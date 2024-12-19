@@ -440,15 +440,17 @@ class _applicant_summeryState extends State<applicant_summery>
                                   onPressed: snapshot.data!.isMovedin!
                                       ? null
                                       : () {
-                                    Provider.of<SelectedTenantsProvider>(context,
-                                        listen: false)
-                                        .clearTenant();
-                                    Provider.of<SelectedCosignersProvider>(context,
-                                        listen: false)
+                                    Provider.of<SelectedCosignersProvider>(
+                                        context,
+                                        listen:
+                                        false)
                                         .clearCosigner();
-                                    Provider.of<SelectedApplicantProvider>(context,
-                                        listen: false).clearApplicant();
-                                          Navigator.push(
+                                    Provider.of<SelectedTenantsProvider>(
+                                        context,
+                                        listen:
+                                        false)
+                                        .clearTenant();
+                                    Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => addLease3(
@@ -457,9 +459,11 @@ class _applicant_summeryState extends State<applicant_summery>
                                                     .data!.leaseData!.rentalId,
                                                 unitId: snapshot
                                                     .data!.leaseData!.unitId,
+                                                leaseId: snapshot.data?.leaseData?.leaseId,
                                               ),
                                             ),
                                           );
+                                          print('applicant lease ${snapshot.data?.leaseData?.leaseId}');
                                         },
                                   child: const Center(
                                     child: Text(
