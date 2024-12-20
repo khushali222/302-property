@@ -62,9 +62,14 @@ class _EditTenantsState extends State<EditTenants> {
   final TextEditingController _dateController = TextEditingController();
   bool form_valid = false;
   Future<void> _selectDate(BuildContext context) async {
+    DateTime initialDate = _dateController.text.isNotEmpty
+        ? DateFormat('dd-MM-yyyy').parse(_dateController.text)
+        : DateTime.now();
+
+
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate:initialDate,
       firstDate: DateTime(1900),
       // lastDate: DateTime(2101),
       lastDate:  DateTime.now(),
@@ -127,7 +132,7 @@ class _EditTenantsState extends State<EditTenants> {
     email.text = widget.tenants.tenantEmail ?? "";
     alterEmail.text = widget.tenants.tenantAlternativeEmail ?? "N/A";
     passWord.text = widget.tenants.tenantPassword ?? "";
-    dob.text = widget.tenants.tenantBirthDate ?? "";
+    _dateController.text = widget.tenants.tenantBirthDate ?? "";
     taxPayerId.text = widget.tenants.taxPayerId ?? "";
     comments.text = widget.tenants.comments ?? "";
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
@@ -135,7 +140,7 @@ class _EditTenantsState extends State<EditTenants> {
     emergencyPhoneNumber.text =
         formatPhoneNumberedit( widget.tenants.emergencyContact?.phoneNumber ?? "");
     emergencyEmail.text = widget.tenants.emergencyContact?.email ?? "";
-    _dateController.text = widget.tenants.tenantBirthDate ?? "";
+    _dateController.text = formatDate4(widget.tenants.tenantBirthDate ?? "");
 
     // enableOverrideFee = widget.tenants.enableoverrideFee!;
     // overrideFee.text = widget.tenants.overRideFee?.toString() ?? '';
@@ -1035,7 +1040,7 @@ class _EditTenantsState extends State<EditTenants> {
                                         email.text != initialEmail ||
                                         alterEmail.text != initialAlterEmail ||
                                         passWord.text != initialPassword ||
-                                        dob.text != initialDob ||
+                                        _dateController.text != initialDob ||
                                         taxPayerId.text != initialTaxPayerId ||
                                         comments.text != initialComments ||
                                         contactName.text !=
@@ -1854,7 +1859,7 @@ class _EditTenantsState extends State<EditTenants> {
                                         email.text != initialEmail ||
                                         alterEmail.text != initialAlterEmail ||
                                         passWord.text != initialPassword ||
-                                        dob.text != initialDob ||
+                                        _dateController.text != initialDob ||
                                         taxPayerId.text != initialTaxPayerId ||
                                         comments.text != initialComments ||
                                         contactName.text !=

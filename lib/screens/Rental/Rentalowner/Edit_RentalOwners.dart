@@ -125,8 +125,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     taxtype.text = widget.rentalOwner.textIdentityType!;
     taxid.text = widget.rentalOwner.texpayerId!;
     //birthdateController.text = widget.rentalOwner.b;
-    startdateController.text = widget.rentalOwner.startDate!;
-    enddateController.text = widget.rentalOwner.endDate!;
+    startdateController.text =formatDate4( widget.rentalOwner.startDate!);
+    enddateController.text =formatDate4( widget.rentalOwner.endDate!);
 
     if (widget.rentalOwner.processorList != null) {
       for (int i = 0; i < widget.rentalOwner.processorList!.length; i++) {
@@ -188,10 +188,16 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   DateTime? enddate;
 
   Future<void> _startDate(BuildContext context) async {
+
+
+    DateTime initialDate = startdateController.text.isNotEmpty
+        ? DateFormat('dd-MM-yyyy').parse(startdateController.text)
+        : DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: startdate ?? DateTime.now(),
-      firstDate: DateTime(2015, 8),
+      initialDate: initialDate,
+    //  initialDate: startdate ?? DateTime.now(),
+      firstDate:  DateTime(2015, 8),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -223,20 +229,79 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     }
   }
 
+  // Future<void> _endDate(BuildContext context) async {
+  //   // DateTime initialEndDate = enddateController.text.isNotEmpty
+  //   //     ? DateFormat('dd-MM-yyyy').parse(enddateController.text)
+  //   //     : DateTime.now();
+  //   // if (initialEndDate.isBefore(startdate ?? DateTime.now())) {
+  //   //   initialEndDate = startdate ?? DateTime.now();  // Use start date if end date is invalid
+  //   // }
+  //   DateTime initialEndDate;
+  //   try {
+  //     initialEndDate = enddateController.text.isNotEmpty
+  //         ? DateFormat('dd-MM-yyyy').parse(enddateController.text)
+  //         : DateTime.now();
+  //   } catch (e) {
+  //     // In case of parsing failure, fallback to DateTime.now()
+  //     initialEndDate = DateTime.now();
+  //   }
+  //
+  //   // Ensure initialStartDate is after the firstDate constraint
+  //   if (initialEndDate.isBefore(DateTime(2015, 8, 1))) {
+  //     initialEndDate = DateTime(2015, 8, 1);  // Set to the minimum allowed date
+  //   }
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: initialEndDate,
+  //     //initialDate: enddate ?? DateTime.now(),
+  //     firstDate: startdate ?? DateTime.now(),
+  //     // firstDate: DateTime(2015, 8),
+  //     lastDate: DateTime(2101),
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.light().copyWith(
+  //           primaryColor:
+  //                blueColor, // Header background color
+  //           // accentColor: Colors.white, // Button text color
+  //           colorScheme:  ColorScheme.light(
+  //             primary: blueColor, // Selection color
+  //             onPrimary: Colors.white, // Text color
+  //             surface: Colors.white, // Calendar background color
+  //             onSurface: Colors.black, // Calendar text color
+  //           ),
+  //           dialogBackgroundColor: Colors.white, // Background color
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //   if (picked != null && picked != enddate) {
+  //     setState(() {
+  //       enddate = picked;
+  //       //birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+  //       //startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+  //       enddateController.text = DateFormat('dd-MM-yyyy').format(picked);
+  //     });
+  //   }
+  // }
   Future<void> _endDate(BuildContext context) async {
+
+
+    DateTime initialDate = startdateController.text.isNotEmpty
+        ? DateFormat('dd-MM-yyyy').parse(startdateController.text)
+        : DateTime.now();
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: enddate ?? DateTime.now(),
-      firstDate: startdate!,
-      // firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
+      initialDate: initialDate,
+      firstDate: initialDate, // Dynamically set based on startdate
+      //firstDate: DateTime(2015, 8), // Dynamically set based on startdate
+      lastDate: DateTime(2101), // Far future date as upper limit
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor:
-                 blueColor, // Header background color
-            // accentColor: Colors.white, // Button text color
-            colorScheme:  ColorScheme.light(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
               primary: blueColor, // Selection color
               onPrimary: Colors.white, // Text color
               surface: Colors.white, // Calendar background color
@@ -248,15 +313,17 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
         );
       },
     );
+
     if (picked != null && picked != enddate) {
       setState(() {
         enddate = picked;
-        //birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        //startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
         enddateController.text = DateFormat('dd-MM-yyyy').format(picked);
+        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+        print(dateForApi); // For API usage
       });
     }
   }
+
 
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
