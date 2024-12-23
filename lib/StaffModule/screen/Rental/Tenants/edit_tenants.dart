@@ -61,17 +61,57 @@ class _EditTenantsState extends State<EditTenants> {
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController _dateController = TextEditingController();
   bool form_valid = false;
+  // Future<void> _selectDate(BuildContext context) async {
+  //   DateTime initialDate = _dateController.text.isNotEmpty
+  //       ? DateFormat('dd-MM-yyyy').parse(_dateController.text)
+  //       : DateTime.now();
+  //   DateTime? selectedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: initialDate,
+  //     // initialDate: DateTime.now(),
+  //     firstDate: DateTime(1900),
+  //     // lastDate: DateTime(2101),
+  //     lastDate: DateTime.now(),
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.light().copyWith(
+  //           colorScheme: ColorScheme.light(
+  //             primary: blueColor, // header background color
+  //             onPrimary: Colors.white, // header text color
+  //             // onSurface: Colors.blue, // body text color
+  //           ),
+  //           textButtonTheme: TextButtonThemeData(
+  //             style: TextButton.styleFrom(
+  //               foregroundColor: Colors.white,
+  //               backgroundColor:
+  //                   blueColor, // button text color
+  //             ),
+  //           ),
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //
+  //   if (selectedDate != null) {
+  //     setState(() {
+  //       _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+  //     });
+  //   }
+  // }
+
   Future<void> _selectDate(BuildContext context) async {
     DateTime initialDate = _dateController.text.isNotEmpty
         ? DateFormat('dd-MM-yyyy').parse(_dateController.text)
         : DateTime.now();
+
+
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: initialDate,
-      // initialDate: DateTime.now(),
+      initialDate:initialDate,
       firstDate: DateTime(1900),
       // lastDate: DateTime(2101),
-      lastDate: DateTime.now(),
+      lastDate:  DateTime.now(),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -83,8 +123,7 @@ class _EditTenantsState extends State<EditTenants> {
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                    blueColor, // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -130,7 +169,7 @@ class _EditTenantsState extends State<EditTenants> {
     email.text = widget.tenants.tenantEmail!;
     alterEmail.text = widget.tenants.tenantAlternativeEmail!;
     passWord.text = widget.tenants.tenantPassword!;
-    _dateController.text = widget.tenants.tenantBirthDate!;
+    _dateController.text = formatDate(widget.tenants.tenantBirthDate ?? "");
     taxPayerId.text = widget.tenants.taxPayerId!;
     comments.text = widget.tenants.comments!;
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
@@ -139,7 +178,7 @@ class _EditTenantsState extends State<EditTenants> {
         formatPhoneNumberedit(widget.tenants.emergencyContact!.phoneNumber ?? "");
     emergencyEmail.text = widget.tenants.emergencyContact!.email ?? "";
     // _dateController.text = widget.tenants.tenantBirthDate!;
-  print(widget.tenants.tenantBirthDate);
+ //print(widget.tenants.tenantBirthDate);
     // enableOverrideFee = widget.tenants.enableoverrideFee!;
     // overrideFee.text = widget.tenants.overRideFee?.toString() ?? '';
 
@@ -1865,7 +1904,7 @@ class _EditTenantsState extends State<EditTenants> {
                                       tenantEmail: email.text,
                                       tenantAlternativeEmail: alterEmail.text,
                                       tenantPassword: passWord.text,
-                                      tenantBirthDate: _dateController.text,
+                                      tenantBirthDate: reverseFormatDate(_dateController.text),
                                       taxPayerId: taxPayerId.text,
                                       comments: comments.text,
                                       emergencyContactName: contactName.text,

@@ -897,7 +897,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                               rentalOwner: rentals,
                                                                             )));
                                                             if (check == true) {
-                                                              setState(() {});
+                                                              setState(() {
+                                                                futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
+                                                              });
                                                             }
                                                           },
                                                           child: Container(

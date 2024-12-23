@@ -2265,7 +2265,7 @@ class _AddTenantState extends State<AddTenant> {
       tenantEmail: email.text,
       tenantAlternativeEmail: alterEmail.text,
       tenantPassword: passWord.text,
-      tenantBirthDate: _dateController.text,
+      tenantBirthDate:reverseFormatDate(_dateController.text),
       taxPayerId: taxPayerId.text,
       comments: comments.text,
       emergencyContact: emergencyContact,

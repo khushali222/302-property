@@ -125,8 +125,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     taxtype.text = widget.rentalOwner.textIdentityType!;
     taxid.text = widget.rentalOwner.texpayerId!;
     //birthdateController.text = widget.rentalOwner.b;
-    startdateController.text =formatDate4( widget.rentalOwner.startDate!);
-    enddateController.text =formatDate4( widget.rentalOwner.endDate!);
+    startdateController.text =formatDate( widget.rentalOwner.startDate!);
+    enddateController.text =formatDate( widget.rentalOwner.endDate!);
 
     if (widget.rentalOwner.processorList != null) {
       for (int i = 0; i < widget.rentalOwner.processorList!.length; i++) {
@@ -3024,8 +3024,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       rentalOwnerPhoneNumber: phonenum.text,
                       rentalOwnerHomeNumber: homenum.text,
                       rentalOwnerBusinessNumber: officenum.text,
-                      startDate: startdateController.text,
-                      endDate: enddateController.text,
+                      startDate:reverseFormatDate(startdateController.text),
+                      endDate: reverseFormatDate(enddateController.text),
                       texpayerId: taxid.text,
                       textIdentityType: taxtype.text,
                       city: city2.text,

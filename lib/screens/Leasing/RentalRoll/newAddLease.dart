@@ -139,13 +139,17 @@ class _addLease3State extends State<addLease3>
             _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
           }
 
+          Provider.of<SelectedTenantsProvider>(context, listen: false)
+              .clearTenant();
+
           // Update tenants
           if (fetchedDetails.tenant != null) {
             for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
+              fetchedDetails.tenant![i].tenantId = fetchedDetails.tenant![i].applicantId;
               Provider.of<SelectedTenantsProvider>(context, listen: false)
                   .addTenant(fetchedDetails.tenant![i]);
-              Provider.of<SelectedTenantsProvider>(context, listen: false)
-                  .rentShareControllers[i].text = fetchedDetails.tenant![i].rentshare.toString();
+              // Provider.of<SelectedTenantsProvider>(context, listen: false)
+              //     .rentShareControllers[i].text = fetchedDetails.tenant![i].rentshare.toString();
             }
           }
 

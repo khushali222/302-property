@@ -1356,7 +1356,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                               tenantId: '',
                                                                             )));
                                                             if (check == true) {
-                                                              setState(() {});
+                                                              setState(() {
+                                                                futureTenants = TenantsRepository().fetchTenants();
+                                                              });
                                                             }
                                                           },
                                                           child: Container(

@@ -30,6 +30,7 @@ class TenantResponse {
 class Tenant {
   String? id;
   String? tenantId;
+  String? applicantId;
   String? adminId;
   String? tenantFirstName;
   String? tenantLastName;
@@ -59,6 +60,7 @@ class Tenant {
   Tenant({
     this.id,
     this.tenantId,
+    this.applicantId,
     this.adminId,
     this.tenantFirstName,
     this.tenantLastName,
@@ -90,6 +92,7 @@ class Tenant {
 
     print("calling tenants");
     tenantId = json['tenant_id'];
+    applicantId = json['applicant_id'];
     tenantResidentStatus = json['tenant_residentStatus'];
     adminId = json['admin_id'];
     tenantFirstName = json['tenant_firstName'].toString();
@@ -128,6 +131,7 @@ class Tenant {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['_id'] = id;
     data['tenant_id'] = tenantId;
+    data['applicant_id'] = applicantId;
     data['admin_id'] = adminId;
     data['tenant_residentStatus'] = tenantResidentStatus;
     data['tenant_firstName'] = tenantFirstName;

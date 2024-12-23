@@ -43,23 +43,33 @@ class SelectedTenantsProvider extends ChangeNotifier {
   // }
 
   void addTenant(Tenant tenant) {
-    print("Add Tenant is calling");
+    print("Add Tenant is calling ${tenant.tenantId} ${tenant.tenantFirstName}");
+    for(var tenants  in _selectedTenants){
 
-    // Check if the tenant is already in the selected tenants
+      print(tenants.tenantFirstName);
+      print(tenants.tenantId);
+      print(tenants.tenantId);
+    }
+
+//    Check if the tenant is already in the selected tenants
     if (_selectedTenants.any((existingTenant) => existingTenant.tenantId == tenant.tenantId)) {
       print("Tenant ${tenant.tenantFirstName} is already added.");
       return; // Exit the method if the tenant is already added
     }
 
+
+
     // Add a new controller for the tenant
-    if (_selectedTenants.isEmpty) {
+    if (_selectedTenants.isEmpty || _selectedTenants.length == 0) {
       // Set rent share to 100 for the first tenant
+      print("calling");
       _rentShareControllers.add(TextEditingController(text: '100'));
     } else {
+      print("calling 2");
       _rentShareControllers.add(TextEditingController()); // Subsequent tenants get 0
     }
 
-    print("add before length ${tenant.tenantLastName}");
+    print("add before length ${_selectedTenants.length}");
     _selectedTenants.add(tenant);
     print("add after length ${_selectedTenants.length}");
     notifyListeners();

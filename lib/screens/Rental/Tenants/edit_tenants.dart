@@ -44,7 +44,7 @@ class _EditTenantsState extends State<EditTenants> {
 
   final TextEditingController passWord = TextEditingController();
 
-  final TextEditingController dob = TextEditingController();
+  // final TextEditingController dob = TextEditingController();
 
   final TextEditingController taxPayerId = TextEditingController();
 
@@ -132,7 +132,7 @@ class _EditTenantsState extends State<EditTenants> {
     email.text = widget.tenants.tenantEmail ?? "";
     alterEmail.text = widget.tenants.tenantAlternativeEmail ?? "N/A";
     passWord.text = widget.tenants.tenantPassword ?? "";
-    _dateController.text = widget.tenants.tenantBirthDate ?? "";
+    // _dateController.text = widget.tenants.tenantBirthDate ?? "";
     taxPayerId.text = widget.tenants.taxPayerId ?? "";
     comments.text = widget.tenants.comments ?? "";
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
@@ -140,7 +140,8 @@ class _EditTenantsState extends State<EditTenants> {
     emergencyPhoneNumber.text =
         formatPhoneNumberedit( widget.tenants.emergencyContact?.phoneNumber ?? "");
     emergencyEmail.text = widget.tenants.emergencyContact?.email ?? "";
-    _dateController.text = formatDate4(widget.tenants.tenantBirthDate ?? "");
+    print("DOB ${widget.tenants.tenantBirthDate}");
+    _dateController.text = formatDate(widget.tenants.tenantBirthDate ?? "");
 
     // enableOverrideFee = widget.tenants.enableoverrideFee!;
     // overrideFee.text = widget.tenants.overRideFee?.toString() ?? '';
@@ -1101,37 +1102,38 @@ class _EditTenantsState extends State<EditTenants> {
                                     );
                                     Fluttertoast.showToast(
                                         msg: "Tenant updated successfully");
-                                    setState(() {
-                                      isLoading = false;
-                                      errorMessage = null;
-                                      widget.tenants.tenantFirstName =
-                                          firstName.text;
-                                      widget.tenants.tenantLastName =
-                                          lastName.text;
-                                      widget.tenants.tenantPhoneNumber =
-                                          phoneNumber.text;
-                                      widget.tenants.tenantAlternativeNumber =
-                                          workNumber.text;
-                                      widget.tenants.tenantAlternativeEmail =
-                                          alterEmail.text;
-                                      widget.tenants.tenantEmail = email.text;
-                                      widget.tenants.tenantPassword =
-                                          passWord.text;
-                                      widget.tenants.tenantBirthDate =
-                                          _dateController.text;
-                                      widget.tenants.taxPayerId =
-                                          taxPayerId.text;
-                                      widget.tenants.comments = comments.text;
-                                      widget.tenants.emergencyContact?.name =
-                                          contactName.text;
-                                      widget.tenants.emergencyContact
-                                          ?.relation = relationToTenant.text;
-                                      widget.tenants.emergencyContact?.email =
-                                          emergencyEmail.text;
-                                      widget.tenants.emergencyContact
-                                              ?.phoneNumber =
-                                          emergencyPhoneNumber.text;
-                                    });
+                                    // setState(() {
+                                    //   isLoading = false;
+                                    //   errorMessage = null;
+                                    //   widget.tenants.tenantFirstName =
+                                    //       firstName.text;
+                                    //   widget.tenants.tenantLastName =
+                                    //       lastName.text;
+                                    //   widget.tenants.tenantPhoneNumber =
+                                    //       phoneNumber.text;
+                                    //   widget.tenants.tenantAlternativeNumber =
+                                    //       workNumber.text;
+                                    //   widget.tenants.tenantAlternativeEmail =
+                                    //       alterEmail.text;
+                                    //   widget.tenants.tenantEmail = email.text;
+                                    //   widget.tenants.tenantPassword =
+                                    //       passWord.text;
+                                    //   widget.tenants.tenantBirthDate =
+                                    //       reverseFormatDate(
+                                    //       _dateController.text);
+                                    //   widget.tenants.taxPayerId =
+                                    //       taxPayerId.text;
+                                    //   widget.tenants.comments = comments.text;
+                                    //   widget.tenants.emergencyContact?.name =
+                                    //       contactName.text;
+                                    //   widget.tenants.emergencyContact
+                                    //       ?.relation = relationToTenant.text;
+                                    //   widget.tenants.emergencyContact?.email =
+                                    //       emergencyEmail.text;
+                                    //   widget.tenants.emergencyContact
+                                    //           ?.phoneNumber =
+                                    //       emergencyPhoneNumber.text;
+                                    // });
                                     Navigator.of(context).pop(true);
                                   } catch (e) {
                                     Fluttertoast.showToast(
@@ -1903,7 +1905,7 @@ class _EditTenantsState extends State<EditTenants> {
                                       tenantEmail: email.text,
                                       tenantAlternativeEmail: alterEmail.text,
                                       tenantPassword: passWord.text,
-                                      tenantBirthDate: _dateController.text,
+                                      tenantBirthDate:  reverseFormatDate(_dateController.text),
                                       taxPayerId: taxPayerId.text,
                                       comments: comments.text,
                                       emergencyContactName: contactName.text,
@@ -1918,6 +1920,7 @@ class _EditTenantsState extends State<EditTenants> {
                                       enableOverRideFee:
                                           enableOverrideFee.toString(),
                                     );
+                                    print(' birth date ${reverseFormatDate(_dateController.text)}');
                                     Fluttertoast.showToast(
                                         msg: "Tenant updated successfully");
                                     setState(() {
@@ -1936,8 +1939,7 @@ class _EditTenantsState extends State<EditTenants> {
                                       widget.tenants.tenantEmail = email.text;
                                       widget.tenants.tenantPassword =
                                           passWord.text;
-                                      widget.tenants.tenantBirthDate =
-                                          _dateController.text;
+                                      widget.tenants.tenantBirthDate = _dateController.text;
                                       widget.tenants.taxPayerId =
                                           taxPayerId.text;
                                       widget.tenants.comments = comments.text;
@@ -1951,7 +1953,9 @@ class _EditTenantsState extends State<EditTenants> {
                                               ?.phoneNumber =
                                           emergencyPhoneNumber.text;
                                     });
+
                                     Navigator.of(context).pop(true);
+
                                   } catch (e) {
                                     Fluttertoast.showToast(
                                         msg: "Failed to update tenant");
@@ -2012,6 +2016,9 @@ class _EditTenantsState extends State<EditTenants> {
         ),
       ),
     );
+  }
+  reload_Screen() {
+    setState(() {});
   }
 }
 

@@ -1068,14 +1068,28 @@ class _RenewleaseState extends State<Renewlease> {
                                             },
                                           );
 
+                                          // if (pickedDate != null) {
+                                          //   // String formattedDate =
+                                          //   //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                          //   String formattedDate =
+                                          //       "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                          //   setState(() {
+                                          //     endDateController.text =
+                                          //         formattedDate;
+                                          //   });
+                                          // }
+
                                           if (pickedDate != null) {
-                                            // String formattedDate =
-                                            //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                            String formattedDate =
-                                                "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                            String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+
+                                            // Calculate the end date by adding one month
+                                            DateTime endDate = DateTime(pickedDate.year, pickedDate.month + 1, pickedDate.day);
+                                            String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+
                                             setState(() {
-                                              endDateController.text =
-                                                  formattedDate;
+                                              startDateController.text = formattedStartDate;
+                                              endDateController.text = formattedEndDate; // Set the end date
+                                              _startDate = pickedDate;
                                             });
                                           }
                                         },

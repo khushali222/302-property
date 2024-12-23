@@ -1217,7 +1217,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                               tenantId: '',
                                                                             )));
                                                             if (check == true) {
-                                                              setState(() {});
+
+                                                              setState(() {
+
+                                                                futureTenants = TenantsRepository().fetchTenants();
+                                                              });
+
                                                             }
                                                           },
                                                           child: Container(
@@ -1314,6 +1319,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {
+
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
@@ -1322,6 +1328,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                             tenants,
                                                                         tenantId:
                                                                             tenants.tenantId!)));
+
+
                                                           },
                                                           child: Container(
                                                             height: 40,

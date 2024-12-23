@@ -310,7 +310,7 @@ class TenantsRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-    print(response.body);
+    print('edit tenant ${response.body}');
     print(responseData);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
