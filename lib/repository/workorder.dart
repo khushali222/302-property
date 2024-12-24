@@ -296,7 +296,7 @@ class WorkOrderRepository {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode({"workOrder": workorder}));
-
+   print('update workorder ${response.body}');
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)["data"];
       return true;

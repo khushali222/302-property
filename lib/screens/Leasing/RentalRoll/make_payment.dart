@@ -119,6 +119,7 @@ class _MakePaymentState extends State<MakePayment> {
     DateTime today = DateTime.now();
     _startDate.text = DateFormat('dd-MM-yyyy').format(today);
      //selectedTenantId = widget.tenantId;
+    fetchChargesAndBalance(widget.leaseId);
   }
 
   void _updateTotalAmount() {
@@ -440,6 +441,41 @@ class _MakePaymentState extends State<MakePayment> {
     setState(() {
       groupedCharges = categorizedData;
     });
+  }
+
+  Future<void> fetchChargesAndBalance(String leaseId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
+
+    try {
+      final response = await http.get(
+        Uri.parse('$Api_url/api/charge/tenant_charges/$leaseId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+        if (jsonResponse.containsKey('totalCharges') && jsonResponse['totalCharges'] is List) {
+          List<dynamic> totalCharges = jsonResponse['totalCharges'];
+          double balanceValue = jsonResponse['balance']?.toDouble() ?? 0.00;
+
+          setState(() {
+            balance = balanceValue; // Directly set the balance as a double
+          });
+        } else {
+          throw Exception('No charges found');
+        }
+      } else {
+        throw Exception('Failed to load');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
 //for payment
@@ -857,7 +893,7 @@ class _MakePaymentState extends State<MakePayment> {
     isChecked = false;
 
   }
-
+  double balance = 0.00;
   String? _errorText;
   @override
   Widget build(BuildContext context) {
@@ -2585,6 +2621,17 @@ class _MakePaymentState extends State<MakePayment> {
                       Padding(
                         padding: const EdgeInsets.only(left: 10, right: 10),
                         child: const Text('Apply Payment to Balances',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey)),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding:  EdgeInsets.only(left: 10, right: 10),
+                        child:  Text('Current Balances : ${balance.toStringAsFixed(2)}',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,

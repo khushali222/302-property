@@ -153,6 +153,8 @@ class _MakePaymentState extends State<MakePayment> {
 
   List<Map<String, String>> tenants = [];
   String? selectedTenantId;
+  double selectedTenantRent = 0.0;
+
   List<TextEditingController> controllers = [];
   List<BillingData> cardDetails = [];
 
@@ -180,6 +182,7 @@ class _MakePaymentState extends State<MakePayment> {
           'tenant_id': tenant['lease_id'],
           'tenant_name': '${tenant['rental_adress']}',
           'status': '${tenant['status']}',
+          'rent':'${tenant['rent']}'
           /*  'first_name': '${tenant['tenant_firstName']}',
           'last_name': '${tenant['tenant_lastName']}',
           'email': '${tenant['tenant_email']}'*/
@@ -187,6 +190,7 @@ class _MakePaymentState extends State<MakePayment> {
       }
       setState(() {
         tenants = fetchedTenants;
+        selectedTenantRent = double.tryParse(tenants[0]['rent'] ?? '0.0') ?? 0.0;
         isLoading = false;
       });
     } else {
@@ -445,6 +449,7 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   double totalamount = 0.0;
+  double totalrent = 0.0;
   double surchargeamount = 0.0;
   double totalpayamount = 0.0;
 //for payment
@@ -589,6 +594,7 @@ class _MakePaymentState extends State<MakePayment> {
               double.parse(lease_data!["total_due_amount"].toString());
           totalpayamount =
               double.parse(lease_data!["total_due_amount"].toString());
+          totalrent = double.parse(lease_data!["total_due_amount"].toString());
           if (surCharge != null) {
             surchargeamount = totalamount * surCharge! / 100;
             totalpayamount = totalamount + surchargeamount;
@@ -1030,6 +1036,17 @@ class _MakePaymentState extends State<MakePayment> {
                                                 value!);
                                             fetchChargesForSelectedTenant(
                                                 value!);
+                                            // Find the selected tenant from the list
+                                            final selectedTenant = tenants.firstWhere(
+                                                  (tenant) => tenant['tenant_id'] == value,
+                                              orElse: () => {},
+                                            );
+
+                                            // Update rent amount if the tenant is found
+                                            selectedTenantRent = double.tryParse(
+                                                selectedTenant['rent']?.toString() ?? '0.0') ??
+                                                0.0;
+
                                             state.didChange(
                                                 value); // Notify FormField of change
                                           });
@@ -1562,6 +1579,42 @@ class _MakePaymentState extends State<MakePayment> {
                           SizedBox(
                             height: 15,
                           ),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text("Rent Amount : ",style: TextStyle(
+                                      color: blueColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),),
+                                  SizedBox(width: 5,),
+                                  if(lease_data != null)
+                                  if (tenants.isNotEmpty)
+                                    Text(
+                                      "\$${selectedTenantRent.toString()}",
+                                      style: TextStyle(
+                                          color: Color.fromRGBO(115, 119, 145, 1),
+                                          fontSize: 16),
+                                    ),
+
+                                  if(lease_data == null)
+                                    Text(
+                                      "\$0.0",
+                                      style: TextStyle(
+                                          color: Color.fromRGBO(115, 119, 145, 1),
+                                          fontSize: 16),
+                                    ),
+
+
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(
+                            height: 10,
+                          ),
+
                           Row(
                             children: [
                               Text(

@@ -83,7 +83,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
     futureworkorderSummary =
         WorkOrderRepository.getworkorderSummary(widget.workorder_id!);
-
+  print('id work ${widget.workorder_id}');
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
     _loadStaff();
@@ -3932,19 +3932,26 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(backgroundColor: blueColor),
                             onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
                               SharedPreferences prefs = await SharedPreferences.getInstance();
                               String? firstName = prefs.getString("first_name");
                               String? lastName = prefs.getString("last_name");
+                              final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                              String notificationTime = formatter.format(DateTime.now());
                               Map<String, dynamic> values = {
-                                "date": selectedDate.text,
+                                "date": reverseFormatDate(selectedDate.text),
                                 "message": message.text,
                                 "status": selectedStatus,
                                 "statusUpdatedBy": "Admin",
                                 "staffmember_name": _selectedStaffs,
                                 "staffmember_id": _selectedstaffId,
                                 "workOrderUpdate_images":_uploadedFileNames!,
-
+                                'notificationTime':notificationTime,
                               };
+                              print('normal date ${selectedDate.text}');
+                              print('revers date ${reverseFormatDate(selectedDate.text)}');
                               await WorkOrderRepository.updateworkorderSummary(
                                   values, widget.workorder_id!)
                                   .then((value) {
@@ -3965,9 +3972,19 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               // print('Status: ${update.status}');
                               // print('Date: ${update.date}');
                               // print('Message: ${update.message}');
-                              Navigator.of(context).pop(); // Close the dialog
+                              Navigator.of(context).pop();
+                              setState(() {
+                                isLoading = false;
+                              });// Close the dialog
                             },
-                            child: Text('Save'),
+                            child: isLoading
+                                ? Center(
+                              child: SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 25.0,
+                              ),
+                            )
+                                :Text('Save'),
                           ),
                           TextButton(
                             onPressed: () {
