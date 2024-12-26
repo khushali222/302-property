@@ -25,6 +25,7 @@ class AddTenant extends StatefulWidget {
 }
 
 class _AddTenantState extends State<AddTenant> {
+  final GlobalKey<TooltipState> _tooltipKey = GlobalKey<TooltipState>();
   final TextEditingController firstName = TextEditingController();
   final TextEditingController lastName = TextEditingController();
   final TextEditingController phoneNumber = TextEditingController();
@@ -241,10 +242,13 @@ class _AddTenantState extends State<AddTenant> {
                                                         color: Colors.grey)),
                                                 SizedBox(height: 10),
                                                 CustomTextField(
-                                              keyboardType: TextInputType.number,
+                                                  keyboardType:
+                                                      TextInputType.number,
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
-                                                    LengthLimitingTextInputFormatter(10),
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
                                                     PhoneNumberFormatter(),
                                                   ],
                                                   hintText:
@@ -280,10 +284,13 @@ class _AddTenantState extends State<AddTenant> {
                                                   //     .numberWithOptions(
                                                   //         signed: true,
                                                   //         decimal: true),
-                                                  keyboardType: TextInputType.number,
+                                                  keyboardType:
+                                                      TextInputType.number,
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
-                                                    LengthLimitingTextInputFormatter(10),
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
                                                     PhoneNumberFormatter(),
                                                   ],
                                                   hintText: 'Enter work number',
@@ -769,10 +776,13 @@ class _AddTenantState extends State<AddTenant> {
                                                 //     .numberWithOptions(
                                                 //         signed: true,
                                                 //         decimal: true),
-                                                keyboardType: TextInputType.number,
+                                                keyboardType:
+                                                    TextInputType.number,
                                                 inputFormatters: [
-                                                  FilteringTextInputFormatter.digitsOnly,
-                                                  LengthLimitingTextInputFormatter(10),
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                  LengthLimitingTextInputFormatter(
+                                                      10),
                                                   PhoneNumberFormatter(),
                                                 ],
                                                 hintText: 'Enter phone number',
@@ -841,8 +851,7 @@ class _AddTenantState extends State<AddTenant> {
                                       ],
                                     ),
                                     enableOverrideFee
-                                        ?
-                                    Material(
+                                        ? Material(
                                             elevation: 2,
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
@@ -1734,11 +1743,63 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Password *',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text('Password *',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey)),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      GestureDetector(
+                                          onTap: () {
+                                            _tooltipKey.currentState
+                                                ?.ensureTooltipVisible();
+                                          },
+                                          child: Tooltip(
+                                              verticalOffset: 16.0,
+                                              exitDuration:
+                                                  Duration(seconds: 2),
+                                              textAlign: TextAlign.start,
+                                              textStyle: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.white),
+                                              margin: EdgeInsets.only(
+                                                left: 42.0,
+                                                right: 42.0,
+                                              ),
+                                              // padding: EdgeInsets.all(8.0),
+                                              message:
+                                                  '''• At least one uppercase letter (A-Z).
+• At least one lowercase letter (a-z).
+• At least one number (0-9).
+• At least one special character (e.g., @ # etc.).
+• Password must be at least 12 characters long.
+• No continuous alphabetical characters (e.g., abcd) or continuous numerical characters (e.g..1234).
+• Avoid strictly sequential patterns (e.g.,Akl 2345678!).
+• Don't use birthdays, names, addresses, or other personal information.
+                                                  ''',
+                                              key: _tooltipKey,
+                                              child: Icon(Icons.info)))
+                                    ],
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        String generatedPassword =
+                                            generateRandomPassword();
+                                        setState(() {
+                                          passWord.text = generatedPassword;
+                                        });
+                                      },
+                                      icon: Icon(Icons.refresh))
+                                ],
+                              ),
                               SizedBox(
                                 height: 10,
                               ),
@@ -2530,8 +2591,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       children: <Widget>[
         FormField<String>(
           validator: widget.optional!
-              ?
-              (value) {
+              ? (value) {
                   if (widget.controller!.text.isEmpty) {
                     return null;
                   } else if (widget.phone != null) {
@@ -2575,9 +2635,10 @@ class CustomTextFieldState extends State<CustomTextField> {
                   //     return '';
                   //   }
                   // }
-                  else if (widget.phone != null) { // Check if it's a phone number
+                  else if (widget.phone != null) {
+                    // Check if it's a phone number
                     String formattedPhoneNumber =
-                    widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
                     if (formattedPhoneNumber.length != 10) {
                       setState(() {
@@ -2585,8 +2646,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       });
                       return '';
                     }
-                  }
-                  else if (widget.email != null) {
+                  } else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
                       setState(() {
                         _errorMessage = "Email is not valid";

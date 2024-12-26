@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,6 @@ String Api_url = "http://192.168.1.13:4000";
 
 String image_upload_url = "https://saas.cloudrentalmanager.com";
 
-
 formatDate(String dateTime) {
   //print(dateTime);
   List<String> dateFormats = [
@@ -26,7 +26,7 @@ formatDate(String dateTime) {
     'M/d/yyyy',
     'MM/dd/yyyy',
     'M/d/yyyy, h:mm:ss a',
-    'M/d/yyyy, h:mm a'        // 05032024 (no separators)
+    'M/d/yyyy, h:mm a' // 05032024 (no separators)
   ];
 
   DateTime? parsedDate;
@@ -55,7 +55,6 @@ String formatDate4(String dateTime) {
   return DateFormat('dd-MM-yyyy').format(parsedDate);
 }
 
-
 String formatDate3(String dateStr) {
   DateTime dateTime = DateTime.parse(dateStr);
   return DateFormat('dd-MM-yyyy').format(dateTime);
@@ -72,7 +71,8 @@ Color blueColor = Color.fromRGBO(21, 43, 81, 1);
 
 Color greyColor = Color.fromRGBO(73, 81, 96, 1);
 Color grey = Color.fromRGBO(21, 43, 83, .5);
-TableRow buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+TableRow buildTableRow(
+    String leftLabel, String leftValue, String rightLabel, String rightValue) {
   return TableRow(
     children: [
       TableCell(
@@ -124,7 +124,6 @@ String getDisplayValue(String? value) {
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 
-
 String formatPhoneNumber(String phoneNumber) {
   if (phoneNumber == null || phoneNumber.isEmpty) {
     return "N/A"; // Return "N/A" if the phone number is null or empty
@@ -139,6 +138,7 @@ String formatPhoneNumber(String phoneNumber) {
     return phoneNumber; // Return original if not valid
   }
 }
+
 String formatPhoneNumberedit(String phoneNumber) {
   if (phoneNumber == null || phoneNumber.isEmpty) {
     return ""; // Return "N/A" if the phone number is null or empty
@@ -153,8 +153,6 @@ String formatPhoneNumberedit(String phoneNumber) {
     return phoneNumber; // Return original if not valid
   }
 }
-
-
 
 // void _checkPasswordStrength(String password) {
 //   final result = Zxcvbn().evaluate(password);
@@ -217,17 +215,56 @@ String? ValidatePassword(String password) {
     return 'Must contain at least one special character.';
   }
 
-  var result = Zxcvbn().evaluate(password);
-  if (result.score! < 3) {
-    return 'Password is too weak.';
-  }
-  if (RegExp(r'(\d)\1{2,}|\d{3,}|[A-Za-z]{3,}').hasMatch(password)) {
-    return 'Avoid sequential or repeating patterns.';
+  // Avoid sequential or repeating patterns
+  if (RegExp(r'(\d)\1{2,}|[A-Za-z]{4,}|\d{4,}').hasMatch(password)) {
+    return 'Avoid sequential or excessive repeating patterns.';
   }
 
-  return null; // Indicate that the password is valid
+  // Simulated strength check: length-based and diversity
+  if (password.length < 12) {
+    return 'Password is too weak. Use a longer password.';
+  }
+
+  return null; // Indicate the password is valid
 }
 
+String generateRandomPassword() {
+  const String upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const String lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
+  const String digits = '0123456789';
+  const String specialCharacters = '!@#\$%^&*(),.?":{}|<>';
+  const String allCharacters =
+      '$upperCaseLetters$lowerCaseLetters$digits$specialCharacters';
+
+  // Ensure at least one of each required character type
+  List<String> passwordChars = [];
+  passwordChars
+      .add(upperCaseLetters[Random().nextInt(upperCaseLetters.length)]);
+  passwordChars
+      .add(lowerCaseLetters[Random().nextInt(lowerCaseLetters.length)]);
+  passwordChars.add(digits[Random().nextInt(digits.length)]);
+  passwordChars
+      .add(specialCharacters[Random().nextInt(specialCharacters.length)]);
+
+  // Fill the rest of the password with random characters
+  int remainingLength = Random().nextInt(5) + 8; // Ensure total length is 12-16
+  for (int i = 0; i < remainingLength; i++) {
+    passwordChars.add(allCharacters[Random().nextInt(allCharacters.length)]);
+  }
+
+  // Shuffle to ensure randomness
+  passwordChars.shuffle();
+
+  // Join characters into a password string
+  String password = passwordChars.join('');
+
+  // Ensure no sequential or repeating patterns
+  if (RegExp(r'(\d)\1{2,}|[A-Za-z]{4,}|\d{4,}').hasMatch(password)) {
+    return generateRandomPassword(); // Retry if invalid pattern is found
+  }
+
+  return password;
+}
 
 class PhoneNumberFormatter extends TextInputFormatter {
   @override
@@ -243,10 +280,12 @@ class PhoneNumberFormatter extends TextInputFormatter {
 
     String formatted = '';
     if (digitsOnly.length >= 1) {
-      formatted += '(${digitsOnly.substring(0, digitsOnly.length >= 3 ? 3 : digitsOnly.length)}';
+      formatted +=
+          '(${digitsOnly.substring(0, digitsOnly.length >= 3 ? 3 : digitsOnly.length)}';
     }
     if (digitsOnly.length >= 4) {
-      formatted += ') ${digitsOnly.substring(3, digitsOnly.length >= 6 ? 6 : digitsOnly.length)}';
+      formatted +=
+          ') ${digitsOnly.substring(3, digitsOnly.length >= 6 ? 6 : digitsOnly.length)}';
     }
     if (digitsOnly.length >= 7) {
       formatted += '-${digitsOnly.substring(6)}';
