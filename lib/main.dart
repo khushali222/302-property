@@ -97,7 +97,6 @@ void main() {
     DeviceOrientation.portraitDown,
   ]);
   runApp(
-
     DevicePreview(
       enabled: true,
       tools: [
@@ -150,13 +149,10 @@ void main() {
           ChangeNotifierProvider(
             create: (context) => ProfileProvider(),
           ),
-          ChangeNotifierProvider(
-              create: (_) => DateProvider()),
-          ChangeNotifierProvider(
-              create: (_) => DropdownProvider()),
+          ChangeNotifierProvider(create: (_) => DateProvider()),
+          ChangeNotifierProvider(create: (_) => DropdownProvider()),
           ChangeNotifierProvider(create: (_) => CheckConnection()),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
-
         ],
         child: MyApp(),
       ),
@@ -236,9 +232,11 @@ class NameProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
 class NoGlowScrollBehavior extends ScrollBehavior {
   @override
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
     // Remove the glow effect
     return child;
   }

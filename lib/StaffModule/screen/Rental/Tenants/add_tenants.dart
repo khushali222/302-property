@@ -25,6 +25,7 @@ class AddTenant extends StatefulWidget {
 }
 
 class _AddTenantState extends State<AddTenant> {
+  final GlobalKey<TooltipState> _tooltipKey = GlobalKey<TooltipState>();
   final TextEditingController firstName = TextEditingController();
   final TextEditingController lastName = TextEditingController();
   final TextEditingController phoneNumber = TextEditingController();
@@ -64,8 +65,7 @@ class _AddTenantState extends State<AddTenant> {
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                    blueColor, // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -238,14 +238,17 @@ class _AddTenantState extends State<AddTenant> {
                                                       color: Colors.grey)),
                                               SizedBox(height: 10),
                                               CustomTextField(
-                                                keyboardType: TextInputType.number,
+                                                keyboardType:
+                                                    TextInputType.number,
                                                 // keyboardType: TextInputType
                                                 //     .numberWithOptions(
                                                 //         signed: true,
                                                 //         decimal: true),
                                                 inputFormatters: [
-                                                  FilteringTextInputFormatter.digitsOnly,
-                                                  LengthLimitingTextInputFormatter(10),
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                  LengthLimitingTextInputFormatter(
+                                                      10),
                                                   PhoneNumberFormatter(),
                                                 ],
                                                 phone: true,
@@ -258,7 +261,6 @@ class _AddTenantState extends State<AddTenant> {
                                                   }
                                                   return null;
                                                 },
-
                                               ),
                                             ],
                                           ),
@@ -277,10 +279,13 @@ class _AddTenantState extends State<AddTenant> {
                                                       color: Colors.grey)),
                                               SizedBox(height: 10),
                                               CustomTextField(
-                                                keyboardType: TextInputType.number,
+                                                keyboardType:
+                                                    TextInputType.number,
                                                 inputFormatters: [
-                                                  FilteringTextInputFormatter.digitsOnly,
-                                                  LengthLimitingTextInputFormatter(10),
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                  LengthLimitingTextInputFormatter(
+                                                      10),
                                                   PhoneNumberFormatter(),
                                                 ],
                                                 // keyboardType: TextInputType
@@ -503,8 +508,7 @@ class _AddTenantState extends State<AddTenant> {
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
-                                          color:
-                                              blueColor)),
+                                          color: blueColor)),
                                   SizedBox(
                                     height: 15,
                                   ),
@@ -671,8 +675,7 @@ class _AddTenantState extends State<AddTenant> {
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
-                                          color:
-                                              blueColor)),
+                                          color: blueColor)),
                                   SizedBox(
                                     height: 15,
                                   ),
@@ -760,14 +763,17 @@ class _AddTenantState extends State<AddTenant> {
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             CustomTextField(
-                                              keyboardType: TextInputType.number,
+                                              keyboardType:
+                                                  TextInputType.number,
                                               // keyboardType: TextInputType
                                               //     .numberWithOptions(
                                               //         signed: true,
                                               //         decimal: true),
                                               inputFormatters: [
-                                                FilteringTextInputFormatter.digitsOnly,
-                                                LengthLimitingTextInputFormatter(10),
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                                LengthLimitingTextInputFormatter(
+                                                    10),
                                                 PhoneNumberFormatter(),
                                               ],
                                               hintText: 'Enter phone number',
@@ -879,10 +885,7 @@ class _AddTenantState extends State<AddTenant> {
                                                 _validateInput();
                                               },
                                               controller: overrideFee,
-                                              cursorColor: blueColor
-
-
-,
+                                              cursorColor: blueColor,
                                             ),
                                           ),
                                         )
@@ -923,8 +926,7 @@ class _AddTenantState extends State<AddTenant> {
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        blueColor,
+                                    backgroundColor: blueColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
@@ -1249,8 +1251,7 @@ class _AddTenantState extends State<AddTenant> {
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
-                                          color:
-                                              blueColor)),
+                                          color: blueColor)),
                                   SizedBox(
                                     height: 15,
                                   ),
@@ -1397,8 +1398,7 @@ class _AddTenantState extends State<AddTenant> {
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
-                                          color:
-                                              blueColor)),
+                                          color: blueColor)),
                                   SizedBox(
                                     height: 15,
                                   ),
@@ -1494,8 +1494,7 @@ class _AddTenantState extends State<AddTenant> {
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        blueColor,
+                                    backgroundColor: blueColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
@@ -1734,11 +1733,61 @@ class _AddTenantState extends State<AddTenant> {
                             SizedBox(
                               height: 10,
                             ),
-                            Text('Password *',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('Password *',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    GestureDetector(
+                                        onTap: () {
+                                          _tooltipKey.currentState
+                                              ?.ensureTooltipVisible();
+                                        },
+                                        child: Tooltip(
+                                            verticalOffset: 16.0,
+                                            exitDuration: Duration(seconds: 2),
+                                            textAlign: TextAlign.start,
+                                            textStyle: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white),
+                                            margin: EdgeInsets.only(
+                                              left: 42.0,
+                                              right: 42.0,
+                                            ),
+                                            // padding: EdgeInsets.all(8.0),
+                                            message:
+                                                '''• At least one uppercase letter (A-Z).
+• At least one lowercase letter (a-z).
+• At least one number (0-9).
+• At least one special character (e.g., @ # etc.).
+• Password must be at least 12 characters long.
+• No continuous alphabetical characters (e.g., abcd) or continuous numerical characters (e.g..1234).
+• Avoid strictly sequential patterns (e.g.,Akl 2345678!).
+• Don't use birthdays, names, addresses, or other personal information.
+                                                  ''',
+                                            key: _tooltipKey,
+                                            child: Icon(Icons.info)))
+                                  ],
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      String generatedPassword =
+                                          generateRandomPassword();
+                                      setState(() {
+                                        passWord.text = generatedPassword;
+                                      });
+                                    },
+                                    icon: Icon(Icons.refresh))
+                              ],
+                            ),
                             SizedBox(
                               height: 10,
                             ),
@@ -2137,8 +2186,7 @@ class _AddTenantState extends State<AddTenant> {
                                           _validateInput();
                                         },
                                         controller: overrideFee,
-                                        cursorColor:
-                                           blueColor,
+                                        cursorColor: blueColor,
                                       ),
                                     ),
                                   )
@@ -2265,7 +2313,7 @@ class _AddTenantState extends State<AddTenant> {
       tenantEmail: email.text,
       tenantAlternativeEmail: alterEmail.text,
       tenantPassword: passWord.text,
-      tenantBirthDate:reverseFormatDate(_dateController.text),
+      tenantBirthDate: reverseFormatDate(_dateController.text),
       taxPayerId: taxPayerId.text,
       comments: comments.text,
       emergencyContact: emergencyContact,
@@ -2471,7 +2519,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
   late FocusNode _focusNode;
   @override
   void dispose() {
@@ -2493,7 +2541,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-                (node) {
+            (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -2525,79 +2573,73 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator:
-          widget.optional!
+          validator: widget.optional!
               ? (value) {
-            if (widget.controller!.text.isEmpty) {
-              return null;
-            } else if (widget.phone != null) {
-              String formattedPhoneNumber =
-              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+                  if (widget.controller!.text.isEmpty) {
+                    return null;
+                  } else if (widget.phone != null) {
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
 
-              if (formattedPhoneNumber.length != 10) {
-                setState(() {
-                  _errorMessage = "Phone number must be 10 digits";
-                });
-                return '';
-              }
-            } else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-
-            return null;
-
-          }
+                  return null;
+                }
               : (value) {
-            if (widget.controller!.text.isEmpty) {
-              setState(() {
-                if (widget.label == null)
-                  _errorMessage = 'Please ${widget.hintText}';
-                else
-                  _errorMessage = 'Please ${widget.label}';
-              });
-              return '';
-            } else if (widget.phone != null) {
-              String formattedPhoneNumber = widget.controller!.text
-                  .replaceAll(RegExp(r'\D'), '');
+                  if (widget.controller!.text.isEmpty) {
+                    setState(() {
+                      if (widget.label == null)
+                        _errorMessage = 'Please ${widget.hintText}';
+                      else
+                        _errorMessage = 'Please ${widget.label}';
+                    });
+                    return '';
+                  } else if (widget.phone != null) {
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
-              // Removed the empty check
-              if (formattedPhoneNumber.length != 10) {
-                setState(() {
-                  _errorMessage = "Phone number must be 10 digits";
-                });
-                return '';
-              }
-            }else if (widget.pass != null) {
-              String? validationMessage = ValidatePassword(widget.controller!.text);
-              if (validationMessage != null) {
-                setState(() {
-                  _errorMessage =
-                      validationMessage;
-                });
-                return '';
-              }
-            }
-            else if (widget.email != null) {
-              if (!EmailValidator.validate(widget.controller!.text)) {
-                setState(() {
-                  _errorMessage = "Email is not valid";
-                });
-                return '';
-              }
-            }
-            else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            return null;
-          },
-
+                    // Removed the empty check
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                  } else if (widget.pass != null) {
+                    String? validationMessage =
+                        ValidatePassword(widget.controller!.text);
+                    if (validationMessage != null) {
+                      setState(() {
+                        _errorMessage = validationMessage;
+                      });
+                      return '';
+                    }
+                  } else if (widget.email != null) {
+                    if (!EmailValidator.validate(widget.controller!.text)) {
+                      setState(() {
+                        _errorMessage = "Email is not valid";
+                      });
+                      return '';
+                    }
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -2607,7 +2649,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -2642,7 +2684,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         widget.onChanged2;
                       },*/
                       onFieldSubmitted: widget.onChanged2,
-                      inputFormatters:widget.inputFormatters ?? [],
+                      inputFormatters: widget.inputFormatters ?? [],
                       onChanged: (value) {
                         //  print("object calin $value");
                         if (value.isNotEmpty) {
@@ -2675,7 +2717,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
@@ -2706,13 +2748,13 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: _errorMessage != null ? 75 : 60,
-      width: MediaQuery.of(context).size.width * .98,
-      child: KeyboardActions(
-        config: _buildConfig(context),
-        child: textfield,
-      ),
-    )
+            height: _errorMessage != null ? 75 : 60,
+            width: MediaQuery.of(context).size.width * .98,
+            child: KeyboardActions(
+              config: _buildConfig(context),
+              child: textfield,
+            ),
+          )
         : textfield;
   }
 }

@@ -85,6 +85,7 @@ dependencies:
   flutter_blurhash: ^0.6.0
   lottie: ^3.1.2
   connectivity_plus: ^5.0.2
+  encrypt:
 
   # pdf:
 

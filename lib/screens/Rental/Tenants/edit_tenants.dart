@@ -34,6 +34,7 @@ class EditTenants extends StatefulWidget {
 }
 
 class _EditTenantsState extends State<EditTenants> {
+  final GlobalKey<TooltipState> _tooltipKey = GlobalKey<TooltipState>();
   final TextEditingController firstName = TextEditingController();
   final TextEditingController lastName = TextEditingController();
   final TextEditingController phoneNumber = TextEditingController();
@@ -66,13 +67,12 @@ class _EditTenantsState extends State<EditTenants> {
         ? DateFormat('dd-MM-yyyy').parse(_dateController.text)
         : DateTime.now();
 
-
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate:initialDate,
+      initialDate: initialDate,
       firstDate: DateTime(1900),
       // lastDate: DateTime(2101),
-      lastDate:  DateTime.now(),
+      lastDate: DateTime.now(),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -127,18 +127,21 @@ class _EditTenantsState extends State<EditTenants> {
     // TODO: implement initState
     firstName.text = widget.tenants.tenantFirstName ?? "";
     lastName.text = widget.tenants.tenantLastName ?? "";
-    phoneNumber.text = formatPhoneNumberedit(widget.tenants.tenantPhoneNumber ?? "");
-    workNumber.text = formatPhoneNumberedit(widget.tenants.tenantAlternativeNumber ?? "");
+    print(' tenant password ${widget.tenants.tenantPassword}');
+    phoneNumber.text =
+        formatPhoneNumberedit(widget.tenants.tenantPhoneNumber ?? "");
+    workNumber.text =
+        formatPhoneNumberedit(widget.tenants.tenantAlternativeNumber ?? "");
     email.text = widget.tenants.tenantEmail ?? "";
     alterEmail.text = widget.tenants.tenantAlternativeEmail ?? "N/A";
-    passWord.text = widget.tenants.tenantPassword ?? "";
+   // passWord.text = widget.tenants.tenantPassword ?? "";
     // _dateController.text = widget.tenants.tenantBirthDate ?? "";
     taxPayerId.text = widget.tenants.taxPayerId ?? "";
     comments.text = widget.tenants.comments ?? "";
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
     relationToTenant.text = widget.tenants.emergencyContact?.relation ?? "";
-    emergencyPhoneNumber.text =
-        formatPhoneNumberedit( widget.tenants.emergencyContact?.phoneNumber ?? "");
+    emergencyPhoneNumber.text = formatPhoneNumberedit(
+        widget.tenants.emergencyContact?.phoneNumber ?? "");
     emergencyEmail.text = widget.tenants.emergencyContact?.email ?? "";
     print("DOB ${widget.tenants.tenantBirthDate}");
     _dateController.text = formatDate(widget.tenants.tenantBirthDate ?? "");
@@ -236,6 +239,7 @@ class _EditTenantsState extends State<EditTenants> {
         overrideFee.text = tenantData['override_fee'] != null
             ? tenantData['override_fee'].toString()
             : '';
+        passWord.text = tenantData['tenant_password'];
       });
     } else {
       throw Exception('Failed to load tenant override fee data');
@@ -400,8 +404,10 @@ class _EditTenantsState extends State<EditTenants> {
                                             hintText: 'Enter work number',
                                             controller: workNumber,
                                             inputFormatters: [
-                                              FilteringTextInputFormatter.digitsOnly,
-                                              LengthLimitingTextInputFormatter(10),
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  10),
                                               PhoneNumberFormatter(),
                                             ],
                                             optional: true,
@@ -1374,11 +1380,61 @@ class _EditTenantsState extends State<EditTenants> {
                             SizedBox(
                               height: 10,
                             ),
-                            Text('Password *',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('Password *',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    GestureDetector(
+                                        onTap: () {
+                                          _tooltipKey.currentState
+                                              ?.ensureTooltipVisible();
+                                        },
+                                        child: Tooltip(
+                                            verticalOffset: 16.0,
+                                            exitDuration: Duration(seconds: 2),
+                                            textAlign: TextAlign.start,
+                                            textStyle: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white),
+                                            margin: EdgeInsets.only(
+                                              left: 42.0,
+                                              right: 42.0,
+                                            ),
+                                            // padding: EdgeInsets.all(8.0),
+                                            message:
+                                                '''• At least one uppercase letter (A-Z).
+• At least one lowercase letter (a-z).
+• At least one number (0-9).
+• At least one special character (e.g., @ # etc.).
+• Password must be at least 12 characters long.
+• No continuous alphabetical characters (e.g., abcd) or continuous numerical characters (e.g..1234).
+• Avoid strictly sequential patterns (e.g.,Akl 2345678!).
+• Don't use birthdays, names, addresses, or other personal information.
+                                                  ''',
+                                            key: _tooltipKey,
+                                            child: Icon(Icons.info)))
+                                  ],
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      String generatedPassword =
+                                          generateRandomPassword();
+                                      setState(() {
+                                        passWord.text = generatedPassword;
+                                      });
+                                    },
+                                    icon: Icon(Icons.refresh))
+                              ],
+                            ),
                             SizedBox(
                               height: 10,
                             ),
@@ -1905,7 +1961,8 @@ class _EditTenantsState extends State<EditTenants> {
                                       tenantEmail: email.text,
                                       tenantAlternativeEmail: alterEmail.text,
                                       tenantPassword: passWord.text,
-                                      tenantBirthDate:  reverseFormatDate(_dateController.text),
+                                      tenantBirthDate: reverseFormatDate(
+                                          _dateController.text),
                                       taxPayerId: taxPayerId.text,
                                       comments: comments.text,
                                       emergencyContactName: contactName.text,
@@ -1920,7 +1977,8 @@ class _EditTenantsState extends State<EditTenants> {
                                       enableOverRideFee:
                                           enableOverrideFee.toString(),
                                     );
-                                    print(' birth date ${reverseFormatDate(_dateController.text)}');
+                                    print(
+                                        ' birth date ${reverseFormatDate(_dateController.text)}');
                                     Fluttertoast.showToast(
                                         msg: "Tenant updated successfully");
                                     setState(() {
@@ -1939,7 +1997,8 @@ class _EditTenantsState extends State<EditTenants> {
                                       widget.tenants.tenantEmail = email.text;
                                       widget.tenants.tenantPassword =
                                           passWord.text;
-                                      widget.tenants.tenantBirthDate = _dateController.text;
+                                      widget.tenants.tenantBirthDate =
+                                          _dateController.text;
                                       widget.tenants.taxPayerId =
                                           taxPayerId.text;
                                       widget.tenants.comments = comments.text;
@@ -1955,7 +2014,6 @@ class _EditTenantsState extends State<EditTenants> {
                                     });
 
                                     Navigator.of(context).pop(true);
-
                                   } catch (e) {
                                     Fluttertoast.showToast(
                                         msg: "Failed to update tenant");
@@ -2017,6 +2075,7 @@ class _EditTenantsState extends State<EditTenants> {
       ),
     );
   }
+
   reload_Screen() {
     setState(() {});
   }
@@ -2134,83 +2193,83 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-            if (widget.controller!.text.isEmpty) {
-              return null;
-            } else if (widget.phone != null) {
-              String formattedPhoneNumber =
-              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+                  if (widget.controller!.text.isEmpty) {
+                    return null;
+                  } else if (widget.phone != null) {
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
-              // Removed the empty check
-              if (formattedPhoneNumber.length != 10) {
-                setState(() {
-                  _errorMessage = "Phone number must be 10 digits";
-                });
-                return '';
-              }
-            } else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            return null;
-          }
+                    // Removed the empty check
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                }
               : (value) {
-            if (widget.controller!.text.isEmpty) {
-              setState(() {
-                if (widget.label == null)
-                  _errorMessage = 'Please ${widget.hintText}';
-                else
-                  _errorMessage = 'Please ${widget.label}';
-              });
-              return '';
-            } else if (widget.phone != null) {
-              String formattedPhoneNumber =
-              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+                  if (widget.controller!.text.isEmpty) {
+                    setState(() {
+                      if (widget.label == null)
+                        _errorMessage = 'Please ${widget.hintText}';
+                      else
+                        _errorMessage = 'Please ${widget.label}';
+                    });
+                    return '';
+                  } else if (widget.phone != null) {
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
-              // Removed the empty check
-              if (formattedPhoneNumber.length != 10) {
-                setState(() {
-                  _errorMessage = "Phone number must be 10 digits";
-                });
-                return '';
-              }
-            } else if (widget.email != null) {
-              if (!EmailValidator.validate(widget.controller!.text)) {
-                setState(() {
-                  _errorMessage = "Email is not valid";
-                });
-                return '';
-              }
-            } else if (widget.pass != null) {
-              String? validationMessage =
-              ValidatePassword(widget.controller!.text);
-              if (validationMessage != null) {
-                setState(() {
-                  _errorMessage = validationMessage;
-                });
-                return '';
-              }
-            }
-            // else if (widget.pass != null) {
-            //   // Validate as password
-            //   String? validationMessage = ValidatePassword(value ?? '');
-            //   if (validationMessage != null) {
-            //     setState(() {
-            //       _errorMessage = validationMessage;
-            //     });
-            //     return ''; // Return empty string to indicate error
-            //   }
-            // }
+                    // Removed the empty check
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                  } else if (widget.email != null) {
+                    if (!EmailValidator.validate(widget.controller!.text)) {
+                      setState(() {
+                        _errorMessage = "Email is not valid";
+                      });
+                      return '';
+                    }
+                  } else if (widget.pass != null) {
+                    String? validationMessage =
+                        ValidatePassword(widget.controller!.text);
+                    if (validationMessage != null) {
+                      setState(() {
+                        _errorMessage = validationMessage;
+                      });
+                      return '';
+                    }
+                  }
+                  // else if (widget.pass != null) {
+                  //   // Validate as password
+                  //   String? validationMessage = ValidatePassword(value ?? '');
+                  //   if (validationMessage != null) {
+                  //     setState(() {
+                  //       _errorMessage = validationMessage;
+                  //     });
+                  //     return ''; // Return empty string to indicate error
+                  //   }
+                  // }
 
-            else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            return null;
-          },
+                  else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -2220,7 +2279,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -2288,7 +2347,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),

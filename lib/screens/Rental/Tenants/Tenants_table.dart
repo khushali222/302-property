@@ -934,6 +934,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                             .toList();
                       }
                       sortData(data);
+                      print('table password ${snapshot.data?.first.tenantPassword}');
                       data = data.reversed.toList();
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
@@ -1219,7 +1220,6 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                             if (check == true) {
 
                                                               setState(() {
-
                                                                 futureTenants = TenantsRepository().fetchTenants();
                                                               });
 

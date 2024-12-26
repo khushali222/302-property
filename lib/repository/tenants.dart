@@ -24,7 +24,7 @@ class TenantsRepository {
         "id": "CRM $id",
       },
     );
-    print(response.body);
+    print('get tenant ${response.body}');
     print('${Api_url}/api/tenant/tenants/$id');
     if (response.statusCode == 200) {
       // Decode the JSON response

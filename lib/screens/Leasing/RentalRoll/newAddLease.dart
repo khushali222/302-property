@@ -55,6 +55,8 @@ class _addLease3State extends State<addLease3>
     with SingleTickerProviderStateMixin {
   late Future<List<Rentals>> futureRentalOwners;
 
+
+  List<String> applicantIds = [];
   @override
   void initState() {
     super.initState();
@@ -129,7 +131,13 @@ class _addLease3State extends State<addLease3>
           // Update rent charges
         //  _selectedRent = fetchedDetails.rentCharges?.first.rentCycle ?? "";
          // rentMemo.text = fetchedDetails.rentCharges?.first.memo ?? "";
-
+        if(fetchedDetails.tenant != null ){
+          for(var t in fetchedDetails.tenant!){
+            applicantIds.add(t.applicantId!);
+            print("Appllicant id  ${t.applicantId}" );
+          }
+        }
+        print(applicantIds);
 
 
 
@@ -751,7 +759,8 @@ class _addLease3State extends State<addLease3>
   List<Map<String, String>> formDataOneTimeList = [];
 
   void _showPopupForm(BuildContext context, String rent,
-      {Map<String, String>? initialData, int? index}) async {
+      {Map<String, String>? initialData, int? index})
+  async {
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) {
@@ -4371,7 +4380,8 @@ class _addLease3State extends State<addLease3>
                                               'Total rent share must equal 100';
                                         });
                                         return;
-                                      } else {
+                                      }
+                                      else {
                                         SharedPreferences prefs =
                                             await SharedPreferences
                                                 .getInstance();
@@ -4618,6 +4628,7 @@ class _addLease3State extends State<addLease3>
                                                     tenant.tenantId ?? '')
                                                 .toList(),
                                             tenantResidentStatus:
+
                                                 _selectedResidentsEmail,
                                             unitId: _selectedUnit,
                                             uploadedFile: _uploadedFileNames,
@@ -4625,18 +4636,24 @@ class _addLease3State extends State<addLease3>
                                           tenantData: tenantDataList,
                                         );
                                         print("Pro-rated Rent Value: ${proRatedRentController.text}");
-                                        print('${lease}');
-                                        await addLeaseAndNavigate(lease);
+                                        print('lease data full ${lease}');
+                                        lease.tenantData.forEach((tenant) {
+                                          print('  Tenant First Name: ${tenant.tenantFirstName}');
+                                          print('  Tenant Last Name: ${tenant.tenantLastName}');
+                                          print('  Tenant ID: ${tenant.tenantId}');
+                                        });
+
+                                       await addLeaseAndNavigate(lease);
 
                                         setState(() {
                                           isLoading = false; // Stop loading
                                         });
-                                        if (widget.applicantId != null &&
-                                            widget.applicantId!.isNotEmpty) {
+                                        if (applicantIds != null &&
+                                            applicantIds!.isNotEmpty) {
                                           print(
                                               'applicant id is: ${widget.applicantId}');
                                           ifApplicantMoveIn(
-                                              widget.applicantId!);
+                                              widget.applicantId!,applicantIds);
                                         } else {
                                           print('No applicant id provided');
                                         }
@@ -4821,8 +4838,8 @@ class _addLease3State extends State<addLease3>
     }
   }
 
-  Future<void> ifApplicantMoveIn(String applicantId) async {
-    bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId);
+  Future<void> ifApplicantMoveIn(String applicantId,List<String> apnt_Id) async {
+    bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId,apnt_Id);
 
     if (success) {
       Navigator.pop(context); // Replace with the actual navigation logic

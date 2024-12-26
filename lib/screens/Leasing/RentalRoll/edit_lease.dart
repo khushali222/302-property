@@ -218,7 +218,7 @@ class _Edit_leaseState extends State<Edit_lease>
   final TextEditingController rentAmount = TextEditingController();
   final TextEditingController rentNextDueDate = TextEditingController();
   final TextEditingController rentMemo = TextEditingController();
-
+  List<String> applicantsid = [];
   //changes variables
   Future<void> _loadProperties() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -756,8 +756,10 @@ class _Edit_leaseState extends State<Edit_lease>
     Map<int, Map<String, String>> tenantsMap =
         tenants.asMap().map((index, tenant) {
       print('in map ${tenant.tenantFirstName}');
+
       return MapEntry(index, {
         'tenantId': tenant.tenantId ?? "",
+        'applicantId':tenant.applicantId ?? "",
         'tenant_residentStatus': tenant.tenant_residentStatus.toString(),
         'firstName': tenant.tenantFirstName ?? "",
         'lastName': tenant.tenantLastName ?? "",
@@ -3884,12 +3886,17 @@ class _Edit_leaseState extends State<Edit_lease>
                                               cosignersMap.isNotEmpty
                                                   ? cosignersMap[0]
                                                   : {};
+                                          List<String> applicantids = [];
                                           List<TenantData> tenantDataList =
                                               tenantsMap.entries.map((entry) {
                                             int index = entry.key;
                                             final tenantMap = entry.value;
                                             print(tenantMap['firstName']);
                                             print(tenantMap['firstName']);
+                                            if(tenantMap['applicantId']!.isNotEmpty){
+                                              applicantids.add(tenantMap['applicantId']!);
+                                            }
+                                            print("Applicant ids $applicantids");
                                             return TenantData(
                                                 adminId: adminId,
                                                 comments:
@@ -4028,6 +4035,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                             isLoading = false; // Stop loading
                                           });
                                           print('valid');
+                                          if (applicantids != null &&
+                                              applicantids!.isNotEmpty) {
+
+                                            ifApplicantMoveIn(
+                                                applicantids.first,applicantids);
+                                          } else {
+                                            print('No applicant id provided');
+                                          }
+
                                         }
                                       } else {
                                         SharedPreferences prefs =
@@ -4496,7 +4512,16 @@ class _Edit_leaseState extends State<Edit_lease>
       ),
     );
   }
+  Future<void> ifApplicantMoveIn(String applicantId,List<String> apnt_Id) async {
+    bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId,apnt_Id);
 
+    if (success) {
+      Navigator.pop(context); // Replace with the actual navigation logic
+    } else {
+      // Handle the failure case, maybe show a message
+      print('Failed to update applicant status');
+    }
+  }
   String reverseFormatDate(String inputDate) {
     DateTime parsedDate;
 
@@ -6289,6 +6314,7 @@ class _AddTenantState extends State<AddTenant> {
   List<Datum> filteredApplicant = [];
   List<Datum> selectedApplicant = [];
   List<bool> select = [];
+
   Future<void> fetchTenantsAndApplicants() async {
     setState(() {
       isLoading = true;
@@ -6310,7 +6336,12 @@ class _AddTenantState extends State<AddTenant> {
         Map<String, dynamic> tenantData = json.decode(tenantResponse.body);
         if (tenantData.containsKey('data')) {
           List<dynamic> tenantList = tenantData['data']['tenants'];
+          List<dynamic> applicantlist = tenantData['data']['applicants'];
+
           tenants = tenantList.map((item) => Tenant.fromJson(item)).toList();
+          tenants.addAll(applicantlist.map((item)=>convertApplicantToTenant(Datum.fromJson(item))).toList());
+
+
         } else {
           print("Unexpected tenant response structure: Missing 'data' key");
         }
@@ -6319,28 +6350,28 @@ class _AddTenantState extends State<AddTenant> {
       }
 
       // Fetch applicants
-      final applicantResponse = await http
-          .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-      });
-
-      if (applicantResponse.statusCode == 200) {
-        Map<String, dynamic> applicantData = json.decode(applicantResponse.body);
-        if (applicantData.containsKey('data')) {
-          List<dynamic> applicantList = applicantData['data'];
-          List<Tenant> convertedApplicants = applicantList
-              .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
-              .toList();
-
-          // Merge tenants and converted applicants
-          tenants.addAll(convertedApplicants);
-        } else {
-          print("Unexpected applicant response structure: Missing 'data' key");
-        }
-      } else {
-        print("Failed to load applicants: ${applicantResponse.statusCode}");
-      }
+      // final applicantResponse = await http
+      //     .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
+      //   "authorization": "CRM $token",
+      //   "id": "CRM $id",
+      // });
+      //
+      // if (applicantResponse.statusCode == 200) {
+      //   Map<String, dynamic> applicantData = json.decode(applicantResponse.body);
+      //   if (applicantData.containsKey('data')) {
+      //     List<dynamic> applicantList = applicantData['data'];
+      //     List<Tenant> convertedApplicants = applicantList
+      //         .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
+      //         .toList();
+      //
+      //     // Merge tenants and converted applicants
+      //     tenants.addAll(convertedApplicants);
+      //   } else {
+      //     print("Unexpected applicant response structure: Missing 'data' key");
+      //   }
+      // } else {
+      //   print("Failed to load applicants: ${applicantResponse.statusCode}");
+      // }
 
       // Update filtered list and selection state
       filteredTenants = List.from(tenants);
@@ -6356,6 +6387,7 @@ class _AddTenantState extends State<AddTenant> {
 
   Tenant convertApplicantToTenant(Datum applicant) {
     return Tenant(
+      applicantId: applicant.applicantId,
       tenantFirstName: applicant.applicantFirstName,
       tenantLastName: applicant.applicantLastName,
       tenantEmail: applicant.applicantEmail,

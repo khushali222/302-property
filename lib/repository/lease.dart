@@ -83,44 +83,85 @@ class LeaseRepository {
     }
   }
 
-  Future<bool> ifApplicantMoveInTrue(String applicantId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
-    final String url = '$Api_url/api/applicant/applicant/$applicantId';
-    final Map<String, dynamic> body = {
-      'isMovedin': true,
-      'applicant_status': [
-        {
-          'status': 'Approved',
-          'statusUpdatedBy': 'Admin',
-        },
-      ],
-    };
+  // Future<bool>  ifApplicantMoveInTrue(String applicantId) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   String? id = prefs.getString('adminId');
+  //   final String url = '$Api_url/api/applicant/applicant-movein';
+  //   final Map<String, dynamic> body = {
+  //     'isMovedin': true,
+  //     'applicant_status': [
+  //       {
+  //         'status': 'Approved',
+  //         'statusUpdatedBy': 'Admin',
+  //       },
+  //     ],
+  //   };
+  //
+  //   try {
+  //     final response = await http.put(
+  //       Uri.parse(url),
+  //       headers: {
+  //         'authorization': 'CRM $token',
+  //         'id': 'CRM $id',
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: json.encode(body),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       print('Applicant status updated successfully');
+  //       return true;
+  //     } else {
+  //       print('Failed to update applicant status: ${response.body}');
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     print('Error updating applicant status: $e');
+  //     return false;
+  //   }
+  // }
+  Future<bool>  ifApplicantMoveInTrue(String applicantId,List<String> applicantIds) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+      final String url = '$Api_url/api/applicant/applicant-movein';
+      final Map<String, dynamic> body = {
+        'ids': applicantIds.isNotEmpty ? applicantIds : applicantIds,
+        'updates': {
+          'isMovedin': true,
+          'applicant_status': [
+            {
+              'status': 'Approved',
+              'statusUpdatedBy': 'Admin',
+            },
+          ],
+        }
+      };
 
-    try {
-      final response = await http.put(
-        Uri.parse(url),
-        headers: {
-          'authorization': 'CRM $token',
-          'id': 'CRM $id',
-          'Content-Type': 'application/json'
-        },
-        body: json.encode(body),
-      );
+      try {
+        final response = await http.put(
+          Uri.parse(url),
+          headers: {
+            'authorization': 'CRM $token',
+            'id': 'CRM $id',
+            'Content-Type': 'application/json'
+          },
+          body: json.encode(body),
+        );
 
-      if (response.statusCode == 200) {
-        print('Applicant status updated successfully');
-        return true;
-      } else {
-        print('Failed to update applicant status: ${response.body}');
+        if (response.statusCode == 200) {
+          print('Applicant status updated successfully');
+          return true;
+        } else {
+          print('Failed to update applicant status: ${response.body}');
+          return false;
+        }
+      } catch (e) {
+        print('Error updating applicant status: $e');
         return false;
       }
-    } catch (e) {
-      print('Error updating applicant status: $e');
-      return false;
     }
-  }
 
   Future<bool> updateLease(Lease lease) async {
     print(lease);
