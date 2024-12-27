@@ -1458,9 +1458,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             _buildTableRow(
                                                                 'Locality:',
                                                                 _getDisplayValue(
-                                                                    rentals
-                                                                        .rentalOwnerData
-                                                                        ?.city),
+                                                                    rentals.rentalCity),
                                                                 'Created At:',
                                                                 formatDate(
                                                                     '${rentals.createdAt}')),

@@ -965,7 +965,6 @@ class _addLease3State extends State<addLease3>
         'firstName': tenant.tenantFirstName ?? "",
         'lastName': tenant.tenantLastName ?? "",
         'passWord': tenant.tenantPassword ?? '',
-        'passWord': tenant.tenantPassword ?? '',
         'phoneNumber': tenant.tenantPhoneNumber ?? "",
         'workNumber': tenant.tenantAlternativeNumber ?? "",
         'email': tenant.tenantEmail ?? "",

@@ -1186,6 +1186,43 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 ],
                                                               ),
                                                             ),
+                                                            SizedBox(
+                                                              height: 8,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Property : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color: blueColor
+
+
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: applicant.applicantEmail !=
+                                                                        null
+                                                                        ? applicant.rentalData?.rentalAdress
+                                                                        .toString()
+                                                                        : 'N/A',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color:
+                                                                        grey),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
                                                           ],
                                                         ),
                                                       ),

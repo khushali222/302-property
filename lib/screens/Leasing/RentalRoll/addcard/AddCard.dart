@@ -137,9 +137,13 @@ class _AddCardState extends State<AddCard> {
           'rental_zip': "${data['data']['rental_zip']}",
         });
       }
-
+      final rentalAddress = {
+        'rental_adress': data['data']['rental_adress'] ?? "",
+      };
       setState(() {
         tenants = fetchedTenants;
+        address.text ='${rentalAddress['rental_adress']}';
+
       });
     } else {
       throw Exception('Failed to load tenants');

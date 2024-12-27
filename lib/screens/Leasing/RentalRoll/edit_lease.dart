@@ -3896,6 +3896,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                             if(tenantMap['applicantId']!.isNotEmpty){
                                               applicantids.add(tenantMap['applicantId']!);
                                             }
+
                                             print("Applicant ids $applicantids");
                                             return TenantData(
                                                 adminId: adminId,

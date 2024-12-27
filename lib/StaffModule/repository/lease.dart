@@ -82,20 +82,23 @@ class LeaseRepository {
     }
   }
 
-  Future<bool> ifApplicantMoveInTrue(String applicantId) async {
+  Future<bool> ifApplicantMoveInTrue(String applicantId,List<String> applicantIds) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    final String url = '$Api_url/api/applicant/applicant/$applicantId';
+    final String url = '$Api_url/api/applicant/applicant-movein';
     final Map<String, dynamic> body = {
-      'isMovedin': true,
-      'applicant_status': [
-        {
-          'status': 'Approved',
-          'statusUpdatedBy': 'Admin',
-        },
-      ],
+      'ids': applicantIds.isNotEmpty ? applicantIds : applicantIds,
+      'updates': {
+        'isMovedin': true,
+        'applicant_status': [
+          {
+            'status': 'Approved',
+            'statusUpdatedBy': 'Admin',
+          },
+        ],
+      }
     };
 
     try {

@@ -917,6 +917,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   Rentals rentals = entry.value;
+                                  print('test check city ${rentals.rentalCity}');
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     // decoration: BoxDecoration(
@@ -1107,7 +1108,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                     .rentalOwnerData
                                                                     ?.rentalOwnerPrimaryEmail)),
                                                             _buildTableRow(
-                                                                'Locality:', _getDisplayValue(rentals.rentalOwnerData?.city),
+                                                                'Locality:', _getDisplayValue(rentals.rentalCity),
                                                                 'Created At:',  dateProvider.formatCurrentDate('${rentals.createdAt}')
 
                                                             ),

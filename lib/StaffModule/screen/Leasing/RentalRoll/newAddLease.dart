@@ -19,6 +19,7 @@ import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
 import '../../../../Model/ApplicantModel.dart';
+import '../../../../model/edit_lease.dart';
 import '../../../repository/lease.dart';
 import '../../../repository/properties.dart';
 
@@ -38,8 +39,9 @@ class addLease3 extends StatefulWidget {
   final String? applicantId;
   final String? rentalId;
   final String? unitId;
+  String? leaseId;
 
-  const addLease3({Key? key, this.applicantId, this.rentalId, this.unitId})
+   addLease3({Key? key, this.applicantId, this.rentalId, this.unitId,this.leaseId})
       : super(key: key);
 
   @override
@@ -51,6 +53,7 @@ class _addLease3State extends State<addLease3>
   late Future<List<Rentals>> futureRentalOwners;
   final TextEditingController proRatedRentController = TextEditingController();
 
+  List<String> applicantIds = [];
   @override
   void initState() {
     super.initState();
@@ -73,10 +76,105 @@ class _addLease3State extends State<addLease3>
       }
     });
 
+    if (widget.leaseId != null && widget.leaseId!.isNotEmpty) {
+      print('idi3 ${widget.leaseId}');
+      setState(() {
+        fetchDetails(widget.leaseId!);
+      });// Using widget.leaseId safely
+    }
     futureRentalOwners = PropertiesRepository().fetchProperties();
     _loadProperties();
     _tabController = TabController(length: 2, vsync: this);
     _updateProRatedRent(_selectedRent ?? 'Monthly');
+  }
+  Future<void> fetchDetails(String leaseId) async {
+    try {
+
+      // Fetch lease details from the repository
+      LeaseDetails fetchedDetails = await LeaseRepository().fetchLeaseDetails(leaseId);
+      print('Lease type: ${fetchedDetails.lease.leaseType}');
+
+      // Optional delay for demonstration purposes
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Check if the widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          print('Rental Address: ${fetchedDetails.rental.rentalAddress}');
+
+          // Update state variables
+          _selectedProperty = fetchedDetails.rental.rentalId ?? "";
+          renderId = fetchedDetails.rental.rentalId ?? "";
+          //_selectedLeaseType = fetchedDetails.lease.leaseType ?? "";
+          print("calling stage 1");
+          if(fetchedDetails.lease.startDate!=null)
+            startDateController.text = formatDate(fetchedDetails.lease.startDate);
+          print("calling stage 2");
+          if(fetchedDetails.lease.endDate!=null)
+            endDateController.text = formatDate(fetchedDetails.lease.endDate);
+          print("calling stage 3");
+          // Calculate rent cycle items
+          if(fetchedDetails.lease.startDate!=null &&fetchedDetails.lease.startDate!=null)
+            // rentCycleItemsDynamic(DateTime.parse(fetchedDetails.lease.endDate)
+            //     .difference(DateTime.parse(fetchedDetails.lease.startDate))
+            //     .inDays);
+            print("calling stage 4");
+          // Update rent charges
+          //  _selectedRent = fetchedDetails.rentCharges?.first.rentCycle ?? "";
+          // rentMemo.text = fetchedDetails.rentCharges?.first.memo ?? "";
+          if(fetchedDetails.tenant != null ){
+            for(var t in fetchedDetails.tenant!){
+              applicantIds.add(t.applicantId!);
+              print("Appllicant id  ${t.applicantId}" );
+            }
+          }
+          print(applicantIds);
+
+
+
+          // Handle uploaded files
+          if (fetchedDetails.lease.uploadedFile != null &&
+              fetchedDetails.lease.uploadedFile.isNotEmpty) {
+            _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
+          }
+
+          Provider.of<SelectedTenantsProvider>(context, listen: false)
+              .clearTenant();
+
+          // Update tenants
+          if (fetchedDetails.tenant != null) {
+            for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
+              fetchedDetails.tenant![i].tenantId = fetchedDetails.tenant![i].applicantId;
+              Provider.of<SelectedTenantsProvider>(context, listen: false)
+                  .addTenant(fetchedDetails.tenant![i]);
+              // Provider.of<SelectedTenantsProvider>(context, listen: false)
+              //     .rentShareControllers[i].text = fetchedDetails.tenant![i].rentshare.toString();
+            }
+          }
+
+          // Update cosigners
+          if (fetchedDetails.cosigner != null) {
+            for (int i = 0; i < fetchedDetails.cosigner!.length; i++) {
+              Provider.of<SelectedCosignersProvider>(context, listen: false)
+                  .addCosigner(fetchedDetails.cosigner![i]);
+            }
+          }
+        });
+
+        // Load units after setting state
+        _loadUnits(renderId);
+
+        // Update selected unit
+        if (mounted) {
+          setState(() {
+            _selectedUnit = fetchedDetails.lease.unitId;
+          });
+        }
+      }
+    } catch (e) {
+      // Handle any errors that occur during the fetch
+      print('Failed to fetch lease details: $e');
+    }
   }
 
   void _updateProRatedRent(String frequency) {
@@ -823,7 +921,6 @@ class _addLease3State extends State<addLease3>
         'firstName': tenant.tenantFirstName ?? "",
         'lastName': tenant.tenantLastName ?? "",
         'passWord': tenant.tenantPassword ?? '',
-        'passWord': tenant.tenantPassword ?? '',
         'phoneNumber': tenant.tenantPhoneNumber ?? "",
         'workNumber': tenant.tenantAlternativeNumber ?? "",
         'email': tenant.tenantEmail ?? "",
@@ -846,6 +943,12 @@ class _addLease3State extends State<addLease3>
         Provider.of<SelectedTenantsProvider>(context, listen: false);
     // var selectedCosignerProvider =
     // Provider.of<SelectedCosignersProvider>(context, listen: false);
+    bool hasSelectedTenants = Provider.of<SelectedTenantsProvider>(context)
+        .selectedTenants
+        .isNotEmpty;
+    bool hasSelectedApplicants = Provider.of<SelectedApplicantProvider>(context)
+        .selectedApplicant
+        .isNotEmpty;
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -3632,16 +3735,24 @@ class _addLease3State extends State<addLease3>
                                         setState(() {
                                           isLoading = false; // Stop loading
                                         });
-                                        if (widget.applicantId != null &&
-                                            widget.applicantId!.isNotEmpty) {
+                                        // if (widget.applicantId != null &&
+                                        //     widget.applicantId!.isNotEmpty) {
+                                        //   print(
+                                        //       'applicant id is: ${widget.applicantId}');
+                                        //   ifApplicantMoveIn(
+                                        //       widget.applicantId!);
+                                        // } else {
+                                        //   print('No applicant id provided');
+                                        // }
+                                        if (applicantIds != null &&
+                                            applicantIds!.isNotEmpty) {
                                           print(
                                               'applicant id is: ${widget.applicantId}');
                                           ifApplicantMoveIn(
-                                              widget.applicantId!);
+                                              widget.applicantId!,applicantIds);
                                         } else {
                                           print('No applicant id provided');
                                         }
-
                                         print('valid');
                                       }
                                     } else {
@@ -3826,9 +3937,20 @@ class _addLease3State extends State<addLease3>
   }
 
 
+  //
+  // Future<void> ifApplicantMoveIn(String applicantId) async {
+  //   bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId);
+  //
+  //   if (success) {
+  //     Navigator.pop(context); // Replace with the actual navigation logic
+  //   } else {
+  //     // Handle the failure case, maybe show a message
+  //     print('Failed to update applicant status');
+  //   }
+  // }
 
-  Future<void> ifApplicantMoveIn(String applicantId) async {
-    bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId);
+  Future<void> ifApplicantMoveIn(String applicantId,List<String> apnt_Id) async {
+    bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId,apnt_Id);
 
     if (success) {
       Navigator.pop(context); // Replace with the actual navigation logic

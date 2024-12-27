@@ -37,7 +37,8 @@ import 'make_payment.dart';
 class SummeryPageLease extends StatefulWidget {
   bool? isredirectpayment;
   String leaseId;
-  SummeryPageLease({super.key, required this.leaseId, this.isredirectpayment});
+  String? enddate;
+  SummeryPageLease({super.key, required this.leaseId, this.isredirectpayment ,this.enddate});
   @override
   State<SummeryPageLease> createState() => _SummeryPageLeaseState();
 }
@@ -52,7 +53,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   late Future<LeaseLedger?> _leaseLedgerFuture;
   TabController? _tabController;
   ConnectivityResult? _connectivityResult;
-
+  String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   @override
   void initState() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
@@ -68,7 +69,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     _leaseLedgerFuture =
         LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
-    moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    moveOutDate = formatDate(widget.enddate!);
     if (widget.isredirectpayment != null && widget.isredirectpayment!) {
       _tabController!.animateTo(1);
     }
@@ -86,7 +88,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
   final TextEditingController endDateController = TextEditingController();
-  String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
   bool isLoading = false;
   bool isMovedOut = false;
   int _selectedIndex = 0;
@@ -2751,8 +2753,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Widget buildMoveout(LeaseTenant tenant) {
-    moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    startdateController.text = moveOutDate;
+   // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    moveOutDate = formatDate(widget.enddate!);
+    //startdateController.text = moveOutDate;
+    startdateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
