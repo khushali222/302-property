@@ -1167,6 +1167,34 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
+                                                                    'Tenant : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                    ' ${Tenant_financial.tenantData != null ? '${Tenant_financial.tenantData?.tenantFirstName} ${Tenant_financial.tenantData?.tenantLastName}' : 'N/A' }',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
                                                                     'Transaction : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
@@ -1177,7 +1205,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        'Manual ${Tenant_financial.type} ${Tenant_financial.response} For ${Tenant_financial.paymentType}',
+                                                                        '${ Tenant_financial.type == 'Payment' ? 'Manual ${Tenant_financial.type} ${Tenant_financial.response} For ${Tenant_financial.paymentType}' : '${accounts}'}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight

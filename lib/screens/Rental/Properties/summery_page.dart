@@ -141,8 +141,9 @@ class _Summery_pageState extends State<Summery_page>
 
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     futurerentalowners = PropertiesRepository().fetchProperties();
-    displayDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(moveOutDate));
-    startdateController.text = displayDate;
+    // displayDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(moveOutDate));
+    // startdateController.text = displayDate;
+    print('abc test for enddate ${widget.tenants?.endDate}');
     // fetchunits1();
     //fetchLeases();
     // fetchAndSetCounts(context);
@@ -159,8 +160,9 @@ class _Summery_pageState extends State<Summery_page>
     });
   }
 
-  String moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  String displayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+   String? moveOutDate;
+  // String moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  // String displayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   Future<Map<String, dynamic>> fetchDataOfCountWork(String rentalId) async {
     final response = await http
         .get(Uri.parse('$Api_url/api/work-order/rental_workorder/$rentalId'));
@@ -3857,7 +3859,7 @@ class _Summery_pageState extends State<Summery_page>
               ],
             ),
             const Spacer(),
-            if (isMoveouts == false)
+            if (tenant.moveoutDate == null)
               InkWell(
                 onTap: () {
                   showDialog(
@@ -3906,24 +3908,59 @@ class _Summery_pageState extends State<Summery_page>
                   ],
                 ),
               ),
-            if (isMoveouts == true)
-              Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.check,
-                    size: 17,
-                    color: blueColor,
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    "Moved out",
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
+            // if (isMoveouts == true)
+            if (tenant.moveoutDate != null)
+              InkWell(
+
+                onTap: () async {
+                  print("calling movein");
+                  String? tenantId = tenant.tenantId != null && tenant.tenantId!.isNotEmpty
+                      ? tenant.tenantId?.first
+                      : null;
+                  print(tenantId);
+                  SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+                  String? id = prefs.getString("adminId");
+                  LeaseMoveoutRepository()
+                      .addMoveInTenant(
+                    adminId: id!,
+                    tenantId: tenantId,
+                    leaseId: tenant.leaseId,
+                  )
+                      .then((value) {
+                    setState(() {
+                      futurePropertysummery = Properies_summery_Repo()
+                          .fetchPropertiessummery(widget.properties.rentalId!);
+                      isLoading = false;
+                      // isMovedOut = true;
+                    });
+
+                    Navigator.pop(context, true);
+                  }).catchError((e) {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  });
+                },
+                child: Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.circleArrowLeft,
+                      size: 17,
                       color: blueColor,
                     ),
-                  ),
-                ],
+                    SizedBox(width: 5),
+                    Text(
+                      "Move In",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight:
+                        FontWeight.w500,
+                        color: blueColor,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             const SizedBox(width: 15),
           ],
@@ -3995,15 +4032,86 @@ class _Summery_pageState extends State<Summery_page>
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        if (tenant
+            .moveoutDate !=
+            null )
+          SizedBox(height: 10),
+        if (tenant
+            .moveoutDate !=
+            null )
+          Row(
+            children: [
+              const SizedBox(width: 65),
+              Text(
+                'Notice Date : ',
+                maxLines:
+                3, // Set maximum number of lines
+                overflow: TextOverflow
+                    .ellipsis, // Handle overflow with ellipsis
+                style: TextStyle(
+                    fontSize: 15,
+                    color: blueColor,
+                    fontWeight:
+                    FontWeight.bold),
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                formatDate('${tenant.moveoutNoticeGivenDate}'),
+                style: TextStyle(
+                  fontSize: 15,
+                  color: blueColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        if (tenant
+            .moveoutDate !=
+            null)
+          SizedBox(height: 8),
+        if (tenant
+            .moveoutDate !=
+            null )
+          Row(
+            children: [
+              const SizedBox(width: 65),
+              Text(
+                'Move out : ',
+                maxLines:
+                3, // Set maximum number of lines
+                overflow: TextOverflow
+                    .ellipsis, // Handle overflow with ellipsis
+                style: TextStyle(
+                    fontSize: 15,
+                    color: blueColor,
+                    fontWeight:
+                    FontWeight.bold),
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                formatDate('${tenant.moveoutDate}'),
+                style: TextStyle(
+                  fontSize: 15,
+                  color: blueColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        SizedBox(height: 10),
       ],
     );
   }
 
   Widget buildMoveout(TenantData tenant) {
     final dateProvider = Provider.of<DateProvider>(context);
-    displayDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(moveOutDate));
-    startdateController.text = displayDate;
+    moveOutDate = formatDate(tenant.endDate!);
+    // displayDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(moveOutDate));
+    startdateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -4225,7 +4333,8 @@ class _Summery_pageState extends State<Summery_page>
                                             // controller: displayDate,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
-                                              hintText: displayDate,
+                                             // hintText: displayDate,
+                                              hintText: moveOutDate,
                                               suffixIcon: IconButton(
                                                 icon:
                                                     Icon(Icons.calendar_today),
@@ -4424,7 +4533,7 @@ class _Summery_pageState extends State<Summery_page>
                     );
                     if (pickedDate != null) {
                       setState(() {
-                        controller.text = displayDate;
+                        controller.text = moveOutDate!;
                         controller.text =
                             DateFormat('dd-MM-yyyy').format(pickedDate);
                       });

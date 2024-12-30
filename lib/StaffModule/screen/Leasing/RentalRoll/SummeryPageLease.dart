@@ -56,7 +56,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
    //moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    moveOutDate = formatDate(widget.enddate!);
+  print(widget.enddate);
     if (widget.isredirectpayment != null && widget.isredirectpayment!) {
       _tabController!.animateTo(1);
     }
@@ -79,8 +79,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     });
 
   }
-
-  String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  String? moveOutDate;
+//  String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   bool isLoading = false;
   bool isMovedOut = false;
   @override
@@ -2007,8 +2007,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         const Spacer(),
                                         if (snapshot.data![index]
                                             .moveoutDate ==
-                                            "" ||
-                                            ismove == false)
+                                            "" )
                                           InkWell(
                                             onTap: () {
                                               showDialog(
@@ -2074,32 +2073,56 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         //   if(isMovedOut || status == 'Expired')
                                         if (snapshot.data![index]
                                             .moveoutDate !=
-                                            "" &&
-                                            ismove)
-                                          Row(
-                                            children: [
-                                              FaIcon(
-                                                FontAwesomeIcons.check,
-                                                size: 17,
-                                                color: blueColor
+                                            "")
+                                          InkWell(
 
+                                            onTap: () async {
+                                              print("calling movein");
+                                              String? tenantId =
+                                              snapshot.data?[index].tenantId != null ? snapshot.data![index].tenantId : null;
+                                              SharedPreferences prefs =
+                                              await SharedPreferences.getInstance();
+                                              String? id = prefs.getString("adminId");
+                                              LeaseMoveoutRepository()
+                                                  .addMoveInTenant(
+                                                adminId: id!,
+                                                tenantId: tenantId,
+                                                leaseId: snapshot.data![index].leaseId,
+                                              )
+                                                  .then((value) {
+                                                setState(() {
+                                                  futureLeasetenant =
+                                                      LeaseRepository.fetchLeaseTenants(widget.leaseId);
+                                                  isLoading = false;
+                                                  // isMovedOut = true;
+                                                });
 
-,
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                "Moved out",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                  FontWeight.w500,
-                                                  color: blueColor
-
-
-,
+                                                Navigator.pop(context, true);
+                                              }).catchError((e) {
+                                                setState(() {
+                                                  isLoading = false;
+                                                });
+                                              });
+                                            },
+                                            child: Row(
+                                              children: [
+                                                FaIcon(
+                                                  FontAwesomeIcons.circleArrowLeft,
+                                                  size: 17,
+                                                  color: blueColor,
                                                 ),
-                                              ),
-                                            ],
+                                                SizedBox(width: 5),
+                                                Text(
+                                                  "Move In",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                    FontWeight.w500,
+                                                    color: blueColor,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         // if(MediaQuery.of(context).size.width < 350)
                                         //   SizedBox(width: 5),
@@ -2201,13 +2224,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                     if (snapshot.data![index]
                                         .moveoutDate !=
-                                        "" &&
-                                        ismove)
+                                        "" )
                                       SizedBox(height: 15),
                                     if (snapshot.data![index]
                                         .moveoutDate !=
-                                        "" &&
-                                        ismove)
+                                        "" )
                                       Row(
                                         children: [
                                           const SizedBox(width: 65),
@@ -2225,7 +2246,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           ),
                                           SizedBox(width: 5,),
                                           Text(
-                                            '${snapshot.data!.first.moveoutNoticeGivenDate}',
+                                            '${snapshot.data![index].moveoutNoticeGivenDate}',
                                             style:  TextStyle(
                                               fontSize: 15,
                                               color: blueColor,
@@ -2236,13 +2257,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       ),
                                     if (snapshot.data![index]
                                         .moveoutDate !=
-                                        "" &&
-                                        ismove)
+                                        "" )
                                       SizedBox(height: 15),
                                     if (snapshot.data![index]
                                         .moveoutDate !=
-                                        "" &&
-                                        ismove)
+                                        "" )
                                       Row(
                                         children: [
                                           const SizedBox(width: 65),
@@ -2260,7 +2279,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           ),
                                           SizedBox(width: 5,),
                                           Text(
-                                            '${snapshot.data!.first.moveoutDate}',
+                                            '${snapshot.data![index].moveoutDate}',
                                             style:  TextStyle(
                                               fontSize: 15,
                                               color: blueColor,
@@ -2605,6 +2624,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
   Widget buildMoveout(LeaseTenant tenant) {
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    if(widget.enddate != null)
     moveOutDate = formatDate(widget.enddate!);
     //startdateController.text = moveOutDate;
     startdateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -3016,7 +3036,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                     );
                     if (pickedDate != null) {
                       setState(() {
-                        controller.text = moveOutDate;
+                        controller.text = moveOutDate!;
                         controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
                       });
                     }

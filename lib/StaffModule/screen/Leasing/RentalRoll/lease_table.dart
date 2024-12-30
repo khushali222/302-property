@@ -1262,7 +1262,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     builder: (context) =>
                                                                         SummeryPageLease(
                                                                             leaseId:
-                                                                                lease.leaseId!)));
+                                                                                lease.leaseId!,enddate: lease.endDate,)));
                                                           },
                                                           child: Container(
                                                             height: 40,

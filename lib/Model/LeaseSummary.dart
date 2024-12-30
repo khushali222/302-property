@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:three_zero_two_property/Model/tenants.dart';
 
 class LeaseSummary {
@@ -194,6 +196,7 @@ class LeaseTenant {
 
   factory LeaseTenant.fromJson(Map<String, dynamic> json) {
     print(json);
+    log(json.toString());
     return LeaseTenant(
       leaseId: json['lease_id'],
       tenantId: json['tenant_id'],
