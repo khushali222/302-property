@@ -45,6 +45,7 @@ class Properies_summery_Repo{
     print(id);
     final response = await http.get(Uri.parse('${Api_url}/api/tenant/rental_tenant/$rentalId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    print(" get summery details ${response.body}");
     if (response.statusCode == 200) {
 
       List jsonResponse = json.decode(response.body)['data'];

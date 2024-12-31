@@ -1673,6 +1673,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 style:
                                     TextStyle(color: blueColor, fontSize: 16),
                               )
+
                             ],
                           ),
                           Row(
@@ -1783,6 +1784,61 @@ class _MakePaymentState extends State<MakePayment> {
                               },
                             ),
                           ],
+                          // Row(
+                          //   children: [
+                          //     Container(
+                          //       height: 30,
+                          //       //  color: blueColor.withOpacity(.6),
+                          //       child: Radio(
+                          //         value: "Rent",
+                          //         activeColor: blueColor,
+                          //         groupValue: selected_account,
+                          //         fillColor: MaterialStateProperty.resolveWith(
+                          //               (states) {
+                          //             if (states
+                          //                 .contains(MaterialState.selected)) {
+                          //               return blueColor;
+                          //             }
+                          //             return blueColor;
+                          //           },
+                          //         ),
+                          //         onChanged: (value) {
+                          //           setState(() {
+                          //             selected_account = "Rent";
+                          //             partialamount = false;
+                          //             if(lease_data != null){
+                          //               totalamount =
+                          //                   double.parse( lease_data!["total_due_amount"].toString());
+                          //               // totalAmount = double.tryParse(lease_data?["total_due_amount"]) ?? 0.0;
+                          //
+                          //               if(surCharge != null){
+                          //                 surchargeamount = totalamount * surCharge!/100;
+                          //               }
+                          //               totalpayamount = totalamount + surchargeamount;
+                          //
+                          //             }
+                          //
+                          //             //_site = value;
+                          //           });
+                          //         },
+                          //       ),
+                          //     ),
+                          //     Text(
+                          //       'Pay Rent Amount',
+                          //       style:
+                          //       TextStyle(color: blueColor, fontSize: 16),
+                          //     ),
+                          //     SizedBox(width: 5,),
+                          //     if(lease_data != null)
+                          //       if (tenants.isNotEmpty)
+                          //         Text(
+                          //           "\$${selectedTenantRent.toString()}",
+                          //           style: TextStyle(
+                          //               color: Color.fromRGBO(115, 119, 145, 1),
+                          //               fontSize: 16),
+                          //         ),
+                          //   ],
+                          // ),
                           SizedBox(
                             height: 15,
                           ),

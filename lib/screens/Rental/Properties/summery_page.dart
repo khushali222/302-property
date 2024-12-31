@@ -242,11 +242,95 @@ class _Summery_pageState extends State<Summery_page>
         _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
         _imageUrls.add(fileName!);
+        _updateRentalImage(fileName!);
+        print(fileName);
       });
+
     } catch (e) {
       print('Image upload failed: $e');
     }
   }
+
+  Future<void> _updateRentalImage(String fileName) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final String apiUrl =
+          '${Api_url}/api/rentals/proparty_image/${widget.properties.rentalId}';
+      final response = await http.put(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          "authorization" : "CRM $token",
+          'Content-Type': 'application/json; charset=UTF-8',
+          "id":"CRM $id",
+        },
+        body: json.encode({
+          'rental_id': widget.properties.rentalId,
+          'admin_id':id,
+          'rental_image': fileName, // Use the uploaded file name
+        }),
+      );
+   print(' image put ${response.body}');
+      if (response.statusCode == 200) {
+        print('Image updated successfully');
+        var responseBody = json.decode(response.body);
+        setState(() {
+          widget.properties.rentalImage = fileName; // Update the rental image URL
+        });
+        print(responseBody['message']);
+      } else {
+        throw Exception('Failed to update rental image');
+      }
+    } catch (e) {
+      print('Failed to update image: $e');
+    }
+  }
+
+
+
+  Future<void> _removeImage() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final String apiUrl =
+          '${Api_url}/api/rentals/proparty_image/${widget.properties.rentalId}';
+
+      // Send the PUT request to update the rental image to empty (or null) on the server
+      final response = await http.put(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          'Content-Type': 'application/json; charset=UTF-8',
+          "id": "CRM $id",
+        },
+        body: json.encode({
+          'rental_id': widget.properties.rentalId,
+          'admin_id': id,
+          'rental_image': '', // Remove the image by setting it to an empty string
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Image deleted successfully from the API');
+        var responseBody = json.decode(response.body);
+        print(responseBody['message']);
+
+        // Clear local image data and update UI
+        setState(() {
+          widget.properties.rentalImage = ''; // Set the rentalImage to empty
+          _imageUrls.clear(); // Clear the image list
+        });
+      } else {
+        throw Exception('Failed to delete image from API');
+      }
+    } catch (e) {
+      print('Failed to remove image: $e');
+    }
+  }
+
+
 
   List<String> _imageUrls = [];
 
@@ -1789,48 +1873,30 @@ class _Summery_pageState extends State<Summery_page>
                         // ),
 
                         Container(
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 150
-                              : 250,
-                          height: MediaQuery.of(context).size.width < 500
-                              ? 120
-                              : 200,
-                          //decoration: const BoxDecoration(color: Colors.blue),
+                          width: MediaQuery.of(context).size.width < 500 ? 150 : 250,
+                          height: MediaQuery.of(context).size.width < 500 ? 120 : 200,
                           child: SizedBox(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: CachedNetworkImage(
-                                imageUrl: widget.properties.rentalImage !=
-                                            null &&
-                                        widget
-                                            .properties.rentalImage!.isNotEmpty
+                                imageUrl: _imageUrls.isNotEmpty
+                                    ? "$image_url${_imageUrls.first}" // Use _imageUrls to show the uploaded image
+                                    : (widget.properties.rentalImage != null && widget.properties.rentalImage!.isNotEmpty
                                     ? "$image_url${widget.properties.rentalImage}"
-                                    : 'assets/images/no_image.jpg',
+                                    : 'assets/images/no_image.jpg'),
                                 fit: BoxFit.cover,
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 140
-                                    : 220,
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? 160
-                                    : 220,
-                                placeholder: (context, url) =>
-                                    Shimmer.fromColors(
+                                height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
+                                width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
+                                placeholder: (context, url) => Shimmer.fromColors(
                                   baseColor: Colors.grey[300]!,
                                   highlightColor: Colors.grey[100]!,
                                   child: Container(
                                     color: Colors.grey[300],
-                                    height:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 140
-                                            : 220,
-                                    width:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 160
-                                            : 220,
+                                    height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
+                                    width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
                                   ),
                                 ),
-                                errorWidget: (context, url, error) =>
-                                    Image.asset(
+                                errorWidget: (context, url, error) => Image.asset(
                                   "assets/images/no_image.jpg",
                                   fit: BoxFit.fill,
                                 ),
@@ -1838,6 +1904,59 @@ class _Summery_pageState extends State<Summery_page>
                             ),
                           ),
                         ),
+
+                        // Container(
+                        //   width: MediaQuery.of(context).size.width < 500
+                        //       ? 150
+                        //       : 250,
+                        //   height: MediaQuery.of(context).size.width < 500
+                        //       ? 120
+                        //       : 200,
+                        //   //decoration: const BoxDecoration(color: Colors.blue),
+                        //   child: SizedBox(
+                        //     child: ClipRRect(
+                        //       borderRadius: BorderRadius.circular(8.0),
+                        //       child: CachedNetworkImage(
+                        //         imageUrl: widget.properties.rentalImage !=
+                        //                     null &&
+                        //                 widget
+                        //                     .properties.rentalImage!.isNotEmpty
+                        //             ? "$image_url${widget.properties.rentalImage}"
+                        //             : 'assets/images/no_image.jpg',
+                        //         fit: BoxFit.cover,
+                        //         height: MediaQuery.of(context).size.width < 500
+                        //             ? 140
+                        //             : 220,
+                        //         width: MediaQuery.of(context).size.width < 500
+                        //             ? 160
+                        //             : 220,
+                        //         placeholder: (context, url) =>
+                        //             Shimmer.fromColors(
+                        //           baseColor: Colors.grey[300]!,
+                        //           highlightColor: Colors.grey[100]!,
+                        //           child: Container(
+                        //             color: Colors.grey[300],
+                        //             height:
+                        //                 MediaQuery.of(context).size.width < 500
+                        //                     ? 140
+                        //                     : 220,
+                        //             width:
+                        //                 MediaQuery.of(context).size.width < 500
+                        //                     ? 160
+                        //                     : 220,
+                        //           ),
+                        //         ),
+                        //         errorWidget: (context, url, error) =>
+                        //             Image.asset(
+                        //           "assets/images/no_image.jpg",
+                        //           fit: BoxFit.fill,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+
+
 
                         if (MediaQuery.of(context).size.width < 500)
                           SizedBox(
@@ -1986,6 +2105,68 @@ class _Summery_pageState extends State<Summery_page>
                             // ),
                           ],
                         ),
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      children: [
+                         SizedBox(
+                          width: 15,
+                        ),
+                        Container(
+                          height: 30,
+                          width: 85,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                              blueColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            onPressed: () async {
+                              _pickImage().then((_) {
+                                setState(
+                                        () {}); // Rebuild the widget after selecting the image
+                              });
+                            },
+                            child:  Text(
+                              'Upload',
+                              style:
+                              TextStyle(color: Color(0xFFf7f8f9)),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8,),
+                        if (_imageUrls.isNotEmpty || widget.properties.rentalImage != '')
+                          Container(
+                            height: 30,
+                            width: 80,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                blueColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              onPressed: () async {
+
+                               _removeImage();
+                              },
+                              child:  Text(
+                                'Delete',
+                                style:
+                                TextStyle(color: Color(0xFFf7f8f9)),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ],

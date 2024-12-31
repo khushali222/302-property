@@ -65,7 +65,7 @@ class WorkDefaults {
   bool? isDelete;
   String? createdAt;
   String? updatedAt;
-  int? iV;
+
 
   WorkDefaults(
       {this.sId,
@@ -77,9 +77,10 @@ class WorkDefaults {
         this.isDelete,
         this.createdAt,
         this.updatedAt,
-        this.iV});
+        });
 
   WorkDefaults.fromJson(Map<String, dynamic> json) {
+    print(json['staffmember_id']);
     sId = json['_id'];
     adminId = json['admin_id'];
     entryAllowed = json['entry_allowed'];
@@ -89,7 +90,7 @@ class WorkDefaults {
     isDelete = json['is_delete'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    iV = json['__v'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -103,7 +104,7 @@ class WorkDefaults {
     data['is_delete'] = this.isDelete;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
+
     return data;
   }
 }
@@ -120,7 +121,7 @@ class StaffMember {
   String? createdAt;
   String? updatedAt;
   bool? isDelete;
-  int? iV;
+
 
   StaffMember(
       {this.sId,
@@ -134,7 +135,7 @@ class StaffMember {
         this.createdAt,
         this.updatedAt,
         this.isDelete,
-        this.iV});
+        });
 
   StaffMember.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -148,7 +149,7 @@ class StaffMember {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     isDelete = json['is_delete'];
-    iV = json['__v'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -164,7 +165,7 @@ class StaffMember {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['is_delete'] = this.isDelete;
-    data['__v'] = this.iV;
+
     return data;
   }
 }
@@ -174,13 +175,13 @@ class Vendor {
   String? vendorId;
   String? adminId;
   String? vendorName;
-  int? vendorPhoneNumber;
+  String? vendorPhoneNumber;
   String? vendorEmail;
   String? vendorPassword;
   String? createdAt;
   String? updatedAt;
   bool? isDelete;
-  int? iV;
+
 
   Vendor(
       {this.sId,
@@ -193,7 +194,7 @@ class Vendor {
         this.createdAt,
         this.updatedAt,
         this.isDelete,
-        this.iV});
+        });
 
   Vendor.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -206,7 +207,7 @@ class Vendor {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     isDelete = json['is_delete'];
-    iV = json['__v'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -221,7 +222,7 @@ class Vendor {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['is_delete'] = this.isDelete;
-    data['__v'] = this.iV;
+
     return data;
   }
 }

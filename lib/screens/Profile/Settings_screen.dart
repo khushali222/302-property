@@ -1326,6 +1326,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isaccounts = false;
                                       islatefee = false;
                                       isdateformate = false;
+                                      isworkorder = false;
                                     });
                                   },
                                   child: Container(
@@ -1369,6 +1370,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isaccounts = false;
                                       isdateformate = false;
                                       islatefee = true;
+                                      isworkorder = false;
                                     });
                                   },
                                   child: Container(
@@ -1379,7 +1381,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        "Late Fee",
+                                        "Late Fee Charge",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: islatefee
@@ -1419,6 +1421,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismail = true;
                                       islatefee = false;
                                       isdateformate = false;
+                                      isworkorder = false;
                                     });
                                   },
                                   child: Container(
@@ -1457,6 +1460,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isaccounts = true;
                                       islatefee = false;
                                       isdateformate = false;
+                                      isworkorder = false;
                                     });
                                   },
                                   child: Container(
@@ -1468,7 +1472,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        "Manage Accounts",
+                                        "Accounts",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: isaccounts
@@ -1576,7 +1580,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "Manage WorkOrder",
+                                          "WorkOrder",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: isworkorder
