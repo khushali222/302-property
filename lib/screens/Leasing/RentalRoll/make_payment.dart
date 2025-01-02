@@ -979,7 +979,7 @@ class _MakePaymentState extends State<MakePayment> {
                               height: 8,
                             ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Received From *',
+                              const Text('Received From **',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1014,6 +1014,25 @@ class _MakePaymentState extends State<MakePayment> {
                                                   Text(tenant['tenant_name']!),
                                             );
                                           }).toList(),
+                                          // items: [
+                                          //   ...tenants.map((tenant) {
+                                          //     return DropdownMenuItem<String>(
+                                          //       value: tenant['tenant_id'],
+                                          //       child: Text(tenant['tenant_name']!),
+                                          //     );
+                                          //   }).toList(),
+                                          //   // Add a special menu item for "Add New Tenant"
+                                          //   DropdownMenuItem<String>(
+                                          //     value: 'add_new_tenant',
+                                          //     child: const Text(
+                                          //       'Add New Tenant',
+                                          //       style: TextStyle(
+                                          //         color: Colors.blue,
+                                          //         fontStyle: FontStyle.italic,
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          // ],
                                           onChanged: (value) async {
                                             state.didChange(value);
                                             setState(() {

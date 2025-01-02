@@ -23,6 +23,7 @@ class PaymentService {
     required String company_name,
     required bool future_Date,
     String? notificationTime,
+    required String paymentAmountType,
 
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -62,6 +63,7 @@ class PaymentService {
       );
 
       print(response.statusCode);
+      print(" payment responce ${response.body}");
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
@@ -75,6 +77,7 @@ class PaymentService {
               adminId: adminId,
               tenantId: tenantId,
               leaseId: leaseid,
+              paymentAmountType: paymentAmountType,
               paymentType: "Card",
               customerVaultId: customerVaultId,
               billingId: billingId,
@@ -105,7 +108,7 @@ class PaymentService {
           paymentType: "Card",
           customerVaultId: customerVaultId,
           billingId: billingId,
-
+          paymentAmountType: paymentAmountType,
           totalAmount: amount,
           isLeaseAdded: false,
           uploadedFile: "",
@@ -137,6 +140,7 @@ class PaymentService {
     required String transactionId,
     required String responseText,
     required String surcharge,
+    required String paymentAmountType,
   }) async {
     final String baseUrl = '$Api_url/api/payment/tenant-payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -157,6 +161,7 @@ class PaymentService {
         'tenant_id': tenantId,
         'lease_id': leaseId,
         'payment_type': paymentType,
+        'paymentAmountType': paymentAmountType,
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'notificationTime':notificationTime,

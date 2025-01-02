@@ -1093,6 +1093,7 @@ class _StaffTableState extends State<StaffTable> {
                                                               // ),
                                                               SizedBox(
                                                                   width: 5),
+
                                                             ],
                                                           ),
                                                           SizedBox(
@@ -1122,7 +1123,10 @@ class _StaffTableState extends State<StaffTable> {
                                                                     if (check ==
                                                                         true) {
                                                                       setState(
-                                                                          () {});
+                                                                          () {
+                                                                            futureStaffMembers =
+                                                                                StaffMemberRepository().fetchStaffmembers();
+                                                                          });
                                                                     }
                                                                   },
                                                                   child:

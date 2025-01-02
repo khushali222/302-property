@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +14,7 @@ import '../../model/staffmember.dart';
 import '../../repository/Staffmember.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
+import 'package:http/http.dart' as http;
 
 class Edit_staff_member extends StatefulWidget {
   Staffmembers? staff;
@@ -27,22 +30,28 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
   TextEditingController phonenumber = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController conpassword = TextEditingController();
+
   bool nameerror = false;
   bool designationerror = false;
   bool phonenumbererror = false;
   bool emailerror = false;
   bool passworderror = false;
+  bool conpassworderror = false;
 
   String namemessage = "";
   String designationmessage = "";
   String phonenumbermessage = "";
   String emailmessage = "";
   String passwordmessage = "";
+  String conpasswordmessage = "";
 
   String? initialname;
   String? initialdesignation;
   String? initialphonenumber;
   String? initialemail;
+  String? initialpass;
+  String? initialconpass;
 
   @override
   void initState() {
@@ -52,12 +61,16 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
     designation.text = widget.staff!.staffmemberDesignation!;
     phonenumber.text = formatPhoneNumberedit(widget.staff!.staffmemberPhoneNumber!.toString());
     email.text = widget.staff!.staffmemberEmail.toString();
-    // password.text = widget.staff!.staffmemberPassword.toString();
+   // password.text = widget.staff!.staffmemberPassword.toString();
+  //  conpassword.text = widget.staff!.staffmemberPassword.toString();
 
     initialname = widget.staff!.staffmemberName!;
     initialdesignation = widget.staff!.staffmemberDesignation!;
     initialphonenumber = widget.staff!.staffmemberPhoneNumber!.toString();
     initialemail = widget.staff!.staffmemberEmail.toString();
+
+
+    fetchStaff();
   }
 
   bool isLoading = false;
@@ -75,6 +88,33 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
     );
   }
 
+  Future<void> fetchStaff() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response = await http.get(Uri.parse('$Api_url/api/staffmember/staff/member/${widget.staff?.staffmemberId}'),
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+    );
+    print('reponse ${response.body}');
+    if (response.statusCode == 200) {
+      // Parse the response body
+      final Map<String, dynamic> data = jsonDecode(response.body);
+
+     setState(() {
+       // Extract the password
+       password.text = data['data']['staffmember_password'] ?? "";
+       conpassword.text = data['data']['staffmember_password'] ?? "";
+
+       initialpass =  data['data']['staffmember_password'] ?? "";
+       initialconpass =  data['data']['staffmember_password'] ?? "";
+     });
+
+   print(password.text);
+
+    } else {
+      throw Exception('Failed to load tenant override fee data');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -573,6 +613,218 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       Row(
                         children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Password *",
+                            style: TextStyle(
+                              // color: Colors.grey,
+                                color: Color(0xFF8A95A8),
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 15
+                                    : 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(width: 2),
+                          Expanded(
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width * .6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  border: Border.all(
+                                    color: Color(0xFF8A95A8),
+                                  ),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            passworderror = false;
+                                          });
+                                        },
+                                        controller: password,
+                                        cursorColor: blueColor,
+                                        decoration: InputDecoration(
+                                          hintText: "Enter password",
+                                          hintStyle: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20,
+                                            color: Color(0xFF8A95A8),
+                                          ),
+                                          enabledBorder: passworderror
+                                              ? OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                              : InputBorder.none,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(12),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 2),
+                        ],
+                      ),
+                      passworderror
+                          ? Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Expanded(
+                            child: Text(
+                              passwordmessage,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .037,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
+                          : Container(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Confirm Password *",
+                            style: TextStyle(
+                              // color: Colors.grey,
+                                color: Color(0xFF8A95A8),
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 15
+                                    : 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(width: 2),
+                          Expanded(
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width * .6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  border: Border.all(
+                                    color: Color(0xFF8A95A8),
+                                  ),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            conpassworderror = false;
+                                          });
+                                        },
+                                        controller: conpassword,
+                                        cursorColor: blueColor,
+                                        decoration: InputDecoration(
+                                          hintText: "Enter password",
+                                          hintStyle: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20,
+                                            color: Color(0xFF8A95A8),
+                                          ),
+                                          enabledBorder: conpassworderror
+                                              ? OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                              : InputBorder.none,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(12),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 2),
+                        ],
+                      ),
+                      conpassworderror
+                          ? Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Expanded(
+                            child: Text(
+                              conpasswordmessage,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .037,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
+                          : Container(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
                           if (MediaQuery.of(context).size.width < 500)
                             SizedBox(
                                 width:
@@ -587,7 +839,9 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                               bool hasChanges = name.text != initialname ||
                                   designation.text != initialdesignation ||
                                   phonenumber.text != initialphonenumber ||
-                                  email.text != initialemail;
+                                  email.text != initialemail ||
+                              password.text != initialpass ||
+                              conpassword.text != initialconpass;
 
                               // Validate Name Field
                               if (name.text.isEmpty) {
@@ -644,11 +898,60 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 });
                               }
 
+                              if (password.text.isEmpty) {
+                                setState(() {
+                                  passworderror = true;
+                                  passwordmessage = "Password is required";
+                                });
+                              } else if (password.text.length < 8) {
+                                setState(() {
+                                  passworderror = true;
+                                  passwordmessage =
+                                  "Password must have 8 Characters";
+                                });
+                              }
+
+                              else {
+                                String? validationMessage =
+                                ValidatePassword(password.text);
+
+                                if (validationMessage != null) {
+                                  setState(() {
+                                    passworderror = true;
+                                    passwordmessage =
+                                        validationMessage; // Use the dynamic message
+                                  });
+                                } else {
+                                  setState(() {
+                                    passworderror = false; // No error
+                                  });
+                                }
+                              }
+
+                              if (conpassword.text.isEmpty) {
+                                setState(() {
+                                  conpassworderror = true;
+                                  conpasswordmessage = "Confirm Password is required";
+                                });
+                              } else if (conpassword.text != password.text) {
+                                setState(() {
+                                  conpassworderror = true;
+                                  conpasswordmessage = "Passwords do not match";
+                                });
+                              } else {
+                                setState(() {
+                                  conpassworderror = false;
+                                });
+                              }
                               // If any validation fails, return early and do not proceed with API call or navigation
                               if (nameerror ||
                                   designationerror ||
                                   phonenumbererror ||
-                                  emailerror) {
+                                  emailerror ||
+                              passworderror ||
+                              conpassworderror
+
+                              ) {
                                 return; // This prevents the navigation and edit if any field is invalid
                               }
 
@@ -681,6 +984,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                     staffmemberPhoneNumber: phonenumber.text,
                                     staffmemberEmail: email.text,
                                     Sid: widget.staff!.staffmemberId,
+                                    staffmemberPassword: password.text
                                   );
 
                                   // Update the staff details after successful edit
@@ -694,8 +998,10 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                     widget.staff?.staffmemberId =
                                         widget.staff!.staffmemberId;
                                     widget.staff?.adminId = adminId;
+                                    widget.staff?.staffmemberPassword = password.text;
                                     isLoading = false;
                                   });
+                                  print('New Password: ${password.text}');
 
                                   // Navigate back with success response
                                   Navigator.of(context).pop(true);

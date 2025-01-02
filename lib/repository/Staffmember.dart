@@ -81,6 +81,7 @@ class StaffMemberRepository {
       "staffmember_designation": staffmemberDesignation,
       "staffmember_phoneNumber": staffmemberPhoneNumber,
       "staffmember_email": staffmemberEmail,
+      "staffmember_password": staffmemberPassword,
     //  "staffmember_password": staffmemberPassword,
 
     };
@@ -99,7 +100,7 @@ class StaffMemberRepository {
       },
       body: jsonEncode(data),
     );
-    print(response.body);
+    print('edit responce ${response.body}');
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);

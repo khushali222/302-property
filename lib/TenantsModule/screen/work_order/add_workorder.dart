@@ -296,25 +296,28 @@ class _Add_WorkorderState extends State<Add_Workorder> {
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
+        // jsonResponse.forEach((data) {
+        //   addresses[data['rental_id'].toString()] =
+        //       data['rental_adress'].toString();
+        // });
         jsonResponse.forEach((data) {
           addresses[data['rental_id'].toString()] =
-              data['rental_adress'].toString();
+          '${data['rental_adress']} (${data['status']})';
         });
-
         setState(() {
           properties = addresses;
           _isLoading = false;
         });
       } else {
-        throw Exception('Failed to load data');
+      //  throw Exception('Failed to load data');
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Failed to fetch properties: $e')),
+      // );
     }
   }
 
@@ -344,15 +347,15 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           _isLoading = false;
         });
       } else {
-        throw Exception('Failed to load units');
+        //throw Exception('Failed to load units');
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch units: $e')),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Failed to fetch units: $e')),
+      // );
     }
   }
 
@@ -372,6 +375,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
   String renderId = '';
   String unitId = '';
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+  String? _propertyErrorMessage;
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -549,7 +553,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                     return DropdownMenuItem<String>(
                                       value: rentalId,
                                       child: Text(
-                                        properties[rentalId]!,
+                                       '${ properties[rentalId]!}',
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
@@ -562,6 +566,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                   value: _selectedPropertyId,
                                   onChanged: (value) {
                                     setState(() {
+                                      _propertyErrorMessage = null;
                                       _selectedUnitId = null;
                                       _selectedPropertyId = value;
                                       _selectedProperty = properties[
@@ -572,6 +577,11 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                           'Selected Property: $_selectedProperty');
                                       _loadUnits(
                                           value!); // Fetch units for the selected property
+                                      if (_selectedProperty != null &&
+                                          _selectedProperty!.contains('(Expired)')) {
+                                        _propertyErrorMessage =
+                                        'Your lease for this property has expired. The work order will appear only on the admin/staff dashboard.';
+                                      }
                                     });
                                   },
                                   buttonStyleData: ButtonStyleData(
@@ -901,7 +911,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.only(top: 16,right: 16,left: 16,bottom: 5),
                   child: Row(
                     children: [
                       Container(
@@ -954,6 +964,22 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               )))
                     ],
                   ),
+                ),
+                if (_propertyErrorMessage != null) // Display error message if present
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0,left: 16,right: 16),
+                    child: Text(
+                      _propertyErrorMessage!,
+                      textAlign: TextAlign.justify,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                SizedBox(
+                  height: 30,
                 ),
               ],
             ),
@@ -1017,8 +1043,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           workCategory: _selectedCategory!,
           workPerformed: perform.text,
           status: 'New',
-          rentalAddress: properties[_selectedPropertyId]!,
-          rentalUnit: units[_selectedUnitId]!,
+          rentalAddress: properties[_selectedPropertyId] ?? "",
+          rentalUnit: units[_selectedUnitId] ?? "",
           tenant: "${firstName} ${lastName}(Tenant)",
           rentalid: rentalId,
           unitid: unitId,

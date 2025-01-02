@@ -29,17 +29,20 @@ class _Add_staffmemberState extends State<Add_staffmember> {
   TextEditingController phonenumber = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController conpassword = TextEditingController();
   bool nameerror = false;
   bool designationerror = false;
   bool phonenumbererror = false;
   bool emailerror = false;
   bool passworderror = false;
+  bool conpassworderror = false;
 
   String namemessage = "";
   String designationmessage = "";
   String phonenumbermessage = "";
   String emailmessage = "";
   String passwordmessage = "";
+  String conpasswordmessage = "";
 
   bool isLoading = false;
   KeyboardActionsConfig _buildConfig(BuildContext context) {
@@ -664,6 +667,112 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                             )
                           : Container(),
                       SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Confirm Password *",
+                            style: TextStyle(
+                              // color: Colors.grey,
+                                color: Color(0xFF8A95A8),
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 15
+                                    : 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(width: 2),
+                          Expanded(
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width * .6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  border: Border.all(
+                                    color: Color(0xFF8A95A8),
+                                  ),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            conpassworderror = false;
+                                          });
+                                        },
+                                        controller: conpassword,
+                                        cursorColor: blueColor,
+                                        decoration: InputDecoration(
+                                          hintText: "Enter password",
+                                          hintStyle: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20,
+                                            color: Color(0xFF8A95A8),
+                                          ),
+                                          enabledBorder: conpassworderror
+                                              ? OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                              : InputBorder.none,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(12),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 2),
+                        ],
+                      ),
+                      conpassworderror
+                          ? Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Expanded(
+                            child: Text(
+                              conpasswordmessage,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .037,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
+                          : Container(),
+                      SizedBox(
                         height: 20,
                       ),
                       Row(
@@ -762,6 +871,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                       "Password must have 8 Characters";
                                 });
                               }
+
                               else {
                                 String? validationMessage =
                                     ValidatePassword(password.text);
@@ -779,12 +889,30 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 }
                               }
 
+                              if (conpassword.text.isEmpty) {
+                                setState(() {
+                                  conpassworderror = true;
+                                  conpasswordmessage = "Confirm Password is required";
+                                });
+                              } else if (conpassword.text != password.text) {
+                                setState(() {
+                                  conpassworderror = true;
+                                  conpasswordmessage = "Passwords do not match";
+                                });
+                              } else {
+                                setState(() {
+                                  conpassworderror = false;
+                                });
+                              }
+
                               // Now, only proceed if all fields are filled and valid
                               if (!nameerror &&
                                   !designationerror &&
                                   !phonenumbererror &&
                                   !emailerror &&
-                                  !passworderror) {
+                                  !passworderror &&
+                               !conpassworderror
+                              ) {
                                 // Fixed the extra check
                                 setState(() {
                                   isLoading = true;
@@ -804,6 +932,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                       staffmemberPhoneNumber: phonenumber.text,
                                       staffmemberEmail: email.text,
                                       staffmemberPassword: password.text,
+
                                     );
                                     setState(() {
                                       isLoading = false;
