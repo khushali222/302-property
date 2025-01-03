@@ -967,7 +967,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     'Complaint',
     'Contribution Request',
     'Feedback/Suggestion',
-    'General inquiry',
+    'General Inquiry',
     'Maintenance Request',
     'Other'
   ];

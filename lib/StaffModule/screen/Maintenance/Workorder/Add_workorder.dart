@@ -331,7 +331,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
   String? _selectedStatus = "New";
   final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Closed'];
   final List<String> _account = [
-    'Advertizing',
+    'Advertising',
     'Association fees',
   ];
   List<Map<String, dynamic>> rows = [];
@@ -2258,6 +2258,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
       String? token = prefs.getString('token');
       String? rentalId = _selectedPropertyId;
       String? unitId = _selectedUnitId;
+      String? finalVendorId = _selectedvendorsId ?? vendorId;
 
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
@@ -2285,7 +2286,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           rentalid: rentalId,
           unitid: unitId,
           workOrderImages: _uploadedFileNames,
-          vendorId: vendorId,
+          vendorId: finalVendorId,
           vendorNotes: vendornote.text,
           priority: _selectedOption,
           isBillable: isChecked,
@@ -2606,7 +2607,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
   String? _selectedStatus = "New";
   final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Closed'];
   final List<String> _account = [
-    'Advertizing',
+    'Advertising',
     'Association fees',
   ];
   List<Map<String, dynamic>> rows = [];
@@ -4766,6 +4767,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
       String? token = prefs.getString('token');
       String? rentalId = _selectedPropertyId;
       String? unitId = _selectedUnitId;
+      String? finalTenantId = _selectedtenantId ?? tenantId;
 
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
@@ -4788,7 +4790,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           status: _selectedStatus,
           rentalAddress: properties[_selectedPropertyId],
           rentalUnit: units[_selectedUnitId],
-          tenant: tenantId,
+          tenant: finalTenantId,
           rentalid: rentalId,
           unitid: unitId,
           workOrderImages: [],

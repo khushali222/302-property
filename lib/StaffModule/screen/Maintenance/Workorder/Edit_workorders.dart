@@ -123,7 +123,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   String? initialSelectedStatus;
   String? initialSelectedVendorId;
   String? initialSelectedStaffId;
-
+  String? initialSelectedTenantId;
+  String? initialSelectedpriority;
+  bool? initialSelectedbillable;
+  List<String>? initialSelectedimage;
+  List<Map<String, dynamic>>? initialSelectedparts;
 
   Future<void> fetchWorkordersDetails(String workorderId) async {
     //try {
@@ -165,6 +169,36 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       initialSelectedStatus = fetchedDetails.status;
       initialSelectedVendorId = fetchedDetails.vendorId.toString();
       initialSelectedStaffId = fetchedDetails.staffmemberId;
+      initialSelectedTenantId = fetchedDetails.tenantId;
+      initialSelectedpriority = fetchedDetails.priority;
+      initialSelectedbillable = fetchedDetails.isBillable!;
+      initialSelectedimage = fetchedDetails.workOrderImages;
+      initialSelectedparts = fetchedDetails.partsandchargeData?.map<Map<String, dynamic>>((data) {
+        TextEditingController qtyController = TextEditingController(text:data.partsQuantity!.toString() );
+        TextEditingController priceController = TextEditingController(text: data.partsPrice!.toString());
+        TextEditingController totalController = TextEditingController(text: data.amount!.toString());
+        TextEditingController subtotalcontroller = TextEditingController();
+        qtyController.addListener(() {
+          calculateTotal(qtyController, priceController, totalController,
+              subtotalcontroller);
+        });
+        priceController.addListener(() {
+          calculateTotal(qtyController, priceController, totalController,
+              subtotalcontroller);
+        });
+        print('part id ${data.partsQuantity}');
+        print('part account ${data.account}');
+        return {
+          "parts_id": data.partsId,
+          "qtyController": qtyController,
+          "selectedAccount": data.account ?? '',
+          "descriptionController":
+          TextEditingController(text: data.description ?? ''),
+          "priceController": priceController,
+          "totalController": totalController,
+        };
+      }).toList() ??
+          [];
 
       //_imageUrls = fetchedDetails.workOrderImages ?? [];
       subject.text = fetchedDetails.workSubject!;
@@ -1982,7 +2016,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                       ),
                                                     );
                                                   }).toList(),
-                                                  value: _selectedtenantId,
+                                                  value: tenants.containsKey(_selectedtenantId)
+                                                      ? _selectedtenantId
+                                                      : null ,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       tenantId =
@@ -2347,7 +2383,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           _selectedCategory != initialSelectedCategory ||
           _selectedStatus != initialSelectedStatus ||
           _selectedvendorsId != initialSelectedVendorId ||
-          _selectedstaffId != initialSelectedStaffId;
+          _selectedstaffId != initialSelectedStaffId ||
+          _selectedOption != initialSelectedpriority ||
+          isChecked != initialSelectedbillable ||
+          _imageUrls != initialSelectedimage ||
+          partsAndLabor != initialSelectedparts ||
+          _selectedtenantId != initialSelectedTenantId;
 
       if (!hasChanges) {
         print("no changes");
@@ -4878,7 +4919,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                     );
                                                                   }).toList(),
                                                                   value:
-                                                                      _selectedtenantId,
+                                                                  tenants.containsKey(_selectedtenantId)
+                                                                      ? _selectedtenantId
+                                                                      : null ,
                                                                   onChanged:
                                                                       (value) {
                                                                     setState(

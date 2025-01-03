@@ -370,6 +370,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
   Summery_page(WorkOrderData_summery summery) {
     print(' update image ${summery.workorderUpdates}');
+    print(' update tenant ${summery.vendorData?.companyName}');
     final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
 

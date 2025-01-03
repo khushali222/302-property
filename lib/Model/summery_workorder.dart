@@ -379,15 +379,15 @@ class TenantData {
 
   TenantData.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
-    firstname = json['firstname'];
-    lastname = json['lastname'];
+    firstname = json['tenant_firstName'];
+    lastname = json['tenant_lastName'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.id;
-    data['firstname'] = this.firstname;
-    data['lastname'] = this.lastname;
+    data['tenant_firstName'] = this.firstname;
+    data['tenant_lastName'] = this.lastname;
     return data;
   }
 }

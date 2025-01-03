@@ -1547,7 +1547,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       alternativeerror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(
+                                  width: 5,
+                                ),
                                 Text(
                                   alternativemessage,
                                   style: TextStyle(
@@ -3175,16 +3177,21 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       primaryemailerror = false;
                     });
                   }
-                 /* if (alternativeemail.text.isEmpty) {
+                 if (alternativeemail.text.isEmpty) {
                     setState(() {
-                      alternativeerror = true;
-                      alternativemessage = "required";
+                      alternativeerror = false;
+
                     });
-                  } else {
+                  }else if(alternativeemail.text == primaryemail.text){
+                   setState(() {
+                     alternativeerror = true;
+                     alternativemessage = " email cannot be the same";
+                   });
+                 } else {
                     setState(() {
                       alternativeerror = false;
                     });
-                  }*/
+                  }
 
                   String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
                   if (formattedPhoneNumber.isEmpty) {
@@ -3213,7 +3220,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       homenumerror = true;
                       homenummessage = "Phone number must be 10 digits";
                     });
-                  } else {
+                  } else if(formattedhomeNumber == formattedPhoneNumber){
+                    setState(() {
+                      homenumerror = true;
+                      homenummessage = " number cannot be the same";
+                    });
+                  }else {
                     setState(() {
                       homenumerror = false;
                     });
@@ -3227,6 +3239,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     setState(() {
                       officenumerror = true;
                       officenummessage = "Phone number must be 10 digits";
+                    });
+                  }else if(formattedofficeNumber == formattedhomeNumber){
+                    setState(() {
+                      officenumerror = true;
+                      officenummessage = " number cannot be the same";
                     });
                   } else {
                     setState(() {

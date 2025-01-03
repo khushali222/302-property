@@ -1644,7 +1644,7 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Phone Number *',
+                              Text('Phone Number **',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1669,6 +1669,7 @@ class _AddTenantState extends State<AddTenant> {
                                   }
                                   return null;
                                 },
+                                phonenum: true,
                                 phone: true,
                               ),
                               SizedBox(
@@ -1690,6 +1691,7 @@ class _AddTenantState extends State<AddTenant> {
                                 controller: workNumber,
                                 optional: true,
                                 phone: true,
+                                worknum: true,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(10),
@@ -2101,6 +2103,7 @@ class _AddTenantState extends State<AddTenant> {
                                 //     signed: true, decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: emergencyPhoneNumber,
+                                businessnum: true,
                                 optional: true,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
@@ -2330,7 +2333,6 @@ class _AddTenantState extends State<AddTenant> {
       tenantEmail: email.text,
       tenantAlternativeEmail: alterEmail.text,
       tenantPassword: passWord.text,
-
       tenantBirthDate: reverseFormatDate(_dateController.text),
       taxPayerId: taxPayerId.text,
       comments: comments.text,
@@ -2502,6 +2504,9 @@ class CustomTextField extends StatefulWidget {
   final bool? email;
   final bool? pass;
   final bool? phone;
+  final bool? worknum;
+  final bool? phonenum;
+  final bool? businessnum;
   final List<TextInputFormatter>? inputFormatters;
 
   CustomTextField({
@@ -2527,6 +2532,9 @@ class CustomTextField extends StatefulWidget {
     this.pass,
     this.phone,
     this.inputFormatters,
+    this.worknum,
+    this.phonenum,
+    this.businessnum,
     // Initialize onTap
   }) : super(key: key);
 
@@ -2583,6 +2591,10 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
   }
 
+
+
+
+
   @override
   Widget build(BuildContext context) {
     final shouldUseKeyboardActions =
@@ -2606,7 +2618,29 @@ class CustomTextFieldState extends State<CustomTextField> {
                       });
                       return '';
                     }
-                  } else if (widget.amount_check != null &&
+                  }
+                  else if (widget.phonenum != null &&
+                      widget.worknum != null) {
+                    if (widget.phonenum == widget.worknum) {
+                      setState(() {
+                        _errorMessage =
+                            "Phone number and work number cannot be the same";
+                      });
+                      return '';
+                    }
+                  }
+                  // else if (widget.phonenum != null || widget.worknum != null || widget.businessnum != null) {
+                  //   if (widget.phonenum == widget.businessnum || widget.phonenum == widget.worknum || widget.businessnum == widget.worknum) {
+                  //     setState(() {
+                  //       _errorMessage = "Phone numbers cannot be the same";
+                  //     });
+                  //   } else {
+                  //     setState(() {
+                  //       _errorMessage = null;
+                  //     });
+                  //   }
+                  // }
+                  else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text) >
                           double.parse(widget.max_amount!))
                     setState(() {
@@ -2647,7 +2681,32 @@ class CustomTextFieldState extends State<CustomTextField> {
                       });
                       return '';
                     }
-                  } else if (widget.email != null) {
+                  }
+                  else if (widget.phonenum != null &&
+                      widget.worknum != null) {
+                    if (widget.phonenum == widget.worknum) {
+                      setState(() {
+                        _errorMessage =
+                        "Phone number and work number cannot be the same";
+                      });
+                      return '';
+                    }
+                  }
+
+                  // else if (widget.phonenum != null || widget.worknum != null || widget.businessnum != null) {
+                  //   if (widget.phonenum == widget.businessnum ||
+                  //       widget.phonenum == widget.worknum ||
+                  //       widget.businessnum == widget.worknum) {
+                  //     setState(() {
+                  //       _errorMessage = "Phone numbers cannot be the same";
+                  //     });
+                  //   } else {
+                  //     setState(() {
+                  //       _errorMessage = null;
+                  //     });
+                  //   }
+                  // }
+                  else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
                       setState(() {
                         _errorMessage = "Email is not valid";
