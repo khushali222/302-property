@@ -2956,10 +2956,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                   if (!nameerror &&
                       !comnameerror &&
                       !primaryemailerror &&
-                      // !alternativeerror &&
-                      !phonenumerror //&&
-                  // !homenumerror &&
-                  // !officenumerror &&
+                      !alternativeerror &&
+                      !phonenumerror &&
+                  !homenumerror &&
+                  !officenumerror
                   // !street2error &&
                   // !city2error &&
                   //  !state2error &&

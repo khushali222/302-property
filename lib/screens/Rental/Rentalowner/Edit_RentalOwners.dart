@@ -2950,6 +2950,25 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       primaryemailerror = false;
                     });
                   }
+                  if (alternativeemail.text.isNotEmpty) {
+                    if (alternativeemail.text == primaryemail.text) {
+                      setState(() {
+                        alternativeerror = true;
+                        alternativemessage = "Email cannot be the same";
+                        isFormValid = false;
+                      });
+                    } else if (!EmailValidator.validate(alternativeemail.text)) {
+                      setState(() {
+                        alternativeerror = true;
+                        alternativemessage = "Email is not valid";
+                        isFormValid = false;
+                      });
+                    } else {
+                      setState(() {
+                        alternativeerror = false;
+                      });
+                    }
+                  }
                   String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
                   if (formattedPhoneNumber.isEmpty) {
                     setState(() {
@@ -2966,8 +2985,47 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       phonenumerror = false;
                     });
                   }
+                  String formattedhomeNumber = homenum.text.replaceAll(RegExp(r'\D'), '');
+                  if (formattedhomeNumber.isEmpty) {
+                    setState(() {
+                      homenumerror = false;
 
-
+                    });
+                  }else if(formattedhomeNumber.length != 10){
+                    setState(() {
+                      homenumerror = true;
+                      homenummessage = "Phone number must be 10 digits";
+                    });
+                  } else if(formattedhomeNumber == formattedPhoneNumber){
+                    setState(() {
+                      homenumerror = true;
+                      homenummessage = " number cannot be the same";
+                    });
+                  }else {
+                    setState(() {
+                      homenumerror = false;
+                    });
+                  }
+                  String formattedofficeNumber = officenum.text.replaceAll(RegExp(r'\D'), '');
+                  if (formattedofficeNumber.isEmpty) {
+                    setState(() {
+                      officenumerror = false;
+                    });
+                  }else if(formattedofficeNumber.length != 10){
+                    setState(() {
+                      officenumerror = true;
+                      officenummessage = "Phone number must be 10 digits";
+                    });
+                  }else if(formattedofficeNumber == formattedhomeNumber){
+                    setState(() {
+                      officenumerror = true;
+                      officenummessage = " number cannot be the same";
+                    });
+                  } else {
+                    setState(() {
+                      officenumerror = false;
+                    });
+                  }
 
                   // Validate other fields similarly...
 

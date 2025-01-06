@@ -1667,10 +1667,16 @@ class _AddTenantState extends State<AddTenant> {
                                   if (value == null || value.isEmpty) {
                                     return 'please enter the phone number';
                                   }
+                                  if (phoneNumber.text.isNotEmpty && value == phoneNumber.text) {
+                                    return "Work number and phone number cannot be the same";
+                                  }
                                   return null;
                                 },
                                 phonenum: true,
                                 phone: true,
+                                worknum: false,
+                                otherController: workNumber,
+
                               ),
                               SizedBox(
                                 height: 10,
@@ -1692,6 +1698,9 @@ class _AddTenantState extends State<AddTenant> {
                                 optional: true,
                                 phone: true,
                                 worknum: true,
+                                phonenum: true,
+                             //   samephonenumber: phoneNumber.text.isNotEmpty ? phoneNumber.text == workNumber.text : false,
+                                otherController: phoneNumber,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(10),
@@ -1717,6 +1726,7 @@ class _AddTenantState extends State<AddTenant> {
                                   if (value == null || value.isEmpty) {
                                     return 'please enter email';
                                   }
+
                                   // else if(!EmailValidator.validate(email.text)){
                                   //   return 'please enter valid email';
                                   // }
@@ -2105,6 +2115,10 @@ class _AddTenantState extends State<AddTenant> {
                                 controller: emergencyPhoneNumber,
                                 businessnum: true,
                                 optional: true,
+
+                               // samephonenumber: workNumber.text.isNotEmpty ? workNumber.text == emergencyPhoneNumber.text : false,
+                                otherController: workNumber,
+                                businessController: phoneNumber,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(10),
@@ -2250,6 +2264,7 @@ class _AddTenantState extends State<AddTenant> {
                                 setState(() {
                                   formValid = true;
                                 });
+                                print("work number ${workNumber.text}");
                                 if (_formkey.currentState!.validate()) {
                                   setState(() {
                                     formValid = false;
@@ -2508,6 +2523,10 @@ class CustomTextField extends StatefulWidget {
   final bool? phonenum;
   final bool? businessnum;
   final List<TextInputFormatter>? inputFormatters;
+  final TextEditingController? otherController;
+  final TextEditingController? businessController;
+  final TextEditingController? telephoneController;
+  final bool? samephonenumber;
 
   CustomTextField({
     Key? key,
@@ -2535,6 +2554,10 @@ class CustomTextField extends StatefulWidget {
     this.worknum,
     this.phonenum,
     this.businessnum,
+    this.otherController, // For work number comparison
+    this.businessController,
+    this.telephoneController,
+    this.samephonenumber=false
     // Initialize onTap
   }) : super(key: key);
 
@@ -2590,10 +2613,88 @@ class CustomTextFieldState extends State<CustomTextField> {
       ],
     );
   }
+  // void _validatePhoneNumber(String value) {
+  //   String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
+  //
+  //   // Check if phone number is exactly 10 digits
+  //   if (formattedPhoneNumber.length != 10) {
+  //     setState(() {
+  //       _errorMessage = "Phone number must be 10 digits";
+  //     });
+  //   } else if (widget.otherController != null  ) {
+  //     if(widget.businessController != null ){
+  //       if (widget.otherController?.text == value) {
+  //         setState(() {
+  //           _errorMessage = 'work and business cannot be the same';
+  //         });
+  //       }
+  //      else if (widget.businessController?.text == value) {
+  //         setState(() {
+  //           _errorMessage = 'Phone and business cannot be the same';
+  //         });
+  //       }
+  //       else if (widget.telephoneController?.text == value) {
+  //         setState(() {
+  //           _errorMessage = 'Phone and telephone cannot be the same';
+  //         });
+  //       }
+  //       else {
+  //         setState(() {
+  //           _errorMessage = null; // Clear error message when the number is valid
+  //         });
+  //       }
+  //     }
+  //     else{
+  //       if (widget.otherController?.text == value) {
+  //         setState(() {
+  //           _errorMessage = 'Phone number and work number cannot be the same';
+  //         });
+  //       } else {
+  //         setState(() {
+  //           _errorMessage = null; // Clear error message when the number is valid
+  //         });
+  //       }
+  //     }
+  //     // Compare with the work number
+  //
+  //   } else {
+  //     setState(() {
+  //       _errorMessage = null; // Clear error message for valid phone numbers
+  //     });
+  //   }
+  // }
+  void _validatePhoneNumber(String value) {
+    String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
 
-
-
-
+    // Check if phone number is exactly 10 digits
+    if (formattedPhoneNumber.length != 10) {
+      setState(() {
+        _errorMessage = "Phone number must be 10 digits";
+      });
+    } else {
+      // Validate uniqueness across all phone number controllers
+      if (widget.telephoneController != null &&
+          widget.telephoneController?.text == value) {
+        setState(() {
+          _errorMessage = 'Number cannot be the same as another';
+        });
+      } else if (widget.otherController != null &&
+          widget.otherController?.text == value) {
+        setState(() {
+          _errorMessage = 'Number cannot be the same as another';
+        });
+      } else if (widget.businessController != null &&
+          widget.businessController?.text == value) {
+        setState(() {
+          _errorMessage = 'Number cannot be the same as another';
+        });
+      } else {
+        setState(() {
+          _errorMessage = null; // Clear error message when the number is valid
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2605,41 +2706,38 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
+            print("work same callling  ${widget.samephonenumber}");
                   if (widget.controller!.text.isEmpty) {
                     return null;
-                  } else if (widget.phone != null) {
-                    String formattedPhoneNumber =
-                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-
-                    // Removed the empty check
-                    if (formattedPhoneNumber.length != 10) {
-                      setState(() {
-                        _errorMessage = "Phone number must be 10 digits";
-                      });
-                      return '';
-                    }
                   }
-                  else if (widget.phonenum != null &&
-                      widget.worknum != null) {
-                    if (widget.phonenum == widget.worknum) {
-                      setState(() {
-                        _errorMessage =
-                            "Phone number and work number cannot be the same";
-                      });
-                      return '';
-                    }
+                  else if (widget.phone != null) {
+                    // String formattedPhoneNumber =
+                    //     widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+                    //
+                    // // Removed the empty check
+                    // if (formattedPhoneNumber.length != 10) {
+                    //   setState(() {
+                    //     _errorMessage = "Phone number must be 10 digits";
+                    //   });
+                    //   return '';
+                    // }
+                    //   if (widget.samephonenumber != null && widget.samephonenumber ==true ) {
+                    //       print("Same Work Number calling");
+                    //       setState(() {
+                    //         _errorMessage = ' number cannot be the same';
+                    //       });
+                    //
+                    //
+                    //   return '';
+                    // }else {
+                    //   // Clear error message if phone number is valid
+                    //   setState(() {
+                    //     _errorMessage = null;
+                    //   });
+                    // }
+                    _validatePhoneNumber(widget.controller!.text);
+                    return '';
                   }
-                  // else if (widget.phonenum != null || widget.worknum != null || widget.businessnum != null) {
-                  //   if (widget.phonenum == widget.businessnum || widget.phonenum == widget.worknum || widget.businessnum == widget.worknum) {
-                  //     setState(() {
-                  //       _errorMessage = "Phone numbers cannot be the same";
-                  //     });
-                  //   } else {
-                  //     setState(() {
-                  //       _errorMessage = null;
-                  //     });
-                  //   }
-                  // }
                   else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text) >
                           double.parse(widget.max_amount!))
@@ -2658,18 +2756,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     });
                     return '';
                   }
-                  // else if (widget.keyboardType == TextInputType.number) {
-                  //   String formattedPhoneNumber =
-                  //       widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-                  //
-                  //   // Removed the empty check
-                  //   if (formattedPhoneNumber.length != 10) {
-                  //     setState(() {
-                  //       _errorMessage = "Phone number must be 10 digits";
-                  //     });
-                  //     return '';
-                  //   }
-                  // }
+
                   else if (widget.phone != null) {
                     // Check if it's a phone number
                     String formattedPhoneNumber =
@@ -2681,32 +2768,19 @@ class CustomTextFieldState extends State<CustomTextField> {
                       });
                       return '';
                     }
-                  }
-                  else if (widget.phonenum != null &&
-                      widget.worknum != null) {
-                    if (widget.phonenum == widget.worknum) {
+                  if (widget.samephonenumber != null &&
+                        widget.samephonenumber!) {
                       setState(() {
-                        _errorMessage =
-                        "Phone number and work number cannot be the same";
+                        _errorMessage = 'Phone number and work number cannot be the same';
                       });
                       return '';
+                    }else {
+                      // Clear error message if phone number is valid
+                      setState(() {
+                        _errorMessage = null;
+                      });
                     }
-                  }
-
-                  // else if (widget.phonenum != null || widget.worknum != null || widget.businessnum != null) {
-                  //   if (widget.phonenum == widget.businessnum ||
-                  //       widget.phonenum == widget.worknum ||
-                  //       widget.businessnum == widget.worknum) {
-                  //     setState(() {
-                  //       _errorMessage = "Phone numbers cannot be the same";
-                  //     });
-                  //   } else {
-                  //     setState(() {
-                  //       _errorMessage = null;
-                  //     });
-                  //   }
-                  // }
-                  else if (widget.email != null) {
+                  } else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
                       setState(() {
                         _errorMessage = "Email is not valid";
@@ -2723,16 +2797,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       return '';
                     }
                   }
-                  // else if (widget.pass != null) {
-                  //   // Validate as password
-                  //   String? validationMessage = ValidatePassword(value ?? '');
-                  //   if (validationMessage != null) {
-                  //     setState(() {
-                  //       _errorMessage = validationMessage;
-                  //     });
-                  //     return ''; // Return empty string to indicate error
-                  //   }
-                  // }
+
 
                   else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text) >

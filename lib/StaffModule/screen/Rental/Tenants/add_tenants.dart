@@ -1646,23 +1646,30 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             CustomTextField(
+                              keyboardType: TextInputType.number,
                               // keyboardType: TextInputType.numberWithOptions(
                               //     signed: true, decimal: true),
-                              keyboardType: TextInputType.number,
+                              hintText: 'Enter phone number',
+                              controller: phoneNumber,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(10),
                                 PhoneNumberFormatter(),
                               ],
-                              hintText: 'Enter phone number',
-                              controller: phoneNumber,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'please enter the phone number';
                                 }
+                                if (phoneNumber.text.isNotEmpty && value == phoneNumber.text) {
+                                  return "Work number and phone number cannot be the same";
+                                }
                                 return null;
                               },
+                              phonenum: true,
                               phone: true,
+                              worknum: false,
+                              otherController: workNumber,
+
                             ),
                             SizedBox(
                               height: 10,
@@ -1677,17 +1684,21 @@ class _AddTenantState extends State<AddTenant> {
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(10),
-                                PhoneNumberFormatter(),
-                              ],
                               // keyboardType: TextInputType.numberWithOptions(
                               //     signed: true, decimal: true),
                               hintText: 'Enter work number',
                               controller: workNumber,
                               optional: true,
                               phone: true,
+                              worknum: true,
+                              phonenum: true,
+                              //   samephonenumber: phoneNumber.text.isNotEmpty ? phoneNumber.text == workNumber.text : false,
+                              otherController: phoneNumber,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
                             ),
                             SizedBox(
                               height: 10,
@@ -2082,16 +2093,21 @@ class _AddTenantState extends State<AddTenant> {
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.number,
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
+                              hintText: 'Enter phone number',
+                              controller: emergencyPhoneNumber,
+                              businessnum: true,
+                              optional: true,
+
+                              // samephonenumber: workNumber.text.isNotEmpty ? workNumber.text == emergencyPhoneNumber.text : false,
+                              otherController: workNumber,
+                              businessController: phoneNumber,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(10),
                                 PhoneNumberFormatter(),
                               ],
-                              // keyboardType: TextInputType.numberWithOptions(
-                              //     signed: true, decimal: true),
-                              hintText: 'Enter phone number',
-                              controller: emergencyPhoneNumber,
-                              optional: true,
                               phone: true,
                             ),
                           ],
@@ -2484,8 +2500,14 @@ class CustomTextField extends StatefulWidget {
   final bool? email;
   final bool? pass;
   final bool? phone;
+  final bool? worknum;
+  final bool? phonenum;
+  final bool? businessnum;
   final List<TextInputFormatter>? inputFormatters;
-
+  final TextEditingController? otherController;
+  final TextEditingController? businessController;
+  final TextEditingController? telephoneController;
+  final bool? samephonenumber;
   CustomTextField({
     Key? key,
     this.onChanged,
@@ -2509,6 +2531,13 @@ class CustomTextField extends StatefulWidget {
     this.pass,
     this.phone,
     this.inputFormatters,
+    this.worknum,
+    this.phonenum,
+    this.businessnum,
+    this.otherController, // For work number comparison
+    this.businessController,
+    this.telephoneController,
+    this.samephonenumber=false
     // Initialize onTap
   }) : super(key: key);
 
@@ -2564,7 +2593,38 @@ class CustomTextFieldState extends State<CustomTextField> {
       ],
     );
   }
+  void _validatePhoneNumber(String value) {
+    String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
 
+    // Check if phone number is exactly 10 digits
+    if (formattedPhoneNumber.length != 10) {
+      setState(() {
+        _errorMessage = "Phone number must be 10 digits";
+      });
+    } else {
+      // Validate uniqueness across all phone number controllers
+      if (widget.telephoneController != null &&
+          widget.telephoneController?.text == value) {
+        setState(() {
+          _errorMessage = 'Number cannot be the same as another';
+        });
+      } else if (widget.otherController != null &&
+          widget.otherController?.text == value) {
+        setState(() {
+          _errorMessage = 'Number cannot be the same as another';
+        });
+      } else if (widget.businessController != null &&
+          widget.businessController?.text == value) {
+        setState(() {
+          _errorMessage = 'Number cannot be the same as another';
+        });
+      } else {
+        setState(() {
+          _errorMessage = null; // Clear error message when the number is valid
+        });
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final shouldUseKeyboardActions =
@@ -2578,15 +2638,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                   if (widget.controller!.text.isEmpty) {
                     return null;
                   } else if (widget.phone != null) {
-                    String formattedPhoneNumber =
-                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-
-                    if (formattedPhoneNumber.length != 10) {
-                      setState(() {
-                        _errorMessage = "Phone number must be 10 digits";
-                      });
-                      return '';
-                    }
+                    // String formattedPhoneNumber =
+                    //     widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+                    //
+                    // if (formattedPhoneNumber.length != 10) {
+                    //   setState(() {
+                    //     _errorMessage = "Phone number must be 10 digits";
+                    //   });
+                    //   return '';
+                    // }
+                    _validatePhoneNumber(widget.controller!.text);
+                    return '';
                   } else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text) >
                           double.parse(widget.max_amount!))

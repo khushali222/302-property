@@ -2026,6 +2026,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             primaryemailerror = false;
                           });
                         }
+
                         String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
                         if (formattedPhoneNumber.isEmpty) {
                           setState(() {

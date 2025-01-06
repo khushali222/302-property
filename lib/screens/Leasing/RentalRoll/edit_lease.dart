@@ -1,4 +1,4 @@
-import 'dart:convert';
+                                                                                                                                                                                                                        import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
@@ -6794,6 +6794,7 @@ class _AddTenantState extends State<AddTenant> {
                         keyboardType: TextInputType.number,
                         hintText: 'Enter phone number',
                         controller: phoneNumber,
+                        otherController: workNumber,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'please enter the phone number';
@@ -6836,7 +6837,9 @@ class _AddTenantState extends State<AddTenant> {
                               keyboardType: TextInputType.number,
                               hintText: 'Enter work number',
                               controller: workNumber,
+                              otherController: phoneNumber,
                               phone: true,
+                              optional: true,
                             ),
                           ],
                         ),
@@ -7287,6 +7290,8 @@ class _AddTenantState extends State<AddTenant> {
                         ],
                         keyboardType: TextInputType.number,
                         hintText: 'Enter phone number',
+                        otherController: phoneNumber,
+                        businessController: workNumber,
                         controller: emergencyPhoneNumber,
                         optional: true,
                         phone: true,
@@ -7516,6 +7521,7 @@ class _AddCosignerState extends State<AddCosigner> {
                     keyboardType: TextInputType.number,
                     hintText: 'Enter phone number',
                     controller: phoneNumber,
+                    otherController: workNumber,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter the phone number';
@@ -7577,6 +7583,7 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter work number',
                                 controller: workNumber,
+                                otherController: phoneNumber,
                                 optional: true,
                                 phone: true,
                               ),

@@ -7058,6 +7058,7 @@ class _AddTenantState extends State<AddTenant> {
                               keyboardType: TextInputType.number,
                               hintText: 'Enter phone number',
                               phone: true,
+                              otherController: workNumber,
                               controller: phoneNumber,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -7102,7 +7103,9 @@ class _AddTenantState extends State<AddTenant> {
                                           keyboardType: TextInputType.number,
                                           hintText: 'Enter work number',
                                           controller: workNumber,
+                                          otherController: phoneNumber,
                                           phone: true,
+                                          optional: true,
                                         ),
                                       ],
                                     ),
@@ -7550,6 +7553,8 @@ class _AddTenantState extends State<AddTenant> {
                                     controller: emergencyPhoneNumber,
                                     optional: true,
                                     phone: true,
+                                    otherController: phoneNumber,
+                                    businessController: workNumber,
                                   ),
                                 ],
                               ),
@@ -7774,6 +7779,7 @@ class _AddCosignerState extends State<AddCosigner> {
                       return null;
                     },
                     phone: true,
+                    otherController: workNumber,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
@@ -7835,6 +7841,7 @@ class _AddCosignerState extends State<AddCosigner> {
                                 hintText: 'Enter work number',
                                 controller: workNumber,
                                 optional: true,
+                                otherController: phoneNumber,
                                 phone: true,
                               ),
                             ],

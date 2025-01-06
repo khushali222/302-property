@@ -1283,22 +1283,29 @@ class _EditTenantsState extends State<EditTenants> {
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.number,
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
+                              hintText: 'Enter phone number',
+                              controller: phoneNumber,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(10),
                                 PhoneNumberFormatter(),
                               ],
-                              // keyboardType: TextInputType.numberWithOptions(
-                              //     signed: true, decimal: true),
-                              hintText: 'Enter phone number',
-                              controller: phoneNumber,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'please enter the phone number';
                                 }
+                                if (phoneNumber.text.isNotEmpty && value == phoneNumber.text) {
+                                  return "Work number and phone number cannot be the same";
+                                }
                                 return null;
                               },
+                              phonenum: true,
                               phone: true,
+                              worknum: false,
+                              otherController: workNumber,
+
                             ),
                             SizedBox(
                               height: 10,
@@ -1313,15 +1320,21 @@ class _EditTenantsState extends State<EditTenants> {
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.number,
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
                               hintText: 'Enter work number',
                               controller: workNumber,
                               optional: true,
+                              phone: true,
+                              worknum: true,
+                              phonenum: true,
+                              //   samephonenumber: phoneNumber.text.isNotEmpty ? phoneNumber.text == workNumber.text : false,
+                              otherController: phoneNumber,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(10),
                                 PhoneNumberFormatter(),
                               ],
-                              phone: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1736,16 +1749,21 @@ class _EditTenantsState extends State<EditTenants> {
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.number,
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
+                              hintText: 'Enter phone number',
+                              controller: emergencyPhoneNumber,
+                              businessnum: true,
+                              optional: true,
+
+                              // samephonenumber: workNumber.text.isNotEmpty ? workNumber.text == emergencyPhoneNumber.text : false,
+                              otherController: workNumber,
+                              businessController: phoneNumber,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(10),
                                 PhoneNumberFormatter(),
                               ],
-                              // keyboardType: TextInputType.numberWithOptions(
-                              //     signed: true, decimal: true),
-                              hintText: 'Enter phone number',
-                              controller: emergencyPhoneNumber,
-                              optional: true,
                               phone: true,
                             ),
                           ],
@@ -2093,34 +2111,47 @@ class CustomTextField extends StatefulWidget {
   final bool? email;
   final bool? pass;
   final bool? phone;
+  final bool? worknum;
+  final bool? phonenum;
+  final bool? businessnum;
   final List<TextInputFormatter>? inputFormatters;
+  final TextEditingController? otherController;
+  final TextEditingController? businessController;
+  final TextEditingController? telephoneController;
+  final bool? samephonenumber;
 
-  CustomTextField(
-      {Key? key,
-      this.onChanged,
-      this.controller,
-      required this.hintText,
-      this.obscureText = false,
-      this.keyboardType = TextInputType.emailAddress,
-      this.readOnnly = false,
-      this.prefixIcon,
-      this.suffixIcon,
-      this.validator,
-      this.onSuffixIconPressed,
-      this.label,
-      this.onTap,
-      this.onChanged2,
-      this.amount_check,
-      this.max_amount,
-      this.error_mess,
-      this.optional = false,
-      this.email,
-      this.pass,
-      this.phone,
-      this.inputFormatters
-      // Initialize onTap
-      })
-      : super(key: key);
+  CustomTextField({
+    Key? key,
+    this.onChanged,
+    this.controller,
+    required this.hintText,
+    this.obscureText = false,
+    this.keyboardType = TextInputType.emailAddress,
+    this.readOnnly = false,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.validator,
+    this.onSuffixIconPressed,
+    this.label,
+    this.onTap,
+    this.onChanged2,
+    this.amount_check,
+    this.max_amount,
+    this.error_mess,
+    this.optional = false,
+    this.email,
+    this.pass,
+    this.phone,
+    this.inputFormatters,
+    this.worknum,
+    this.phonenum,
+    this.businessnum,
+    this.otherController, // For work number comparison
+    this.businessController,
+    this.telephoneController,
+    this.samephonenumber=false
+    // Initialize onTap
+  }) : super(key: key);
 
   @override
   CustomTextFieldState createState() => CustomTextFieldState();
@@ -2129,11 +2160,11 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-      TextEditingController(); // Add this line
+  TextEditingController(); // Add this line
   late FocusNode _focusNode;
   @override
   void dispose() {
-    _textController.dispose(); // Dispose the controller when not needed anymore
+    //  _textController.dispose(); // Dispose the controller when not needed anymore
     super.dispose();
     _focusNode.dispose();
   }
@@ -2151,7 +2182,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-            (node) {
+                (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -2174,6 +2205,88 @@ class CustomTextFieldState extends State<CustomTextField> {
       ],
     );
   }
+  // void _validatePhoneNumber(String value) {
+  //   String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
+  //
+  //   // Check if phone number is exactly 10 digits
+  //   if (formattedPhoneNumber.length != 10) {
+  //     setState(() {
+  //       _errorMessage = "Phone number must be 10 digits";
+  //     });
+  //   } else if (widget.otherController != null  ) {
+  //     if(widget.businessController != null ){
+  //       if (widget.otherController?.text == value) {
+  //         setState(() {
+  //           _errorMessage = 'work and business cannot be the same';
+  //         });
+  //       }
+  //      else if (widget.businessController?.text == value) {
+  //         setState(() {
+  //           _errorMessage = 'Phone and business cannot be the same';
+  //         });
+  //       }
+  //       else if (widget.telephoneController?.text == value) {
+  //         setState(() {
+  //           _errorMessage = 'Phone and telephone cannot be the same';
+  //         });
+  //       }
+  //       else {
+  //         setState(() {
+  //           _errorMessage = null; // Clear error message when the number is valid
+  //         });
+  //       }
+  //     }
+  //     else{
+  //       if (widget.otherController?.text == value) {
+  //         setState(() {
+  //           _errorMessage = 'Phone number and work number cannot be the same';
+  //         });
+  //       } else {
+  //         setState(() {
+  //           _errorMessage = null; // Clear error message when the number is valid
+  //         });
+  //       }
+  //     }
+  //     // Compare with the work number
+  //
+  //   } else {
+  //     setState(() {
+  //       _errorMessage = null; // Clear error message for valid phone numbers
+  //     });
+  //   }
+  // }
+  void _validatePhoneNumber(String value) {
+    String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
+
+    // Check if phone number is exactly 10 digits
+    if (formattedPhoneNumber.length != 10) {
+      setState(() {
+        _errorMessage = "Phone number must be 10 digits";
+      });
+    } else {
+      // Validate uniqueness across all phone number controllers
+      if (widget.telephoneController != null &&
+          widget.telephoneController?.text == value) {
+        setState(() {
+          _errorMessage = 'Number cannot be the same as another';
+        });
+      } else if (widget.otherController != null &&
+          widget.otherController?.text == value) {
+        setState(() {
+          _errorMessage = 'Number cannot be the same as another';
+        });
+      } else if (widget.businessController != null &&
+          widget.businessController?.text == value) {
+        setState(() {
+          _errorMessage = 'Number cannot be the same as another';
+        });
+      } else {
+        setState(() {
+          _errorMessage = null; // Clear error message when the number is valid
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2185,71 +2298,107 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-                  if (widget.controller!.text.isEmpty) {
-                    return null;
-                  } else if (widget.phone != null) {
-                    String formattedPhoneNumber =
-                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-
-                    // Removed the empty check
-                    if (formattedPhoneNumber.length != 10) {
-                      setState(() {
-                        _errorMessage = "Phone number must be 10 digits";
-                      });
-                      return '';
-                    }
-                  } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
-                          double.parse(widget.max_amount!))
-                    setState(() {
-                      _errorMessage = '${widget.error_mess}';
-                    });
-                  return null;
-                }
+            print("work same callling  ${widget.samephonenumber}");
+            if (widget.controller!.text.isEmpty) {
+              return null;
+            }
+            else if (widget.phone != null) {
+              // String formattedPhoneNumber =
+              //     widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+              //
+              // // Removed the empty check
+              // if (formattedPhoneNumber.length != 10) {
+              //   setState(() {
+              //     _errorMessage = "Phone number must be 10 digits";
+              //   });
+              //   return '';
+              // }
+              //   if (widget.samephonenumber != null && widget.samephonenumber ==true ) {
+              //       print("Same Work Number calling");
+              //       setState(() {
+              //         _errorMessage = ' number cannot be the same';
+              //       });
+              //
+              //
+              //   return '';
+              // }else {
+              //   // Clear error message if phone number is valid
+              //   setState(() {
+              //     _errorMessage = null;
+              //   });
+              // }
+              _validatePhoneNumber(widget.controller!.text);
+              return '';
+            }
+            else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text) >
+                    double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+            return null;
+          }
               : (value) {
-                  if (widget.controller!.text.isEmpty) {
-                    setState(() {
-                      if (widget.label == null)
-                        _errorMessage = 'Please ${widget.hintText}';
-                      else
-                        _errorMessage = 'Please ${widget.label}';
-                    });
-                    return '';
-                  } else if (widget.phone != null) {
-                    String formattedPhoneNumber =
-                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+            if (widget.controller!.text.isEmpty) {
+              setState(() {
+                if (widget.label == null)
+                  _errorMessage = 'Please ${widget.hintText}';
+                else
+                  _errorMessage = 'Please ${widget.label}';
+              });
+              return '';
+            }
 
-                    // Removed the empty check
-                    if (formattedPhoneNumber.length != 10) {
-                      setState(() {
-                        _errorMessage = "Phone number must be 10 digits";
-                      });
-                      return '';
-                    }
-                  } else if (widget.pass != null) {
-                    String? validationMessage =
-                        ValidatePassword(widget.controller!.text);
-                    if (validationMessage != null) {
-                      setState(() {
-                        _errorMessage = validationMessage;
-                      });
-                      return '';
-                    }
-                  } else if (widget.email != null) {
-                    if (!EmailValidator.validate(widget.controller!.text)) {
-                      setState(() {
-                        _errorMessage = "Email is not valid";
-                      });
-                      return '';
-                    }
-                  } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
-                          double.parse(widget.max_amount!))
-                    setState(() {
-                      _errorMessage = '${widget.error_mess}';
-                    });
-                  return null;
-                },
+            else if (widget.phone != null) {
+              // Check if it's a phone number
+              String formattedPhoneNumber =
+              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+
+              if (formattedPhoneNumber.length != 10) {
+                setState(() {
+                  _errorMessage = "Phone number must be 10 digits";
+                });
+                return '';
+              }
+              if (widget.samephonenumber != null &&
+                  widget.samephonenumber!) {
+                setState(() {
+                  _errorMessage = 'Phone number and work number cannot be the same';
+                });
+                return '';
+              }else {
+                // Clear error message if phone number is valid
+                setState(() {
+                  _errorMessage = null;
+                });
+              }
+            } else if (widget.email != null) {
+              if (!EmailValidator.validate(widget.controller!.text)) {
+                setState(() {
+                  _errorMessage = "Email is not valid";
+                });
+                return '';
+              }
+            } else if (widget.pass != null) {
+              String? validationMessage =
+              ValidatePassword(widget.controller!.text);
+              if (validationMessage != null) {
+                setState(() {
+                  _errorMessage = validationMessage;
+                });
+                return '';
+              }
+            }
+
+
+            else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text) >
+                    double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+            return null;
+          },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -2259,7 +2408,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -2295,20 +2444,26 @@ class CustomTextFieldState extends State<CustomTextField> {
                       },*/
                       onFieldSubmitted: widget.onChanged2,
                       onChanged: (value) {
-                        print("object calin $value");
+                        //  print("object calin $value");
                         if (value.isNotEmpty) {
                           setState(() {
                             _errorMessage = null;
                           });
                         }
-
-                        widget.onChanged;
-                        print("callllll");
+                        if (widget.onChanged != null) widget.onChanged!(value);
+//print("callllll");
                       },
-                      focusNode: _focusNode,
-                      onTap: widget.onTap,
-                      obscureText: widget.obscureText,
                       inputFormatters: widget.inputFormatters ?? [],
+                      focusNode: _focusNode,
+                      onTap: () {
+                        if (widget.onTap != null) {
+                          widget.onTap!();
+                          setState(() {
+                            _errorMessage = null;
+                          });
+                        }
+                      },
+                      obscureText: widget.obscureText,
                       readOnly: widget.readOnnly,
                       keyboardType: widget.keyboardType,
                       validator: (value) {
@@ -2321,14 +2476,15 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
                     ),
                   ),
                 ),
-                if (state.hasError || widget.amount_check != null)
+                if (state.hasError && _errorMessage != null ||
+                    widget.amount_check != null)
                   SizedBox(height: 24),
                 // Reserve space for error message
               ],
@@ -2351,13 +2507,13 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-            height: 60,
-            width: MediaQuery.of(context).size.width * .98,
-            child: KeyboardActions(
-              config: _buildConfig(context),
-              child: textfield,
-            ),
-          )
+      height: _errorMessage != null ? 75 : 60,
+      width: MediaQuery.of(context).size.width * .98,
+      child: KeyboardActions(
+        config: _buildConfig(context),
+        child: textfield,
+      ),
+    )
         : textfield;
   }
 }

@@ -271,6 +271,7 @@ class _AddApplicantState extends State<AddApplicant> {
                           //     signed: true, decimal: true),
                           hintText: 'Enter mobile number',
                           controller: mobileNumber,
+                          otherController: homeNumber,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(10),
@@ -298,16 +299,17 @@ class _AddApplicantState extends State<AddApplicant> {
                           // },
                           // keyboardType: TextInputType.numberWithOptions(
                           //     signed: true, decimal: true),
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter home number',
                           controller: homeNumber,
-                          keyboardType: TextInputType.number,
+                          otherController: mobileNumber,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(10),
                             PhoneNumberFormatter(),
                           ],
-                          phone: true,
                           optional: true,
+                          phone: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -327,11 +329,18 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.number,
                           // keyboardType: TextInputType.numberWithOptions(
                           //     signed: true, decimal: true),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                            PhoneNumberFormatter(),
+                          ],
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
+                          otherController: homeNumber,
+                          businessController: mobileNumber,
                           optional: true,
                           phone: true,
                         ),
@@ -355,14 +364,17 @@ class _AddApplicantState extends State<AddApplicant> {
                           // },
                           // keyboardType: TextInputType.numberWithOptions(
                           //     signed: true, decimal: true),
-                          hintText: 'Enter telephone number',
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(10),
                             PhoneNumberFormatter(),
                           ],
-                          keyboardType: TextInputType.number,
+                          hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
+                          otherController: bussinessNumber,
+                          businessController: homeNumber,
+                          telephoneController: mobileNumber,
                           optional: true,
                           phone: true,
                         ),

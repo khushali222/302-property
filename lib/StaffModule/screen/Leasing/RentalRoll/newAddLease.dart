@@ -6165,6 +6165,7 @@ Tenant convertApplicantToTenant(Datum applicant) {
                         ],
                         hintText: 'Enter phone number',
                         controller: phoneNumber,
+                        otherController: workNumber,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'please enter the phone number';
@@ -6201,6 +6202,7 @@ Tenant convertApplicantToTenant(Datum applicant) {
                                 PhoneNumberFormatter(),
                               ],
                               hintText: 'Enter work number',
+                              otherController: phoneNumber,
                               controller: workNumber,
                               optional: true,
                               phone: true,
@@ -6660,6 +6662,8 @@ Tenant convertApplicantToTenant(Datum applicant) {
                         hintText: 'Enter phone number',
                         controller: emergencyPhoneNumber,
                         optional: true,
+                        otherController: phoneNumber,
+                        businessController: workNumber,
                         phone: true,
                       ),
                     ],
@@ -6880,6 +6884,7 @@ class _AddCosignerState extends State<AddCosigner> {
                     keyboardType: TextInputType.number,
                     hintText: 'Enter phone number',
                     controller: phoneNumber,
+                    otherController: workNumber,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
@@ -6947,6 +6952,7 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter work number',
                                 controller: workNumber,
+                                otherController: phoneNumber,
                                 optional: true,
                                 phone: true,
                               ),

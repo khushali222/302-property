@@ -178,6 +178,7 @@ class RentalOwnerService {
       "rentalOwner_name": rentalOwnerName,
       "rentalOwner_companyName": rentalOwnerCompanyName,
       "rentalOwner_primaryEmail": rentalOwnerPrimaryEmail,
+      "rentalOwner_alternateEmail": rentalOwnerAlternateEmail,
       "rentalOwner_phoneNumber": rentalOwnerPhoneNumber,
       "rentalOwner_homeNumber": rentalOwnerHomeNumber,
       "rentalOwner_businessNumber": rentalOwnerBusinessNumber,
