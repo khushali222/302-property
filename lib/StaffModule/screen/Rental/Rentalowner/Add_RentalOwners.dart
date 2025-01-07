@@ -1546,7 +1546,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       alternativeerror
                           ? Row(
                         children: [
-                          SizedBox(width: 8,),
+
                           Text(
                             alternativemessage,
                             style: TextStyle(
@@ -1777,7 +1777,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       homenumerror
                           ? Row(
                         children: [
-                          Spacer(),
+
                           Text(
                             homenummessage,
                             style: TextStyle(
@@ -1891,7 +1891,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       officenumerror
                           ? Row(
                         children: [
-                          Spacer(),
+
                           Text(
                             officenummessage,
                             style: TextStyle(
@@ -2794,18 +2794,22 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       alternativeerror = false;
                     });
                   }*/
-                  if (alternativeemail.text.isNotEmpty && !EmailValidator.validate(alternativeemail.text)) {
-                    setState(() {
-                      alternativeerror = true;
-                      alternativemessage = "Email is not valid";
-                    });
-                  }
-                  else {
+                  if (alternativeemail.text.isEmpty) {
                     setState(() {
                       alternativeerror = false;
-                      alternativemessage = "";
+
+                    });
+                  }else if(alternativeemail.text == primaryemail.text){
+                    setState(() {
+                      alternativeerror = true;
+                      alternativemessage = " email cannot be the same";
+                    });
+                  } else {
+                    setState(() {
+                      alternativeerror = false;
                     });
                   }
+
                   String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
                   if (formattedPhoneNumber.isEmpty) {
                     setState(() {
@@ -2833,7 +2837,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       homenumerror = true;
                       homenummessage = "Phone number must be 10 digits";
                     });
-                  } else {
+                  } else if(formattedhomeNumber == formattedPhoneNumber){
+                    setState(() {
+                      homenumerror = true;
+                      homenummessage = " number cannot be the same";
+                    });
+                  }else {
                     setState(() {
                       homenumerror = false;
                     });
@@ -2847,6 +2856,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     setState(() {
                       officenumerror = true;
                       officenummessage = "Phone number must be 10 digits";
+                    });
+                  }else if(formattedofficeNumber == formattedhomeNumber){
+                    setState(() {
+                      officenumerror = true;
+                      officenummessage = " number cannot be the same";
                     });
                   } else {
                     setState(() {

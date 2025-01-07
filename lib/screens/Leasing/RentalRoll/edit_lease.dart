@@ -6886,6 +6886,8 @@ class _AddTenantState extends State<AddTenant> {
                         keyboardType: TextInputType.emailAddress,
                         hintText: 'Enter Email',
                         controller: email,
+                        email: true,
+                        alterController: alterEmail,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter an email';
@@ -6921,6 +6923,9 @@ class _AddTenantState extends State<AddTenant> {
                               TextInputType.emailAddress,
                               hintText: 'Enter alternative email',
                               controller: alterEmail,
+                              alterController: email,
+                              email: true,
+                              optional: true,
                             ),
                             const SizedBox(
                               height: 10,
@@ -7270,6 +7275,9 @@ class _AddTenantState extends State<AddTenant> {
                         hintText: 'Enter email',
                         controller: emergencyEmail,
                         optional: true,
+                        email: true,
+                        alterController: email,
+                        emrgencyController: alterEmail,
                       ),
                       const SizedBox(
                         height: 10,
@@ -7606,6 +7614,8 @@ class _AddCosignerState extends State<AddCosigner> {
                     keyboardType: TextInputType.emailAddress,
                     hintText: 'Enter Email',
                     controller: email,
+                    email: true,
+                    alterController: alterEmail,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter email';
@@ -7662,6 +7672,8 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.emailAddress,
                                 hintText: 'Enter alternative email',
                                 controller: alterEmail,
+                                email: true,
+                                alterController: email,
                                 optional: true,
                               ),
                             ],

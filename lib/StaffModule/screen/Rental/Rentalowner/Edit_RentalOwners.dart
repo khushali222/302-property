@@ -624,7 +624,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       nameerror
                           ? Row(
                               children: [
-                                Spacer(),
+
                                 Text(
                                   namemessage,
                                   style: TextStyle(
@@ -735,7 +735,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       comnameerror
                           ? Row(
                               children: [
-                                Spacer(),
+
                                 Text(
                                   comnamemessage,
                                   style: TextStyle(
@@ -1643,7 +1643,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       primaryemailerror
                           ? Row(
                               children: [
-                                Spacer(),
+
                                 Text(
                                   primaryemailmessage,
                                   style: TextStyle(
@@ -1750,7 +1750,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       alternativeerror
                           ? Row(
                               children: [
-                                SizedBox(width: 20,),
+
                                 Text(
                                   alternativemessage,
                                   style: TextStyle(
@@ -1865,7 +1865,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       phonenumerror
                           ? Row(
                               children: [
-                                Spacer(),
+
                                 Text(
                                   phonenummessage,
                                   style: TextStyle(
@@ -1980,7 +1980,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       homenumerror
                           ? Row(
                               children: [
-                                Spacer(),
+
                                 Text(
                                   homenummessage,
                                   style: TextStyle(
@@ -2095,7 +2095,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       officenumerror
                           ? Row(
                               children: [
-                                Spacer(),
+
                                 Text(
                                   officenummessage,
                                   style: TextStyle(

@@ -2072,7 +2072,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     )
                                   : Center(
                                       child: Text(
-                                      "Make Payment",
+                                      "Make Payment ",
                                       style: TextStyle(
                                           fontSize: 14, color: Colors.white),
                                     )),
@@ -2162,6 +2162,7 @@ class _MakePaymentState extends State<MakePayment> {
           finaltotal = double.parse(amountController.text) + surchargecount!;
         });
       }
+
     } catch (e) {
       setState(() {
         surchargecount = 0;

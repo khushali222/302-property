@@ -1361,6 +1361,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 }
                                 return null;
                               },
+                              alterController: alterEmail,
                               email: true,
                             ),
                             SizedBox(
@@ -1387,6 +1388,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 }
                                 return null;
                               },
+                              alterController: email,
                               email: true,
                               optional: true,
                             ),
@@ -1735,6 +1737,8 @@ class _EditTenantsState extends State<EditTenants> {
                                 }
                                 return null;
                               },
+                              emrgencyController: alterEmail,
+                              alterController: email,
                               email: true,
                               optional: true,
                             ),
@@ -2483,6 +2487,8 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? otherController;
   final TextEditingController? businessController;
   final TextEditingController? telephoneController;
+  final TextEditingController? alterController;
+  final TextEditingController? emrgencyController;
   final bool? samephonenumber;
 
   CustomTextField({
@@ -2514,6 +2520,8 @@ class CustomTextField extends StatefulWidget {
     this.otherController, // For work number comparison
     this.businessController,
     this.telephoneController,
+    this.alterController,
+    this.emrgencyController,
     this.samephonenumber=false
     // Initialize onTap
   }) : super(key: key);
@@ -2652,7 +2660,31 @@ class CustomTextFieldState extends State<CustomTextField> {
       }
     }
   }
-
+  void _validateEmail(String value) {
+    // Validate email format using EmailValidator
+    if (!EmailValidator.validate(value)) {
+      setState(() {
+        _errorMessage = "Email is not valid";
+      });
+    } else {
+      // Check if email is not the same as another email (example: other controllers)
+      if (widget.alterController != null &&
+          widget.alterController?.text == value) {
+        setState(() {
+          _errorMessage = 'Email cannot be the same';
+        });
+      }else if (widget.emrgencyController != null &&
+          widget.emrgencyController?.text == value) {
+        setState(() {
+          _errorMessage = 'Email cannot be the same';
+        });
+      } else {
+        setState(() {
+          _errorMessage = null; // Clear error message when email is valid
+        });
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final shouldUseKeyboardActions =
@@ -2693,6 +2725,17 @@ class CustomTextFieldState extends State<CustomTextField> {
               //   });
               // }
               _validatePhoneNumber(widget.controller!.text);
+              return '';
+            }else if (widget.email != null) {
+              // if (!EmailValidator.validate(widget.controller!.text)) {
+              //   setState(() {
+              //     _errorMessage = "Email is not valid";
+              //   });
+              //   return '';
+              // }
+              _validateEmail(widget.controller!.text);
+
+              // Return an empty string or handle accordingly
               return '';
             }
             else if (widget.amount_check != null &&

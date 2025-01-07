@@ -6255,6 +6255,8 @@ Tenant convertApplicantToTenant(Datum applicant) {
                         keyboardType: TextInputType.emailAddress,
                         hintText: 'Enter Email',
                         controller: email,
+                        email: true,
+                        alterController: alterEmail,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter an email';
@@ -6291,6 +6293,8 @@ Tenant convertApplicantToTenant(Datum applicant) {
                               hintText: 'Enter alternative email',
                               controller: alterEmail,
                               optional: true,
+                              email: true,
+                              alterController: email,
                             ),
                             const SizedBox(
                               height: 10,
@@ -6640,6 +6644,9 @@ Tenant convertApplicantToTenant(Datum applicant) {
                         hintText: 'Enter email',
                         controller: emergencyEmail,
                         optional: true,
+                        email: true,
+                        emrgencyController: alterEmail,
+                        alterController: email,
                       ),
                       const SizedBox(
                         height: 10,
@@ -6975,6 +6982,8 @@ class _AddCosignerState extends State<AddCosigner> {
                     keyboardType: TextInputType.emailAddress,
                     hintText: 'Enter Email',
                     controller: email,
+                    email: true,
+                    alterController: alterEmail,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter email';
@@ -7031,6 +7040,8 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.emailAddress,
                                 hintText: 'Enter alternative email',
                                 controller: alterEmail,
+                                email: true,
+                                alterController: email,
                                 optional: true,
                               ),
                             ],

@@ -1069,11 +1069,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     ],
                                   ),
                                   alternativeerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           alternativemessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                  ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -1300,11 +1306,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     ],
                                   ),
                                   homenumerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           homenummessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                      ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -1399,11 +1411,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     ],
                                   ),
                                   businessnumerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           businessnummessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                      ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -2027,7 +2045,32 @@ class _AddRentalownersState extends State<AddRentalowners> {
                           });
                         }
 
+                        if (alternativeemail.text.isNotEmpty) {
+                          if (alternativeemail.text == primaryemail.text) {
+                            setState(() {
+                              alternativeerror = true;
+                              alternativemessage = "Email cannot be the same ";
+                            });
+                          } else if (!EmailValidator.validate(alternativeemail.text)) {
+                            setState(() {
+                              alternativeerror = true;
+                              alternativemessage = "Email is not valid";
+                            });
+                          } else {
+                            setState(() {
+                              alternativeerror = false;
+                            });
+                          }
+                        } else {
+                          // Clear error if alternative email is empty, and no validation applies
+                          setState(() {
+                            alternativeerror = false;
+                          });
+                        }
+
                         String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
+                        String formattedofficeNumber = businessnum.text.replaceAll(RegExp(r'\D'), '');
+                        String formattedhomeNumber = homenum.text.replaceAll(RegExp(r'\D'), '');
                         if (formattedPhoneNumber.isEmpty) {
                           setState(() {
                             phonenumerror = true;
@@ -2044,7 +2087,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             phonenumerror = false;
                           });
                         }
-                        String formattedhomeNumber = homenum.text.replaceAll(RegExp(r'\D'), '');
+
                         if (formattedhomeNumber.isEmpty) {
                           setState(() {
                             homenumerror = false;
@@ -2055,12 +2098,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             homenumerror = true;
                             homenummessage = "Phone number must be 10 digits";
                           });
+                        }else if(formattedhomeNumber == formattedPhoneNumber){
+                          setState(() {
+                            print("phone number and home number are the same.");
+                            homenumerror = true;
+                            homenummessage = " number cannot be the same";
+                          });
                         } else {
                           setState(() {
                             homenumerror = false;
                           });
                         }
-                        String formattedofficeNumber = businessnum.text.replaceAll(RegExp(r'\D'), '');
+
                         if (formattedofficeNumber.isEmpty) {
                           setState(() {
                             businessnumerror = false;
@@ -2070,6 +2119,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             businessnumerror = true;
                             businessnummessage = "Phone number must be 10 digits";
                           });
+                        }else if(formattedofficeNumber == formattedhomeNumber){
+                          setState(() {
+
+                            businessnumerror = true;
+                            businessnummessage = " number cannot be the same";
+                          });
                         } else {
                           setState(() {
                             businessnumerror = false;
@@ -2078,7 +2133,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (!firstnameerror &&
                             !comnameerror &&
                             !primaryemailerror &&
-                            !phonenumerror) {
+                            !phonenumerror &&
+                           !homenumerror &&
+                        !businessnumerror &&
+                         !alternativeerror
+                        ) {
                           print('hello');
                           if (widget.isEdit == true || isChecked2) {
                             /* Fluttertoast.showToast(

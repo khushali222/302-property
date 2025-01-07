@@ -7152,6 +7152,8 @@ class _AddTenantState extends State<AddTenant> {
                               keyboardType: TextInputType.emailAddress,
                               hintText: 'Enter Email',
                               controller: email,
+                              email: true,
+                              alterController: alterEmail,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter an email';
@@ -7187,6 +7189,9 @@ class _AddTenantState extends State<AddTenant> {
                                               TextInputType.emailAddress,
                                           hintText: 'Enter alternative email',
                                           controller: alterEmail,
+                                          email: true,
+                                          optional: true,
+                                          alterController: email,
                                         ),
                                         const SizedBox(
                                           height: 10,
@@ -7529,6 +7534,9 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.emailAddress,
                                     hintText: 'Enter email',
                                     controller: emergencyEmail,
+                                    alterController: email,
+                                    emrgencyController: alterEmail,
+                                    email: true,
                                     optional: true,
                                   ),
                                   const SizedBox(
@@ -7863,7 +7871,9 @@ class _AddCosignerState extends State<AddCosigner> {
                     keyboardType: TextInputType.emailAddress,
                     hintText: 'Enter Email',
                     controller: email,
-                    optional: true,
+                    // optional: true,
+                    email: true,
+                    alterController: alterEmail,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter email';
@@ -7920,7 +7930,9 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.emailAddress,
                                 hintText: 'Enter alternative email',
                                 controller: alterEmail,
+                                alterController: email,
                                 optional: true,
+                                email: true,
                               ),
                             ],
                           ),

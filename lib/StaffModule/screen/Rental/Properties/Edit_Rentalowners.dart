@@ -730,11 +730,17 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     ],
                                   ),
                                   firstnameerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           firstnamemessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                  ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -843,11 +849,17 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     ],
                                   ),
                                   comnameerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           comnamemessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                      ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -958,11 +970,17 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     ],
                                   ),
                                   primaryemailerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           primaryemailmessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                      ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -1072,11 +1090,17 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     ],
                                   ),
                                   alternativeerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           alternativemessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                  ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -1195,11 +1219,17 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     ],
                                   ),
                                   phonenumerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           phonenummessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                      ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -1296,11 +1326,17 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     ],
                                   ),
                                   homenumerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           homenummessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                  ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -1392,11 +1428,17 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     ],
                                   ),
                                   businessnumerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           businessnummessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                      ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,

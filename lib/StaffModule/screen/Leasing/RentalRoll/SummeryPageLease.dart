@@ -751,44 +751,97 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       fontSize: 18),
                                 ),
                                 Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Renewlease(
+                                Visibility(
+                                  visible:
+                                  leasesummery.data!.is_renewing ?? true,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Renewlease(
                                                 leaseId: widget.leaseId,
-                                                lease: leasesummery)));
-                                  },
-                                  child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 35
-                                              : 45,
-                                      width: MediaQuery.of(context).size.width <
-                                              500
-                                          ? 120
-                                          : 165,
-                                      decoration: BoxDecoration(
-                                          color: blueColor,
-                                          borderRadius:
-                                              BorderRadius.circular(5.0)),
-                                      child: Center(
-                                        child: Text(
-                                          'Renew Lease',
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 14
-                                                  : 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
-                                        ),
-                                      )),
+                                                lease: leasesummery,
+                                                startdate: leasesummery
+                                                    .data!.startDate,
+                                                enddate: leasesummery
+                                                    .data!.endDate,
+                                                leasetype: leasesummery
+                                                    .data!.leaseType,
+                                                rentamount: leasesummery
+                                                    .data!.amount
+                                                    .toString(),
+                                              )));
+                                    },
+                                    child: Container(
+                                        height:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 35
+                                            : 45,
+                                        width:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 120
+                                            : 165,
+                                        decoration: BoxDecoration(
+                                            color: blueColor,
+                                            borderRadius:
+                                            BorderRadius.circular(5.0)),
+                                        child: Center(
+                                          child: Text(
+                                            'Renew Lease',
+                                            style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width <
+                                                    500
+                                                    ? 14
+                                                    : 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        )),
+                                  ),
                                 ),
+                                // GestureDetector(
+                                //   onTap: () {
+                                //     Navigator.push(
+                                //         context,
+                                //         MaterialPageRoute(
+                                //             builder: (context) => Renewlease(
+                                //                 leaseId: widget.leaseId,
+                                //                 lease: leasesummery)));
+                                //   },
+                                //   child: Container(
+                                //       height:
+                                //           MediaQuery.of(context).size.width <
+                                //                   500
+                                //               ? 35
+                                //               : 45,
+                                //       width: MediaQuery.of(context).size.width <
+                                //               500
+                                //           ? 120
+                                //           : 165,
+                                //       decoration: BoxDecoration(
+                                //           color: blueColor,
+                                //           borderRadius:
+                                //               BorderRadius.circular(5.0)),
+                                //       child: Center(
+                                //         child: Text(
+                                //           'Renew Lease',
+                                //           style: TextStyle(
+                                //               fontSize: MediaQuery.of(context)
+                                //                           .size
+                                //                           .width <
+                                //                       500
+                                //                   ? 14
+                                //                   : 18,
+                                //               fontWeight: FontWeight.bold,
+                                //               color: Colors.white),
+                                //         ),
+                                //       )),
+                                // ),
                               ],
                             ),
                           if (MediaQuery.of(context).size.width < 500)

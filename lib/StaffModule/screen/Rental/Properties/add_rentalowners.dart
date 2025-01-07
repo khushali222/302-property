@@ -1304,11 +1304,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     ],
                                   ),
                                   homenumerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           homenummessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                  ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -1406,11 +1412,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     ],
                                   ),
                                   businessnumerror
-                                      ? Center(
-                                          child: Text(
+                                      ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                           businessnummessage,
                                           style: TextStyle(color: Colors.red),
-                                        ))
+                                                                                  ),
+                                        ],
+                                      )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -2361,6 +2373,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             alternativeerror = true;
                             alternativemessage = "Email is not valid";
                           });
+                        }else if(alternativeemail.text == primaryemail.text){
+                          setState(() {
+                            alternativeerror = true;
+                            alternativemessage = " email cannot be the same";
+                          });
                         }
                         else {
                           setState(() {
@@ -2397,6 +2414,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             homenumerror = true;
                             homenummessage = "Phone number must be 10 digits";
                           });
+                        }else if(formattedhomeNumber == formattedPhoneNumber){
+                          setState(() {
+                            homenumerror = true;
+                            homenummessage = " number cannot be the same";
+                          });
                         } else {
                           setState(() {
                             homenumerror = false;
@@ -2412,6 +2434,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             businessnumerror = true;
                             businessnummessage = "Phone number must be 10 digits";
                           });
+                        }else if(formattedofficeNumber == formattedhomeNumber){
+                          setState(() {
+                            businessnumerror = true;
+                            businessnummessage = " number cannot be the same";
+                          });
                         } else {
                           setState(() {
                             businessnumerror = false;
@@ -2420,7 +2447,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (!firstnameerror &&
                             !comnameerror &&
                             !primaryemailerror &&
-                            !phonenumerror) {
+                            !phonenumerror &&
+                        !primaryemailerror &&
+                        !homenumerror &&
+                        !businessnumerror
+
+                        ) {
                           print('hello');
                           if (widget.isEdit == true || isChecked2) {
                             /* Fluttertoast.showToast(
