@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../TenantsModule/screen/work_order/workorder_summery.dart';
 import '../../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../../../widgets/titleBar.dart';
@@ -73,6 +74,55 @@ class _notificationsState extends State<notifications> {
     } else {
       // For more than a year ago
       return DateFormat('dd-MM-yyyy').format(dateTime);
+    }
+  }
+  Future<void> handleNotificationTap(
+      BuildContext context, bool isWorkOrder, String notificationId) async
+  {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("vendor_id");
+    String? token = prefs.getString('token');
+    String apiUrl =
+        '${Api_url}/api/notification/vendor_notification/$notificationId';
+
+    print("Notification ID: $notificationId");
+
+    try {
+      // Make the PUT request to the API
+      var response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: json.encode({'is_workorder': isWorkOrder}),
+      );
+
+      final jsonData = json.decode(response.body);
+
+      if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+        print("API call successful");
+
+        final responseData = jsonData['data'];
+
+        // Check if it's a work order or payment
+        if (responseData['is_workorder'] == true) {
+          print("Navigating to Edit Work Order...");
+          String workOrderId =
+          responseData['notification_type']['workorder_id'];
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Workorder_summery(workorder_id: workOrderId)));
+        }
+
+      } else {
+        print(
+            "Failed to update notification. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error: $e");
     }
   }
   String formatDateTime(String dateTime) {
@@ -178,14 +228,25 @@ class _notificationsState extends State<notifications> {
                                         ],
                                       ),
                                       Spacer(),
-                                      Container(
-                                          height: 40,
-                                          width: 40,
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey.shade200,
-                                              borderRadius: BorderRadius.circular(6)
-                                          ),
-                                          child: Center(child: FaIcon(FontAwesomeIcons.solidEye,size: 22,)))
+                                      GestureDetector(
+                                        onTap: () {
+                                          print("calling");
+                                          handleNotificationTap(
+                                              context,
+                                              notification['is_workorder'],
+                                              notification['notification_id']);
+                                          print(
+                                              "noti id gest ${notification['notification_id']}");
+                                        },
+                                        child: Container(
+                                            height: 40,
+                                            width: 40,
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey.shade200,
+                                                borderRadius: BorderRadius.circular(6)
+                                            ),
+                                            child: Center(child: FaIcon(FontAwesomeIcons.solidEye,size: 22,))),
+                                      )
                                     ],
                                   ),
                                   SizedBox(height: 14.0),

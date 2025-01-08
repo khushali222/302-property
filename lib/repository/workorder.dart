@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -125,7 +127,7 @@ class WorkOrderRepository {
     }
   }
 
-  Future<EditData> fetchWorkordersDetails(String workorderId) async {
+  Future<EditData> fetchWorkordersDetails(BuildContext context,String workorderId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -144,6 +146,34 @@ class WorkOrderRepository {
       // List leasesJson = jsonResponse['data'];
       return EditData.fromJson(jsonResponse['data']);
     } else {
+      Alert(
+        context: context,
+        type: AlertType.warning,
+        title: "Workorder data not found",
+        style: const AlertStyle(
+          backgroundColor: Colors.white,
+          titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,  // Ensures the Column doesn't take too much space
+          children: [
+            SizedBox(height: 10), // Add some space between the title and content
+
+          ],
+        ),
+        buttons: [
+          DialogButton(
+            width: 130, // Set width of the button
+            height: 45, // Set height of the button
+            child: const Text(
+              "Ok",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            onPressed: () => Navigator.pop(context),
+            color: blueColor, // Your button color
+          ),
+        ],
+      ).show();
       throw Exception('Failed to load workorder');
     }
   }

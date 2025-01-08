@@ -50,9 +50,10 @@ class Summery_page extends StatefulWidget {
   Rentals properties;
   TenantData? tenants;
   unit_properties? unit;
+  String? rentalid;
 
   //RentalSummary? tenantsummery;
-  Summery_page({super.key, required this.properties, this.tenants, this.unit});
+  Summery_page({super.key, required this.properties, this.tenants, this.unit ,this.rentalid});
   @override
   _Summery_pageState createState() => _Summery_pageState();
 }

@@ -38,7 +38,7 @@ class SummeryPageLease extends StatefulWidget {
   bool? isredirectpayment;
   String leaseId;
   String? enddate;
-  SummeryPageLease({super.key, required this.leaseId, this.isredirectpayment ,this.enddate});
+  SummeryPageLease({super.key, required this.leaseId, this.isredirectpayment = false ,this.enddate});
   @override
   State<SummeryPageLease> createState() => _SummeryPageLeaseState();
 }
@@ -78,6 +78,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     print(' get moved out ${widget.enddate}');
     if (widget.isredirectpayment != null && widget.isredirectpayment!) {
       _tabController!.animateTo(1);
+      _selectedIndex=1;
     }
     super.initState();
   }
@@ -191,17 +192,26 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   width: 25,
                                 ),
                               Text(
-                                  '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)} ${snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.length > 0 ? " - Renewed" : ""}',
-                                  style: TextStyle(
-                                      color: _getStatusColor(determineStatus(
-                                          snapshot.data!.data?.startDate,
-                                          snapshot.data!.data?.endDate)),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 13
-                                              : 16)),
+                                '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) ?? "No status available"} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
+                                style: TextStyle(
+                                  color: _getStatusColor(determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 16,
+                                ),
+                              ),
+
+                              // Text(
+                              //     '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)} ${snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.length > 0 ? " - Renewed" : ""}',
+                              //     style: TextStyle(
+                              //         color: _getStatusColor(determineStatus(
+                              //             snapshot.data!.data?.startDate,
+                              //             snapshot.data!.data?.endDate)),
+                              //         fontWeight: FontWeight.bold,
+                              //         fontSize:
+                              //             MediaQuery.of(context).size.width <
+                              //                     500
+                              //                 ? 13
+                              //                 : 16)),
                             ],
                           ),
                           const SizedBox(
@@ -383,13 +393,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: FinancialTable(
-            rentalUnit: snapshot.data!.rentalUnit,
-            rentalAddress: snapshot.data!.rentalAddress,
+            rentalUnit: snapshot.data?.rentalUnit,
+            rentalAddress: snapshot.data?.rentalAddress,
             leaseId: widget.leaseId,
             status: determineStatus(
-                    snapshot.data!.startDate, snapshot.data!.endDate)
+                    snapshot.data?.startDate, snapshot.data?.endDate)
                 .toString(),
-            tenantId: ' ${snapshot.data!.tenantId}',
+            tenantId: ' ${snapshot.data?.tenantId}',
           ),
         );
       case 2:

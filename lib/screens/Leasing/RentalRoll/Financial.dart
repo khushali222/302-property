@@ -42,7 +42,7 @@ import 'package:http/http.dart' as http;
 class FinancialTable extends StatefulWidget {
   final String leaseId;
   final String tenantId;
-  final String status;
+  final String? status;
   final String? rentalAddress;
   final String? rentalUnit;
   FinancialTable(

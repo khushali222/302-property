@@ -7,9 +7,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/TenantsModule/screen/financial/financial_table.dart';
 
 
 import '../../../constant/constant.dart';
+import '../../../screens/Maintenance/Workorder/workorder_summery.dart';
 import '../../../widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/appbar.dart';
@@ -102,6 +104,65 @@ class _notificationsState extends State<notifications> {
     DateTime parsedDateTime = DateTime.parse(dateTime);
     return DateFormat('dd-MM-yyyy hh:mm a').format(parsedDateTime);
   }
+
+  Future<void> handleNotificationTap(
+      BuildContext context, bool isWorkOrder, String notificationId) async
+  {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("tenant_id");
+    String? token = prefs.getString('token');
+    String apiUrl =
+        '${Api_url}/api/notification/tenant_notification/$notificationId';
+
+    print("Notification ID: $notificationId");
+
+    try {
+      // Make the PUT request to the API
+      var response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: json.encode({'is_workorder': isWorkOrder}),
+      );
+
+      final jsonData = json.decode(response.body);
+
+      if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+        print("API call successful");
+
+        final responseData = jsonData['data'];
+
+        // Check if it's a work order or payment
+        if (responseData['is_workorder'] == true) {
+          print("Navigating to Edit Work Order...");
+          String workOrderId =
+          responseData['notification_type']['workorder_id'];
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Workorder_summery(workorder_id: workOrderId)));
+        } else {
+          print("Navigating to Property...");
+          // String rentalId = responseData['rental_id'];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FinancialTable(),
+            ),
+          );
+        }
+      } else {
+        print(
+            "Failed to update notification. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,7 +226,7 @@ class _notificationsState extends State<notifications> {
 
                    return SingleChildScrollView(
                      child: Padding(
-                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                        child: Column(
                          crossAxisAlignment: CrossAxisAlignment.start,
                          children: notifications.map((notification) {
@@ -190,7 +251,7 @@ class _notificationsState extends State<notifications> {
                                          Text(
                                            notification['notification_title'],
                                            style: TextStyle(
-                                               fontSize: 18.0,
+                                               fontSize: 16.0,
                                                fontWeight: FontWeight.bold,
                                                color: blueColor
                                            ),
@@ -203,14 +264,25 @@ class _notificationsState extends State<notifications> {
                                        ],
                                      ),
                                      Spacer(),
-                                     Container(
-                                         height: 40,
-                                         width: 40,
-                                         decoration: BoxDecoration(
-                                           color: Colors.grey.shade200,
-                                           borderRadius: BorderRadius.circular(6)
-                                         ),
-                                         child: Center(child: FaIcon(FontAwesomeIcons.solidEye,size: 22,)))
+                                     GestureDetector(
+                                       onTap: () {
+                                         print("calling");
+                                         handleNotificationTap(
+                                             context,
+                                             notification['is_workorder'],
+                                             notification['notification_id']);
+                                         print(
+                                             "noti id gest ${notification['notification_id']}");
+                                       },
+                                       child: Container(
+                                           height: 40,
+                                           width: 40,
+                                           decoration: BoxDecoration(
+                                             color: Colors.grey.shade200,
+                                             borderRadius: BorderRadius.circular(6)
+                                           ),
+                                           child: Center(child: FaIcon(FontAwesomeIcons.solidEye,size: 22,))),
+                                     )
                                    ],
                                  ),
                                  SizedBox(height: 14.0),

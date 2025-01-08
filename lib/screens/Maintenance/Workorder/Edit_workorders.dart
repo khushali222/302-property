@@ -133,7 +133,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     //try {
     // await _loadProperties();
     EditData fetchedDetails =
-        await WorkOrderRepository().fetchWorkordersDetails(workorderId);
+        await WorkOrderRepository().fetchWorkordersDetails(context,workorderId);
     print(workorderId);
 
     print('Address ${fetchedDetails.propertyData?.address}');
@@ -2502,7 +2502,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     //try {
     // await _loadProperties();
     EditData fetchedDetails =
-        await WorkOrderRepository().fetchWorkordersDetails(workorderId);
+        await WorkOrderRepository().fetchWorkordersDetails(context,workorderId);
     print(workorderId);
 
     print('Address ${fetchedDetails.propertyData?.address}');

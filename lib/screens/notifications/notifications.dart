@@ -11,6 +11,7 @@ import '../../widgets/custom_drawer.dart';
 import '../../widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
 
+import '../Leasing/RentalRoll/Financial.dart';
 import '../Maintenance/Workorder/Edit_workorders.dart';
 import '../Leasing/RentalRoll/SummeryPageLease.dart';
 class notifications extends StatefulWidget {
@@ -82,6 +83,126 @@ class _notificationsState extends State<notifications> {
     DateTime parsedDateTime = DateTime.parse(dateTime);
     return DateFormat('dd-MM-yyyy hh:mm a').format(parsedDateTime);
   }
+
+  // Future<void> handleNotificationTap(BuildContext context, bool isWorkOrder,String notificationId) async {
+  //   // API endpoint
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? id = prefs.getString("adminId");
+  //   String? token = prefs.getString('token');
+  //   String apiUrl = '${Api_url}/api/notification/admin_notification/$notificationId';
+  //  print(" notificati id ${notificationId}");
+  //   // Data to send in the API request
+  //   Map<String, dynamic> requestData = {
+  //     'is_workorder': isWorkOrder,
+  //
+  //   };
+  //
+  //   try {
+  //     // Make the PUT request to the API
+  //     var response = await http.put(
+  //       Uri.parse(apiUrl),
+  //       headers: {
+  //         "authorization": "CRM $token",
+  //         "id": "CRM $id",
+  //       },
+  //       body: json.encode(requestData),
+  //     );
+  //     final jsonData = json.decode(response.body);
+  //     if ( jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201)  {
+  //       print("API call successful");
+  //
+  //       // Parse the response body
+  //       var responseData = json.decode(response.body);
+  //
+  //       // Check if the API response contains the expected message
+  //       if (responseData['statusCode'] == 200 || jsonData["statusCode"] == 201) {
+  //         print(responseData['message']); // "Updated is_admin_read to true"
+  //
+  //         // Navigate based on whether it's a work order or payment
+  //         if (isWorkOrder) {
+  //           String workOrderId = responseData['data']['notification_type']['workorder_id'];
+  //          print("work");
+  //          Navigator
+  //              .push(
+  //              context,
+  //              MaterialPageRoute(
+  //                  builder: (context) =>
+  //                      ResponsiveEditWorkOrder(
+  //                        workorderId: workOrderId,
+  //                      )));
+  //
+  //         }
+  //         else {
+  //           print("payment");
+  //         }
+  //       } else {
+  //         print("Failed to update notification. Message: ${responseData['message']}");
+  //       }
+  //     } else {
+  //       print("Failed to update notification. Status code: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     print("Error: $e");
+  //   }
+  // }
+  Future<void> handleNotificationTap(BuildContext context, bool isWorkOrder, String notificationId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    String apiUrl = '${Api_url}/api/notification/admin_notification/$notificationId';
+
+    print("Notification ID: $notificationId");
+
+    try {
+      // Make the PUT request to the API
+      var response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: json.encode({'is_workorder': isWorkOrder}),
+      );
+
+      final jsonData = json.decode(response.body);
+
+      if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+        print("API call successful");
+
+        final responseData = jsonData['data'];
+
+        // Check if it's a work order or payment
+        if (responseData['is_workorder'] == true) {
+          print("Navigating to Edit Work Order...");
+          String workOrderId = responseData['notification_type']['workorder_id'];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResponsiveEditWorkOrder(workorderId: workOrderId),
+            ),
+          );
+        } else {
+          print("Navigating to Payment...");
+          String leaseId = responseData['notification_type']['lease_id'];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SummeryPageLease(
+                leaseId: leaseId,
+                isredirectpayment: true, // Pass this to trigger tab navigation
+              ),
+            ),
+          );
+
+        }
+      } else {
+        print("Failed to update notification. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -176,14 +297,21 @@ class _notificationsState extends State<notifications> {
                                         ],
                                       ),
                                       Spacer(),
-                                      Container(
-                                          height: 40,
-                                          width: 40,
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey.shade200,
-                                              borderRadius: BorderRadius.circular(6)
-                                          ),
-                                          child: Center(child: FaIcon(FontAwesomeIcons.solidEye,size: 22,)))
+                                      GestureDetector(
+                                        onTap: (){
+                                          print("calling");
+                                          handleNotificationTap(context, notification['is_workorder'], notification['notification_id']);
+                                          print("noti id gest ${notification['notification_id']}");
+                                        },
+                                        child: Container(
+                                            height: 40,
+                                            width: 40,
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey.shade200,
+                                                borderRadius: BorderRadius.circular(6)
+                                            ),
+                                            child: Center(child: FaIcon(FontAwesomeIcons.solidEye,size: 22,))),
+                                      )
                                     ],
                                   ),
                                   SizedBox(height: 14.0),
