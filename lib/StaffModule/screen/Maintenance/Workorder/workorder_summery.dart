@@ -80,15 +80,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
     super.initState();
     _loadStaff();
   }
-  ConnectivityResult? _connectivityResult ;
-  void checkInternet()async{
 
+  ConnectivityResult? _connectivityResult;
+  void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
     });
-
   }
 
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
@@ -200,7 +199,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   List<String> _imageUrls = [];
-
+  int visibleCount = 5;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -212,159 +211,161 @@ class _Workorder_summeryState extends State<Workorder_summery>
         currentpage: "Work Order",
         dropdown: true,
       ),
-      body: _connectivityResult !=ConnectivityResult.none ?
-      Column(
-        children: [
-          SizedBox(
-            height: 15,
-          ),
-          Row(
-            children: [
-              Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Material(
-                  elevation: 3,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(5),
-                  ),
-                  child: Container(
-                    height: 40,
-                    width: 80,
-                    decoration:  BoxDecoration(
-                      color: blueColor,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
+      body: _connectivityResult != ConnectivityResult.none
+          ? Column(
+              children: [
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Material(
+                        elevation: 3,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(5),
+                        ),
+                        child: Container(
+                          height: 40,
+                          width: 80,
+                          decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5),
+                            ),
+                          ),
+                          child: const Center(
+                              child: Text(
+                            "Back",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white),
+                          )),
+                        ),
                       ),
                     ),
-                    child: const Center(
-                        child: Text(
-                      "Back",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, color: Colors.white),
-                    )),
-                  ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          titleBar(
-            width: MediaQuery.of(context).size.width * .91,
-            title: 'Work Order Details',
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: FutureBuilder<WorkOrderData_summery>(
-                  future: futureworkorderSummary,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: SpinKitFadingCircle(
-                          color: Colors.black,
-                          size: 55.0,
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data == null) {
-                      return Center(child: Text('No data found.'));
-                    } else {
-                      // _selectedValue = snapshot.data!.applicantStatus!.last!.status;
-                      return Column(
-                        children: <Widget>[
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                            height: 60,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color:blueColor),
-                              // color: Colors.blue,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: TabBar(
-                              controller: _tabController,
-                              dividerColor: Colors.transparent,
-                              indicatorWeight: 5,
-                              //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-                              indicatorColor:
-                                 blueColor,
-                              labelColor:blueColor,
-                              unselectedLabelColor:
-                                 blueColor,
-                              tabs: [
-                                const Tab(text: 'Summary'),
-                                const Tab(
-                                  text: 'Application',
+                SizedBox(
+                  height: 20,
+                ),
+                titleBar(
+                  width: MediaQuery.of(context).size.width * .91,
+                  title: 'Work Order Details',
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: FutureBuilder<WorkOrderData_summery>(
+                        future: futureworkorderSummary,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: SpinKitFadingCircle(
+                                color: Colors.black,
+                                size: 55.0,
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data == null) {
+                            return Center(child: Text('No data found.'));
+                          } else {
+                            // _selectedValue = snapshot.data!.applicantStatus!.last!.status;
+                            return Column(
+                              children: <Widget>[
+                                const SizedBox(
+                                  height: 20,
                                 ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: TabBarView(
-                              controller: _tabController,
-                              children: [
-                                Summery_page(snapshot.data!),
-                                Task(snapshot.data!),
-                                // Summery_page(snapshot.data!),
-                                // Summery_page(snapshot.data!),
-                                /*  SummaryPage(),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  height: 60,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: blueColor),
+                                    // color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: TabBar(
+                                    controller: _tabController,
+                                    dividerColor: Colors.transparent,
+                                    indicatorWeight: 5,
+                                    //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
+                                    indicatorColor: blueColor,
+                                    labelColor: blueColor,
+                                    unselectedLabelColor: blueColor,
+                                    tabs: [
+                                      const Tab(text: 'Summary'),
+                                      const Tab(
+                                        text: 'Application',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: TabBarView(
+                                    controller: _tabController,
+                                    children: [
+                                      Summery_page(snapshot.data!),
+                                      Task(snapshot.data!),
+                                      // Summery_page(snapshot.data!),
+                                      // Summery_page(snapshot.data!),
+                                      /*  SummaryPage(),
                                 FinancialTable(
                                     leaseId: widget.leaseId,
                                     status:
                                     '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}'),
                                 Tenant(context),*/
+                                    ],
+                                  ),
+                                ),
                               ],
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  }),
+                            );
+                          }
+                        }),
+                  ),
+                ),
+              ],
+            )
+          : SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ): SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
-            ),
-            Text(
-              'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
   Summery_page(WorkOrderData_summery summery) {
+
     double grandTotal = 0;
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
     return LayoutBuilder(builder: (context, constraints) {
@@ -383,8 +384,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       width: MediaQuery.of(context).size.width * .48,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        border: Border.all(
-                            color:blueColor),
+                        border: Border.all(color: blueColor),
                         // color: Colors.blue,
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -397,9 +397,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 width: 40,
                                 decoration: BoxDecoration(
                                   color: blueColor,
-                                  border: Border.all(
-                                      color:
-                                         blueColor),
+                                  border: Border.all(color: blueColor),
                                   // color: Colors.blue,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -1133,7 +1131,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               4: FlexColumnWidth(2),
                             },
                             children: [
-                               TableRow(children: [
+                              TableRow(children: [
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text('QTY',
@@ -1281,8 +1279,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                          color:blueColor),
+                      border: Border.all(color: blueColor),
                       // color: Colors.blue,
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -1359,6 +1356,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
           ),
         );
       } else {
+        final workOrderUpdates = summery.workorderUpdates ?? [];
         return SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
@@ -1370,8 +1368,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    border:
-                        Border.all(color:blueColor),
+                    border: Border.all(color: blueColor),
                     // color: Colors.blue,
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -1384,8 +1381,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             width: 40,
                             decoration: BoxDecoration(
                               color: blueColor,
-                              border: Border.all(
-                                  color:blueColor),
+                              border: Border.all(color: blueColor),
                               // color: Colors.blue,
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -1718,8 +1714,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                          color:blueColor),
+                      border: Border.all(color: blueColor),
                       // color: Colors.blue,
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -1928,6 +1923,131 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             );
                           }).toList(),
                         ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Display the updates
+                            ...summery.workorderUpdates!.take(visibleCount).map((entry) {
+                              final update = entry;
+                              return Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor),
+                                    ),
+                                    Divider(color: Colors.black),
+                                    Text(
+                                      'Work Order Is Updated',
+                                      style: TextStyle(color: Colors.grey[500]),
+                                    ),
+                                    if (update.workOrderUpdateimages != null &&
+                                        update.workOrderUpdateimages!.length > 0)
+                                      Column(
+                                        children: [
+                                          SizedBox(height: 10),
+                                          Wrap(
+                                            spacing: 10,
+                                            runSpacing: 10,
+                                            children: update.workOrderUpdateimages!.map((imageUrl) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  // Show the image in a dialog when tapped
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return Dialog(
+                                                        backgroundColor: Colors.transparent,
+                                                        child: Stack(
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.end,
+                                                              children: [
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    Navigator.of(context).pop(); // Close the dialog
+                                                                  },
+                                                                  child: Icon(Icons.close, color: Colors.black, size: 30),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.all(27.0),
+                                                              child: CachedNetworkImage(
+                                                                imageUrl: "$image_url$imageUrl",
+                                                                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                                errorWidget: (context, url, error) {
+                                                                  print(error);
+                                                                  return Center(child: Icon(Icons.error));
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Container(
+                                                  width: (MediaQuery.of(context).size.width / 3) - 10,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                  child: ClipRRect(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: "$image_url$imageUrl",
+                                                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                      errorWidget: (context, url, error) => Container(),
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ],
+                                      ),
+                                    if (update.workOrderUpdateimages == null || update.workOrderUpdateimages!.isEmpty)
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "No Images Provided",
+                                            style: TextStyle(color: blueColor),
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+
+                            // "View More" or "View Less" button
+                            if (summery.workorderUpdates!.length > 5)
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    // Toggle between showing all or limited items
+                                    if (visibleCount == 5) {
+                                      visibleCount = summery.workorderUpdates!.length;
+                                    } else {
+                                      visibleCount = 5;
+                                    }
+                                  });
+                                },
+                                child: Text(
+                                  visibleCount == 5 ? 'View More' : 'View Less',
+                                  style: TextStyle(color: blueColor),
+                                ),
+                              ),
+                          ],
+                        ),
                       ],
                     )),
                 SizedBox(
@@ -1997,9 +2117,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         isChecked = value ?? false;
                                       });
                                     },
-                                    activeColor: isChecked
-                                        ? Colors.black
-                                        : blueColor,
+                                    activeColor:
+                                        isChecked ? Colors.black : blueColor,
                                   ),
                                 ),
                                 SizedBox(
@@ -2423,8 +2542,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       width: MediaQuery.of(context).size.width * .5,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        border: Border.all(
-                            color:blueColor),
+                        border: Border.all(color: blueColor),
                         // color: Colors.blue,
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -2437,9 +2555,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 width: 40,
                                 decoration: BoxDecoration(
                                   color: blueColor,
-                                  border: Border.all(
-                                      color:
-                                         blueColor),
+                                  border: Border.all(color: blueColor),
                                   // color: Colors.blue,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -2919,8 +3035,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    border:
-                        Border.all(color:blueColor),
+                    border: Border.all(color: blueColor),
                     // color: Colors.blue,
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -2933,8 +3048,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             width: 40,
                             decoration: BoxDecoration(
                               color: blueColor,
-                              border: Border.all(
-                                  color:blueColor),
+                              border: Border.all(color: blueColor),
                               // color: Colors.blue,
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -3415,24 +3529,29 @@ class _Workorder_summeryState extends State<Workorder_summery>
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return  StatefulBuilder(
-          builder:
-              (BuildContext context, StateSetter setState) {
-            return  Dialog(
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
               child: Container(
                 // width: double.maxFinite,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 10,right: 10,top: 15,bottom: 10),
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, top: 15, bottom: 10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
                         'Update Work Order',
-                        style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,fontSize: 16),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
                       ),
                       SizedBox(height: 10.0),
-                      Text('Status', style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                      Text('Status',
+                          style: TextStyle(
+                              color: blueColor, fontWeight: FontWeight.bold)),
                       DropdownButtonHideUnderline(
                         child: DropdownButtonFormField2<String>(
                           decoration: InputDecoration(border: InputBorder.none),
@@ -3510,15 +3629,17 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           },
                         ),
                       ),
-                      Text('Due Date', style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                      Text('Due Date',
+                          style: TextStyle(
+                              color: blueColor, fontWeight: FontWeight.bold)),
                       SizedBox(height: 8.0),
                       Material(
                         elevation: 3,
                         borderRadius: BorderRadius.circular(8.0),
                         child: Container(
                           height: 45,
-                          padding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(8.0),
@@ -3536,9 +3657,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   return Theme(
                                     data: ThemeData.light().copyWith(
                                       colorScheme: const ColorScheme.light(
-                                        primary: Color.fromRGBO(
-                                            21, 43, 83, 1), // header background color
-                                        onPrimary: Colors.white, // header text color
+                                        primary: Color.fromRGBO(21, 43, 83,
+                                            1), // header background color
+                                        onPrimary:
+                                            Colors.white, // header text color
                                         onSurface: Color.fromRGBO(
                                             21, 43, 83, 1), // body text color
                                       ),
@@ -3546,7 +3668,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         style: TextButton.styleFrom(
                                           foregroundColor: Colors.white,
                                           backgroundColor: const Color.fromRGBO(
-                                              21, 43, 83, 1), // button text color
+                                              21,
+                                              43,
+                                              83,
+                                              1), // button text color
                                         ),
                                       ),
                                     ),
@@ -3568,7 +3693,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             controller: selectedDate,
                             decoration: InputDecoration(
                               suffixIcon:
-                              Icon(Icons.calendar_today, color: blueColor),
+                                  Icon(Icons.calendar_today, color: blueColor),
                               // hintStyle:
                               // TextStyle(fontSize: 13, color: blueColor),
                               border: InputBorder.none,
@@ -3594,110 +3719,114 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         : '${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}'),
                   ),*/
                       SizedBox(height: 16.0),
-                      Text('Assigned To', style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                      Text('Assigned To',
+                          style: TextStyle(
+                              color: blueColor, fontWeight: FontWeight.bold)),
                       SizedBox(height: 8.0),
                       _isLoadingstaff
                           ? const Center(
-                        child: SpinKitFadingCircle(
-                          color: Colors.black,
-                          size: 50.0,
-                        ),
-                      )
+                              child: SpinKitFadingCircle(
+                                color: Colors.black,
+                                size: 50.0,
+                              ),
+                            )
                           : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DropdownButtonHideUnderline(
-                            child: DropdownButtonFormField2<String>(
-                              decoration:
-                              InputDecoration(border: InputBorder.none),
-                              isExpanded: true,
-                              hint: const Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'Select here',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xFFb0b6c3),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButtonFormField2<String>(
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none),
+                                    isExpanded: true,
+                                    hint: const Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Select here',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: Color(0xFFb0b6c3),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              items: staffs.keys.map((staffmember_id) {
-                                return DropdownMenuItem<String>(
-                                  value: staffmember_id,
-                                  child: Text(
-                                    staffs[staffmember_id]!,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black87,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              }).toList(),
-                              value: _selectedstaffId,
-                              onChanged: (value) {
-                                setState(() {
-                                  // _selectedUnitId = null;
-                                  _selectedstaffId = value;
-                                  _selectedStaffs = staffs[
-                                  value]; // Store selected rental_adress
+                                    items: staffs.keys.map((staffmember_id) {
+                                      return DropdownMenuItem<String>(
+                                        value: staffmember_id,
+                                        child: Text(
+                                          staffs[staffmember_id]!,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.black87,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList(),
+                                    value: _selectedstaffId,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        // _selectedUnitId = null;
+                                        _selectedstaffId = value;
+                                        _selectedStaffs = staffs[
+                                            value]; // Store selected rental_adress
 
-                                  //StaffId = value.toString();
-                                  print('Selected Staffs: $_selectedStaffs');
-                                  // Fetch units for the selected property
-                                });
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: 45,
-                                width: 160,
-                                padding:
-                                const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
+                                        //StaffId = value.toString();
+                                        print(
+                                            'Selected Staffs: $_selectedStaffs');
+                                        // Fetch units for the selected property
+                                      });
+                                    },
+                                    buttonStyleData: ButtonStyleData(
+                                      height: 45,
+                                      width: 160,
+                                      padding: const EdgeInsets.only(
+                                          left: 14, right: 14),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        color: Colors.white,
+                                      ),
+                                      elevation: 2,
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                      ),
+                                      iconSize: 24,
+                                      iconEnabledColor: Color(0xFFb0b6c3),
+                                      iconDisabledColor: Colors.grey,
+                                    ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        color: Colors.white,
+                                      ),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        radius: const Radius.circular(6),
+                                        thickness: MaterialStateProperty.all(6),
+                                        thumbVisibility:
+                                            MaterialStateProperty.all(true),
+                                      ),
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      height: 40,
+                                      padding:
+                                          EdgeInsets.only(left: 14, right: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please select an option';
+                                      }
+                                      return null;
+                                    },
+                                  ),
                                 ),
-                                elevation: 2,
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                ),
-                                iconSize: 24,
-                                iconEnabledColor: Color(0xFFb0b6c3),
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(6),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility:
-                                  MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select an option';
-                                }
-                                return null;
-                              },
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
                       SizedBox(height: 8.0),
                       Text('Photo ',
                           style: TextStyle(
@@ -3714,13 +3843,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             onTap: () {
                               _pickImage().then((_) {
                                 setState(
-                                        () {}); // Rebuild the widget after selecting the image
+                                    () {}); // Rebuild the widget after selecting the image
                               });
                             },
                             child: Text(
                               '+ Add',
-                              style: TextStyle(
-                                  color: Colors.green),
+                              style: TextStyle(color: Colors.green),
                             ),
                           ),
                         ],
@@ -3730,100 +3858,87 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       ),
                       _images.isNotEmpty
                           ? Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              //color: Colors.blue,
-                              child: Wrap(
-                                spacing:
-                                8.0, // Horizontal spacing between items
-                                runSpacing:
-                                8.0, // Vertical spacing between rows
-                                children: List.generate(
-                                  _images.length,
-                                      (index) {
-                                    return Container(
-                                      // color: Colors.green,
-                                      width: 85,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .start,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment
-                                            .start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                width:
-                                                60,
-                                              ),
-                                              GestureDetector(
-                                                onTap:
-                                                    () {
-                                                  setState(
-                                                          () {
-                                                        _images.removeAt(index);
-                                                      });
-                                                },
-                                                child:
-                                                Icon(
-                                                  Icons
-                                                      .close,
-                                                  color:
-                                                  Colors.grey,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    //color: Colors.blue,
+                                    child: Wrap(
+                                      spacing:
+                                          8.0, // Horizontal spacing between items
+                                      runSpacing:
+                                          8.0, // Vertical spacing between rows
+                                      children: List.generate(
+                                        _images.length,
+                                        (index) {
+                                          return Container(
+                                            // color: Colors.green,
+                                            width: 85,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 60,
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          _images
+                                                              .removeAt(index);
+                                                        });
+                                                      },
+                                                      child: Icon(
+                                                        Icons.close,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment
-                                                .start,
-                                            children: [
-                                              Container(
-                                                // color:Colors.blue,
-                                                child: Image
-                                                    .file(
-                                                  _images[
-                                                  index],
-                                                  height:
-                                                  80,
-                                                  width:
-                                                  80,
-                                                  fit: BoxFit
-                                                      .cover,
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      // color:Colors.blue,
+                                                      child: Image.file(
+                                                        _images[index],
+                                                        height: 80,
+                                                        width: 80,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
+                              ],
+                            )
                           : Center(
-                        child:
-                        Text("No images selected."),
-                      ),
+                              child: Text("No images selected."),
+                            ),
                       SizedBox(height: 16.0),
-                      Text('Message', style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                      Text('Message',
+                          style: TextStyle(
+                              color: blueColor, fontWeight: FontWeight.bold)),
                       Material(
                         elevation: 3,
                         borderRadius: BorderRadius.circular(8.0),
                         child: Container(
                           height: 50,
-                          padding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(8.0),
@@ -3861,7 +3976,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
                             decoration: InputDecoration(
                               //  suffixIcon: widget.suffixIcon,
-                              hintStyle: TextStyle(fontSize: 13, color: blueColor),
+                              hintStyle:
+                                  TextStyle(fontSize: 13, color: blueColor),
                               border: InputBorder.none,
                               //   hintText: widget.hintText,
                             ),
@@ -3872,16 +3988,20 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       Row(
                         children: [
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor),
                             onPressed: () async {
                               setState(() {
                                 isLoading = true;
                               });
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
                               String? firstName = prefs.getString("first_name");
                               String? lastName = prefs.getString("last_name");
-                              final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
-                              String notificationTime = formatter.format(DateTime.now());
+                              final DateFormat formatter =
+                                  DateFormat('yyyy-MM-dd HH:mm:ss');
+                              String notificationTime =
+                                  formatter.format(DateTime.now());
                               Map<String, dynamic> values = {
                                 "date": reverseFormatDate(selectedDate.text),
                                 "message": message.text,
@@ -3889,11 +4009,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 "statusUpdatedBy": "Admin",
                                 "staffmember_name": _selectedStaffs,
                                 "staffmember_id": _selectedstaffId,
-                                "workOrderUpdate_images":_uploadedFileNames!,
-                                'notificationTime':notificationTime,
+                                "workOrderUpdate_images": _uploadedFileNames!,
+                                'notificationTime': notificationTime,
                               };
                               await WorkOrderRepository.updateworkorderSummary(
-                                  values, widget.workorder_id!)
+                                      values, widget.workorder_id!)
                                   .then((value) {
                                 setState(() {
                                   futureworkorderSummary =
@@ -3917,13 +4037,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 isLoading = true;
                               });
                             },
-                            child:isLoading
+                            child: isLoading
                                 ? Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 25.0,
-                              ),
-                            ): Text('Save'),
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 25.0,
+                                    ),
+                                  )
+                                : Text('Save'),
                           ),
                           TextButton(
                             onPressed: () {
@@ -3941,12 +4062,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 ),
               ),
             );
-
-
-
           },
         );
-
       },
     );
   }

@@ -9,6 +9,8 @@ import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/summery_page.dart';
 
 import '../../../constant/constant.dart';
+import '../../../model/properties.dart';
+import '../../repository/properties.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/appbar.dart';
 import '../../../widgets/titleBar.dart';
@@ -28,7 +30,13 @@ class _notificationsState extends State<notifications> {
   late Future<List<Map<String, dynamic>>> fetchnoti;
   void initState() {
     super.initState();
-    fetchnoti = fetchNotifications()!;
+    // fetchnoti = fetchNotifications()!;
+    loadNotifications();
+  }
+  void loadNotifications() {
+    setState(() {
+      fetchnoti = fetchNotifications()!;
+    });
   }
 
   Future<List<Map<String, dynamic>>>? fetchNotifications() async {
@@ -87,8 +95,8 @@ class _notificationsState extends State<notifications> {
   }
 
   Future<void> handleNotificationTap(
-      BuildContext context, bool isWorkOrder, String notificationId) async
-  {
+      BuildContext context, bool isWorkOrder, String notificationId)
+  async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
@@ -114,7 +122,7 @@ class _notificationsState extends State<notifications> {
         print("API call successful");
 
         final responseData = jsonData['data'];
-
+        print(responseData);
         // Check if it's a work order or payment
         if (responseData['is_workorder'] == true) {
           print("Navigating to Edit Work Order...");
@@ -126,16 +134,19 @@ class _notificationsState extends State<notifications> {
                   builder: (context) =>
                       Workorder_summery(workorder_id: workOrderId)));
         } else {
-          print("Navigating to Payment...");
+          print("Navigating to Property...");
           String rentalId = responseData['rental_id'];
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => Summery_page(
-          //        properties:  responseData['rental_id'], // Pass this to trigger tab navigation
-          //     ),
-          //   ),
-          // );
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Summery_page(
+                properties: Rentals(rentalId: rentalId),
+                notification_redirect: true,
+                // Pass the Rentals object to the Summery_page
+              ),
+            ),
+          );
         }
       } else {
         print(
@@ -173,7 +184,8 @@ class _notificationsState extends State<notifications> {
                     return Container(
                       height: MediaQuery.of(context).size.height * .7,
                       child: Center(
-                        child: SpinKitFadingCircle(
+                        child:
+                        SpinKitFadingCircle(
                           color: blueColor,
                           size: 50.0,
                         ),
@@ -268,6 +280,7 @@ class _notificationsState extends State<notifications> {
                                               notification['notification_id']);
                                           print(
                                               "noti id gest ${notification['notification_id']}");
+                                          loadNotifications();
                                         },
                                         child: Container(
                                             height: 40,

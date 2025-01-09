@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -51,9 +52,10 @@ class Summery_page extends StatefulWidget {
   TenantData? tenants;
   unit_properties? unit;
   String? rentalid;
+  bool? notification_redirect;
 
   //RentalSummary? tenantsummery;
-  Summery_page({super.key, required this.properties, this.tenants, this.unit ,this.rentalid});
+  Summery_page({super.key, required this.properties, this.tenants, this.unit ,this.rentalid,this.notification_redirect});
   @override
   _Summery_pageState createState() => _Summery_pageState();
 }
@@ -65,8 +67,9 @@ class _Summery_pageState extends State<Summery_page>
 
   late Future<List<unit_properties>> futureUnitsummery;
   late Future<List<Rentals>> futurerentalowners;
-
+  bool isLoaders =false;
   //late Future<List<RentalSummary>> futuresummery;
+
 
   unit_properties? unit;
   DateTime? startdate;
@@ -113,6 +116,39 @@ class _Summery_pageState extends State<Summery_page>
     }
   }
 
+  Future<void> fetchPropertySummeryData(String rentalId) async {
+    setState(() {
+      isLoaders = true;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //String? id = prefs.getString("rentalid");
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    print("Rental ID ${rentalId}");
+    final response = await http
+        .get(Uri.parse('$Api_url/api/rentals/rental_summary/$rentalId'),
+        headers: {"authorization" : "CRM $token","id":"CRM $id",}
+
+    );
+  log("$Api_url/api/rentals/rental_summary/$rentalId ${response.body}");
+    if (response.statusCode == 200) {
+      // Parse the response body
+      final Map<String, dynamic> data = json.decode(response.body);
+      List resData  = data['data'];
+      // Extract the rental data from the response
+      final rentalData = Rentals.fromJson(resData.first);
+
+      setState(() {
+        widget.properties = rentalData;
+        isLoaders = false;
+      });
+    } else {
+      throw Exception('Failed to load count data');
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -122,6 +158,9 @@ class _Summery_pageState extends State<Summery_page>
         _connectivityResult = result;
       });
     });
+    if(widget.notification_redirect != null && widget.notification_redirect == true){
+      fetchPropertySummeryData(widget.properties.rentalId!);
+    }
     checkInternet();
     futureUnitsummery =
         Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
@@ -136,6 +175,7 @@ class _Summery_pageState extends State<Summery_page>
     _fetchData();
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     futurerentalowners = PropertiesRepository().fetchProperties();
+
 //     displayDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(moveOutDate));
 // startdateController.text = displayDate;
     // fetchunits1();
@@ -1621,6 +1661,11 @@ class _Summery_pageState extends State<Summery_page>
       appBar: widget_302.App_Bar(context: context),
       drawer:CustomDrawer(currentpage: "Properties",dropdown: true,),
       body: _connectivityResult !=ConnectivityResult.none ?
+
+          isLoaders? Center(child:  SpinKitFadingCircle(
+            color: blueColor,
+            size: 50.0,
+          ),) :
       SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -2041,7 +2086,7 @@ class _Summery_pageState extends State<Summery_page>
                                   ? 200
                                   : 173,
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 10),
+                                padding: const EdgeInsets.only(left: 12),
                                 child:
                                 Text(
                                   [
@@ -2060,7 +2105,7 @@ class _Summery_pageState extends State<Summery_page>
                                         ? 13
                                         : 18,
                                   ),
-                                  maxLines: 6,
+                                  maxLines: 7,
                                 ),
                               ),
                             ),
@@ -9663,6 +9708,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                               ),
                                               Expanded(
+                                                flex:3,
                                                 child: Text(
                                                   '${workOrder.workSubject}',
                                                   style: TextStyle(
@@ -9678,6 +9724,7 @@ class _Summery_pageState extends State<Summery_page>
                                                       .width *
                                                       .099),
                                               Expanded(
+                                                flex:2,
                                                 child: Text(
                                                   '${workOrder.status}',
                                                   style: TextStyle(
@@ -9693,6 +9740,7 @@ class _Summery_pageState extends State<Summery_page>
                                                       .width *
                                                       .08),
                                               Expanded(
+                                                flex:3,
                                                 child: Row(
                                                   mainAxisAlignment:
                                                   MainAxisAlignment.center,

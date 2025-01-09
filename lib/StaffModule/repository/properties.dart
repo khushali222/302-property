@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -23,6 +24,7 @@ class PropertiesRepository {
     final response = await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$adminid'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     print(response.body);
+  //log(re)
     print('${Api_url}/api/rentals/rentals/$id');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];

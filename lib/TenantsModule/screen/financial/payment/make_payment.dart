@@ -131,7 +131,7 @@ class _MakePaymentState extends State<MakePayment> {
       }
     }
   }
-
+ String? leaseid;
   @override
   void initState() {
     super.initState();
@@ -139,7 +139,12 @@ class _MakePaymentState extends State<MakePayment> {
     fetchTenants();
     // fetchCompany();
     fetchDropdownData();
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   await fetchPaymentSettings(widget.tenantId, widget.leaseId);
+    // });
 
+    print("id tenant ${widget.tenantId}");
+    print("id tenant ${widget.leaseId}");
     //  fetchSurcharge();
     //totalAmount = chargeAmount + surchargeIncluded;
     // amountController.addListener(_updateTotalAmount);
@@ -190,9 +195,12 @@ class _MakePaymentState extends State<MakePayment> {
       }
       setState(() {
         tenants = fetchedTenants;
+        leaseid = tenants[0]['tenant_id'];
+        print('leaseid $leaseid');
         selectedTenantRent =
             double.tryParse(tenants[0]['rent'] ?? '0.0') ?? 0.0;
         isLoading = false;
+
       });
     } else {
       setState(() {
@@ -911,7 +919,7 @@ class _MakePaymentState extends State<MakePayment> {
           } else {
             surCharge = surchargeData['override_fee'];
             if (totalamount > 0.0) {
-              surchargeamount = totalamount * surCharge! / 100;
+              surchargeamount = totalamount * (surCharge ?? 00) / 100;
               totalpayamount = totalamount + surchargeamount;
             }
           }
@@ -951,6 +959,63 @@ class _MakePaymentState extends State<MakePayment> {
       print('Error: $e');
     }*/
   }
+  bool creditCardAccepted = false;
+  bool debitCardAccepted = false;
+  bool isCardOneEnabled = false;
+  bool isCardTwoEnabled = false;
+
+  Future<void> fetchPaymentSettings(String tenantId, String leaseid) async {
+    print("abc calling");
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("tenant_id");
+
+    final url = '${Api_url}/api/tenant/payment_settings/${tenantId}/${leaseid}';
+    print('API URL: $url');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "id": "CRM $id",
+        "authorization": "CRM $token",
+      },
+    );
+
+    print("Response Status Code: ${response.statusCode}");
+
+    if (response.statusCode == 200 ) {
+      try {
+        var jsonResponse = json.decode(response.body);
+        print('Decoded Response: $jsonResponse');
+
+        setState(() {
+          creditCardAccepted = jsonResponse['data']['creditCardAccepted'];
+          debitCardAccepted = jsonResponse['data']['debitCardAccepted'];
+
+          // Enable/Disable the cards based on the response
+          isCardOneEnabled = creditCardAccepted;
+          isCardTwoEnabled = debitCardAccepted;
+
+          // Print values to ensure state is being updated correctly
+          print("creditCardAccepted: $creditCardAccepted");
+          print("debitCardAccepted: $debitCardAccepted");
+          print("isCardOneEnabled: $isCardOneEnabled");
+          print("isCardTwoEnabled: $isCardTwoEnabled");
+        });
+
+        // Fetch the credit card details
+        await fetchcreditcard(tenantId);
+      } catch (e) {
+        print("Error parsing response body: $e");
+      }
+    } else {
+      print('Failed to fetch payment settings');
+      print('Response Status Code: ${response.statusCode}');
+    }
+  }
+
+
 
   String? _errorText;
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
@@ -1080,7 +1145,8 @@ class _MakePaymentState extends State<MakePayment> {
                                             state.didChange(
                                                 value); // Notify FormField of change
                                           });
-                                          fetchcreditcard(widget.tenantId);
+                                          //fetchcreditcard(widget.tenantId);
+                                           fetchPaymentSettings(widget.tenantId,leaseid ?? "");
                                           state.reset();
                                           //   print('Selected tenant_id: $selectedTenantId');
                                         },
@@ -1222,6 +1288,10 @@ class _MakePaymentState extends State<MakePayment> {
                                                         .asMap()
                                                         .entries
                                                         .map((entry) {
+                                                      bool isCreditCardEnabled = creditCardAccepted;
+
+                                                      // Check if the debit card is accepted
+                                                      bool isDebitCardEnabled = debitCardAccepted;
                                                       int index = entry.key;
                                                       BillingData item =
                                                           entry.value;

@@ -1144,7 +1144,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex: 4,
+                                                  flex: 3,
                                                   child: InkWell(
                                                     onTap: () {
                                                       setState(() {
@@ -1177,7 +1177,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .04),
+                                                            .03),
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
@@ -1197,7 +1197,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                 .width *
                                                             .04),
                                                 Expanded(
-                                                  flex: 2,
+                                                  flex: 1,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
                                                     '${workorder.status}',
