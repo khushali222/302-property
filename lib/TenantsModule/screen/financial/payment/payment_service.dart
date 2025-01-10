@@ -22,6 +22,7 @@ class PaymentService {
     required String leaseid,
     required String company_name,
     required bool future_Date,
+    required List<Map<String, dynamic>> entries,
     String? notificationTime,
     required String paymentAmountType,
 
@@ -49,6 +50,8 @@ class PaymentService {
         'address1': address1,
         'processor_id': processorId,
         'notificationTime':notificationTime,
+        'lease_id': leaseid,
+        'entry':entries,
       };
       print(paymentDetails);
 
@@ -115,6 +118,7 @@ class PaymentService {
           transactionId: "",
           responseText: "PENDING",
           surcharge: surcharge,
+
             notificationTime: notificationTime
         );
         return "Payment Scheduled Successfully";
@@ -230,6 +234,7 @@ class PaymentService {
         'amount': amount,
         'tenantId': tenantId,
         'date': date,
+        'lease_id': leaseid,
         'address1': address1,
         'processor_id': processorId,
       };
@@ -384,6 +389,7 @@ class PaymentService {
         'first_name': firstName,
         'last_name': lastName,
         'email_name': emailName,
+        'lease_id': leaseid,
         /*'checkname': checkname,
         'account_type': account_type,
         'checkaccount': checkaccount,

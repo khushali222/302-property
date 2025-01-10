@@ -966,7 +966,9 @@ class _MakePaymentState extends State<MakePayment> {
 
   Future<void> fetchPaymentSettings(String tenantId, String leaseid) async {
     print("abc calling");
-
+    setState(() {
+      isloading = true;
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("tenant_id");
@@ -993,9 +995,7 @@ class _MakePaymentState extends State<MakePayment> {
           creditCardAccepted = jsonResponse['data']['creditCardAccepted'];
           debitCardAccepted = jsonResponse['data']['debitCardAccepted'];
 
-          // Enable/Disable the cards based on the response
-          isCardOneEnabled = creditCardAccepted;
-          isCardTwoEnabled = debitCardAccepted;
+
 
           // Print values to ensure state is being updated correctly
           print("creditCardAccepted: $creditCardAccepted");
@@ -1145,8 +1145,10 @@ class _MakePaymentState extends State<MakePayment> {
                                             state.didChange(
                                                 value); // Notify FormField of change
                                           });
-                                          //fetchcreditcard(widget.tenantId);
-                                           fetchPaymentSettings(widget.tenantId,leaseid ?? "");
+                                         // fetchcreditcard(widget.tenantId);
+
+                                            fetchPaymentSettings(widget.tenantId,leaseid ?? "");
+                                           print('leaseid by ${leaseid ?? ""}');
                                           state.reset();
                                           //   print('Selected tenant_id: $selectedTenantId');
                                         },
@@ -1288,10 +1290,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                         .asMap()
                                                         .entries
                                                         .map((entry) {
-                                                      bool isCreditCardEnabled = creditCardAccepted;
 
-                                                      // Check if the debit card is accepted
-                                                      bool isDebitCardEnabled = debitCardAccepted;
                                                       int index = entry.key;
                                                       BillingData item =
                                                           entry.value;
@@ -1332,7 +1331,9 @@ class _MakePaymentState extends State<MakePayment> {
                                                                       expMonth) <
                                                                   int.parse(
                                                                       currentMonth));
-
+                                                      bool isCardAccepted = (item.binResult == "CREDIT" && creditCardAccepted) ||
+                                                          (item.binResult == "DEBIT" && debitCardAccepted);
+                                                        print('abc check ${isCardAccepted}');
                                                       return TableRow(
                                                         decoration: BoxDecoration(
                                                             color:
@@ -1352,49 +1353,76 @@ class _MakePaymentState extends State<MakePayment> {
                                                                     .all(8.0),
                                                             child: Column(
                                                               children: [
-                                                                isExpired ==
-                                                                        true
+                                                                // isExpired ==
+                                                                //         true
+                                                                //     ? Text(
+                                                                //         'Expired',
+                                                                //         style: TextStyle(
+                                                                //             color:
+                                                                //                 Colors.red),
+                                                                //       )
+                                                                //     : Checkbox(
+                                                                //         activeColor:
+                                                                //             blueColor,
+                                                                //         // Color of your check mark
+                                                                //         checkColor:
+                                                                //             Colors.white,
+                                                                //         shape:
+                                                                //             RoundedRectangleBorder(
+                                                                //           borderRadius:
+                                                                //               BorderRadius.circular(2),
+                                                                //         ),
+                                                                //         side:
+                                                                //             BorderSide(
+                                                                //           // ======> CHANGE THE BORDER COLOR HERE <======
+                                                                //           color:
+                                                                //               blueColor,
+                                                                //           // Give your checkbox border a custom width
+                                                                //           width:
+                                                                //               1.5,
+                                                                //         ),
+                                                                //         value: selectedcardindex ==
+                                                                //                 index
+                                                                //             ? true
+                                                                //             : false,
+                                                                //         onChanged:
+                                                                //             (bool?
+                                                                //                 value) async {
+                                                                //           setState(
+                                                                //               () {
+                                                                //             selectedcardindex =
+                                                                //                 index;
+                                                                //           });
+                                                                //           await fetchSurcharge();
+                                                                //         },
+                                                                //       ),
+                                                                isExpired
                                                                     ? Text(
-                                                                        'Expired',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.red),
-                                                                      )
+                                                                  'Expired',
+                                                                  style: TextStyle(color: Colors.red),
+                                                                )
                                                                     : Checkbox(
-                                                                        activeColor:
-                                                                            blueColor,
-                                                                        // Color of your check mark
-                                                                        checkColor:
-                                                                            Colors.white,
-                                                                        shape:
-                                                                            RoundedRectangleBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(2),
-                                                                        ),
-                                                                        side:
-                                                                            BorderSide(
-                                                                          // ======> CHANGE THE BORDER COLOR HERE <======
-                                                                          color:
-                                                                              blueColor,
-                                                                          // Give your checkbox border a custom width
-                                                                          width:
-                                                                              1.5,
-                                                                        ),
-                                                                        value: selectedcardindex ==
-                                                                                index
-                                                                            ? true
-                                                                            : false,
-                                                                        onChanged:
-                                                                            (bool?
-                                                                                value) async {
-                                                                          setState(
-                                                                              () {
-                                                                            selectedcardindex =
-                                                                                index;
-                                                                          });
-                                                                          await fetchSurcharge();
-                                                                        },
-                                                                      ),
+                                                                  activeColor: blueColor,
+                                                                  checkColor: Colors.white,
+
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(2),
+                                                                  ),
+
+                                                                  side: BorderSide(
+                                                                    color: isCardAccepted ? blueColor : Colors.grey,
+                                                                    width: 1.5,
+                                                                  ),
+                                                                  value: selectedcardindex == index,
+                                                                  onChanged: isCardAccepted
+                                                                      ? (bool? value) async {
+                                                                    setState(() {
+                                                                      selectedcardindex = index;
+                                                                    });
+                                                                    await fetchSurcharge();
+                                                                  }
+                                                                      : null, // Disable the checkbox if card is not accepted
+                                                                ),
                                                               ],
                                                             ),
                                                           ),
@@ -1454,6 +1482,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                                   item.ccType!),
                                                             ],
                                                           ),
+
                                                         ],
                                                       );
                                                     }).expand((row) {
@@ -1468,6 +1497,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                             SizedBox(height: 8),
                                                             SizedBox(height: 8),
                                                             SizedBox(height: 8),
+
                                                           ],
                                                         ),
                                                       ];
@@ -1478,6 +1508,24 @@ class _MakePaymentState extends State<MakePayment> {
                           /* const SizedBox(
                             height: 10,
                           ),*/
+                          // if(!creditCardAccepted )
+                          //   Text(
+                          //     'Credit cards are not accepted.',
+                          //     style: TextStyle(
+                          //       color: Colors.red,
+                          //       fontSize: 14,
+                          //     ),
+                          //   ),
+                          //   if(!debitCardAccepted)
+                          //     Text(
+                          //       'Debit cards are not accepted.',
+                          //       style: TextStyle(
+                          //         color: Colors.red,
+                          //         fontSize: 14,
+                          //       ),
+                          //     ),
+
+
                           Padding(
                             padding: const EdgeInsets.only(
                                 top: 5, left: 16, right: 16, bottom: 10),
@@ -2052,8 +2100,21 @@ class _MakePaymentState extends State<MakePayment> {
                                       DateFormat('yyyy-MM-dd HH:mm:ss');
                                   String notificationTime =
                                       formatter.format(DateTime.now());
+                                  List<Map<String, dynamic>> manualEntries = [
+                                    {
+                                      "account": selected_account == "rent" ? "Rent Income" : "Payment",
+                                      "amount": totalamount,
+                                      "memo": selected_account == "rent" ? "Rent Income" : "Payment",
+                                      "date": notificationTime,
+                                      "charge_type": selected_account == "rent" ? "Rent" : "Payment",
+                                    }
+                                  ];
+                                  print('abc entries ${manualEntries}');
+                                  print('abc id ${selectedTenantId!}');
+
                                   await PaymentService()
                                       .makePaymentforcard(
+                                    entries:manualEntries,
                                     paymentAmountType: selected_account ?? '',
                                     adminId: id ?? "",
                                     firstName: first_name!,

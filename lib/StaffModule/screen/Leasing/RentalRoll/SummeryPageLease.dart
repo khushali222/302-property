@@ -292,7 +292,58 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       return 'Active';
     }
   }
+  String determineStatusrenew(String? startDate, String? endDate, bool isRenewed) {
+    if (startDate == null || endDate == null) return 'Unknown';
 
+    DateTime start = formatDates(startDate);
+    DateTime end = formatDates(endDate);
+    DateTime today = DateTime.now();
+
+    if (isRenewed) {
+      // Renewed lease logic
+      if (today.isBefore(start)) {
+        return 'Future';  // Lease starts in the future
+      } else if (today.isAfter(end)) {
+        return 'Expired';  // Lease is expired
+      } else {
+        return 'Active';  // Lease is currently active
+      }
+    } else {
+      // Non-renewed lease logic
+      if (today.isBefore(start)) {
+        return 'Future';  // Lease starts in the future
+      } else if (today.isAfter(end)) {
+        return 'Not Renewed';  // Lease expired and not renewed
+      } else {
+        return 'Not Renewed';  // Lease is ongoing but not renewed
+      }
+    }
+  }
+  DateTime formatDates(String dateTime) {
+    List<String> dateFormats = [
+      'yyyy-MM-dd',
+      'yyyy-M-d',
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+      'M/d/yyyy',
+      'MM/dd/yyyy',
+      'M/d/yyyy, h:mm:ss a',
+      'M/d/yyyy, h:mm a'
+    ];
+
+    DateTime? parsedDate;
+
+    for (String format in dateFormats) {
+      try {
+        parsedDate = DateFormat(format).parse(dateTime);
+        break;
+      } catch (e) {
+        continue;
+      }
+    }
+
+    return parsedDate!;
+  }
   Color _getStatusColor(String status) {
     if (status == 'Active') {
       return Colors.green; // Green color for 'Active'
@@ -989,7 +1040,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 ),
                                               ),
                                               Expanded(
-                                                flex: 4,
+                                                flex: 5,
                                                 child: InkWell(
                                                   onTap: () {
                                                     // Handle navigation or other actions if needed
@@ -1014,10 +1065,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    .00,
+                                                    .06,
                                               ),
                                               Expanded(
-                                                flex: 2,
+                                                flex: 4,
                                                 child: Text(
                                                   '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}',
                                                   style: TextStyle(
@@ -1031,10 +1082,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    .08,
+                                                    .04,
                                               ),
                                               Expanded(
-                                                flex: 3,
+                                                flex: 4,
                                                 child: Text(
                                                   '${snapshot.data!.data!.leaseType}',
                                                   style: TextStyle(
@@ -1445,7 +1496,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         ),
                                                       ),
                                                       Expanded(
-                                                        flex: 4,
+                                                        flex: 5,
                                                         child: InkWell(
                                                           onTap: () {
                                                             setState(() {
@@ -1479,12 +1530,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         width: MediaQuery.of(context)
                                                             .size
                                                             .width *
-                                                            .00,
+                                                            .06,
                                                       ),
                                                       Expanded(
-                                                        flex: 2,
+                                                        flex: 4,
                                                         child: Text(
-                                                          '${determineStatus(lease.startDate ?? "", lease.endDate)}',
+                                                          '${determineStatusrenew(lease.startDate ?? "", lease.endDate ?? "", lease.isrenewed ?? false)}',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight: FontWeight.bold,
@@ -1499,7 +1550,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             .08,
                                                       ),
                                                       Expanded(
-                                                        flex: 3,
+                                                        flex: 4,
                                                         child: Text(
                                                           '${lease.leaseType}',
                                                           style: TextStyle(

@@ -250,6 +250,7 @@ class RenewLeases {
   int? amount;
   int? leaseAmount;
   bool? isDelete;
+  bool? isrenewed;
   String? createdAt;
   String? updatedAt;
   int? iV;
@@ -266,6 +267,7 @@ class RenewLeases {
         this.amount,
         this.leaseAmount,
         this.isDelete,
+        this.isrenewed,
         this.createdAt,
         this.updatedAt,
         this.iV});
@@ -282,6 +284,7 @@ class RenewLeases {
     amount = json['amount'] ??"";
     leaseAmount = json['lease_amount'] ?? "";
     isDelete = json['is_delete']??"";
+    isrenewed = json['is_renewed']??"";
     createdAt = json['createdAt']??"";
     updatedAt = json['updatedAt']??"";
     iV = json['__v']??"";
@@ -300,6 +303,7 @@ class RenewLeases {
     data['amount'] = this.amount;
     data['lease_amount'] = this.leaseAmount;
     data['is_delete'] = this.isDelete;
+    data['is_renewed'] = this.isrenewed;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['__v'] = this.iV;

@@ -54,6 +54,8 @@ class PaymentService {
         'processor_id': processorId,
         'tenantName':tenantname,
         'notificationTime':notificationTime,
+        'lease_id':leaseid,
+        'entry':entries,
       };
       log(paymentDetails.toString());
       final response = await http.post(
@@ -244,6 +246,8 @@ print('card for real ${response.body}');
         'processor_id': processorId,
         'tenantName':tenantname,
         'notificationTime':notificationTime,
+        'lease_id':leaseid,
+        'entry': entries,
       };
       print(paymentDetails);
       final response = await http.post(
@@ -427,6 +431,8 @@ print('card for real ${response.body}');
         'date': date,
         'address1': address1,
         'processor_id': processorId,
+        'lease_id':leaseid,
+        'entry': entries,
         // 'notificationTime':notificationTime,
       };
       print(paymentDetails);
