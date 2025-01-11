@@ -97,6 +97,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
   }
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+  int visibleCount = 5;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1373,26 +1374,32 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               SizedBox(
                                 width: 20,
                               ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                      child: Text(
-                                        '${summery.workSubject}',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold, color: blueColor),
-                                      )),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                      child: Text(
-                                        '${summery.propertyData?.rentaladress}',
-                                        style: TextStyle(color: blueColor),
-                                      )),
-                                ],
-                              )
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        child: Text(
+                                          '${summery.workSubject}',
+                                          maxLines: 5,
+                                          textAlign: TextAlign.justify,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold, color: blueColor),
+                                        )),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                        child: Text(
+                                          maxLines: 4,
+                                          '${summery.propertyData?.rentaladress}',
+                                          style: TextStyle(color: blueColor),
+                                        )),
+                                  ],
+                                ),
+                              ),
+
                             ],
                           ),
                           SizedBox(
@@ -1732,27 +1739,74 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               height: 10,
                             ),
                             Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: summery.workorderUpdates!.map((entry) {
-                                final update = entry;
-                                return Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                      Divider(color: Colors.black),
-                                      Text('Work Order Is Updated'),
-                                    ],
+                              children: [
+                                // Display the updates
+                                ...summery.workorderUpdates!.take(visibleCount).map((entry) {
+                                  final update = entry;
+                                  return   Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        Divider(color: Colors.black),
+                                        Text('Work Order Is Updated'),
+                                      ],
+                                    ),
+                                  );
+
+                                }).toList(),
+
+                                // "View More" or "View Less" button
+                                if (summery.workorderUpdates!.length > 5)
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        // Toggle between showing all or limited items
+                                        if (visibleCount == 5) {
+                                          visibleCount = summery.workorderUpdates!.length;
+                                        } else {
+                                          visibleCount = 5;
+                                        }
+                                      });
+                                    },
+                                    child: Text(
+                                      visibleCount == 5 ? 'View More' : 'View Less',
+                                      style: TextStyle(color: blueColor),
+                                    ),
                                   ),
-                                );
-                              }).toList(),
+
+                              ],
                             ),
+                            // Column(
+                            //   mainAxisAlignment: MainAxisAlignment.start,
+                            //   crossAxisAlignment: CrossAxisAlignment.start,
+                            //   children: summery.workorderUpdates!.map((entry) {
+                            //     final update = entry;
+                            //     return
+                            //       Padding(
+                            //       padding: const EdgeInsets.all(5.0),
+                            //       child: Column(
+                            //         crossAxisAlignment: CrossAxisAlignment.start,
+                            //         mainAxisAlignment: MainAxisAlignment.start,
+                            //         children: [
+                            //           Text(
+                            //             '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                            //             style: TextStyle(fontWeight: FontWeight.bold),
+                            //           ),
+                            //           Divider(color: Colors.black),
+                            //           Text('Work Order Is Updated'),
+                            //         ],
+                            //       ),
+                            //     );
+                            //   }).toList(),
+                            // ),
+
                           ],
                         )),
                     SizedBox(

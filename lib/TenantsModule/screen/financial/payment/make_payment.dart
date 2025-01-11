@@ -1270,241 +1270,279 @@ class _MakePaymentState extends State<MakePayment> {
                                                         TextStyle(fontSize: 15),
                                                   )),
                                                 )
-                                              : Table(
-                                                  columnWidths: {
-                                                    0: FlexColumnWidth(
-                                                        .5), // Date
-                                                    1: FlexColumnWidth(
-                                                        1.3), // Address
-                                                    2: FlexColumnWidth(
-                                                        1), // Work
-                                                    3: FlexColumnWidth(
-                                                        .5), // Performed
-                                                    // Performed
-                                                  },
-                                                  defaultVerticalAlignment:
-                                                      TableCellVerticalAlignment
-                                                          .middle,
-                                                  children: [
-                                                    ...cardDetails
-                                                        .asMap()
-                                                        .entries
-                                                        .map((entry) {
+                                              : Column(
+                                                children: [
+                                                  Table(
+                                                      columnWidths: {
+                                                        0: FlexColumnWidth(
+                                                            .5), // Date
+                                                        1: FlexColumnWidth(
+                                                            1.3), // Address
+                                                        2: FlexColumnWidth(
+                                                            1), // Work
+                                                        3: FlexColumnWidth(
+                                                            .5), // Performed
+                                                        // Performed
+                                                      },
+                                                      defaultVerticalAlignment:
+                                                          TableCellVerticalAlignment
+                                                              .middle,
+                                                      children: [
+                                                        ...cardDetails
+                                                            .asMap()
+                                                            .entries
+                                                            .map((entry) {
 
-                                                      int index = entry.key;
-                                                      BillingData item =
-                                                          entry.value;
-                                                      String month = item.ccExp!
-                                                          .substring(0, 2);
-                                                      String year = item.ccExp!
-                                                          .substring(2, 4);
-                                                      String currentMonth =
-                                                          DateTime.now()
-                                                              .month
-                                                              .toString()
-                                                              .padLeft(2, '0');
-                                                      String currentYear =
-                                                          DateTime.now()
-                                                              .year
-                                                              .toString()
-                                                              .substring(2);
-                                                      String currentMonthYear =
-                                                          currentMonth +
-                                                              currentYear;
-                                                      String expMonthYear =
-                                                          item.ccExp!;
-                                                      String expMonth =
-                                                          expMonthYear
+                                                          int index = entry.key;
+                                                          BillingData item =
+                                                              entry.value;
+                                                          String month = item.ccExp!
                                                               .substring(0, 2);
-                                                      String expYear =
-                                                          expMonthYear
+                                                          String year = item.ccExp!
                                                               .substring(2, 4);
-                                                      bool isExpired = int
-                                                                  .parse(
-                                                                      expYear) <
-                                                              int.parse(
-                                                                  currentYear) ||
-                                                          (int.parse(expYear) ==
+                                                          String currentMonth =
+                                                              DateTime.now()
+                                                                  .month
+                                                                  .toString()
+                                                                  .padLeft(2, '0');
+                                                          String currentYear =
+                                                              DateTime.now()
+                                                                  .year
+                                                                  .toString()
+                                                                  .substring(2);
+                                                          String currentMonthYear =
+                                                              currentMonth +
+                                                                  currentYear;
+                                                          String expMonthYear =
+                                                              item.ccExp!;
+                                                          String expMonth =
+                                                              expMonthYear
+                                                                  .substring(0, 2);
+                                                          String expYear =
+                                                              expMonthYear
+                                                                  .substring(2, 4);
+                                                          bool isExpired = int
+                                                                      .parse(
+                                                                          expYear) <
                                                                   int.parse(
-                                                                      currentYear) &&
-                                                              int.parse(
-                                                                      expMonth) <
+                                                                      currentYear) ||
+                                                              (int.parse(expYear) ==
+                                                                      int.parse(
+                                                                          currentYear) &&
                                                                   int.parse(
-                                                                      currentMonth));
-                                                      bool isCardAccepted = (item.binResult == "CREDIT" && creditCardAccepted) ||
-                                                          (item.binResult == "DEBIT" && debitCardAccepted);
-                                                        print('abc check ${isCardAccepted}');
-                                                      return TableRow(
-                                                        decoration: BoxDecoration(
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    240,
-                                                                    243,
-                                                                    248,
-                                                                    1),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5)),
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Column(
-                                                              children: [
-                                                                // isExpired ==
-                                                                //         true
-                                                                //     ? Text(
-                                                                //         'Expired',
-                                                                //         style: TextStyle(
-                                                                //             color:
-                                                                //                 Colors.red),
-                                                                //       )
-                                                                //     : Checkbox(
-                                                                //         activeColor:
-                                                                //             blueColor,
-                                                                //         // Color of your check mark
-                                                                //         checkColor:
-                                                                //             Colors.white,
-                                                                //         shape:
-                                                                //             RoundedRectangleBorder(
-                                                                //           borderRadius:
-                                                                //               BorderRadius.circular(2),
-                                                                //         ),
-                                                                //         side:
-                                                                //             BorderSide(
-                                                                //           // ======> CHANGE THE BORDER COLOR HERE <======
-                                                                //           color:
-                                                                //               blueColor,
-                                                                //           // Give your checkbox border a custom width
-                                                                //           width:
-                                                                //               1.5,
-                                                                //         ),
-                                                                //         value: selectedcardindex ==
-                                                                //                 index
-                                                                //             ? true
-                                                                //             : false,
-                                                                //         onChanged:
-                                                                //             (bool?
-                                                                //                 value) async {
-                                                                //           setState(
-                                                                //               () {
-                                                                //             selectedcardindex =
-                                                                //                 index;
-                                                                //           });
-                                                                //           await fetchSurcharge();
-                                                                //         },
-                                                                //       ),
-                                                                isExpired
-                                                                    ? Text(
-                                                                  'Expired',
-                                                                  style: TextStyle(color: Colors.red),
-                                                                )
-                                                                    : Checkbox(
-                                                                  activeColor: blueColor,
-                                                                  checkColor: Colors.white,
+                                                                          expMonth) <
+                                                                      int.parse(
+                                                                          currentMonth));
+                                                          bool isCardAccepted = (item.binResult == "CREDIT" && creditCardAccepted) ||
+                                                              (item.binResult == "DEBIT" && debitCardAccepted);
+                                                            print('abc check ${isCardAccepted}');
+                                                          return TableRow(
+                                                            decoration: BoxDecoration(
+                                                                color:
+                                                                    Color.fromRGBO(
+                                                                        240,
+                                                                        243,
+                                                                        248,
+                                                                        1),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5)),
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(8.0),
+                                                                child: Column(
+                                                                  children: [
+                                                                    // isExpired ==
+                                                                    //         true
+                                                                    //     ? Text(
+                                                                    //         'Expired',
+                                                                    //         style: TextStyle(
+                                                                    //             color:
+                                                                    //                 Colors.red),
+                                                                    //       )
+                                                                    //     : Checkbox(
+                                                                    //         activeColor:
+                                                                    //             blueColor,
+                                                                    //         // Color of your check mark
+                                                                    //         checkColor:
+                                                                    //             Colors.white,
+                                                                    //         shape:
+                                                                    //             RoundedRectangleBorder(
+                                                                    //           borderRadius:
+                                                                    //               BorderRadius.circular(2),
+                                                                    //         ),
+                                                                    //         side:
+                                                                    //             BorderSide(
+                                                                    //           // ======> CHANGE THE BORDER COLOR HERE <======
+                                                                    //           color:
+                                                                    //               blueColor,
+                                                                    //           // Give your checkbox border a custom width
+                                                                    //           width:
+                                                                    //               1.5,
+                                                                    //         ),
+                                                                    //         value: selectedcardindex ==
+                                                                    //                 index
+                                                                    //             ? true
+                                                                    //             : false,
+                                                                    //         onChanged:
+                                                                    //             (bool?
+                                                                    //                 value) async {
+                                                                    //           setState(
+                                                                    //               () {
+                                                                    //             selectedcardindex =
+                                                                    //                 index;
+                                                                    //           });
+                                                                    //           await fetchSurcharge();
+                                                                    //         },
+                                                                    //       ),
+                                                                    isExpired
+                                                                        ? Text(
+                                                                      'Expired',
+                                                                      style: TextStyle(color: Colors.red),
+                                                                    )
+                                                                        : Checkbox(
+                                                                      activeColor: blueColor,
+                                                                      checkColor: Colors.white,
 
-                                                                  shape: RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(2),
-                                                                  ),
+                                                                      shape: RoundedRectangleBorder(
+                                                                        borderRadius: BorderRadius.circular(2),
+                                                                      ),
 
-                                                                  side: BorderSide(
-                                                                    color: isCardAccepted ? blueColor : Colors.grey,
-                                                                    width: 1.5,
-                                                                  ),
-                                                                  value: selectedcardindex == index,
-                                                                  onChanged: isCardAccepted
-                                                                      ? (bool? value) async {
-                                                                    setState(() {
-                                                                      selectedcardindex = index;
-                                                                    });
-                                                                    await fetchSurcharge();
-                                                                  }
-                                                                      : null, // Disable the checkbox if card is not accepted
+                                                                      side: BorderSide(
+                                                                        color: isCardAccepted ? blueColor : Colors.grey,
+                                                                        width: 1.5,
+                                                                      ),
+                                                                      value: selectedcardindex == index,
+                                                                      onChanged: isCardAccepted
+                                                                          ? (bool? value) async {
+                                                                        setState(() {
+                                                                          selectedcardindex = index;
+                                                                        });
+                                                                        await fetchSurcharge();
+                                                                      }
+                                                                          : null, // Disable the checkbox if card is not accepted
+                                                                    ),
+
+
+                                                                  ],
                                                                 ),
+                                                              ),
+                                                              Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    "Card Number",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold),
+                                                                  ),
+                                                                  Text(
+                                                                    item.ccNumber!,
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    "Card Type",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold),
+                                                                  ),
+                                                                  Text(
+                                                                    '${item.binResult}',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Column(
+                                                                children: [
+                                                                  _buildLogosBlocktablet(
+                                                                      item.ccType!),
+                                                                ],
+                                                              ),
+
+                                                            ],
+                                                          );
+                                                        }).expand((row) {
+                                                          // Add space between rows
+                                                          return [
+                                                            row,
+                                                            TableRow(
+                                                              children: [
+                                                                SizedBox(
+                                                                    height:
+                                                                        8), // Add spacing between rows
+                                                                SizedBox(height: 8),
+                                                                SizedBox(height: 8),
+                                                                SizedBox(height: 8),
+
                                                               ],
                                                             ),
-                                                          ),
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                "Card Number",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                              Text(
-                                                                item.ccNumber!,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        14),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                "Card Type",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                              Text(
-                                                                '${item.binResult}',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        14),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Column(
-                                                            children: [
-                                                              _buildLogosBlocktablet(
-                                                                  item.ccType!),
-                                                            ],
-                                                          ),
-
-                                                        ],
-                                                      );
-                                                    }).expand((row) {
-                                                      // Add space between rows
-                                                      return [
-                                                        row,
-                                                        TableRow(
-                                                          children: [
-                                                            SizedBox(
-                                                                height:
-                                                                    8), // Add spacing between rows
-                                                            SizedBox(height: 8),
-                                                            SizedBox(height: 8),
-                                                            SizedBox(height: 8),
-
-                                                          ],
+                                                          ];
+                                                        }).toList(),
+                                                      ],
+                                                    ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  if (!debitCardAccepted &&
+                                                      cardDetails.any((item) => item.binResult == "DEBIT"))
+                                                    Row(
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 5,
                                                         ),
-                                                      ];
-                                                    }).toList(),
-                                                  ],
-                                                ),
+                                                        Text(
+                                                          'DEBIT card types not accepted by rentl owner',
+                                                          style: TextStyle(color: Colors.red, fontSize: 14),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  if (!creditCardAccepted &&
+                                                      cardDetails.any((item) => item.binResult == "CREDIT"))
+                                                    Row(
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        Text(
+                                                          'CREDIT card types not accepted by rentl owner',
+                                                          style: TextStyle(color: Colors.red, fontSize: 14),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                ],
+                                              ),
+
+
                                 ),
+
                           /* const SizedBox(
                             height: 10,
                           ),*/
@@ -1531,6 +1569,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 top: 5, left: 16, right: 16, bottom: 10),
                             child: Row(
                               children: [
+
+
                                 if (state.hasError)
                                   Padding(
                                     padding: const EdgeInsets.only(top: 5),
@@ -1544,11 +1584,21 @@ class _MakePaymentState extends State<MakePayment> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AddCard()));
+                            onTap: ()async {
+                              final newCard = await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => AddCard()),
+                              );
+
+                              if (newCard != null) {
+                                setState(() {
+                                  fetchPaymentSettings(widget.tenantId,leaseid ?? ""); // Only add BillingData objects
+                                });
+                              }
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => AddCard()));
                             },
                             child: Container(
                               height: 45,

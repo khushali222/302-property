@@ -202,7 +202,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
       print('Image upload failed: $e');
     }
   }
-
+  int visibleCount = 5;
   List<String> _imageUrls = [];
   @override
   Widget build(BuildContext context) {
@@ -1777,108 +1777,329 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         SizedBox(
                           height: 10,
                         ),
+                        // Column(
+                        //   mainAxisAlignment: MainAxisAlignment.start,
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: summery.workorderUpdates!.map((entry) {
+                        //     final update = entry;
+                        //     return Padding(
+                        //       padding: const EdgeInsets.all(5.0),
+                        //       child: Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         mainAxisAlignment: MainAxisAlignment.start,
+                        //         children: [
+                        //           Text(
+                        //             '${update.statusUpdatedBy ?? ""} updated this work order (${'${update.date}'?? "N/A"})',
+                        //             style: TextStyle(
+                        //                 fontWeight: FontWeight.bold,
+                        //                 color: blueColor),
+                        //           ),
+                        //           Divider(color: Colors.black),
+                        //           Text(
+                        //             'Work Order Is Updated',
+                        //             style: TextStyle(color: Colors.grey[500]),
+                        //           ),
+                        //           if (update.workOrderUpdateimages != null && update.workOrderUpdateimages!.length > 0)
+                        //             Column(
+                        //               children: [
+                        //                 SizedBox(height: 10),
+                        //                 Wrap(
+                        //                   spacing: 10,
+                        //                   runSpacing: 10,
+                        //                   children: update.workOrderUpdateimages!.map((imageUrl) {
+                        //                     return GestureDetector(
+                        //                       onTap: () {
+                        //                         // Show the image in a dialog when tapped
+                        //                         showDialog(
+                        //                           context: context,
+                        //                           builder: (BuildContext context) {
+                        //                             return Dialog(
+                        //                               backgroundColor: Colors.transparent,
+                        //                               child: Stack(
+                        //                                 children: [
+                        //                                   Row(
+                        //                                     mainAxisAlignment: MainAxisAlignment.end,
+                        //                                     children: [
+                        //                                       InkWell(
+                        //                                           onTap:() {
+                        //                                             Navigator.of(context).pop(); // Close the dialog
+                        //                                           },
+                        //                                           child: Icon(Icons.close, color: Colors.black,size: 30,)),
+                        //                                     ],
+                        //                                   ),
+                        //                                   Padding(
+                        //                                     padding: const EdgeInsets.all(27.0),
+                        //                                     child: Container(
+                        //                                       // width: MediaQuery.of(context).size.width,
+                        //                                     // height: MediaQuery.of(context).size.height,
+                        //                                       child: CachedNetworkImage(
+                        //                                         imageUrl: "$image_url$imageUrl",
+                        //                                         placeholder: (context, url) => Center(
+                        //                                           child: CircularProgressIndicator(),
+                        //                                         ),
+                        //                                         errorWidget: (context, url, error) {
+                        //                                           print(error);
+                        //                                           return Center(child: Icon(Icons.error));
+                        //                                         },
+                        //                                         //fit: BoxFit.cover, // Adjust fit as needed
+                        //                                       ),
+                        //                                     ),
+                        //                                   ),
+                        //
+                        //                                 ],
+                        //                               ),
+                        //                             );
+                        //                           },
+                        //                         );
+                        //                       },
+                        //                       child: Container(
+                        //                         width: summery.workorderUpdates?.first.workOrderUpdateimages?.length == 1
+                        //                             ? MediaQuery.of(context).size.width / 3
+                        //                             : (MediaQuery.of(context).size.width / 3) - 10,
+                        //                         decoration: BoxDecoration(
+                        //                           borderRadius: BorderRadius.circular(10),
+                        //                         ),
+                        //                         child: ClipRRect(
+                        //                           borderRadius: BorderRadius.circular(10),
+                        //                           child: CachedNetworkImage(
+                        //                             imageUrl: "$image_url$imageUrl",
+                        //                             placeholder: (context, url) => Center(
+                        //                               child: CircularProgressIndicator(),
+                        //                             ),
+                        //                             errorWidget: (context, url, error) {
+                        //                               print(error);
+                        //                               return Container();
+                        //                             },
+                        //                             fit: BoxFit.cover,
+                        //                           ),
+                        //                         ),
+                        //                       ),
+                        //                     );
+                        //                   }).toList(),
+                        //                 ),
+                        //               ],
+                        //             ),
+                        //             // Column(
+                        //             //   children: [
+                        //             //     SizedBox(
+                        //             //       height: 10,
+                        //             //     ),
+                        //             //     Wrap(
+                        //             //       spacing: 10,
+                        //             //       runSpacing: 10,
+                        //             //       children: update.workOrderUpdateimages!
+                        //             //           .map((imageUrl) {
+                        //             //         return Container(
+                        //             //           width:
+                        //             //           summery.workorderUpdates?.first.workOrderUpdateimages?.length ==
+                        //             //               1
+                        //             //               ? MediaQuery.of(context)
+                        //             //               .size
+                        //             //               .width /
+                        //             //               3
+                        //             //               : (MediaQuery.of(context)
+                        //             //               .size
+                        //             //               .width /
+                        //             //               3) -
+                        //             //               10,
+                        //             //           decoration: BoxDecoration(
+                        //             //             borderRadius:
+                        //             //             BorderRadius.circular(10),
+                        //             //           ),
+                        //             //           child: ClipRRect(
+                        //             //             borderRadius:
+                        //             //             BorderRadius.circular(10),
+                        //             //             child: CachedNetworkImage(
+                        //             //               imageUrl: "$image_url$imageUrl",
+                        //             //               placeholder: (context, url) =>
+                        //             //                   Center(
+                        //             //                       child:
+                        //             //                       CircularProgressIndicator()),
+                        //             //               errorWidget:
+                        //             //                   (context, url, error) {
+                        //             //                 print(error);
+                        //             //                 return Container();
+                        //             //               },
+                        //             //               fit: BoxFit.cover,
+                        //             //             ),
+                        //             //           ),
+                        //             //         );
+                        //             //       }).toList(),
+                        //             //     ),
+                        //             //   ],
+                        //             // ),
+                        //           if (summery.workorderUpdates?.first.workOrderUpdateimages == 0)
+                        //             Row(
+                        //               mainAxisAlignment: MainAxisAlignment.center,
+                        //               children: [
+                        //                 Text(
+                        //                   "No Images Provided",
+                        //                   style: TextStyle(color: blueColor),
+                        //                 ),
+                        //                 // Text("(${summery.unitData!.unitName})"),
+                        //               ],
+                        //             ),
+                        //         ],
+                        //       ),
+                        //     );
+                        //   }).toList(),
+                        // ),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: summery.workorderUpdates!.map((entry) {
-                            final update = entry;
-                            return Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${update.statusUpdatedBy ?? ""} updated this work order (${'${update.date}'?? "N/A"})',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  Divider(color: Colors.black),
-                                  Text(
-                                    'Work Order Is Updated',
-                                    style: TextStyle(color: Colors.grey[500]),
-                                  ),
-                                  if (update.workOrderUpdateimages != null && update.workOrderUpdateimages!.length > 0)
-                                    Column(
-                                      children: [
-                                        SizedBox(height: 10),
-                                        Wrap(
-                                          spacing: 10,
-                                          runSpacing: 10,
-                                          children: update.workOrderUpdateimages!.map((imageUrl) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                // Show the image in a dialog when tapped
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return Dialog(
-                                                      backgroundColor: Colors.transparent,
-                                                      child: Stack(
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.end,
-                                                            children: [
-                                                              InkWell(
-                                                                  onTap:() {
-                                                                    Navigator.of(context).pop(); // Close the dialog
+                          children: [
+                            // Display the updates
+                            ...summery.workorderUpdates!.reversed
+                                .take(visibleCount)
+                                .map((entry) {
+                              final update = entry;
+                              return Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor),
+                                    ),
+                                    Divider(color: Colors.black),
+                                    Text(
+                                      'Work Order Is Updated',
+                                      style: TextStyle(color: Colors.grey[500]),
+                                    ),
+                                    if (update.workOrderUpdateimages != null &&
+                                        update.workOrderUpdateimages!.length >
+                                            0)
+                                      Column(
+                                        children: [
+                                          SizedBox(height: 10),
+                                          Wrap(
+                                            spacing: 10,
+                                            runSpacing: 10,
+                                            children: update
+                                                .workOrderUpdateimages!
+                                                .map((imageUrl) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  // Show the image in a dialog when tapped
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return Dialog(
+                                                        backgroundColor:
+                                                        Colors.transparent,
+                                                        child: Stack(
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                              children: [
+                                                                InkWell(
+                                                                    onTap: () {
+                                                                      Navigator.of(
+                                                                          context)
+                                                                          .pop(); // Close the dialog
+                                                                    },
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .close,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      size: 30,
+                                                                    )),
+                                                              ],
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                              const EdgeInsets
+                                                                  .all(
+                                                                  27.0),
+                                                              child: Container(
+                                                                // width: MediaQuery.of(context).size.width,
+                                                                // height: MediaQuery.of(context).size.height,
+                                                                child:
+                                                                CachedNetworkImage(
+                                                                  imageUrl:
+                                                                  "$image_url$imageUrl",
+                                                                  placeholder:
+                                                                      (context,
+                                                                      url) =>
+                                                                      Center(
+                                                                        child:
+                                                                        CircularProgressIndicator(),
+                                                                      ),
+                                                                  errorWidget:
+                                                                      (context,
+                                                                      url,
+                                                                      error) {
+                                                                    print(
+                                                                        error);
+                                                                    return Center(
+                                                                        child: Icon(
+                                                                            Icons.error));
                                                                   },
-                                                                  child: Icon(Icons.close, color: Colors.black,size: 30,)),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding: const EdgeInsets.all(27.0),
-                                                            child: Container(
-                                                              // width: MediaQuery.of(context).size.width,
-                                                            // height: MediaQuery.of(context).size.height,
-                                                              child: CachedNetworkImage(
-                                                                imageUrl: "$image_url$imageUrl",
-                                                                placeholder: (context, url) => Center(
-                                                                  child: CircularProgressIndicator(),
+                                                                  //fit: BoxFit.cover, // Adjust fit as needed
                                                                 ),
-                                                                errorWidget: (context, url, error) {
-                                                                  print(error);
-                                                                  return Center(child: Icon(Icons.error));
-                                                                },
-                                                                //fit: BoxFit.cover, // Adjust fit as needed
                                                               ),
                                                             ),
-                                                          ),
-
-                                                        ],
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              child: Container(
-                                                width: summery.workorderUpdates?.first.workOrderUpdateimages?.length == 1
-                                                    ? MediaQuery.of(context).size.width / 3
-                                                    : (MediaQuery.of(context).size.width / 3) - 10,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                ),
-                                                child: ClipRRect(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: "$image_url$imageUrl",
-                                                    placeholder: (context, url) => Center(
-                                                      child: CircularProgressIndicator(),
-                                                    ),
-                                                    errorWidget: (context, url, error) {
-                                                      print(error);
-                                                      return Container();
+                                                          ],
+                                                        ),
+                                                      );
                                                     },
-                                                    fit: BoxFit.cover,
+                                                  );
+                                                },
+                                                child: Container(
+                                                  width: summery
+                                                      .workorderUpdates
+                                                      ?.first
+                                                      .workOrderUpdateimages
+                                                      ?.length ==
+                                                      1
+                                                      ? MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                      3
+                                                      : (MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                      3) -
+                                                      10,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        10),
+                                                  ),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        10),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl:
+                                                      "$image_url$imageUrl",
+                                                      placeholder:
+                                                          (context, url) =>
+                                                          Center(
+                                                            child:
+                                                            CircularProgressIndicator(),
+                                                          ),
+                                                      errorWidget: (context,
+                                                          url, error) {
+                                                        print(error);
+                                                        return Container();
+                                                      },
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ],
-                                    ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ],
+                                      ),
                                     // Column(
                                     //   children: [
                                     //     SizedBox(
@@ -1928,21 +2149,71 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     //     ),
                                     //   ],
                                     // ),
-                                  if (summery.workorderUpdates?.first.workOrderUpdateimages == 0)
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "No Images Provided",
-                                          style: TextStyle(color: blueColor),
-                                        ),
-                                        // Text("(${summery.unitData!.unitName})"),
-                                      ],
+
+                                    if (summery.workorderUpdates?.first
+                                        .workOrderUpdateimages ==
+                                        0)
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "No Images Provided",
+                                            style: TextStyle(color: blueColor),
+                                          ),
+                                          // Text("(${summery.unitData!.unitName})"),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+
+                            if (summery.workorderUpdates!.length > 5)
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    // Toggle between showing all or limited items
+                                    if (visibleCount == 5) {
+                                      visibleCount =
+                                          summery.workorderUpdates!.length;
+                                    } else {
+                                      visibleCount = 5;
+                                    }
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Error Icon (Down arrow or error icon)
+
+                                    // Space between the icon and the text
+                                    Text(
+                                      visibleCount == 5
+                                          ? 'View More'
+                                          : 'View Less',
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                ],
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 1),
+                                      child: Icon(
+                                        visibleCount == 5
+                                            ? Icons.keyboard_arrow_up
+                                            : Icons.keyboard_arrow_down_outlined,
+                                        color: blueColor,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            );
-                          }).toList(),
+                          ],
                         ),
                       ],
                     )),

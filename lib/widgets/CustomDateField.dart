@@ -77,7 +77,18 @@ class CustomDateFieldState extends State<CustomDateField> {
     return FormField<String>(
       validator: (value) {
         if (widget.validator != null) {
-          return widget.validator!(value);
+          final error = widget.validator!(value);
+          if (error != null) {
+            setState(() {
+              _errorMessage = error;
+            });
+          }
+          return error;
+        } else if ((widget.controller?.text ?? '').isEmpty) {
+          setState(() {
+            _errorMessage = 'Please select a date';
+          });
+          return _errorMessage;
         }
         return null;
       },

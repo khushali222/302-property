@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -363,6 +364,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         const SizedBox(
                                           height: 5,
                                         ),
+
                                         CustomDateField(
                                           hintText: 'Pick date of birth',
                                           controller:
@@ -383,6 +385,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomEmailField(
                                           hintText: 'Enter your email',
+
                                           controller: _applicantEmailController,
                                           keyboardType:
                                               TextInputType.emailAddress,
@@ -402,8 +405,16 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Phone Number',
+                                          otherController: _emergencyPhoneNumberController,
+
                                           controller:
                                               _applicantPhoneNumberController,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
@@ -457,6 +468,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Street Address',
                                           controller:
                                               _applicantStreetAddressController,
@@ -475,6 +487,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'City',
                                           controller: _applicantCityController,
                                         ),
@@ -492,6 +505,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'State',
                                           controller: _applicantStateController,
                                         ),
@@ -509,6 +523,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Country',
                                           controller:
                                               _applicantCountryController,
@@ -527,6 +542,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Postal Code',
                                           controller:
                                               _applicantPostalCodeController,
@@ -576,6 +592,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'First Name',
                                           controller:
                                               _emergencyFirstNameController,
@@ -595,6 +612,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Last Name',
                                           controller:
                                               _emergencyLastNameController,
@@ -614,6 +632,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Relationship',
                                           controller:
                                               _emergencyRelationshipController,
@@ -634,6 +653,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Email',
+                                          optional: true,
                                           controller: _emergencyEmailController,
                                         ),
                                         const SizedBox(
@@ -651,6 +671,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
+                                          phone: true,
+                                          optional: true,
+                                          otherController: _applicantPhoneNumberController,
                                           hintText: 'Phone Number',
                                           controller:
                                               _emergencyPhoneNumberController,
@@ -701,6 +730,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Rental Address',
                                           controller: _rentalAddressController,
                                         ),
@@ -719,6 +749,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'City',
                                           controller: _rentalCityController,
                                         ),
@@ -737,6 +768,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'State',
                                           controller: _rentalStateController,
                                         ),
@@ -756,6 +788,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Country',
+                                          optional: true,
                                           controller: _rentalCountryController,
                                         ),
                                         const SizedBox(
@@ -773,6 +806,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Postcode',
                                           controller: _rentalPostcodeController,
                                         ),
@@ -792,6 +826,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Start Date',
+                                          optional: true,
                                           controller: _startDateController,
                                         ),
                                         const SizedBox(
@@ -810,6 +845,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'End Date',
+                                          optional: true,
                                           controller: _endDateController,
                                         ),
                                         const SizedBox(
@@ -828,6 +864,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Rent Amount',
+                                          optional: true,
                                           controller: _rentController,
                                         ),
                                         const SizedBox(
@@ -846,6 +883,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Reason for Leaving',
+                                          optional: true,
                                           controller: _leavingReasonController,
                                         ),
                                         const SizedBox(height: 16),
@@ -893,6 +931,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'First Name',
                                           controller:
                                               _rentalOwnerFirstNameController,
@@ -912,6 +951,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Last Name',
                                           controller:
                                               _rentalOwnerLastNameController,
@@ -931,6 +971,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Email',
                                           controller:
                                               _rentalOwnerEmailController,
@@ -950,7 +991,17 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Phone Number',
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
+                                          phone: true,
+                                          otherController: _emergencyPhoneNumberController,
+                                          businessController: _applicantPhoneNumberController,
                                           controller:
                                               _rentalOwnerPhoneNumberController,
                                         ),
@@ -1000,6 +1051,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Company Name',
+                                          optional: true,
                                           controller: _employmentNameController,
                                         ),
                                         const SizedBox(
@@ -1018,6 +1070,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Street Address',
+                                          optional: true,
                                           controller:
                                               _employmentStreetAddressController,
                                         ),
@@ -1036,6 +1089,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'City',
                                           controller: _employmentCityController,
                                         ),
@@ -1055,6 +1109,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'State',
+                                          optional: true,
                                           controller:
                                               _employmentStateController,
                                         ),
@@ -1074,6 +1129,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Country',
+                                          optional: true,
                                           controller:
                                               _employmentCountryController,
                                         ),
@@ -1093,6 +1149,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Postal Code',
+                                          optional: true,
                                           controller:
                                               _employmentPostalCodeController,
                                         ),
@@ -1112,6 +1169,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Primary Email',
+                                          optional: true,
                                           controller:
                                               _employmentPrimaryEmailController,
                                         ),
@@ -1131,6 +1189,17 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Phone Number',
+                                          optional: true,
+                                          phone: true,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
+                                          otherController: _rentalOwnerPhoneNumberController,
+                                          businessController: _emergencyPhoneNumberController,
+                                          telephoneController: _applicantPhoneNumberController,
                                           controller:
                                               _employmentPhoneNumberController,
                                         ),
@@ -1150,6 +1219,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Position',
+                                          optional: true,
                                           controller:
                                               _employmentPositionController,
                                         ),
@@ -1169,6 +1239,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Supervisor First Name',
+                                          optional: true,
                                           controller:
                                               _supervisorFirstNameController,
                                         ),
@@ -1188,6 +1259,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Supervisor Last Name',
+                                          optional: true,
                                           controller:
                                               _supervisorLastNameController,
                                         ),
@@ -1207,6 +1279,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Supervisor Title',
+                                          optional: true,
                                           controller:
                                               _supervisorTitleController,
                                         ),
@@ -1470,7 +1543,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         print('Form is invalid');
                                       }
                                     },
-                                    child: const Text('Save Applicant',style: TextStyle(fontWeight: FontWeight.bold),),
+                                    child: const Text('Save Applicantt',style: TextStyle(fontWeight: FontWeight.bold),),
                                   ),
                                 ),
                               ],

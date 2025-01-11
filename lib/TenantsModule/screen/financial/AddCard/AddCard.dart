@@ -302,7 +302,7 @@ class _AddCardState extends State<AddCard> {
   Future<void> deleteCardaction(
       BillingData billingData, String customervaultid) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString('adminId');
 
     cardModelFordelete cardmodelfordelete = cardModelFordelete(
       adminId: id,
@@ -851,7 +851,7 @@ class _AddCardState extends State<AddCard> {
                                       isLoading1 = false;
                                     });
                                   });
-                                  Navigator.pop(context);
+                                  Navigator.pop(context, true);
                                   Fluttertoast.showToast(
                                       msg: 'Add Card Successfully');
                                 }

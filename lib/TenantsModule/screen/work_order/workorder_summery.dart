@@ -95,6 +95,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   bool isLoading = false;
+  int visibleCount = 5;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1628,7 +1629,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             SizedBox(
                               width: 10,
                             ),
-                            Text("Updates",
+                            Text("Updatess",
                                 style: TextStyle(
                                     color: blueColor,
                                     fontSize: 16,
@@ -1656,29 +1657,103 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         SizedBox(
                           height: 10,
                         ),
+                        // Column(
+                        //   mainAxisAlignment: MainAxisAlignment.start,
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: summery.workorderUpdates!.map((entry) {
+                        //     final update = entry;
+                        //     return
+                        //       Padding(
+                        //       padding: const EdgeInsets.all(5.0),
+                        //       child: Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         mainAxisAlignment: MainAxisAlignment.start,
+                        //         children: [
+                        //           Text(
+                        //             '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                        //             style:
+                        //                 TextStyle(fontWeight: FontWeight.bold),
+                        //           ),
+                        //           Divider(color: Colors.black),
+                        //           Text('Work Order Is Updated'),
+                        //         ],
+                        //       ),
+                        //     );
+                        //   }).toList(),
+                        // ),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: summery.workorderUpdates!.map((entry) {
-                            final update = entry;
-                            return Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
-                                    style:
+                          children: [
+                            // Display the updates
+                            ...summery.workorderUpdates!.reversed
+                                .take(visibleCount)
+                                .map((entry) {
+                              final update = entry;
+                              return
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                                        style:
                                         TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      Divider(color: Colors.black),
+                                      Text('Work Order Is Updated'),
+                                    ],
                                   ),
-                                  Divider(color: Colors.black),
-                                  Text('Work Order Is Updated'),
-                                ],
+                                );
+                            }).toList(),
+
+                            if (summery.workorderUpdates!.length > 5)
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    // Toggle between showing all or limited items
+                                    if (visibleCount == 5) {
+                                      visibleCount =
+                                          summery.workorderUpdates!.length;
+                                    } else {
+                                      visibleCount = 5;
+                                    }
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Error Icon (Down arrow or error icon)
+
+                                    // Space between the icon and the text
+                                    Text(
+                                      visibleCount == 5
+                                          ? 'View More'
+                                          : 'View Less',
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 1),
+                                      child: Icon(
+                                        visibleCount == 5
+                                            ? Icons.keyboard_arrow_up
+                                            : Icons.keyboard_arrow_down_outlined,
+                                        color: blueColor,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            );
-                          }).toList(),
-                        ),
+                          ],
+                        )
                       ],
                     )),
                 SizedBox(
