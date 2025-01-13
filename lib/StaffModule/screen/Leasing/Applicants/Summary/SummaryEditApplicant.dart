@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/edit_applicant.dart';
 import 'package:three_zero_two_property/provider/editapplicationsummaryForm.dart';
 import 'package:three_zero_two_property/repository/applicant_summery_repo.dart';
 
@@ -21,89 +23,90 @@ class EditApplicantSummary extends StatefulWidget {
   State<EditApplicantSummary> createState() => _EditApplicantSummaryState();
 }
 
+
 class _EditApplicantSummaryState extends State<EditApplicantSummary> {
   bool checked = true;
   final _formEditKey = GlobalKey<FormState>();
 
   final TextEditingController _applicantStreetAddressController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _applicantCityController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _applicantStateController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _applicantCountryController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _applicantPostalCodeController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _applicantFirstNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _applicantLastNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _applicantEmailController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _applicantPhoneNumberController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _applicantBirthdateController =
-      TextEditingController();
+  TextEditingController();
 
   final TextEditingController _agreeByController = TextEditingController();
   final TextEditingController _emergencyFirstNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _emergencyLastNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _emergencyRelationshipController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _emergencyEmailController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _emergencyPhoneNumberController =
-      TextEditingController();
+  TextEditingController();
 
   final TextEditingController _rentalAddressController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _rentalCityController = TextEditingController();
   final TextEditingController _rentalStateController = TextEditingController();
   final TextEditingController _rentalCountryController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _rentalPostcodeController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _rentalOwnerFirstNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _rentalOwnerLastNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
   final TextEditingController _rentController = TextEditingController();
   final TextEditingController _leavingReasonController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _rentalOwnerEmailController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _rentalOwnerPhoneNumberController =
-      TextEditingController();
+  TextEditingController();
 
   final TextEditingController _employmentNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _employmentStreetAddressController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _employmentCityController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _employmentStateController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _employmentCountryController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _employmentPostalCodeController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _employmentPrimaryEmailController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _employmentPhoneNumberController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _employmentPositionController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _supervisorFirstNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _supervisorLastNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _supervisorTitleController =
-      TextEditingController();
+  TextEditingController();
 
   @override
   void dispose() {
@@ -156,7 +159,8 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
   }
 
   Future<ApplicantContentDetails> fetchApplicantDetails(
-      String applicantId) async {
+      String applicantId) async
+  {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString('adminId');
     String? token = prefs.getString('token');
@@ -191,7 +195,8 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
     fetchAndSetApplicantDetails();
   }
 
-  Future<void> fetchAndSetApplicantDetails() async {
+  Future<void> fetchAndSetApplicantDetails() async
+  {
     final applicantDetails = await fetchApplicantDetails(widget.applicantId);
     if (applicantDetails.data != null) {
       Provider.of<ApplicantDetailsProvider>(context, listen: false)
@@ -217,7 +222,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
         _applicantEmailController.text =
             applicantDetails.data!.applicantEmail ?? '';
         _applicantPhoneNumberController.text =
-            applicantDetails.data!.applicantPhoneNumber ?? '';
+            formatPhoneNumberedit( applicantDetails.data!.applicantPhoneNumber ?? '');
         _emergencyFirstNameController.text =
             applicantDetails.data!.emergencyContact?.firstName ?? '';
         _emergencyLastNameController.text =
@@ -227,8 +232,9 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
         _emergencyEmailController.text =
             applicantDetails.data!.emergencyContact?.email ?? '';
         _emergencyPhoneNumberController.text =
-            (applicantDetails.data!.emergencyContact?.phoneNumber.toString()) ??
-                '';
+            formatPhoneNumberedit( (applicantDetails.data!.emergencyContact?.phoneNumber.toString()) ??
+                '');
+           
 
         // Set rental details
         _rentalAddressController.text =
@@ -254,10 +260,10 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
             applicantDetails.data!.rentalHistory?.leavingReason ?? '';
         _rentalOwnerEmailController.text =
             applicantDetails.data!.rentalHistory?.rentalOwnerPrimaryEmail ?? '';
-        _rentalOwnerPhoneNumberController.text = (applicantDetails
-                .data!.rentalHistory?.rentalOwnerPhoneNumber
-                .toString()) ??
-            '';
+        _rentalOwnerPhoneNumberController.text =formatPhoneNumberedit( (applicantDetails
+            .data!.rentalHistory?.rentalOwnerPhoneNumber
+            .toString()) ??
+            '');
 
         // Set employment details
         _employmentNameController.text =
@@ -274,10 +280,9 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
             applicantDetails.data!.employment?.postalCode ?? '';
         _employmentPrimaryEmailController.text =
             applicantDetails.data!.employment?.employmentPrimaryEmail ?? '';
-        _employmentPhoneNumberController.text = (applicantDetails
-                .data!.employment?.employmentPhoneNumber
-                .toString()) ??
-            '';
+        _employmentPhoneNumberController.text = formatPhoneNumberedit('${applicantDetails
+            .data!.employment?.employmentPhoneNumber
+            .toString()}');
 
         _employmentPositionController.text =
             applicantDetails.data!.employment?.employmentPosition ?? '';
@@ -290,14 +295,15 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
       });
     }
   }
-
+  bool isCheckboxError = false;
   @override
   Widget build(BuildContext context) {
     final editFormState = Provider.of<EditFormState>(context);
     return Container(
       child: Form(
         key: _formEditKey,
-        child: Column(
+        child:
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -359,7 +365,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                   border: Border.all(
-                    color: blueColor,
+                    color:  blueColor,
                   ),
                   borderRadius: BorderRadius.circular(10.0)),
               child: Padding(
@@ -379,6 +385,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'First Name',
+
                       controller: _applicantFirstNameController,
                     ),
                     const SizedBox(
@@ -413,7 +420,8 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     CustomDateField(
                       hintText: 'Pick date of birth',
-                      controller: _applicantBirthdateController,
+                      controller:
+                      _applicantBirthdateController,
                     ),
                     const SizedBox(
                       height: 12,
@@ -430,7 +438,13 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Email',
+                      email: true,
+                      alterController:
+                      _emergencyEmailController,
                       controller: _applicantEmailController,
+                      keyboardType:
+                      TextInputType.emailAddress,
+
                     ),
                     const SizedBox(
                       height: 12,
@@ -447,7 +461,15 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Phone Number',
+                      phone: true,
+                      keyboardType: TextInputType.number,
                       controller: _applicantPhoneNumberController,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                        PhoneNumberFormatter(),
+                      ],
+                      otherController: _emergencyPhoneNumberController,
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -470,7 +492,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: blueColor,
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -491,6 +513,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Street Address',
+                      optional: true,
                       controller: _applicantStreetAddressController,
                     ),
                     const SizedBox(
@@ -507,6 +530,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'City',
                       controller: _applicantCityController,
                     ),
@@ -524,6 +548,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'State',
                       controller: _applicantStateController,
                     ),
@@ -541,6 +566,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Country',
                       controller: _applicantCountryController,
                     ),
@@ -558,6 +584,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Postal Code',
                       controller: _applicantPostalCodeController,
                     ),
@@ -584,7 +611,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: blueColor,
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -605,6 +632,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'First Name',
                       controller: _emergencyFirstNameController,
                     ),
@@ -623,6 +651,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Last Name',
                       controller: _emergencyLastNameController,
                     ),
@@ -641,6 +670,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Relationship',
                       controller: _emergencyRelationshipController,
                     ),
@@ -659,8 +689,13 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Email',
+                      email: true,
+                      alterController:
+                      _applicantEmailController,
                       controller: _emergencyEmailController,
+
                     ),
                     const SizedBox(
                       height: 12,
@@ -677,8 +712,17 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
+                      phone: true,
                       hintText: 'Phone Number',
+                      keyboardType: TextInputType.number,
                       controller: _emergencyPhoneNumberController,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                        PhoneNumberFormatter(),
+                      ],
+                      otherController: _applicantPhoneNumberController,
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -704,7 +748,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: blueColor,
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -725,6 +769,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Rental Address',
                       controller: _rentalAddressController,
                     ),
@@ -744,6 +789,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'City',
+                      optional: true,
                       controller: _rentalCityController,
                     ),
                     const SizedBox(
@@ -761,6 +807,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'State',
                       controller: _rentalStateController,
                     ),
@@ -779,6 +826,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Country',
                       controller: _rentalCountryController,
                     ),
@@ -797,6 +845,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Postcode',
                       controller: _rentalPostcodeController,
                     ),
@@ -815,6 +864,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Start Date',
                       controller: _startDateController,
                     ),
@@ -833,6 +883,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'End Date',
                       controller: _endDateController,
                     ),
@@ -851,6 +902,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Rent Amount',
                       controller: _rentController,
                     ),
@@ -870,6 +922,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Reason for Leaving',
+                      optional: true,
                       controller: _leavingReasonController,
                     ),
                     const SizedBox(height: 16),
@@ -895,7 +948,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: blueColor,
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -917,6 +970,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'First Name',
+                      optional: true,
                       controller: _rentalOwnerFirstNameController,
                     ),
                     const SizedBox(
@@ -935,6 +989,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Last Name',
+                      optional: true,
                       controller: _rentalOwnerLastNameController,
                     ),
                     const SizedBox(
@@ -953,7 +1008,12 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Email',
-                      controller: _rentalOwnerEmailController,
+                      optional: true,
+                      email: true,
+                      controller:
+                      _rentalOwnerEmailController,
+                      alterController: _applicantEmailController,
+                      emrgencyController: _emergencyEmailController,
                     ),
                     const SizedBox(
                       height: 12,
@@ -971,6 +1031,20 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Phone Number',
+                      optional: true,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter
+                            .digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            10),
+                        PhoneNumberFormatter(),
+                      ],
+                      phone: true,
+                      otherController:
+                      _emergencyPhoneNumberController,
+                      businessController:
+                      _applicantPhoneNumberController,
                       controller: _rentalOwnerPhoneNumberController,
                     ),
                     const SizedBox(height: 16),
@@ -996,7 +1070,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: blueColor,
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -1018,6 +1092,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Company Name',
+                      optional: true,
                       controller: _employmentNameController,
                     ),
                     const SizedBox(
@@ -1036,6 +1111,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Street Address',
+                      optional: true,
                       controller: _employmentStreetAddressController,
                     ),
                     const SizedBox(
@@ -1053,6 +1129,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'City',
                       controller: _employmentCityController,
                     ),
@@ -1071,6 +1148,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'State',
                       controller: _employmentStateController,
                     ),
@@ -1089,6 +1167,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Country',
                       controller: _employmentCountryController,
                     ),
@@ -1107,6 +1186,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       height: 5,
                     ),
                     NewCustomTextField(
+                      optional: true,
                       hintText: 'Postal Code',
                       controller: _employmentPostalCodeController,
                     ),
@@ -1126,7 +1206,13 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Primary Email',
+                      optional: true,
+                      email: true,
+                      keyboardType: TextInputType.number,
                       controller: _employmentPrimaryEmailController,
+                      emailController:_applicantEmailController,
+                      alterController: _rentalOwnerEmailController,
+                      emrgencyController: _emergencyEmailController,
                     ),
                     const SizedBox(
                       height: 12,
@@ -1144,6 +1230,22 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Phone Number',
+                      optional: true,
+                      phone: true,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter
+                            .digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            10),
+                        PhoneNumberFormatter(),
+                      ],
+                      otherController:
+                      _rentalOwnerPhoneNumberController,
+                      businessController:
+                      _emergencyPhoneNumberController,
+                      telephoneController:
+                      _applicantPhoneNumberController,
                       controller: _employmentPhoneNumberController,
                     ),
                     const SizedBox(
@@ -1162,6 +1264,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Position',
+                      optional: true,
                       controller: _employmentPositionController,
                     ),
                     const SizedBox(
@@ -1180,6 +1283,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Supervisor First Name',
+                      optional: true,
                       controller: _supervisorFirstNameController,
                     ),
                     const SizedBox(
@@ -1198,6 +1302,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Supervisor Last Name',
+                      optional: true,
                       controller: _supervisorLastNameController,
                     ),
                     const SizedBox(
@@ -1216,6 +1321,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     ),
                     NewCustomTextField(
                       hintText: 'Supervisor Title',
+                      optional: true,
                       controller: _supervisorTitleController,
                     ),
                     const SizedBox(height: 16),
@@ -1254,7 +1360,12 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Checkbox(value: checked, onChanged: (value) {}),
+                Checkbox(value: checked,    onChanged: (value) {
+                  setState(() {
+                    checked = value!;
+                    isCheckboxError = !checked; // Update error state dynamically
+                  });
+                }),
                 Padding(
                   padding: const EdgeInsets.only(
                     left: 4.0,
@@ -1268,6 +1379,17 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                           fontWeight: FontWeight.w400)),
                 ),
               ],
+            ),
+            if (isCheckboxError)
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  'You must agree to the terms and conditions.',
+                  style: TextStyle(color: Colors.red, fontSize: 14),
+                ),
+              ),
+            const SizedBox(
+              height: 5,
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -1295,39 +1417,42 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               ),
               child: RichText(
                   text: TextSpan(children: [
-                TextSpan(
-                    text:
+                    TextSpan(
+                        text:
                         'By submitting this application, I (1) am giving permission to run a background check on me, which may include obtaining my credit report from a consumer reporting agency; and (2) agreeing to the ',
-                    style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500)),
-                TextSpan(
-                    text: 'Privacy Policy',
-                    style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500)),
-                TextSpan(
-                    text: ' and ',
-                    style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500)),
-                TextSpan(
-                    text: 'Terms of Service.',
-                    style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500)),
-              ])),
+                        style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500)),
+                    TextSpan(
+                        text: 'Privacy Policy',
+                        style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500)),
+                    TextSpan(
+                        text: ' and ',
+                        style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500)),
+                    TextSpan(
+                        text: 'Terms of Service.',
+                        style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500)),
+                  ])),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: blueColor),
               onPressed: () async {
+                setState(() {
+                  isCheckboxError = !checked; // Validate checkbox when submitting
+                });
                 if (_formEditKey.currentState!.validate()) {
                   SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
+                  await SharedPreferences.getInstance();
                   String? adminId = prefs.getString('adminId');
                   // printAllFields();
                   Data data = Data(
@@ -1337,7 +1462,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       relationship: _emergencyRelationshipController.text,
                       email: _emergencyEmailController.text,
                       phoneNumber:
-                          int.tryParse(_emergencyPhoneNumberController.text),
+                      int.tryParse(_emergencyPhoneNumberController.text),
                     ),
                     rentalHistory: RentalHistory(
                       rentalAdress: _rentalAddressController.text,
@@ -1346,7 +1471,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       rentalCountry: _rentalCountryController.text,
                       rentalPostcode: _rentalPostcodeController.text,
                       rentalOwnerFirstName:
-                          _rentalOwnerFirstNameController.text,
+                      _rentalOwnerFirstNameController.text,
                       rentalOwnerLastName: _rentalOwnerLastNameController.text,
                       startDate: _startDateController.text,
                       endDate: _endDateController.text,
@@ -1354,7 +1479,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       leavingReason: _leavingReasonController.text,
                       rentalOwnerPrimaryEmail: _rentalOwnerEmailController.text,
                       rentalOwnerPhoneNumber:
-                          int.tryParse(_rentalOwnerPhoneNumberController.text),
+                      int.tryParse(_rentalOwnerPhoneNumberController.text),
                     ),
                     employment: Employment(
                       name: _employmentNameController.text,
@@ -1364,9 +1489,9 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       country: _employmentCountryController.text,
                       postalCode: _employmentPostalCodeController.text,
                       employmentPrimaryEmail:
-                          _employmentPrimaryEmailController.text,
+                      _employmentPrimaryEmailController.text,
                       employmentPhoneNumber:
-                          int.tryParse(_employmentPhoneNumberController.text),
+                      int.tryParse(_employmentPhoneNumberController.text),
                       employmentPosition: _employmentPositionController.text,
                       supervisorFirstName: _supervisorFirstNameController.text,
                       supervisorLastName: _supervisorLastNameController.text,
@@ -1376,9 +1501,9 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     applicantId: widget
                         .applicantId, // Assuming this value is not set from a controller
                     adminId:
-                        adminId, // Assuming this value is not set from a controller
+                    adminId, // Assuming this value is not set from a controller
                     applicantStreetAddress:
-                        _applicantStreetAddressController.text,
+                    _applicantStreetAddressController.text,
                     applicantCity: _applicantCityController.text,
                     applicantState: _applicantStateController.text,
                     applicantCountry: _applicantCountryController.text,
@@ -1393,7 +1518,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                   );
                   print('entry');
                   ApplicantSummeryRepository applicantSummeryRepository =
-                      ApplicantSummeryRepository();
+                  ApplicantSummeryRepository();
                   print('entry');
                   bool success = await applicantSummeryRepository
                       .editApplicantSummaryForm(data, widget.applicantId);
@@ -1405,6 +1530,10 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     print('not complete');
                   }
                 } else {
+                  if (!checked) {
+                    // Fluttertoast.showToast(
+                    //     msg: 'You must agree to the terms and conditions.');
+                  }
                   setState(() {}); // Rebuild to show the error message
                   print('Form is invalid');
                 }
@@ -1418,13 +1547,4 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
   }
 }
 
-class ApplicantDetailsProvider extends ChangeNotifier {
-  Data? _applicantDetails;
 
-  Data? get applicantDetails => _applicantDetails;
-
-  void setApplicantDetails(Data details) {
-    _applicantDetails = details;
-    notifyListeners();
-  }
-}

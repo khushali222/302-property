@@ -383,7 +383,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   String? _selectedHoldertype;
   double? surchage_percent;
-  final List<String> _paymentMethods = [
+   List<String> _paymentMethods = [
     'Card',
     'Check',
     'Cash',
@@ -1023,9 +1023,9 @@ class _MakePaymentState extends State<MakePayment> {
                                           //   }).toList(),
                                           //   // Add a special menu item for "Add New Tenant"
                                           //   DropdownMenuItem<String>(
-                                          //     value: 'add_new_tenant',
+                                          //     value: 'external_source',
                                           //     child: const Text(
-                                          //       'Add New Tenant',
+                                          //       'External Source',
                                           //       style: TextStyle(
                                           //         color: Colors.blue,
                                           //         fontStyle: FontStyle.italic,
@@ -1035,8 +1035,38 @@ class _MakePaymentState extends State<MakePayment> {
                                           // ],
                                           onChanged: (value) async {
                                             state.didChange(value);
-                                            setState(() {
+                                            setState(()  {
                                               selectedTenantId = value;
+
+                                              // if (value == 'external_source') {
+                                              //   // Fetch all charges if "Add New Tenant" is selected
+                                              //    fetchChargesForSelectedTenant(
+                                              //       value!);
+                                              // } else {
+                                              //   tenantname = tenants.firstWhere(
+                                              //           (tenant) =>
+                                              //       tenant['tenant_id'] ==
+                                              //           value)['tenant_name']!;
+                                              //   fetchChargesForSelectedTenant(
+                                              //       value!);
+                                              // }
+                                              // if (value == 'external_source') {
+                                              //   _paymentMethods = [
+                                              //     'Cash',
+                                              //     'Money Order',
+                                              //     'Manual'
+                                              //   ]; // Only show these payment methods
+                                              // } else {
+                                              //   _paymentMethods = [
+                                              //     'Card',
+                                              //     'Check',
+                                              //     'Cash',
+                                              //     'ACH',
+                                              //     'Cashier\'s Check',
+                                              //     'Money Order',
+                                              //     'Manual'
+                                              //   ]; // Show all payment methods
+                                              // }
                                               tenantname = tenants.firstWhere(
                                                   (tenant) =>
                                                       tenant['tenant_id'] ==

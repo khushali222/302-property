@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -187,7 +188,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
       });
     });
   }
-
+  bool isCheckboxError = false;
   @override
   Widget build(BuildContext context) {
     final editFormState = Provider.of<EditFormState>(context);
@@ -220,12 +221,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                       ? Container(
                           child: Form(
                             key: _formKey,
-                            child: Column(
+                            child:
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Expanded(
                                       child: Text('Enter Applicant Details',
@@ -234,7 +236,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           style: TextStyle(
                                               color: blueColor,
                                               fontSize: 18,
-                                              fontWeight: FontWeight.w500)),
+                                              fontWeight: FontWeight.bold)),
                                     ),
                                     GestureDetector(
                                       onTap: () {
@@ -245,18 +247,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                       child: Container(
                                         child: Material(
                                           borderRadius:
-                                              BorderRadius.circular(4.0),
+                                          BorderRadius.circular(4.0),
                                           elevation: 4,
                                           child: Container(
                                             decoration: BoxDecoration(
                                               color: blueColor,
                                               borderRadius:
-                                                  BorderRadius.circular(4),
-                                              border: Border.all(
-                                                  color: blueColor
-
-
-),
+                                              BorderRadius.circular(4),
+                                              border:
+                                              Border.all(color: blueColor),
                                             ),
                                             child: const Padding(
                                               padding: EdgeInsets.all(8.0),
@@ -266,7 +265,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     color: Colors.white,
                                                     fontSize: 15,
                                                     fontWeight:
-                                                        FontWeight.w500),
+                                                    FontWeight.bold),
                                                 textAlign: TextAlign.center,
                                               ),
                                             ),
@@ -283,33 +282,32 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Applicant information',
                                   style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.bold,
                                       color: blueColor),
                                 ),
                                 const SizedBox(
-                                  height: 5,
+                                  height: 8,
                                 ),
                                 Container(
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                       border: Border.all(
-                                        color:
-                                            blueColor,
+                                        color: blueColor,
                                       ),
                                       borderRadius:
-                                          BorderRadius.circular(10.0)),
+                                      BorderRadius.circular(10.0)),
                                   child: Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'First name',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -317,7 +315,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         NewCustomTextField(
                                           hintText: 'First Name',
                                           controller:
-                                              _applicantFirstNameController,
+                                          _applicantFirstNameController,
                                           keyboardType: TextInputType.text,
                                           validator: (value) {
                                             if (value == null ||
@@ -335,8 +333,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Last Name',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -344,7 +342,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         NewCustomTextField(
                                           hintText: 'Last Name',
                                           controller:
-                                              _applicantLastNameController,
+                                          _applicantLastNameController,
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
@@ -361,35 +359,38 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Birth Date',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
+
                                         CustomDateField(
                                           hintText: 'Pick date of birth',
                                           controller:
-                                              _applicantBirthdateController,
+                                          _applicantBirthdateController,
                                         ),
                                         const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
-                                          'Email',
+                                          'Email ',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
-                                        NewCustomEmailField(
+                                        NewCustomTextField(
                                           hintText: 'Enter your email',
+                                          email: true,
+                                          alterController: _emergencyEmailController,
                                           controller: _applicantEmailController,
                                           keyboardType:
-                                              TextInputType.emailAddress,
+                                          TextInputType.emailAddress,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -398,16 +399,24 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Phone Number',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Phone Number',
+                                          otherController: _emergencyPhoneNumberController,
+
                                           controller:
-                                              _applicantPhoneNumberController,
+                                          _applicantPhoneNumberController,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
@@ -430,7 +439,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Applicant Street Address',
                                   style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.bold,
                                       color: blueColor),
                                 ),
                                 const SizedBox(
@@ -440,8 +449,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                          blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -449,22 +457,23 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Street Address',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Street Address',
                                           controller:
-                                              _applicantStreetAddressController,
+                                          _applicantStreetAddressController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -473,13 +482,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'City',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'City',
                                           controller: _applicantCityController,
                                         ),
@@ -490,13 +500,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'State',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'State',
                                           controller: _applicantStateController,
                                         ),
@@ -507,16 +518,17 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Country',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Country',
                                           controller:
-                                              _applicantCountryController,
+                                          _applicantCountryController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -525,16 +537,17 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Postal Code',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Postal Code',
                                           controller:
-                                              _applicantPostalCodeController,
+                                          _applicantPostalCodeController,
                                         ),
                                         const SizedBox(height: 16),
                                       ],
@@ -548,7 +561,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Emergency contact',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
                                 ),
@@ -559,8 +572,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                          blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -568,23 +580,24 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'First Name',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'First Name',
                                           controller:
-                                              _emergencyFirstNameController,
+                                          _emergencyFirstNameController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -592,18 +605,19 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Last Name',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Last Name',
                                           controller:
-                                              _emergencyLastNameController,
+                                          _emergencyLastNameController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -611,18 +625,19 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Relationship',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Relationship',
                                           controller:
-                                              _emergencyRelationshipController,
+                                          _emergencyRelationshipController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -630,9 +645,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Email',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -640,6 +655,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Email',
+                                          optional: true,
+                                          email: true,
+                                          alterController: _applicantEmailController,
                                           controller: _emergencyEmailController,
                                         ),
                                         const SizedBox(
@@ -648,18 +666,27 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Phone Number',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
+                                          phone: true,
+                                          optional: true,
+                                          otherController: _applicantPhoneNumberController,
                                           hintText: 'Phone Number',
                                           controller:
-                                              _emergencyPhoneNumberController,
+                                          _emergencyPhoneNumberController,
                                         ),
                                         const SizedBox(height: 16),
                                       ],
@@ -671,10 +698,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   height: 16,
                                 ),
                                 Text(
-                                  'Rental history',
+                                  'Rental historys',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
                                 ),
@@ -685,8 +712,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                          blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -694,20 +720,21 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Rental Address',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Rental Address',
                                           controller: _rentalAddressController,
                                         ),
@@ -717,15 +744,16 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'City',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'City',
                                           controller: _rentalCityController,
                                         ),
@@ -735,15 +763,16 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'State',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'State',
                                           controller: _rentalStateController,
                                         ),
@@ -753,9 +782,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Country',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -763,6 +792,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Country',
+                                          optional: true,
                                           controller: _rentalCountryController,
                                         ),
                                         const SizedBox(
@@ -771,15 +801,16 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Postcode',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Postcode',
                                           controller: _rentalPostcodeController,
                                         ),
@@ -789,9 +820,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Start Date',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -799,6 +830,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Start Date',
+                                          optional: true,
                                           controller: _startDateController,
                                         ),
                                         const SizedBox(
@@ -807,9 +839,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'End Date',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -817,6 +849,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'End Date',
+                                          optional: true,
                                           controller: _endDateController,
                                         ),
                                         const SizedBox(
@@ -825,9 +858,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Rent Amount',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -835,6 +868,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Rent Amount',
+                                          optional: true,
                                           controller: _rentController,
                                         ),
                                         const SizedBox(
@@ -843,9 +877,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Reason for Leaving',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -853,6 +887,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Reason for Leaving',
+                                          optional: true,
                                           controller: _leavingReasonController,
                                         ),
                                         const SizedBox(height: 16),
@@ -867,7 +902,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Rental owner information',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
                                 ),
@@ -878,8 +913,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                          blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -887,23 +921,24 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'First Name',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'First Name',
                                           controller:
-                                              _rentalOwnerFirstNameController,
+                                          _rentalOwnerFirstNameController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -911,18 +946,19 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Last Name',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Last Name',
                                           controller:
-                                              _rentalOwnerLastNameController,
+                                          _rentalOwnerLastNameController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -930,18 +966,22 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Email',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Email',
+                                          email: true,
                                           controller:
-                                              _rentalOwnerEmailController,
+                                          _rentalOwnerEmailController,
+                                          alterController: _applicantEmailController,
+                                          emrgencyController: _emergencyEmailController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -949,18 +989,28 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Phone Number',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'Phone Number',
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
+                                          phone: true,
+                                          otherController: _emergencyPhoneNumberController,
+                                          businessController: _applicantPhoneNumberController,
                                           controller:
-                                              _rentalOwnerPhoneNumberController,
+                                          _rentalOwnerPhoneNumberController,
                                         ),
                                         const SizedBox(height: 16),
                                       ],
@@ -974,7 +1024,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Employment',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
                                 ),
@@ -985,8 +1035,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                          blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -994,14 +1043,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Company Name',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1009,6 +1058,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Company Name',
+                                          optional: true,
                                           controller: _employmentNameController,
                                         ),
                                         const SizedBox(
@@ -1017,9 +1067,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Street Address',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1027,8 +1077,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Street Address',
+                                          optional: true,
                                           controller:
-                                              _employmentStreetAddressController,
+                                          _employmentStreetAddressController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1036,15 +1087,16 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'City',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
+                                          optional: true,
                                           hintText: 'City',
                                           controller: _employmentCityController,
                                         ),
@@ -1054,9 +1106,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'State',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1064,8 +1116,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'State',
+                                          optional: true,
                                           controller:
-                                              _employmentStateController,
+                                          _employmentStateController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1073,9 +1126,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Country',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1083,8 +1136,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Country',
+                                          optional: true,
                                           controller:
-                                              _employmentCountryController,
+                                          _employmentCountryController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1092,9 +1146,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Postal Code',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1102,8 +1156,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Postal Code',
+                                          optional: true,
                                           controller:
-                                              _employmentPostalCodeController,
+                                          _employmentPostalCodeController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1111,9 +1166,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Primary Email',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1121,8 +1176,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Primary Email',
+                                          optional: true,
+                                          email: true,
+                                          keyboardType: TextInputType.number,
                                           controller:
-                                              _employmentPrimaryEmailController,
+                                          _employmentPrimaryEmailController,
+                                          emailController:_applicantEmailController,
+                                          alterController: _rentalOwnerEmailController,
+                                          emrgencyController: _emergencyEmailController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1130,9 +1191,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Phone Number',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1140,8 +1201,19 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Phone Number',
+                                          optional: true,
+                                          phone: true,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
+                                          otherController: _rentalOwnerPhoneNumberController,
+                                          businessController: _emergencyPhoneNumberController,
+                                          telephoneController: _applicantPhoneNumberController,
                                           controller:
-                                              _employmentPhoneNumberController,
+                                          _employmentPhoneNumberController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1149,9 +1221,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Position',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1159,8 +1231,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Position',
+                                          optional: true,
                                           controller:
-                                              _employmentPositionController,
+                                          _employmentPositionController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1168,9 +1241,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Supervisor First Name',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1178,8 +1251,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Supervisor First Name',
+                                          optional: true,
                                           controller:
-                                              _supervisorFirstNameController,
+                                          _supervisorFirstNameController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1187,9 +1261,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Supervisor Last Name',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1197,8 +1271,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Supervisor Last Name',
+                                          optional: true,
                                           controller:
-                                              _supervisorLastNameController,
+                                          _supervisorLastNameController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1206,9 +1281,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Text(
                                           'Supervisor Title',
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1216,8 +1291,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Supervisor Title',
+                                          optional: true,
                                           controller:
-                                              _supervisorTitleController,
+                                          _supervisorTitleController,
                                         ),
                                         const SizedBox(height: 16),
                                       ],
@@ -1226,7 +1302,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                    bottom: 16.0,
+
+                                    bottom: 17.0,
+                                    left: 8,
+                                    right: 8,
                                     top: 16.0,
                                   ),
                                   child: Text('Terms and conditions',
@@ -1235,16 +1314,19 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                       style: TextStyle(
                                           color: blueColor,
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w500)),
+                                          fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     bottom: 16.0,
                                     top: 16.0,
+                                    left: 8,
+                                    right: 8,
                                   ),
                                   child: Text(
                                       '''I understand that this is a routine application to establish credit, character, employment, and rental history. I also understand that this is NOT an agreement to rent and that all applications must be approved. I authorize verification of references given. I declare that the statements above are true and correct, and I agree that the Rental owner may terminate my agreement entered into in reliance on any misstatement made above.''',
                                       softWrap: true,
+                                      textAlign: TextAlign.justify,
                                       overflow: TextOverflow.fade,
                                       style: TextStyle(
                                           color: Colors.grey[600],
@@ -1256,12 +1338,21 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Checkbox(
-                                        value: checked, onChanged: (value) {}),
+                                        value: checked,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            checked = value!;
+                                            isCheckboxError = !checked; // Update error state dynamically
+                                          });
+                                        }),
+
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                        left: 4.0,
+
+                                        left: 8,
+                                        right: 8,
                                       ),
-                                      child: Text('Agreed to*',
+                                      child: Text('Agreed to**',
                                           softWrap: true,
                                           overflow: TextOverflow.fade,
                                           style: TextStyle(
@@ -1271,9 +1362,21 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     ),
                                   ],
                                 ),
+                                if (isCheckboxError)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      'You must agree to the terms and conditions.',
+                                      style: TextStyle(color: Colors.red, fontSize: 14),
+                                    ),
+                                  ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                    left: 4.0,
+                                    left: 10,
+                                    right: 10,
                                   ),
                                   child: Text('Agreed by',
                                       softWrap: true,
@@ -1286,185 +1389,201 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                NewCustomTextField(
-                                  hintText: 'Agreed by...',
-                                  controller: _agreeByController,
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: NewCustomTextField(
+                                    hintText: 'Agreed by...',
+                                    controller: _agreeByController,
+                                  ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
+                                    left: 8,
+                                    right: 8,
                                     bottom: 16.0,
                                     top: 16.0,
                                   ),
                                   child: RichText(
                                       text: TextSpan(children: [
-                                    TextSpan(
-                                        text:
+                                        TextSpan(
+                                            text:
                                             'By submitting this application, I (1) am giving permission to run a background check on me, which may include obtaining my credit report from a consumer reporting agency; and (2) agreeing to the ',
-                                        style: TextStyle(
-                                            color: Colors.grey[500],
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500)),
-                                    TextSpan(
-                                        text: 'Privacy Policy',
-                                        style: TextStyle(
-                                            color: Colors.grey[600],
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500)),
-                                    TextSpan(
-                                        text: ' and ',
-                                        style: TextStyle(
-                                            color: Colors.grey[500],
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500)),
-                                    TextSpan(
-                                        text: 'Terms of Service.',
-                                        style: TextStyle(
-                                            color: Colors.grey[600],
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500)),
-                                  ])),
+                                            style: TextStyle(
+                                                color: Colors.grey[500],
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500)),
+                                        TextSpan(
+                                            text: 'Privacy Policy',
+                                            style: TextStyle(
+                                                color: Colors.grey[600],
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500)),
+                                        TextSpan(
+                                            text: ' and ',
+                                            style: TextStyle(
+                                                color: Colors.grey[500],
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500)),
+                                        TextSpan(
+                                            text: 'Terms of Service.',
+                                            style: TextStyle(
+                                                color: Colors.grey[600],
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500)),
+                                      ])),
                                 ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: blueColor),
-                                  onPressed: () async {
-                                    if (_formKey.currentState!.validate()) {
-                                      SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
-                                      String? adminId =
-                                          prefs.getString('adminId');
-                                      // printAllFields();
-                                      Data data = Data(
-                                        emergencyContact: EmergencyContact(
-                                          firstName:
-                                              _emergencyFirstNameController
-                                                  .text,
-                                          lastName:
-                                              _emergencyLastNameController.text,
-                                          relationship:
-                                              _emergencyRelationshipController
-                                                  .text,
-                                          email: _emergencyEmailController.text,
-                                          phoneNumber: int.tryParse(
-                                              _emergencyPhoneNumberController
-                                                  .text),
-                                        ),
-                                        rentalHistory: RentalHistory(
-                                          rentalAdress:
-                                              _rentalAddressController.text,
-                                          rentalCity:
-                                              _rentalCityController.text,
-                                          rentalState:
-                                              _rentalStateController.text,
-                                          rentalCountry:
-                                              _rentalCountryController.text,
-                                          rentalPostcode:
-                                              _rentalPostcodeController.text,
-                                          rentalOwnerFirstName:
-                                              _rentalOwnerFirstNameController
-                                                  .text,
-                                          rentalOwnerLastName:
-                                              _rentalOwnerLastNameController
-                                                  .text,
-                                          startDate: _startDateController.text,
-                                          endDate: _endDateController.text,
-                                          rent: _rentController.text,
-                                          leavingReason:
-                                              _leavingReasonController.text,
-                                          rentalOwnerPrimaryEmail:
-                                              _rentalOwnerEmailController.text,
-                                          rentalOwnerPhoneNumber: int.tryParse(
-                                              _rentalOwnerPhoneNumberController
-                                                  .text),
-                                        ),
-                                        employment: Employment(
-                                          name: _employmentNameController.text,
-                                          streetAddress:
-                                              _employmentStreetAddressController
-                                                  .text,
-                                          city: _employmentCityController.text,
-                                          state:
-                                              _employmentStateController.text,
-                                          country:
-                                              _employmentCountryController.text,
-                                          postalCode:
-                                              _employmentPostalCodeController
-                                                  .text,
-                                          employmentPrimaryEmail:
-                                              _employmentPrimaryEmailController
-                                                  .text,
-                                          employmentPhoneNumber: int.tryParse(
-                                              _employmentPhoneNumberController
-                                                  .text),
-                                          employmentPosition:
-                                              _employmentPositionController
-                                                  .text,
-                                          supervisorFirstName:
-                                              _supervisorFirstNameController
-                                                  .text,
-                                          supervisorLastName:
-                                              _supervisorLastNameController
-                                                  .text,
-                                          supervisorTitle:
-                                              _supervisorTitleController.text,
-                                        ),
-
-                                        applicantId: widget.applicantDetail
-                                            .applicantId, // Assuming this value is not set from a controller
-                                        adminId:
-                                            adminId, // Assuming this value is not set from a controller
-                                        applicantStreetAddress:
-                                            _applicantStreetAddressController
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: blueColor),
+                                    onPressed: () async {
+                                      setState(() {
+                                        isCheckboxError = !checked; // Validate checkbox when submitting
+                                      });
+                                      if (_formKey.currentState!.validate() && checked) {
+                                        SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                        String? adminId =
+                                        prefs.getString('adminId');
+                                        // printAllFields();
+                                        Data data = Data(
+                                          emergencyContact: EmergencyContact(
+                                            firstName:
+                                            _emergencyFirstNameController
                                                 .text,
-                                        applicantCity:
-                                            _applicantCityController.text,
-                                        applicantState:
-                                            _applicantStateController.text,
-                                        applicantCountry:
-                                            _applicantCountryController.text,
-                                        applicantPostalCode:
-                                            _applicantPostalCodeController.text,
-                                        agreeBy: _agreeByController.text,
-
-                                        applicantFirstName:
-                                            _applicantFirstNameController.text,
-                                        applicantLastName:
-                                            _applicantLastNameController.text,
-                                        applicantEmail:
-                                            _applicantEmailController.text,
-                                        applicantPhoneNumber:
-                                            _applicantPhoneNumberController
+                                            lastName:
+                                            _emergencyLastNameController.text,
+                                            relationship:
+                                            _emergencyRelationshipController
                                                 .text,
-                                        isApplicantDataEmpty:
-                                            false, // Default value
-                                      );
-                                      print('entry');
-                                      ApplicantSummeryRepository
-                                          applicantSummeryRepository =
-                                          ApplicantSummeryRepository();
-                                      print('entry');
-                                      bool success =
-                                          await ApplicantSummeryRepository()
-                                              .addApplicantSummaryForm(
-                                                  data, widget.applicant_id);
-                                      if (success == true) {
-                                        print('complete');
-                                        Fluttertoast.showToast(
-                                            msg:
-                                                'Applicant Added Successfully');
+                                            email: _emergencyEmailController.text,
+                                            phoneNumber: int.tryParse(
+                                                _emergencyPhoneNumberController
+                                                    .text),
+                                          ),
+                                          rentalHistory: RentalHistory(
+                                            rentalAdress:
+                                            _rentalAddressController.text,
+                                            rentalCity:
+                                            _rentalCityController.text,
+                                            rentalState:
+                                            _rentalStateController.text,
+                                            rentalCountry:
+                                            _rentalCountryController.text,
+                                            rentalPostcode:
+                                            _rentalPostcodeController.text,
+                                            rentalOwnerFirstName:
+                                            _rentalOwnerFirstNameController
+                                                .text,
+                                            rentalOwnerLastName:
+                                            _rentalOwnerLastNameController
+                                                .text,
+                                            startDate: _startDateController.text,
+                                            endDate: _endDateController.text,
+                                            rent: _rentController.text,
+                                            leavingReason:
+                                            _leavingReasonController.text,
+                                            rentalOwnerPrimaryEmail:
+                                            _rentalOwnerEmailController.text,
+                                            rentalOwnerPhoneNumber: int.tryParse(
+                                                _rentalOwnerPhoneNumberController
+                                                    .text),
+                                          ),
+                                          employment: Employment(
+                                            name: _employmentNameController.text,
+                                            streetAddress:
+                                            _employmentStreetAddressController
+                                                .text,
+                                            city: _employmentCityController.text,
+                                            state:
+                                            _employmentStateController.text,
+                                            country:
+                                            _employmentCountryController.text,
+                                            postalCode:
+                                            _employmentPostalCodeController
+                                                .text,
+                                            employmentPrimaryEmail:
+                                            _employmentPrimaryEmailController
+                                                .text,
+                                            employmentPhoneNumber: int.tryParse(
+                                                _employmentPhoneNumberController
+                                                    .text),
+                                            employmentPosition:
+                                            _employmentPositionController
+                                                .text,
+                                            supervisorFirstName:
+                                            _supervisorFirstNameController
+                                                .text,
+                                            supervisorLastName:
+                                            _supervisorLastNameController
+                                                .text,
+                                            supervisorTitle:
+                                            _supervisorTitleController.text,
+                                          ),
+
+                                          applicantId: widget.applicantDetail
+                                              .applicantId, // Assuming this value is not set from a controller
+                                          adminId:
+                                          adminId, // Assuming this value is not set from a controller
+                                          applicantStreetAddress:
+                                          _applicantStreetAddressController
+                                              .text,
+                                          applicantCity:
+                                          _applicantCityController.text,
+                                          applicantState:
+                                          _applicantStateController.text,
+                                          applicantCountry:
+                                          _applicantCountryController.text,
+                                          applicantPostalCode:
+                                          _applicantPostalCodeController.text,
+                                          agreeBy: _agreeByController.text,
+
+                                          applicantFirstName:
+                                          _applicantFirstNameController.text,
+                                          applicantLastName:
+                                          _applicantLastNameController.text,
+                                          applicantEmail:
+                                          _applicantEmailController.text,
+                                          applicantPhoneNumber:
+                                          _applicantPhoneNumberController
+                                              .text,
+                                          isApplicantDataEmpty:
+                                          false, // Default value
+                                        );
+                                        print('entry');
+                                        ApplicantSummeryRepository
+                                        applicantSummeryRepository =
+                                        ApplicantSummeryRepository();
+                                        print('entry');
+                                        bool success =
+                                        await ApplicantSummeryRepository()
+                                            .addApplicantSummaryForm(
+                                            data, widget.applicant_id);
+                                        if (success == true) {
+                                          print('complete');
+                                          Fluttertoast.showToast(
+                                              msg:
+                                              'Applicant Added Successfully');
+                                        } else {
+                                          print('not complete');
+                                          Fluttertoast.showToast(
+                                              msg: 'Failed to add applicant');
+                                        }
                                       } else {
-                                        print('not complete');
-                                        Fluttertoast.showToast(
-                                            msg: 'Failed to add applicant');
+                                        if (!checked) {
+                                          // Fluttertoast.showToast(
+                                          //     msg: 'You must agree to the terms and conditions.');
+                                        }
+                                        setState(
+                                                () {}); // Rebuild to show the error message
+                                        print('Form is invalid');
                                       }
-                                    } else {
-                                      setState(
-                                          () {}); // Rebuild to show the error message
-                                      print('Form is invalid');
-                                    }
-                                  },
-                                  child: const Text('Save Applicant'),
+                                    },
+                                    child: const Text('Save Applicantt',style: TextStyle(fontWeight: FontWeight.bold),),
+                                  ),
                                 ),
+
                               ],
                             ),
                           ),

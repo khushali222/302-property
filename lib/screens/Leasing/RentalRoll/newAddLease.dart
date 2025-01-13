@@ -40,11 +40,10 @@ class addLease3 extends StatefulWidget {
   final String? applicantId;
   final String? rentalId;
   final String? unitId;
-   String? leaseId;
+  String? leaseId;
 
-
-
-   addLease3({Key? key, this.applicantId, this.rentalId, this.unitId,this.leaseId})
+  addLease3(
+      {Key? key, this.applicantId, this.rentalId, this.unitId, this.leaseId})
       : super(key: key);
 
   @override
@@ -54,7 +53,6 @@ class addLease3 extends StatefulWidget {
 class _addLease3State extends State<addLease3>
     with SingleTickerProviderStateMixin {
   late Future<List<Rentals>> futureRentalOwners;
-
 
   List<String> applicantIds = [];
   @override
@@ -83,12 +81,10 @@ class _addLease3State extends State<addLease3>
 
     if (widget.leaseId != null && widget.leaseId!.isNotEmpty) {
       print('idi3 ${widget.leaseId}');
-     setState(() {
-       fetchDetails(widget.leaseId!);
-     });// Using widget.leaseId safely
+      setState(() {
+        fetchDetails(widget.leaseId!);
+      }); // Using widget.leaseId safely
     }
-
-
 
     futureRentalOwners = PropertiesRepository().fetchProperties();
     _loadProperties();
@@ -98,9 +94,9 @@ class _addLease3State extends State<addLease3>
 
   Future<void> fetchDetails(String leaseId) async {
     try {
-
       // Fetch lease details from the repository
-      LeaseDetails fetchedDetails = await LeaseRepository().fetchLeaseDetails(leaseId);
+      LeaseDetails fetchedDetails =
+          await LeaseRepository().fetchLeaseDetails(leaseId);
       print('Lease type: ${fetchedDetails.lease.leaseType}');
 
       // Optional delay for demonstration purposes
@@ -116,30 +112,30 @@ class _addLease3State extends State<addLease3>
           renderId = fetchedDetails.rental.rentalId ?? "";
           //_selectedLeaseType = fetchedDetails.lease.leaseType ?? "";
           print("calling stage 1");
-          if(fetchedDetails.lease.startDate!=null)
-          startDateController.text = formatDate(fetchedDetails.lease.startDate);
+          if (fetchedDetails.lease.startDate != null)
+            startDateController.text =
+                formatDate(fetchedDetails.lease.startDate);
           print("calling stage 2");
-          if(fetchedDetails.lease.endDate!=null)
-          endDateController.text = formatDate(fetchedDetails.lease.endDate);
+          if (fetchedDetails.lease.endDate != null)
+            endDateController.text = formatDate(fetchedDetails.lease.endDate);
           print("calling stage 3");
           // Calculate rent cycle items
-          if(fetchedDetails.lease.startDate!=null &&fetchedDetails.lease.startDate!=null)
-          // rentCycleItemsDynamic(DateTime.parse(fetchedDetails.lease.endDate)
-          //     .difference(DateTime.parse(fetchedDetails.lease.startDate))
-          //     .inDays);
-          print("calling stage 4");
+          if (fetchedDetails.lease.startDate != null &&
+              fetchedDetails.lease.startDate != null)
+            // rentCycleItemsDynamic(DateTime.parse(fetchedDetails.lease.endDate)
+            //     .difference(DateTime.parse(fetchedDetails.lease.startDate))
+            //     .inDays);
+            print("calling stage 4");
           // Update rent charges
-        //  _selectedRent = fetchedDetails.rentCharges?.first.rentCycle ?? "";
-         // rentMemo.text = fetchedDetails.rentCharges?.first.memo ?? "";
-        if(fetchedDetails.tenant != null ){
-          for(var t in fetchedDetails.tenant!){
-            applicantIds.add(t.applicantId!);
-            print("Appllicant id  ${t.applicantId}" );
+          //  _selectedRent = fetchedDetails.rentCharges?.first.rentCycle ?? "";
+          // rentMemo.text = fetchedDetails.rentCharges?.first.memo ?? "";
+          if (fetchedDetails.tenant != null) {
+            for (var t in fetchedDetails.tenant!) {
+              applicantIds.add(t.applicantId!);
+              print("Appllicant id  ${t.applicantId}");
+            }
           }
-        }
-        print(applicantIds);
-
-
+          print(applicantIds);
 
           // Handle uploaded files
           if (fetchedDetails.lease.uploadedFile != null &&
@@ -153,7 +149,8 @@ class _addLease3State extends State<addLease3>
           // Update tenants
           if (fetchedDetails.tenant != null) {
             for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
-              fetchedDetails.tenant![i].tenantId = fetchedDetails.tenant![i].applicantId;
+              fetchedDetails.tenant![i].tenantId =
+                  fetchedDetails.tenant![i].applicantId;
               Provider.of<SelectedTenantsProvider>(context, listen: false)
                   .addTenant(fetchedDetails.tenant![i]);
               // Provider.of<SelectedTenantsProvider>(context, listen: false)
@@ -185,10 +182,6 @@ class _addLease3State extends State<addLease3>
       print('Failed to fetch lease details: $e');
     }
   }
-
-
-
-
 
 //first container variable
   String selectedFrequency = 'Monthly';
@@ -759,8 +752,7 @@ class _addLease3State extends State<addLease3>
   List<Map<String, String>> formDataOneTimeList = [];
 
   void _showPopupForm(BuildContext context, String rent,
-      {Map<String, String>? initialData, int? index})
-  async {
+      {Map<String, String>? initialData, int? index}) async {
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) {
@@ -1465,7 +1457,8 @@ class _addLease3State extends State<addLease3>
                                             .difference(_startDate!)
                                             .inDays);
                                         _selectedRent = null;
-                                        rentAmount.text = ''; // Reset amount entered status
+                                        rentAmount.text =
+                                            ''; // Reset amount entered status
                                         rentNextDueDate.text = '';
                                         startDateController.text.isNotEmpty;
                                         isProRent = false;
@@ -2004,8 +1997,8 @@ class _addLease3State extends State<addLease3>
                                                                 ],
                                                               ),
                                                               isTenantSelected
-                                                                  ? const AddTenant()
-                                                                  : AddCosigner(),
+                                                                  ? AddTenant()
+                                                                  : AddCosigner()
                                                             ],
                                                           ),
                                                         ),
@@ -2633,8 +2626,7 @@ class _addLease3State extends State<addLease3>
                                         children: [
                                           TableRow(
                                             decoration: BoxDecoration(
-                                              color:
-                                                  blueColor,
+                                              color: blueColor,
                                             ),
                                             children: [
                                               Padding(
@@ -2693,7 +2685,6 @@ class _addLease3State extends State<addLease3>
                                               ),
                                             ],
                                           ),
-
                                           ...Provider.of<
                                                       SelectedTenantsProvider>(
                                                   context)
@@ -2726,11 +2717,7 @@ class _addLease3State extends State<addLease3>
                                                               : 18,
                                                       fontWeight:
                                                           FontWeight.w700,
-                                                      color:
-                                                           blueColor
-
-
-,
+                                                      color: blueColor,
                                                     ),
                                                   ),
                                                 ),
@@ -2769,8 +2756,7 @@ class _addLease3State extends State<addLease3>
                                                         ),
                                                       ),
                                                       child: Center(
-                                                        child:
-                                                        Padding(
+                                                        child: Padding(
                                                           padding:
                                                               const EdgeInsets
                                                                   .only(
@@ -2848,10 +2834,10 @@ class _addLease3State extends State<addLease3>
                                                                   _errorMessage =
                                                                       'Total rent share must equal 100';
                                                                 });
-                                                              }
-                                                              else{
+                                                              } else {
                                                                 setState(() {
-                                                                  _errorMessage = null;
+                                                                  _errorMessage =
+                                                                      null;
                                                                 });
                                                               }
                                                             },
@@ -4379,8 +4365,7 @@ class _addLease3State extends State<addLease3>
                                               'Total rent share must equal 100';
                                         });
                                         return;
-                                      }
-                                      else {
+                                      } else {
                                         SharedPreferences prefs =
                                             await SharedPreferences
                                                 .getInstance();
@@ -4612,7 +4597,9 @@ class _addLease3State extends State<addLease3>
                                           leaseData: LeaseData(
                                             adminId: adminId ?? "",
                                             isProRent: isProRent,
-                                            proRatedRent: isProRent ? proRatedRentController.text : null,
+                                            proRatedRent: isProRent
+                                                ? proRatedRentController.text
+                                                : null,
                                             companyName: companyName,
                                             endDate:
                                                 reverseFormatDate(leaseEndDate),
@@ -4627,22 +4614,25 @@ class _addLease3State extends State<addLease3>
                                                     tenant.tenantId ?? '')
                                                 .toList(),
                                             tenantResidentStatus:
-
                                                 _selectedResidentsEmail,
                                             unitId: _selectedUnit,
                                             uploadedFile: _uploadedFileNames,
                                           ),
                                           tenantData: tenantDataList,
                                         );
-                                        print("Pro-rated Rent Value: ${proRatedRentController.text}");
+                                        print(
+                                            "Pro-rated Rent Value: ${proRatedRentController.text}");
                                         print('lease data full ${lease}');
                                         lease.tenantData.forEach((tenant) {
-                                          print('  Tenant First Name: ${tenant.tenantFirstName}');
-                                          print('  Tenant Last Name: ${tenant.tenantLastName}');
-                                          print('  Tenant ID: ${tenant.tenantId}');
+                                          print(
+                                              '  Tenant First Name: ${tenant.tenantFirstName}');
+                                          print(
+                                              '  Tenant Last Name: ${tenant.tenantLastName}');
+                                          print(
+                                              '  Tenant ID: ${tenant.tenantId}');
                                         });
 
-                                       await addLeaseAndNavigate(lease);
+                                        await addLeaseAndNavigate(lease);
 
                                         setState(() {
                                           isLoading = false; // Stop loading
@@ -4651,8 +4641,8 @@ class _addLease3State extends State<addLease3>
                                             applicantIds!.isNotEmpty) {
                                           print(
                                               'applicant id is: ${widget.applicantId}');
-                                          ifApplicantMoveIn(
-                                              widget.applicantId!,applicantIds);
+                                          ifApplicantMoveIn(widget.applicantId!,
+                                              applicantIds);
                                         } else {
                                           print('No applicant id provided');
                                         }
@@ -4837,8 +4827,10 @@ class _addLease3State extends State<addLease3>
     }
   }
 
-  Future<void> ifApplicantMoveIn(String applicantId,List<String> apnt_Id) async {
-    bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId,apnt_Id);
+  Future<void> ifApplicantMoveIn(
+      String applicantId, List<String> apnt_Id) async {
+    bool success =
+        await LeaseRepository().ifApplicantMoveInTrue(applicantId, apnt_Id);
 
     if (success) {
       Navigator.pop(context); // Replace with the actual navigation logic
@@ -4967,8 +4959,12 @@ class _addLease3State extends State<addLease3>
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
                                                 return LinearGradient(
+                                                  // colors: [
+                                                  //   blueColor,
+                                                  // ],
                                                   colors: [
                                                     blueColor,
+                                                    blueColor
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -5032,6 +5028,7 @@ class _addLease3State extends State<addLease3>
                                                 return LinearGradient(
                                                   colors: [
                                                     blueColor,
+                                                    blueColor
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -5063,46 +5060,46 @@ class _addLease3State extends State<addLease3>
                   ),
                 ),
               ),
-              actions: [
-                Container(
-                    height: 50,
-                    width: 90,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: blueColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0))),
-                        onPressed: () {
-                          if (_addRecurringFormKey.currentState!.validate()) {
-                            print('object valid');
-                          } else {
-                            print('object invalid');
-                          }
-                        },
-                        child: const Text(
-                          'Add',
-                          style: TextStyle(color: Color(0xFFf7f8f9)),
-                        ))),
-                Container(
-                    height: 50,
-                    width: 94,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFffffff),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0))),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(color: Color(0xFF748097)),
-                        )))
-              ],
+              // actions: [
+              //   Container(
+              //       height: 50,
+              //       width: 90,
+              //       decoration:
+              //           BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+              //       child: ElevatedButton(
+              //           style: ElevatedButton.styleFrom(
+              //               backgroundColor: blueColor,
+              //               shape: RoundedRectangleBorder(
+              //                   borderRadius: BorderRadius.circular(8.0))),
+              //           onPressed: () {
+              //             if (_addRecurringFormKey.currentState!.validate()) {
+              //               print('object valid');
+              //             } else {
+              //               print('object invalid');
+              //             }
+              //           },
+              //           child: const Text(
+              //             'Add',
+              //             style: TextStyle(color: Color(0xFFf7f8f9)),
+              //           ))),
+              //   Container(
+              //       height: 50,
+              //       width: 94,
+              //       decoration:
+              //           BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+              //       child: ElevatedButton(
+              //           style: ElevatedButton.styleFrom(
+              //               backgroundColor: const Color(0xFFffffff),
+              //               shape: RoundedRectangleBorder(
+              //                   borderRadius: BorderRadius.circular(8.0))),
+              //           onPressed: () {
+              //             Navigator.pop(context);
+              //           },
+              //           child: const Text(
+              //             'Cancel',
+              //             style: TextStyle(color: Color(0xFF748097)),
+              //           )))
+              // ],
             );
           });
         });
@@ -6552,8 +6549,8 @@ class _AddTenantState extends State<AddTenant> {
     filteredTenants = tenants;
     selected = List<bool>.generate(tenants.length, (index) => false);
     fetchTenantsAndApplicants();
-   // fetchTenants();
-  //  fetchApplicants();
+    // fetchTenants();
+    //  fetchApplicants();
     filteredApplicant = Applicant;
     select = List<bool>.generate(Applicant.length, (index) => false);
   }
@@ -6590,6 +6587,7 @@ class _AddTenantState extends State<AddTenant> {
       });
     }
   }
+
   Tenant convertApplicantToTenant(Datum applicant) {
     return Tenant(
       tenantFirstName: applicant.applicantFirstName,
@@ -6599,6 +6597,7 @@ class _AddTenantState extends State<AddTenant> {
       tenantId: null, // Explicitly set tenantId as null
     );
   }
+
   bool isValidEmail(String email) {
     String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
     RegExp regex = RegExp(pattern);
@@ -6664,10 +6663,13 @@ class _AddTenantState extends State<AddTenant> {
       });
     }
   }
+
   Future<void> fetchTenantsAndApplicants() async {
-    setState(() {
-      isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -6701,7 +6703,8 @@ class _AddTenantState extends State<AddTenant> {
       });
 
       if (applicantResponse.statusCode == 200) {
-        Map<String, dynamic> applicantData = json.decode(applicantResponse.body);
+        Map<String, dynamic> applicantData =
+            json.decode(applicantResponse.body);
         if (applicantData.containsKey('data')) {
           List<dynamic> applicantList = applicantData['data'];
           List<Tenant> convertedApplicants = applicantList
@@ -6717,19 +6720,22 @@ class _AddTenantState extends State<AddTenant> {
         print("Failed to load applicants: ${applicantResponse.statusCode}");
       }
 
-      // Update filtered list and selection state
-      filteredTenants = List.from(tenants);
-      selected = List<bool>.filled(tenants.length, false);
+      if (mounted) {
+        setState(() {
+          filteredTenants = List.from(tenants);
+          selected = List<bool>.filled(tenants.length, false);
+        });
+      }
     } catch (e) {
       print("Error fetching tenants or applicants: $e");
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
-
-
 
   //for applicant
 
@@ -6762,14 +6768,11 @@ class _AddTenantState extends State<AddTenant> {
         if (responseData.containsKey('data')) {
           List<dynamic> data = responseData['data'];
           Applicant = data.map((item) => Datum.fromJson(item)).toList();
-          List<Tenant> tenants = Applicant.map((applicant) =>
-              convertApplicantToTenant(applicant)).toList();
+          List<Tenant> tenants =
+              Applicant.map((applicant) => convertApplicantToTenant(applicant))
+                  .toList();
           filteredApplicant = List.from(Applicant);
           select = List<bool>.filled(Applicant.length, false);
-
-
-
-
         } else {
           // Handle unexpected response structure
           print("Unexpected response structure: Missing 'data' key");
@@ -8059,6 +8062,7 @@ class _AddCosignerState extends State<AddCosigner> {
                             Provider.of<SelectedCosignersProvider>(context,
                                     listen: false)
                                 .addCosigner(cosigner);
+                            Navigator.pop(context);
                           } else {
                             final cosigner = Cosigner(
                               //c_id : firstName.text,
@@ -8076,6 +8080,7 @@ class _AddCosignerState extends State<AddCosigner> {
                             Provider.of<SelectedCosignersProvider>(context,
                                     listen: false)
                                 .updateCosigner(cosigner, widget.index!);
+                            Navigator.pop(context);
                             // Navigator.push(
                             //   context,
                             //   MaterialPageRoute(

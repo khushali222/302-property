@@ -24,6 +24,7 @@ import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart
 import 'StaffModule/repository/staffpermission_provider.dart';
 import 'TenantsModule/repository/permission_provider.dart';
 import 'constant/constant.dart';
+import 'provider/edit_applicant.dart';
 
 // void main() {
 //   runApp(

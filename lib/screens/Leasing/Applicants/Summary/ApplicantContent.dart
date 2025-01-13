@@ -188,7 +188,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
       });
     });
   }
-
+  bool isCheckboxError = false;
   @override
   Widget build(BuildContext context) {
     final editFormState = Provider.of<EditFormState>(context);
@@ -221,7 +221,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                       ? Container(
                           child: Form(
                             key: _formKey,
-                            child: Column(
+                            child:
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
@@ -364,7 +365,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         const SizedBox(
                                           height: 5,
                                         ),
-
                                         CustomDateField(
                                           hintText: 'Pick date of birth',
                                           controller:
@@ -374,7 +374,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           height: 12,
                                         ),
                                         Text(
-                                          'Email',
+                                          'Email ',
                                           style: TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
@@ -383,9 +383,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         const SizedBox(
                                           height: 5,
                                         ),
-                                        NewCustomEmailField(
+                                        NewCustomTextField(
                                           hintText: 'Enter your email',
-
+                                          email: true,
+                                          alterController: _emergencyEmailController,
                                           controller: _applicantEmailController,
                                           keyboardType:
                                               TextInputType.emailAddress,
@@ -654,6 +655,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         NewCustomTextField(
                                           hintText: 'Email',
                                           optional: true,
+                                          email: true,
+                                          alterController: _applicantEmailController,
                                           controller: _emergencyEmailController,
                                         ),
                                         const SizedBox(
@@ -694,7 +697,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   height: 16,
                                 ),
                                 Text(
-                                  'Rental history',
+                                  'Rental historys',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -973,8 +976,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         NewCustomTextField(
                                           optional: true,
                                           hintText: 'Email',
+                                          email: true,
                                           controller:
                                               _rentalOwnerEmailController,
+                                          alterController: _applicantEmailController,
+                                          emrgencyController: _emergencyEmailController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1170,8 +1176,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         NewCustomTextField(
                                           hintText: 'Primary Email',
                                           optional: true,
+                                          email: true,
+                                          keyboardType: TextInputType.number,
                                           controller:
                                               _employmentPrimaryEmailController,
+                                          emailController:_applicantEmailController,
+                                          alterController: _rentalOwnerEmailController,
+                                          emrgencyController: _emergencyEmailController,
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1290,7 +1301,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                    
+
                                     bottom: 17.0,
                                     left: 8,
                                     right: 8,
@@ -1326,14 +1337,21 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Checkbox(
-                                        value: checked, onChanged: (value) {}),
+                                        value: checked,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        checked = value!;
+                                        isCheckboxError = !checked; // Update error state dynamically
+                                      });
+                                    }),
+
                                     Padding(
                                       padding: const EdgeInsets.only(
 
                                         left: 8,
                                         right: 8,
                                       ),
-                                      child: Text('Agreed to*',
+                                      child: Text('Agreed to**',
                                           softWrap: true,
                                           overflow: TextOverflow.fade,
                                           style: TextStyle(
@@ -1342,6 +1360,17 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               fontWeight: FontWeight.w400)),
                                     ),
                                   ],
+                                ),
+                                if (isCheckboxError)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      'You must agree to the terms and conditions.',
+                                      style: TextStyle(color: Colors.red, fontSize: 14),
+                                    ),
+                                  ),
+                                const SizedBox(
+                                  height: 5,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -1408,7 +1437,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: blueColor),
                                     onPressed: () async {
-                                      if (_formKey.currentState!.validate()) {
+                                      setState(() {
+                                        isCheckboxError = !checked; // Validate checkbox when submitting
+                                      });
+                                      if (_formKey.currentState!.validate() && checked) {
                                         SharedPreferences prefs =
                                             await SharedPreferences.getInstance();
                                         String? adminId =
@@ -1538,6 +1570,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               msg: 'Failed to add applicant');
                                         }
                                       } else {
+                                        if (!checked) {
+                                          // Fluttertoast.showToast(
+                                          //     msg: 'You must agree to the terms and conditions.');
+                                        }
                                         setState(
                                             () {}); // Rebuild to show the error message
                                         print('Form is invalid');
@@ -1546,6 +1582,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     child: const Text('Save Applicantt',style: TextStyle(fontWeight: FontWeight.bold),),
                                   ),
                                 ),
+
                               ],
                             ),
                           ),
@@ -2445,7 +2482,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               height: 16,
                                             ),
                                             Text(
-                                              'Rental history',
+                                              'Rental historys',
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
