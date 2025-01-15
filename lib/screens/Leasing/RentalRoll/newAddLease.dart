@@ -1821,6 +1821,14 @@ class _addLease3State extends State<addLease3>
                                         builder: (context) {
                                           return StatefulBuilder(
                                             builder: (context, setState) {
+                                              var cosignerProvider = Provider.of<SelectedCosignersProvider>(context);
+                                              Cosigner? existingCosigner;
+                                              int? existingIndex;
+
+                                              if (cosignerProvider.cosigners.isNotEmpty) {
+                                                existingCosigner = cosignerProvider.cosigners.first; // Get the first cosigner
+                                                existingIndex = 0; // Assuming you want to edit the first cosigner
+                                              }
                                               return AlertDialog(
                                                 backgroundColor: Colors.white,
                                                 contentPadding: EdgeInsets.zero,
@@ -1998,7 +2006,7 @@ class _addLease3State extends State<addLease3>
                                                               ),
                                                               isTenantSelected
                                                                   ? AddTenant()
-                                                                  : AddCosigner()
+                                                                  : AddCosigner(cosigner: existingCosigner,index: existingIndex,)
                                                             ],
                                                           ),
                                                         ),

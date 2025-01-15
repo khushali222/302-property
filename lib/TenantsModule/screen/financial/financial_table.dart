@@ -18,6 +18,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
 
+import '../../../provider/Plan Purchase/plancheckProvider.dart';
 import '../../model/tenant_financial.dart';
 import '../../model/tenant_property.dart';
 
@@ -634,6 +635,12 @@ class _FinancialTableState extends State<FinancialTable> {
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
+        .checkplanpurchaseModel
+        ?.data
+        ?.planDetail
+        ?.planName ==
+        'Free Plan';
     final permissionProvider = Provider.of<PermissionProvider>(context);
     final permissions = permissionProvider.permissions;
     return Scaffold(
@@ -653,7 +660,7 @@ class _FinancialTableState extends State<FinancialTable> {
             ),
             //add propertytype
 
-            if(permissions!.financialAdd)
+            if(!isFreePlan && permissions!.financialAdd)
               Padding(
               padding: (MediaQuery.of(context).size.width > 500)
           ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.045 ):  EdgeInsets.only(left: 13, right: 13),

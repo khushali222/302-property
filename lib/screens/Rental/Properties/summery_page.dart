@@ -129,7 +129,7 @@ class _Summery_pageState extends State<Summery_page>
     checkInternet();
     _fetchData();
     futureUnitsummery =
-        Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
+        Properies_summery_Repo().fetchunit(widget.properties.rentalId ?? "");
 
     futurePropertysummery = Properies_summery_Repo()
         .fetchPropertiessummery(widget.properties.rentalId!);
@@ -384,15 +384,17 @@ class _Summery_pageState extends State<Summery_page>
 
   Future<void> _fetchData() async {
     try {
-      final data = await unitRepository.fetchunit(widget.properties.rentalId!);
+      final data = await unitRepository.fetchunit(widget.properties.rentalId ?? "");
       final data1 = await Properies_summery_Repo()
-          .fetchPropertiessummery(widget.properties.rentalId!);
+          .fetchPropertiessummery(widget.properties.rentalId ?? "");
       final data2 = await Properies_summery_Repo()
-          .fetchWorkOrders(widget.properties.rentalId!);
+          .fetchWorkOrders(widget.properties.rentalId ?? "");
+      print('Unit count: ${data.length }');
+
       setState(() {
-        unitCount = data.length;
-        tenentCount = data1.length;
-        count = data2.length;
+        unitCount = data.isNotEmpty ? data.length : 0;
+        tenentCount = data1.isNotEmpty ? data1.length : 0;
+        count = data2.isNotEmpty ? data2.length : 0;
         complete_count = data2.length;
       });
     } catch (e) {
@@ -405,11 +407,11 @@ class _Summery_pageState extends State<Summery_page>
   final Properies_summery_Repo unit1Repository = Properies_summery_Repo();
   Future<void> fetchunits1() async {
     //  try {
-    final fetchedunit1 = await unit1Repository.fetchunit(widget.unit!.unitId!);
-    print(widget.unit!.unitId!);
+    final fetchedunit1 = await unit1Repository.fetchunit(widget.unit?.unitId ?? "");
+    print(widget.unit?.unitId ?? "");
     print('hello');
     setState(() {
-      print(widget.unit!.unitId!);
+      print(widget.unit?.unitId ??"");
       print('hello');
       data = fetchedunit1;
       isLoading = false;
@@ -882,11 +884,11 @@ class _Summery_pageState extends State<Summery_page>
   bool ascending2multi = false;
   bool ascending3multi = false;
 
-  countupdateunit(int cnt) {
-    setState(() {
-      unitCount = cnt;
-    });
-  }
+  // countupdateunit(int cnt) {
+  //   setState(() {
+  //     unitCount = cnt;
+  //   });
+  // }
 
   Widget _buildHeadersmulti() {
     var width = MediaQuery.of(context).size.width;
@@ -6857,7 +6859,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           Properies_summery_Repo()
                                                               .fetchunit(widget
                                                                   .properties
-                                                                  .rentalId!);
+                                                                  .rentalId ?? "");
                                                       isLoading = false;
                                                       data.add(unit_properties(
                                                         adminId: id!,
@@ -9898,7 +9900,7 @@ class _Summery_pageState extends State<Summery_page>
                               // Add your delete logic here
                               setState(() {
                                 futureUnitsummery = Properies_summery_Repo()
-                                    .fetchunit(widget.properties.rentalId!);
+                                    .fetchunit(widget.properties.rentalId ?? "");
                                 showdetails = false;
                               });
                               //Navigator.pop(context);
@@ -11635,7 +11637,7 @@ class _Summery_pageState extends State<Summery_page>
   reload_Screen() {
     setState(() {
       futureUnitsummery =
-          Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
+          Properies_summery_Repo().fetchunit(widget.properties.rentalId ?? "");
     });
   }
 }

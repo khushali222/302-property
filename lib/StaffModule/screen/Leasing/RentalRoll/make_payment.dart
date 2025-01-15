@@ -137,7 +137,7 @@ class _MakePaymentState extends State<MakePayment> {
               'account': entry.account,
               'amount': 0.0,
               'charge_amount': entry.amount,
-              'memo': entry.memo,
+              'memo': entry.memo?.isNotEmpty == true ? entry.memo : "Payment",
               'date': entry.date,
               'charge_type': entry.chargeType,
               'newfield': false,
@@ -416,7 +416,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   String? _selectedHoldertype;
   double? surchage_percent;
-  final List<String> _paymentMethods = [
+   List<String> _paymentMethods = [
     'Card',
     'Check',
     'Cash',
@@ -531,7 +531,7 @@ class _MakePaymentState extends State<MakePayment> {
                 'account': entry.account,
                 'amount': 0.0,
                 'charge_amount': entry.chargeAmount,
-                'memo': entry.memo,
+                'memo': entry.memo?.isNotEmpty == true ? entry.memo : "Payment",
                 'date': entry.date,
                 'charge_type': entry.chargeType,
                 'newfield': false,
@@ -571,7 +571,7 @@ class _MakePaymentState extends State<MakePayment> {
         'account': null,
         'charge_type': null,
         'amount': 0.0,
-        'memo': Memo.text,
+        'memo':  Memo.text.isNotEmpty ? Memo.text : "Payment",
         'charge_amount': 0.0,
         'date': _startDate.text,
         'newfield': true
@@ -996,23 +996,63 @@ class _MakePaymentState extends State<MakePayment> {
                                           isExpanded: true,
                                           hint: const Text('Select Tenant'),
                                           value: selectedTenantId,
-                                          items: tenants.map((tenant) {
-                                            return DropdownMenuItem<String>(
-                                              value: tenant['tenant_id'],
-                                              child:
-                                                  Text(tenant['tenant_name']!),
-                                            );
-                                          }).toList(),
+                                          items: [
+                                            ...tenants.map((tenant) {
+                                              return DropdownMenuItem<String>(
+                                                value: tenant['tenant_id'],
+                                                child: Text(tenant['tenant_name']!),
+                                              );
+                                            }).toList(),
+                                            // Add a special menu item for "Add New Tenant"
+                                            DropdownMenuItem<String>(
+                                              value: 'external_source',
+                                              child:  Text(
+                                                'External Source',
+                                                style: TextStyle(
+
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                           onChanged: (value) async {
                                             state.didChange(value);
                                             setState(() {
                                               selectedTenantId = value;
-                                              tenantname = tenants.firstWhere(
-                                                  (tenant) =>
-                                                      tenant['tenant_id'] ==
-                                                      value)['tenant_name']!;
-                                              fetchChargesForSelectedTenant(
-                                                  value!);
+                                              if (value == 'external_source') {
+                                                // Fetch all charges if "Add New Tenant" is selected
+                                                fetchChargesForSelectedTenant(
+                                                    value!);
+                                              } else {
+                                                tenantname = tenants.firstWhere(
+                                                        (tenant) =>
+                                                    tenant['tenant_id'] ==
+                                                        value)['tenant_name']!;
+                                                fetchChargesForSelectedTenant(
+                                                    value!);
+                                              }
+                                              if (value == 'external_source') {
+                                                _paymentMethods = [
+                                                  'Cash',
+                                                  'Money Order',
+                                                  'Manual'
+                                                ]; // Only show these payment methods
+                                              } else {
+                                                _paymentMethods = [
+                                                  'Card',
+                                                  'Check',
+                                                  'Cash',
+                                                  'ACH',
+                                                  'Cashier\'s Check',
+                                                  'Money Order',
+                                                  'Manual'
+                                                ]; // Show all payment methods
+                                              }
+                                              // tenantname = tenants.firstWhere(
+                                              //     (tenant) =>
+                                              //         tenant['tenant_id'] ==
+                                              //         value)['tenant_name']!;
+                                              // fetchChargesForSelectedTenant(
+                                              //     value!);
                                             });
                                             state.reset();
                                             await fetchcreditcard(value!);
@@ -3717,8 +3757,10 @@ class _MakePaymentState extends State<MakePayment> {
                                   return tenant['tenant_id'] ==
                                       selectedTenantId;
                                 }).toList();
-                                Map<String, String> selectedTenant =
-                                    filteredTenants.first;
+                                // Map<String, String> selectedTenant =
+                                //     filteredTenants.first;
+                                Map<String, String>? selectedTenant =
+                                filteredTenants.isNotEmpty ? filteredTenants.first : null;
                                 final DateFormat formatter =
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
@@ -3726,14 +3768,14 @@ class _MakePaymentState extends State<MakePayment> {
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
-                                  firstName: selectedTenant["first_name"]!,
-                                  lastName: selectedTenant["last_name"]!,
-                                  emailName: selectedTenant["email"]!,
+                                  firstName: selectedTenant?["first_name"] ?? "",
+                                  lastName: selectedTenant?["last_name"] ?? "",
+                                  emailName: selectedTenant?["email"] ?? "",
                                   surcharge:
                                       "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
                                   amount:
                                       "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
-                                  tenantId: selectedTenantId!,
+                                  tenantId: selectedTenant != null ? selectedTenantId! : "",
                                   date: _startDate.text,
                                   address1: "",
                                   processorId: "",
@@ -3767,8 +3809,10 @@ class _MakePaymentState extends State<MakePayment> {
                                   return tenant['tenant_id'] ==
                                       selectedTenantId;
                                 }).toList();
-                                Map<String, String> selectedTenant =
-                                    filteredTenants.first;
+                                // Map<String, String> selectedTenant =
+                                //     filteredTenants.first;
+                                Map<String, String>? selectedTenant =
+                                filteredTenants.isNotEmpty ? filteredTenants.first : null;
                                 final DateFormat formatter =
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
@@ -3776,15 +3820,14 @@ class _MakePaymentState extends State<MakePayment> {
                                 await PaymentService()
                                     .makePaymentfornormal(
                                         adminId: id ?? "",
-                                        firstName:
-                                            selectedTenant["first_name"]!,
-                                        lastName: selectedTenant["last_name"]!,
-                                        emailName: selectedTenant["email"]!,
+                                    firstName: selectedTenant?["first_name"] ?? "",
+                                    lastName: selectedTenant?["last_name"] ?? "",
+                                    emailName: selectedTenant?["email"] ?? "",
                                         surcharge:
                                             "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
                                         amount:
                                             "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
-                                        tenantId: selectedTenantId!,
+                                        tenantId:selectedTenant != null ? selectedTenantId! : "",
                                         date: _startDate.text,
                                         address1: "",
                                         processorId: "",
