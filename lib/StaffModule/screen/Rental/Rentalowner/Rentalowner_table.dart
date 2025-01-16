@@ -659,7 +659,15 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                         data = snapshot.data!
                             .where((rentals) => rentals.rentalOwnername!
                                 .toLowerCase()
-                                .contains(searchValue!.toLowerCase()))
+                                .contains(searchValue!.toLowerCase())||
+                            rentals.rentalOwnerPhoneNumber!
+                                .toLowerCase()
+                                .contains(searchValue!.toLowerCase()) ||
+                            rentals.rentalOwnerPrimaryEmail!
+                                .toLowerCase()
+                                .contains(searchValue!.toLowerCase())
+
+                        )
                             .toList();
                       } else {
                         data = snapshot.data!

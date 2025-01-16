@@ -1981,8 +1981,9 @@ class _EditTenantsState extends State<EditTenants> {
                                       tenantEmail: email.text,
                                       tenantAlternativeEmail: alterEmail.text,
                                       tenantPassword: passWord.text,
-                                      tenantBirthDate: reverseFormatDate(
-                                          _dateController.text),
+                                      tenantBirthDate: _dateController.text.isNotEmpty
+                                          ? reverseFormatDate(_dateController.text)
+                                          : "",
                                       taxPayerId: taxPayerId.text,
                                       comments: comments.text,
                                       emergencyContactName: contactName.text,

@@ -120,6 +120,7 @@ class _EditTenantsState extends State<EditTenants> {
   String? initialRelationToTenant;
   String? initialEmergencyEmail;
   String? initialEmergencyPhoneNumber;
+  bool? initialoverride;
 
   @override
   void initState() {
@@ -1984,8 +1985,10 @@ class _EditTenantsState extends State<EditTenants> {
                                       tenantEmail: email.text,
                                       tenantAlternativeEmail: alterEmail.text,
                                       tenantPassword: passWord.text,
-                                      tenantBirthDate: reverseFormatDate(
-                                          _dateController.text),
+                                      tenantBirthDate:  _dateController.text.isNotEmpty
+                                    ? reverseFormatDate(_dateController.text)
+                                  : "",  // This will ensure no empty string is passed to reverseFormatDate
+
                                       taxPayerId: taxPayerId.text,
                                       comments: comments.text,
                                       emergencyContactName: contactName.text,
@@ -2061,7 +2064,7 @@ class _EditTenantsState extends State<EditTenants> {
                                     ),
                                   )
                                 : Text(
-                                    'Edit Tenant',
+                                    'Edit Tenantt',
                                     style: TextStyle(color: Color(0xFFf7f8f9)),
                                   ),
                           ),

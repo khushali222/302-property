@@ -881,9 +881,20 @@ class _Applicants_tableState extends State<Applicants_table> {
                                 applicant.applicantFirstName!
                                     .toLowerCase()
                                     .contains(searchvalue.toLowerCase()) ||
-                                applicant.applicantLastName!
-                                    .toLowerCase()
-                                    .contains(searchvalue.toLowerCase()))
+                                    applicant.applicantLastName!
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    applicant.applicantPhoneNumber!
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase())||
+                                    applicant.applicantEmail!
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase())||
+                                    applicant.rentalData!.rentalAdress!
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase())
+
+                        )
                             .toList();
                       } else {
                         data = snapshot.data!

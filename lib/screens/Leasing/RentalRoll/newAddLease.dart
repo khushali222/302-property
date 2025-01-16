@@ -266,33 +266,47 @@ class _addLease3State extends State<addLease3>
     String? token = prefs.getString('token');
     try {
       final response = await http
-          .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
+          .get(Uri.parse('$Api_url/api/unit/rental_unit_dropdown/$rentalId'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('$Api_url/api/unit/rental_unit/$rentalId');
+      print('$Api_url/api/unit/rental_unit_dropdown/$rentalId');
 
       if (response.statusCode == 200) {
-        List jsonResponse = json.decode(response.body)['data'];
+        Map<String,dynamic> responses = jsonDecode(response.body);
+        if(responses["statusCode"] == 200){
+          List jsonResponse = json.decode(response.body)['data'];
 
-        List<Map<String, String>> unitAddresses = jsonResponse.map((data) {
-          return {
-            'unit_id': data['unit_id'].toString(),
-            'rental_unit': data['rental_unit'].toString(),
-          };
-        }).toList();
+          List<Map<String, String>> unitAddresses = jsonResponse.map((data) {
+            return {
+              'unit_id': data['unit_id'].toString(),
+              'rental_unit': data['rental_unit'].toString(),
+            };
+          }).toList();
 
-        setState(() {
-          units = unitAddresses;
-          _isLoading = false;
-          _showUnitDropdown = true;
-        });
+          setState(() {
+            units = unitAddresses;
+            _isLoading = false;
+            //_showUnitDropdown = true;
+            _showUnitDropdown = units.isNotEmpty;
+          });
+        }
+        else{
+          setState(() {
+
+            _isLoading = false;
+            //_showUnitDropdown = true;
+            _showUnitDropdown = false;
+          });
+        }
+
       } else {
         throw Exception('Failed to load units');
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
+
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch units: $e')),
@@ -1135,8 +1149,12 @@ class _addLease3State extends State<addLease3>
                                                   renderId = value.toString();
                                                   print(
                                                       'Hello Yash:${renderId}');
+
+
+                                                  print("units $units");
                                                   _loadUnits(
-                                                      value!); // Fetch units for the selected property
+                                                      value!);
+
                                                 });
                                                 state.reset();
                                               },

@@ -261,7 +261,7 @@ class TenantsRepository {
     required String tenantEmail,
     required String tenantAlternativeEmail,
     required String tenantPassword,
-    required String tenantBirthDate,
+     String? tenantBirthDate,
     required String taxPayerId,
     required String comments,
     required String emergencyContactName,

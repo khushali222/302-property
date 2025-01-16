@@ -282,20 +282,33 @@ class _Edit_leaseState extends State<Edit_lease>
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
-        List jsonResponse = json.decode(response.body)['data'];
+        Map<String,dynamic> responses = jsonDecode(response.body);
+        if(responses["statusCode"] == 200){
+          List jsonResponse = json.decode(response.body)['data'];
 
-        List<Map<String, String>> unitAddresses = jsonResponse.map((data) {
-          return {
-            'unit_id': data['unit_id'].toString(),
-            'rental_unit': data['rental_unit'].toString(),
-          };
-        }).toList();
+          List<Map<String, String>> unitAddresses = jsonResponse.map((data) {
+            return {
+              'unit_id': data['unit_id'].toString(),
+              'rental_unit': data['rental_unit'].toString(),
+            };
+          }).toList();
 
-        setState(() {
-          units = unitAddresses;
-          _isLoading = false;
-          _showUnitDropdown = true;
-        });
+          setState(() {
+            units = unitAddresses;
+            _isLoading = false;
+            //_showUnitDropdown = true;
+            _showUnitDropdown = units.isNotEmpty;
+          });
+        }
+        else{
+          setState(() {
+
+            _isLoading = false;
+            //_showUnitDropdown = true;
+            _showUnitDropdown = false;
+          });
+        }
+
       } else {
         throw Exception('Failed to load units');
       }

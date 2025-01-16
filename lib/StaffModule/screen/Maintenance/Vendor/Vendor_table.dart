@@ -838,7 +838,11 @@ class _Vendor_tableState extends State<Vendor_table> {
                                     .contains(searchvalue!.toLowerCase()) ||
                                 property.vendorPhoneNumber!
                                     .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
+                                    .contains(searchvalue!.toLowerCase())||
+                                    property.vendorEmail!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase())
+                        )
                             .toList();
                       }
                       sortData(data);

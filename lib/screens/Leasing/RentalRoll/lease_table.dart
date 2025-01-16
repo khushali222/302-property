@@ -857,7 +857,30 @@ class _Lease_tableState extends State<Lease_table> {
                                               searchValue!.toLowerCase()) ||
                                       lease.tenantNames!
                                           .toLowerCase()
-                                          .contains(searchValue!.toLowerCase()))
+                                          .contains(searchValue!.toLowerCase())||
+                                          lease.rentCycle!
+                                              .toLowerCase()
+                                              .contains(searchValue!.toLowerCase())||
+                                          lease.startDate!
+                                              .toLowerCase()
+                                              .contains(searchValue!.toLowerCase())||
+                                          lease.endDate!
+                                              .toLowerCase()
+                                              .contains(searchValue!.toLowerCase())||
+                                          lease.amount!.toStringAsFixed(2)
+                                              .toLowerCase()
+                                              .contains(searchValue!.toLowerCase()) ||
+                                          lease.remainingDays!
+                                              .toLowerCase()
+                                              .contains(searchValue!.toLowerCase())||
+                                          lease.rentDueDate!
+                                              .toLowerCase()
+                                              .contains(searchValue!.toLowerCase())||
+                                          lease.totalBalance!.toStringAsFixed(2)
+                                              .toLowerCase()
+                                              .contains(searchValue!.toLowerCase())
+
+                              )
                                   .toList();
                             } else {
                               data = snapshot.data!

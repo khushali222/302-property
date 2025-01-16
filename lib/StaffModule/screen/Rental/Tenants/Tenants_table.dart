@@ -971,9 +971,19 @@ class _Tenants_tableState extends State<Tenants_table> {
                                 rentals.tenantFirstName!
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()) ||
-                                rentals.tenantLastName!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
+                                    rentals.tenantLastName!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    rentals.tenantPhoneNumber!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    rentals.tenantEmail!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    rentals.rentalAddress!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase())
+                        )
                             .toList();
                       } else {
                         data = snapshot.data!

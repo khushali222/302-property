@@ -734,7 +734,17 @@ class _StaffTableState extends State<StaffTable> {
                               data = snapshot.data!
                                   .where((staff) => staff.staffmemberName!
                                       .toLowerCase()
-                                      .contains(searchValue!.toLowerCase()))
+                                      .contains(searchValue!.toLowerCase()) ||
+                                  staff.staffmemberDesignation!
+                                      .toLowerCase()
+                                      .contains(searchValue!.toLowerCase()) ||
+                                  staff.staffmemberPhoneNumber!
+                                      .toLowerCase()
+                                      .contains(searchValue!.toLowerCase()) ||
+                                  staff.staffmemberEmail!
+                                      .toLowerCase()
+                                      .contains(searchValue!.toLowerCase())
+                              )
                                   .toList();
                             } else {
                               data = snapshot.data!

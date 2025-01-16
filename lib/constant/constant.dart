@@ -60,10 +60,28 @@ String formatDate3(String dateStr) {
   return DateFormat('dd-MM-yyyy').format(dateTime);
 }
 
+// String reverseFormatDate(String formattedDate) {
+//   print(formattedDate);
+//   DateTime dateTime = DateFormat('dd-MM-yyyy').parse(formattedDate);
+//   return DateFormat('yyyy-MM-dd').format(dateTime);
+// }
 String reverseFormatDate(String formattedDate) {
-  print(formattedDate);
-  DateTime dateTime = DateFormat('dd-MM-yyyy').parse(formattedDate);
-  return DateFormat('yyyy-MM-dd').format(dateTime);
+  // Check if the formattedDate is empty or invalid
+  if (formattedDate.isEmpty) {
+    print("Empty date received, returning an empty string");
+    return "";  // Return an empty string if the date is empty
+  }
+
+  try {
+    print(formattedDate);
+    // Try parsing the date
+    DateTime dateTime = DateFormat('dd-MM-yyyy').parse(formattedDate);
+    // Return the formatted date in 'yyyy-MM-dd' format
+    return DateFormat('yyyy-MM-dd').format(dateTime);
+  } catch (e) {
+    print("Error while formatting date: $e");
+    return "";  // Return an empty string if there is an error
+  }
 }
 
 Color blueColor = Color.fromRGBO(21, 43, 81, 1);

@@ -741,6 +741,31 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                             );
                           } else {
                             var data = snapshot.data!;
+                            if (selectedValue == null && searchvalue.isEmpty) {
+                              data = snapshot.data!;
+                            } else if (selectedValue == "All") {
+                              data = snapshot.data!;
+                            } else if (searchvalue.isNotEmpty) {
+                              data = snapshot.data!
+                                  .where((applicant) =>
+                              applicant.rentalAddress!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()) ||
+                                  applicant.tenantNames!.toString()
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase()) ||
+                                  applicant.remainingDays!.toString()
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase())
+                              )
+                                  .toList();
+                            } else {
+                              data = snapshot.data!
+                                  .where((applicant) =>
+                              applicant.rentalAddress == selectedValue)
+                                  .toList();
+                            }
+
                             /* if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
                       } else if (selectedValue == "All") {
