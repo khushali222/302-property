@@ -67,6 +67,7 @@ class PaymentService {
 
       print(response.statusCode);
       print(" payment responce ${response.body}");
+
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
@@ -87,6 +88,7 @@ class PaymentService {
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: "",
+              date: date,
               transactionId: jsonData["data"]["transactionid"],
               responseText: "SUCCESS",
               surcharge: surcharge,
@@ -116,6 +118,7 @@ class PaymentService {
           isLeaseAdded: false,
           uploadedFile: "",
           transactionId: "",
+          date: date,
           responseText: "PENDING",
           surcharge: surcharge,
 
@@ -145,6 +148,7 @@ class PaymentService {
     required String responseText,
     required String surcharge,
     required String paymentAmountType,
+    required String date,
   }) async {
     final String baseUrl = '$Api_url/api/payment/tenant-payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -176,6 +180,7 @@ class PaymentService {
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
+        'date': date,
       }),
     );
 

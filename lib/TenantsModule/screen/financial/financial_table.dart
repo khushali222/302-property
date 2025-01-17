@@ -1122,7 +1122,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   flex: 2,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-                                                    '${formatDate4(Tenant_financial.entry!.first.date!)}' ,
+                                                    '${formatDate4(Tenant_financial.entry?.first.date ?? "")}' ,
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

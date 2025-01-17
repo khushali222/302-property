@@ -1690,11 +1690,31 @@ class _AddCardState extends State<AddCard> {
                                     ? Container()
                                     : Padding(
                                         padding: EdgeInsets.only(left: 16.0),
-                                        child: Text('Cards',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500,
-                                                color: blueColor)),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text('Cards',
+                                                    style: TextStyle(
+                                                        fontSize: 17,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: blueColor)),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text('Note: Swipe right on the card to delete it.',
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: blueColor)),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                 selectedTenantId == null
                                     ? Container()

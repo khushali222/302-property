@@ -10,7 +10,7 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-String Api_url = "http://192.168.1.7:4000";
+String Api_url = "http://192.168.1.21:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
 
@@ -50,10 +50,24 @@ formatDate(String dateTime) {
   return DateFormat('dd-MM-yyyy').format(parsedDate);
 }
 
+// String formatDate4(String dateTime) {
+//   DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(dateTime);0
+//   return DateFormat('dd-MM-yyyy').format(parsedDate);
+// }
+
 String formatDate4(String dateTime) {
-  DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(dateTime);
-  return DateFormat('dd-MM-yyyy').format(parsedDate);
+  if (dateTime.isEmpty) {
+    return ""; // Handle empty or invalid date input
+  }
+
+  try {
+    DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(dateTime);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  } catch (e) {
+    return ""; // Return this if parsing fails
+  }
 }
+
 
 String formatDate3(String dateStr) {
   DateTime dateTime = DateTime.parse(dateStr);

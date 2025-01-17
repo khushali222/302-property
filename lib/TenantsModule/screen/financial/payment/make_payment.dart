@@ -62,7 +62,7 @@ class _MakePaymentState extends State<MakePayment> {
   double surchargeIncluded = 0.0;
   double totalAmount = 0.0;
   int? selectedcardindex;
-  bool? futuredate;
+  bool? futuredate = false;
   Setting1? surcharges;
   double? surchargecount = 0.0;
   double? finaltotal;
@@ -131,7 +131,8 @@ class _MakePaymentState extends State<MakePayment> {
       }
     }
   }
- String? leaseid;
+
+  String? leaseid;
   @override
   void initState() {
     super.initState();
@@ -142,7 +143,8 @@ class _MakePaymentState extends State<MakePayment> {
     // WidgetsBinding.instance.addPostFrameCallback((_) async {
     //   await fetchPaymentSettings(widget.tenantId, widget.leaseId);
     // });
-
+    DateTime today = DateTime.now();
+    _startDate.text = DateFormat('dd-MM-yyyy').format(today);
     print("id tenant ${widget.tenantId}");
     print("id tenant ${widget.leaseId}");
     //  fetchSurcharge();
@@ -200,7 +202,6 @@ class _MakePaymentState extends State<MakePayment> {
         selectedTenantRent =
             double.tryParse(tenants[0]['rent'] ?? '0.0') ?? 0.0;
         isLoading = false;
-
       });
     } else {
       setState(() {
@@ -959,6 +960,7 @@ class _MakePaymentState extends State<MakePayment> {
       print('Error: $e');
     }*/
   }
+
   bool creditCardAccepted = false;
   bool debitCardAccepted = false;
   bool isCardOneEnabled = false;
@@ -986,7 +988,7 @@ class _MakePaymentState extends State<MakePayment> {
 
     print("Response Status Code: ${response.statusCode}");
 
-    if (response.statusCode == 200 ) {
+    if (response.statusCode == 200) {
       try {
         var jsonResponse = json.decode(response.body);
         print('Decoded Response: $jsonResponse');
@@ -994,8 +996,6 @@ class _MakePaymentState extends State<MakePayment> {
         setState(() {
           creditCardAccepted = jsonResponse['data']['creditCardAccepted'];
           debitCardAccepted = jsonResponse['data']['debitCardAccepted'];
-
-
 
           // Print values to ensure state is being updated correctly
           print("creditCardAccepted: $creditCardAccepted");
@@ -1014,8 +1014,6 @@ class _MakePaymentState extends State<MakePayment> {
       print('Response Status Code: ${response.statusCode}');
     }
   }
-
-
 
   String? _errorText;
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
@@ -1145,10 +1143,11 @@ class _MakePaymentState extends State<MakePayment> {
                                             state.didChange(
                                                 value); // Notify FormField of change
                                           });
-                                         // fetchcreditcard(widget.tenantId);
+                                          // fetchcreditcard(widget.tenantId);
 
-                                            fetchPaymentSettings(widget.tenantId,leaseid ?? "");
-                                           print('leaseid by ${leaseid ?? ""}');
+                                          fetchPaymentSettings(
+                                              widget.tenantId, leaseid ?? "");
+                                          print('leaseid by ${leaseid ?? ""}');
                                           state.reset();
                                           //   print('Selected tenant_id: $selectedTenantId');
                                         },
@@ -1219,6 +1218,79 @@ class _MakePaymentState extends State<MakePayment> {
                           SizedBox(
                             height: 10,
                           ),
+                          Text('Date',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor)),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          CustomTextField(
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2101),
+                                locale: const Locale('en', 'US'),
+                                builder:
+                                    (BuildContext context, Widget? child) {
+                                  return Theme(
+                                    data: ThemeData.light().copyWith(
+                                      colorScheme: const ColorScheme.light(
+                                        primary: Color.fromRGBO(21, 43, 83,
+                                            1), // header background color
+                                        onPrimary: Colors
+                                            .white, // header text color
+                                        onSurface: Color.fromRGBO(21, 43,
+                                            83, 1), // body text color
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor:
+                                          const Color.fromRGBO(
+                                              21,
+                                              43,
+                                              83,
+                                              1), // button text color
+                                        ),
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (pickedDate != null) {
+                                bool isfuture =
+                                pickedDate.isAfter(DateTime.now());
+                                String formattedDate =
+                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                setState(() {
+                                  futuredate = isfuture;
+                                  _startDate.text = formattedDate;
+                                });
+                              }
+                            },
+                            readOnnly: true,
+                            suffixIcon: IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.date_range_rounded)),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select start date';
+                              }
+                              return null;
+                            },
+                            label: "Select the date",
+                            keyboardType: TextInputType.text,
+                            hintText: 'dd-mm-yyyy',
+                            controller: _startDate,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Text(
                             "Payment Card Details",
                             style: TextStyle(
@@ -1271,8 +1343,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                   )),
                                                 )
                                               : Column(
-                                                children: [
-                                                  Table(
+                                                  children: [
+                                                    Table(
                                                       columnWidths: {
                                                         0: FlexColumnWidth(
                                                             .5), // Date
@@ -1292,35 +1364,40 @@ class _MakePaymentState extends State<MakePayment> {
                                                             .asMap()
                                                             .entries
                                                             .map((entry) {
-
                                                           int index = entry.key;
                                                           BillingData item =
                                                               entry.value;
-                                                          String month = item.ccExp!
+                                                          String month = item
+                                                              .ccExp!
                                                               .substring(0, 2);
-                                                          String year = item.ccExp!
+                                                          String year = item
+                                                              .ccExp!
                                                               .substring(2, 4);
                                                           String currentMonth =
                                                               DateTime.now()
                                                                   .month
                                                                   .toString()
-                                                                  .padLeft(2, '0');
+                                                                  .padLeft(
+                                                                      2, '0');
                                                           String currentYear =
                                                               DateTime.now()
                                                                   .year
                                                                   .toString()
                                                                   .substring(2);
-                                                          String currentMonthYear =
+                                                          String
+                                                              currentMonthYear =
                                                               currentMonth +
                                                                   currentYear;
                                                           String expMonthYear =
                                                               item.ccExp!;
                                                           String expMonth =
                                                               expMonthYear
-                                                                  .substring(0, 2);
+                                                                  .substring(
+                                                                      0, 2);
                                                           String expYear =
                                                               expMonthYear
-                                                                  .substring(2, 4);
+                                                                  .substring(
+                                                                      2, 4);
                                                           bool isExpired = int
                                                                       .parse(
                                                                           expYear) <
@@ -1333,13 +1410,19 @@ class _MakePaymentState extends State<MakePayment> {
                                                                           expMonth) <
                                                                       int.parse(
                                                                           currentMonth));
-                                                          bool isCardAccepted = (item.binResult == "CREDIT" && creditCardAccepted) ||
-                                                              (item.binResult == "DEBIT" && debitCardAccepted);
-                                                            print('abc check ${isCardAccepted}');
+                                                          bool isCardAccepted = (item
+                                                                          .binResult ==
+                                                                      "CREDIT" &&
+                                                                  creditCardAccepted) ||
+                                                              (item.binResult ==
+                                                                      "DEBIT" &&
+                                                                  debitCardAccepted);
+                                                          print(
+                                                              'abc check ${isCardAccepted}');
                                                           return TableRow(
                                                             decoration: BoxDecoration(
-                                                                color:
-                                                                    Color.fromRGBO(
+                                                                color: Color
+                                                                    .fromRGBO(
                                                                         240,
                                                                         243,
                                                                         248,
@@ -1352,7 +1435,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                               Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                        .all(8.0),
+                                                                        .all(
+                                                                        8.0),
                                                                 child: Column(
                                                                   children: [
                                                                     // isExpired ==
@@ -1400,33 +1484,37 @@ class _MakePaymentState extends State<MakePayment> {
                                                                     //       ),
                                                                     isExpired
                                                                         ? Text(
-                                                                      'Expired',
-                                                                      style: TextStyle(color: Colors.red),
-                                                                    )
+                                                                            'Expired',
+                                                                            style:
+                                                                                TextStyle(color: Colors.red),
+                                                                          )
                                                                         : Checkbox(
-                                                                      activeColor: blueColor,
-                                                                      checkColor: Colors.white,
+                                                                            activeColor:
+                                                                                blueColor,
+                                                                            checkColor:
+                                                                                Colors.white,
 
-                                                                      shape: RoundedRectangleBorder(
-                                                                        borderRadius: BorderRadius.circular(2),
-                                                                      ),
+                                                                            shape:
+                                                                                RoundedRectangleBorder(
+                                                                              borderRadius: BorderRadius.circular(2),
+                                                                            ),
 
-                                                                      side: BorderSide(
-                                                                        color: isCardAccepted ? blueColor : Colors.grey,
-                                                                        width: 1.5,
-                                                                      ),
-                                                                      value: selectedcardindex == index,
-                                                                      onChanged: isCardAccepted
-                                                                          ? (bool? value) async {
-                                                                        setState(() {
-                                                                          selectedcardindex = index;
-                                                                        });
-                                                                        await fetchSurcharge();
-                                                                      }
-                                                                          : null, // Disable the checkbox if card is not accepted
-                                                                    ),
-
-
+                                                                            side:
+                                                                                BorderSide(
+                                                                              color: isCardAccepted ? blueColor : Colors.grey,
+                                                                              width: 1.5,
+                                                                            ),
+                                                                            value:
+                                                                                selectedcardindex == index,
+                                                                            onChanged: isCardAccepted
+                                                                                ? (bool? value) async {
+                                                                                    setState(() {
+                                                                                      selectedcardindex = index;
+                                                                                    });
+                                                                                    await fetchSurcharge();
+                                                                                  }
+                                                                                : null, // Disable the checkbox if card is not accepted
+                                                                          ),
                                                                   ],
                                                                 ),
                                                               ),
@@ -1444,8 +1532,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                                         fontSize:
                                                                             16,
                                                                         fontWeight:
-                                                                            FontWeight
-                                                                                .bold),
+                                                                            FontWeight.bold),
                                                                   ),
                                                                   Text(
                                                                     item.ccNumber!,
@@ -1469,8 +1556,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                                         fontSize:
                                                                             16,
                                                                         fontWeight:
-                                                                            FontWeight
-                                                                                .bold),
+                                                                            FontWeight.bold),
                                                                   ),
                                                                   Text(
                                                                     '${item.binResult}',
@@ -1486,7 +1572,6 @@ class _MakePaymentState extends State<MakePayment> {
                                                                       item.ccType!),
                                                                 ],
                                                               ),
-
                                                             ],
                                                           );
                                                         }).expand((row) {
@@ -1498,49 +1583,59 @@ class _MakePaymentState extends State<MakePayment> {
                                                                 SizedBox(
                                                                     height:
                                                                         8), // Add spacing between rows
-                                                                SizedBox(height: 8),
-                                                                SizedBox(height: 8),
-                                                                SizedBox(height: 8),
-
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                SizedBox(
+                                                                    height: 8),
                                                               ],
                                                             ),
                                                           ];
                                                         }).toList(),
                                                       ],
                                                     ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  if (!debitCardAccepted &&
-                                                      cardDetails.any((item) => item.binResult == "DEBIT"))
-                                                    Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        Text(
-                                                          'DEBIT card types not accepted by rentl owner',
-                                                          style: TextStyle(color: Colors.red, fontSize: 14),
-                                                        ),
-                                                      ],
+                                                    SizedBox(
+                                                      height: 5,
                                                     ),
-                                                  if (!creditCardAccepted &&
-                                                      cardDetails.any((item) => item.binResult == "CREDIT"))
-                                                    Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        Text(
-                                                          'CREDIT card types not accepted by rentl owner',
-                                                          style: TextStyle(color: Colors.red, fontSize: 14),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                ],
-                                              ),
-
-
+                                                    if (!debitCardAccepted &&
+                                                        cardDetails.any((item) =>
+                                                            item.binResult ==
+                                                            "DEBIT"))
+                                                      Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Text(
+                                                            'DEBIT card types not accepted by rentl owner',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    if (!creditCardAccepted &&
+                                                        cardDetails.any((item) =>
+                                                            item.binResult ==
+                                                            "CREDIT"))
+                                                      Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Text(
+                                                            'CREDIT card types not accepted by rentl owner',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                  ],
+                                                ),
                                 ),
 
                           /* const SizedBox(
@@ -1563,14 +1658,11 @@ class _MakePaymentState extends State<MakePayment> {
                           //       ),
                           //     ),
 
-
                           Padding(
                             padding: const EdgeInsets.only(
                                 top: 5, left: 16, right: 16, bottom: 10),
                             child: Row(
                               children: [
-
-
                                 if (state.hasError)
                                   Padding(
                                     padding: const EdgeInsets.only(top: 5),
@@ -1584,15 +1676,19 @@ class _MakePaymentState extends State<MakePayment> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: ()async {
+                            onTap: () async {
                               final newCard = await Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => AddCard()),
+                                MaterialPageRoute(
+                                    builder: (context) => AddCard()),
                               );
 
                               if (newCard != null) {
                                 setState(() {
-                                  fetchPaymentSettings(widget.tenantId,leaseid ?? ""); // Only add BillingData objects
+                                  fetchPaymentSettings(
+                                      widget.tenantId,
+                                      leaseid ??
+                                          ""); // Only add BillingData objects
                                 });
                               }
                               // Navigator.push(
@@ -1877,6 +1973,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         }
                                         totalpayamount =
                                             totalamount + surchargeamount;
+                                        iserror = false;
                                       }
 
                                       //_site = value;
@@ -1897,7 +1994,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 height: 30,
                                 //   color: blueColor.withOpacity(.6),
                                 child: Radio(
-                                  value: "Partial",
+                                  value: "partial",
                                   activeColor: blueColor,
                                   fillColor: MaterialStateProperty.resolveWith(
                                     (states) {
@@ -1925,11 +2022,13 @@ class _MakePaymentState extends State<MakePayment> {
                                         totalpayamount =
                                             totalamount + surchargeamount;
                                         partialamount = true;
+                                        iserror = false;
                                       } else {
                                         totalamount = 0.0;
                                         totalpayamount = 0.0;
                                         surchargeamount = 0.0;
                                         partialamount = true;
+                                        iserror = true;
                                       }
 
                                       //_site = value;
@@ -1957,7 +2056,14 @@ class _MakePaymentState extends State<MakePayment> {
                               },
                               keyboardType: TextInputType.number,
                               hintText: 'Enter Amount',
-                              controller: amountController,
+                              controller: amountController
+                                ..text = lease_data != null &&
+                                        double.parse(
+                                                lease_data!["total_due_amount"]
+                                                    .toString()) >
+                                            0
+                                    ? amountController.text
+                                    : '0',
                               onChanged: (value) {
                                 setState(() {
                                   // Check if the value is not empty before processing
@@ -1989,6 +2095,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           totalamount * surCharge! / 100;
                                       totalpayamount += surchargeamount;
                                     }
+                                    iserror = false;
                                   } else {
                                     if (lease_data == null)
                                       amountController.text = "0";
@@ -1996,6 +2103,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     totalamount = 0.0;
                                     totalpayamount = 0.0;
                                     surchargeamount = 0.0;
+                                    iserror = true;
                                   }
                                 });
                               },
@@ -2033,7 +2141,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         totalpayamount =
                                             totalamount + surchargeamount;
                                       }
-
+                                      iserror = false;
                                       //_site = value;
                                     });
                                   },
@@ -2152,19 +2260,25 @@ class _MakePaymentState extends State<MakePayment> {
                                       formatter.format(DateTime.now());
                                   List<Map<String, dynamic>> manualEntries = [
                                     {
-                                      "account": selected_account == "rent" ? "Rent Income" : "Payment",
+                                      "account": selected_account == "rent"
+                                          ? "Rent Income"
+                                          : "Payment",
                                       "amount": totalamount,
-                                      "memo": selected_account == "rent" ? "Rent Income" : "Payment",
-                                      "date": notificationTime,
-                                      "charge_type": selected_account == "rent" ? "Rent" : "Payment",
+                                      "memo": selected_account == "rent"
+                                          ? "Rent Income"
+                                          : "Payment",
+                                      "date": _startDate.text,
+                                      "charge_type": selected_account == "rent"
+                                          ? "Rent"
+                                          : "Payment",
                                     }
                                   ];
                                   print('abc entries ${manualEntries}');
                                   print('abc id ${selectedTenantId!}');
-
+print('start date ${_startDate.text}');
                                   await PaymentService()
                                       .makePaymentforcard(
-                                    entries:manualEntries,
+                                    entries: manualEntries,
                                     paymentAmountType: selected_account ?? '',
                                     adminId: id ?? "",
                                     firstName: first_name!,
@@ -2178,13 +2292,13 @@ class _MakePaymentState extends State<MakePayment> {
                                     surcharge: "${surchargeamount}",
                                     amount: "${totalamount}",
                                     tenantId: widget.tenantId,
-                                    date: _startDate.text,
+                                    date: reverseFormatDate(_startDate.text),
                                     address1: cardDetails[selectedcardindex!]
                                         .address_1!,
                                     processorId: "",
                                     leaseid: selectedTenantId!,
                                     company_name: companyName,
-                                    future_Date: false,
+                                    future_Date: futuredate!,
                                     notificationTime: notificationTime,
                                   )
                                       .then((value) {
@@ -2229,10 +2343,19 @@ class _MakePaymentState extends State<MakePayment> {
                                     Fluttertoast.showToast(
                                         msg: "Payment failed $e");
                                   });
+                                } else {
+                                  setState(() {
+                                    //iserror = totalpayamount < 0.0;
+                                    iserror = true;
+                                    print("iserror $iserror");
+                                    isLoading = false;
+                                  });
                                 }
                               } else {
                                 setState(() {
-                                  iserror = true;
+                                  //iserror = totalpayamount < 0.0;
+                                  // iserror = true;
+                                  //print("iserror $iserror");
                                   isLoading = false;
                                 });
                               }
@@ -2265,6 +2388,19 @@ class _MakePaymentState extends State<MakePayment> {
                             child: SpinKitFadingCircle(
                               color: Colors.black,
                               size: 45.0,
+                            ),
+                          ),
+                        if (selectedTenantId != null &&
+                            iserror) // Conditionally show error message
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Text(
+                              "Payment cannot be processed due to a negative balance.",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                       ],
@@ -2343,7 +2479,6 @@ class _MakePaymentState extends State<MakePayment> {
           finaltotal = double.parse(amountController.text) + surchargecount!;
         });
       }
-
     } catch (e) {
       setState(() {
         surchargecount = 0;

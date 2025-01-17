@@ -212,6 +212,14 @@ class _MakePaymentState extends State<MakePayment> {
           selectedTenantId = tenants.first["tenant_id"];
           fetchChargesForSelectedTenant(selectedTenantId!);
           fetchcreditcard(selectedTenantId!);
+        }else if (tenants.length > 1) {
+          // If there are multiple tenants, select the first tenant and fetch their charges
+          selectedTenantId = tenants.first["tenant_id"];
+          tenantname = tenants.first["tenant_name"]!;
+        }
+        if (selectedTenantId != null) {
+          fetchChargesForSelectedTenant(selectedTenantId!);
+          fetchcreditcard(selectedTenantId!);
         }
         processor_id = data["processor_id"] ?? "";
       });
@@ -968,7 +976,7 @@ class _MakePaymentState extends State<MakePayment> {
                               height: 8,
                             ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Received From *',
+                              const Text('Received From *8',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1022,6 +1030,11 @@ class _MakePaymentState extends State<MakePayment> {
                                                 // Fetch all charges if "Add New Tenant" is selected
                                                 fetchChargesForSelectedTenant(
                                                     value!);
+                                                _paymentMethods = [
+                                                  'Cash',
+                                                  'Money Order',
+                                                  'Manual'
+                                                ];
                                               } else {
                                                 tenantname = tenants.firstWhere(
                                                         (tenant) =>
@@ -1029,14 +1042,6 @@ class _MakePaymentState extends State<MakePayment> {
                                                         value)['tenant_name']!;
                                                 fetchChargesForSelectedTenant(
                                                     value!);
-                                              }
-                                              if (value == 'external_source') {
-                                                _paymentMethods = [
-                                                  'Cash',
-                                                  'Money Order',
-                                                  'Manual'
-                                                ]; // Only show these payment methods
-                                              } else {
                                                 _paymentMethods = [
                                                   'Card',
                                                   'Check',
@@ -1045,8 +1050,9 @@ class _MakePaymentState extends State<MakePayment> {
                                                   'Cashier\'s Check',
                                                   'Money Order',
                                                   'Manual'
-                                                ]; // Show all payment methods
+                                                ];
                                               }
+
                                               // tenantname = tenants.firstWhere(
                                               //     (tenant) =>
                                               //         tenant['tenant_id'] ==
@@ -2774,10 +2780,15 @@ class _MakePaymentState extends State<MakePayment> {
                                                 children: [
                                                   DropdownButton2<String>(
                                                     isExpanded: true,
-                                                    value: liabilityAccounts
-                                                            .contains(
-                                                                row['account'])
+                                                    // value: liabilityAccounts
+                                                    //         .contains(
+                                                    //             row['account'])
+                                                    //     ? "${row['account']}_Liability Account"
+                                                    //     : "${row['account']}_${row['charge_type']}",
+                                                    value: liabilityAccounts.contains(row['account'])
                                                         ? "${row['account']}_Liability Account"
+                                                        : (row['account'] == null || row['account'].isEmpty || row['charge_type'] == null || row['charge_type'].isEmpty)
+                                                        ? null  // Default value that is part of the items
                                                         : "${row['account']}_${row['charge_type']}",
                                                     items: [
                                                       ...categorizedDataCopy
