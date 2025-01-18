@@ -10,7 +10,7 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-String Api_url = "http://192.168.1.21:4000";
+String Api_url = "http://192.168.1.18:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
 
@@ -328,4 +328,66 @@ class PhoneNumberFormatter extends TextInputFormatter {
       selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
+}
+
+class CVVFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Allow only digits
+    final digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
+
+    // Restrict to 3 digits maximum
+    if (digitsOnly.length > 3) {
+      return oldValue;
+    }
+
+    return TextEditingValue(
+      text: digitsOnly,
+      selection: TextSelection.collapsed(offset: digitsOnly.length),
+    );
+  }
+}
+
+
+String? ValidateExpirationDate(String expirationDate) {
+  // Check if the date is in the correct MM/YYYY format
+  //require formate first is 0-9 and second 0-2
+  final regex = RegExp(r'^(0[1-9]|1[0-9])\/\d{4}$');
+  if (!regex.hasMatch(expirationDate)) {
+    return 'Expiration date must be in the format MM/YYYY.';
+  }
+
+  // Split the date into month and year
+  final parts = expirationDate.split('/');
+  final month = int.parse(parts[0]);
+  final year = int.parse(parts[1]);
+
+  // Validate that the month is between 01 and 12
+  if (month < 1 || month > 12) {
+    return 'Month must be between 01 and 12.';
+  }
+
+  // Get the current date and the expiration date
+  final currentDate = DateTime.now();
+  final expirationDateTime = DateTime(year, month);
+
+  // Check if the expiration date is in the past
+  if (expirationDateTime.isBefore(currentDate)) {
+    return 'Expiration date cannot be in the past.';
+  }
+
+  // Check if the expiration date is too far in the future (e.g., 10 years from now)
+  final maxDate = currentDate.add(Duration(days: 365 * 10)); // 10 years
+  if (expirationDateTime.isAfter(maxDate)) {
+    return 'Expiration date cannot be more than 10 years in the future.';
+  }
+
+  // Ensure the expiration year is not before the current year
+  final minYear = currentDate.year;
+  if (year < minYear) {
+    return 'Expiration year must be greater than or equal to the current year.';
+  }
+
+  return null; // Indicate the expiration date is valid
 }

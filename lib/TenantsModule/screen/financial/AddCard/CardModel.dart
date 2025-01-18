@@ -8,6 +8,7 @@ class CardModel {
   String? city;
   String? state;
   String? zip;
+  String? cvv;
   String? country;
   String? company;
   String? phone;
@@ -26,6 +27,7 @@ class CardModel {
         this.city,
         this.state,
         this.zip,
+        this.cvv,
         this.country,
         this.company,
         this.phone,
@@ -44,6 +46,7 @@ class CardModel {
     city = json['city'];
     state = json['state'];
     zip = json['zip'];
+    cvv = json['cvv'];
     country = json['country'];
     company = json['company'];
     phone = json['phone'];
@@ -62,6 +65,7 @@ class CardModel {
     print('tojson ${city}');
     print('tojson ${state}');
     print('tojson ${zip}');
+    print('tojson ${cvv}');
     print('tojson ${country}');
     print('tojson ${company}');
     print('tojson ${phone}');
@@ -80,6 +84,7 @@ class CardModel {
     data['city'] = this.city;
     data['state'] = this.state;
     data['zip'] = this.zip;
+    data['cvv'] = this.cvv;
     data['country'] = this.country;
     data['company'] = this.company;
     data['phone'] = this.phone;
@@ -121,6 +126,7 @@ class BillingData {
   String? cardType;
   String? lastName;
   String? ccNumber;
+  String? cvv;
   String? ccExp;
   String? ccType;
   String? ccBin;
@@ -138,6 +144,7 @@ class BillingData {
         this.firstName,
         this.lastName,
         this.ccNumber,
+        this.cvv,
         this.ccExp,
         this.ccType,
         this.ccBin,
@@ -223,6 +230,16 @@ class BillingData {
       null; // Or json["last_name"]["some_field"] if you need a specific value
     }
 
+    String? cvv;
+
+    if (json["cvv"] is String) {
+      cvv = json["cvv"] as String?;
+    } else if (json["cvv"] is Map) {
+      // Handle the case when last_name is a Map, set it to null or extract specific value
+      cvv =
+      null; // Or json["last_name"]["some_field"] if you need a specific value
+    }
+
     String? billingId;
     print(json["billing_id"].runtimeType);
     if (json["billing_id"] is int) {
@@ -242,7 +259,7 @@ class BillingData {
         ccExp: ccExp,
         ccType: ccType,
         ccBin: ccBin,
-
+        cvv:cvv,
         customerVaultId: customerVaultId,
         billingId: json["@attributes"]["id"].toString(),
         email: json["email"].runtimeType == Map ? null : json["email"],

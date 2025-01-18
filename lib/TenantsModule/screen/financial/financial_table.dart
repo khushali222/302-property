@@ -1102,8 +1102,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
-                                                    Tenant_financial.type == 'Refund' ?  ' \$${Tenant_financial.balance!.abs().toStringAsFixed(2)}':
-                                                    '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}',
+                                  Tenant_financial.balance! < 0
+                                  ? '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}'
+                                      : '\$${Tenant_financial.balance!.toStringAsFixed(2)}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1269,7 +1270,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                             blueColor), // Bold and black
                                                                       ),
                                                                       TextSpan(
-                                                                        text:Tenant_financial.type == 'Refund' ? ' \$${Tenant_financial.totalAmount!.toStringAsFixed(2)}' : ' -\$${Tenant_financial.totalAmount!.toStringAsFixed(2)}',
+                                                                        text: Tenant_financial.type == 'Refund' || Tenant_financial.type == 'Charge'
+                                                                            ? '\$${Tenant_financial.totalAmount!.abs().toStringAsFixed(2)}'
+                                                                            : ' - \$${Tenant_financial.totalAmount!.abs().toStringAsFixed(2)}',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                             FontWeight

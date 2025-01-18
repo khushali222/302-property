@@ -82,6 +82,7 @@ class AddCardService {
             customerVaultId: customvaultId, responseCode: responseCode);
       } else {
         print('Failed to submit card details: ${response.statusCode}');
+
         return null;
       }
     } catch (e) {
