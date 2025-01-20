@@ -87,6 +87,7 @@ dependencies:
   connectivity_plus: ^5.0.2
   encrypt:
   credit_card_validator:
+  url_launcher: ^6.1.10
   # pdf:
 
 

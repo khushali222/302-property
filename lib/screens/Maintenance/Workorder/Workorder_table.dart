@@ -55,10 +55,10 @@ class _Workorder_tableState extends State<Workorder_table> {
               .compareTo(a.workOrderData!.workSubject!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.workOrderData!.workSubject!
-              .compareTo(b.workOrderData!.workSubject!)
-          : b.workOrderData!.workSubject!
-              .compareTo(a.workOrderData!.workSubject!));
+          ? a.workOrderData!.status!
+              .compareTo(b.workOrderData!.status!)
+          : b.workOrderData!.status!
+              .compareTo(a.workOrderData!.status!));
     }
   }
 
@@ -937,6 +937,10 @@ class _Workorder_tableState extends State<Workorder_table> {
                                           .toLowerCase()
                                           .contains(
                                               searchvalue!.toLowerCase()) ||
+                                          workorder.workOrderData!.createdAt.toString()
+                                              .toLowerCase()
+                                              .contains(
+                                              searchvalue!.toLowerCase()) ||
                                       workorder.workOrderData!.workCategory!
                                           .toLowerCase()
                                           .contains(
@@ -1461,8 +1465,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                       dateProvider
                                                                           .formatCurrentDate(
                                                                               '${workOrder.workOrderData?.updatedAt}}'),
-                                                                      '',
-                                                                      ''),
+                                                                      'Due Date',
+                                                                      _getDisplayValue(workOrder
+                                                                          .workOrderData?.workorderUpdates?.first.date)),
                                                                 ],
                                                               ),
                                                             ),

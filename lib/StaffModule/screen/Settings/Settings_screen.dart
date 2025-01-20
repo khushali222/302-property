@@ -37,7 +37,7 @@ class TabBarExample extends StatefulWidget {
 }
 
 class _TabBarExampleState extends State<TabBarExample> {
-  int _selectedRadio = 1;
+  int _selectedRadio = 0;
   TextEditingController credit = TextEditingController();
   TextEditingController debit = TextEditingController();
   TextEditingController percent = TextEditingController();
@@ -45,6 +45,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController late_fee = TextEditingController();
   TextEditingController duration = TextEditingController();
   TextEditingController durationmail = TextEditingController();
+  TextEditingController replyToEmail = TextEditingController();
 
   bool rentDueReminderEmail = false;
 
@@ -111,6 +112,7 @@ class _TabBarExampleState extends State<TabBarExample> {
               ? surcharges.surchargeFlatACH.toString()
               : "";
           surge_id = surcharges.surchargeId.toString();
+          _selectedRadio = surcharges.surchargePercentACH != 0.0 && surcharges.surchargeFlatACH != 0.0 ? 3 : surcharges.surchargePercentACH != 0.0 ?  1:surcharges.surchargeFlatACH != 0.0?2:0;
         });
       }
     } catch (e) {
@@ -333,6 +335,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
+        "replyToEmail":replyToEmail.text,
         "duration":
         durationmail.text.isNotEmpty ? double.parse(durationmail.text) : null,
 
@@ -363,6 +366,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
+        "replyToEmail":replyToEmail.text,
         "duration": durationmail.text.isNotEmpty ? int.parse(durationmail.text) : null,
 
       };
@@ -1177,53 +1181,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                     MediaQuery.of(context).size.width < 500 ? 850 : 900,
                     child: Row(
                       children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              final dateProvider = Provider.of<DateProvider>(context,listen: false);
-                              setState(() {
-                                issurge = false;
-                                isaccounts = false;
-                                ismail = false;
-                                isdateformate = true;
-                                islatefee = false;
-                                DateTime now = DateTime.now();
-                                  dateformateselect = dateProvider.dateformateselect;
-                                 dateformate1 = DateFormat('MM/dd/yyyy').format(now);
-                                 dateformate2 = DateFormat('yyyy-MM-dd').format(now);
-                                 dateformate3 = DateFormat('yyyy-MMM-dd').format(now);
-                               //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
-
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: blueColor),
-                                color:  !isdateformate
-                                    ? Colors.white
-                                    : blueColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Date Formate",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: isdateformate
-                                          ? Colors.white
-                                          : blueColor,
-                                      fontSize: MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 20),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10,),
                         Expanded(
                           child: InkWell(
                             onTap: () {
@@ -2270,7 +2227,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                         ),
                         Row(
                           children: [
-
                             Text(
                               "Mail Service",
                               style: TextStyle(
@@ -2283,6 +2239,88 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                             ),
                           ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "Add Your Reply to Address",
+                              style: TextStyle(
+                                  fontSize:
+                                  MediaQuery.of(context)
+                                      .size
+                                      .width <
+                                      500
+                                      ? 15
+                                      : 20,
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(width: 5),
+                            Expanded(
+                              child: Container(
+                                height: 50,
+                                width:
+                                MediaQuery.of(context).size.width *
+                                    .5,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: grey),
+                                  color: Colors.white,
+                                  borderRadius:
+                                  BorderRadius.circular(5),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextFormField(
+                                        controller: replyToEmail,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            //  passworderror = false;
+                                          });
+                                        },
+                                        //  controller: password,
+                                        cursorColor: Color.fromRGBO(
+                                            21, 43, 81, 1),
+                                        decoration: InputDecoration(
+                                          hintText: "Enter email",
+                                          hintStyle: TextStyle(
+                                            fontSize:
+                                            MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                .037,
+                                            color: Color(0xFF8A95A8),
+                                          ),
+
+                                          border: InputBorder.none,
+                                          contentPadding:
+                                          EdgeInsets.all(13),
+
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 190),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         _buildRentDueReminderSwitch(),
                       /*  SizedBox(
@@ -2428,7 +2466,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      "Update",
+                                      "Save",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -3148,7 +3186,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      "Update",
+                                      "Save",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -3865,277 +3903,7 @@ class _TabBarExampleState extends State<TabBarExample> {
 
                         ],
                     ),
-                  if(isdateformate)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                            height:15
-                        ),
-                        Row(
-                          children: [
-                            Text("Manage Date Format",style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: blueColor,
-                              fontSize: MediaQuery.of(context).size.width < 500
-                                  ? 18
-                                  : 25,
-                            ),),
-                            Spacer(),
 
-                          ],
-                        ),
-                        SizedBox(
-                            height:15
-                        ),
-                        Row(
-                            children: [
-                              Text("Current Date Format :- dd-mm-yyyy",style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: blueColor,
-                                fontSize: MediaQuery.of(context).size.width < 500
-                                    ? 16
-                                    : 25,
-                              ),),
-                            ],
-                        ),
-                        SizedBox(
-                            height:15
-                        ),
-                        Text("Select Date Format",style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: blueColor,
-                          fontSize: MediaQuery.of(context).size.width < 500
-                              ? 16
-                              : 25,
-                        ),),
-                        Row(
-                          children: [
-                            Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        height: 20,width: 30,
-                                        child: Radio(value: 0, groupValue: dateformateselect, onChanged: (value){
-                                          setState(() {
-                                            dateProvider.updateDateFormat('MM/dd/yyyy',value);
-                                            dateformateselect = value!;
-                                          });
-                                        })),
-
-                                      Text("MM/DD/YYYY",style: TextStyle(
-                                        fontSize: 16,
-
-                                      ),)
-                                    ],
-                                  ),
-                                  SizedBox(height: 10,),
-                                  SizedBox(
-                                    height: 50,
-                                    width: 150,
-
-                                    child: TextFormField(
-                                      enabled: false,
-                                      initialValue: dateformate1 ?? "",
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                                          border: OutlineInputBorder(),
-                                        filled: true,
-                                        fillColor: Colors.grey.shade200,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                            ),
-                            SizedBox(width: 15,),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                        height: 20,width: 30,
-                                      child: Radio(value: 1, groupValue: dateformateselect, onChanged: (value){
-                                        setState(() {
-                                          dateProvider.updateDateFormat('yyyy-MM-dd',value);
-                                          dateformateselect = value!;
-                                        });
-                                      })),
-                                    Text("YYYY-MM-DD",style: TextStyle(
-                                      fontSize: 16,
-
-                                    ),)
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
-                                SizedBox(
-                                  height: 50,
-                                  width: 150,
-                                  child: TextFormField(
-                                    enabled: false,
-                                    initialValue: dateformate2 ??"",
-
-                                    decoration:  InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                                        border: OutlineInputBorder(),
-                                      filled: true,
-                                      fillColor: Colors.grey.shade200,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 10,),
-                        Row(
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                        height: 20,width: 30,
-                                      child: Radio(value: 2, groupValue: dateformateselect, onChanged: (value){
-                                        setState(() {
-                                          dateProvider.updateDateFormat('yyyy-MMM-dd',value);
-                                          dateformateselect = value!;
-                                        });
-                                      })),
-                                    Text("YYYY-MMM-DD",style: TextStyle(
-                                      fontSize: 16,
-
-                                    ),)
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
-                                SizedBox(
-                                  height: 50,
-                                  width: 150,
-                                  child: TextFormField(
-                                    initialValue: dateformate3??"",
-                                    enabled: false,
-                                    decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                                        border: OutlineInputBorder(),
-                                      filled: true,
-                                      fillColor: Colors.grey.shade200,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(width: 15,),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                        height: 20,width: 30,
-                                      child: Radio(value: 3, groupValue: dateformateselect, onChanged: (value){
-                                        setState(() {
-                                          dateformateselect = value!;
-                                        });
-                                      })),
-                                    Text("Custom",style: TextStyle(
-                                      fontSize: 16,
-
-                                    ),)
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
-                                SizedBox(
-                                  height: 50,
-                                  width: 150,
-                                  child: TextFormField(
-                                    initialValue: customdate??"",
-                                    enabled:dateformateselect ==3 ,
-                                    decoration:  InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                                        border: OutlineInputBorder(),
-                                      filled: dateformateselect !=3,
-                                      fillColor: Colors.grey.shade200,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 10,),
-                        // Text("Select text color",style: TextStyle(
-                        //   fontWeight: FontWeight.normal,
-                        //   color: blueColor,
-                        //   fontSize: MediaQuery.of(context).size.width < 500
-                        //       ? 16
-                        //       : 25,
-                        // ),),
-                        // Card(
-                        //   elevation: 4,
-                        //   child: ListTile(
-                        //     title: Text('Choose a color', style: TextStyle(fontSize: 18)),
-                        //     trailing: Icon(Icons.color_lens, color: _selectedColor),
-                        //     // onTap: _showColorPicker,
-                        //     // onTap: () {
-                        //     //   _showColorPicker(_selectedColor, (Color color) {
-                        //     //     setState(() {
-                        //     //       _selectedColor = color;
-                        //     //     });
-                        //     //     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-                        //     //     themeProvider.updateColor(_selectedColor);
-                        //     //   //  _saveColorPreference(_selectedColor,_selectedColor);
-                        //     //   }, 'Select a text color','_selectedColor');
-                        //     // },
-                        //     onTap: () {
-                        //       _showColorPicker(_selectedColor, (Color color) {
-                        //         setState(() {
-                        //           _selectedColor = color;
-                        //         });
-                        //       }, 'Select a text color', 'selectedColor');
-                        //     },
-                        //   ),
-                        // ),
-                        // Text("Select label color",style: TextStyle(
-                        //   fontWeight: FontWeight.normal,
-                        //   color: blueColor,
-                        //   fontSize: MediaQuery.of(context).size.width < 500
-                        //       ? 16
-                        //       : 25,
-                        // ),),
-                        // Card(
-                        //   elevation: 4,
-                        //   child: ListTile(
-                        //     title: Text('Choose a color', style: TextStyle(fontSize: 18)),
-                        //     trailing: Icon(Icons.color_lens, color: _selectedLabelColor),
-                        //     // onTap: _showColorPicker,
-                        //     onTap: () {
-                        //       // _showColorPicker(_selectedLabelColor, (Color color) {
-                        //       //   setState(() {
-                        //       //     _selectedLabelColor = color;
-                        //       //   });
-                        //       //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-                        //       //   themeProvider.updatelabelColor(_selectedLabelColor);
-                        //       //    //_saveColorPreference(_selectedLabelColor,_selectedLabelColor);
-                        //       // }, 'Select a label color','labelColor');
-                        //       _showColorPicker(_selectedColor, (Color color) {
-                        //         setState(() {
-                        //           _selectedColor = color;
-                        //         });
-                        //       }, 'Select a label color', 'labelColor');
-                        //     },
-                        //   ),
-                        // ),
-                      ],
-                    ),
                 ],
               ),
             ),

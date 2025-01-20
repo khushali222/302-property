@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:shimmer/shimmer.dart';
@@ -15,7 +16,9 @@ import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../provider/Plan Purchase/plancheckProvider.dart';
 import '../../repository/profile_repository.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
@@ -34,6 +37,7 @@ class Profile_screen extends StatefulWidget {
 class _Profile_screenState extends State<Profile_screen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _createdDate = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _companyNameController = TextEditingController();
@@ -55,6 +59,7 @@ class _Profile_screenState extends State<Profile_screen> {
   String originalFirstName = '';
   String originalLastName = '';
   String originalEmail = '';
+  String originalDate = '';
   String originalPhoneNumber = '';
   String originalCompanyName = '';
   String originalCompanyAddress = '';
@@ -74,7 +79,6 @@ class _Profile_screenState extends State<Profile_screen> {
     checkInternet();
     _fetchProfile();
     _loadOldPassword();
-
   }
 
   void checkInternet() async {
@@ -93,12 +97,13 @@ class _Profile_screenState extends State<Profile_screen> {
         _firstNameController.text = profileData.firstName ?? '';
         _lastNameController.text = profileData.lastName ?? '';
         _emailController.text = profileData.email ?? '';
-        _phoneNumberController.text = formatPhoneNumberedit(profileData.phoneNumber?.toString() ?? '');
+        _phoneNumberController.text =
+            formatPhoneNumberedit(profileData.phoneNumber?.toString() ?? '');
         _companyNameController.text = profileData.companyName ?? '';
         _companyAddressController.text = profileData.companyAddress ?? '';
         _companyPostalCodeController.text = profileData.companyPostalCode ?? '';
         _companyCityController.text = profileData.companyCity ?? '';
-
+        _createdDate.text = profileData.createdAt ?? "";
         _companyStateController.text = profileData.companyState ?? '';
         _companyCountryController.text = profileData.companyCountry ?? '';
 
@@ -113,7 +118,7 @@ class _Profile_screenState extends State<Profile_screen> {
         originalCompanyCity = profileData.companyCity ?? '';
         originalCompanyState = profileData.companyState ?? '';
         originalCompanyCountry = profileData.companyCountry ?? '';
-
+        originalDate = profileData.createdAt ?? "";
         _isLoading = false;
       });
     } catch (e) {
@@ -142,7 +147,6 @@ class _Profile_screenState extends State<Profile_screen> {
 
   final formKey = GlobalKey<FormState>();
 
-
   void changePassword() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -165,14 +169,14 @@ class _Profile_screenState extends State<Profile_screen> {
         'password': password.text,
         'admin_id': id,
         'role': "admin",
-        'user_id':userid,
+        'user_id': userid,
       }),
     );
     print("${role}");
     setState(() {
       loading = false; // Set loading to false after receiving response
     });
-    print( ' change password ${response.body}');
+    print(' change password ${response.body}');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       if (jsonData["message"] == "Password Updated Successfully") {
@@ -183,8 +187,7 @@ class _Profile_screenState extends State<Profile_screen> {
         //   SnackBar(content: Text("Password updated successfully")),
         // );
         await _savePassword(password.text);
-        Fluttertoast.showToast(
-            msg: 'Password updated successfully');
+        Fluttertoast.showToast(msg: 'Password updated successfully');
       } else {
         // Handle other successful responses or display an error message
       }
@@ -193,8 +196,7 @@ class _Profile_screenState extends State<Profile_screen> {
       // ScaffoldMessenger.of(context).showSnackBar(
       //   SnackBar(content: Text("Failed to update password")),
       // );
-      Fluttertoast.showToast(
-          msg: 'Failed to update password');
+      Fluttertoast.showToast(msg: 'Failed to update password');
     }
   }
 
@@ -204,7 +206,6 @@ class _Profile_screenState extends State<Profile_screen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("password", password); // Store the new password
   }
-
 
   String oldPassword = "";
   Future<void> _loadOldPassword() async {
@@ -216,8 +217,14 @@ class _Profile_screenState extends State<Profile_screen> {
     });
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
+    bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
+            .checkplanpurchaseModel
+            ?.data
+            ?.planDetail
+            ?.planName ==
+        'Free Plan';
     return Scaffold(
       appBar: widget_302.App_Bar(context: context, isProfilePageActive: true),
       backgroundColor: Colors.white,
@@ -314,6 +321,122 @@ class _Profile_screenState extends State<Profile_screen> {
                               ),
                             ),
                             const SizedBox(height: 20),
+                            Container(
+                              //  height: 10,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 22),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Account Level :",
+                                          style: TextStyle(
+                                              color: Color(0xFF8A95A8),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          '${isFreePlan ? 'Paid' : "Free"}',
+                                          style: TextStyle(
+                                              color: blueColor,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  if (isFreePlan)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 22),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          const url =
+                                              'https://www.hostmerchantservices.com/signup/?leadsource=CloudRentalManager';
+                                          final uri = Uri.parse(url);
+
+                                          if (await canLaunchUrl(uri)) {
+                                            await launchUrl(
+                                              uri,
+                                              mode: LaunchMode
+                                                  .externalApplication, // Ensures the system browser is used
+                                            );
+                                          } else {
+                                            print('Could not launch URL');
+                                          }
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: 35,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.4,
+                                              decoration: BoxDecoration(
+                                                color: blueColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Center(
+                                                child: loading
+                                                    ? SpinKitFadingCircle(
+                                                        color: Colors.white,
+                                                        size: 40.0,
+                                                      )
+                                                    : Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "Upgrade Account",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
+                                                                  ? 15
+                                                                  : 20,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  if (isFreePlan)
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
                             Material(
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
@@ -388,9 +511,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                           height: 5,
                                         ),
                                         buildTextField(
-                                            'First Name',
-                                            _firstNameController,
-                                            _validateFirstName,
+                                          'First Name',
+                                          _firstNameController,
+                                          _validateFirstName,
                                           isRequired: true,
                                         ),
                                         const SizedBox(height: 16.0),
@@ -404,10 +527,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                           height: 5,
                                         ),
                                         buildTextField(
-                                            'Last Name',
-                                            _lastNameController,
-                                            _validateFirstName,
-                                        isRequired: true,
+                                          'Last Name',
+                                          _lastNameController,
+                                          _validateFirstName,
+                                          isRequired: true,
                                         ),
                                         const SizedBox(height: 16.0),
                                         const Text(
@@ -420,12 +543,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                           height: 5,
                                         ),
                                         buildTextField(
-                                            'Email Address',
-                                            _emailController,
-                                            _validateFirstName,
+                                          'Email Address',
+                                          _emailController,
+                                          _validateFirstName,
                                           isEnabled: false,
                                           isRequired: true,
-
                                         ),
                                         const SizedBox(height: 16.0),
                                         const Text(
@@ -438,10 +560,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                           height: 5,
                                         ),
                                         buildTextField(
-                                            'Phone Number',
-                                            _phoneNumberController,
-                                            _validateFirstName,
-                                        isRequired: true,
+                                          'Phone Number',
+                                          _phoneNumberController,
+                                          _validateFirstName,
+                                          isRequired: true,
                                         ),
                                         const SizedBox(height: 16.0),
                                         const Text(
@@ -454,10 +576,28 @@ class _Profile_screenState extends State<Profile_screen> {
                                           height: 5,
                                         ),
                                         buildTextField(
-                                            'Company Name',
-                                            _companyNameController,
-                                            _validateFirstName,
-                                        isRequired: true,
+                                          'Company Name',
+                                          _companyNameController,
+                                          _validateFirstName,
+                                          isRequired: true,
+                                        ),
+                                        const SizedBox(height: 16.0),
+                                        const Text(
+                                          'Created Date *',
+                                          style: TextStyle(
+                                              color: Color(0xFF8A95A8),
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        buildTextField(
+                                          'Created Date',
+                                          _createdDate,
+                                          _validateFirstName,
+                                          isEnabled: false,
+
+                                          isRequired: true,
                                         ),
                                         const SizedBox(height: 16.0),
                                         const Text(
@@ -470,10 +610,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                           height: 5,
                                         ),
                                         buildTextField(
-                                            'Company Address',
-                                            _companyAddressController,
-                                            _validateFirstName,
-                                        isRequired: false,
+                                          'Company Address',
+                                          _companyAddressController,
+                                          _validateFirstName,
+                                          isRequired: false,
                                         ),
                                         const SizedBox(height: 16.0),
                                         const Text(
@@ -594,36 +734,78 @@ class _Profile_screenState extends State<Profile_screen> {
                                               //   }
                                               // },
                                               onTap: () {
-                                                if (_formKey.currentState!.validate()) {
+                                                if (_formKey.currentState!
+                                                    .validate()) {
                                                   // Check if any field has changed
-                                                  if (_firstNameController.text != originalFirstName ||
-                                                      _lastNameController.text != originalLastName ||
-                                                      _emailController.text != originalEmail ||
-                                                      _companyNameController.text != originalCompanyName ||
-                                                      _phoneNumberController.text != originalPhoneNumber ||
-                                                      _companyAddressController.text != originalCompanyAddress ||
-                                                      _companyPostalCodeController.text != originalCompanyPostalCode ||
-                                                      _companyCityController.text != originalCompanyCity ||
-                                                      _companyStateController.text != originalCompanyState ||
-                                                      _companyCountryController.text != originalCompanyCountry) {
-
+                                                  if (_firstNameController
+                                                              .text !=
+                                                          originalFirstName ||
+                                                      _lastNameController
+                                                              .text !=
+                                                          originalLastName ||
+                                                      _emailController
+                                                              .text !=
+                                                          originalEmail ||
+                                                      _companyNameController
+                                                              .text !=
+                                                          originalCompanyName ||
+                                                      _phoneNumberController
+                                                              .text !=
+                                                          originalPhoneNumber ||
+                                                      _companyAddressController
+                                                              .text !=
+                                                          originalCompanyAddress ||
+                                                      _companyPostalCodeController
+                                                              .text !=
+                                                          originalCompanyPostalCode ||
+                                                      _companyCityController
+                                                              .text !=
+                                                          originalCompanyCity ||
+                                                      _companyStateController
+                                                              .text !=
+                                                          originalCompanyState ||
+                                                      _companyCountryController
+                                                              .text !=
+                                                          originalCompanyCountry) {
                                                     // If any field has changed, call the API
-                                                    _formKey.currentState!.save();
-                                                    ProfileRepository().Edit_profile({
-                                                      "first_name": _firstNameController.text,
-                                                      "last_name": _lastNameController.text,
-                                                      "email": _emailController.text,
-                                                      "company_name": _companyNameController.text,
-                                                      "phone_number": _phoneNumberController.text,
-                                                      "company_address": _companyAddressController.text,
-                                                      "postal_code": _companyPostalCodeController.text,
-                                                      "city": _companyCityController.text,
-                                                      "state": _companyStateController.text,
-                                                      "country": _companyCountryController.text,
+                                                    _formKey.currentState!
+                                                        .save();
+                                                    ProfileRepository()
+                                                        .Edit_profile({
+                                                      "first_name":
+                                                          _firstNameController
+                                                              .text,
+                                                      "last_name":
+                                                          _lastNameController
+                                                              .text,
+                                                      "email":
+                                                          _emailController.text,
+                                                      "company_name":
+                                                          _companyNameController
+                                                              .text,
+                                                      "phone_number":
+                                                          _phoneNumberController
+                                                              .text,
+                                                      "company_address":
+                                                          _companyAddressController
+                                                              .text,
+                                                      "postal_code":
+                                                          _companyPostalCodeController
+                                                              .text,
+                                                      "city":
+                                                          _companyCityController
+                                                              .text,
+                                                      "state":
+                                                          _companyStateController
+                                                              .text,
+                                                      "country":
+                                                          _companyCountryController
+                                                              .text,
                                                     });
                                                   } else {
                                                     // Optionally, show a message that no changes were made
-                                                    print("No changes detected. API call skipped.");
+                                                    print(
+                                                        "No changes detected. API call skipped.");
                                                   }
                                                 }
                                               },
@@ -636,13 +818,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       BorderRadius.circular(5),
                                                 ),
                                                 child: Center(
-
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
-                                                      SizedBox(width: 8,),
+                                                      SizedBox(
+                                                        width: 8,
+                                                      ),
                                                       Text(
                                                         "Update",
                                                         style: TextStyle(
@@ -657,15 +840,18 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                 ? 15
                                                                 : 20),
                                                       ),
-                                                      SizedBox(width: 8,),
+                                                      SizedBox(
+                                                        width: 8,
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(width: 10,),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
                                             GestureDetector(
-
                                               onTap: () {
                                                 Navigator.pop(context);
                                               },
@@ -675,31 +861,34 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 decoration: BoxDecoration(
                                                   color: blueColor,
                                                   borderRadius:
-                                                  BorderRadius.circular(5),
+                                                      BorderRadius.circular(5),
                                                 ),
                                                 child: Center(
-
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .center,
+                                                        MainAxisAlignment
+                                                            .center,
                                                     children: [
-                                                      SizedBox(width: 8,),
+                                                      SizedBox(
+                                                        width: 8,
+                                                      ),
                                                       Text(
                                                         "  Back  ",
                                                         style: TextStyle(
                                                             color: Colors.white,
                                                             fontWeight:
-                                                            FontWeight.bold,
+                                                                FontWeight.bold,
                                                             fontSize: MediaQuery.of(
-                                                                context)
-                                                                .size
-                                                                .width <
-                                                                500
+                                                                            context)
+                                                                        .size
+                                                                        .width <
+                                                                    500
                                                                 ? 15
                                                                 : 20),
                                                       ),
-                                                      SizedBox(width: 8,),
+                                                      SizedBox(
+                                                        width: 8,
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
@@ -801,7 +990,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               setState(() {
                                                                 passworderror =
                                                                     false;
-                                                                passwordsameerror = false;
+                                                                passwordsameerror =
+                                                                    false;
                                                               });
                                                             },
                                                             obscureText:
@@ -822,11 +1012,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                   passworderror
                                                                       ? OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              MediaQuery.of(context)
-                                                                                  .size
-                                                                                  .width *
-                                                                                  0.013),
+                                                                              BorderRadius.circular(MediaQuery.of(context).size.width * 0.013),
                                                                           borderSide:
                                                                               BorderSide(color: Colors.red), // Set border color here
                                                                         )
@@ -961,11 +1147,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                   confirmpassworderror
                                                                       ? OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              MediaQuery.of(context)
-                                                                                  .size
-                                                                                  .width *
-                                                                                  0.013),
+                                                                              BorderRadius.circular(MediaQuery.of(context).size.width * 0.013),
                                                                           borderSide:
                                                                               BorderSide(color: Colors.red), // Set border color here
                                                                         )
@@ -1139,39 +1321,44 @@ class _Profile_screenState extends State<Profile_screen> {
                                       //   ),
                                       // ),
                                       GestureDetector(
-                                        onTap: () async{
-                                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                                          String? pass = prefs.getString("password");
+                                        onTap: () async {
+                                          SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          String? pass =
+                                              prefs.getString("password");
                                           print(pass);
                                           // Validate the new password
                                           if (password.text.isEmpty) {
                                             setState(() {
                                               passworderror = true;
-                                              passwordmessage = "Password is required";
+                                              passwordmessage =
+                                                  "Password is required";
                                             });
                                           } else if (password.text.length < 8) {
                                             setState(() {
                                               passworderror = true;
-                                              passwordmessage = "Password must have at least 8 characters";
+                                              passwordmessage =
+                                                  "Password must have at least 8 characters";
                                             });
                                           } else if (!RegExp(
-                                              r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+                                                  r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
                                               .hasMatch(password.text)) {
                                             setState(() {
                                               passworderror = true;
                                               passwordmessage =
-                                              'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                                                  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
                                             });
                                           } else if (password.text == pass) {
                                             setState(() {
                                               passworderror = true;
-                                              passwordmessage = 'New password cannot be the same as the old password';
+                                              passwordmessage =
+                                                  'New password cannot be the same as the old password';
                                             });
-
-
                                           } else {
                                             setState(() {
-                                              passworderror = false; // Clear the password error
+                                              passworderror =
+                                                  false; // Clear the password error
                                             });
                                           }
 
@@ -1179,53 +1366,73 @@ class _Profile_screenState extends State<Profile_screen> {
                                           if (confirmpassword.text.isEmpty) {
                                             setState(() {
                                               confirmpassworderror = true;
-                                              confirmpasswordmessage = "Confirm password is required";
+                                              confirmpasswordmessage =
+                                                  "Confirm password is required";
                                             });
-                                          } else if (confirmpassword.text != password.text) {
+                                          } else if (confirmpassword.text !=
+                                              password.text) {
                                             setState(() {
                                               confirmpassworderror = true;
-                                              confirmpasswordmessage = "Both passwords do not match";
+                                              confirmpasswordmessage =
+                                                  "Both passwords do not match";
                                             });
                                           } else {
                                             setState(() {
-                                              confirmpassworderror = false; // Clear the confirmation password error
+                                              confirmpassworderror =
+                                                  false; // Clear the confirmation password error
                                             });
                                           }
 
                                           // If there are no errors, proceed to change the password
-                                          if (!passworderror && !confirmpassworderror ) {
+                                          if (!passworderror &&
+                                              !confirmpassworderror) {
                                             //await _savePassword(password.text);
-                                             changePassword(); // Call the function to change the password
+                                            changePassword(); // Call the function to change the password
                                           }
                                         },
                                         child: Row(
                                           children: [
                                             Container(
                                               height: 40,
-                                              width: MediaQuery.of(context).size.width * 0.45,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.45,
                                               decoration: BoxDecoration(
                                                 color: blueColor,
-                                                borderRadius: BorderRadius.circular(5),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
                                               ),
                                               child: Center(
                                                 child: loading
                                                     ? SpinKitFadingCircle(
-                                                  color: Colors.white,
-                                                  size: 40.0,
-                                                )
-                                                    : Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      "Change Password",
-                                                      style: TextStyle(
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                                        size: 40.0,
+                                                      )
+                                                    : Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "Change Password",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
+                                                                  ? 15
+                                                                  : 20,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
                                               ),
                                             ),
                                           ],
@@ -1272,8 +1479,13 @@ class _Profile_screenState extends State<Profile_screen> {
     );
   }
 
-  Widget buildTextField(String label, TextEditingController controller,
-      String? Function(String?)? validator , {bool isEnabled = true,bool isRequired = false,} ) {
+  Widget buildTextField(
+    String label,
+    TextEditingController controller,
+    String? Function(String?)? validator, {
+    bool isEnabled = true,
+    bool isRequired = false,
+  }) {
     return Material(
       elevation: 3,
       borderRadius: BorderRadius.circular(5),
@@ -1286,7 +1498,7 @@ class _Profile_screenState extends State<Profile_screen> {
         child: TextFormField(
           controller: controller,
           // validator: validator,
-          validator:  (value) {
+          validator: (value) {
             // Only validate if the field is required
             if (isRequired) {
               return validator != null ? validator(value) : null;

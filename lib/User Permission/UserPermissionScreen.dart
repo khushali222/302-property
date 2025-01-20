@@ -239,10 +239,10 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
           tenantWorkorderView = permissions.tenantPermission?.workorderView ?? false;
           tenantWorkorderAdd = permissions.tenantPermission?.workorderAdd ?? false;
           tenantWorkorderEdit = permissions.tenantPermission?.workorderEdit ?? false;
-          tenantWorkorderDelete = permissions.tenantPermission?.workorderDelete ?? false;
+         // tenantWorkorderDelete = permissions.tenantPermission?.workorderDelete ?? false;
           tenantDocumentsView = permissions.tenantPermission?.documentsView ?? false;
           tenantDocumentsEdit = permissions.tenantPermission?.documentsEdit ?? false;
-          tenantDocumentsDelete = permissions.tenantPermission?.documentsDelete ?? false;
+         // tenantDocumentsDelete = permissions.tenantPermission?.documentsDelete ?? false;
 
           // Staff permissions
         //  staffPropertydetailView = permissions.staffPermission?.propertydetailView ?? false;
@@ -287,6 +287,57 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
           // Vendor permissions
           vendorWorkorderEdit = permissions.vendorPermission?.workorderEdit ?? false;
           vendorWorkorderView = permissions.vendorPermission?.workorderView ?? false;
+
+
+          selectAll = [
+            tenantPropertyView,
+            tenantFinancialView,
+            tenantFinancialAdd,
+            tenantFinancialEdit,
+            tenantDocumentsAdd,
+            tenantWorkorderView,
+            tenantWorkorderAdd,
+            tenantWorkorderEdit,
+
+            tenantDocumentsView,
+            tenantDocumentsEdit,
+
+            staffPropertyView,
+            staffLeaseAdd,
+            staffWorkorderEdit,
+            staffPropertyAdd,
+            staffPropertyEdit,
+            staffPropertyDelete,
+            staffTenantView,
+            staffTenantAdd,
+            staffTenantEdit,
+            staffTenantDelete,
+            staffLeaseView,
+            staffLeaseEdit,
+            staffLeaseDelete,
+            staffSetting,
+            staffWorkorderView,
+            staffWorkorderAdd,
+            staffWorkorderDelete,
+            staffPropertyTypeView,
+            staffPropertyTypeAdd,
+            staffPropertyTypeEdit,
+            staffPropertyTypeDelete,
+            staffRentalOwnerView,
+            staffRentalOwnerAdd,
+            staffRentalOwnerEdit,
+            staffRentalOwnerDelete,
+            staffApplicantView,
+            staffApplicantAdd,
+            staffApplicantEdit,
+            staffApplicantDelete,
+            staffVendorView,
+            staffVendorAdd,
+            staffVendorEdit,
+            staffVendorDelete,
+            vendorWorkorderEdit,
+            vendorWorkorderView,
+          ].every((permission) => permission);
         });
       }
     } catch (e) {
@@ -456,16 +507,16 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                               });
                             },
                           ),
-                          _buildCheckboxRow(
-                            'DELETE',
-                            isDisabled: tenantWorkorderView ,
-                            tenantWorkorderDelete,
-                            (value) {
-                              setState(() {
-                                tenantWorkorderDelete = value!;
-                              });
-                            },
-                          ),
+                          // _buildCheckboxRow(
+                          //   'DELETE',
+                          //   isDisabled: tenantWorkorderView ,
+                          //   tenantWorkorderDelete,
+                          //   (value) {
+                          //     setState(() {
+                          //       tenantWorkorderDelete = value!;
+                          //     });
+                          //   },
+                          // ),
                         ],
                       ),
                       Divider(color: blueColor),
@@ -504,16 +555,16 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                               });
                             },
                           ),
-                          _buildCheckboxRow(
-                            'DELETE',
-                            isDisabled: tenantDocumentsView ,
-                            tenantDocumentsDelete,
-                            (value) {
-                              setState(() {
-                                tenantDocumentsDelete = value!;
-                              });
-                            },
-                          ),
+                          // _buildCheckboxRow(
+                          //   'DELETE',
+                          //   isDisabled: tenantDocumentsView ,
+                          //   tenantDocumentsDelete,
+                          //   (value) {
+                          //     setState(() {
+                          //       tenantDocumentsDelete = value!;
+                          //     });
+                          //   },
+                          // ),
                         ],
                       ),
                     ],
@@ -997,7 +1048,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                         'Setting',
                         [
                           _buildCheckboxRow(
-                            'VIEW',
+                            'MANAGE',
                             staffSetting,
                                 (value) {
                               setState(() {

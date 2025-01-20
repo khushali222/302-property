@@ -10,7 +10,7 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-String Api_url = "http://192.168.1.18:4000";
+String Api_url = "http://192.168.1.14:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
 
@@ -248,9 +248,9 @@ String? ValidatePassword(String password) {
   }
 
   // Avoid sequential or repeating patterns
-  if (RegExp(r'(\d)\1{2,}|[A-Za-z]{4,}|\d{4,}').hasMatch(password)) {
-    return 'Avoid sequential or excessive repeating patterns.';
-  }
+  // if (RegExp(r'(\d)\1{2,}|[A-Za-z]{4,}|\d{4,}').hasMatch(password)) {
+  //   return 'Avoid sequential or excessive repeating patterns.';
+  // }
 
   // Simulated strength check: length-based and diversity
   if (password.length < 12) {

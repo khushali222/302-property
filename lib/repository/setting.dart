@@ -28,7 +28,7 @@ class SurchargeRepository {
         }
     );
     final response_Data = jsonDecode(response.body);
-    print(response_Data);
+    print('surcharge check ${adminId}');
     if (response_Data["statusCode"] == 200) {
       // final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
       final apiResponse = Setting1.fromJson(jsonDecode(response.body)["data"][0]);

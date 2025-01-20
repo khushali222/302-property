@@ -28,6 +28,12 @@ class widget_302 {
     var arrowNearText,
     required BuildContext context,
   }) {
+    bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
+        .checkplanpurchaseModel
+        ?.data
+        ?.planDetail
+        ?.planName ==
+        'Free Plan';
     return AppBar(
       iconTheme: const IconThemeData(color: Colors.black),
       elevation: 1,
@@ -209,6 +215,7 @@ class widget_302 {
                       //  }
                       },
                     ),
+                    if (!isFreePlan)
                     PopupMenuItem(
                       child:  Row(
                         children: [

@@ -592,7 +592,7 @@ List<ReportCardModel> reportCards = [
     destination: PaymentExceptionReports(),
   ),
   ReportCardModel(
-    title: "Convenience Fee Override",
+    title:"Convenience Fee Override",
     description: "Report shows all leases with convenience fee override",
     destination: ConvenienceFeeReports(),
   ),

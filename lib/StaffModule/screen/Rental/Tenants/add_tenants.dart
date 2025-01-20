@@ -841,54 +841,53 @@ class _AddTenantState extends State<AddTenant> {
                                     ],
                                   ),
                                   enableOverrideFee
-                                      ? Material(
-                                          elevation: 2,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          child: Container(
-                                            height: 50,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 16.0, vertical: 0),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black
-                                                      .withOpacity(0.2),
-                                                  offset: Offset(4, 4),
-                                                  blurRadius: 3,
-                                                ),
-                                              ],
-                                            ),
-                                            child: TextField(
-                                              keyboardType: TextInputType
-                                                  .numberWithOptions(
-                                                      decimal: true),
-                                              decoration: InputDecoration(
-                                                hintStyle: TextStyle(
-                                                    fontSize: 13,
-                                                    color: Color(0xFFb0b6c3)),
-                                                border: InputBorder.none,
-                                                hintText: "Enter number...*",
-                                                suffix: Text(
-                                                  '%',
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                              onChanged: (value) {
-                                                _validateInput();
-                                              },
-                                              controller: overrideFee,
-                                              cursorColor: blueColor,
-                                            ),
+                                      ?
+                                  Material(
+                                    elevation: 2,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Container(
+                                      height: 50,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.0, vertical: 0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                        BorderRadius.circular(8.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                            Colors.black.withOpacity(0.2),
+                                            offset: Offset(4, 4),
+                                            blurRadius: 3,
                                           ),
-                                        )
+                                        ],
+                                      ),
+                                      child: TextField(
+                                        keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: true),
+                                        decoration: InputDecoration(
+                                          hintStyle: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFb0b6c3)),
+                                          border: InputBorder.none,
+                                          hintText: "Enter the amount to override fee",
+                                          suffix: Text(
+                                            '%',
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        onChanged: (value) {
+                                          _validateInput();
+                                        },
+                                        controller: overrideFee,
+                                        cursorColor: blueColor,
+                                      ),
+                                    ),
+                                  )
                                       : Container(),
                                   overRideFeeError != null
                                       ? Padding(
@@ -2164,52 +2163,53 @@ class _AddTenantState extends State<AddTenant> {
                               ],
                             ),
                             enableOverrideFee
-                                ? Material(
-                                    elevation: 2,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Container(
-                                      height: 50,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16.0, vertical: 0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.2),
-                                            offset: Offset(4, 4),
-                                            blurRadius: 3,
-                                          ),
-                                        ],
-                                      ),
-                                      child: TextField(
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                decimal: true),
-                                        decoration: InputDecoration(
-                                          hintStyle: TextStyle(
-                                              fontSize: 13,
-                                              color: Color(0xFFb0b6c3)),
-                                          border: InputBorder.none,
-                                          hintText: "Enter number...*",
-                                          suffix: Text(
-                                            '%',
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        onChanged: (value) {
-                                          _validateInput();
-                                        },
-                                        controller: overrideFee,
-                                        cursorColor: blueColor,
-                                      ),
+                                ?
+                            Material(
+                              elevation: 2,
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Container(
+                                height: 50,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                  BorderRadius.circular(8.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                      Colors.black.withOpacity(0.2),
+                                      offset: Offset(4, 4),
+                                      blurRadius: 3,
                                     ),
-                                  )
+                                  ],
+                                ),
+                                child: TextField(
+                                  keyboardType:
+                                  TextInputType.numberWithOptions(
+                                      decimal: true),
+                                  decoration: InputDecoration(
+                                    hintStyle: TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFFb0b6c3)),
+                                    border: InputBorder.none,
+                                    hintText: "Enter the amount to override fee",
+                                    suffix: Text(
+                                      '%',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  onChanged: (value) {
+                                    _validateInput();
+                                  },
+                                  controller: overrideFee,
+                                  cursorColor: blueColor,
+                                ),
+                              ),
+                            )
                                 : Container(),
                             overRideFeeError != null
                                 ? Padding(

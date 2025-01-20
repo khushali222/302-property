@@ -37,7 +37,7 @@ class TabBarExample extends StatefulWidget {
 }
 
 class _TabBarExampleState extends State<TabBarExample> {
-  int _selectedRadio = 1;
+  int  _selectedRadio = 0;
   TextEditingController credit = TextEditingController();
   TextEditingController debit = TextEditingController();
   TextEditingController percent = TextEditingController();
@@ -45,6 +45,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController late_fee = TextEditingController();
   TextEditingController duration = TextEditingController();
   TextEditingController durationmail = TextEditingController();
+  TextEditingController replyToEmail = TextEditingController();
 
   bool rentDueReminderEmail = false;
 
@@ -132,7 +133,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     try {
-      Setting1 surcharges = await surchargeRepository.fetchSurchargeData('$id');
+      Setting1 surcharges = await surchargeRepository.fetchSurchargeData('${id ?? ""}');
 
       if (surcharges != null) {
         setState(() {
@@ -147,10 +148,11 @@ class _TabBarExampleState extends State<TabBarExample> {
               : "";
           surge_id = surcharges.surchargeId.toString();
           selectedAccount = surcharges!.surcharge_account ?? null;
+          _selectedRadio = surcharges.surchargePercentACH != 0.0 && surcharges.surchargeFlatACH != 0.0 ? 3 : surcharges.surchargePercentACH != 0.0 ?  1:surcharges.surchargeFlatACH != 0.0?2:0;
         });
       }
     } catch (e) {
-      print('Failed to load surcharge data: $e');
+      print('Failed to load surcharge dataaa: $e');
     }
   }
 
@@ -378,6 +380,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         "duration": durationmail.text.isNotEmpty
             ? double.parse(durationmail.text)
             : null,
+        "replyToEmail":replyToEmail.text,
       };
 
       bool success = await mailrepository.updateMailData(data);
@@ -404,6 +407,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
+        "replyToEmail":replyToEmail.text,
         "duration":
             durationmail.text.isNotEmpty ? int.parse(durationmail.text) : null,
       };
@@ -1121,7 +1125,7 @@ class _TabBarExampleState extends State<TabBarExample> {
           _isLoadingvendors = false;
         });
       } else {
-        throw Exception('Failed to load data');
+       // throw Exception('Failed to load data');
       }
     } catch (e) {
       setState(() {
@@ -2657,6 +2661,86 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ],
                               ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+
+                                  Text(
+                                    "Add Your Reply to Address",
+                                    style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context)
+                                            .size
+                                            .width <
+                                            500
+                                            ? 15
+                                            : 20,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+
+                                  Expanded(
+                                    child: Container(
+                                      height: 50,
+                                      width:
+                                      MediaQuery.of(context).size.width *
+                                          .5,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: grey),
+                                        color: Colors.white,
+                                        borderRadius:
+                                        BorderRadius.circular(5),
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Positioned.fill(
+                                            child: TextFormField(
+                                              controller: replyToEmail,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  //  passworderror = false;
+                                                });
+                                              },
+                                              //  controller: password,
+                                              cursorColor: Color.fromRGBO(
+                                                  21, 43, 81, 1),
+                                              decoration: InputDecoration(
+                                                 hintText: "Enter email",
+                                                hintStyle: TextStyle(
+                                                  fontSize:
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .037,
+                                                  color: Color(0xFF8A95A8),
+                                                ),
+
+                                                border: InputBorder.none,
+                                                contentPadding:
+                                                EdgeInsets.all(13),
+
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 190),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
                               _buildRentDueReminderSwitch(),
                               /*  SizedBox(
                           height: 10,
@@ -2804,7 +2888,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            "Update",
+                                            "Save",
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
@@ -3507,7 +3591,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            "Update",
+                                            "Save",
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
