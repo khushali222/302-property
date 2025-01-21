@@ -735,13 +735,13 @@ class _StaffTableState extends State<StaffTable> {
                                   .where((staff) => staff.staffmemberName!
                                       .toLowerCase()
                                       .contains(searchValue!.toLowerCase()) ||
-                                  staff.staffmemberDesignation!
+                                  staff.staffmemberDesignation.toString()
                                       .toLowerCase()
                                       .contains(searchValue!.toLowerCase()) ||
-                                  staff.staffmemberPhoneNumber!
+                                  staff.staffmemberPhoneNumber.toString()
                                       .toLowerCase()
                                       .contains(searchValue!.toLowerCase()) ||
-                                  staff.staffmemberEmail!
+                                  staff.staffmemberEmail.toString()
                                       .toLowerCase()
                                       .contains(searchValue!.toLowerCase())
                               )
@@ -751,6 +751,32 @@ class _StaffTableState extends State<StaffTable> {
                                   .where((staff) =>
                                       staff.staffmemberName == searchValue)
                                   .toList();
+                            }
+                            if (data.isEmpty) {
+                              return Center(
+                                child:
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              );
                             }
                             sortData(data);
                             final totalPages =

@@ -44,7 +44,7 @@ import '../../../widgets/custom_drawer.dart';
 class RentPastDueReports extends StatefulWidget {
   bool? isRentdue;
   String? title;
-  RentPastDueReports({super.key, this.isRentdue,this.title});
+  RentPastDueReports({super.key, this.isRentdue, this.title});
 
   @override
   State<RentPastDueReports> createState() => _RentPastDueReportsState();
@@ -341,7 +341,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   });
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 0),
+                  padding: const EdgeInsets.only(left: 5),
                   child: Row(
                     children: [
                       width < 400
@@ -351,7 +351,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
-
                     ],
                   ),
                 ),
@@ -381,10 +380,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 8),
-                    Text("Tenant", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 28),
+                    Text("  Tenant", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-
                   ],
                 ),
               ),
@@ -414,10 +412,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 25),
+                    SizedBox(width: 30),
                     Text("Amount", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-
+                    // SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -890,7 +887,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     for (var tenant in delinquentTenantsData) {
       csvData.add([
         tenant.rentalData?.address ?? 'N/A',
-        '${tenant.tenantData?.tenantFirstName  ?? 'N / A' } ${tenant.tenantData?.tenantLastName  ?? 'N / A' }',
+        '${tenant.tenantData?.tenantFirstName ?? 'N / A'} ${tenant.tenantData?.tenantLastName ?? 'N / A'}',
         "\$${tenant.total?.toStringAsFixed(2)}" ?? '0.00',
       ]);
 
@@ -954,9 +951,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   TextEditingController fromDate = TextEditingController();
   TextEditingController toDate = TextEditingController();
   String? daterange;
-  String? chargeType ;
+  String? chargeType;
 
-  String? monthType;
+  String? monthType = 'Current Month';
   String? selectedrenatalownerid;
   @override
   Widget build(BuildContext context) {
@@ -991,7 +988,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                             child: Column(
                               children: [
                                 filters(),
-                                SizedBox(height: 20,),
+                                SizedBox(
+                                  height: 20,
+                                ),
                                 SpinKitFadingCircle(
                                   size: 50,
                                   color: blueColor,
@@ -1002,7 +1001,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else if (snapshot.hasData) {
-
                           var rentPastDue = snapshot.data!;
                           List<Transaction> filteredCharges = [];
 
@@ -1020,7 +1018,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               var address = charge.rentalData?.address;
                               var tenantName =
                                   charge.tenantData?.tenantFirstName;
-                             //print
+                              //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1034,7 +1032,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               var address = charge.rentalData?.address;
                               var tenantName =
                                   charge.tenantData?.tenantFirstName;
-                             //print
+                              //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1048,7 +1046,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               var address = charge.rentalData?.address;
                               var tenantName =
                                   charge.tenantData?.tenantFirstName;
-                             //print
+                              //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1062,7 +1060,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               var address = payment.rentalData?.address;
                               var tenantName =
                                   payment.tenantData?.tenantFirstName;
-                             //print
+                              //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1076,7 +1074,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               var address = payment.rentalData?.address;
                               var tenantName =
                                   payment.tenantData?.tenantFirstName;
-                             //print
+                              //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1090,7 +1088,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               var address = payment.rentalData?.address;
                               var tenantName =
                                   payment.tenantData?.tenantFirstName;
-                             //print
+                              //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1116,32 +1114,44 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       chargeType == 'Charges' &&
                                           monthType == null)
                                     chargeTable(
-                                        snapshot.data!.dueRentCharges!.charges!,snapshot.data!.dueRentCharges!.total!.toDouble()!)
+                                        snapshot.data!.dueRentCharges!.charges!,
+                                        snapshot.data!.dueRentCharges!.total!
+                                            .toDouble()!)
 
                                   // chargeTable(
                                   //     snapshot.data!.dueRentCharges!.charges!)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Current Month')
-                                    chargeTable(snapshot
-                                        .data!.currentDueRentCharges!.charges!,snapshot.data!.currentMonthRentDue!)
+                                    chargeTable(
+                                        snapshot.data!.currentDueRentCharges!
+                                            .charges!,
+                                        snapshot.data!.currentMonthRentDue!)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Last Month')
-                                    chargeTable(snapshot
-                                        .data!.lastDueRentCharges!.charges!,snapshot.data!.lastMonthRentDue!)
+                                    chargeTable(
+                                        snapshot
+                                            .data!.lastDueRentCharges!.charges!,
+                                        snapshot.data!.lastMonthRentDue!)
                                   else if (chargeType == "Payment" &&
                                       monthType == "Current Month")
-                                    chargeTable(snapshot
-                                        .data!.currentPayments!.payments!,snapshot.data!.currentPayments!.total!.toDouble()!)
+                                    chargeTable(
+                                        snapshot
+                                            .data!.currentPayments!.payments!,
+                                        snapshot.data!.currentPayments!.total!
+                                            .toDouble()!)
                                   else if (chargeType == "Payment" &&
                                       monthType == null)
-                                    chargeTable(snapshot
-                                        .data!.currentPayments!.payments!,snapshot.data!.currentPayments!.total!.toDouble()!)
+                                    chargeTable(
+                                        snapshot
+                                            .data!.currentPayments!.payments!,
+                                        snapshot.data!.currentPayments!.total!
+                                            .toDouble()!)
                                   else if (chargeType == "Payment" &&
                                       monthType == "Last Month")
                                     chargeTable(
-                                        snapshot.data!.lastPayments!.payments!,snapshot.data!.lastPayments!.total!.toDouble()!),
-
-
+                                        snapshot.data!.lastPayments!.payments!,
+                                        snapshot.data!.lastPayments!.total!
+                                            .toDouble()!),
                                 ],
                               ),
                             ),
@@ -1180,14 +1190,14 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     );
   }
 
-  chargeTable(List<Transaction> chargedata,double total) {
+  chargeTable(List<Transaction> chargedata, double total) {
     int totalPages = (chargedata.length / itemsPerPage).ceil();
 
     // Get the current page data
     List<Transaction> currentPageData =
         chargedata.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
 
-    currentPageData = currentPageData.reversed.toList();
+  //  currentPageData = currentPageData.reversed.toList();
 
     return SingleChildScrollView(
       child: Padding(
@@ -1205,97 +1215,75 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 ),
                 Text(
                   "${widget.title}",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15,color: blueColor),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: blueColor),
                 ),
                 Spacer(),
                 Text(
                   '\$${total.toStringAsFixed(2)}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15,color: blueColor),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: blueColor),
                 ),
                 SizedBox(
                   width: 5,
                 ),
               ],
             ),
-           const SizedBox(height: 10),
+            const SizedBox(height: 10),
             _buildHeaders(),
-            if(currentPageData.length == 0)
+            if (currentPageData.length == 0)
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text("No data Available"),
               ),
-            if(currentPageData.length > 0)
-            Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
-              child: Column(
-                children: currentPageData.asMap().entries.where((entry) {
-                  // Filter the data based on the search input
-                  Transaction item = entry.value;
-                  String address =
-                      item.rentalData?.address?.toLowerCase() ?? '';
-                  return address.contains(searchvalue);
-                }).map((entry) {
-                  int rowIndex = entry.key;
-                  Transaction item = entry.value;
-                  bool isRowExpanded = expandedRowIndex == rowIndex;
-                  //printitem.rentalData.toString());
-                  //print'${item.rentalData?.address}');
-                  //show the charge data
-                  //  Charge rental = entry.value;
-                  //for the payment data
-                  // Payment rental = entry.value;
-                  return Container(
-                    // decoration: BoxDecoration(
-                    //   border: Border.all(color: blueColor),
-                    // ),
-                    decoration: BoxDecoration(
-                      color: rowIndex % 2 != 0
-                          ? Colors.white
-                          : blueColor.withOpacity(0.09),
-                      border:
-                          Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (expandedRowIndex == rowIndex) {
-                                        expandedRowIndex = null;
-                                      } else {
-                                        expandedRowIndex = rowIndex;
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 5, right: 5),
-                                    padding: !isRowExpanded
-                                        ? const EdgeInsets.only(bottom: 10)
-                                        : const EdgeInsets.only(top: 10),
-                                    child: FaIcon(
-                                      isRowExpanded
-                                          ? FontAwesomeIcons.sortUp
-                                          : FontAwesomeIcons.sortDown,
-                                      size: 0,
-                                      color: isRowExpanded
-                                          ? Colors.transparent
-                                          : Colors.transparent,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: GestureDetector(
+            if (currentPageData.length > 0)
+              Container(
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                child: Column(
+                  children: currentPageData.asMap().entries.where((entry) {
+                    // Filter the data based on the search input
+                    Transaction item = entry.value;
+                    String address =
+                        item.rentalData?.address?.toLowerCase() ?? '';
+                    return address.contains(searchvalue);
+                  }).map((entry) {
+                    int rowIndex = entry.key;
+                    Transaction item = entry.value;
+                    bool isRowExpanded = expandedRowIndex == rowIndex;
+                    //printitem.rentalData.toString());
+                    //print'${item.rentalData?.address}');
+                    //show the charge data
+                    //  Charge rental = entry.value;
+                    //for the payment data
+                    // Payment rental = entry.value;
+                    return Container(
+                      // decoration: BoxDecoration(
+                      //   border: Border.all(color: blueColor),
+                      // ),
+                      decoration: BoxDecoration(
+                        color: rowIndex % 2 != 0
+                            ? Colors.white
+                            : blueColor.withOpacity(0.09),
+                        border: Border.all(
+                            color: Color.fromRGBO(152, 162, 179, .5)),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  GestureDetector(
                                     onTap: () {
                                       setState(() {
                                         if (expandedRowIndex == rowIndex) {
@@ -1305,8 +1293,55 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                         }
                                       });
                                     },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 5, right: 5),
+                                      padding: !isRowExpanded
+                                          ? const EdgeInsets.only(bottom: 10)
+                                          : const EdgeInsets.only(top: 10),
+                                      child: FaIcon(
+                                        isRowExpanded
+                                            ? FontAwesomeIcons.sortUp
+                                            : FontAwesomeIcons.sortDown,
+                                        size: 0,
+                                        color: isRowExpanded
+                                            ? Colors.transparent
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 4,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          if (expandedRowIndex == rowIndex) {
+                                            expandedRowIndex = null;
+                                          } else {
+                                            expandedRowIndex = rowIndex;
+                                          }
+                                        });
+                                      },
+                                      child: Text(
+                                        '${item.rentalData != null ? item.rentalData!.address : "N/A" ?? '-'} ',
+                                        style: TextStyle(
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  // SizedBox(
+                                  //   width: 30,
+                                  // ),
+                                  SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          .05),
+                                  Expanded(
+                                    flex: 3,
                                     child: Text(
-                                      '${item.rentalData != null ? item.rentalData!.address : "N/A" ?? '-'} ',
+                                      '${item.tenantData != null ? item.tenantData!.tenantFirstName : "N/A" ?? '-'} ${item.tenantData != null ? item.tenantData!.tenantLastName : "N/A" ?? '-'}',
                                       style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold,
@@ -1314,51 +1349,30 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                // SizedBox(
-                                //     width:
-                                //     MediaQuery.of(context)
-                                //         .size
-                                //         .width *
-                                //         .3),
-                                Expanded(
-                                  flex: 4,
-                                  child: Text(
-                                    '${item.tenantData != null ? item.tenantData!.tenantFirstName : "N/A" ?? '-'} ${item.tenantData != null ? item.tenantData!.tenantLastName : "N/A" ?? '-'}',
-                                    style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                  // SizedBox(
+                                  //   width: 5,
+                                  // ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      '\$${item.total!.toStringAsFixed(2).toString() ?? '-'}',
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 9,
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    '${item.total!.toStringAsFixed(2).toString() ?? '-'}',
-                                    style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -1446,81 +1460,119 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Container(
-                  height: 42,
-                  // width: 170,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: chargeType,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      hint: Text(
-                        "Charge type",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'Charges',
-                          child: Text('Charges'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Payment',
-                          child: Text('Payment'),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Charge Type",
+                          style: TextStyle(fontSize: 14, color:blueColor,fontWeight: FontWeight.bold),
                         ),
                       ],
-                      onChanged: (value) {
-                        setState(() {
-                          chargeType = value;
-                        });
-                        // Handle the selected charge type
-                        //printvalue);
-                      },
                     ),
-                  ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 42,
+                            // width: 170,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: Colors.grey)),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: chargeType,
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                hint: Text(
+                                  "Charge type" ,
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                                items: const [
+                                  DropdownMenuItem<String>(
+                                    value: 'Charges',
+                                    child: Text('Charges'),
+                                  ),
+                                  DropdownMenuItem<String>(
+                                    value: 'Payment',
+                                    child: Text('Payment'),
+                                  ),
+                                ],
+                                onChanged: (value) {
+                                  setState(() {
+                                    chargeType = value;
+                                  });
+                                  // Handle the selected charge type
+                                  //printvalue);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 6),
               Expanded(
-                child: Container(
-                  height: 42,
-                  // width: 170,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: monthType,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      hint: Text(
-                        "Select Month",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                      items:  [
-                        if(chargeType != "Payment")
-                        DropdownMenuItem<String>(
-                          value: 'All',
-                          child: Text('All'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Current Month',
-                          child: Text('Current Month'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Last Month',
-                          child: Text('Last Month'),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Select Month",
+                          style: TextStyle(fontSize: 14, color:blueColor,fontWeight: FontWeight.bold),
                         ),
                       ],
-                      onChanged: (value) {
-                        setState(() {
-                          monthType = value;
-                        });
-                        // Handle the selected charge type
-                        //printvalue);
-                      },
                     ),
-                  ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 42,
+                            // width: 170,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: Colors.grey)),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: monthType,
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                hint: Text(
+                                  "Select Month",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                                items: [
+                                  if (chargeType != "Payment")
+                                    DropdownMenuItem<String>(
+                                      value: 'All',
+                                      child: Text('All'),
+                                    ),
+                                  DropdownMenuItem<String>(
+                                    value: 'Current Month',
+                                    child: Text('Current Month'),
+                                  ),
+                                  DropdownMenuItem<String>(
+                                    value: 'Last Month',
+                                    child: Text('Last Month'),
+                                  ),
+                                ],
+                                onChanged: (value) {
+                                  setState(() {
+                                    monthType = value;
+                                  });
+                                  // Handle the selected charge type
+                                  //printvalue);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -1528,6 +1580,14 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
         ),
         SizedBox(
           height: 10,
+        ),
+        Row(
+          children: [
+            Text(
+              "Search",
+              style: TextStyle(fontSize: 14, color: blueColor,fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -1648,8 +1708,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
             ],
           ),
         ),
-
-
       ],
     );
   }

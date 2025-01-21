@@ -984,28 +984,33 @@ class _Workorder_tableState extends State<Workorder_table> {
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((workorder) =>
-                                workorder.workOrderData!.workSubject!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                    workorder.workOrderData!.status!
-                                        .toLowerCase()
-                                        .contains(
-                                        searchvalue!.toLowerCase()) ||
-                                    workorder.workOrderData!.isBillable!
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains(
-                                        searchvalue!.toLowerCase()) ||
-                                    workorder.rentalAddress!.rentalAdress!
-                                        .toLowerCase()
-                                        .contains(
-                                        searchvalue!.toLowerCase()) ||
-                                    workorder.workOrderData!.workCategory!
-                                        .toLowerCase()
-                                        .contains(
-                                        searchvalue!.toLowerCase()) ||
-                                    (workorder.staffMember?.staffmemberName?.toLowerCase() ?? '')
-                                        .contains(searchvalue.toLowerCase())
+                        workorder.workOrderData!.workSubject!
+                            .toLowerCase()
+                            .contains(
+                            searchvalue!.toLowerCase()) ||
+                            workorder.workOrderData!.status!
+                                .toLowerCase()
+                                .contains(
+                                searchvalue!.toLowerCase()) ||
+                            workorder.workOrderData!.isBillable!
+                                .toString()
+                                .toLowerCase()
+                                .contains(
+                                searchvalue!.toLowerCase()) ||
+                            workorder.rentalAddress!.rentalAdress!
+                                .toLowerCase()
+                                .contains(
+                                searchvalue!.toLowerCase()) ||
+                            workorder.workOrderData!.createdAt.toString()
+                                .toLowerCase()
+                                .contains(
+                                searchvalue!.toLowerCase()) ||
+                            workorder.workOrderData!.workCategory!
+                                .toLowerCase()
+                                .contains(
+                                searchvalue!.toLowerCase()) ||
+                            (workorder.staffMember?.staffmemberName?.toLowerCase() ?? '')
+                                .contains(searchvalue.toLowerCase())
                         )
 
                             .toList();

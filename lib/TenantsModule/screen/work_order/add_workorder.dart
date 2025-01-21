@@ -221,6 +221,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
   String? _selectedProperty;
   String? _selectedUnitId;
   String? _selectedUnit;
+  String? _selectedRentaId;
   Future<void> selectImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -277,6 +278,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     }
   }
   Future<void> _loadProperties() async {
+    print("Calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? admin_id = prefs.getString("adminId");
@@ -292,7 +294,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           headers: {"authorization" : "CRM $token","id":"CRM $id",}
       );
       print('${Api_url}/api/rentals/rentals/$id');
-
+print("${response.body}");
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
@@ -300,10 +302,17 @@ class _Add_WorkorderState extends State<Add_Workorder> {
         //   addresses[data['rental_id'].toString()] =
         //       data['rental_adress'].toString();
         // });
+        // jsonResponse.forEach((data) {
+        //   addresses[data['rental_id'].toString()] =
+        //   '${data['rental_adress']} (${data['status']})';
+        // });
         jsonResponse.forEach((data) {
-          addresses[data['rental_id'].toString()] =
-          '${data['rental_adress']} (${data['status']})';
+          // Combine rental_id and address to create a unique key
+          String key = '${data['rental_id']} - ${data['rental_adress']} - ${data['status']}';
+          addresses[key] = '${data['rental_adress']} - ${data['status']}'; // Value remains the rental_id
+
         });
+
         setState(() {
           properties = addresses;
           _isLoading = false;
@@ -362,7 +371,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
   @override
   void initState() {
     // TODO: implement initState
-
     super.initState();
     _loadProperties();
   }
@@ -550,6 +558,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                     ],
                                   ),
                                   items: properties.keys.map((rentalId) {
+
                                     return DropdownMenuItem<String>(
                                       value: rentalId,
                                       child: Text(
@@ -569,16 +578,22 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                       _propertyErrorMessage = null;
                                       _selectedUnitId = null;
                                       _selectedPropertyId = value;
-                                      _selectedProperty = properties[
-                                      value]; // Store selected rental_adress
+                                      _selectedProperty = properties[value]; // Store selected rental_adress
+                                    //  _selectedProperty = properties[value]; // Store selected rental_adress
+                                      String? selectedKey = value;
+                                      List<String> splitValue = selectedKey!.split(' - ');
 
+                                      _selectedRentaId = splitValue[0];
+                                       String status = splitValue[2];
+                                      // print('rentalid ${rentalId}');
+                                       print('rental status ${status}');
                                       renderId = value.toString();
                                       print(
-                                          'Selected Property: $_selectedProperty');
+                                          'Selected Property: $_selectedPropertyId');
+
                                       _loadUnits(
-                                          value!); // Fetch units for the selected property
-                                      if (_selectedProperty != null &&
-                                          _selectedProperty!.contains('(Expired)')) {
+                                          _selectedRentaId!); // Fetch units for the selected propert
+                                      if (status.contains('Expired')) {
                                         _propertyErrorMessage =
                                         'Your lease for this property has expired. The work order will appear only on the admin/staff dashboard.';
                                       }
@@ -888,7 +903,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Welcome To Be Performed',
+                          Text('Work To Be Performed',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -1043,10 +1058,10 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           workCategory: _selectedCategory!,
           workPerformed: perform.text,
           status: 'New',
-          rentalAddress: properties[_selectedPropertyId] ?? "",
+          rentalAddress: _selectedRentaId ?? "",
           rentalUnit: units[_selectedUnitId] ?? "",
           tenant: "${firstName} ${lastName}(Tenant)",
-          rentalid: rentalId,
+          rentalid: _selectedRentaId,
           unitid: unitId,
           entry: _selectedEntry == 'Yes',
           notificationTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),

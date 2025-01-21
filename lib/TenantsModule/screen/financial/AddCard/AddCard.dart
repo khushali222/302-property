@@ -639,9 +639,18 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
+                      formatter: [
+                        FilteringTextInputFormatter
+                            .digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            10),
+                        PhoneNumberFormatter(),
+                      ],
                       keyboardType: TextInputType.number,
+                      // keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                       hintText: 'Enter Phone Number',
                       controller: phoneNumber,
+                      phone: true,
                     ),
                     const SizedBox(
                       height: 8,

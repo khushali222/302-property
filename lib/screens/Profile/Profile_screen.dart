@@ -229,7 +229,7 @@ class _Profile_screenState extends State<Profile_screen> {
       appBar: widget_302.App_Bar(context: context, isProfilePageActive: true),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Dashboard",
+        currentpage: "Profile",
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none

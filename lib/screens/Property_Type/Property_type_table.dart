@@ -920,7 +920,8 @@ class _PropertyTableState extends State<PropertyTable> {
                       return Container(
                         height: MediaQuery.of(context).size.height * .5,
                         child: Center(
-                          child: Column(
+                          child:
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -955,15 +956,49 @@ class _PropertyTableState extends State<PropertyTable> {
                                 property.propertyType!
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()) ||
-                                property.propertysubType!
+                                property.propertysubType.toString()
                                     .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
+                                    .contains(searchvalue!.toLowerCase())||
+                                    property.createdAt.toString()
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase())||
+                                    property.updatedAt.toString()
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase())
+
+                        )
                             .toList();
                       } else {
                         data = snapshot.data!
                             .where((property) =>
                                 property.propertyType == selectedValue)
                             .toList();
+                      }
+                      if (data.isEmpty) {
+                        return Center(
+                          child:
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
+                            ],
+                          ),
+                        );
                       }
                       sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
