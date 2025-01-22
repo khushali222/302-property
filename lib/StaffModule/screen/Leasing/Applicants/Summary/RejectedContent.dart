@@ -154,14 +154,35 @@ class _RejectedContentState extends State<RejectedContent> {
                       color: blueColor,
                     ),
                     const SizedBox(width: 5),
-                    Text(
-                      '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
-                      style:  TextStyle(
-                        fontSize: 18,
-                        color: blueColor,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(
+                      width:
+                      MediaQuery.of(context).size.width > 500 ? 200 : 200,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 1),
+                        child: Text(
+                          '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
+                          textAlign: TextAlign.justify,
+                          maxLines: 7, // Set maximum number of lines
+                          overflow: TextOverflow
+                              .ellipsis, // Handle overflow with ellipsis
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 13
+                                : 18,
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
+                    // Text(
+                    //   '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
+                    //   style:  TextStyle(
+                    //     fontSize: 18,
+                    //     color: blueColor,
+                    //     fontWeight: FontWeight.w500,
+                    //   ),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 20),

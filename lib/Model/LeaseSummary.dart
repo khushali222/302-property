@@ -83,9 +83,11 @@ class Data {
   });
 
   Data.fromJson(Map<String, dynamic> json) {
+    print('tenant id ${json['tenant_id']}');
     leaseId = json['lease_id']; 
     tenantId =
         json['tenant_id'] != null ? List<String>.from(json['tenant_id']) : [];
+
     adminId = json['admin_id'];
     rentalId = json['rental_id'];
     unitId = json['unit_id'];
@@ -243,10 +245,12 @@ class RenewLeases {
   String? renewId;
   String? leaseId;
   String? adminId;
+
   String? leaseType;
   String? startDate;
   String? endDate;
-  String? renewfileName;
+  List<String>? renewFileName;
+ // String? renewfileName;
   int? amount;
   int? leaseAmount;
   bool? isDelete;
@@ -260,10 +264,12 @@ class RenewLeases {
         this.renewId,
         this.leaseId,
         this.adminId,
+
         this.leaseType,
         this.startDate,
         this.endDate,
-        this.renewfileName,
+        this.renewFileName,
+       // this.renewfileName,
         this.amount,
         this.leaseAmount,
         this.isDelete,
@@ -275,11 +281,26 @@ class RenewLeases {
   RenewLeases.fromJson(Map<String, dynamic> json) {
     sId = json['_id'] ?? "";
     renewId = json['renew_id'] ?? "";
+    // tenantId = json['tenant_id'] != null ? List<String>.from(json['tenant_id']) : [];
     leaseId = json['lease_id'] ?? "";
     adminId = json['admin_id']?? "";
     leaseType = json['lease_type']?? "";
     startDate = json['start_date']?? "";
-    renewfileName = json['renew_fileName'] ?? "";
+   // renewFileName = json['renew_fileName'] != null
+        // ? List<String>.from(json['renew_fileName'])
+        // : [];
+   // renewfileName = json['renew_fileName'] ?? "";
+    // Handle renew_fileName: if it's a string, convert it to a list.
+    if (json['renew_fileName'] != null) {
+      if (json['renew_fileName'] is String) {
+        renewFileName = json['renew_fileName'] == "" ? [] : [json['renew_fileName']];
+      } else {
+        renewFileName = List<String>.from(json['renew_fileName']);
+      }
+    } else {
+      renewFileName = [];
+    }
+
     endDate = json['end_date']??"";
     amount = json['amount'] ??"";
     leaseAmount = json['lease_amount'] ?? "";
@@ -296,9 +317,12 @@ class RenewLeases {
     data['renew_id'] = this.renewId;
     data['lease_id'] = this.leaseId;
     data['admin_id'] = this.adminId;
+
     data['lease_type'] = this.leaseType;
     data['start_date'] = this.startDate;
-    data['renew_fileName'] = this.renewfileName;
+   // data['renew_fileName'] = this.renewFileName;
+    // data['renew_fileName'] = this.renewfileName;
+    data['renew_fileName'] = this.renewFileName ?? [];
     data['end_date'] = this.endDate;
     data['amount'] = this.amount;
     data['lease_amount'] = this.leaseAmount;

@@ -855,25 +855,25 @@ class _Lease_tableState extends State<Lease_table> {
                                           .toLowerCase()
                                           .contains(
                                               searchValue!.toLowerCase()) ||
-                                      lease.tenantNames!
+                                      lease.tenantNames.toString()
                                           .toLowerCase()
                                           .contains(searchValue!.toLowerCase())||
-                                          lease.rentCycle!
+                                          lease.rentCycle.toString()
                                               .toLowerCase()
                                               .contains(searchValue!.toLowerCase())||
-                                          lease.startDate!
+                                          lease.startDate.toString()
                                               .toLowerCase()
                                               .contains(searchValue!.toLowerCase())||
-                                          lease.endDate!
+                                          lease.endDate.toString()
                                               .toLowerCase()
                                               .contains(searchValue!.toLowerCase())||
                                           lease.amount!.toStringAsFixed(2)
                                               .toLowerCase()
                                               .contains(searchValue!.toLowerCase()) ||
-                                          lease.remainingDays!
+                                          lease.remainingDays.toString()
                                               .toLowerCase()
                                               .contains(searchValue!.toLowerCase())||
-                                          lease.rentDueDate!
+                                          lease.rentDueDate.toString()
                                               .toLowerCase()
                                               .contains(searchValue!.toLowerCase())||
                                           lease.totalBalance!.toStringAsFixed(2)
@@ -1144,8 +1144,8 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   _buildTableRow(
                                                                       'Current Balance:',
                                                                       _getDisplayValue(lease
-                                                                          .totalBalance!
-                                                                          .toStringAsFixed(
+                                                                          .totalBalance
+                                                                          ?.toStringAsFixed(
                                                                               2)
                                                                           .toString()),
                                                                       '',

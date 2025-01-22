@@ -248,7 +248,7 @@ class LeaseRepository {
     );
     print('$Api_url/api/leases/leases/$adminId');
     print(adminId);
-    print('fetch lease ${response.body}');
+    print('fetch leasee ${response.body}');
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -521,6 +521,9 @@ class LeaseRepository {
       },
     );
     log(response.body);
+    print(json);
+    log('JSON being parsed: ${response.body}');
+
     print('lease renewal ${response.body}');
     if (response.statusCode == 200) {
       return LeaseSummary.fromJson(jsonDecode(response.body));

@@ -332,7 +332,22 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
   final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Closed'];
   final List<String> _account = [
     'Advertising',
-    'Association fees',
+    'Association Fees',
+    'Bank Fees',
+    'Auto and Travel',
+    'Cleaning and Maintenance',
+    'Commissions',
+    'Depreciation Expense',
+    'Insurance',
+    'Legal and Professional Fees',
+    'Licenses and Permits',
+    'Management Fees',
+    'Mortgage Interest',
+    'Other Expenses',
+    'Other Interest Expenses',
+    'Postage and Delivery',
+    'Repairs',
+
   ];
   List<Map<String, dynamic>> rows = [];
   bool _showTextField = false;
@@ -1665,7 +1680,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Welcome To Be Performed',
+                          Text('Work To Be Performed',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -2608,7 +2623,22 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
   final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Closed'];
   final List<String> _account = [
     'Advertising',
-    'Association fees',
+    'Association Fees',
+    'Bank Fees',
+    'Auto and Travel',
+    'Cleaning and Maintenance',
+    'Commissions',
+    'Depreciation Expense',
+    'Insurance',
+    'Legal and Professional Fees',
+    'Licenses and Permits',
+    'Management Fees',
+    'Mortgage Interest',
+    'Other Expenses',
+    'Other Interest Expenses',
+    'Postage and Delivery',
+    'Repairs',
+
   ];
   List<Map<String, dynamic>> rows = [];
   bool _showTextField = false;
@@ -3918,7 +3948,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('Welcome To Be Performed',
+                                        Text('Work To Be Performed',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,

@@ -62,13 +62,15 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
           : b.createdAt!.compareTo(a.createdAt!));
     }*/
   }
-  void _showAddInsuranceAlert(BuildContext context, VoidCallback onConfirm) {
+  void _showAddInsuranceAlert(BuildContext context, VoidCallback onConfirm,Insurance_data? property) {
+    var id = property?.status == 'ACTIVE' ? property?.policyId : null;
+    print('property status ${id}');
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Add New Insurance",
       desc:
-      "If you add a new renter's insurance, the older one will get expired. Do you want to proceed?",
+      "If you add new renters insurance, the older one with active Policy ID ${id} will get expired!",
       style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -722,7 +724,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                 futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
               });
             }
-          });
+          },existingInsurances[0]);
         } else {
           // Navigate to add_insurance directly if no existing insurance
           final result = await Navigator.of(context).push(

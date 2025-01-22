@@ -971,6 +971,7 @@ class _addLease3State extends State<addLease3>
         'firstName': tenant.tenantFirstName ?? "",
         'lastName': tenant.tenantLastName ?? "",
         'passWord': tenant.tenantPassword ?? '',
+        if (tenant.rentalUnit != null) 'rental_unit': tenant.rentalUnit!,
         'phoneNumber': tenant.tenantPhoneNumber ?? "",
         'workNumber': tenant.tenantAlternativeNumber ?? "",
         'email': tenant.tenantEmail ?? "",
@@ -2718,13 +2719,22 @@ class _addLease3State extends State<addLease3>
                                               .asMap()
                                               .entries
                                               .map((entry) {
+                                            // final index = entry.key;
+                                            // final tenant = entry.value;
+                                            // final controller = Provider.of<
+                                            //             SelectedTenantsProvider>(
+                                            //         context)
+                                            //     .rentShareControllers[index];
                                             final index = entry.key;
                                             final tenant = entry.value;
-                                            final controller = Provider.of<
-                                                        SelectedTenantsProvider>(
-                                                    context)
-                                                .rentShareControllers[index];
 
+                                            print("Controller length:- ${Provider.of<
+                                                SelectedTenantsProvider>(context)
+                                                .rentShareControllers.length}  $index");
+                                            final controller = Provider.of<
+                                                SelectedTenantsProvider>(
+                                                context)
+                                                .rentShareControllers[index];
                                             return TableRow(
                                               children: [
                                                 Padding(
@@ -6621,6 +6631,7 @@ class _AddTenantState extends State<AddTenant> {
       tenantEmail: applicant.applicantEmail,
       tenantPhoneNumber: applicant.applicantPhoneNumber.toString(),
       tenantId: null, // Explicitly set tenantId as null
+      applicantId: applicant.applicantId
     );
   }
 
@@ -6648,54 +6659,51 @@ class _AddTenantState extends State<AddTenant> {
   List<Tenant> selectedTenants = [];
   List<bool> selected = [];
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Future<void> fetchTenants() async {
+  // Future<void> fetchTenants() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   try {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? id = prefs.getString("adminId");
+  //     String? token = prefs.getString('token');
+  //     final response = await http
+  //         .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
+  //       "authorization": "CRM $token",
+  //       "id": "CRM $id",
+  //     });
+  //
+  //     if (response.statusCode == 200) {
+  //       Map<String, dynamic> responseData = json.decode(response.body);
+  //
+  //       // Check if the response contains the expected keys
+  //       if (responseData.containsKey('data')) {
+  //         List<dynamic> data = responseData['data']['tenants'];
+  //         tenants = data.map((item) => Tenant.fromJson(item)).toList();
+  //         filteredTenants = List.from(tenants);
+  //         selected = List<bool>.filled(tenants.length, false);
+  //       } else {
+  //         // Handle unexpected response structure
+  //         print("Unexpected response structure: Missing 'data' key");
+  //       }
+  //     } else {
+  //       // Handle HTTP errors
+  //       print("Failed to load tenants: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     // Handle other errors
+  //     print("Error fetching tenants: $e");
+  //   } finally {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
+  Future<void> fetchTenantsAndApplicants() async {
     setState(() {
       isLoading = true;
     });
-
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? id = prefs.getString("adminId");
-      String? token = prefs.getString('token');
-      final response = await http
-          .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-      });
-
-      if (response.statusCode == 200) {
-        Map<String, dynamic> responseData = json.decode(response.body);
-
-        // Check if the response contains the expected keys
-        if (responseData.containsKey('data')) {
-          List<dynamic> data = responseData['data']['tenants'];
-          tenants = data.map((item) => Tenant.fromJson(item)).toList();
-          filteredTenants = List.from(tenants);
-          selected = List<bool>.filled(tenants.length, false);
-        } else {
-          // Handle unexpected response structure
-          print("Unexpected response structure: Missing 'data' key");
-        }
-      } else {
-        // Handle HTTP errors
-        print("Failed to load tenants: ${response.statusCode}");
-      }
-    } catch (e) {
-      // Handle other errors
-      print("Error fetching tenants: $e");
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<void> fetchTenantsAndApplicants() async {
-    if (mounted) {
-      setState(() {
-        isLoading = true;
-      });
-    }
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -6713,7 +6721,12 @@ class _AddTenantState extends State<AddTenant> {
         Map<String, dynamic> tenantData = json.decode(tenantResponse.body);
         if (tenantData.containsKey('data')) {
           List<dynamic> tenantList = tenantData['data']['tenants'];
+          List<dynamic> applicantlist = tenantData['data']['applicants'];
+
           tenants = tenantList.map((item) => Tenant.fromJson(item)).toList();
+          tenants.addAll(applicantlist.map((item)=>convertApplicantToTenant(Datum.fromJson(item))).toList());
+
+
         } else {
           print("Unexpected tenant response structure: Missing 'data' key");
         }
@@ -6722,46 +6735,123 @@ class _AddTenantState extends State<AddTenant> {
       }
 
       // Fetch applicants
-      final applicantResponse = await http
-          .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-      });
+      // final applicantResponse = await http
+      //     .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
+      //   "authorization": "CRM $token",
+      //   "id": "CRM $id",
+      // });
+      //
+      // if (applicantResponse.statusCode == 200) {
+      //   Map<String, dynamic> applicantData = json.decode(applicantResponse.body);
+      //   if (applicantData.containsKey('data')) {
+      //     List<dynamic> applicantList = applicantData['data'];
+      //     List<Tenant> convertedApplicants = applicantList
+      //         .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
+      //         .toList();
+      //
+      //     // Merge tenants and converted applicants
+      //     tenants.addAll(convertedApplicants);
+      //   } else {
+      //     print("Unexpected applicant response structure: Missing 'data' key");
+      //   }
+      // } else {
+      //   print("Failed to load applicants: ${applicantResponse.statusCode}");
+      // }
 
-      if (applicantResponse.statusCode == 200) {
-        Map<String, dynamic> applicantData =
-            json.decode(applicantResponse.body);
-        if (applicantData.containsKey('data')) {
-          List<dynamic> applicantList = applicantData['data'];
-          List<Tenant> convertedApplicants = applicantList
-              .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
-              .toList();
-
-          // Merge tenants and converted applicants
-          tenants.addAll(convertedApplicants);
-        } else {
-          print("Unexpected applicant response structure: Missing 'data' key");
-        }
-      } else {
-        print("Failed to load applicants: ${applicantResponse.statusCode}");
-      }
-
-      if (mounted) {
-        setState(() {
-          filteredTenants = List.from(tenants);
-          selected = List<bool>.filled(tenants.length, false);
-        });
-      }
+      // Update filtered list and selection state
+      filteredTenants = List.from(tenants);
+      selected = List<bool>.filled(tenants.length, false);
     } catch (e) {
       print("Error fetching tenants or applicants: $e");
     } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+      setState(() {
+        isLoading = false;
+      });
     }
   }
+
+  // Tenant convertApplicantToTenant(Datum applicant) {
+  //   return Tenant(
+  //     applicantId: applicant.applicantId,
+  //     tenantFirstName: applicant.applicantFirstName,
+  //     tenantLastName: applicant.applicantLastName,
+  //     tenantEmail: applicant.applicantEmail,
+  //     tenantPhoneNumber: applicant.applicantPhoneNumber.toString(),
+  //     tenantId: null, // Explicitly set tenantId as null
+  //   );
+  // }
+  // Future<void> fetchTenantsAndApplicants() async {
+  //   if (mounted) {
+  //     setState(() {
+  //       isLoading = true;
+  //     });
+  //   }
+  //
+  //   try {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? id = prefs.getString("adminId");
+  //     String? token = prefs.getString('token');
+  //
+  //     // Fetch tenants
+  //     final tenantResponse = await http
+  //         .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
+  //       "authorization": "CRM $token",
+  //       "id": "CRM $id",
+  //     });
+  //
+  //     if (tenantResponse.statusCode == 200) {
+  //       Map<String, dynamic> tenantData = json.decode(tenantResponse.body);
+  //       if (tenantData.containsKey('data')) {
+  //         List<dynamic> tenantList = tenantData['data']['tenants'];
+  //         tenants = tenantList.map((item) => Tenant.fromJson(item)).toList();
+  //       } else {
+  //         print("Unexpected tenant response structure: Missing 'data' key");
+  //       }
+  //     } else {
+  //       print("Failed to load tenants: ${tenantResponse.statusCode}");
+  //     }
+  //
+  //     // Fetch applicants
+  //     final applicantResponse = await http
+  //         .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
+  //       "authorization": "CRM $token",
+  //       "id": "CRM $id",
+  //     });
+  //
+  //     if (applicantResponse.statusCode == 200) {
+  //       Map<String, dynamic> applicantData =
+  //           json.decode(applicantResponse.body);
+  //       if (applicantData.containsKey('data')) {
+  //         List<dynamic> applicantList = applicantData['data'];
+  //         List<Tenant> convertedApplicants = applicantList
+  //             .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
+  //             .toList();
+  //
+  //         // Merge tenants and converted applicants
+  //         tenants.addAll(convertedApplicants);
+  //       } else {
+  //         print("Unexpected applicant response structure: Missing 'data' key");
+  //       }
+  //     } else {
+  //       print("Failed to load applicants: ${applicantResponse.statusCode}");
+  //     }
+  //
+  //     if (mounted) {
+  //       setState(() {
+  //         filteredTenants = List.from(tenants);
+  //         selected = List<bool>.filled(tenants.length, false);
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching tenants or applicants: $e");
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //     }
+  //   }
+  // }
 
   //for applicant
 
@@ -6884,6 +6974,16 @@ class _AddTenantState extends State<AddTenant> {
                           rows: [
                             // Add tenant rows
                             ...filteredTenants.map((tenant) {
+                              final matchingTenants =
+                              Provider.of<SelectedTenantsProvider>(context)
+                                  .selectedTenants
+                                  .where((test) => tenant.tenantId != null ?
+                              test.tenantId == tenant.tenantId : test.applicantId ==tenant.applicantId)
+                                  .toList();
+                              print(matchingTenants);
+
+                              final isSelected =
+                              matchingTenants.length > 0 ? true : false;
                               return DataRow(
                                 cells: [
                                   DataCell(
@@ -6892,9 +6992,10 @@ class _AddTenantState extends State<AddTenant> {
                                   ),
                                   DataCell(
                                     Checkbox(
-                                      value: selectedTenantsProvider
-                                          .selectedTenants
-                                          .contains(tenant),
+                                      // value: selectedTenantsProvider
+                                      //     .selectedTenants
+                                      //     .contains(tenant),
+                                      value: isSelected,
                                       onChanged: (bool? value) {
                                         if (value!) {
                                           selectedTenantsProvider

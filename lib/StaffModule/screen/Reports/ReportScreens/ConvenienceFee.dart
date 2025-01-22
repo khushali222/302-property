@@ -695,6 +695,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
     );
 
     await Printing.layoutPdf(
+      format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }

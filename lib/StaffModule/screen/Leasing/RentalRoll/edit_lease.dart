@@ -2011,9 +2011,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                               .map((entry) {
                                             final index = entry.key;
                                             final tenant = entry.value;
+
+                                            print("Controller length:- ${Provider.of<
+                                                SelectedTenantsProvider>(context)
+                                                .rentShareControllers.length}  $index");
                                             final controller = Provider.of<
-                                                        SelectedTenantsProvider>(
-                                                    context)
+                                                SelectedTenantsProvider>(
+                                                context)
                                                 .rentShareControllers[index];
 
                                             return TableRow(
@@ -6390,10 +6394,16 @@ class _AddTenantState extends State<AddTenant> {
                             DataColumn(label: Text('Select')),
                           ],
                           rows: filteredTenants.map((tenant) {
-                            // Check if the tenant is temporarily selected
-                            final isSelected =
-                                selectedTenantsTemp.contains(tenant);
+                            final matchingTenants =
+                            Provider.of<SelectedTenantsProvider>(context)
+                                .selectedTenants
+                                .where((test) => tenant.tenantId != null ?
+                            test.tenantId == tenant.tenantId : test.applicantId ==tenant.applicantId)
+                                .toList();
+                            print(matchingTenants);
 
+                            final isSelected =
+                            matchingTenants.length > 0 ? true : false;
                             return DataRow(
                               cells: [
                                 DataCell(
@@ -6407,15 +6417,14 @@ class _AddTenantState extends State<AddTenant> {
                                     child: Checkbox(
                                       value: isSelected,
                                       onChanged: (bool? value) {
-                                        setState(() {
-                                          if (value!) {
-                                            // Add tenant to temporary list
-                                            selectedTenantsTemp.add(tenant);
-                                          } else {
-                                            // Remove tenant from temporary list
-                                            selectedTenantsTemp.remove(tenant);
-                                          }
-                                        });
+                                        if (value!) {
+                                          selectedTenantsProvider
+                                              .addTenant(tenant);
+                                        } else {
+                                          selectedTenantsProvider
+                                              .removeTenant(tenant);
+                                        }
+                                        setState(() {});
                                       },
                                       activeColor: blueColor,
                                     ),

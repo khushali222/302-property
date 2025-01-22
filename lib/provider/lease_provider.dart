@@ -52,7 +52,7 @@ class SelectedTenantsProvider extends ChangeNotifier {
     }
 
 //    Check if the tenant is already in the selected tenants
-    if (_selectedTenants.any((existingTenant) => existingTenant.tenantId == tenant.tenantId)) {
+    if (_selectedTenants.any((existingTenant) => tenant.tenantId != null ?  existingTenant.tenantId == tenant.tenantId:existingTenant.applicantId == tenant.applicantId)) {
       print("Tenant ${tenant.tenantFirstName} is already added.");
       return; // Exit the method if the tenant is already added
     }

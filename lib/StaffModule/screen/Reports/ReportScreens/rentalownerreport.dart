@@ -657,6 +657,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     );
 
     await Printing.layoutPdf(
+      format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }

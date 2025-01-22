@@ -321,6 +321,7 @@ class _MyAppState extends State<MyApp> {
     );
 
     await Printing.layoutPdf(
+      format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }
@@ -1255,6 +1256,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     );
 
     await Printing.layoutPdf(
+      format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }

@@ -1288,6 +1288,7 @@ class _FinancialTableState extends State<FinancialTable> {
     );
 
     await Printing.layoutPdf(
+      format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }

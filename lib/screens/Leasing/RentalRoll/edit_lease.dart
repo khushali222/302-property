@@ -6600,10 +6600,11 @@ class _AddTenantState extends State<AddTenant> {
                       final matchingTenants =
                       Provider.of<SelectedTenantsProvider>(context)
                           .selectedTenants
-                          .where((test) =>
-                      test.tenantId == tenant.tenantId)
+                          .where((test) => tenant.tenantId != null ?
+                      test.tenantId == tenant.tenantId : test.applicantId ==tenant.applicantId)
                           .toList();
                       print(matchingTenants);
+
                       final isSelected =
                       matchingTenants.length > 0 ? true : false;
                       return DataRow(

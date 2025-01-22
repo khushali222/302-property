@@ -115,6 +115,8 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
       throw Exception('Failed to load tenant override fee data');
     }
   }
+  bool obsecure = true;
+  bool conobsecure = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -658,6 +660,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         },
                                         controller: password,
                                         cursorColor: blueColor,
+                                        obscureText: obsecure,
                                         decoration: InputDecoration(
                                           hintText: "Enter password",
                                           hintStyle: TextStyle(
@@ -685,6 +688,43 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                     ),
                                   ],
                                 ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                              width:
+                              10), // Add some space between the widgets
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                obsecure = !obsecure;
+                              });
+                            },
+                            child: Container(
+                              width: 38,
+                              height: 50,
+                              child: Center(
+                                child: FaIcon(
+                                  !obsecure
+                                      ? FontAwesomeIcons.eyeSlash
+                                      : FontAwesomeIcons.eye,
+                                  size: 20,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    offset: Offset(1.2, 1.2),
+                                    blurRadius: 3.0,
+                                    spreadRadius: 1.0,
+                                  ),
+                                ],
+                                border: Border.all(
+                                    width: 0, color: Color(0xFF8A95A8)),
+                                borderRadius: BorderRadius.circular(2.0),
                               ),
                             ),
                           ),
@@ -763,6 +803,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                           });
                                         },
                                         controller: conpassword,
+                                        obscureText: conobsecure,
                                         cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter password",
@@ -791,6 +832,44 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                     ),
                                   ],
                                 ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                              width:
+                              10), // Add some space between the widgets
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                conobsecure = !conobsecure;
+                              });
+                            },
+                            child: Container(
+                              width: 38,
+                              height: 50,
+                              child: Center(
+                                child: FaIcon(
+                                  !conobsecure
+                                      ? FontAwesomeIcons.eyeSlash
+                                      : FontAwesomeIcons.eye,
+                                  size: 20,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    offset: Offset(1.2, 1.2),
+                                    blurRadius: 3.0,
+                                    spreadRadius: 1.0,
+                                  ),
+                                ],
+                                border: Border.all(
+                                    width: 0, color: Color(0xFF8A95A8)),
+                                borderRadius: BorderRadius.circular(2.0),
                               ),
                             ),
                           ),

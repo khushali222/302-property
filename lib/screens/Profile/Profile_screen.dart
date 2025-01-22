@@ -225,6 +225,8 @@ class _Profile_screenState extends State<Profile_screen> {
             ?.planDetail
             ?.planName ==
         'Free Plan';
+
+
     return Scaffold(
       appBar: widget_302.App_Bar(context: context, isProfilePageActive: true),
       backgroundColor: Colors.white,
@@ -349,7 +351,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                           width: 10,
                                         ),
                                         Text(
-                                          '${isFreePlan ? 'Paid' : "Free"}',
+                                          '${!isFreePlan ? 'Paid' : "Free"}',
                                           style: TextStyle(
                                               color: blueColor,
                                               fontSize: 16,
@@ -437,6 +439,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               ),
                             ),
                             const SizedBox(height: 20),
+
                             Material(
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
