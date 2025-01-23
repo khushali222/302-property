@@ -190,11 +190,11 @@ class DateProvider with ChangeNotifier {
   String get dateFormat => _dateFormat;
   int get _dateformateselect => dateformateselect;
   DateProvider() {
-    _loadDateFormat();
+    loadDateFormat();
     //_loadSelectedDateFormat();
   }
 
-  Future<void> _loadDateFormat() async {
+  Future<void> loadDateFormat() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -223,7 +223,7 @@ class DateProvider with ChangeNotifier {
           "Content-Type": "application/json"
         },
         body: jsonEncode({
-          'format': _dateFormat,
+          'format': _dateFormat.toUpperCase(),
           'admin_id': id,
         }),
       );
@@ -237,12 +237,13 @@ class DateProvider with ChangeNotifier {
         print("Failed to save date format.");
       } else {
         final jsonData = jsonDecode(response.body);
-        await checkToken(jsonData["token"]);
+        await checkToken(token);
       }
     }
   }
 
   void updateDateFormat(String newFormat,  selectIndex) {
+
     print(newFormat);
     _dateFormat = newFormat;
     dateformateselect = selectIndex;
@@ -252,6 +253,7 @@ class DateProvider with ChangeNotifier {
   }
 
   String formatCurrentDate(String dateTime) {
+
     List<String> dateFormats = [
       'yyyy-MM-dd',
       'yyyy-M-d',
@@ -277,11 +279,53 @@ class DateProvider with ChangeNotifier {
     if (parsedDate == null) {
       return dateTime; // Return original if parsing fails
     }
-
+  print(_dateFormat);
     return DateFormat(_dateFormat).format(parsedDate);
   }
 
-  Future<void> checkToken(String token) async {
+  // Future<void> checkToken(String token) async {
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final adminId = prefs.getString("adminId");
+  //
+  //     final response = await http.post(
+  //       Uri.parse('${Api_url}/api/auth'),
+  //       headers: {
+  //         "authorization": "CRM $token",
+  //         "id": "CRM $adminId",
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: json.encode({"token": token}),
+  //     );
+  //     print("date formate calling ${response.body}");
+  //     if (response.statusCode == 200) {
+  //       final jsonData = jsonDecode(response.body);
+  //       if (jsonData["statusCode"] == 200) {
+  //         _dateFormat = jsonData['format'].toString();
+  //         dateformateselect = _dateformateselect;
+  //        // _loadSelectedDateFormat();
+  //         notifyListeners();
+  //       } else {
+  //         // Handle invalid token case
+  //         _dateFormat = 'MM-dd-yyyy'; // Reset to default
+  //         dateformateselect = 0;
+  //         notifyListeners();
+  //       }
+  //     } else {
+  //       // Handle error
+  //       _dateFormat = 'MM-dd-yyyy'; // Reset to default
+  //     }
+  //   } catch (e) {
+  //     // Handle error
+  //   }
+  // }
+  Future<void> checkToken(String? token) async {
+    if (token == null || token.isEmpty) {
+      print("Invalid or missing token.");
+      return;
+    }
+
+    // Proceed with token validation
     try {
       final prefs = await SharedPreferences.getInstance();
       final adminId = prefs.getString("adminId");
@@ -295,28 +339,38 @@ class DateProvider with ChangeNotifier {
         },
         body: json.encode({"token": token}),
       );
-      print("date formate calling ${response.body}");
+      print("Check token response: ${response.body}");
+
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-        if (jsonData["statusCode"] == 200) {
-          _dateFormat = jsonData['format'].toString();
-          dateformateselect = _dateformateselect;
-         // _loadSelectedDateFormat();
-          notifyListeners();
-        } else {
-          // Handle invalid token case
-          _dateFormat = 'MM-dd-yyyy'; // Reset to default
+        _dateFormat = jsonData['themes']?['format']?.toString() ?? 'MM-dd-yyyy';
+        if(_dateFormat == "YYYY-MM-DD")
+          {
+            dateformateselect = 1;
+            _dateFormat = 'yyyy-MM-dd';
+          }
+        else if(_dateFormat == "YYYY-MMM-DD")
+          {
+            dateformateselect = 2;
+            _dateFormat = 'yyyy-MMM-dd';
+          }
+        else if(_dateFormat == "MM/DD/YYYY"){
           dateformateselect = 0;
-          notifyListeners();
+          _dateFormat = 'MM/dd/yyyy';
+        }else {
+          // Handle custom case
+          dateformateselect = 3;
+        //  customdate = _dateFormat; // Store the custom format
         }
+        notifyListeners();
       } else {
-        // Handle error
-        _dateFormat = 'MM-dd-yyyy'; // Reset to default
+        print("Token validation failed. Status code: ${response.statusCode}");
       }
     } catch (e) {
-      // Handle error
+      print("Error in checkToken: $e");
     }
   }
+
 
   Future<void> _saveSelectedDateFormat() async {
     final prefs = await SharedPreferences.getInstance();

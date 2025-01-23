@@ -13,6 +13,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/financial/payment/make_payment.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/property/summery_page.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -633,8 +634,10 @@ class _FinancialTableState extends State<FinancialTable> {
   }
 
   final _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
         .checkplanpurchaseModel
         ?.data
@@ -1123,7 +1126,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   flex: 2,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-                                                    '${formatDate4(Tenant_financial.entry?.first.date ?? "")}' ,
+                                                    //'${formatDate4(Tenant_financial.entry?.first.date ?? "")}' ,
+                                                    Tenant_financial.entry?.first.date?.isNotEmpty == true
+                                                        ? dateProvider.formatCurrentDate('${Tenant_financial.entry?.first.date}')
+                                                        : 'N/A',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

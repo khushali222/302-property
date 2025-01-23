@@ -106,6 +106,9 @@ class _Profile_screenState extends State<Profile_screen> {
         _createdDate.text = profileData.createdAt ?? "";
         _companyStateController.text = profileData.companyState ?? '';
         _companyCountryController.text = profileData.companyCountry ?? '';
+        password.text = profileData.password ?? "";
+        confirmpassword.text = profileData.password ?? "";
+
 
         // Store original values
         originalFirstName = profileData.firstName ?? '';

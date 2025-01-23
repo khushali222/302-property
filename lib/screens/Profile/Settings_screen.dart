@@ -90,6 +90,13 @@ class _TabBarExampleState extends State<TabBarExample> {
     _loadVendor();
     _loadStaff();
     fetchWorkData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      dateProvider.loadDateFormat();
+    });
+   // _customDateController.text = customdate!;
+   //  customdate = customdate ?? "2025-01-23"; // Example default date
+   //  _customDateController.text = customdate!;
   }
 
 
@@ -1251,9 +1258,42 @@ class _TabBarExampleState extends State<TabBarExample> {
     }
   }
 
+
+  //for date formate
+  Future<void> updateDateFormat(String format, String adminId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final url = Uri.parse('${Api_url}/api/themes/date-format');
+    final response = await http.post(
+      url,
+      headers: {
+        "authorization": "CRM $token",
+        "id":"CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+
+      },
+      body: json.encode({
+        'format': format,
+        'admin_id': adminId,
+      }),
+    );
+    var responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to Date format');
+    }
+
+  }
+  TextEditingController _customDateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
+   //dateProvider.loadDateFormat();
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
@@ -4546,14 +4586,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     setState(() {
                                                       dateProvider
                                                           .updateDateFormat(
-                                                              'MM-dd-yyyy',
+                                                              'MM/dd/yyyy',
                                                               value);
                                                       dateformateselect =
                                                           value!;
                                                     });
                                                   })),
                                           Text(
-                                            "MM-DD-YYYY",
+                                            "MM/DD/YYYY",
                                             style: TextStyle(
                                               fontSize: 16,
                                             ),
@@ -4715,6 +4755,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     setState(() {
                                                       dateformateselect =
                                                           value!;
+                                                      customdate = ""; // Clear the custom date format when switched to custom
+                                                      _customDateController.text = "";
                                                     });
                                                   })),
                                           Text(
@@ -4732,7 +4774,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         height: 50,
                                         width: 150,
                                         child: TextFormField(
-                                          initialValue: customdate ?? "",
+                                         // controller: _customDateController,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              customdate = value;
+                                            });
+                                          },
+                                          initialValue: customdate != null ? customdate : dateProvider.dateFormat ?? "",
                                           enabled: dateformateselect == 3,
                                           decoration: InputDecoration(
                                             contentPadding:
@@ -4747,6 +4795,62 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     ],
                                   )
                                 ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  if (dateformateselect == 3 && customdate != null) {
+                                    // Save the custom date format
+                                    context.read<DateProvider>().updateDateFormat(customdate!, 3);
+                                    // Optionally, show a success message
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      content: Text("Date format saved!"),
+                                    ));
+                                  }
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  child: Container(
+                                    height:
+                                    MediaQuery.of(context).size.width <
+                                        500
+                                        ? 40
+                                        : 50,
+                                    width:
+                                    MediaQuery.of(context).size.width <
+                                        500
+                                        ? 100
+                                        : 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(5.0),
+                                      color: blueColor,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey,
+                                          offset: Offset(0.0, 1.0), //(x,y)
+                                          blurRadius: 6.0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Save",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 16
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                               SizedBox(
                                 height: 10,
