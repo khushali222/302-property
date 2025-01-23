@@ -713,8 +713,17 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
         // Check if there are existing insurance entries
         final existingInsurances = await futurePropertyTypes.catchError((_) => []);
 
-        // If there's more than one existing insurance, show an alert
-        if (existingInsurances.isNotEmpty) {
+        // Filter to find active insurance
+        final activeInsurances = existingInsurances.where(
+              (insurance) => insurance.status == 'ACTIVE',
+        );
+
+        final Insurance_data? activeInsurance = activeInsurances.isNotEmpty
+            ? activeInsurances.first
+            : null;
+
+        if (activeInsurance != null) {
+          // Show alert with active policy ID
           _showAddInsuranceAlert(context, () async {
             final result = await Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => add_insurance()),
@@ -724,9 +733,9 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                 futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
               });
             }
-          },existingInsurances[0]);
+          }, activeInsurance);
         } else {
-          // Navigate to add_insurance directly if no existing insurance
+          // Navigate directly to add_insurance if no active insurance
           final result = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => add_insurance()),
           );
@@ -737,6 +746,35 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
           }
         }
       },
+
+      // onTap: () async {
+      //   // Check if there are existing insurance entries
+      //   final existingInsurances = await futurePropertyTypes.catchError((_) => []);
+      //
+      //   // If there's more than one existing insurance, show an alert
+      //   if (existingInsurances.isNotEmpty) {
+      //     _showAddInsuranceAlert(context, () async {
+      //       final result = await Navigator.of(context).push(
+      //         MaterialPageRoute(builder: (context) => add_insurance()),
+      //       );
+      //       if (result == true) {
+      //         setState(() {
+      //           futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
+      //         });
+      //       }
+      //     },existingInsurances[0]);
+      //   } else {
+      //     // Navigate to add_insurance directly if no existing insurance
+      //     final result = await Navigator.of(context).push(
+      //       MaterialPageRoute(builder: (context) => add_insurance()),
+      //     );
+      //     if (result == true) {
+      //       setState(() {
+      //         futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
+      //       });
+      //     }
+      //   }
+      // },
       child: Container(
         height: (MediaQuery.of(context).size.width < 500)
             ? 50

@@ -134,6 +134,10 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           countList[2] = jsonData["data"]['rent'];
           countList[3] = convertDateFormat( jsonData["data"]['due_date'].toString());
           countList[4] = convertDateFormat(jsonData["data"]['end_date'].toString());
+          countList[1] = double.parse(jsonData["data"]['balance'].toString()).toStringAsFixed(2);
+          countList[1] = double.parse(countList[1]) < 0
+              ? "-\$${double.parse(countList[1]).abs()}"
+              : "\$${countList[1]}";
           loading = false;
         });
       } else {
@@ -178,7 +182,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         print(jsonData["totalBalance"]);
         setState(() {
          // countList[0] = jsonData['property_staffMember'];
-          countList[1] = double.parse(jsonData['totalBalance'].toString()).abs().toStringAsFixed(2);
+
 
           /*  countList[2] = jsonData['vendorCount'];
           countList[3] = jsonData['applicantCount'];
@@ -315,10 +319,11 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   List<dynamic> countList = [0,0,0,"",""];
   List<int> amountList = List.filled(2, 0);
   String convertDateFormat(String dateStr) {
-    DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(dateStr);
-    String formattedDate = DateFormat('dd/MM/yyyy').format(parsedDate);
+    DateTime parsedDate = DateTime.parse(dateStr);
+    String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
     return formattedDate;
   }
+
 
   ConnectivityResult? _connectivityResult ;
 
@@ -648,12 +653,12 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                   borderRadius: BorderRadius.circular(10)
                                               ),
                                               child: Center(
-                                                child: Icon(
-                                                  dashboardData.icons[index],
-                                                  size: 25,
-                                                  color:
-                                                  dashboardData.colorc[index]
-                                                  ,
+                                                child:  SvgPicture.asset(
+                                                  "${dashboardData.ico[index]}",
+                                                  fit: BoxFit.contain,
+                                                  height: 23,
+                                                  width: 23,
+                                                  color: dashboardData.colorc[index],
                                                 ),
                                               ),
                                             ),

@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -192,7 +193,7 @@ class _add_insuranceState extends State<add_insurance> {
                 ),
                 titleBar(
                   width: MediaQuery.of(context).size.width * .91,
-                  title: 'New Insurance',
+                  title: 'New Insurancecc',
                  // size: 18,
                 ),
 
@@ -246,6 +247,10 @@ class _add_insuranceState extends State<add_insurance> {
                             keyboardType: TextInputType.text,
                             hintText: 'Enter Policy Id',
                              controller: policy,
+                              // inputFormatters: [
+                              //   // Only allow alphanumeric characters (letters and digits)
+                              //   FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9]*$')),
+                              // ],
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'please enter the subject';
@@ -321,7 +326,7 @@ class _add_insuranceState extends State<add_insurance> {
                             height: 10,
                           ),
                           CustomTextField(
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.number,
                             hintText: '\$0.0',
                              label: "Enter Liability Coverage",
                              controller: liablity,
@@ -416,10 +421,25 @@ class _add_insuranceState extends State<add_insurance> {
                             ),
                           ),
                           onPressed: (){
-                            //print("calling 111");
-                            if(_formkey.currentState!.validate()){
-                            //  print("calling 22");
-                              addinsurance();
+                            // //print("calling 111");
+                            // if(_formkey.currentState!.validate()){
+                            // //  print("calling 22");
+                            //   addinsurance();
+                            // }
+                            if (_formkey.currentState!.validate()) {
+                              setState(() {
+                                isLoading = true;  // Show loading spinner
+                              });
+                              addinsurance().then((_) {
+                                setState(() {
+                                  isLoading = false;  // Hide loading spinner after adding insurance
+                                });
+                              }).catchError((error) {
+                                setState(() {
+                                  isLoading = false;  // Hide loading spinner in case of error
+                                });
+                                // Optionally, handle the error here, such as showing a message
+                              });
                             }
                           },
                           child: isLoading
