@@ -418,22 +418,59 @@ class _Summery_pageState extends State<Summery_page>
   int count = 0;
   int complete_count = 0;
 
+  // Future<void> _fetchData() async {
+  //   try {
+  //     final data = await unitRepository.fetchunit(widget.properties.rentalId!);
+  //     final data1 = await Properies_summery_Repo()
+  //         .fetchPropertiessummery(widget.properties.rentalId!);
+  //     final data2 = await Properies_summery_Repo()
+  //         .fetchWorkOrders(widget.properties.rentalId!);
+  //     setState(() {
+  //       unitCount = data.length;
+  //       tenentCount = data1.length;
+  //       count = data2.length;
+  //       complete_count = data2.length;
+  //     });
+  //   } catch (e) {
+  //     // Handle error
+  //     print(e);
+  //   }
+  // }
   Future<void> _fetchData() async {
     try {
-      final data = await unitRepository.fetchunit(widget.properties.rentalId!);
-      final data1 = await Properies_summery_Repo()
-          .fetchPropertiessummery(widget.properties.rentalId!);
-      final data2 = await Properies_summery_Repo()
-          .fetchWorkOrders(widget.properties.rentalId!);
+      // Fetch unit count
+      final data = await unitRepository.fetchunit(widget.properties.rentalId ?? "");
       setState(() {
-        unitCount = data.length;
-        tenentCount = data1.length;
-        count = data2.length;
+        unitCount = data.isNotEmpty ? data.length : 0;
+      });
+    } catch (e) {
+      // Handle error for fetching unit count
+      print('Error fetching unit data: $e');
+    }
+
+    try {
+      // Fetch tenant count
+      final data1 = await Properies_summery_Repo()
+          .fetchPropertiessummery(widget.properties.rentalId ?? "");
+      setState(() {
+        tenentCount = data1.isNotEmpty ? data1.length : 0;
+      });
+    } catch (e) {
+      // Handle error for fetching tenant data
+      print('Error fetching tenant data: $e');
+    }
+
+    try {
+      // Fetch work order count
+      final data2 = await Properies_summery_Repo()
+          .fetchWorkOrders(widget.properties.rentalId ?? "");
+      setState(() {
+        count = data2.isNotEmpty ? data2.length : 0;
         complete_count = data2.length;
       });
     } catch (e) {
-      // Handle error
-      print(e);
+      // Handle error for fetching work orders
+      print('Error fetching work order data: $e');
     }
   }
 

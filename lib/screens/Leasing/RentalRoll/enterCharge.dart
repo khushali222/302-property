@@ -478,7 +478,7 @@ class _enterChargeState extends State<enterCharge> {
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
-      Fluttertoast.showToast(msg: 'PDF added successfully');
+      //Fluttertoast.showToast(msg: 'PDF added successfully');
       List file = responseBody['files'];
       return file.first["filename"];
     } else {

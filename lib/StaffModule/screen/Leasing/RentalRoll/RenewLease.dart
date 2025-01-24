@@ -116,6 +116,7 @@ class _RenewleaseState extends State<Renewlease> {
     return parsedDate!;
   }
   TextEditingController rent = TextEditingController();
+  TextEditingController securitydeposit = TextEditingController();
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
   final TextEditingController endDateController = TextEditingController();
@@ -1084,9 +1085,63 @@ class _RenewleaseState extends State<Renewlease> {
                                       ],
                                     ),
                                     CustomTextField(
-                                      keyboardType: TextInputType.emailAddress,
+                                      keyboardType: TextInputType.number,
                                       hintText: 'Enter rent',
                                       controller: rent,
+                                      onChanged: (value) {
+                                        // Sanitize input to allow only numbers and a single decimal point
+                                        String sanitizedValue = value.replaceAll(RegExp(r'[^0-9.]'), '');
+                                        sanitizedValue = sanitizedValue.replaceAll(RegExp(r'(\..*?)\..*'), r'$1');
+
+                                        // Update the rent value
+                                        rent.text = sanitizedValue;
+
+                                        // Calculate renewAmount
+                                        double enteredAmount = double.tryParse(sanitizedValue) ?? 0.0;
+                                        num existingAmount = leasesummery.data?.amount ?? 00;
+
+                                        double renewAmount = enteredAmount - existingAmount > 0
+                                            ? enteredAmount - existingAmount
+                                            : 0.0;
+
+                                        // Update your state (if you're using setState or a state management solution)
+                                        setState(() {
+                                          // renewLeaseData['amount'] = enteredAmount;
+                                          // renewLeaseData['renewAmount'] = renewAmount;
+
+                                          // Update Security Deposit field dynamically
+                                          securitydeposit.text = renewAmount.toStringAsFixed(2);
+                                        });
+
+                                        // Move the cursor to the end of the text field
+                                        rent.selection = TextSelection.fromPosition(
+                                            TextPosition(offset: rent.text.length));
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          'Security Deposit',
+                                          style: TextStyle(
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                    CustomTextField(
+                                      keyboardType: TextInputType.number,
+                                      hintText: 'Enter Security Deposit',
+                                      controller: securitydeposit,
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -2464,7 +2519,8 @@ class _RenewleaseState extends State<Renewlease> {
                                     "lease_type":leasesummery.data!.leaseType,
                                     "start_date": reverseFormatDate(startDateController.text),
                                     "end_date":reverseFormatDate(endDateController.text),
-                                    "amount":rent.text,    // new amount
+                                    "amount":rent.text,
+                                    "renewAmount": securitydeposit.text,// new amount
                                     "lease_amount" :widget.rentamount,
                                     "charges":charge,
                                     "renew_fileName" :  _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",

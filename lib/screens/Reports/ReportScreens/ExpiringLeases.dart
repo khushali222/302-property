@@ -67,6 +67,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
       });
     });
     checkInternet();
+    _fetchData();
   }
 
   void checkInternet()async{
@@ -1107,12 +1108,24 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                     } else if (searchvalue.isNotEmpty) {
                       data = snapshot.data!
                           .where((lease) =>
-                              lease.rentalAddress!
+                              lease.rentalAddress.toString()
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()) ||
-                              lease.tenantNames!
+                              lease.tenantNames.toString()
                                   .toLowerCase()
-                                  .contains(searchvalue.toLowerCase()))
+                                  .contains(searchvalue.toLowerCase())
+                                  ||
+                                  lease.amount.toString()
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase())
+                                  ||
+                                  lease.status.toString()
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase())||
+                                  lease.startDate.toString()
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase())
+                      )
                           .toList();
                     } else {
                       data = snapshot.data!
@@ -1138,7 +1151,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                             flex: 0,
                             child: Padding(
                               padding:
-                                  const EdgeInsets.only(left: 0.0, right: 0.0),
+                                  const EdgeInsets.only(left: 5, right: 5),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -1153,7 +1166,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                       height:
                                           MediaQuery.of(context).size.width <
                                                   500
-                                              ? 40
+                                              ? 48
                                               : 50,
                                       width: MediaQuery.of(context).size.width <
                                               500

@@ -36,8 +36,8 @@ class CustomDateFieldState extends State<CustomDateField> {
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate:  DateTime.now(),
-      // lastDate: DateTime(2101),
+     // lastDate:  DateTime.now(),
+       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
