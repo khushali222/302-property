@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/property/summery_page.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -14,6 +15,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
 
+import '../../../provider/dateProvider.dart';
 import '../../model/tenant_property.dart';
 
 import '../../widgets/appbar.dart';
@@ -640,6 +642,7 @@ class _PropertyTableState extends State<PropertyTable> {
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       key: key,
       appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
@@ -1042,6 +1045,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
+                                                    Propertytype.startDate?.isNotEmpty == true
+                                                        ? dateProvider.formatCurrentDate('${Propertytype.startDate}')
+                                                        : 'N/A'
                                                     '${ formatDate4(Propertytype.startDate!)}',
                                                     style: TextStyle(
                                                       color: blueColor,
@@ -1061,7 +1067,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   flex: 2,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-
+                                                    Propertytype.endDate?.isNotEmpty == true
+                                                        ? dateProvider.formatCurrentDate('${Propertytype.endDate}')
+                                                        : 'N/A'
                                                         '${formatDate4(Propertytype.endDate!)}',
 
                                                     style: TextStyle(

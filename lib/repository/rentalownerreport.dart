@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -22,12 +24,14 @@ class RentalOwnerReportService {
       url = '$url&selectedChargeType=$chargetype';
     }
     print(url);
+
     try {
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
         "authorization": "CRM $token",
         "id": "CRM $id",
       },);
+      print("report rentalowner ${response.body}");
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body)["data"];
@@ -41,7 +45,7 @@ class RentalOwnerReportService {
       }
     } catch (error) {
       // Handle error during fetch
-      print('Error fetching rental owner reports: $error');
+      print('Error fetching rental owner reportsd: $error');
       return [];
     }
   }

@@ -93,6 +93,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       dateProvider.loadDateFormat();
+
     });
    // _customDateController.text = customdate!;
    //  customdate = customdate ?? "2025-01-23"; // Example default date
@@ -4778,9 +4779,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           onChanged: (value) {
                                             setState(() {
                                               customdate = value;
+                                            //  print("custom date  $customdate");
                                             });
                                           },
-                                          initialValue: customdate != null ? customdate : dateProvider.dateFormat ?? "",
+                                          initialValue: customdate != null ? customdate : dateProvider.dateFormat.toUpperCase() ?? "",
                                           enabled: dateformateselect == 3,
                                           decoration: InputDecoration(
                                             contentPadding:
@@ -4801,13 +4803,19 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               GestureDetector(
                                 onTap: () async {
+                                  customdate = customdate != null && customdate!.isNotEmpty
+                                      ? customdate
+                                      : dateProvider.dateFormat;
+
+                                  print("Custom Date: $customdate");
                                   if (dateformateselect == 3 && customdate != null) {
                                     // Save the custom date format
-                                    context.read<DateProvider>().updateDateFormat(customdate!, 3);
+                                    String fixedDate = fixDateFormat(customdate!);
+                                    context.read<DateProvider>().updateDateFormat(fixedDate!, 3);
                                     // Optionally, show a success message
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                      content: Text("Date format saved!"),
-                                    ));
+                                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    //   content: Text("Date format saved!"),
+                                    // ));
                                   }
                                 },
                                 child: ClipRRect(
@@ -5521,7 +5529,19 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
     );
   }
-
+  String fixDateFormat(String customdate) {
+    return customdate.replaceAllMapped(
+      RegExp(r'[DY]'),
+          (match) {
+        if (match.group(0) == 'D') {
+          return 'd';
+        } else if (match.group(0) == 'Y') {
+          return 'y';
+        }
+        return match.group(0)!; // Return the character unchanged if it doesn't match
+      },
+    );
+  }
   Widget _buildRentDueReminderSwitch() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),

@@ -127,7 +127,9 @@ class Payment {
       tenantData: TenantData.fromJson(json['tenant_data'] ?? {}),
       rentalData: RentalData.fromJson(json['rental_data'] ?? {}),
       rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
-      checkAccount: json['check_account'] ?? {},
+      checkAccount: (json['check_account'] != null && json['check_account'] is Map<String, dynamic>)
+          ? json['check_account']
+          : {},
       ccType: json['cc_type'] ?? 'N/A',
       ccNumber: json['cc_number'] ?? 'N/A',
       transactionType: json['transaction_type'] ?? '',

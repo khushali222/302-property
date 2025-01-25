@@ -15,10 +15,10 @@ class Barchart extends StatefulWidget {
 class _BarchartState extends State<Barchart> {
   List<RevenueData> chartData = [];
   final List<String> items = [
-    'This Year',
+    'Current Year',
     'Previous Year',
   ];
-  String? selectedValue = 'This Year'; // Default selection
+  String? selectedValue = 'Current Year'; // Default selection
   bool isLoading = true;
 
   @override
@@ -32,7 +32,7 @@ class _BarchartState extends State<Barchart> {
       isLoading = true;
     });
 
-   // final url = Uri.parse('http://192.168.1.12:4000/api/payment/monthly-summary');
+    // final url = Uri.parse('http://192.168.1.12:4000/api/payment/monthly-summary');
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
@@ -48,7 +48,7 @@ class _BarchartState extends State<Barchart> {
         Map<int, double> revenueMap = {};
 
         // Process data for the selected year
-        if (year == 'This Year') {
+        if (year == 'Current Year') {
           for (var item in data['currentYear']) {
             revenueMap[item['month']] = item['totalAmount'].toDouble();
           }
@@ -156,7 +156,7 @@ class _BarchartState extends State<Barchart> {
                   },
                   buttonStyleData: ButtonStyleData(
                     height: 50,
-                    width: 110,
+                    width: 130,
                     padding: const EdgeInsets.only(left: 14, right: 14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
@@ -177,9 +177,9 @@ class _BarchartState extends State<Barchart> {
                   ),
                   dropdownStyleData: DropdownStyleData(
                     maxHeight: 200,
-                    width: 110,
+                    width: 130,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(6),
                       color: Color.fromRGBO(50, 75, 119, 1),
                     ),
                     offset: const Offset(0, -5),
@@ -196,6 +196,7 @@ class _BarchartState extends State<Barchart> {
                 ),
               ),
             ),
+
             Container(
               height: 190,
               child: isLoading
@@ -207,12 +208,18 @@ class _BarchartState extends State<Barchart> {
                   majorTickLines: MajorTickLines(size: 0), // Hide tick lines
                   axisLine: AxisLine(width: 0), // Hide X-axis line
                   labelIntersectAction: AxisLabelIntersectAction.rotate45,
+                  labelStyle: TextStyle(
+                  //  fontFamily: "mulish",
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold, // Make X-axis labels bold
+                    color: Colors.black, // Optional: Set label color
+                  ),
                   title: AxisTitle(
                       text: "Total Revenue",
                       textStyle: TextStyle(
-                          fontFamily: "mulish",
+                          // fontFamily: "mulish",
                           fontSize: 14,
-                          color: Colors.black,
+                          color: blueColor,
                           fontWeight: FontWeight.bold)),
                 ),
                 primaryYAxis: NumericAxis(
@@ -231,8 +238,50 @@ class _BarchartState extends State<Barchart> {
                     dataLabelSettings: DataLabelSettings(isVisible: false),
                     borderRadius: BorderRadius.circular(10),
                     width: .4, // Rounded corners for bars
+
+
                   )
                 ],
+                tooltipBehavior: TooltipBehavior(
+                  enable: true,
+                  color: Colors.white,
+                  borderColor: Colors.black,
+                  builder: (dynamic data, dynamic point, dynamic series, int pointIndex, int seriesIndex) {
+                    return Container(
+                      padding: EdgeInsets.all(10),
+
+                      decoration: BoxDecoration(
+                        //  color: Colors.blueAccent,
+                        borderRadius: BorderRadius.circular(8),
+
+
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${point.x}', // Display the month
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            '${selectedValue}: \$${point.y.toStringAsFixed(2)}', // Display revenue
+                            style: TextStyle(
+                              // color: Colors.yellowAccent,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],

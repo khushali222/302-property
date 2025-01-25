@@ -160,7 +160,7 @@ class _Summery_pageState extends State<Summery_page>
     });
   }
 
-   String? moveOutDate;
+  String? moveOutDate;
   // String moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   // String displayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   Future<Map<String, dynamic>> fetchDataOfCountWork(String rentalId) async {
@@ -242,10 +242,9 @@ class _Summery_pageState extends State<Summery_page>
         _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
         _imageUrls.add(fileName!);
-        _updateRentalImage(fileName!);
+        // _updateRentalImage(fileName!);
         print(fileName);
       });
-
     } catch (e) {
       print('Image upload failed: $e');
     }
@@ -261,22 +260,23 @@ class _Summery_pageState extends State<Summery_page>
       final response = await http.put(
         Uri.parse(apiUrl),
         headers: <String, String>{
-          "authorization" : "CRM $token",
+          "authorization": "CRM $token",
           'Content-Type': 'application/json; charset=UTF-8',
-          "id":"CRM $id",
+          "id": "CRM $id",
         },
         body: json.encode({
           'rental_id': widget.properties.rentalId,
-          'admin_id':id,
+          'admin_id': id,
           'rental_image': fileName, // Use the uploaded file name
         }),
       );
-   print(' image put ${response.body}');
+      print(' image put ${response.body}');
       if (response.statusCode == 200) {
         print('Image updated successfully');
         var responseBody = json.decode(response.body);
         setState(() {
-          widget.properties.rentalImage = fileName; // Update the rental image URL
+          widget.properties.rentalImage =
+              fileName; // Update the rental image URL
         });
         print(responseBody['message']);
       } else {
@@ -286,8 +286,6 @@ class _Summery_pageState extends State<Summery_page>
       print('Failed to update image: $e');
     }
   }
-
-
 
   Future<void> _removeImage() async {
     try {
@@ -308,7 +306,8 @@ class _Summery_pageState extends State<Summery_page>
         body: json.encode({
           'rental_id': widget.properties.rentalId,
           'admin_id': id,
-          'rental_image': '', // Remove the image by setting it to an empty string
+          'rental_image':
+              '', // Remove the image by setting it to an empty string
         }),
       );
 
@@ -329,8 +328,6 @@ class _Summery_pageState extends State<Summery_page>
       print('Failed to remove image: $e');
     }
   }
-
-
 
   List<String> _imageUrls = [];
 
@@ -406,7 +403,8 @@ class _Summery_pageState extends State<Summery_page>
   Future<void> _fetchData() async {
     try {
       // Fetch unit count
-      final data = await unitRepository.fetchunit(widget.properties.rentalId ?? "");
+      final data =
+          await unitRepository.fetchunit(widget.properties.rentalId ?? "");
       setState(() {
         unitCount = data.isNotEmpty ? data.length : 0;
       });
@@ -445,11 +443,12 @@ class _Summery_pageState extends State<Summery_page>
   final Properies_summery_Repo unit1Repository = Properies_summery_Repo();
   Future<void> fetchunits1() async {
     //  try {
-    final fetchedunit1 = await unit1Repository.fetchunit(widget.unit?.unitId ?? "");
+    final fetchedunit1 =
+        await unit1Repository.fetchunit(widget.unit?.unitId ?? "");
     print(widget.unit?.unitId ?? "");
     print('hello');
     setState(() {
-      print(widget.unit?.unitId ??"");
+      print(widget.unit?.unitId ?? "");
       print('hello');
       data = fetchedunit1;
       isLoading = false;
@@ -1464,7 +1463,6 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
-
   Widget _buildPaginationControlsrent() {
     int numorpages = 1;
     numorpages = (totalrecordsrent / _rowsPerPagerent).ceil();
@@ -1551,10 +1549,6 @@ class _Summery_pageState extends State<Summery_page>
   bool isMovedOut = false;
   int _selectedIndex = 0;
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1566,7 +1560,7 @@ class _Summery_pageState extends State<Summery_page>
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-            child: Column(
+              child: Column(
                 children: <Widget>[
                   const SizedBox(
                     height: 20,
@@ -1612,19 +1606,21 @@ class _Summery_pageState extends State<Summery_page>
                       const SizedBox(
                         width: 20,
                       ),
-                      Text('${widget.properties.propertyTypeData?.propertyType}',
+                      Text(
+                          '${widget.properties.propertyTypeData?.propertyType}',
                           style: TextStyle(
                             color: Color(0xFF8A95A8),
                             fontWeight: FontWeight.bold,
-                            fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 13 : 20,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 13
+                                : 20,
                           )),
                     ],
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                /*  Container(
+                  /*  Container(
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     height: 60,
                     padding: const EdgeInsets.all(10),
@@ -1722,11 +1718,10 @@ class _Summery_pageState extends State<Summery_page>
                   Container(
                     padding: EdgeInsets.all(8),
                     height: 60,
-                    margin: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                     decoration: BoxDecoration(
-                        border: Border.all(color: blueColor)
-                        ,borderRadius: BorderRadius.circular(5)
-                    ),
+                        border: Border.all(color: blueColor),
+                        borderRadius: BorderRadius.circular(5)),
                     // color: Colors.red,
                     child: Row(
                       children: [
@@ -1739,15 +1734,23 @@ class _Summery_pageState extends State<Summery_page>
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: _selectedIndex == 0 ? blueColor : Colors.white,
-                                  borderRadius: BorderRadius.circular(5)
-                              ),
-                              child: Center(child: Text("Summary",style: TextStyle(color:  _selectedIndex != 0 ? blueColor : Colors.white,),)),
+                                  color: _selectedIndex == 0
+                                      ? blueColor
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Center(
+                                  child: Text(
+                                "Summary",
+                                style: TextStyle(
+                                  color: _selectedIndex != 0
+                                      ? blueColor
+                                      : Colors.white,
+                                ),
+                              )),
                             ),
                           ),
                         ),
                         Expanded(
-
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
@@ -1756,11 +1759,17 @@ class _Summery_pageState extends State<Summery_page>
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: _selectedIndex == 1 ? blueColor : Colors.white,
-                                  borderRadius: BorderRadius.circular(5)
-                              ),
-
-                              child: Center(child: Text("Unit(${unitCount})",style: TextStyle(color:  _selectedIndex != 1 ? blueColor : Colors.white,))),
+                                  color: _selectedIndex == 1
+                                      ? blueColor
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Center(
+                                  child: Text("Unit(${unitCount})",
+                                      style: TextStyle(
+                                        color: _selectedIndex != 1
+                                            ? blueColor
+                                            : Colors.white,
+                                      ))),
                             ),
                           ),
                         ),
@@ -1773,10 +1782,17 @@ class _Summery_pageState extends State<Summery_page>
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: _selectedIndex == 2 ? blueColor : Colors.white,
-                                  borderRadius: BorderRadius.circular(5)
-                              ),
-                              child: Center(child: Text("Tenant($tenentCount)",style: TextStyle(color:  _selectedIndex != 2 ? blueColor : Colors.white,))),
+                                  color: _selectedIndex == 2
+                                      ? blueColor
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Center(
+                                  child: Text("Tenant($tenentCount)",
+                                      style: TextStyle(
+                                        color: _selectedIndex != 2
+                                            ? blueColor
+                                            : Colors.white,
+                                      ))),
                             ),
                           ),
                         ),
@@ -1789,10 +1805,18 @@ class _Summery_pageState extends State<Summery_page>
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: _selectedIndex == 3 ? blueColor : Colors.white,
-                                  borderRadius: BorderRadius.circular(5)
-                              ),
-                              child: Center(child: Text("Workorder\n($count)",textAlign: TextAlign.center,style: TextStyle(color:  _selectedIndex != 3 ? blueColor : Colors.white,))),
+                                  color: _selectedIndex == 3
+                                      ? blueColor
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Center(
+                                  child: Text("Workorder\n($count)",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: _selectedIndex != 3
+                                            ? blueColor
+                                            : Colors.white,
+                                      ))),
                             ),
                           ),
                         ),
@@ -1800,7 +1824,7 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ),
                   _buildTabContent(context),
-                 /* Expanded(
+                  /* Expanded(
                     child: TabBarView(
                       controller: _tabController,
                       children: [
@@ -1826,7 +1850,7 @@ class _Summery_pageState extends State<Summery_page>
                   ),*/
                 ],
               ),
-          )
+            )
           : SizedBox(
               width: double.infinity,
               child: Column(
@@ -1852,22 +1876,22 @@ class _Summery_pageState extends State<Summery_page>
             ),
     );
   }
-  Widget _buildTabContent( BuildContext context) {
+
+  Widget _buildTabContent(BuildContext context) {
     switch (_selectedIndex) {
       case 0:
         return Summary_page();
       case 1:
-        return showdetails
-        ? unitScreen1(context, unit!)
-            : Unit_page(context);
+        return showdetails ? unitScreen1(context, unit!) : Unit_page(context);
       case 2:
         return Tenants(context);
       case 3:
-        return  Workorder(context);
+        return Workorder(context);
       default:
         return Container(); // Fallback for safety
     }
   }
+
   Summary_page() {
     print("$image_url${widget.properties.rentalImage}");
     return Container(
@@ -1913,30 +1937,47 @@ class _Summery_pageState extends State<Summery_page>
                         // ),
 
                         Container(
-                          width: MediaQuery.of(context).size.width < 500 ? 150 : 250,
-                          height: MediaQuery.of(context).size.width < 500 ? 120 : 200,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 150
+                              : 250,
+                          height: MediaQuery.of(context).size.width < 500
+                              ? 120
+                              : 200,
                           child: SizedBox(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: CachedNetworkImage(
-                                imageUrl: _imageUrls.isNotEmpty
-                                    ? "$image_url${_imageUrls.first}" // Use _imageUrls to show the uploaded image
-                                    : (widget.properties.rentalImage != null && widget.properties.rentalImage!.isNotEmpty
+                                imageUrl: (widget.properties.rentalImage !=
+                                            null &&
+                                        widget
+                                            .properties.rentalImage!.isNotEmpty
                                     ? "$image_url${widget.properties.rentalImage}"
                                     : 'assets/images/no_image.jpg'),
                                 fit: BoxFit.cover,
-                                height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
-                                width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
-                                placeholder: (context, url) => Shimmer.fromColors(
+                                height: MediaQuery.of(context).size.width < 500
+                                    ? 140
+                                    : 220,
+                                width: MediaQuery.of(context).size.width < 500
+                                    ? 160
+                                    : 220,
+                                placeholder: (context, url) =>
+                                    Shimmer.fromColors(
                                   baseColor: Colors.grey[300]!,
                                   highlightColor: Colors.grey[100]!,
                                   child: Container(
                                     color: Colors.grey[300],
-                                    height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
-                                    width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
+                                    height:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 140
+                                            : 220,
+                                    width:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 160
+                                            : 220,
                                   ),
                                 ),
-                                errorWidget: (context, url, error) => Image.asset(
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
                                   "assets/images/no_image.jpg",
                                   fit: BoxFit.fill,
                                 ),
@@ -1995,8 +2036,6 @@ class _Summery_pageState extends State<Summery_page>
                         //     ),
                         //   ),
                         // ),
-
-
 
                         if (MediaQuery.of(context).size.width < 500)
                           SizedBox(
@@ -2092,23 +2131,26 @@ class _Summery_pageState extends State<Summery_page>
                                   : 173,
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 10),
-                                child:
-                                Text(
+                                child: Text(
                                   [
                                     widget.properties.rentalCity,
                                     widget.properties.rentalState,
                                     widget.properties.rentalCountry,
                                     widget.properties.rentalPostcode,
                                   ]
-                                      .where((element) => element != null && element.isNotEmpty) // Filter out null or empty elements
-                                      .map((element) => element!) // Ensure non-null elements
+                                      .where((element) =>
+                                          element != null &&
+                                          element
+                                              .isNotEmpty) // Filter out null or empty elements
+                                      .map((element) =>
+                                          element!) // Ensure non-null elements
                                       .join(' , '),
                                   style: TextStyle(
                                     color: blueColor,
                                     fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 13
-                                        : 18,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
                                   ),
                                   maxLines: 6,
                                 ),
@@ -2147,10 +2189,12 @@ class _Summery_pageState extends State<Summery_page>
                         ),
                       ],
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       children: [
-                         SizedBox(
+                        SizedBox(
                           width: 15,
                         ),
                         Container(
@@ -2161,8 +2205,7 @@ class _Summery_pageState extends State<Summery_page>
                           ),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                              blueColor,
+                              backgroundColor: blueColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
@@ -2170,18 +2213,20 @@ class _Summery_pageState extends State<Summery_page>
                             onPressed: () async {
                               _pickImage().then((_) {
                                 setState(
-                                        () {}); // Rebuild the widget after selecting the image
+                                    () {}); // Rebuild the widget after selecting the image
                               });
                             },
-                            child:  Text(
+                            child: Text(
                               'Upload',
-                              style:
-                              TextStyle(color: Color(0xFFf7f8f9)),
+                              style: TextStyle(color: Color(0xFFf7f8f9)),
                             ),
                           ),
                         ),
-                        SizedBox(width: 8,),
-                        if (_imageUrls.isNotEmpty || widget.properties.rentalImage != '')
+                        SizedBox(
+                          width: 8,
+                        ),
+                        if (_imageUrls.isNotEmpty ||
+                            widget.properties.rentalImage != '')
                           Container(
                             height: 30,
                             width: 80,
@@ -2190,20 +2235,17 @@ class _Summery_pageState extends State<Summery_page>
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                blueColor,
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
                               onPressed: () async {
-
-                               _removeImage();
+                                _removeImage();
                               },
-                              child:  Text(
+                              child: Text(
                                 'Delete',
-                                style:
-                                TextStyle(color: Color(0xFFf7f8f9)),
+                                style: TextStyle(color: Color(0xFFf7f8f9)),
                               ),
                             ),
                           ),
@@ -2447,8 +2489,11 @@ class _Summery_pageState extends State<Summery_page>
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "N/A"),
-                                                   //'${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
+                                                    formatPhoneNumber(rentals
+                                                            .rentalOwnerData
+                                                            ?.rentalOwnerPhoneNumber ??
+                                                        "N/A"),
+                                                    //'${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -2549,9 +2594,11 @@ class _Summery_pageState extends State<Summery_page>
                                                                             blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text:
-                                                                    formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "N/A"),
-                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
+                                                                    text: formatPhoneNumber(rentals
+                                                                            .rentalOwnerData
+                                                                            ?.rentalOwnerHomeNumber ??
+                                                                        "N/A"),
+                                                                    //'${(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2583,9 +2630,11 @@ class _Summery_pageState extends State<Summery_page>
                                                                             blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text:
-                                                                    formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "N/A"),
-                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
+                                                                    text: formatPhoneNumber(rentals
+                                                                            .rentalOwnerData
+                                                                            ?.rentalOwnerBuisinessNumber ??
+                                                                        "N/A"),
+                                                                    //'${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -3820,9 +3869,12 @@ class _Summery_pageState extends State<Summery_page>
                                     Cardsdata[index],
                                     cardAcceptanceResponse,
                                   );
-                                  Provider.of<DropdownProvider>(context, listen: false)
-                                                                  .initializeTenantCard(
-                                                                  tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList());
+                                  Provider.of<DropdownProvider>(context,
+                                          listen: false)
+                                      .initializeTenantCard(tenantsWithCards
+                                          .map((e) =>
+                                              e['cards'] as List<BillingData>)
+                                          .toList());
 
                                   return Padding(
                                     padding: const EdgeInsets.all(3.0),
@@ -3856,7 +3908,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   DropdownButtonHideUnderline(
                                                 child: DropdownButton<String>(
                                                   isExpanded: true,
-                                                //  value: , // Use ccNumber as selected value
+                                                  //  value: , // Use ccNumber as selected value
                                                   // Custom display of the selected item:
                                                   selectedItemBuilder:
                                                       (BuildContext context) {
@@ -4132,15 +4184,15 @@ class _Summery_pageState extends State<Summery_page>
             // if (isMoveouts == true)
             if (tenant.moveoutDate != null)
               InkWell(
-
                 onTap: () async {
                   print("calling movein");
-                  String? tenantId = tenant.tenantId != null && tenant.tenantId!.isNotEmpty
-                      ? tenant.tenantId?.first
-                      : null;
+                  String? tenantId =
+                      tenant.tenantId != null && tenant.tenantId!.isNotEmpty
+                          ? tenant.tenantId?.first
+                          : null;
                   print(tenantId);
                   SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
+                      await SharedPreferences.getInstance();
                   String? id = prefs.getString("adminId");
                   LeaseMoveoutRepository()
                       .addMoveInTenant(
@@ -4175,8 +4227,7 @@ class _Summery_pageState extends State<Summery_page>
                       "Move In",
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight:
-                        FontWeight.w500,
+                        fontWeight: FontWeight.w500,
                         color: blueColor,
                       ),
                     ),
@@ -4220,7 +4271,9 @@ class _Summery_pageState extends State<Summery_page>
             ),
             const SizedBox(width: 5),
             Text(
-              formatPhoneNumber('${tenant.phoneNumber}',),
+              formatPhoneNumber(
+                '${tenant.phoneNumber}',
+              ),
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: blueColor,
@@ -4253,27 +4306,20 @@ class _Summery_pageState extends State<Summery_page>
             ),
           ],
         ),
-        if (tenant
-            .moveoutDate !=
-            null )
-          SizedBox(height: 10),
-        if (tenant
-            .moveoutDate !=
-            null )
+        if (tenant.moveoutDate != null) SizedBox(height: 10),
+        if (tenant.moveoutDate != null)
           Row(
             children: [
               const SizedBox(width: 65),
               Text(
                 'Notice Date : ',
-                maxLines:
-                3, // Set maximum number of lines
-                overflow: TextOverflow
-                    .ellipsis, // Handle overflow with ellipsis
+                maxLines: 3, // Set maximum number of lines
+                overflow:
+                    TextOverflow.ellipsis, // Handle overflow with ellipsis
                 style: TextStyle(
                     fontSize: 15,
                     color: blueColor,
-                    fontWeight:
-                    FontWeight.bold),
+                    fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 width: 5,
@@ -4288,27 +4334,20 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ],
           ),
-        if (tenant
-            .moveoutDate !=
-            null)
-          SizedBox(height: 8),
-        if (tenant
-            .moveoutDate !=
-            null )
+        if (tenant.moveoutDate != null) SizedBox(height: 8),
+        if (tenant.moveoutDate != null)
           Row(
             children: [
               const SizedBox(width: 65),
               Text(
                 'Move out : ',
-                maxLines:
-                3, // Set maximum number of lines
-                overflow: TextOverflow
-                    .ellipsis, // Handle overflow with ellipsis
+                maxLines: 3, // Set maximum number of lines
+                overflow:
+                    TextOverflow.ellipsis, // Handle overflow with ellipsis
                 style: TextStyle(
                     fontSize: 15,
                     color: blueColor,
-                    fontWeight:
-                    FontWeight.bold),
+                    fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 width: 5,
@@ -4554,7 +4593,7 @@ class _Summery_pageState extends State<Summery_page>
                                             // controller: displayDate,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
-                                             // hintText: displayDate,
+                                              // hintText: displayDate,
                                               hintText: moveOutDate,
                                               suffixIcon: IconButton(
                                                 icon:
@@ -4851,7 +4890,12 @@ class _Summery_pageState extends State<Summery_page>
                                                 data[0].rentalunitadress!;
                                             unitnum.text = data[0].rentalunit!;
                                             //_image = data[0].p;
-                                            String? imageUrl = data[0].rentalImages != null && data[0].rentalImages!.isNotEmpty
+                                            String? imageUrl = data[0]
+                                                            .rentalImages !=
+                                                        null &&
+                                                    data[0]
+                                                        .rentalImages!
+                                                        .isNotEmpty
                                                 ? "$image_url${data[0].rentalImages!.first}" // Assuming image_url is the base URL
                                                 : null;
                                             if (widget
@@ -5221,15 +5265,11 @@ class _Summery_pageState extends State<Summery_page>
                                                                       children: [
                                                                         Row(
                                                                           children: [
-                                                                            Image
-                                                                                .file(
+                                                                            Image.file(
                                                                               _image!,
-                                                                              height:
-                                                                                  80,
-                                                                              width:
-                                                                                  80,
-                                                                              fit: BoxFit
-                                                                                  .cover,
+                                                                              height: 80,
+                                                                              width: 80,
+                                                                              fit: BoxFit.cover,
                                                                             ),
                                                                           ],
                                                                         ),
@@ -5237,28 +5277,30 @@ class _Summery_pageState extends State<Summery_page>
                                                                         //     ""),
                                                                       ],
                                                                     )
-                                                                  : imageUrl != null
-                                                                  ? Column(
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      CachedNetworkImage(
-                                                                        imageUrl: imageUrl,
-                                                                        height: 80,
-                                                                        width: 80,
-                                                                        fit: BoxFit.cover,
-                                                                        placeholder: (context, url) => CircularProgressIndicator(),
-                                                                        errorWidget: (context, url, error) => Image.asset(
-                                                                          "assets/images/no_image.jpg",
-                                                                          fit: BoxFit.fill,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(height: 8.0),
-                                                                ],
-                                                              )
-                                                                  : const Text('No image available'),
+                                                                  : imageUrl !=
+                                                                          null
+                                                                      ? Column(
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                CachedNetworkImage(
+                                                                                  imageUrl: imageUrl,
+                                                                                  height: 80,
+                                                                                  width: 80,
+                                                                                  fit: BoxFit.cover,
+                                                                                  placeholder: (context, url) => CircularProgressIndicator(),
+                                                                                  errorWidget: (context, url, error) => Image.asset(
+                                                                                    "assets/images/no_image.jpg",
+                                                                                    fit: BoxFit.fill,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(height: 8.0),
+                                                                          ],
+                                                                        )
+                                                                      : const Text(
+                                                                          'No image available'),
                                                               const SizedBox(
                                                                   height: 8.0),
                                                               Row(
@@ -5293,21 +5335,34 @@ class _Summery_pageState extends State<Summery_page>
                                                                             id =
                                                                             prefs.getString("adminId");
 
-                                                                        print("Rental Images: $_uploadedFileNames");
-                                                                        List<String> rentalImages = _uploadedFileNames ?? [];
+                                                                        print(
+                                                                            "Rental Images: $_uploadedFileNames");
+                                                                        List<String>
+                                                                            rentalImages =
+                                                                            _uploadedFileNames ??
+                                                                                [];
                                                                         Properies_summery_Repo()
                                                                             .Editunit(
-                                                                          rentalImages: rentalImages,
-                                                                                rentalsqft: sqft3.text,
-                                                                                rentalunitadress: street3.text,
-                                                                                rentalbath: bath3.text,
-                                                                                rentalbed: bed3.text,
-                                                                             //   unitId: unit?.unitId,
-                                                                                unitId: data.first.unitId,
-                                                                                adminId: id,
-                                                                              //  rentalId: unit?.rentalId
-                                                                                rentalId: data.first.rentalId,
-
+                                                                          rentalImages:
+                                                                              rentalImages,
+                                                                          rentalsqft:
+                                                                              sqft3.text,
+                                                                          rentalunitadress:
+                                                                              street3.text,
+                                                                          rentalbath:
+                                                                              bath3.text,
+                                                                          rentalbed:
+                                                                              bed3.text,
+                                                                          //   unitId: unit?.unitId,
+                                                                          unitId: data
+                                                                              .first
+                                                                              .unitId,
+                                                                          adminId:
+                                                                              id,
+                                                                          //  rentalId: unit?.rentalId
+                                                                          rentalId: data
+                                                                              .first
+                                                                              .rentalId,
                                                                         )
                                                                             .then((value) {
                                                                           setState(
@@ -5628,47 +5683,45 @@ class _Summery_pageState extends State<Summery_page>
                                                               //         ''),
                                                               _image != null
                                                                   ? Column(
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      Image
-                                                                          .file(
-                                                                        _image!,
-                                                                        height:
-                                                                        80,
-                                                                        width:
-                                                                        80,
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  // Text(_uploadedFileName ??
-                                                                  //     ""),
-                                                                ],
-                                                              )
-                                                                  : imageUrl != null
-                                                                  ? Column(
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      CachedNetworkImage(
-                                                                        imageUrl: imageUrl,
-                                                                        height: 80,
-                                                                        width: 80,
-                                                                        fit: BoxFit.cover,
-                                                                        placeholder: (context, url) => CircularProgressIndicator(),
-                                                                        errorWidget: (context, url, error) => Image.asset(
-                                                                          "assets/images/no_image.jpg",
-                                                                          fit: BoxFit.fill,
+                                                                      children: [
+                                                                        Row(
+                                                                          children: [
+                                                                            Image.file(
+                                                                              _image!,
+                                                                              height: 80,
+                                                                              width: 80,
+                                                                              fit: BoxFit.cover,
+                                                                            ),
+                                                                          ],
                                                                         ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(height: 8.0),
-                                                                ],
-                                                              )
-                                                                  : const Text('No image available'),
+                                                                        // Text(_uploadedFileName ??
+                                                                        //     ""),
+                                                                      ],
+                                                                    )
+                                                                  : imageUrl !=
+                                                                          null
+                                                                      ? Column(
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                CachedNetworkImage(
+                                                                                  imageUrl: imageUrl,
+                                                                                  height: 80,
+                                                                                  width: 80,
+                                                                                  fit: BoxFit.cover,
+                                                                                  placeholder: (context, url) => CircularProgressIndicator(),
+                                                                                  errorWidget: (context, url, error) => Image.asset(
+                                                                                    "assets/images/no_image.jpg",
+                                                                                    fit: BoxFit.fill,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(height: 8.0),
+                                                                          ],
+                                                                        )
+                                                                      : const Text(
+                                                                          'No image available'),
                                                               const SizedBox(
                                                                   height: 8.0),
                                                               Row(
@@ -5701,16 +5754,24 @@ class _Summery_pageState extends State<Summery_page>
                                                                         String?
                                                                             id =
                                                                             prefs.getString("adminId");
-                                                                        List<String> rentalImages = _uploadedFileNames ?? [];
+                                                                        List<String>
+                                                                            rentalImages =
+                                                                            _uploadedFileNames ??
+                                                                                [];
                                                                         Properies_summery_Repo()
                                                                             .Editunit(
-                                                                          rentalImages: rentalImages,
+                                                                          rentalImages:
+                                                                              rentalImages,
                                                                           rentalsqft:
                                                                               sqft3.text,
-                                                                          unitId:
-                                                                          data.first.unitId,
-                                                                          rentalId: data.first.rentalId,
-                                                                          adminId: id,
+                                                                          unitId: data
+                                                                              .first
+                                                                              .unitId,
+                                                                          rentalId: data
+                                                                              .first
+                                                                              .rentalId,
+                                                                          adminId:
+                                                                              id,
                                                                         )
                                                                             .then((value) {
                                                                           setState(
@@ -5968,26 +6029,36 @@ class _Summery_pageState extends State<Summery_page>
                                           height: 5,
                                         ),
                                         SizedBox(
-                                          width: MediaQuery.of(context).size.width > 500
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width >
+                                                  500
                                               ? 200
                                               : 159,
                                           child: Padding(
-                                            padding: const EdgeInsets.only(left: 16),
-                                            child:
-                                            Text(
+                                            padding:
+                                                const EdgeInsets.only(left: 16),
+                                            child: Text(
                                               [
                                                 widget.properties.rentalCity,
                                                 widget.properties.rentalState,
                                                 widget.properties.rentalCountry,
-                                                widget.properties.rentalPostcode,
+                                                widget
+                                                    .properties.rentalPostcode,
                                               ]
-                                                  .where((element) => element != null && element.isNotEmpty) // Filter out null or empty elements
-                                                  .map((element) => element!) // Ensure non-null elements
+                                                  .where((element) =>
+                                                      element != null &&
+                                                      element
+                                                          .isNotEmpty) // Filter out null or empty elements
+                                                  .map((element) =>
+                                                      element!) // Ensure non-null elements
                                                   .join(' , '),
                                               style: TextStyle(
                                                 color: blueColor,
-                                                fontSize:
-                                                MediaQuery.of(context).size.width < 500
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
                                                     ? 13
                                                     : 18,
                                               ),
@@ -6400,6 +6471,7 @@ class _Summery_pageState extends State<Summery_page>
                       bath3.clear();
                       bed3.clear();
                       _imageUrls.clear();
+
                       if (widget.properties.propertyTypeData!.isMultiunit! &&
                           widget.properties.propertyTypeData!.propertyType ==
                               'Residential')
@@ -6411,8 +6483,7 @@ class _Summery_pageState extends State<Summery_page>
                             return StatefulBuilder(
                               builder:
                                   (BuildContext context, StateSetter setState) {
-                                return
-                                  AlertDialog(
+                                return AlertDialog(
                                   backgroundColor: Colors.white,
                                   surfaceTintColor: Colors.white,
                                   content: SingleChildScrollView(
@@ -6896,22 +6967,26 @@ class _Summery_pageState extends State<Summery_page>
                                                       futureUnitsummery =
                                                           Properies_summery_Repo()
                                                               .fetchunit(widget
-                                                                  .properties
-                                                                  .rentalId ?? "");
+                                                                      .properties
+                                                                      .rentalId ??
+                                                                  "");
                                                       isLoading = false;
                                                       data.add(unit_properties(
-                                                        adminId: id!,
-                                                        rentalId: widget
-                                                            .properties
-                                                            .rentalId,
-                                                        rentalunit:
-                                                            unitnum.text,
-                                                        rentalunitadress:
-                                                            street3.text,
-                                                        rentalsqft: sqft3.text,
-                                                        rentalbath: bath3.text,
-                                                        rentalbed: bed3.text,
-                                                      ));
+                                                          adminId: id!,
+                                                          rentalId: widget
+                                                              .properties
+                                                              .rentalId,
+                                                          rentalunit:
+                                                              unitnum.text,
+                                                          rentalunitadress:
+                                                              street3.text,
+                                                          rentalsqft:
+                                                              sqft3.text,
+                                                          rentalbath:
+                                                              bath3.text,
+                                                          rentalbed: bed3.text,
+                                                          rentalImages:
+                                                              _uploadedFileNames!));
                                                     });
                                                     reload_Screen();
                                                     Navigator.pop(
@@ -9938,7 +10013,8 @@ class _Summery_pageState extends State<Summery_page>
                               // Add your delete logic here
                               setState(() {
                                 futureUnitsummery = Properies_summery_Repo()
-                                    .fetchunit(widget.properties.rentalId ?? "");
+                                    .fetchunit(
+                                        widget.properties.rentalId ?? "");
                                 showdetails = false;
                               });
                               //Navigator.pop(context);
@@ -10063,23 +10139,26 @@ class _Summery_pageState extends State<Summery_page>
                                 : 160,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 12),
-                              child:
-                              Text(
+                              child: Text(
                                 [
                                   widget.properties.rentalCity,
                                   widget.properties.rentalState,
                                   widget.properties.rentalCountry,
                                   widget.properties.rentalPostcode,
                                 ]
-                                    .where((element) => element != null && element.isNotEmpty) // Filter out null or empty elements
-                                    .map((element) => element!) // Ensure non-null elements
+                                    .where((element) =>
+                                        element != null &&
+                                        element
+                                            .isNotEmpty) // Filter out null or empty elements
+                                    .map((element) =>
+                                        element!) // Ensure non-null elements
                                     .join(' , '),
                                 style: TextStyle(
                                   color: blueColor,
                                   fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 13
-                                      : 18,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 13
+                                          : 18,
                                 ),
                                 maxLines: 6,
                               ),
@@ -10803,11 +10882,14 @@ class _Summery_pageState extends State<Summery_page>
                       //     .toList();
                       // Provider.of<WorkOrderCountProvider>(context)
                       //     .updateCount(data.length);
-                      data = data.where((workorder) => workorder.status == 'Completed').toList();
+                      data = data
+                          .where((workorder) => workorder.status == 'Completed')
+                          .toList();
 
                       // Schedule the update after the current frame
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Provider.of<WorkOrderCountProvider>(context, listen: false)
+                        Provider.of<WorkOrderCountProvider>(context,
+                                listen: false)
                             .updateCount(data.length);
                       });
                     } else {

@@ -10,6 +10,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/property/summery_page.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
@@ -679,6 +680,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     final permissionProvider = Provider.of<PermissionProvider>(context);
     final permissions = permissionProvider.permissions;
     return Scaffold(
@@ -1160,8 +1162,9 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                   flex: 2,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-
-                                                    '${formatDate(Propertytype.expirationDate!)}',
+                                                    '${ Propertytype.expirationDate?.isNotEmpty == true
+                                                        ? dateProvider.formatCurrentDate('${Propertytype.expirationDate}')
+                                                        : 'N/A'}',
 
                                                     style: TextStyle(
                                                       color: blueColor,
@@ -1274,7 +1277,9 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                    '${formatDate(Propertytype.effectiveDate!)}',
+                                                                    '${ Propertytype.effectiveDate?.isNotEmpty == true
+                                                                        ? dateProvider.formatCurrentDate('${Propertytype.effectiveDate}')
+                                                                        : 'N/A'}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight

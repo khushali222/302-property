@@ -7,8 +7,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/property/summery_page.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
@@ -634,6 +636,7 @@ class _Lease_TableState extends State<Lease_Table> {
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       key: key,
       appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
@@ -980,7 +983,9 @@ class _Lease_TableState extends State<Lease_Table> {
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
-                                                    '${formatDate(Propertytype.startDate!)}',
+                                                    '${ Propertytype.startDate?.isNotEmpty == true
+                                                        ? dateProvider.formatCurrentDate('${Propertytype.startDate}')
+                                                        : 'N/A'}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -999,8 +1004,9 @@ class _Lease_TableState extends State<Lease_Table> {
                                                   flex: 3,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-
-                                                        '${formatDate(Propertytype.endDate!)}',
+                                                    '${ Propertytype.endDate?.isNotEmpty == true
+                                                        ? dateProvider.formatCurrentDate('${Propertytype.endDate}')
+                                                        : 'N/A'}',
 
                                                     style: TextStyle(
                                                       color: blueColor,
@@ -1162,8 +1168,10 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                         blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate(
-                                                                        '${Propertytype.createdAt}'),
+                                                                    text:
+                                                                      '${ Propertytype.createdAt?.isNotEmpty == true
+                                                                          ? dateProvider.formatCurrentDate('${Propertytype.createdAt}')
+                                                                          : 'N/A'}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
@@ -1187,8 +1195,9 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                         blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate(
-                                                                        '${Propertytype.updatedAt}'),
+                                                                    text:  '${ Propertytype.updatedAt?.isNotEmpty == true
+                                                                        ? dateProvider.formatCurrentDate('${Propertytype.updatedAt}')
+                                                                        : 'N/A'}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight

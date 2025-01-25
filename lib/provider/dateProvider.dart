@@ -193,7 +193,19 @@ class DateProvider with ChangeNotifier {
     loadDateFormat();
     //_loadSelectedDateFormat();
   }
-
+  String fixDateFormat(String customdate) {
+    return customdate.replaceAllMapped(
+      RegExp(r'[DY]'),
+          (match) {
+        if (match.group(0) == 'D') {
+          return 'd';
+        } else if (match.group(0) == 'Y') {
+          return 'y';
+        }
+        return match.group(0)!; // Return the character unchanged if it doesn't match
+      },
+    );
+  }
   Future<void> loadDateFormat() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -280,7 +292,8 @@ class DateProvider with ChangeNotifier {
       return dateTime; // Return original if parsing fails
     }
   print(_dateFormat);
-    return DateFormat(_dateFormat).format(parsedDate);
+    
+    return DateFormat(_dateFormat).format(DateTime.parse(dateTime));
   }
 
   // Future<void> checkToken(String token) async {
@@ -362,6 +375,7 @@ class DateProvider with ChangeNotifier {
           dateformateselect = 3;
         //  customdate = _dateFormat; // Store the custom format
         }
+        _dateFormat = fixDateFormat(_dateFormat);
         notifyListeners();
       } else {
         print("Token validation failed. Status code: ${response.statusCode}");
