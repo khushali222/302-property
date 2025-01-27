@@ -1236,7 +1236,6 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                           const SizedBox(height: 10),
                           _buildHeaders(),
                           const SizedBox(height: 20),
-                        if (snapshot.data?.first.tenantData != null && snapshot.data!.first.tenantData!.isNotEmpty)
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
@@ -1462,39 +1461,6 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                               }).toList(),
                             ),
                           ),
-                          if (snapshot.data?.first.tenantData != null && snapshot.data!.first.tenantData!.isEmpty)
-                            Container(
-                              height:
-                              MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          if (snapshot.data?.first.tenantData != null && snapshot.data!.first.tenantData!.isNotEmpty)
-                          const SizedBox(height: 20),
-                          if (snapshot.data?.first.tenantData != null && snapshot.data!.first.tenantData!.isNotEmpty)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [

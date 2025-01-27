@@ -265,6 +265,7 @@ class DateProvider with ChangeNotifier {
   }
 
   String formatCurrentDate(String dateTime) {
+    dateTime = dateTime.trim();
 
     List<String> dateFormats = [
       'yyyy-MM-dd',

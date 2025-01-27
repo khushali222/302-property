@@ -42,6 +42,13 @@ class ConvenienceFeeReportsServices {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body)["data"];
+        //for tenant frome list
+        // List<Data> filteredData = jsonData
+        //     .map((data) => Data.fromJson(data))
+        //     .where((data) => data.tenantData != null && data.tenantData!.isNotEmpty)
+        //     .toList();
+        //
+        // return filteredData;
         return jsonData.map((data) => Data.fromJson(data)).toList();
       } else {
         print('Failed to load report. Status code: ${response.statusCode}');

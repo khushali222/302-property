@@ -8539,10 +8539,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 Row(
                                                                                   children: [
                                                                                     GestureDetector(
-                                                                                      onTap: () {
-                                                                                        _pickImage().then((_) {
-                                                                                          setState(() {}); // Rebuild the widget after selecting the image
-                                                                                        });
+                                                                                      onTap: () async{
+                                                                                        await _pickImage();
+                                                                                        reloadScreen();
                                                                                       },
                                                                                       child: const Text(
                                                                                         '+ Add',
@@ -9932,6 +9931,9 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
+  reloadScreen(){
+    setState(() {});
+  }
   unitScreen1(BuildContext context, unit_properties unit) {
     return SingleChildScrollView(
       child: Column(

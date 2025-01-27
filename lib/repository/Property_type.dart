@@ -56,6 +56,7 @@ class PropertyTypeRepository {
           "id":"CRM $id",
         }
     );
+    print("property type  ${response.body}");
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => propertytype.fromJson(data)).toList();

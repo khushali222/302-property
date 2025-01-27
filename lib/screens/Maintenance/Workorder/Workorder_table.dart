@@ -1456,7 +1456,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                       _getDisplayValue(workOrder
                                                                           .workOrderData
                                                                           ?.workCategory),
-                                                                      'Created At:',
+                                                                     'Created At:',
                                                                       dateProvider
                                                                           .formatCurrentDate(
                                                                               '${workOrder.workOrderData?.createdAt}')),
@@ -1464,7 +1464,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                       'Updated At:',
                                                                       dateProvider
                                                                           .formatCurrentDate(
-                                                                              '${workOrder.workOrderData?.updatedAt}}'),
+                                                                              '${workOrder.workOrderData?.updatedAt}'),
                                                                       '',''
                                                                       // 'Due Date',
                                                                       // _getDisplayValue(workOrder
