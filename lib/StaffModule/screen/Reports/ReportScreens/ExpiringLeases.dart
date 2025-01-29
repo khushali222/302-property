@@ -18,6 +18,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:three_zero_two_property/Model/ReportExpiringLease.dart';
@@ -328,17 +329,22 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     final String fileName = 'ExpiringLeaseReport_$formattedDate.xlsx';
 
     // Get the directory to save the file.
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    // Ensure the directory exists
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     // Save the file.
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
 
     // Show a message with the file path.
     Fluttertoast.showToast(
@@ -414,17 +420,22 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     final String fileName = 'ExpiringLeaseReport_$formattedDate.csv';
 
     // Get the directory to save the file.
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    // Ensure the directory exists
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     // Save the file
     final File file = File(path);
     await file.writeAsString(csv, flush: true);
+    Share.shareXFiles([XFile(path)]);
 
     // Show a message with the file path
     Fluttertoast.showToast(

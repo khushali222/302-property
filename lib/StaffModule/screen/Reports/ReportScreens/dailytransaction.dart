@@ -9,6 +9,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -1362,15 +1363,20 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         ? 'DailyTransactionReport_${selectdate.text}.xlsx'
         : 'DailyTransactionReport_${formattedDate}.xlsx';
 
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
 
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
 
     Fluttertoast.showToast(
       msg: 'Excel file saved to $path',
@@ -1493,16 +1499,21 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'DailyTransactionReport_$formattedDate.csv';
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
 
-    final directory = Directory('/storage/emulated/0/Download');
     final path = '${directory.path}/$fileName';
 
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
 
+
     final File file = File(path);
     await file.writeAsString(csvContent);
+    Share.shareXFiles([XFile(path)]);
 
     Fluttertoast.showToast(
       msg: 'CSV file saved to $path',

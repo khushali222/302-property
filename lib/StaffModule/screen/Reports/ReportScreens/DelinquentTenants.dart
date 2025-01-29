@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
@@ -773,18 +775,22 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'DelinquentTenantsReport_$formattedDate.xlsx';
 
-    // Define file path
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    // Create directory if it doesn't exist
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     // Write file to the path
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
 
     // Show success toast message
     Fluttertoast.showToast(
@@ -866,17 +872,22 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
     final String fileName = 'DelinquentTenantsReport_$formattedDate.csv';
 
     // Define file path
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    // Create directory if it doesn't exist
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     // Write file to the path
     final File file = File(path);
     await file.writeAsString(csv);
+    Share.shareXFiles([XFile(path)]);
 
     // Show success toast message
     Fluttertoast.showToast(

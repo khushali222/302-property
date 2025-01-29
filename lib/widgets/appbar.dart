@@ -131,7 +131,7 @@ class widget_302 {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
-                        _getDisplayName(context, snapshot.data!),
+                        _getDisplayName(context, snapshot.data!.trim()),
                         style:  TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width > 500 ?16 :14 ),
                       ),
                     ),
@@ -284,11 +284,11 @@ class widget_302 {
     String combinationName = '';
 
     if (firstName != null && firstName.isNotEmpty) {
-      combinationName += firstName;
+      combinationName += firstName.trim();
     }
 
     if (lastName != null && lastName.isNotEmpty) {
-      combinationName += ' $lastName';
+      combinationName += ' ${lastName.trim()}';
     }
     return combinationName.isNotEmpty ? combinationName : "L";
   }

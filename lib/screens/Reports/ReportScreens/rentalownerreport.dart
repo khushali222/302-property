@@ -13,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
@@ -686,12 +687,12 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         tableData.add([
           pw.Padding(
               child: pw.Text(
-                '${property.rentalData.rentalAddress ?? 'N/A'}',
+                '${property.rentalData!.rentalAddress! ?? 'N/A'}',
                 style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold,),
               ),
               padding: pw.EdgeInsets.only(left: 15)), // Property Name
           pw.Text(
-            '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}',
+            '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
             style: pw.TextStyle(
               fontWeight: pw.FontWeight.bold,
               fontSize: 10,
@@ -877,9 +878,9 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       for (var property in owner.payments) {
         sheet
             .getRangeByIndex(rowIndex, 1)
-            .setText(property.rentalData.rentalAddress ?? 'N/A');
+            .setText(property.rentalData!.rentalAddress ?? 'N/A');
         sheet.getRangeByIndex(rowIndex, 2).setText(
-            '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}');
+            '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}');
         sheet
             .getRangeByIndex(rowIndex, 3)
             .setText(property.createdAt.toString());
@@ -949,6 +950,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
 
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
     Fluttertoast.showToast(
       msg: 'Excel file saved to $path',
     );
@@ -986,12 +988,12 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       for (var property in owner.payments) {
         // Replace commas in the rental address with spaces
         final String sanitizedAddress =
-            (property.rentalData.rentalAddress ?? 'N/A').replaceAll(',', ' ');
+            (property.rentalData!.rentalAddress ?? 'N/A').replaceAll(',', ' ');
 
         // Add property and tenant details
         csvBuffer.writeln([
           sanitizedAddress,
-          '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}',
+          '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
           property.createdAt.toString(),
           property.paymentType ?? '',
           property.transactionId ?? '',
@@ -1085,7 +1087,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     // Write CSV file to the path
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
-
+    Share.shareXFiles([XFile(path)]);
     // Show success toast message
     Fluttertoast.showToast(
       msg: 'CSV file saved to $path',
@@ -1180,7 +1182,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     // Write file to the path
     final File file = File(path);
     await file.writeAsString(csv);
-
+    Share.shareXFiles([XFile(path)]);
     // Show success toast message
     Fluttertoast.showToast(
       msg: 'CSV file saved to $path',
@@ -1646,7 +1648,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                               });
                                                             },
                                                             child: Text(
-                                                              "${tenant.rentalData.rentalAddress}",
+                                                              "${tenant.rentalData!.rentalAddress}",
                                                               style: TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
@@ -1694,11 +1696,11 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                           'Property:',
                                                                           _getDisplayValue(tenant
                                                                               .rentalData
-                                                                              .rentalAddress)),
+                                                                              !.rentalAddress)),
                                                                       _buildTableRow(
                                                                           'Tenant Name:',
                                                                           _getDisplayValue(
-                                                                              "${tenant.tenantData.tenantFirstName} ${tenant.tenantData.tenantLastName}"),
+                                                                              "${tenant.tenantData!.tenantFirstName} ${tenant.tenantData!.tenantLastName}"),
                                                                           'Transaction Id',
                                                                           _getDisplayValue(
                                                                               tenant.transactionId)),

@@ -50,91 +50,111 @@ class RentalOwnerReport {
 }
 
 class Payment {
-  String paymentId;
-  String adminId;
-  String leaseId;
-  String tenantId;
+  String? paymentId;
+  String? adminId;
+  String? leaseId;
+  String? tenantId;
   double surcharge;
-  String customerVaultId;
-  String billingId;
-  String transactionId;
-  String response;
+  String? customerVaultId;
+  String? billingId;
+  String? transactionId;
+  String? response;
   List<Entry> entry;
   double totalAmount;
-  String paymentType;
-  String type;
-  List<dynamic> paymentAttachment;
+  String? paymentType;
+  String? type;
+  List<dynamic>? paymentAttachment;
   DateTime createdAt;
   DateTime updatedAt;
   bool isDelete;
-  TenantData tenantData;
-  RentalData rentalData;
-  RentalOwnerData rentalOwnerData;
-  Map<String, dynamic> checkAccount;
-  String ccType;
-  String ccNumber;
-  String transactionType;
+  TenantData? tenantData;
+  RentalData? rentalData;
+  RentalOwnerData? rentalOwnerData;
+  Map<String, dynamic>? checkAccount;
+  String? ccType;
+  String? ccNumber;
+  String? transactionType;
 
   Payment({
-    required this.paymentId,
-    required this.adminId,
-    required this.leaseId,
-    required this.tenantId,
-    required this.surcharge,
-    required this.customerVaultId,
-    required this.billingId,
-    required this.transactionId,
-    required this.response,
+     this.paymentId,
+     this.adminId,
+     this.leaseId,
+     this.tenantId,
+     required this.surcharge,
+     this.customerVaultId,
+     this.billingId,
+     this.transactionId,
+     this.response,
     required this.entry,
     required this.totalAmount,
-    required this.paymentType,
-    required this.type,
-    required this.paymentAttachment,
+     this.paymentType,
+     this.type,
+     this.paymentAttachment,
     required this.createdAt,
     required this.updatedAt,
     required this.isDelete,
-    required this.tenantData,
-    required this.rentalData,
-    required this.rentalOwnerData,
-    required this.checkAccount,
-    required this.ccType,
-    required this.ccNumber,
-    required this.transactionType,
+     this.tenantData,
+     this.rentalData,
+     this.rentalOwnerData,
+     this.checkAccount,
+     this.ccType,
+     this.ccNumber,
+     this.transactionType,
   });
 
   factory Payment.fromJson(Map<String, dynamic> json) {
-    return Payment(
-      paymentId: json['payment_id'] ?? '',
-      adminId: json['admin_id'] ?? '',
-      leaseId: json['lease_id'] ?? '',
-      tenantId: json['tenant_id'] ?? '',
-      surcharge: json['surcharge'] is String ? double.parse(json['surcharge']) : (json['surcharge'] as num?)?.toDouble() ?? 0.0,
-      customerVaultId: json['customer_vault_id']?.toString() ?? '',
-      billingId: json['billing_id']?.toString() ?? '',
-      transactionId: json['transaction_id'] ?? 'N/A',
-      response: json['response'] ?? '',
-      entry: (json['entry'] as List<dynamic>?)
-          ?.map((entryJson) => Entry.fromJson(entryJson))
-          .toList() ??
-          [],
-      totalAmount:json['total_amount'] is String ? double.parse(json['total_amount']) : (json['total_amount'] as num?)?.toDouble() ?? 0.0,
-      paymentType: json['payment_type'] ?? '',
-      type: json['type'] ?? '',
-      paymentAttachment: List<dynamic>.from(json['payment_attachment'] ?? []),
-      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
-      isDelete: json['is_delete'] ?? false,
-      tenantData: TenantData.fromJson(json['tenant_data'] ?? {}),
-      rentalData: RentalData.fromJson(json['rental_data'] ?? {}),
-      rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
-      checkAccount: (json['check_account'] != null && json['check_account'] is Map<String, dynamic>)
-          ? json['check_account']
-          : {},
-      ccType: json['cc_type'] ?? 'N/A',
-      ccNumber: json['cc_number'] ?? 'N/A',
-      transactionType: json['transaction_type'] ?? '',
-    );
+    // Log the full JSON to see the structure
+    print('Full JSON: $json');
+
+    try {
+      // Print each field as we parse it to identify where the issue happens
+      String ccType = (json['cc_type'] is Map<String, dynamic>) ? 'N/A' : (json['cc_type'] ?? 'N/A');
+    //  print('ccType: $ccType');
+
+      String ccNumber = (json['cc_number'] is Map<String, dynamic>) ? 'N/A' : (json['cc_number'] ?? 'N/A');
+     // print('ccNumber: $ccNumber');
+
+      String transactionType = (json['transaction_type'] is Map<String, dynamic>) ? '' : (json['transaction_type'] ?? '');
+   //   print('transactionType: $transactionType');
+
+      return Payment(
+        paymentId: json['payment_id'] ?? '',
+        adminId: json['admin_id'] ?? '',
+        leaseId: json['lease_id'] ?? '',
+        tenantId: json['tenant_id'] ?? '',
+        surcharge: json['surcharge'] is String ? double.parse(json['surcharge']) : (json['surcharge'] as num?)?.toDouble() ?? 0.0,
+        customerVaultId: json['customer_vault_id']?.toString() ?? '',
+        billingId: json['billing_id']?.toString() ?? '',
+        transactionId: json['transaction_id'] ?? 'N/A',
+        response: json['response'] ?? '',
+        entry: (json['entry'] as List<dynamic>?)
+            ?.map((entryJson) => Entry.fromJson(entryJson))
+            .toList() ??
+            [],
+         totalAmount:json['total_amount'] is String ? double.parse(json['total_amount']) : (json['total_amount'] as num?)?.toDouble() ?? 0.0,
+        paymentType: json['payment_type'] ?? '',
+        type: json['type'] ?? '',
+        paymentAttachment: List<dynamic>.from(json['payment_attachment'] ?? []),
+         createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+         updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
+         isDelete: json['is_delete'] ?? false,
+        tenantData: TenantData.fromJson(json['tenant_data'] ?? {}),
+        rentalData: RentalData.fromJson(json['rental_data'] ?? {}),
+        rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
+        checkAccount: (json['check_account'] != null && json['check_account'] is Map<String, dynamic>)
+            ? json['check_account']
+            : {},
+        ccType: ccType,
+        ccNumber: ccNumber,
+        transactionType: transactionType,
+      );
+    } catch (e) {
+      // Catch errors and log the issue
+      print('Error parsing Payment JSON: $e');
+      rethrow;
+    }
   }
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -155,9 +175,9 @@ class Payment {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'is_delete': isDelete,
-      'tenant_data': tenantData.toJson(),
-      'rental_data': rentalData.toJson(),
-      'rental_owner_data': rentalOwnerData.toJson(),
+      'tenant_data': tenantData!.toJson(),
+      'rental_data': rentalData!.toJson(),
+      'rental_owner_data': rentalOwnerData!.toJson(),
       'check_account': checkAccount,
       'cc_type': ccType,
       'cc_number': ccNumber,

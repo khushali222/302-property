@@ -18,6 +18,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:three_zero_two_property/Model/ReportExpiringLease.dart';
@@ -357,7 +358,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     // Save the file.
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
-
+    Share.shareXFiles([XFile(path)]);
     // Show a message with the file path.
     Fluttertoast.showToast(
       msg: 'Excel file saved to $path',
@@ -425,7 +426,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     // Save the file
     final File file = File(path);
     await file.writeAsString(csv, flush: true);
-
+    Share.shareXFiles([XFile(path)]);
     // Show a message with the file path
     Fluttertoast.showToast(
       msg: 'CSV file saved to $path',

@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/OpenWorkOrderReportModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -640,16 +642,21 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'OpenWorkOrderReport_$formattedDate.xlsx';
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
 
-    final directory = Directory('/storage/emulated/0/Download');
     final path = '${directory.path}/$fileName';
 
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
 
+
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
 
     Fluttertoast.showToast(
       msg: 'Excel file saved to $path',
@@ -677,15 +684,22 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'OpenWorkOrderReport_$formattedDate.csv';
 
-    final directory = Directory('/storage/emulated/0/Download');
+
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
 
+
     final File file = File(path);
     await file.writeAsString(csv);
+    Share.shareXFiles([XFile(path)]);
 
     Fluttertoast.showToast(
       msg: 'CSV file saved to $path',

@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/CompletedWorkOrdersModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 
@@ -659,7 +660,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
-
+    Share.shareXFiles([XFile(path)]);
     Fluttertoast.showToast(
       msg: 'Excel file saved to $path',
     );
@@ -700,7 +701,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
     final File file = File(path);
     await file.writeAsString(csv);
-
+    Share.shareXFiles([XFile(path)]);
     Fluttertoast.showToast(
       msg: 'CSV file saved to $path',
     );

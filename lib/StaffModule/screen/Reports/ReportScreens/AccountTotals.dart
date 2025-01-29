@@ -13,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/AccountTotalsReports.dart';
 import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
@@ -803,6 +804,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     final path = '${directory.path}/$fileName';
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
     Fluttertoast.showToast(
       msg: 'Excel file saved to $path',
     );
@@ -895,7 +897,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     // Write CSV file to the path
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
-
+    Share.shareXFiles([XFile(path)]);
     // Show success toast message
     Fluttertoast.showToast(
       msg: 'CSV file saved to $path',

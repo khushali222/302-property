@@ -93,6 +93,7 @@ class Properies_summery_Repo{
       },
       body: jsonEncode(data),
     );
+    print('reesponce ${response.body}');
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);

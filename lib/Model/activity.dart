@@ -52,6 +52,7 @@ class Activity_data {
         this.iV});
 
   Activity_data.fromJson(Map<String, dynamic> json) {
+
     sId = json['_id'];
     activityId = json['activity_id'];
     adminId = json['admin_id'];

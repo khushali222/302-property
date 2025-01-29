@@ -9,6 +9,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
@@ -1378,7 +1379,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
-
+    Share.shareXFiles([XFile(path)]);
     Fluttertoast.showToast(
       msg: 'Excel file saved to $path',
     );
@@ -1513,7 +1514,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
     final File file = File(path);
     await file.writeAsString(csvContent);
-
+    Share.shareXFiles([XFile(path)]);
     Fluttertoast.showToast(
       msg: 'CSV file saved to $path',
     );

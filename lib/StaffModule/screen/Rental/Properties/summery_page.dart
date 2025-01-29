@@ -268,19 +268,27 @@ class _Summery_pageState extends State<Summery_page>
         _image = File(image.path);
         _images.add(File(image.path));
       });
-      _uploadImage(File(image.path));
+   //   _uploadImage(File(image.path));
 
     }
   }
-
+  List<String> _editimageUrls = [];
   Future<void> _uploadImage(File imageFile) async {
     try {
       String? fileName = await uploadImage(imageFile);
+      // setState(() {
+      //   _uploadedFileNames.add(fileName!);
+      //   _uploadedFileName = fileName;
+      //   _imageUrls.add(fileName!);
+      //   _updateRentalImage(fileName!);
+      // });
       setState(() {
         _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
-        _imageUrls.add(fileName!);
-        _updateRentalImage(fileName!);
+        // _imageUrls.add(fileName!);
+        // _updateRentalImage(fileName!);
+        _editimageUrls.add(fileName);
+        print(fileName);
       });
     } catch (e) {
       print('Image upload failed: $e');
@@ -1691,6 +1699,11 @@ class _Summery_pageState extends State<Summery_page>
   int _selectedIndex = 0;
 
   bool isMovedOut = false;
+  Future<void> _uploadAllImages() async {
+    for (var image in _images) {
+      await _uploadImage(image); // Upload each picked image
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -2004,9 +2017,7 @@ class _Summery_pageState extends State<Summery_page>
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: CachedNetworkImage(
-                                imageUrl: _imageUrls.isNotEmpty
-                                    ? "$image_url${_imageUrls.first}" // Use _imageUrls to show the uploaded image
-                                    : (widget.properties.rentalImage != null && widget.properties.rentalImage!.isNotEmpty
+                                imageUrl:  (widget.properties.rentalImage != null && widget.properties.rentalImage!.isNotEmpty
                                     ? "$image_url${widget.properties.rentalImage}"
                                     : 'assets/images/no_image.jpg'),
                                 fit: BoxFit.cover,
@@ -5421,7 +5432,7 @@ class _Summery_pageState extends State<Summery_page>
                       _imageUrls.clear();
                       if (widget.properties.propertyTypeData!.isMultiunit! &&
                           widget.properties.propertyTypeData!.propertyType ==
-                              'Residential')
+                              'Residential') {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -5441,10 +5452,7 @@ class _Summery_pageState extends State<Summery_page>
                                             Text(
                                               "Add Unit Details",
                                               style: TextStyle(
-                                                color: blueColor
-
-
-,
+                                                color: blueColor,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -5762,26 +5770,28 @@ class _Summery_pageState extends State<Summery_page>
                                           ],
                                         ),
                                         SizedBox(height: 8.0),
-                                        Row(
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                _pickImage().then((_) {
-                                                  setState(
-                                                          () {}); // Rebuild the widget after selecting the image
-                                                });
-                                              },
-                                              child: Text(
-                                                '+ Add',
-                                                style: TextStyle(
-                                                    color: Colors.green),
+                                        if (_images.isEmpty)
+                                          Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  _pickImage().then((_) {
+                                                    setState(
+                                                            () {}); // Rebuild the widget after selecting the image
+                                                  });
+                                                },
+                                                child: Text(
+                                                  '+ Add',
+                                                  style: TextStyle(
+                                                      color: Colors.green),
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
+                                            ],
+                                          ),
+                                        if (_images.isEmpty)
+                                          SizedBox(
+                                            height: 10,
+                                          ),
                                         _images.isNotEmpty
                                             ? Row(
                                           children: [
@@ -5789,10 +5799,10 @@ class _Summery_pageState extends State<Summery_page>
                                               child: Container(
                                                 //color: Colors.blue,
                                                 child: Wrap(
-
-
-                                                  spacing: 8.0, // Horizontal spacing between items
-                                                  runSpacing: 8.0, // Vertical spacing between rows
+                                                  spacing:
+                                                  8.0, // Horizontal spacing between items
+                                                  runSpacing:
+                                                  8.0, // Vertical spacing between rows
                                                   children: List.generate(
                                                     _images.length,
                                                         (index) {
@@ -5800,41 +5810,59 @@ class _Summery_pageState extends State<Summery_page>
                                                         // color: Colors.green,
                                                         width: 85,
                                                         child: Column(
-                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                           children: [
                                                             Row(
                                                               children: [
                                                                 SizedBox(
-                                                                  width: 60,
+                                                                  width:
+                                                                  60,
                                                                 ),
                                                                 GestureDetector(
-                                                                  onTap: () {
-                                                                    setState(() {
-                                                                      _images.removeAt(index);
-                                                                    });
+                                                                  onTap:
+                                                                      () {
+                                                                    setState(
+                                                                            () {
+                                                                          _images.removeAt(index);
+                                                                        });
                                                                   },
-                                                                  child: Icon(
-                                                                    Icons.close,
-                                                                    color: Colors.grey,
+                                                                  child:
+                                                                  Icon(
+                                                                    Icons
+                                                                        .close,
+                                                                    color:
+                                                                    Colors.grey,
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
                                                             Row(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                               children: [
                                                                 Container(
                                                                   // color:Colors.blue,
-                                                                  child: Image.file(
-                                                                    _images[index],
-                                                                    height: 80,
-                                                                    width: 80,
-                                                                    fit: BoxFit.cover,
+                                                                  child: Image
+                                                                      .file(
+                                                                    _images[
+                                                                    index],
+                                                                    height:
+                                                                    80,
+                                                                    width:
+                                                                    80,
+                                                                    fit: BoxFit
+                                                                        .cover,
                                                                   ),
                                                                 ),
-
                                                               ],
                                                             ),
                                                           ],
@@ -5848,7 +5876,8 @@ class _Summery_pageState extends State<Summery_page>
                                           ],
                                         )
                                             : Center(
-                                          child: Text("No images selected."),
+                                          child:
+                                          Text("No images selected."),
                                         ),
                                         SizedBox(height: 8.0),
                                         Row(
@@ -5858,6 +5887,9 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                             GestureDetector(
                                               onTap: () async {
+                                                if (_uploadedFileNames.length !=
+                                                    _images.length)
+                                                  await _uploadAllImages();
                                                 if (unitnum.text.isEmpty ||
                                                     street3.text.isEmpty ||
                                                     sqft3.text.isEmpty ||
@@ -5880,34 +5912,44 @@ class _Summery_pageState extends State<Summery_page>
                                                       .addUnit(
                                                       adminId: id!,
                                                       rentalId: widget
-                                                          .properties.rentalId,
-                                                      rentalunit: unitnum.text,
+                                                          .properties
+                                                          .rentalId,
+                                                      rentalunit:
+                                                      unitnum.text,
                                                       rentalunitadress:
                                                       street3.text,
-                                                      rentalsqft: sqft3.text,
-                                                      rentalbath: bath3.text,
+                                                      rentalsqft:
+                                                      sqft3.text,
+                                                      rentalbath:
+                                                      bath3.text,
                                                       rentalbed: bed3.text,
-                                                      rentalImages: _uploadedFileNames!
-                                                  )
-                                                      .then((value) {
+                                                      rentalImages:
+                                                      _uploadedFileNames!)
+                                                      .then((value) async {
                                                     setState(() {
                                                       futureUnitsummery =
-                                                          Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
+                                                          Properies_summery_Repo()
+                                                              .fetchunit(widget
+                                                              .properties
+                                                              .rentalId ??
+                                                              "");
                                                       isLoading = false;
                                                       data.add(unit_properties(
-                                                        adminId: id!,
-                                                        rentalId: widget
-                                                            .properties
-                                                            .rentalId,
-                                                        rentalunit:
-                                                        unitnum.text,
-                                                        rentalunitadress:
-                                                        street3.text,
-                                                        rentalsqft: sqft3.text,
-                                                        rentalbath: bath3.text,
-                                                        rentalbed: bed3.text,
-
-                                                      ));
+                                                          adminId: id!,
+                                                          rentalId: widget
+                                                              .properties
+                                                              .rentalId,
+                                                          rentalunit:
+                                                          unitnum.text,
+                                                          rentalunitadress:
+                                                          street3.text,
+                                                          rentalsqft:
+                                                          sqft3.text,
+                                                          rentalbath:
+                                                          bath3.text,
+                                                          rentalbed: bed3.text,
+                                                          rentalImages:
+                                                          _uploadedFileNames!));
                                                     });
                                                     reload_Screen();
                                                     Navigator.pop(
@@ -5928,10 +5970,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   height: 30,
                                                   width: 80,
                                                   decoration: BoxDecoration(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     borderRadius:
                                                     BorderRadius.all(
                                                       Radius.circular(5),
@@ -5974,8 +6013,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         style: TextStyle(
                                                             fontWeight:
                                                             FontWeight.w500,
-                                                            color: Color.fromRGBO(
-                                                                21, 43, 81, 1)),
+                                                            color: blueColor),
                                                       )),
                                                 ),
                                               ),
@@ -5997,10 +6035,10 @@ class _Summery_pageState extends State<Summery_page>
                             );
                           },
                         );
+                      }
                       if (widget.properties.propertyTypeData!.isMultiunit! &&
                           widget.properties.propertyTypeData!.propertyType ==
-                              'Commercial')
-
+                              'Commercial') {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -6020,10 +6058,7 @@ class _Summery_pageState extends State<Summery_page>
                                             Text(
                                               "Add Unit Details",
                                               style: TextStyle(
-                                                color: blueColor
-
-
-,
+                                                color: blueColor,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -6227,24 +6262,26 @@ class _Summery_pageState extends State<Summery_page>
                                           ],
                                         ),
                                         SizedBox(height: 8.0),
-                                        Row(
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                _pickImage().then((_) {
-                                                  setState(
-                                                          () {}); // Rebuild the widget after selecting the image
-                                                });
-                                              },
-                                              child: Text(
-                                                '+ Add',
-                                                style: TextStyle(
-                                                    color: Colors.green),
+                                        if (_images.isEmpty)
+                                          Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  _pickImage().then((_) {
+                                                    setState(
+                                                            () {}); // Rebuild the widget after selecting the image
+                                                  });
+                                                },
+                                                child: Text(
+                                                  '+ Add',
+                                                  style: TextStyle(
+                                                      color: Colors.green),
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 8.0),
+                                            ],
+                                          ),
+                                        if (_images.isEmpty)
+                                          SizedBox(height: 8.0),
                                         _images.isNotEmpty
                                             ? Row(
                                           children: [
@@ -6252,10 +6289,10 @@ class _Summery_pageState extends State<Summery_page>
                                               child: Container(
                                                 //color: Colors.blue,
                                                 child: Wrap(
-
-
-                                                  spacing: 8.0, // Horizontal spacing between items
-                                                  runSpacing: 8.0, // Vertical spacing between rows
+                                                  spacing:
+                                                  8.0, // Horizontal spacing between items
+                                                  runSpacing:
+                                                  8.0, // Vertical spacing between rows
                                                   children: List.generate(
                                                     _images.length,
                                                         (index) {
@@ -6263,41 +6300,59 @@ class _Summery_pageState extends State<Summery_page>
                                                         // color: Colors.green,
                                                         width: 85,
                                                         child: Column(
-                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                           children: [
                                                             Row(
                                                               children: [
                                                                 SizedBox(
-                                                                  width: 60,
+                                                                  width:
+                                                                  60,
                                                                 ),
                                                                 GestureDetector(
-                                                                  onTap: () {
-                                                                    setState(() {
-                                                                      _images.removeAt(index);
-                                                                    });
+                                                                  onTap:
+                                                                      () {
+                                                                    setState(
+                                                                            () {
+                                                                          _images.removeAt(index);
+                                                                        });
                                                                   },
-                                                                  child: Icon(
-                                                                    Icons.close,
-                                                                    color: Colors.grey,
+                                                                  child:
+                                                                  Icon(
+                                                                    Icons
+                                                                        .close,
+                                                                    color:
+                                                                    Colors.grey,
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
                                                             Row(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                               children: [
                                                                 Container(
                                                                   // color:Colors.blue,
-                                                                  child: Image.file(
-                                                                    _images[index],
-                                                                    height: 80,
-                                                                    width: 80,
-                                                                    fit: BoxFit.cover,
+                                                                  child: Image
+                                                                      .file(
+                                                                    _images[
+                                                                    index],
+                                                                    height:
+                                                                    80,
+                                                                    width:
+                                                                    80,
+                                                                    fit: BoxFit
+                                                                        .cover,
                                                                   ),
                                                                 ),
-
                                                               ],
                                                             ),
                                                           ],
@@ -6311,7 +6366,8 @@ class _Summery_pageState extends State<Summery_page>
                                           ],
                                         )
                                             : Center(
-                                          child: Text("No images selected."),
+                                          child:
+                                          Text("No images selected."),
                                         ),
                                         SizedBox(height: 8.0),
                                         Row(
@@ -6321,6 +6377,9 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                             GestureDetector(
                                               onTap: () async {
+                                                if (_uploadedFileNames.length !=
+                                                    _images.length)
+                                                  await _uploadAllImages();
                                                 if (unitnum.text.isEmpty ||
                                                     street3.text.isEmpty ||
                                                     sqft3.text.isEmpty) {
@@ -6333,6 +6392,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     isLoading = true;
                                                     iserror = false;
                                                   });
+
                                                   SharedPreferences prefs =
                                                   await SharedPreferences
                                                       .getInstance();
@@ -6342,17 +6402,20 @@ class _Summery_pageState extends State<Summery_page>
                                                       .addUnit(
                                                       adminId: id!,
                                                       rentalId: widget
-                                                          .properties.rentalId,
+                                                          .properties
+                                                          .rentalId,
                                                       rentalunitadress:
                                                       street3.text,
-                                                      rentalsqft: sqft3.text,
-                                                      rentalunit: unitnum.text,
-                                                      rentalImages: _uploadedFileNames!
-                                                  )
+                                                      rentalsqft:
+                                                      sqft3.text,
+                                                      rentalunit:
+                                                      unitnum.text,
+                                                      rentalImages:
+                                                      _uploadedFileNames!)
                                                       .then((value) {
-                                                    print("valuesss....${value}");
+                                                    print(
+                                                        "valuesss....${value}");
                                                     setState(() {
-
                                                       isLoading = false;
                                                       data.add(unit_properties(
                                                         adminId: id!,
@@ -6376,8 +6439,6 @@ class _Summery_pageState extends State<Summery_page>
                                                   });
                                                 }
                                                 print("calling.............");
-
-
                                               },
                                               child: Material(
                                                 elevation: 3,
@@ -6388,10 +6449,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   height: 30,
                                                   width: 80,
                                                   decoration: BoxDecoration(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     borderRadius:
                                                     BorderRadius.all(
                                                       Radius.circular(5),
@@ -6434,8 +6492,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         style: TextStyle(
                                                             fontWeight:
                                                             FontWeight.w500,
-                                                            color: Color.fromRGBO(
-                                                                21, 43, 81, 1)),
+                                                            color: blueColor),
                                                       )),
                                                 ),
                                               ),
@@ -6457,6 +6514,1046 @@ class _Summery_pageState extends State<Summery_page>
                             );
                           },
                         );
+                      }
+//                       if (widget.properties.propertyTypeData!.isMultiunit! &&
+//                           widget.properties.propertyTypeData!.propertyType ==
+//                               'Residential') {
+//                         showDialog(
+//                           context: context,
+//                           builder: (BuildContext context) {
+//                             bool isChecked =
+//                             false; // Moved isChecked inside the StatefulBuilder
+//                             return StatefulBuilder(
+//                               builder:
+//                                   (BuildContext context, StateSetter setState) {
+//                                 return AlertDialog(
+//                                   backgroundColor: Colors.white,
+//                                   surfaceTintColor: Colors.white,
+//                                   content: SingleChildScrollView(
+//                                     child: Column(
+//                                       children: [
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "Add Unit Details",
+//                                               style: TextStyle(
+//                                                 color: blueColor
+//
+//
+// ,
+//                                                 fontWeight: FontWeight.bold,
+//                                               ),
+//                                             ),
+//                                             Spacer(),
+//                                             Align(
+//                                               alignment: Alignment.centerRight,
+//                                               child: InkWell(
+//                                                 onTap: () {
+//                                                   Navigator.pop(context);
+//                                                 },
+//                                                 child: Icon(Icons.close,
+//                                                     color: Colors.black),
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "Unit Number",
+//                                               style: TextStyle(
+//                                                   color: Color(0xFF8A95A8),
+//                                                   fontWeight: FontWeight.bold),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 1),
+//                                           child: Material(
+//                                             elevation: 3,
+//                                             borderRadius:
+//                                             BorderRadius.circular(3),
+//                                             child: TextFormField(
+//                                               controller: unitnum,
+//                                               cursorColor: Colors.black,
+//                                               decoration: InputDecoration(
+//                                                 //  hintText: label,
+//                                                 // labelText: label,
+//                                                 // labelStyle: TextStyle(color: Colors.grey[700]),
+//                                                 filled: true,
+//                                                 fillColor: Colors.white,
+//                                                 border: OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide.none,
+//                                                 ),
+//                                                 enabledBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8)),
+//                                                 ),
+//                                                 focusedBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8),
+//                                                       width: 2),
+//                                                 ),
+//                                                 contentPadding:
+//                                                 EdgeInsets.symmetric(
+//                                                     vertical: 10.0,
+//                                                     horizontal: 10.0),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "Street Address",
+//                                               style: TextStyle(
+//                                                   color: Color(0xFF8A95A8),
+//                                                   fontWeight: FontWeight.bold),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 1),
+//                                           child: Material(
+//                                             elevation: 3,
+//                                             borderRadius:
+//                                             BorderRadius.circular(3),
+//                                             child: TextFormField(
+//                                               controller: street3,
+//                                               cursorColor: Colors.black,
+//                                               decoration: InputDecoration(
+//                                                 //  hintText: label,
+//                                                 // labelText: label,
+//                                                 // labelStyle: TextStyle(color: Colors.grey[700]),
+//                                                 filled: true,
+//                                                 fillColor: Colors.white,
+//                                                 border: OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide.none,
+//                                                 ),
+//                                                 enabledBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8)),
+//                                                 ),
+//                                                 focusedBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8),
+//                                                       width: 2),
+//                                                 ),
+//                                                 contentPadding:
+//                                                 EdgeInsets.symmetric(
+//                                                     vertical: 10.0,
+//                                                     horizontal: 10.0),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "SQFT",
+//                                               style: TextStyle(
+//                                                   color: Color(0xFF8A95A8),
+//                                                   fontWeight: FontWeight.bold),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 1),
+//                                           child: Material(
+//                                             elevation: 3,
+//                                             borderRadius:
+//                                             BorderRadius.circular(3),
+//                                             child: TextFormField(
+//                                               controller: sqft3,
+//                                               cursorColor: Colors.black,
+//                                               decoration: InputDecoration(
+//                                                 //  hintText: label,
+//                                                 // labelText: label,
+//                                                 // labelStyle: TextStyle(color: Colors.grey[700]),
+//                                                 filled: true,
+//                                                 fillColor: Colors.white,
+//                                                 border: OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide.none,
+//                                                 ),
+//                                                 enabledBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8)),
+//                                                 ),
+//                                                 focusedBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8),
+//                                                       width: 2),
+//                                                 ),
+//                                                 contentPadding:
+//                                                 EdgeInsets.symmetric(
+//                                                     vertical: 10.0,
+//                                                     horizontal: 10.0),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "bath",
+//                                               style: TextStyle(
+//                                                   color: Color(0xFF8A95A8),
+//                                                   fontWeight: FontWeight.bold),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 1),
+//                                           child: Material(
+//                                             elevation: 3,
+//                                             borderRadius:
+//                                             BorderRadius.circular(3),
+//                                             child: TextFormField(
+//                                               controller: bath3,
+//                                               cursorColor: Colors.black,
+//                                               decoration: InputDecoration(
+//                                                 //  hintText: label,
+//                                                 // labelText: label,
+//                                                 // labelStyle: TextStyle(color: Colors.grey[700]),
+//                                                 filled: true,
+//                                                 fillColor: Colors.white,
+//                                                 border: OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide.none,
+//                                                 ),
+//                                                 enabledBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8)),
+//                                                 ),
+//                                                 focusedBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8),
+//                                                       width: 2),
+//                                                 ),
+//                                                 contentPadding:
+//                                                 EdgeInsets.symmetric(
+//                                                     vertical: 10.0,
+//                                                     horizontal: 10.0),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "bed",
+//                                               style: TextStyle(
+//                                                   color: Color(0xFF8A95A8),
+//                                                   fontWeight: FontWeight.bold),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 1),
+//                                           child: Material(
+//                                             elevation: 3,
+//                                             borderRadius:
+//                                             BorderRadius.circular(3),
+//                                             child: TextFormField(
+//                                               controller: bed3,
+//                                               cursorColor: Colors.black,
+//                                               decoration: InputDecoration(
+//                                                 //  hintText: label,
+//                                                 // labelText: label,
+//                                                 // labelStyle: TextStyle(color: Colors.grey[700]),
+//                                                 filled: true,
+//                                                 fillColor: Colors.white,
+//                                                 border: OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide.none,
+//                                                 ),
+//                                                 enabledBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8)),
+//                                                 ),
+//                                                 focusedBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8),
+//                                                       width: 2),
+//                                                 ),
+//                                                 contentPadding:
+//                                                 EdgeInsets.symmetric(
+//                                                     vertical: 10.0,
+//                                                     horizontal: 10.0),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               'Photo',
+//                                               style: TextStyle(
+//                                                   color: Colors.black),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(height: 8.0),
+//                                         Row(
+//                                           children: [
+//                                             GestureDetector(
+//                                               onTap: () {
+//                                                 _pickImage().then((_) {
+//                                                   setState(
+//                                                           () {}); // Rebuild the widget after selecting the image
+//                                                 });
+//                                               },
+//                                               child: Text(
+//                                                 '+ Add',
+//                                                 style: TextStyle(
+//                                                     color: Colors.green),
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         _images.isNotEmpty
+//                                             ? Row(
+//                                           children: [
+//                                             Expanded(
+//                                               child: Container(
+//                                                 //color: Colors.blue,
+//                                                 child: Wrap(
+//
+//
+//                                                   spacing: 8.0, // Horizontal spacing between items
+//                                                   runSpacing: 8.0, // Vertical spacing between rows
+//                                                   children: List.generate(
+//                                                     _images.length,
+//                                                         (index) {
+//                                                       return Container(
+//                                                         // color: Colors.green,
+//                                                         width: 85,
+//                                                         child: Column(
+//                                                           mainAxisAlignment: MainAxisAlignment.start,
+//                                                           crossAxisAlignment: CrossAxisAlignment.start,
+//                                                           children: [
+//                                                             Row(
+//                                                               children: [
+//                                                                 SizedBox(
+//                                                                   width: 60,
+//                                                                 ),
+//                                                                 GestureDetector(
+//                                                                   onTap: () {
+//                                                                     setState(() {
+//                                                                       _images.removeAt(index);
+//                                                                     });
+//                                                                   },
+//                                                                   child: Icon(
+//                                                                     Icons.close,
+//                                                                     color: Colors.grey,
+//                                                                   ),
+//                                                                 ),
+//                                                               ],
+//                                                             ),
+//                                                             Row(
+//                                                               mainAxisAlignment: MainAxisAlignment.start,
+//                                                               crossAxisAlignment: CrossAxisAlignment.start,
+//                                                               children: [
+//                                                                 Container(
+//                                                                   // color:Colors.blue,
+//                                                                   child: Image.file(
+//                                                                     _images[index],
+//                                                                     height: 80,
+//                                                                     width: 80,
+//                                                                     fit: BoxFit.cover,
+//                                                                   ),
+//                                                                 ),
+//
+//                                                               ],
+//                                                             ),
+//                                                           ],
+//                                                         ),
+//                                                       );
+//                                                     },
+//                                                   ),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         )
+//                                             : Center(
+//                                           child: Text("No images selected."),
+//                                         ),
+//                                         SizedBox(height: 8.0),
+//                                         Row(
+//                                           children: [
+//                                             SizedBox(
+//                                               width: 0,
+//                                             ),
+//                                             GestureDetector(
+//                                               onTap: () async {
+//                                                 if (unitnum.text.isEmpty ||
+//                                                     street3.text.isEmpty ||
+//                                                     sqft3.text.isEmpty ||
+//                                                     bath3.text.isEmpty ||
+//                                                     bed3.text.isEmpty) {
+//                                                   setState(() {
+//                                                     iserror = true;
+//                                                   });
+//                                                 } else {
+//                                                   setState(() {
+//                                                     isLoading = true;
+//                                                     iserror = false;
+//                                                   });
+//                                                   SharedPreferences prefs =
+//                                                   await SharedPreferences
+//                                                       .getInstance();
+//                                                   String? id = prefs
+//                                                       .getString("adminId");
+//                                                   Properies_summery_Repo()
+//                                                       .addUnit(
+//                                                       adminId: id!,
+//                                                       rentalId: widget
+//                                                           .properties.rentalId,
+//                                                       rentalunit: unitnum.text,
+//                                                       rentalunitadress:
+//                                                       street3.text,
+//                                                       rentalsqft: sqft3.text,
+//                                                       rentalbath: bath3.text,
+//                                                       rentalbed: bed3.text,
+//                                                       rentalImages: _uploadedFileNames!
+//                                                   )
+//                                                       .then((value) {
+//                                                     setState(() {
+//                                                       futureUnitsummery =
+//                                                           Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
+//                                                       isLoading = false;
+//                                                       data.add(unit_properties(
+//                                                         adminId: id!,
+//                                                         rentalId: widget
+//                                                             .properties
+//                                                             .rentalId,
+//                                                         rentalunit:
+//                                                         unitnum.text,
+//                                                         rentalunitadress:
+//                                                         street3.text,
+//                                                         rentalsqft: sqft3.text,
+//                                                         rentalbath: bath3.text,
+//                                                         rentalbed: bed3.text,
+//
+//                                                       ));
+//                                                     });
+//                                                     reload_Screen();
+//                                                     Navigator.pop(
+//                                                         context, true);
+//                                                   }).catchError((e) {
+//                                                     setState(() {
+//                                                       isLoading = false;
+//                                                     });
+//                                                   });
+//                                                 }
+//                                               },
+//                                               child: Material(
+//                                                 elevation: 3,
+//                                                 borderRadius: BorderRadius.all(
+//                                                   Radius.circular(5),
+//                                                 ),
+//                                                 child: Container(
+//                                                   height: 30,
+//                                                   width: 80,
+//                                                   decoration: BoxDecoration(
+//                                                     color: blueColor
+//
+//
+// ,
+//                                                     borderRadius:
+//                                                     BorderRadius.all(
+//                                                       Radius.circular(5),
+//                                                     ),
+//                                                   ),
+//                                                   child: Center(
+//                                                       child: Text(
+//                                                         "Save",
+//                                                         style: TextStyle(
+//                                                             fontWeight:
+//                                                             FontWeight.w500,
+//                                                             color: Colors.white),
+//                                                       )),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                             SizedBox(width: 10),
+//                                             GestureDetector(
+//                                               onTap: () {
+//                                                 Navigator.pop(context);
+//                                               },
+//                                               child: Material(
+//                                                 elevation: 3,
+//                                                 borderRadius: BorderRadius.all(
+//                                                   Radius.circular(5),
+//                                                 ),
+//                                                 child: Container(
+//                                                   height: 30,
+//                                                   width: 80,
+//                                                   decoration: BoxDecoration(
+//                                                     color: Colors.white,
+//                                                     borderRadius:
+//                                                     BorderRadius.all(
+//                                                       Radius.circular(5),
+//                                                     ),
+//                                                   ),
+//                                                   child: Center(
+//                                                       child: Text(
+//                                                         "Cancel",
+//                                                         style: TextStyle(
+//                                                             fontWeight:
+//                                                             FontWeight.w500,
+//                                                             color: Color.fromRGBO(
+//                                                                 21, 43, 81, 1)),
+//                                                       )),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(height: 8.0),
+//                                         if (iserror)
+//                                           Text(
+//                                             "Please fill in all fields correctly.",
+//                                             style: TextStyle(
+//                                                 color: Colors.redAccent),
+//                                           ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 );
+//                               },
+//                             );
+//                           },
+//                         );
+//                       }
+//                       if (widget.properties.propertyTypeData!.isMultiunit! &&
+//                           widget.properties.propertyTypeData!.propertyType ==
+//                               'Commercial') {
+//                         showDialog(
+//                           context: context,
+//                           builder: (BuildContext context) {
+//                             bool isChecked =
+//                             false; // Moved isChecked inside the StatefulBuilder
+//                             return StatefulBuilder(
+//                               builder:
+//                                   (BuildContext context, StateSetter setState) {
+//                                 return AlertDialog(
+//                                   backgroundColor: Colors.white,
+//                                   surfaceTintColor: Colors.white,
+//                                   content: SingleChildScrollView(
+//                                     child: Column(
+//                                       children: [
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "Add Unit Details",
+//                                               style: TextStyle(
+//                                                 color: blueColor
+//
+//
+// ,
+//                                                 fontWeight: FontWeight.bold,
+//                                               ),
+//                                             ),
+//                                             Spacer(),
+//                                             Align(
+//                                               alignment: Alignment.centerRight,
+//                                               child: InkWell(
+//                                                 onTap: () {
+//                                                   Navigator.pop(context);
+//                                                 },
+//                                                 child: Icon(Icons.close,
+//                                                     color: Colors.black),
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "Unit Number",
+//                                               style: TextStyle(
+//                                                   color: Color(0xFF8A95A8),
+//                                                   fontWeight: FontWeight.bold),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 1),
+//                                           child: Material(
+//                                             elevation: 3,
+//                                             borderRadius:
+//                                             BorderRadius.circular(3),
+//                                             child: TextFormField(
+//                                               controller: unitnum,
+//                                               cursorColor: Colors.black,
+//                                               decoration: InputDecoration(
+//                                                 //  hintText: label,
+//                                                 // labelText: label,
+//                                                 // labelStyle: TextStyle(color: Colors.grey[700]),
+//                                                 filled: true,
+//                                                 fillColor: Colors.white,
+//                                                 border: OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide.none,
+//                                                 ),
+//                                                 enabledBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8)),
+//                                                 ),
+//                                                 focusedBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8),
+//                                                       width: 2),
+//                                                 ),
+//                                                 contentPadding:
+//                                                 EdgeInsets.symmetric(
+//                                                     vertical: 10.0,
+//                                                     horizontal: 10.0),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "Street Address",
+//                                               style: TextStyle(
+//                                                   color: Color(0xFF8A95A8),
+//                                                   fontWeight: FontWeight.bold),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 1),
+//                                           child: Material(
+//                                             elevation: 3,
+//                                             borderRadius:
+//                                             BorderRadius.circular(3),
+//                                             child: TextFormField(
+//                                               controller: street3,
+//                                               cursorColor: Colors.black,
+//                                               decoration: InputDecoration(
+//                                                 //  hintText: label,
+//                                                 // labelText: label,
+//                                                 // labelStyle: TextStyle(color: Colors.grey[700]),
+//                                                 filled: true,
+//                                                 fillColor: Colors.white,
+//                                                 border: OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide.none,
+//                                                 ),
+//                                                 enabledBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8)),
+//                                                 ),
+//                                                 focusedBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8),
+//                                                       width: 2),
+//                                                 ),
+//                                                 contentPadding:
+//                                                 EdgeInsets.symmetric(
+//                                                     vertical: 10.0,
+//                                                     horizontal: 10.0),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               "SQFT",
+//                                               style: TextStyle(
+//                                                   color: Color(0xFF8A95A8),
+//                                                   fontWeight: FontWeight.bold),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 1),
+//                                           child: Material(
+//                                             elevation: 3,
+//                                             borderRadius:
+//                                             BorderRadius.circular(3),
+//                                             child: TextFormField(
+//                                               controller: sqft3,
+//                                               cursorColor: Colors.black,
+//                                               decoration: InputDecoration(
+//                                                 //  hintText: label,
+//                                                 // labelText: label,
+//                                                 // labelStyle: TextStyle(color: Colors.grey[700]),
+//                                                 filled: true,
+//                                                 fillColor: Colors.white,
+//                                                 border: OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide.none,
+//                                                 ),
+//                                                 enabledBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8)),
+//                                                 ),
+//                                                 focusedBorder:
+//                                                 OutlineInputBorder(
+//                                                   borderRadius:
+//                                                   BorderRadius.circular(3),
+//                                                   borderSide: BorderSide(
+//                                                       color: Color(0xFF8A95A8),
+//                                                       width: 2),
+//                                                 ),
+//                                                 contentPadding:
+//                                                 EdgeInsets.symmetric(
+//                                                     vertical: 10.0,
+//                                                     horizontal: 10.0),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         SizedBox(
+//                                           height: 10,
+//                                         ),
+//                                         Row(
+//                                           children: [
+//                                             Text(
+//                                               'Photo',
+//                                               style: TextStyle(
+//                                                   color: Colors.black),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(height: 8.0),
+//                                         Row(
+//                                           children: [
+//                                             GestureDetector(
+//                                               onTap: () {
+//                                                 _pickImage().then((_) {
+//                                                   setState(
+//                                                           () {}); // Rebuild the widget after selecting the image
+//                                                 });
+//                                               },
+//                                               child: Text(
+//                                                 '+ Add',
+//                                                 style: TextStyle(
+//                                                     color: Colors.green),
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(height: 8.0),
+//                                         _images.isNotEmpty
+//                                             ? Row(
+//                                           children: [
+//                                             Expanded(
+//                                               child: Container(
+//                                                 //color: Colors.blue,
+//                                                 child: Wrap(
+//
+//
+//                                                   spacing: 8.0, // Horizontal spacing between items
+//                                                   runSpacing: 8.0, // Vertical spacing between rows
+//                                                   children: List.generate(
+//                                                     _images.length,
+//                                                         (index) {
+//                                                       return Container(
+//                                                         // color: Colors.green,
+//                                                         width: 85,
+//                                                         child: Column(
+//                                                           mainAxisAlignment: MainAxisAlignment.start,
+//                                                           crossAxisAlignment: CrossAxisAlignment.start,
+//                                                           children: [
+//                                                             Row(
+//                                                               children: [
+//                                                                 SizedBox(
+//                                                                   width: 60,
+//                                                                 ),
+//                                                                 GestureDetector(
+//                                                                   onTap: () {
+//                                                                     setState(() {
+//                                                                       _images.removeAt(index);
+//                                                                     });
+//                                                                   },
+//                                                                   child: Icon(
+//                                                                     Icons.close,
+//                                                                     color: Colors.grey,
+//                                                                   ),
+//                                                                 ),
+//                                                               ],
+//                                                             ),
+//                                                             Row(
+//                                                               mainAxisAlignment: MainAxisAlignment.start,
+//                                                               crossAxisAlignment: CrossAxisAlignment.start,
+//                                                               children: [
+//                                                                 Container(
+//                                                                   // color:Colors.blue,
+//                                                                   child: Image.file(
+//                                                                     _images[index],
+//                                                                     height: 80,
+//                                                                     width: 80,
+//                                                                     fit: BoxFit.cover,
+//                                                                   ),
+//                                                                 ),
+//
+//                                                               ],
+//                                                             ),
+//                                                           ],
+//                                                         ),
+//                                                       );
+//                                                     },
+//                                                   ),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         )
+//                                             : Center(
+//                                           child: Text("No images selected."),
+//                                         ),
+//                                         SizedBox(height: 8.0),
+//                                         Row(
+//                                           children: [
+//                                             SizedBox(
+//                                               width: 0,
+//                                             ),
+//                                             GestureDetector(
+//                                               onTap: () async {
+//                                                 if (unitnum.text.isEmpty ||
+//                                                     street3.text.isEmpty ||
+//                                                     sqft3.text.isEmpty) {
+//                                                   setState(() {
+//                                                     iserror = true;
+//                                                   });
+//                                                 } else {
+//                                                   print("unit calling");
+//                                                   setState(() {
+//                                                     isLoading = true;
+//                                                     iserror = false;
+//                                                   });
+//                                                   SharedPreferences prefs =
+//                                                   await SharedPreferences
+//                                                       .getInstance();
+//                                                   String? id = prefs
+//                                                       .getString("adminId");
+//                                                   Properies_summery_Repo()
+//                                                       .addUnit(
+//                                                       adminId: id!,
+//                                                       rentalId: widget
+//                                                           .properties.rentalId,
+//                                                       rentalunitadress:
+//                                                       street3.text,
+//                                                       rentalsqft: sqft3.text,
+//                                                       rentalunit: unitnum.text,
+//                                                       rentalImages: _uploadedFileNames!
+//                                                   )
+//                                                       .then((value) {
+//                                                     print("valuesss....${value}");
+//                                                     setState(() {
+//
+//                                                       isLoading = false;
+//                                                       data.add(unit_properties(
+//                                                         adminId: id!,
+//                                                         rentalId: widget
+//                                                             .properties
+//                                                             .rentalId,
+//                                                         rentalunitadress:
+//                                                         street3.text,
+//                                                         rentalsqft: sqft3.text,
+//                                                         rentalunit:
+//                                                         unitnum.text,
+//                                                       ));
+//                                                     });
+//                                                     reload_Screen();
+//                                                     Navigator.pop(
+//                                                         context, true);
+//                                                   }).catchError((e) {
+//                                                     setState(() {
+//                                                       isLoading = false;
+//                                                     });
+//                                                   });
+//                                                 }
+//                                                 print("calling.............");
+//
+//
+//                                               },
+//                                               child: Material(
+//                                                 elevation: 3,
+//                                                 borderRadius: BorderRadius.all(
+//                                                   Radius.circular(5),
+//                                                 ),
+//                                                 child: Container(
+//                                                   height: 30,
+//                                                   width: 80,
+//                                                   decoration: BoxDecoration(
+//                                                     color: blueColor
+//
+//
+// ,
+//                                                     borderRadius:
+//                                                     BorderRadius.all(
+//                                                       Radius.circular(5),
+//                                                     ),
+//                                                   ),
+//                                                   child: Center(
+//                                                       child: Text(
+//                                                         "Save",
+//                                                         style: TextStyle(
+//                                                             fontWeight:
+//                                                             FontWeight.w500,
+//                                                             color: Colors.white),
+//                                                       )),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                             SizedBox(width: 10),
+//                                             GestureDetector(
+//                                               onTap: () {
+//                                                 Navigator.pop(context);
+//                                               },
+//                                               child: Material(
+//                                                 elevation: 3,
+//                                                 borderRadius: BorderRadius.all(
+//                                                   Radius.circular(5),
+//                                                 ),
+//                                                 child: Container(
+//                                                   height: 30,
+//                                                   width: 80,
+//                                                   decoration: BoxDecoration(
+//                                                     color: Colors.white,
+//                                                     borderRadius:
+//                                                     BorderRadius.all(
+//                                                       Radius.circular(5),
+//                                                     ),
+//                                                   ),
+//                                                   child: Center(
+//                                                       child: Text(
+//                                                         "Cancel",
+//                                                         style: TextStyle(
+//                                                             fontWeight:
+//                                                             FontWeight.w500,
+//                                                             color: Color.fromRGBO(
+//                                                                 21, 43, 81, 1)),
+//                                                       )),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                         SizedBox(height: 8.0),
+//                                         if (iserror)
+//                                           Text(
+//                                             "Please fill in all fields correctly.",
+//                                             style: TextStyle(
+//                                                 color: Colors.redAccent),
+//                                           ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 );
+//                               },
+//                             );
+//                           },
+//                         );
+//                       }
                     },
                     child: Material(
                       elevation: 3,
@@ -6753,7 +7850,891 @@ class _Summery_pageState extends State<Summery_page>
                                                       children: [
                                                         Expanded(
                                                           child: GestureDetector(
+                                                            // onTap: () {
+                                                            //   unitnum.text =
+                                                            //   Propertytype
+                                                            //       .rentalunit!;
+                                                            //   street3.text =
+                                                            //   Propertytype
+                                                            //       .rentalunitadress!;
+                                                            //   sqft3.text =
+                                                            //   Propertytype
+                                                            //       .rentalsqft!;
+                                                            //   bath3.text =
+                                                            //   Propertytype
+                                                            //       .rentalbath!;
+                                                            //   bed3.text =
+                                                            //   Propertytype
+                                                            //       .rentalbed!;
+                                                            //   if (Propertytype.rentalImages != null) {
+                                                            //     setState(() {
+                                                            //       _imageUrls = Propertytype.rentalImages!;
+                                                            //     });
+                                                            //   }
+                                                            //   if (widget
+                                                            //       .properties
+                                                            //       .propertyTypeData!
+                                                            //       .isMultiunit! &&
+                                                            //       widget
+                                                            //           .properties
+                                                            //           .propertyTypeData!
+                                                            //           .propertyType ==
+                                                            //           'Residential') {
+                                                            //     showDialog(
+                                                            //       context:
+                                                            //       context,
+                                                            //       builder:
+                                                            //           (BuildContext
+                                                            //       context) {
+                                                            //
+                                                            //         // Moved isChecked inside the StatefulBuilder
+                                                            //         return StatefulBuilder(
+                                                            //           builder: (BuildContext
+                                                            //           context,
+                                                            //               StateSetter
+                                                            //               setState) {
+                                                            //             return AlertDialog(
+                                                            //               backgroundColor:
+                                                            //               Colors.white,
+                                                            //               surfaceTintColor:
+                                                            //               Colors.white,
+                                                            //               content:
+                                                            //               SingleChildScrollView(
+                                                            //                 child:
+                                                            //                 Column(
+                                                            //                   children: [
+                                                            //                     Row(
+                                                            //                       children: [
+                                                            //                          Text(
+                                                            //                           "Edit Unit Details",
+                                                            //                           style: TextStyle(
+                                                            //                             color: blueColor,
+                                                            //                             fontWeight: FontWeight.bold,
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                         const Spacer(),
+                                                            //                         Align(
+                                                            //                           alignment: Alignment.centerRight,
+                                                            //                           child: InkWell(
+                                                            //                             onTap: () {
+                                                            //                               Navigator.pop(context);
+                                                            //                             },
+                                                            //                             child: const Icon(Icons.close, color: Colors.black),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           "Unit Number",
+                                                            //                           style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     Padding(
+                                                            //                       padding: const EdgeInsets.symmetric(vertical: 1),
+                                                            //                       child: Material(
+                                                            //                         elevation: 3,
+                                                            //                         borderRadius: BorderRadius.circular(3),
+                                                            //                         child: TextFormField(
+                                                            //                           controller: unitnum,
+                                                            //                           cursorColor: Colors.black,
+                                                            //                           decoration: InputDecoration(
+                                                            //                             //  hintText: label,
+                                                            //                             // labelText: label,
+                                                            //                             // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                            //                             filled: true,
+                                                            //                             fillColor: Colors.white,
+                                                            //                             border: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: BorderSide.none,
+                                                            //                             ),
+                                                            //                             enabledBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                            //                             ),
+                                                            //                             focusedBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                            //                             ),
+                                                            //                             contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ),
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           "Street Address",
+                                                            //                           style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     Padding(
+                                                            //                       padding: const EdgeInsets.symmetric(vertical: 1),
+                                                            //                       child: Material(
+                                                            //                         elevation: 3,
+                                                            //                         borderRadius: BorderRadius.circular(3),
+                                                            //                         child: TextFormField(
+                                                            //                           controller: street3,
+                                                            //                           cursorColor: Colors.black,
+                                                            //                           decoration: InputDecoration(
+                                                            //                             //  hintText: label,
+                                                            //                             // labelText: label,
+                                                            //                             // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                            //                             filled: true,
+                                                            //                             fillColor: Colors.white,
+                                                            //                             border: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: BorderSide.none,
+                                                            //                             ),
+                                                            //                             enabledBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                            //                             ),
+                                                            //                             focusedBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                            //                             ),
+                                                            //                             contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ),
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           "SQFT",
+                                                            //                           style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     Padding(
+                                                            //                       padding: const EdgeInsets.symmetric(vertical: 1),
+                                                            //                       child: Material(
+                                                            //                         elevation: 3,
+                                                            //                         borderRadius: BorderRadius.circular(3),
+                                                            //                         child: TextFormField(
+                                                            //                           controller: sqft3,
+                                                            //                           cursorColor: Colors.black,
+                                                            //                           decoration: InputDecoration(
+                                                            //                             //  hintText: label,
+                                                            //                             // labelText: label,
+                                                            //                             // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                            //                             filled: true,
+                                                            //                             fillColor: Colors.white,
+                                                            //                             border: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: BorderSide.none,
+                                                            //                             ),
+                                                            //                             enabledBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                            //                             ),
+                                                            //                             focusedBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                            //                             ),
+                                                            //                             contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ),
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           "bath",
+                                                            //                           style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     Padding(
+                                                            //                       padding: const EdgeInsets.symmetric(vertical: 1),
+                                                            //                       child: Material(
+                                                            //                         elevation: 3,
+                                                            //                         borderRadius: BorderRadius.circular(3),
+                                                            //                         child: TextFormField(
+                                                            //                           controller: bath3,
+                                                            //                           cursorColor: Colors.black,
+                                                            //                           decoration: InputDecoration(
+                                                            //                             //  hintText: label,
+                                                            //                             // labelText: label,
+                                                            //                             // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                            //                             filled: true,
+                                                            //                             fillColor: Colors.white,
+                                                            //                             border: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: BorderSide.none,
+                                                            //                             ),
+                                                            //                             enabledBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                            //                             ),
+                                                            //                             focusedBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                            //                             ),
+                                                            //                             contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ),
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           "bed",
+                                                            //                           style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     Padding(
+                                                            //                       padding: const EdgeInsets.symmetric(vertical: 1),
+                                                            //                       child: Material(
+                                                            //                         elevation: 3,
+                                                            //                         borderRadius: BorderRadius.circular(3),
+                                                            //                         child: TextFormField(
+                                                            //                           controller: bed3,
+                                                            //                           cursorColor: Colors.black,
+                                                            //                           decoration: InputDecoration(
+                                                            //                             //  hintText: label,
+                                                            //                             // labelText: label,
+                                                            //                             // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                            //                             filled: true,
+                                                            //                             fillColor: Colors.white,
+                                                            //                             border: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: BorderSide.none,
+                                                            //                             ),
+                                                            //                             enabledBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                            //                             ),
+                                                            //                             focusedBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                            //                             ),
+                                                            //                             contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ),
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           'Photo',
+                                                            //                           style: TextStyle(color: Colors.black),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     const SizedBox(height: 8.0),
+                                                            //                     Row(
+                                                            //                       children: [
+                                                            //                         GestureDetector(
+                                                            //                           onTap: () {
+                                                            //                             _pickImage().then((_) {
+                                                            //                               setState(() {}); // Rebuild the widget after selecting the image
+                                                            //                             });
+                                                            //                           },
+                                                            //                           child: const Text(
+                                                            //                             '+ Add',
+                                                            //                             style: TextStyle(color: Colors.green),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     // _image != null
+                                                            //                     //     ? Column(
+                                                            //                     //         children: [
+                                                            //                     //           Image.file(
+                                                            //                     //             _image!,
+                                                            //                     //             height: 80,
+                                                            //                     //             width: 80,
+                                                            //                     //             fit: BoxFit.cover,
+                                                            //                     //           ),
+                                                            //                     //           Text(_uploadedFileName ?? ""),
+                                                            //                     //         ],
+                                                            //                     //       )
+                                                            //                     //     : const Text(''),
+                                                            //                     _imageUrls.isNotEmpty
+                                                            //                         ? Row(
+                                                            //                       children: [
+                                                            //                         Expanded(
+                                                            //                           child: Container(
+                                                            //                             child: Wrap(
+                                                            //                               spacing: 8.0, // Horizontal spacing between items
+                                                            //                               runSpacing: 8.0, // Vertical spacing between rows
+                                                            //                               children: List.generate(
+                                                            //                                 _imageUrls.length,
+                                                            //                                     (index) {
+                                                            //                                   return Container(
+                                                            //                                     width: 85,
+                                                            //                                     child: Column(
+                                                            //                                       mainAxisAlignment: MainAxisAlignment.start,
+                                                            //                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                                            //                                       children: [
+                                                            //                                         Row(
+                                                            //                                           children: [
+                                                            //                                             SizedBox(width: 60),
+                                                            //                                             GestureDetector(
+                                                            //                                               onTap: () {
+                                                            //                                                 setState(() {
+                                                            //                                                   _imageUrls.removeAt(index);
+                                                            //                                                 });
+                                                            //                                               },
+                                                            //                                               child: Icon(
+                                                            //                                                 Icons.close,
+                                                            //                                                 color: Colors.grey,
+                                                            //                                               ),
+                                                            //                                             ),
+                                                            //                                           ],
+                                                            //                                         ),
+                                                            //                                         Row(
+                                                            //                                           mainAxisAlignment: MainAxisAlignment.start,
+                                                            //                                           crossAxisAlignment: CrossAxisAlignment.start,
+                                                            //                                           children: [
+                                                            //                                             Container(
+                                                            //                                               child: Image.network(
+                                                            //                                                 "$image_url${_imageUrls[index]}",
+                                                            //                                                 height: 80,
+                                                            //                                                 width: 80,
+                                                            //                                                 fit: BoxFit.cover,
+                                                            //                                                 errorBuilder: (context, error, stackTrace) {
+                                                            //                                                   return Icon(Icons.error); // Placeholder for errors
+                                                            //                                                 },
+                                                            //                                               ),
+                                                            //                                             ),
+                                                            //                                           ],
+                                                            //                                         ),
+                                                            //                                       ],
+                                                            //                                     ),
+                                                            //                                   );
+                                                            //                                 },
+                                                            //                               ),
+                                                            //                             ),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     )
+                                                            //                         : Center(child: Text("No images selected.")),
+                                                            //                     const SizedBox(height: 8.0),
+                                                            //
+                                                            //                     Row(
+                                                            //                       children: [
+                                                            //                         const SizedBox(
+                                                            //                           width: 0,
+                                                            //                         ),
+                                                            //                         GestureDetector(
+                                                            //                           onTap: () async {
+                                                            //                             if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty || bath3.text.isEmpty || bed3.text.isEmpty) {
+                                                            //                               setState(() {
+                                                            //                                 iserror = true;
+                                                            //                               });
+                                                            //                             } else {
+                                                            //                               setState(() {
+                                                            //                                 isLoading = true;
+                                                            //                                 iserror = false;
+                                                            //                               });
+                                                            //                               SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                            //
+                                                            //                               String? id = prefs.getString("adminId");
+                                                            //                               Properies_summery_Repo().Editunit(
+                                                            //                                   rentalunit: unitnum.text,
+                                                            //                                   rentalImages: _imageUrls,
+                                                            //                                   rentalsqft: sqft3.text,
+                                                            //                                   rentalunitadress: street3.text,
+                                                            //                                   rentalbath: bath3.text,
+                                                            //                                   rentalbed: bed3.text,
+                                                            //                                   unitId: Propertytype.unitId,
+                                                            //                                   adminId: id,
+                                                            //                                   // rentalImages: _imageUrls,
+                                                            //                                   rentalId: Propertytype.rentalId
+                                                            //                               ).then((value) {
+                                                            //                                 setState(() {
+                                                            //                                   isLoading = false;
+                                                            //                                 });
+                                                            //
+                                                            //                                 Navigator.of(context).pop(true);
+                                                            //                                 reload_Screen();
+                                                            //                               }).catchError((e) {
+                                                            //                                 setState(() {
+                                                            //                                   isLoading = false;
+                                                            //                                 });
+                                                            //                               });
+                                                            //                             }
+                                                            //                           },
+                                                            //                           child: Material(
+                                                            //                             elevation: 3,
+                                                            //                             borderRadius: const BorderRadius.all(
+                                                            //                               Radius.circular(5),
+                                                            //                             ),
+                                                            //                             child: Container(
+                                                            //                               height: 30,
+                                                            //                               width: 80,
+                                                            //                               decoration: BoxDecoration(
+                                                            //                                 color: blueColor,
+                                                            //                                 borderRadius: BorderRadius.all(
+                                                            //                                   Radius.circular(5),
+                                                            //                                 ),
+                                                            //                               ),
+                                                            //                               child: const Center(
+                                                            //                                   child: Text(
+                                                            //                                     "Save",
+                                                            //                                     style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                                                            //                                   )),
+                                                            //                             ),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                         const SizedBox(width: 10),
+                                                            //                         GestureDetector(
+                                                            //                           onTap: () {
+                                                            //                             Navigator.pop(context);
+                                                            //                           },
+                                                            //                           child: Material(
+                                                            //                             elevation: 3,
+                                                            //                             borderRadius: const BorderRadius.all(
+                                                            //                               Radius.circular(5),
+                                                            //                             ),
+                                                            //                             child: Container(
+                                                            //                               height: 30,
+                                                            //                               width: 80,
+                                                            //                               decoration: const BoxDecoration(
+                                                            //                                 color: Colors.white,
+                                                            //                                 borderRadius: BorderRadius.all(
+                                                            //                                   Radius.circular(5),
+                                                            //                                 ),
+                                                            //                               ),
+                                                            //                               child:  Center(
+                                                            //                                   child: Text(
+                                                            //                                     "Cancel",
+                                                            //                                     style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
+                                                            //                                   )),
+                                                            //                             ),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     const SizedBox(height: 8.0),
+                                                            //                     if (iserror)
+                                                            //                       const Text(
+                                                            //                         "Please fill in all fields correctly.",
+                                                            //                         style: TextStyle(color: Colors.redAccent),
+                                                            //                       ),
+                                                            //                   ],
+                                                            //                 ),
+                                                            //               ),
+                                                            //             );
+                                                            //           },
+                                                            //         );
+                                                            //       },
+                                                            //     );
+                                                            //   }
+                                                            //   if (widget
+                                                            //       .properties
+                                                            //       .propertyTypeData!
+                                                            //       .isMultiunit! &&
+                                                            //       widget
+                                                            //           .properties
+                                                            //           .propertyTypeData!
+                                                            //           .propertyType ==
+                                                            //           'Commercial') {
+                                                            //     showDialog(
+                                                            //       context:
+                                                            //       context,
+                                                            //       builder:
+                                                            //           (BuildContext
+                                                            //       context) {
+                                                            //         bool
+                                                            //         isChecked =
+                                                            //         false; // Moved isChecked inside the StatefulBuilder
+                                                            //         return StatefulBuilder(
+                                                            //           builder: (BuildContext
+                                                            //           context,
+                                                            //               StateSetter
+                                                            //               setState) {
+                                                            //             return AlertDialog(
+                                                            //               backgroundColor:
+                                                            //               Colors.white,
+                                                            //               surfaceTintColor:
+                                                            //               Colors.white,
+                                                            //               content:
+                                                            //               SingleChildScrollView(
+                                                            //                 child:
+                                                            //                 Column(
+                                                            //                   children: [
+                                                            //                     Row(
+                                                            //                       children: [
+                                                            //                          Text(
+                                                            //                           "Edit Unit Details",
+                                                            //                           style: TextStyle(
+                                                            //                             color: blueColor,
+                                                            //                             fontWeight: FontWeight.bold,
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                         const Spacer(),
+                                                            //                         Align(
+                                                            //                           alignment: Alignment.centerRight,
+                                                            //                           child: InkWell(
+                                                            //                             onTap: () {
+                                                            //                               Navigator.pop(context);
+                                                            //                             },
+                                                            //                             child: const Icon(Icons.close, color: Colors.black),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           "Unit Number",
+                                                            //                           style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     Padding(
+                                                            //                       padding: const EdgeInsets.symmetric(vertical: 1),
+                                                            //                       child: Material(
+                                                            //                         elevation: 3,
+                                                            //                         borderRadius: BorderRadius.circular(3),
+                                                            //                         child: TextFormField(
+                                                            //                           controller: unitnum,
+                                                            //                           cursorColor: Colors.black,
+                                                            //                           decoration: InputDecoration(
+                                                            //                             //  hintText: label,
+                                                            //                             // labelText: label,
+                                                            //                             // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                            //                             filled: true,
+                                                            //                             fillColor: Colors.white,
+                                                            //                             border: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: BorderSide.none,
+                                                            //                             ),
+                                                            //                             enabledBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                            //                             ),
+                                                            //                             focusedBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                            //                             ),
+                                                            //                             contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ),
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           "Street Address",
+                                                            //                           style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     Padding(
+                                                            //                       padding: const EdgeInsets.symmetric(vertical: 1),
+                                                            //                       child: Material(
+                                                            //                         elevation: 3,
+                                                            //                         borderRadius: BorderRadius.circular(3),
+                                                            //                         child: TextFormField(
+                                                            //                           controller: street3,
+                                                            //                           cursorColor: Colors.black,
+                                                            //                           decoration: InputDecoration(
+                                                            //                             //  hintText: label,
+                                                            //                             // labelText: label,
+                                                            //                             // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                            //                             filled: true,
+                                                            //                             fillColor: Colors.white,
+                                                            //                             border: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: BorderSide.none,
+                                                            //                             ),
+                                                            //                             enabledBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                            //                             ),
+                                                            //                             focusedBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                            //                             ),
+                                                            //                             contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ),
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           "SQFT",
+                                                            //                           style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     Padding(
+                                                            //                       padding: const EdgeInsets.symmetric(vertical: 1),
+                                                            //                       child: Material(
+                                                            //                         elevation: 3,
+                                                            //                         borderRadius: BorderRadius.circular(3),
+                                                            //                         child: TextFormField(
+                                                            //                           controller: sqft3,
+                                                            //                           cursorColor: Colors.black,
+                                                            //                           decoration: InputDecoration(
+                                                            //                             //  hintText: label,
+                                                            //                             // labelText: label,
+                                                            //                             // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                            //                             filled: true,
+                                                            //                             fillColor: Colors.white,
+                                                            //                             border: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: BorderSide.none,
+                                                            //                             ),
+                                                            //                             enabledBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                            //                             ),
+                                                            //                             focusedBorder: OutlineInputBorder(
+                                                            //                               borderRadius: BorderRadius.circular(3),
+                                                            //                               borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                            //                             ),
+                                                            //                             contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ),
+                                                            //                     ),
+                                                            //                     const SizedBox(
+                                                            //                       height: 10,
+                                                            //                     ),
+                                                            //                     const Row(
+                                                            //                       children: [
+                                                            //                         Text(
+                                                            //                           'Photo',
+                                                            //                           style: TextStyle(color: Colors.black),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     const SizedBox(height: 8.0),
+                                                            //                     Row(
+                                                            //                       children: [
+                                                            //                         GestureDetector(
+                                                            //                           onTap: () {
+                                                            //                             _pickImage().then((_) {
+                                                            //                               setState(() {}); // Rebuild the widget after selecting the image
+                                                            //                             });
+                                                            //
+                                                            //                           },
+                                                            //                           child: const Text(
+                                                            //                             '+ Add',
+                                                            //                             style: TextStyle(color: Colors.green),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     _imageUrls.isNotEmpty
+                                                            //                         ? Row(
+                                                            //                       children: [
+                                                            //                         Expanded(
+                                                            //                           child: Container(
+                                                            //                             child: Wrap(
+                                                            //                               spacing: 8.0, // Horizontal spacing between items
+                                                            //                               runSpacing: 8.0, // Vertical spacing between rows
+                                                            //                               children: List.generate(
+                                                            //                                 _imageUrls.length,
+                                                            //                                     (index) {
+                                                            //                                   return Container(
+                                                            //                                     width: 85,
+                                                            //                                     child: Column(
+                                                            //                                       mainAxisAlignment: MainAxisAlignment.start,
+                                                            //                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                                            //                                       children: [
+                                                            //                                         Row(
+                                                            //                                           children: [
+                                                            //                                             SizedBox(width: 60),
+                                                            //                                             GestureDetector(
+                                                            //                                               onTap: () {
+                                                            //                                                 setState(() {
+                                                            //                                                   _imageUrls.removeAt(index);
+                                                            //                                                 });
+                                                            //                                               },
+                                                            //                                               child: Icon(
+                                                            //                                                 Icons.close,
+                                                            //                                                 color: Colors.grey,
+                                                            //                                               ),
+                                                            //                                             ),
+                                                            //                                           ],
+                                                            //                                         ),
+                                                            //                                         Row(
+                                                            //                                           mainAxisAlignment: MainAxisAlignment.start,
+                                                            //                                           crossAxisAlignment: CrossAxisAlignment.start,
+                                                            //                                           children: [
+                                                            //                                             Container(
+                                                            //                                               child: Image.network(
+                                                            //                                                 "$image_url${_imageUrls[index]}",
+                                                            //                                                 height: 80,
+                                                            //                                                 width: 80,
+                                                            //                                                 fit: BoxFit.cover,
+                                                            //                                                 errorBuilder: (context, error, stackTrace) {
+                                                            //                                                   return Icon(Icons.error); // Placeholder for errors
+                                                            //                                                 },
+                                                            //                                               ),
+                                                            //                                             ),
+                                                            //                                           ],
+                                                            //                                         ),
+                                                            //                                       ],
+                                                            //                                     ),
+                                                            //                                   );
+                                                            //                                 },
+                                                            //                               ),
+                                                            //                             ),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     )
+                                                            //                         : Center(child: Text("No images selected.")),
+                                                            //                     const SizedBox(height: 8.0),
+                                                            //                     Row(
+                                                            //                       children: [
+                                                            //                         const SizedBox(
+                                                            //                           width: 0,
+                                                            //                         ),
+                                                            //                         GestureDetector(
+                                                            //                           onTap: () async {
+                                                            //                             if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty) {
+                                                            //                               setState(() {
+                                                            //                                 iserror = true;
+                                                            //                               });
+                                                            //                             } else {
+                                                            //                               setState(() {
+                                                            //                                 isLoading = true;
+                                                            //                                 iserror = false;
+                                                            //                               });
+                                                            //                               SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                            //                               String? id = prefs.getString("adminId");
+                                                            //                               Properies_summery_Repo()
+                                                            //                                   .Editunit(
+                                                            //                                 rentalunit: unitnum.text,
+                                                            //                                 rentalsqft: sqft3.text,
+                                                            //                                 rentalImages: _imageUrls,
+                                                            //                                 rentalunitadress: street3.text,
+                                                            //                                 unitId: Propertytype.unitId!,
+                                                            //                                 rentalId: Propertytype.rentalId!,
+                                                            //                               )
+                                                            //                                   .then((value) {
+                                                            //                                 setState(() {
+                                                            //                                   isLoading = false;
+                                                            //                                 });
+                                                            //                                 Navigator.of(context).pop(true);
+                                                            //                                 reload_Screen();
+                                                            //                               }).catchError((e) {
+                                                            //                                 setState(() {
+                                                            //                                   isLoading = false;
+                                                            //                                 });
+                                                            //                               });
+                                                            //                             }
+                                                            //                           },
+                                                            //                           child: Material(
+                                                            //                             elevation: 3,
+                                                            //                             borderRadius: const BorderRadius.all(
+                                                            //                               Radius.circular(5),
+                                                            //                             ),
+                                                            //                             child: Container(
+                                                            //                               height: 30,
+                                                            //                               width: 80,
+                                                            //                               decoration:  BoxDecoration(
+                                                            //                                 color: blueColor,
+                                                            //                                 borderRadius: BorderRadius.all(
+                                                            //                                   Radius.circular(5),
+                                                            //                                 ),
+                                                            //                               ),
+                                                            //                               child: const Center(
+                                                            //                                   child: Text(
+                                                            //                                     "Save",
+                                                            //                                     style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                                                            //                                   )),
+                                                            //                             ),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                         const SizedBox(width: 10),
+                                                            //                         GestureDetector(
+                                                            //                           onTap: () {
+                                                            //                             Navigator.pop(context);
+                                                            //                           },
+                                                            //                           child: Material(
+                                                            //                             elevation: 3,
+                                                            //                             borderRadius: const BorderRadius.all(
+                                                            //                               Radius.circular(5),
+                                                            //                             ),
+                                                            //                             child: Container(
+                                                            //                               height: 30,
+                                                            //                               width: 80,
+                                                            //                               decoration: const BoxDecoration(
+                                                            //                                 color: Colors.white,
+                                                            //                                 borderRadius: BorderRadius.all(
+                                                            //                                   Radius.circular(5),
+                                                            //                                 ),
+                                                            //                               ),
+                                                            //                               child:  Center(
+                                                            //                                   child: Text(
+                                                            //                                     "Cancel",
+                                                            //                                     style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
+                                                            //                                   )),
+                                                            //                             ),
+                                                            //                           ),
+                                                            //                         ),
+                                                            //                       ],
+                                                            //                     ),
+                                                            //                     const SizedBox(height: 8.0),
+                                                            //                     if (iserror)
+                                                            //                       const Text(
+                                                            //                         "Please fill in all fields correctly.",
+                                                            //                         style: TextStyle(color: Colors.redAccent),
+                                                            //                       ),
+                                                            //                   ],
+                                                            //                 ),
+                                                            //               ),
+                                                            //             );
+                                                            //           },
+                                                            //         );
+                                                            //       },
+                                                            //     );
+                                                            //   }
+                                                            // },
                                                             onTap: () {
+                                                              reload_Screen();
                                                               unitnum.text =
                                                               Propertytype
                                                                   .rentalunit!;
@@ -6769,11 +8750,498 @@ class _Summery_pageState extends State<Summery_page>
                                                               bed3.text =
                                                               Propertytype
                                                                   .rentalbed!;
-                                                              if (Propertytype.rentalImages != null) {
+                                                              if (Propertytype
+                                                                  .rentalImages !=
+                                                                  null) {
                                                                 setState(() {
-                                                                  _imageUrls = Propertytype.rentalImages!;
+                                                                  _imageUrls =
+                                                                  Propertytype
+                                                                      .rentalImages!;
                                                                 });
                                                               }
+                                                              _images.clear();
+                                                              // if (widget
+                                                              //         .properties
+                                                              //         .propertyTypeData!
+                                                              //         .isMultiunit! &&
+                                                              //     widget
+                                                              //             .properties
+                                                              //             .propertyTypeData!
+                                                              //             .propertyType ==
+                                                              //         'Residential') {
+                                                              //   showDialog(
+                                                              //     context:
+                                                              //         context,
+                                                              //     builder:
+                                                              //         (BuildContext
+                                                              //             context) {
+                                                              //       // Moved isChecked inside the StatefulBuilder
+                                                              //       return StatefulBuilder(
+                                                              //         builder: (BuildContext
+                                                              //                 context,
+                                                              //             StateSetter
+                                                              //                 setState) {
+                                                              //           return AlertDialog(
+                                                              //             backgroundColor:
+                                                              //                 Colors.white,
+                                                              //             surfaceTintColor:
+                                                              //                 Colors.white,
+                                                              //             content:
+                                                              //                 SingleChildScrollView(
+                                                              //               child:
+                                                              //                   Column(
+                                                              //                 children: [
+                                                              //                   Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "Edit Unit Details",
+                                                              //                         style: TextStyle(
+                                                              //                           color: blueColor,
+                                                              //                           fontWeight: FontWeight.bold,
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                       const Spacer(),
+                                                              //                       Align(
+                                                              //                         alignment: Alignment.centerRight,
+                                                              //                         child: InkWell(
+                                                              //                           onTap: () {
+                                                              //                             Navigator.pop(context);
+                                                              //                           },
+                                                              //                           child: const Icon(Icons.close, color: Colors.black),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   const Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "Unit Number",
+                                                              //                         style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   Padding(
+                                                              //                     padding: const EdgeInsets.symmetric(vertical: 1),
+                                                              //                     child: Material(
+                                                              //                       elevation: 3,
+                                                              //                       borderRadius: BorderRadius.circular(3),
+                                                              //                       child: TextFormField(
+                                                              //                         controller: unitnum,
+                                                              //                         cursorColor: Colors.black,
+                                                              //                         decoration: InputDecoration(
+                                                              //                           //  hintText: label,
+                                                              //                           // labelText: label,
+                                                              //                           // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                              //                           filled: true,
+                                                              //                           fillColor: Colors.white,
+                                                              //                           border: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: BorderSide.none,
+                                                              //                           ),
+                                                              //                           enabledBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                              //                           ),
+                                                              //                           focusedBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                              //                           ),
+                                                              //                           contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ),
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   const Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "Street Address",
+                                                              //                         style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   Padding(
+                                                              //                     padding: const EdgeInsets.symmetric(vertical: 1),
+                                                              //                     child: Material(
+                                                              //                       elevation: 3,
+                                                              //                       borderRadius: BorderRadius.circular(3),
+                                                              //                       child: TextFormField(
+                                                              //                         controller: street3,
+                                                              //                         cursorColor: Colors.black,
+                                                              //                         decoration: InputDecoration(
+                                                              //                           //  hintText: label,
+                                                              //                           // labelText: label,
+                                                              //                           // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                              //                           filled: true,
+                                                              //                           fillColor: Colors.white,
+                                                              //                           border: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: BorderSide.none,
+                                                              //                           ),
+                                                              //                           enabledBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                              //                           ),
+                                                              //                           focusedBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                              //                           ),
+                                                              //                           contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ),
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   const Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "SQFT",
+                                                              //                         style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   Padding(
+                                                              //                     padding: const EdgeInsets.symmetric(vertical: 1),
+                                                              //                     child: Material(
+                                                              //                       elevation: 3,
+                                                              //                       borderRadius: BorderRadius.circular(3),
+                                                              //                       child: TextFormField(
+                                                              //                         controller: sqft3,
+                                                              //                         cursorColor: Colors.black,
+                                                              //                         decoration: InputDecoration(
+                                                              //                           //  hintText: label,
+                                                              //                           // labelText: label,
+                                                              //                           // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                              //                           filled: true,
+                                                              //                           fillColor: Colors.white,
+                                                              //                           border: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: BorderSide.none,
+                                                              //                           ),
+                                                              //                           enabledBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                              //                           ),
+                                                              //                           focusedBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                              //                           ),
+                                                              //                           contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ),
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   const Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "bath",
+                                                              //                         style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   Padding(
+                                                              //                     padding: const EdgeInsets.symmetric(vertical: 1),
+                                                              //                     child: Material(
+                                                              //                       elevation: 3,
+                                                              //                       borderRadius: BorderRadius.circular(3),
+                                                              //                       child: TextFormField(
+                                                              //                         controller: bath3,
+                                                              //                         cursorColor: Colors.black,
+                                                              //                         decoration: InputDecoration(
+                                                              //                           //  hintText: label,
+                                                              //                           // labelText: label,
+                                                              //                           // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                              //                           filled: true,
+                                                              //                           fillColor: Colors.white,
+                                                              //                           border: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: BorderSide.none,
+                                                              //                           ),
+                                                              //                           enabledBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                              //                           ),
+                                                              //                           focusedBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                              //                           ),
+                                                              //                           contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ),
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   const Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "bed",
+                                                              //                         style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   Padding(
+                                                              //                     padding: const EdgeInsets.symmetric(vertical: 1),
+                                                              //                     child: Material(
+                                                              //                       elevation: 3,
+                                                              //                       borderRadius: BorderRadius.circular(3),
+                                                              //                       child: TextFormField(
+                                                              //                         controller: bed3,
+                                                              //                         cursorColor: Colors.black,
+                                                              //                         decoration: InputDecoration(
+                                                              //                           //  hintText: label,
+                                                              //                           // labelText: label,
+                                                              //                           // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                              //                           filled: true,
+                                                              //                           fillColor: Colors.white,
+                                                              //                           border: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: BorderSide.none,
+                                                              //                           ),
+                                                              //                           enabledBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                              //                           ),
+                                                              //                           focusedBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                              //                           ),
+                                                              //                           contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ),
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   const Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         'Photo',
+                                                              //                         style: TextStyle(color: Colors.black),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   const SizedBox(height: 8.0),
+                                                              //                   Row(
+                                                              //                     children: [
+                                                              //                       GestureDetector(
+                                                              //                         onTap: () {
+                                                              //                           _pickImage().then((_) {
+                                                              //                             setState(() {}); // Rebuild the widget after selecting the image
+                                                              //                           });
+                                                              //                         },
+                                                              //                         child: const Text(
+                                                              //                           '+ Add',
+                                                              //                           style: TextStyle(color: Colors.green),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   // _image != null
+                                                              //                   //     ? Column(
+                                                              //                   //         children: [
+                                                              //                   //           Image.file(
+                                                              //                   //             _image!,
+                                                              //                   //             height: 80,
+                                                              //                   //             width: 80,
+                                                              //                   //             fit: BoxFit.cover,
+                                                              //                   //           ),
+                                                              //                   //           Text(_uploadedFileName ?? ""),
+                                                              //                   //         ],
+                                                              //                   //       )
+                                                              //                   //     : const Text(''),
+                                                              //                   _imageUrls.isNotEmpty
+                                                              //                       ? Row(
+                                                              //                           children: [
+                                                              //                             Expanded(
+                                                              //                               child: Container(
+                                                              //                                 child: Wrap(
+                                                              //                                   spacing: 8.0, // Horizontal spacing between items
+                                                              //                                   runSpacing: 8.0, // Vertical spacing between rows
+                                                              //                                   children: List.generate(
+                                                              //                                     _imageUrls.length,
+                                                              //                                     (index) {
+                                                              //                                       return Container(
+                                                              //                                         width: 85,
+                                                              //                                         child: Column(
+                                                              //                                           mainAxisAlignment: MainAxisAlignment.start,
+                                                              //                                           crossAxisAlignment: CrossAxisAlignment.start,
+                                                              //                                           children: [
+                                                              //                                             Row(
+                                                              //                                               children: [
+                                                              //                                                 SizedBox(width: 60),
+                                                              //                                                 GestureDetector(
+                                                              //                                                   onTap: () {
+                                                              //                                                     setState(() {
+                                                              //                                                       _imageUrls.removeAt(index);
+                                                              //                                                     });
+                                                              //                                                   },
+                                                              //                                                   child: Icon(
+                                                              //                                                     Icons.close,
+                                                              //                                                     color: Colors.grey,
+                                                              //                                                   ),
+                                                              //                                                 ),
+                                                              //                                               ],
+                                                              //                                             ),
+                                                              //                                             Row(
+                                                              //                                               mainAxisAlignment: MainAxisAlignment.start,
+                                                              //                                               crossAxisAlignment: CrossAxisAlignment.start,
+                                                              //                                               children: [
+                                                              //                                                 Container(
+                                                              //                                                   child: Image.network(
+                                                              //                                                     "$image_url${_imageUrls[index]}",
+                                                              //                                                     height: 80,
+                                                              //                                                     width: 80,
+                                                              //                                                     fit: BoxFit.cover,
+                                                              //                                                     errorBuilder: (context, error, stackTrace) {
+                                                              //                                                       return Icon(Icons.error); // Placeholder for errors
+                                                              //                                                     },
+                                                              //                                                   ),
+                                                              //                                                 ),
+                                                              //                                               ],
+                                                              //                                             ),
+                                                              //                                           ],
+                                                              //                                         ),
+                                                              //                                       );
+                                                              //                                     },
+                                                              //                                   ),
+                                                              //                                 ),
+                                                              //                               ),
+                                                              //                             ),
+                                                              //                           ],
+                                                              //                         )
+                                                              //                       : Center(child: Text("No images selected.")),
+                                                              //                   const SizedBox(height: 8.0),
+                                                              //
+                                                              //                   Row(
+                                                              //                     children: [
+                                                              //                       const SizedBox(
+                                                              //                         width: 0,
+                                                              //                       ),
+                                                              //                       GestureDetector(
+                                                              //                         onTap: () async {
+                                                              //                           if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty || bath3.text.isEmpty || bed3.text.isEmpty) {
+                                                              //                             setState(() {
+                                                              //                               iserror = true;
+                                                              //                             });
+                                                              //                           } else {
+                                                              //                             setState(() {
+                                                              //                               isLoading = true;
+                                                              //                               iserror = false;
+                                                              //                             });
+                                                              //                             SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                              //
+                                                              //                             String? id = prefs.getString("adminId");
+                                                              //                             Properies_summery_Repo()
+                                                              //                                 .Editunit(
+                                                              //                                     rentalunit: unitnum.text,
+                                                              //                                     rentalImages: _imageUrls,
+                                                              //                                     rentalsqft: sqft3.text,
+                                                              //                                     rentalunitadress: street3.text,
+                                                              //                                     rentalbath: bath3.text,
+                                                              //                                     rentalbed: bed3.text,
+                                                              //                                     unitId: Propertytype.unitId,
+                                                              //                                     adminId: id,
+                                                              //                                     // rentalImages: _imageUrls,
+                                                              //                                     rentalId: Propertytype.rentalId)
+                                                              //                                 .then((value) {
+                                                              //                               setState(() {
+                                                              //                                 isLoading = false;
+                                                              //                               });
+                                                              //
+                                                              //                               Navigator.of(context).pop(true);
+                                                              //                               reload_Screen();
+                                                              //                             }).catchError((e) {
+                                                              //                               setState(() {
+                                                              //                                 isLoading = false;
+                                                              //                               });
+                                                              //                             });
+                                                              //                           }
+                                                              //                         },
+                                                              //                         child: Material(
+                                                              //                           elevation: 3,
+                                                              //                           borderRadius: const BorderRadius.all(
+                                                              //                             Radius.circular(5),
+                                                              //                           ),
+                                                              //                           child: Container(
+                                                              //                             height: 30,
+                                                              //                             width: 80,
+                                                              //                             decoration: BoxDecoration(
+                                                              //                               color: blueColor,
+                                                              //                               borderRadius: BorderRadius.all(
+                                                              //                                 Radius.circular(5),
+                                                              //                               ),
+                                                              //                             ),
+                                                              //                             child: const Center(
+                                                              //                                 child: Text(
+                                                              //                               "Save",
+                                                              //                               style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                                                              //                             )),
+                                                              //                           ),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                       const SizedBox(width: 10),
+                                                              //                       GestureDetector(
+                                                              //                         onTap: () {
+                                                              //                           Navigator.pop(context);
+                                                              //                         },
+                                                              //                         child: Material(
+                                                              //                           elevation: 3,
+                                                              //                           borderRadius: const BorderRadius.all(
+                                                              //                             Radius.circular(5),
+                                                              //                           ),
+                                                              //                           child: Container(
+                                                              //                             height: 30,
+                                                              //                             width: 80,
+                                                              //                             decoration: const BoxDecoration(
+                                                              //                               color: Colors.white,
+                                                              //                               borderRadius: BorderRadius.all(
+                                                              //                                 Radius.circular(5),
+                                                              //                               ),
+                                                              //                             ),
+                                                              //                             child: Center(
+                                                              //                                 child: Text(
+                                                              //                               "Cancel",
+                                                              //                               style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
+                                                              //                             )),
+                                                              //                           ),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   const SizedBox(height: 8.0),
+                                                              //                   if (iserror)
+                                                              //                     const Text(
+                                                              //                       "Please fill in all fields correctly.",
+                                                              //                       style: TextStyle(color: Colors.redAccent),
+                                                              //                     ),
+                                                              //                 ],
+                                                              //               ),
+                                                              //             ),
+                                                              //           );
+                                                              //         },
+                                                              //       );
+                                                              //     },
+                                                              //   );
+                                                              // }
                                                               if (widget
                                                                   .properties
                                                                   .propertyTypeData!
@@ -6789,8 +9257,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                   builder:
                                                                       (BuildContext
                                                                   context) {
-
-                                                                    // Moved isChecked inside the StatefulBuilder
+                                                                    bool
+                                                                    isChecked =
+                                                                    false; // Moved isChecked inside the StatefulBuilder
                                                                     return StatefulBuilder(
                                                                       builder: (BuildContext
                                                                       context,
@@ -6808,29 +9277,29 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                     Text(
+                                                                                    Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
                                                                                         color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
-                                                                                    const Spacer(),
+                                                                                    Spacer(),
                                                                                     Align(
                                                                                       alignment: Alignment.centerRight,
                                                                                       child: InkWell(
                                                                                         onTap: () {
                                                                                           Navigator.pop(context);
                                                                                         },
-                                                                                        child: const Icon(Icons.close, color: Colors.black),
+                                                                                        child: Icon(Icons.close, color: Colors.black),
                                                                                       ),
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       "Unit Number",
@@ -6838,7 +9307,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
                                                                                 Padding(
@@ -6861,21 +9330,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                         enabledBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
                                                                                         ),
                                                                                         focusedBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                         ),
-                                                                                        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       "Street Address",
@@ -6903,21 +9372,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                         enabledBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
                                                                                         ),
                                                                                         focusedBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                         ),
-                                                                                        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       "SQFT",
@@ -6945,21 +9414,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                         enabledBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
                                                                                         ),
                                                                                         focusedBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                         ),
-                                                                                        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       "bath",
@@ -6987,21 +9456,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                         enabledBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
                                                                                         ),
                                                                                         focusedBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                         ),
-                                                                                        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       "bed",
@@ -7029,21 +9498,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                         enabledBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
                                                                                         ),
                                                                                         focusedBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                         ),
-                                                                                        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       'Photo',
@@ -7051,39 +9520,25 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(height: 8.0),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    GestureDetector(
-                                                                                      onTap: () {
-                                                                                        _pickImage().then((_) {
-                                                                                          setState(() {}); // Rebuild the widget after selecting the image
-                                                                                        });
-                                                                                      },
-                                                                                      child: const Text(
-                                                                                        '+ Add',
-                                                                                        style: TextStyle(color: Colors.green),
+                                                                                SizedBox(height: 8.0),
+                                                                                if (_images.isEmpty && _imageUrls.isEmpty)
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      GestureDetector(
+                                                                                        onTap: () {
+                                                                                          _pickImage().then((_) {
+                                                                                            setState(() {}); // Rebuild the widget after selecting the image
+                                                                                          });
+                                                                                        },
+                                                                                        child: Text(
+                                                                                          '+ Add',
+                                                                                          style: TextStyle(color: Colors.green),
+                                                                                        ),
                                                                                       ),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                                const SizedBox(
-                                                                                  height: 10,
-                                                                                ),
-                                                                                // _image != null
-                                                                                //     ? Column(
-                                                                                //         children: [
-                                                                                //           Image.file(
-                                                                                //             _image!,
-                                                                                //             height: 80,
-                                                                                //             width: 80,
-                                                                                //             fit: BoxFit.cover,
-                                                                                //           ),
-                                                                                //           Text(_uploadedFileName ?? ""),
-                                                                                //         ],
-                                                                                //       )
-                                                                                //     : const Text(''),
-                                                                                _imageUrls.isNotEmpty
+                                                                                    ],
+                                                                                  ),
+                                                                                if (_images.isEmpty && _imageUrls.isEmpty) SizedBox(height: 8.0),
+                                                                                _images.isNotEmpty || _imageUrls.isNotEmpty
                                                                                     ? Row(
                                                                                   children: [
                                                                                     Expanded(
@@ -7091,68 +9546,126 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Wrap(
                                                                                           spacing: 8.0, // Horizontal spacing between items
                                                                                           runSpacing: 8.0, // Vertical spacing between rows
-                                                                                          children: List.generate(
-                                                                                            _imageUrls.length,
-                                                                                                (index) {
-                                                                                              return Container(
-                                                                                                width: 85,
-                                                                                                child: Column(
-                                                                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                                  children: [
-                                                                                                    Row(
-                                                                                                      children: [
-                                                                                                        SizedBox(width: 60),
-                                                                                                        GestureDetector(
-                                                                                                          onTap: () {
-                                                                                                            setState(() {
-                                                                                                              _imageUrls.removeAt(index);
-                                                                                                            });
-                                                                                                          },
-                                                                                                          child: Icon(
-                                                                                                            Icons.close,
-                                                                                                            color: Colors.grey,
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ],
-                                                                                                    ),
-                                                                                                    Row(
-                                                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                                      children: [
-                                                                                                        Container(
-                                                                                                          child: Image.network(
-                                                                                                            "$image_url${_imageUrls[index]}",
-                                                                                                            height: 80,
-                                                                                                            width: 80,
-                                                                                                            fit: BoxFit.cover,
-                                                                                                            errorBuilder: (context, error, stackTrace) {
-                                                                                                              return Icon(Icons.error); // Placeholder for errors
+                                                                                          children: [
+                                                                                            // Display picked local images
+                                                                                            ...List.generate(
+                                                                                              _images.length,
+                                                                                                  (index) {
+                                                                                                return Container(
+                                                                                                  width: 85,
+                                                                                                  child: Column(
+                                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                    children: [
+                                                                                                      Row(
+                                                                                                        children: [
+                                                                                                          const SizedBox(width: 60),
+                                                                                                          GestureDetector(
+                                                                                                            onTap: () {
+                                                                                                              setState(() {
+                                                                                                                _images.removeAt(index);
+                                                                                                              });
                                                                                                             },
+                                                                                                            child: const Icon(
+                                                                                                              Icons.close,
+                                                                                                              color: Colors.grey,
+                                                                                                            ),
                                                                                                           ),
-                                                                                                        ),
-                                                                                                      ],
-                                                                                                    ),
-                                                                                                  ],
-                                                                                                ),
-                                                                                              );
-                                                                                            },
-                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                      Row(
+                                                                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                        children: [
+                                                                                                          Container(
+                                                                                                            child: Image.file(
+                                                                                                              _images[index],
+                                                                                                              height: 80,
+                                                                                                              width: 80,
+                                                                                                              fit: BoxFit.cover,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                );
+                                                                                              },
+                                                                                            ),
+                                                                                            // Display uploaded image URLs
+                                                                                            ...List.generate(
+                                                                                              _imageUrls.length,
+                                                                                                  (index) {
+                                                                                                return Container(
+                                                                                                  width: 85,
+                                                                                                  child: Column(
+                                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                    children: [
+                                                                                                      Row(
+                                                                                                        children: [
+                                                                                                          const SizedBox(width: 60),
+                                                                                                          GestureDetector(
+                                                                                                            onTap: () {
+                                                                                                              // setState(() {
+                                                                                                              //   _imageUrls.removeAt(index);
+                                                                                                              // });
+                                                                                                              setState(() {
+                                                                                                                if (index >= 0 && index < _imageUrls.length) {
+                                                                                                                  _imageUrls.removeAt(index);
+                                                                                                                }
+                                                                                                                if (index >= 0 && index < _editimageUrls.length) {
+                                                                                                                  _editimageUrls.removeAt(index);
+                                                                                                                }
+                                                                                                              });
+                                                                                                            },
+                                                                                                            child: const Icon(
+                                                                                                              Icons.close,
+                                                                                                              color: Colors.grey,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                      Row(
+                                                                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                        children: [
+                                                                                                          Container(
+                                                                                                            child: Image.network(
+                                                                                                              "$image_url${_imageUrls[index]}",
+                                                                                                              height: 80,
+                                                                                                              width: 80,
+                                                                                                              fit: BoxFit.cover,
+                                                                                                              errorBuilder: (context, error, stackTrace) {
+                                                                                                                return const Icon(Icons.error); // Placeholder for errors
+                                                                                                              },
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                );
+                                                                                              },
+                                                                                            ),
+                                                                                          ],
                                                                                         ),
                                                                                       ),
                                                                                     ),
                                                                                   ],
                                                                                 )
-                                                                                    : Center(child: Text("No images selected.")),
-                                                                                const SizedBox(height: 8.0),
-
+                                                                                    : const Center(
+                                                                                  child: Text("No images selected."),
+                                                                                ),
+                                                                                SizedBox(height: 8.0),
                                                                                 Row(
                                                                                   children: [
-                                                                                    const SizedBox(
+                                                                                    SizedBox(
                                                                                       width: 0,
                                                                                     ),
                                                                                     GestureDetector(
                                                                                       onTap: () async {
+                                                                                        await _uploadAllImages();
                                                                                         if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty || bath3.text.isEmpty || bed3.text.isEmpty) {
                                                                                           setState(() {
                                                                                             iserror = true;
@@ -7165,7 +9678,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                                           SharedPreferences prefs = await SharedPreferences.getInstance();
 
                                                                                           String? id = prefs.getString("adminId");
-                                                                                          Properies_summery_Repo().Editunit(
+                                                                                          Properies_summery_Repo()
+                                                                                              .Editunit(
                                                                                               rentalunit: unitnum.text,
                                                                                               rentalImages: _imageUrls,
                                                                                               rentalsqft: sqft3.text,
@@ -7175,8 +9689,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               unitId: Propertytype.unitId,
                                                                                               adminId: id,
                                                                                               // rentalImages: _imageUrls,
-                                                                                              rentalId: Propertytype.rentalId
-                                                                                          ).then((value) {
+                                                                                              rentalId: Propertytype.rentalId)
+                                                                                              .then((value) {
                                                                                             setState(() {
                                                                                               isLoading = false;
                                                                                             });
@@ -7212,26 +9726,26 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                       ),
                                                                                     ),
-                                                                                    const SizedBox(width: 10),
+                                                                                    SizedBox(width: 10),
                                                                                     GestureDetector(
                                                                                       onTap: () {
                                                                                         Navigator.pop(context);
                                                                                       },
                                                                                       child: Material(
                                                                                         elevation: 3,
-                                                                                        borderRadius: const BorderRadius.all(
+                                                                                        borderRadius: BorderRadius.all(
                                                                                           Radius.circular(5),
                                                                                         ),
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
+                                                                                          decoration: BoxDecoration(
                                                                                             color: Colors.white,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child:  Center(
+                                                                                          child: Center(
                                                                                               child: Text(
                                                                                                 "Cancel",
                                                                                                 style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
@@ -7241,9 +9755,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(height: 8.0),
+                                                                                SizedBox(height: 8.0),
                                                                                 if (iserror)
-                                                                                  const Text(
+                                                                                  Text(
                                                                                     "Please fill in all fields correctly.",
                                                                                     style: TextStyle(color: Colors.redAccent),
                                                                                   ),
@@ -7256,6 +9770,413 @@ class _Summery_pageState extends State<Summery_page>
                                                                   },
                                                                 );
                                                               }
+                                                              // if (widget
+                                                              //         .properties
+                                                              //         .propertyTypeData!
+                                                              //         .isMultiunit! &&
+                                                              //     widget
+                                                              //             .properties
+                                                              //             .propertyTypeData!
+                                                              //             .propertyType ==
+                                                              //         'Commercial') {
+                                                              //   showDialog(
+                                                              //     context:
+                                                              //         context,
+                                                              //     builder:
+                                                              //         (BuildContext
+                                                              //             context) {
+                                                              //       bool
+                                                              //           isChecked =
+                                                              //           false; // Moved isChecked inside the StatefulBuilder
+                                                              //       return StatefulBuilder(
+                                                              //         builder: (BuildContext
+                                                              //                 context,
+                                                              //             StateSetter
+                                                              //                 setState) {
+                                                              //           return AlertDialog(
+                                                              //             backgroundColor:
+                                                              //                 Colors.white,
+                                                              //             surfaceTintColor:
+                                                              //                 Colors.white,
+                                                              //             content:
+                                                              //                 SingleChildScrollView(
+                                                              //               child:
+                                                              //                   Column(
+                                                              //                 children: [
+                                                              //                   Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "Edit Unit Details",
+                                                              //                         style: TextStyle(
+                                                              //                           color: blueColor,
+                                                              //                           fontWeight: FontWeight.bold,
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                       const Spacer(),
+                                                              //                       Align(
+                                                              //                         alignment: Alignment.centerRight,
+                                                              //                         child: InkWell(
+                                                              //                           onTap: () {
+                                                              //                             Navigator.pop(context);
+                                                              //                           },
+                                                              //                           child: const Icon(Icons.close, color: Colors.black),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   const Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "Unit Number",
+                                                              //                         style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   Padding(
+                                                              //                     padding: const EdgeInsets.symmetric(vertical: 1),
+                                                              //                     child: Material(
+                                                              //                       elevation: 3,
+                                                              //                       borderRadius: BorderRadius.circular(3),
+                                                              //                       child: TextFormField(
+                                                              //                         controller: unitnum,
+                                                              //                         cursorColor: Colors.black,
+                                                              //                         decoration: InputDecoration(
+                                                              //                           //  hintText: label,
+                                                              //                           // labelText: label,
+                                                              //                           // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                              //                           filled: true,
+                                                              //                           fillColor: Colors.white,
+                                                              //                           border: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: BorderSide.none,
+                                                              //                           ),
+                                                              //                           enabledBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                              //                           ),
+                                                              //                           focusedBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                              //                           ),
+                                                              //                           contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ),
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   const Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "Street Address",
+                                                              //                         style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   Padding(
+                                                              //                     padding: const EdgeInsets.symmetric(vertical: 1),
+                                                              //                     child: Material(
+                                                              //                       elevation: 3,
+                                                              //                       borderRadius: BorderRadius.circular(3),
+                                                              //                       child: TextFormField(
+                                                              //                         controller: street3,
+                                                              //                         cursorColor: Colors.black,
+                                                              //                         decoration: InputDecoration(
+                                                              //                           //  hintText: label,
+                                                              //                           // labelText: label,
+                                                              //                           // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                              //                           filled: true,
+                                                              //                           fillColor: Colors.white,
+                                                              //                           border: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: BorderSide.none,
+                                                              //                           ),
+                                                              //                           enabledBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                              //                           ),
+                                                              //                           focusedBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                              //                           ),
+                                                              //                           contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ),
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   const Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         "SQFT",
+                                                              //                         style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   Padding(
+                                                              //                     padding: const EdgeInsets.symmetric(vertical: 1),
+                                                              //                     child: Material(
+                                                              //                       elevation: 3,
+                                                              //                       borderRadius: BorderRadius.circular(3),
+                                                              //                       child: TextFormField(
+                                                              //                         controller: sqft3,
+                                                              //                         cursorColor: Colors.black,
+                                                              //                         decoration: InputDecoration(
+                                                              //                           //  hintText: label,
+                                                              //                           // labelText: label,
+                                                              //                           // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                              //                           filled: true,
+                                                              //                           fillColor: Colors.white,
+                                                              //                           border: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: BorderSide.none,
+                                                              //                           ),
+                                                              //                           enabledBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                              //                           ),
+                                                              //                           focusedBorder: OutlineInputBorder(
+                                                              //                             borderRadius: BorderRadius.circular(3),
+                                                              //                             borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                              //                           ),
+                                                              //                           contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ),
+                                                              //                   ),
+                                                              //                   const SizedBox(
+                                                              //                     height: 10,
+                                                              //                   ),
+                                                              //                   Row(
+                                                              //                     children: [
+                                                              //                       Text(
+                                                              //                         'Photo',
+                                                              //                         style: TextStyle(
+                                                              //                             color: Colors.black),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   SizedBox(height: 8.0),
+                                                              //                   Row(
+                                                              //                     children: [
+                                                              //                       GestureDetector(
+                                                              //                         onTap: () {
+                                                              //                           _pickImage().then((_) {
+                                                              //                             setState(
+                                                              //                                     () {}); // Rebuild the widget after selecting the image
+                                                              //                           });
+                                                              //                         },
+                                                              //                         child: Text(
+                                                              //                           '+ Add',
+                                                              //                           style: TextStyle(
+                                                              //                               color: Colors.green),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   SizedBox(height: 8.0),
+                                                              //                   _images.isNotEmpty
+                                                              //                       ? Row(
+                                                              //                     children: [
+                                                              //                       Expanded(
+                                                              //                         child: Container(
+                                                              //                           //color: Colors.blue,
+                                                              //                           child: Wrap(
+                                                              //                             spacing:
+                                                              //                             8.0, // Horizontal spacing between items
+                                                              //                             runSpacing:
+                                                              //                             8.0, // Vertical spacing between rows
+                                                              //                             children: List.generate(
+                                                              //                               _images.length,
+                                                              //                                   (index) {
+                                                              //                                 return Container(
+                                                              //                                   // color: Colors.green,
+                                                              //                                   width: 85,
+                                                              //                                   child: Column(
+                                                              //                                     mainAxisAlignment:
+                                                              //                                     MainAxisAlignment
+                                                              //                                         .start,
+                                                              //                                     crossAxisAlignment:
+                                                              //                                     CrossAxisAlignment
+                                                              //                                         .start,
+                                                              //                                     children: [
+                                                              //                                       Row(
+                                                              //                                         children: [
+                                                              //                                           SizedBox(
+                                                              //                                             width:
+                                                              //                                             60,
+                                                              //                                           ),
+                                                              //                                           GestureDetector(
+                                                              //                                             onTap:
+                                                              //                                                 () {
+                                                              //                                               setState(
+                                                              //                                                       () {
+                                                              //                                                     _images.removeAt(index);
+                                                              //                                                   });
+                                                              //                                             },
+                                                              //                                             child:
+                                                              //                                             Icon(
+                                                              //                                               Icons
+                                                              //                                                   .close,
+                                                              //                                               color:
+                                                              //                                               Colors.grey,
+                                                              //                                             ),
+                                                              //                                           ),
+                                                              //                                         ],
+                                                              //                                       ),
+                                                              //                                       Row(
+                                                              //                                         mainAxisAlignment:
+                                                              //                                         MainAxisAlignment
+                                                              //                                             .start,
+                                                              //                                         crossAxisAlignment:
+                                                              //                                         CrossAxisAlignment
+                                                              //                                             .start,
+                                                              //                                         children: [
+                                                              //                                           Container(
+                                                              //                                             // color:Colors.blue,
+                                                              //                                             child: Image
+                                                              //                                                 .file(
+                                                              //                                               _images[
+                                                              //                                               index],
+                                                              //                                               height:
+                                                              //                                               80,
+                                                              //                                               width:
+                                                              //                                               80,
+                                                              //                                               fit: BoxFit
+                                                              //                                                   .cover,
+                                                              //                                             ),
+                                                              //                                           ),
+                                                              //                                         ],
+                                                              //                                       ),
+                                                              //                                     ],
+                                                              //                                   ),
+                                                              //                                 );
+                                                              //                               },
+                                                              //                             ),
+                                                              //                           ),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   )
+                                                              //                       : Center(
+                                                              //                     child:
+                                                              //                     Text("No images selected."),
+                                                              //                   ),
+                                                              //                   Row(
+                                                              //                     children: [
+                                                              //                       const SizedBox(
+                                                              //                         width: 0,
+                                                              //                       ),
+                                                              //                       GestureDetector(
+                                                              //                         onTap: () async {
+                                                              //                           if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty) {
+                                                              //                             setState(() {
+                                                              //                               iserror = true;
+                                                              //                             });
+                                                              //                           } else {
+                                                              //                             setState(() {
+                                                              //                               isLoading = true;
+                                                              //                               iserror = false;
+                                                              //                             });
+                                                              //                             SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                              //                             String? id = prefs.getString("adminId");
+                                                              //                             Properies_summery_Repo()
+                                                              //                                 .Editunit(
+                                                              //                               rentalunit: unitnum.text,
+                                                              //                               rentalsqft: sqft3.text,
+                                                              //                               rentalImages: _imageUrls,
+                                                              //                               rentalunitadress: street3.text,
+                                                              //                               unitId: Propertytype.unitId!,
+                                                              //                               rentalId: Propertytype.rentalId!,
+                                                              //                             )
+                                                              //                                 .then((value) {
+                                                              //                               setState(() {
+                                                              //                                 isLoading = false;
+                                                              //                               });
+                                                              //                               Navigator.of(context).pop(true);
+                                                              //                               reload_Screen();
+                                                              //                             }).catchError((e) {
+                                                              //                               setState(() {
+                                                              //                                 isLoading = false;
+                                                              //                               });
+                                                              //                             });
+                                                              //                           }
+                                                              //                         },
+                                                              //                         child: Material(
+                                                              //                           elevation: 3,
+                                                              //                           borderRadius: const BorderRadius.all(
+                                                              //                             Radius.circular(5),
+                                                              //                           ),
+                                                              //                           child: Container(
+                                                              //                             height: 30,
+                                                              //                             width: 80,
+                                                              //                             decoration: BoxDecoration(
+                                                              //                               color: blueColor,
+                                                              //                               borderRadius: BorderRadius.all(
+                                                              //                                 Radius.circular(5),
+                                                              //                               ),
+                                                              //                             ),
+                                                              //                             child: const Center(
+                                                              //                                 child: Text(
+                                                              //                               "Save",
+                                                              //                               style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                                                              //                             )),
+                                                              //                           ),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                       const SizedBox(width: 10),
+                                                              //                       GestureDetector(
+                                                              //                         onTap: () {
+                                                              //                           Navigator.pop(context);
+                                                              //                         },
+                                                              //                         child: Material(
+                                                              //                           elevation: 3,
+                                                              //                           borderRadius: const BorderRadius.all(
+                                                              //                             Radius.circular(5),
+                                                              //                           ),
+                                                              //                           child: Container(
+                                                              //                             height: 30,
+                                                              //                             width: 80,
+                                                              //                             decoration: const BoxDecoration(
+                                                              //                               color: Colors.white,
+                                                              //                               borderRadius: BorderRadius.all(
+                                                              //                                 Radius.circular(5),
+                                                              //                               ),
+                                                              //                             ),
+                                                              //                             child: Center(
+                                                              //                                 child: Text(
+                                                              //                               "Cancel",
+                                                              //                               style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
+                                                              //                             )),
+                                                              //                           ),
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ],
+                                                              //                   ),
+                                                              //                   const SizedBox(height: 8.0),
+                                                              //                   if (iserror)
+                                                              //                     const Text(
+                                                              //                       "Please fill in all fields correctly.",
+                                                              //                       style: TextStyle(color: Colors.redAccent),
+                                                              //                     ),
+                                                              //                 ],
+                                                              //               ),
+                                                              //             ),
+                                                              //           );
+                                                              //         },
+                                                              //       );
+                                                              //     },
+                                                              //   );
+                                                              // }
                                                               if (widget
                                                                   .properties
                                                                   .propertyTypeData!
@@ -7291,29 +10212,29 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                     Text(
-                                                                                      "Edit Unit Details",
+                                                                                    Text(
+                                                                                      "Edid Unit Details",
                                                                                       style: TextStyle(
                                                                                         color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
-                                                                                    const Spacer(),
+                                                                                    Spacer(),
                                                                                     Align(
                                                                                       alignment: Alignment.centerRight,
                                                                                       child: InkWell(
                                                                                         onTap: () {
                                                                                           Navigator.pop(context);
                                                                                         },
-                                                                                        child: const Icon(Icons.close, color: Colors.black),
+                                                                                        child: Icon(Icons.close, color: Colors.black),
                                                                                       ),
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       "Unit Number",
@@ -7321,7 +10242,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
                                                                                 Padding(
@@ -7344,21 +10265,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                         enabledBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
                                                                                         ),
                                                                                         focusedBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                         ),
-                                                                                        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       "Street Address",
@@ -7386,21 +10307,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                         enabledBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
                                                                                         ),
                                                                                         focusedBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                         ),
-                                                                                        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       "SQFT",
@@ -7428,21 +10349,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                         enabledBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
                                                                                         ),
                                                                                         focusedBorder: OutlineInputBorder(
                                                                                           borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                         ),
-                                                                                        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                const SizedBox(
+                                                                                SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                const Row(
+                                                                                Row(
                                                                                   children: [
                                                                                     Text(
                                                                                       'Photo',
@@ -7450,24 +10371,25 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(height: 8.0),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    GestureDetector(
-                                                                                      onTap: () {
-                                                                                        _pickImage().then((_) {
-                                                                                          setState(() {}); // Rebuild the widget after selecting the image
-                                                                                        });
-
-                                                                                      },
-                                                                                      child: const Text(
-                                                                                        '+ Add',
-                                                                                        style: TextStyle(color: Colors.green),
+                                                                                SizedBox(height: 8.0),
+                                                                                if (_images.isEmpty && _imageUrls.isEmpty)
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      GestureDetector(
+                                                                                        onTap: () {
+                                                                                          _pickImage().then((_) {
+                                                                                            setState(() {}); // Rebuild the widget after selecting the image
+                                                                                          });
+                                                                                        },
+                                                                                        child: Text(
+                                                                                          '+ Add',
+                                                                                          style: TextStyle(color: Colors.green),
+                                                                                        ),
                                                                                       ),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                                _imageUrls.isNotEmpty
+                                                                                    ],
+                                                                                  ),
+                                                                                if (_images.isEmpty && _imageUrls.isEmpty) SizedBox(height: 8.0),
+                                                                                _images.isNotEmpty || _imageUrls.isNotEmpty
                                                                                     ? Row(
                                                                                   children: [
                                                                                     Expanded(
@@ -7475,67 +10397,126 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Wrap(
                                                                                           spacing: 8.0, // Horizontal spacing between items
                                                                                           runSpacing: 8.0, // Vertical spacing between rows
-                                                                                          children: List.generate(
-                                                                                            _imageUrls.length,
-                                                                                                (index) {
-                                                                                              return Container(
-                                                                                                width: 85,
-                                                                                                child: Column(
-                                                                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                                  children: [
-                                                                                                    Row(
-                                                                                                      children: [
-                                                                                                        SizedBox(width: 60),
-                                                                                                        GestureDetector(
-                                                                                                          onTap: () {
-                                                                                                            setState(() {
-                                                                                                              _imageUrls.removeAt(index);
-                                                                                                            });
-                                                                                                          },
-                                                                                                          child: Icon(
-                                                                                                            Icons.close,
-                                                                                                            color: Colors.grey,
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ],
-                                                                                                    ),
-                                                                                                    Row(
-                                                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                                      children: [
-                                                                                                        Container(
-                                                                                                          child: Image.network(
-                                                                                                            "$image_url${_imageUrls[index]}",
-                                                                                                            height: 80,
-                                                                                                            width: 80,
-                                                                                                            fit: BoxFit.cover,
-                                                                                                            errorBuilder: (context, error, stackTrace) {
-                                                                                                              return Icon(Icons.error); // Placeholder for errors
+                                                                                          children: [
+                                                                                            // Display picked local images
+                                                                                            ...List.generate(
+                                                                                              _images.length,
+                                                                                                  (index) {
+                                                                                                return Container(
+                                                                                                  width: 85,
+                                                                                                  child: Column(
+                                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                    children: [
+                                                                                                      Row(
+                                                                                                        children: [
+                                                                                                          const SizedBox(width: 60),
+                                                                                                          GestureDetector(
+                                                                                                            onTap: () {
+                                                                                                              setState(() {
+                                                                                                                _images.removeAt(index);
+                                                                                                              });
                                                                                                             },
+                                                                                                            child: const Icon(
+                                                                                                              Icons.close,
+                                                                                                              color: Colors.grey,
+                                                                                                            ),
                                                                                                           ),
-                                                                                                        ),
-                                                                                                      ],
-                                                                                                    ),
-                                                                                                  ],
-                                                                                                ),
-                                                                                              );
-                                                                                            },
-                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                      Row(
+                                                                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                        children: [
+                                                                                                          Container(
+                                                                                                            child: Image.file(
+                                                                                                              _images[index],
+                                                                                                              height: 80,
+                                                                                                              width: 80,
+                                                                                                              fit: BoxFit.cover,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                );
+                                                                                              },
+                                                                                            ),
+                                                                                            // Display uploaded image URLs
+                                                                                            ...List.generate(
+                                                                                              _imageUrls.length,
+                                                                                                  (index) {
+                                                                                                return Container(
+                                                                                                  width: 85,
+                                                                                                  child: Column(
+                                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                    children: [
+                                                                                                      Row(
+                                                                                                        children: [
+                                                                                                          const SizedBox(width: 60),
+                                                                                                          GestureDetector(
+                                                                                                            onTap: () {
+                                                                                                              // setState(() {
+                                                                                                              //   _imageUrls.removeAt(index);
+                                                                                                              // });
+                                                                                                              setState(() {
+                                                                                                                if (index >= 0 && index < _imageUrls.length) {
+                                                                                                                  _imageUrls.removeAt(index);
+                                                                                                                }
+                                                                                                                if (index >= 0 && index < _editimageUrls.length) {
+                                                                                                                  _editimageUrls.removeAt(index);
+                                                                                                                }
+                                                                                                              });
+                                                                                                            },
+                                                                                                            child: const Icon(
+                                                                                                              Icons.close,
+                                                                                                              color: Colors.grey,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                      Row(
+                                                                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                        children: [
+                                                                                                          Container(
+                                                                                                            child: Image.network(
+                                                                                                              "$image_url${_imageUrls[index]}",
+                                                                                                              height: 80,
+                                                                                                              width: 80,
+                                                                                                              fit: BoxFit.cover,
+                                                                                                              errorBuilder: (context, error, stackTrace) {
+                                                                                                                return const Icon(Icons.error); // Placeholder for errors
+                                                                                                              },
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                );
+                                                                                              },
+                                                                                            ),
+                                                                                          ],
                                                                                         ),
                                                                                       ),
                                                                                     ),
                                                                                   ],
                                                                                 )
-                                                                                    : Center(child: Text("No images selected.")),
-                                                                                const SizedBox(height: 8.0),
+                                                                                    : const Center(
+                                                                                  child: Text("No images selected."),
+                                                                                ),
+                                                                                SizedBox(height: 8.0),
                                                                                 Row(
                                                                                   children: [
-                                                                                    const SizedBox(
+                                                                                    SizedBox(
                                                                                       width: 0,
                                                                                     ),
                                                                                     GestureDetector(
                                                                                       onTap: () async {
+                                                                                        await _uploadAllImages();
                                                                                         if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty) {
                                                                                           setState(() {
                                                                                             iserror = true;
@@ -7547,11 +10528,16 @@ class _Summery_pageState extends State<Summery_page>
                                                                                           });
                                                                                           SharedPreferences prefs = await SharedPreferences.getInstance();
                                                                                           String? id = prefs.getString("adminId");
+                                                                                          List<String> combinedImageUrls = [
+                                                                                            ..._imageUrls,
+                                                                                            ..._editimageUrls.where((url) => !_imageUrls.contains(url))
+                                                                                          ];
+
                                                                                           Properies_summery_Repo()
                                                                                               .Editunit(
                                                                                             rentalunit: unitnum.text,
                                                                                             rentalsqft: sqft3.text,
-                                                                                            rentalImages: _imageUrls,
+                                                                                            rentalImages: combinedImageUrls,
                                                                                             rentalunitadress: street3.text,
                                                                                             unitId: Propertytype.unitId!,
                                                                                             rentalId: Propertytype.rentalId!,
@@ -7577,7 +10563,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration:  BoxDecoration(
+                                                                                          decoration: BoxDecoration(
                                                                                             color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
@@ -7591,26 +10577,26 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         ),
                                                                                       ),
                                                                                     ),
-                                                                                    const SizedBox(width: 10),
+                                                                                    SizedBox(width: 10),
                                                                                     GestureDetector(
                                                                                       onTap: () {
                                                                                         Navigator.pop(context);
                                                                                       },
                                                                                       child: Material(
                                                                                         elevation: 3,
-                                                                                        borderRadius: const BorderRadius.all(
+                                                                                        borderRadius: BorderRadius.all(
                                                                                           Radius.circular(5),
                                                                                         ),
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
+                                                                                          decoration: BoxDecoration(
                                                                                             color: Colors.white,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child:  Center(
+                                                                                          child: Center(
                                                                                               child: Text(
                                                                                                 "Cancel",
                                                                                                 style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
@@ -7620,9 +10606,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(height: 8.0),
+                                                                                SizedBox(height: 8.0),
                                                                                 if (iserror)
-                                                                                  const Text(
+                                                                                  Text(
                                                                                     "Please fill in all fields correctly.",
                                                                                     style: TextStyle(color: Colors.redAccent),
                                                                                   ),
