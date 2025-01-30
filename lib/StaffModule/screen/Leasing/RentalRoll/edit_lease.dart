@@ -644,7 +644,8 @@ class _Edit_leaseState extends State<Edit_lease>
   Future<void> _pickPdfFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    //  allowedExtensions: ['pdf'],
       allowMultiple: true,
     );
 

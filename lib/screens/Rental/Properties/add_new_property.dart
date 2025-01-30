@@ -446,6 +446,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
               ],
             ),
             SizedBox(height: 8.0),
+            if (propertyGroupImages[index] == null)
             Row(
               children: [
                 GestureDetector(
@@ -4044,6 +4045,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   postcode: postalcode.text,
                                   staffMemberId: sid,
                                   processor_id: processorId);
+
                               List<Unit> units = [];
                               if (propertyGroupControllers.isNotEmpty) {
                                 List<TextEditingController> firstControllers =
@@ -4074,6 +4076,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
 //                                  units[i].unit = controllers[0].text;
                                 }
+
+                                units.removeWhere((unit) =>
+                                unit.unit!.isEmpty || unit.address!.isEmpty || unit.sqft!.isEmpty);
+
                               } else if (selectedpropertytype ==
                                       'Residential' &&
                                   selectedIsMultiUnit == true) {
@@ -4093,6 +4099,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   units[i].Image = propertyGroupImagenames[i];
 //                                  units[i].unit = controllers[0].text;
                                 }
+                                units.removeWhere((unit) =>
+                                unit.unit!.isEmpty ||
+                                    unit.address!.isEmpty ||
+                                    unit.sqft!.isEmpty ||
+                                    unit.bath!.isEmpty ||
+                                    unit.bed!.isEmpty);
                               } else if (selectedpropertytype ==
                                   'Residential') {
                                 for (int i = 0;
@@ -4110,6 +4122,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   units[i].Image = propertyGroupImagenames[i];
 //                                  units[i].unit = controllers[0].text;
                                 }
+                                units.removeWhere((unit) =>
+                                unit.bath!.isEmpty || unit.bed!.isEmpty || unit.sqft!.isEmpty);
                               } else if (selectedpropertytype == 'Commercial') {
                                 for (int i = 0;
                                     i < propertyGroupControllers.length;
@@ -4122,10 +4136,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   units[i].sqft = controllers[0].text;
                                   units[i].Image = propertyGroupImagenames[i];
                                 }
+
+                                units.removeWhere((unit) =>
+                                unit.sqft!.isEmpty);
                               }
+                            //  print("unit ${}")
                               final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
                               String notificationTime = formatter.format(DateTime.now());
                               print(notificationTime);
+                              print("rental unit ${units.length}");
                               RentalRequest rentalrequest = RentalRequest(
                                   rentalOwner: owners,
                                   rental: rentals,
@@ -4133,14 +4152,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   notificationTime: notificationTime,
 
                               );
+                              print("rental request ${rentalrequest}");
                               await Rental_PropertiesRepository()
                                   .createRental(rentalrequest)
                                   .then((value) {
+                              print("rental request ${rentalrequest}");
+
+
                                 setState(() {
                                   loading = false;
                                 });
-                                Navigator.of(context).pop(true);
-                              });
+                               Navigator.of(context).pop(true);
+                             });
                             }
                           }
                         } else {

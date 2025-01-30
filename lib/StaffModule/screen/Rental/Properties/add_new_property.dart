@@ -439,6 +439,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
               ],
             ),
             SizedBox(height: 8.0),
+            if (propertyGroupImages[index] == null)
             Row(
               children: [
                 GestureDetector(
@@ -4107,6 +4108,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
 //                                  units[i].unit = controllers[0].text;
                                   }
+                                  units.removeWhere((unit) =>
+                                  unit.unit!.isEmpty || unit.address!.isEmpty || unit.sqft!.isEmpty);
                                 } else if (selectedpropertytype == 'Residential' &&
                                     selectedIsMultiUnit == true) {
                                   for (int i = 0;
@@ -4125,6 +4128,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     units[i].Image = propertyGroupImagenames[i];
 //                                  units[i].unit = controllers[0].text;
                                   }
+                                  units.removeWhere((unit) =>
+                                  unit.unit!.isEmpty ||
+                                      unit.address!.isEmpty ||
+                                      unit.sqft!.isEmpty ||
+                                      unit.bath!.isEmpty ||
+                                      unit.bed!.isEmpty);
                                 } else if (selectedpropertytype == 'Residential') {
                                   for (int i = 0;
                                   i < propertyGroupControllers.length;
@@ -4141,6 +4150,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     units[i].Image = propertyGroupImagenames[i];
 //                                  units[i].unit = controllers[0].text;
                                   }
+                                  units.removeWhere((unit) =>
+                                  unit.bath!.isEmpty || unit.bed!.isEmpty || unit.sqft!.isEmpty);
                                 } else if (selectedpropertytype == 'Commercial') {
                                   for (int i = 0;
                                   i < propertyGroupControllers.length;
@@ -4156,6 +4167,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     //units[i].sqft = controllers[2].text;
 //                                  units[i].unit = controllers[0].text;
                                   }
+
+                                  units.removeWhere((unit) =>
+                                  unit.sqft!.isEmpty);
                                 }
                                 final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime = formatter.format(DateTime.now());

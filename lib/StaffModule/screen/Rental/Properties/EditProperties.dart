@@ -600,6 +600,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
               ],
             ),
             SizedBox(height: 8.0),
+            if (propertyGroupImages[index] == null)
             Row(
               children: [
                 GestureDetector(
@@ -4540,6 +4541,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             units[i].sqft = controllers[2].text;
                             units[i].Image = propertyGroupImagenames[i];
                           }
+                          units.removeWhere((unit) =>
+                          unit.unit!.isEmpty || unit.address!.isEmpty || unit.sqft!.isEmpty);
                         } else if (selectedpropertytype == 'Residential' &&
                             selectedIsMultiUnit == true) {
                           for (int i = 0;
@@ -4571,6 +4574,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             units[i].bed = controllers[2].text;
                             units[i].Image = propertyGroupImagenames[i];
                           }
+                          units.removeWhere((unit) =>
+                          unit.unit!.isEmpty ||
+                              unit.address!.isEmpty ||
+                              unit.sqft!.isEmpty ||
+                              unit.bath!.isEmpty ||
+                              unit.bed!.isEmpty);
                         } else if (selectedpropertytype == 'Commercial') {
                           for (int i = 0;
                           i < propertyGroupControllers.length;
@@ -4583,6 +4592,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             units[i].sqft = controllers[0].text;
                             units[i].Image = propertyGroupImagenames[i];
                           }
+                          units.removeWhere((unit) =>
+                          unit.bath!.isEmpty || unit.bed!.isEmpty || unit.sqft!.isEmpty);
                         }
 
                         RentalOwners owners = RentalOwners(

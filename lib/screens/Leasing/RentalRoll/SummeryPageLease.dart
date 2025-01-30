@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Recurring_payment.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Recurringpayment.dart';
+
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/RenewLease.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/Model/tenants.dart';
@@ -876,11 +877,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 onTap: () {
                                                   setState(() {
                                                     //  print("hello");
-                                                    if (_tabController !=
-                                                        null) {
-                                                      _tabController!
-                                                          .animateTo(1);
-                                                    }
+                                                    // if (_tabController !=
+                                                    //     null) {
+                                                    //   _tabController!
+                                                    //       .animateTo(1);
+                                                    // }
+                                                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RecurringPayment(leaseData: leasesummery.data!,)));
                                                   });
                                                 },
                                                 child: Text(
