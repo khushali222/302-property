@@ -706,19 +706,19 @@ class _edit_vendorState extends State<edit_vendor> {
                                         bool isFormValid = true;
 
                                         // Validate each field and update the state accordingly
-                                        if (firstName.text.isEmpty) {
+                                        if (firstName.text.trim().isEmpty) {
                                           setState(() {
                                             isFormValid = false;
                                           });
                                         }
 
-                                        if (phoneNumber.text.isEmpty) {
+                                        if (phoneNumber.text.trim().isEmpty) {
                                           setState(() {
                                             isFormValid = false;
                                           });
                                         }
 
-                                        if (email.text.isEmpty) {
+                                        if (email.text.trim().isEmpty) {
                                           setState(() {
                                             isFormValid = false;
                                           });
@@ -757,10 +757,10 @@ class _edit_vendorState extends State<edit_vendor> {
 
                                         final vendor = Vendor(
                                           adminId: adminId,
-                                          vendorName: firstName.text,
-                                          vendorPhoneNumber: phoneNumber.text,
-                                          vendorEmail: email.text,
-                                          vendorPassword: passWord.text,
+                                          vendorName: firstName.text.trim(),
+                                          vendorPhoneNumber: phoneNumber.text.trim(),
+                                          vendorEmail: email.text.trim(),
+                                          vendorPassword: passWord.text.trim(),
                                         );
 
                                         final success = await vendorRepository
@@ -1114,7 +1114,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       children: <Widget>[
         FormField<String>(
           validator: (value) {
-            if (widget.controller!.text.isEmpty) {
+            if (widget.controller!.text.trim().isEmpty) {
               setState(() {
                 _errorMessage = 'Please ${widget.hintText}';
               });

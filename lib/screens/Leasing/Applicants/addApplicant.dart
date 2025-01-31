@@ -747,13 +747,13 @@ class _AddApplicantState extends State<AddApplicant> {
       // Create the ApplicantDetails object
       ApplicantDetails applicantData = ApplicantDetails(
         adminId: adminId,
-        applicantFirstName: firstName.text,
-        applicantLastName: lastName.text,
-        applicantEmail: email.text,
-        applicantPhoneNumber: mobileNumber.text,
-        applicantHomeNumber: homeNumber.text,
-        applicantTelephoneNumber: telePhoneNumber.text,
-        applicantBusinessNumber: bussinessNumber.text,
+        applicantFirstName: firstName.text.trim(),
+        applicantLastName: lastName.text.trim(),
+        applicantEmail: email.text.trim(),
+        applicantPhoneNumber: mobileNumber.text.trim(),
+        applicantHomeNumber: homeNumber.text.trim(),
+        applicantTelephoneNumber: telePhoneNumber.text.trim(),
+        applicantBusinessNumber: bussinessNumber.text.trim(),
       );
 
       // Create the LeaseApplicant object

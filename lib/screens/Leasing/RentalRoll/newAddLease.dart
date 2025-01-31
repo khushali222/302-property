@@ -4392,7 +4392,7 @@ class _addLease3State extends State<addLease3>
                                       for (var controller
                                           in rentShareControllers) {
                                         double rentShare =
-                                            double.tryParse(controller.text) ??
+                                            double.tryParse(controller.text.trim()) ??
                                                 0.0;
                                         totalRentShare += rentShare;
                                       }
@@ -4436,7 +4436,7 @@ class _addLease3State extends State<addLease3>
                                             chargeType:
                                                 data['charge_type'] ?? '',
                                             date: reverseFormatDate(
-                                                rentNextDueDate.text),
+                                                rentNextDueDate.text.trim()),
                                             isRepeatable: data['is_repeatable']
                                                     ?.toLowerCase() ==
                                                 'true',
@@ -4451,14 +4451,14 @@ class _addLease3State extends State<addLease3>
                                         chargeEntries.add(Entry(
                                           account: "Rent Income",
                                           amount: double.tryParse(
-                                                  rentAmount.text) ??
+                                                  rentAmount.text.trim()) ??
                                               0.0,
                                           chargeType: 'Rent',
                                           date: reverseFormatDate(
-                                              rentNextDueDate.text),
+                                              rentNextDueDate.text.trim()),
                                           isRepeatable:
                                               false, // Set to false if it's not repeatable, adjust as needed
-                                          memo: rentMemo.text,
+                                          memo: rentMemo.text.trim(),
                                           rentCycle:
                                               _selectedRent, // Set default value or adjust as needed
                                         ));
@@ -4466,11 +4466,11 @@ class _addLease3State extends State<addLease3>
                                           account: "Security Deposit",
                                           amount: double.tryParse(
                                                   securityDepositeAmount
-                                                      .text) ??
+                                                      .text.trim()) ??
                                               0.0,
                                           chargeType: 'Security Deposit',
                                           date: reverseFormatDate(
-                                              rentNextDueDate.text),
+                                              rentNextDueDate.text.trim()),
                                           isRepeatable:
                                               false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Last Month\'s Rent',
@@ -4545,7 +4545,7 @@ class _addLease3State extends State<addLease3>
                                                 '',
                                             rentShare:
                                                 rentShareControllers[index]
-                                                    .text,
+                                                    .text.trim(),
                                           );
                                         }).toList();
                                         print(tenantDataList.length);
@@ -4635,13 +4635,13 @@ class _addLease3State extends State<addLease3>
                                             adminId: adminId ?? "",
                                             isProRent: isProRent,
                                             proRatedRent: isProRent
-                                                ? proRatedRentController.text
+                                                ? proRatedRentController.text.trim()
                                                 : null,
                                             companyName: companyName,
                                             endDate:
                                                 reverseFormatDate(leaseEndDate),
                                             entry: chargeEntries,
-                                            leaseAmount: rentAmount.text,
+                                            leaseAmount: rentAmount.text.trim(),
                                             leaseType: _selectedLeaseType ?? "",
                                             rentalId: renderId,
                                             startDate: reverseFormatDate(
@@ -4658,7 +4658,7 @@ class _addLease3State extends State<addLease3>
                                           tenantData: tenantDataList,
                                         );
                                         print(
-                                            "Pro-rated Rent Value: ${proRatedRentController.text}");
+                                            "Pro-rated Rent Value: ${proRatedRentController.text.trim()}");
                                         print('lease data full ${lease}');
                                         lease.tenantData.forEach((tenant) {
                                           print(

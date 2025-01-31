@@ -3811,7 +3811,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         for (var controller
                                             in rentShareControllers) {
                                           double rentShare = double.tryParse(
-                                                  controller.text) ??
+                                                  controller.text.trim()) ??
                                               0.0;
                                           totalRentShare += rentShare;
                                         }
@@ -3839,7 +3839,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                           log(mergedFormDataList.toString());
                                           // Creating Entry objects from the merged list
                                           print(
-                                              "rentDueDate ${rentNextDueDate.text}");
+                                              "rentDueDate ${rentNextDueDate.text.trim()}");
                                           List<Entry> chargeEntries =
                                               mergedFormDataList.map((data) {
                                             print(data['account']);
@@ -3867,11 +3867,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                           chargeEntries.add(Entry(
                                               account: "Rent Income",
                                               amount: double.tryParse(
-                                                      rentAmount.text) ??
+                                                      rentAmount.text.trim()) ??
                                                   0.0,
                                               chargeType: 'Rent',
                                               date: reverseFormatDate(
-                                                  rentNextDueDate.text),
+                                                  rentNextDueDate.text.trim()),
                                               isRepeatable:
                                                   false, // Set to false if it's not repeatable, adjust as needed
                                               memo: 'Last Month\'s Rent',
@@ -3885,11 +3885,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                             account: "Security Deposit",
                                             amount: double.tryParse(
                                                     securityDepositeAmount
-                                                        .text) ??
+                                                        .text.trim()) ??
                                                 0.0,
                                             chargeType: 'Security Deposit',
                                             date: reverseFormatDate(
-                                                rentNextDueDate.text),
+                                                rentNextDueDate.text.trim()),
                                             isRepeatable:
                                                 false, // Set to false if it's not repeatable, adjust as needed
                                             memo: 'Security Deposit',
@@ -3975,7 +3975,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                         '',
                                                 rentShare:
                                                     rentShareControllers[index]
-                                                        .text);
+                                                        .text.trim());
                                           }).toList();
                                           // Assuming tenantDataList is a List<TenantData>
                                           List<String> tenantIds =
@@ -4033,14 +4033,14 @@ class _Edit_leaseState extends State<Edit_lease>
                                               adminId: adminId ?? "",
                                               companyName: companyName,
                                               endDate: reverseFormatDate(
-                                                  endDateController.text),
+                                                  endDateController.text.trim()),
                                               entry: chargeEntries,
-                                              leaseAmount: rentAmount.text,
+                                              leaseAmount: rentAmount.text.trim(),
                                               leaseType:
                                                   _selectedLeaseType ?? "",
                                               rentalId: renderId,
                                               startDate: reverseFormatDate(
-                                                  startDateController.text),
+                                                  startDateController.text.trim()),
                                               tenantId: tenantDataList
                                                   .map((tenant) =>
                                                       tenant.tenantId ?? '')

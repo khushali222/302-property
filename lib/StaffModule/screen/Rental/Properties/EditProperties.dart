@@ -4397,7 +4397,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         }
 
                         // Validate form fields
-                        if (address.text.isEmpty) {
+                        if (address.text.trim().isEmpty) {
                           setState(() {
                             addresserror = true;
                             addressmessage = "required";
@@ -4409,7 +4409,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           });
                         }
 
-                        if (city.text.isEmpty) {
+                        if (city.text.trim().isEmpty) {
                           setState(() {
                             cityerror = true;
                             citymessage = "required";
@@ -4421,7 +4421,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           });
                         }
 
-                        if (state.text.isEmpty) {
+                        if (state.text.trim().isEmpty) {
                           setState(() {
                             stateerror = true;
                             statemessage = "required";
@@ -4433,7 +4433,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           });
                         }
 
-                        if (country.text.isEmpty) {
+                        if (country.text.trim().isEmpty) {
                           setState(() {
                             countryerror = true;
                             countrymessage = "required";
@@ -4445,7 +4445,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           });
                         }
 
-                        if (postalcode.text.isEmpty) {
+                        if (postalcode.text.trim().isEmpty) {
                           setState(() {
                             postalcodeerror = true;
                             postalcodemessage = "required";
@@ -4506,11 +4506,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           rentalId: widget.rentalId,
                           adminId: id,
                           propertyId: widget.properties.propertyId,
-                          address: address.text,
-                          city: city.text,
-                          state: state.text,
-                          country: country.text,
-                          postcode: postalcode.text,
+                          address: address.text.trim(),
+                          city: city.text.trim(),
+                          state: state.text.trim(),
+                          country: country.text.trim(),
+                          postcode: postalcode.text.trim(),
                           staffMemberId: widget.properties.staffMemberId,
                         );
 
@@ -4519,7 +4519,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           List<TextEditingController> firstControllers =
                           propertyGroupControllers[0];
                           bool isFirstBlank = firstControllers
-                              .every((controller) => controller.text.isEmpty);
+                              .every((controller) => controller.text.trim().isEmpty);
                           if (isFirstBlank) {
                             propertyGroupControllers.removeAt(0);
                           }
@@ -4536,9 +4536,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             }
                             List<TextEditingController> controllers =
                             propertyGroupControllers[i];
-                            units[i].unit = controllers[0].text;
-                            units[i].address = controllers[1].text;
-                            units[i].sqft = controllers[2].text;
+                            units[i].unit = controllers[0].text.trim();
+                            units[i].address = controllers[1].text.trim();
+                            units[i].sqft = controllers[2].text.trim();
                             units[i].Image = propertyGroupImagenames[i];
                           }
                           units.removeWhere((unit) =>
@@ -4553,11 +4553,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             }
                             List<TextEditingController> controllers =
                             propertyGroupControllers[i];
-                            units[i].unit = controllers[0].text;
-                            units[i].address = controllers[1].text;
-                            units[i].sqft = controllers[2].text;
-                            units[i].bath = controllers[3].text;
-                            units[i].bed = controllers[4].text;
+                            units[i].unit = controllers[0].text.trim();
+                            units[i].address = controllers[1].text.trim();
+                            units[i].sqft = controllers[2].text.trim();
+                            units[i].bath = controllers[3].text.trim();
+                            units[i].bed = controllers[4].text.trim();
                             units[i].Image = propertyGroupImagenames[i];
                           }
                         } else if (selectedpropertytype == 'Residential') {
@@ -4569,9 +4569,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             }
                             List<TextEditingController> controllers =
                             propertyGroupControllers[i];
-                            units[i].sqft = controllers[0].text;
-                            units[i].bath = controllers[1].text;
-                            units[i].bed = controllers[2].text;
+                            units[i].sqft = controllers[0].text.trim();
+                            units[i].bath = controllers[1].text.trim();
+                            units[i].bed = controllers[2].text.trim();
                             units[i].Image = propertyGroupImagenames[i];
                           }
                           units.removeWhere((unit) =>
@@ -4589,7 +4589,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             }
                             List<TextEditingController> controllers =
                             propertyGroupControllers[i];
-                            units[i].sqft = controllers[0].text;
+                            units[i].sqft = controllers[0].text.trim();
                             units[i].Image = propertyGroupImagenames[i];
                           }
                           units.removeWhere((unit) =>
@@ -4598,14 +4598,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                         RentalOwners owners = RentalOwners(
                           adminId: id,
-                          firstName: firstname.text,
-                          companyName: comname.text,
-                          primaryEmail: primaryemail.text,
-                          phoneNumber: phonenum.text,
-                          city: city2.text,
-                          state: state2.text,
-                          country: county2.text,
-                          postalCode: code2.text,
+                          firstName: firstname.text.trim(),
+                          companyName: comname.text.trim(),
+                          primaryEmail: primaryemail.text.trim(),
+                          phoneNumber: phonenum.text.trim(),
+                          city: city2.text.trim(),
+                          state: state2.text.trim(),
+                          country: county2.text.trim(),
+                          postalCode: code2.text.trim(),
                         );
 
                         RentalRequest rentalrequest = RentalRequest(
@@ -4615,14 +4615,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         );
 
                         final updatedOwner = RentalOwner(
-                          rentalOwnerName: firstnameController.text,
-                          rentalOwnerCompanyName: comnameController.text,
-                          rentalOwnerPrimaryEmail: primaryemailController.text,
-                          rentalOwnerPhoneNumber: phonenumController.text,
-                          city: cityController.text,
-                          state: stateController.text,
-                          country: countyController.text,
-                          postalCode: codeController.text,
+                          rentalOwnerName: firstnameController.text.trim(),
+                          rentalOwnerCompanyName: comnameController.text.trim(),
+                          rentalOwnerPrimaryEmail: primaryemailController.text.trim(),
+                          rentalOwnerPhoneNumber: phonenumController.text.trim(),
+                          city: cityController.text.trim(),
+                          state: stateController.text.trim(),
+                          country: countyController.text.trim(),
+                          postalCode: codeController.text.trim(),
                         );
 
                         RentalOwner? ownerDetails =
@@ -4664,12 +4664,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           ),
                           rentalId: widget.rentalId,
                           propertyId: widget.properties.propertyId,
-                          rentalAddress: address.text,
+                          rentalAddress: address.text.trim(),
                           rentalOwnerId: ownerDetails.rentalOwnerId,
-                          rentalCity: city.text,
-                          rentalState: state.text,
-                          rentalCountry: country.text,
-                          rentalPostcode: postalcode.text,
+                          rentalCity: city.text.trim(),
+                          rentalState: state.text.trim(),
+                          rentalCountry: country.text.trim(),
+                          rentalPostcode: postalcode.text.trim(),
                           staffMemberId: selectedStaff,
                           processor_id: processorId,
                         );

@@ -338,7 +338,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                       isChecked != initialIsMultiUnit;
 
                               if (selectedValue == null ||
-                                  subtype.text.isEmpty) {
+                                  subtype.text.trim().isEmpty) {
                                 setState(() {
                                   iserror = true;
                                 });
@@ -354,7 +354,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                     .EditPropertyType(
                                         adminId: id!,
                                         propertyType: selectedValue,
-                                        propertySubType: subtype.text,
+                                        propertySubType: subtype.text.trim(),
                                         isMultiUnit: isChecked,
                                         id: widget.property.propertyId)
                                     .then((value) {

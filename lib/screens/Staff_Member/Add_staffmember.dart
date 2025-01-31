@@ -868,7 +868,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           GestureDetector(
                             onTap: () async {
                               // Validate name
-                              if (name.text.isEmpty) {
+                              if (name.text.trim().isEmpty) {
                                 setState(() {
                                   nameerror = true;
                                   namemessage = "Name is required";
@@ -880,7 +880,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               }
 
                               // Validate designation
-                              if (designation.text.isEmpty) {
+                              if (designation.text.trim().isEmpty) {
                                 setState(() {
                                   designationerror = true;
                                   designationmessage =
@@ -911,7 +911,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               }
 
                               // Validate email
-                              if (email.text.isEmpty) {
+                              if (email.text.trim().isEmpty) {
                                 setState(() {
                                   emailerror = true;
                                   emailmessage = "Email is required";
@@ -939,7 +939,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               //   });
                               // }
 
-                              if (password.text.isEmpty) {
+                              if (password.text.trim().isEmpty) {
                                 setState(() {
                                   passworderror = true;
                                   passwordmessage = "Password is required";
@@ -969,7 +969,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 }
                               }
 
-                              if (conpassword.text.isEmpty) {
+                              if (conpassword.text.trim().isEmpty) {
                                 setState(() {
                                   conpassworderror = true;
                                   conpasswordmessage = "Confirm Password is required";
@@ -1007,11 +1007,11 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                     await StaffMemberRepository()
                                         .addStaffMember(
                                       adminId: adminId,
-                                      staffmemberName: name.text,
-                                      staffmemberDesignation: designation.text,
-                                      staffmemberPhoneNumber: phonenumber.text,
-                                      staffmemberEmail: email.text,
-                                      staffmemberPassword: password.text,
+                                      staffmemberName: name.text.trim(),
+                                      staffmemberDesignation: designation.text.trim(),
+                                      staffmemberPhoneNumber: phonenumber.text.trim(),
+                                      staffmemberEmail: email.text.trim(),
+                                      staffmemberPassword: password.text.trim(),
 
                                     );
                                     setState(() {

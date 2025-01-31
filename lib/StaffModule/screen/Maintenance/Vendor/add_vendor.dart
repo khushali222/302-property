@@ -1598,10 +1598,10 @@ class _Add_vendorState extends State<Add_vendor> {
 
     final vendor = Vendor(
       adminId: adminId,
-      vendorName: firstName.text,
-      vendorPhoneNumber: phoneNumber.text,
-      vendorEmail: email.text,
-      vendorPassword: passWord.text,
+      vendorName: firstName.text.trim(),
+      vendorPhoneNumber: phoneNumber.text.trim(),
+      vendorEmail: email.text.trim(),
+      vendorPassword: passWord.text.trim(),
     );
 
     final success = await vendorRepository.addVendor(vendor);
@@ -1730,7 +1730,7 @@ class CustomTextFieldState extends State<CustomTextField> {
           validator: widget.optional != null
               ? null
               : (value) {
-            if (widget.controller!.text.isEmpty) {
+            if (widget.controller!.text.trim().isEmpty) {
               setState(() {
                 _errorMessage = 'Please ${widget.hintText}';
               });

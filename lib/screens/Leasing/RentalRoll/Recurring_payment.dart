@@ -71,7 +71,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       print(cardDetails.length);
       print(customervaultid);
       print(tenantIds);
-      getcards();
+     // getcards();
       setState(() {
         for (int i = 0; i < tenantIds.length; i++) {
           tenantDropdowns[i] = [
@@ -272,6 +272,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                           ],
                                           onChanged: (value) {
                                             setState(() {
+                                              print(value);
                                               tenantDropdowns[index]![rowIndex]["selectedCard"] = value;
                                             });
                                           },
@@ -455,6 +456,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                     List<Map<String, dynamic>> recurringsList = [];
 
                     for (var row in tenantDropdowns[i]!) {
+                      print(row['selectedCard'] );
                       if (row['selectedCard'] != null) {
                         var cardData = row['selectedCard']!.split('_'); // Splitting "ccNumber_billingId"
                         String billingId = cardData.length > 1 ? cardData[0] : "";
@@ -584,7 +586,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
       },
     );
-
+    print("bin api ${response.body}");
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       print('BIN check successful: ${jsonResponse['BIN']['type']}');

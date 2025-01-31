@@ -2336,26 +2336,26 @@ class _AddTenantState extends State<AddTenant> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString("adminId")!;
     EmergencyContact emergencyContact = EmergencyContact(
-      name: contactName.text,
-      relation: relationToTenant.text,
-      email: emergencyEmail.text,
-      phoneNumber: emergencyPhoneNumber.text,
+      name: contactName.text.trim(),
+      relation: relationToTenant.text.trim(),
+      email: emergencyEmail.text.trim(),
+      phoneNumber: emergencyPhoneNumber.text.trim(),
     );
-    double? overRideFee = double.tryParse(overrideFee.text);
+    double? overRideFee = double.tryParse(overrideFee.text.trim());
     Tenant tenant = Tenant(
       adminId: adminId,
-      tenantFirstName: firstName.text,
-      tenantLastName: lastName.text,
-      tenantPhoneNumber: phoneNumber.text,
-      tenantAlternativeNumber: workNumber.text,
-      tenantEmail: email.text,
-      tenantAlternativeEmail: alterEmail.text,
-      tenantPassword: passWord.text,
-      tenantBirthDate: _dateController.text.isNotEmpty
-          ? reverseFormatDate(_dateController.text)
+      tenantFirstName: firstName.text.trim(),
+      tenantLastName: lastName.text.trim(),
+      tenantPhoneNumber: phoneNumber.text.trim(),
+      tenantAlternativeNumber: workNumber.text.trim(),
+      tenantEmail: email.text.trim(),
+      tenantAlternativeEmail: alterEmail.text.trim(),
+      tenantPassword: passWord.text.trim(),
+      tenantBirthDate: _dateController.text.trim().isNotEmpty
+          ? reverseFormatDate(_dateController.text.trim())
           : "",
-      taxPayerId: taxPayerId.text,
-      comments: comments.text,
+      taxPayerId: taxPayerId.text.trim(),
+      comments: comments.text.trim(),
       emergencyContact: emergencyContact,
       enableoverrideFee: enableOverrideFee,
       overRideFee: overRideFee,
@@ -2740,7 +2740,7 @@ class CustomTextFieldState extends State<CustomTextField> {
           validator: widget.optional!
               ? (value) {
             print("work same callling  ${widget.samephonenumber}");
-                  if (widget.controller!.text.isEmpty) {
+                  if (widget.controller!.text.trim().isEmpty) {
                     return null;
                   }
                   else if (widget.phone != null) {
@@ -2768,7 +2768,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     //     _errorMessage = null;
                     //   });
                     // }
-                    _validatePhoneNumber(widget.controller!.text);
+                    _validatePhoneNumber(widget.controller!.text.trim());
                     return '';
                   }else if (widget.email != null) {
                     // if (!EmailValidator.validate(widget.controller!.text)) {
@@ -2777,13 +2777,13 @@ class CustomTextFieldState extends State<CustomTextField> {
                     //   });
                     //   return '';
                     // }
-                    _validateEmail(widget.controller!.text);
+                    _validateEmail(widget.controller!.text.trim());
 
                     // Return an empty string or handle accordingly
                     return '';
                   }
                   else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
+                      double.parse(widget.controller!.text.trim()) >
                           double.parse(widget.max_amount!))
                     setState(() {
                       _errorMessage = '${widget.error_mess}';
@@ -2791,7 +2791,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   return null;
                 }
               : (value) {
-                  if (widget.controller!.text.isEmpty) {
+                  if (widget.controller!.text.trim().isEmpty) {
                     setState(() {
                       if (widget.label == null)
                         _errorMessage = 'Please ${widget.hintText}';
@@ -2826,7 +2826,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     }
                   }
                   else if (widget.email != null) {
-                    if (!EmailValidator.validate(widget.controller!.text)) {
+                    if (!EmailValidator.validate(widget.controller!.text.trim())) {
                       setState(() {
                         _errorMessage = "Email is not valid";
                       });
@@ -2839,7 +2839,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   }
                   else if (widget.pass != null) {
                     String? validationMessage =
-                        ValidatePassword(widget.controller!.text);
+                        ValidatePassword(widget.controller!.text.trim());
                     if (validationMessage != null) {
                       setState(() {
                         _errorMessage = validationMessage;
@@ -2850,7 +2850,7 @@ class CustomTextFieldState extends State<CustomTextField> {
 
 
                   else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
+                      double.parse(widget.controller!.text.trim()) >
                           double.parse(widget.max_amount!))
                     setState(() {
                       _errorMessage = '${widget.error_mess}';

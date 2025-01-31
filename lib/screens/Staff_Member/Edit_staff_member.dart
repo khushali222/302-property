@@ -923,7 +923,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                               conpassword.text != initialconpass;
 
                               // Validate Name Field
-                              if (name.text.isEmpty) {
+                              if (name.text.trim().isEmpty) {
                                 setState(() {
                                   nameerror = true;
                                   namemessage = "Name is required";
@@ -935,7 +935,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                               }
 
                               // Validate Designation Field
-                              if (designation.text.isEmpty) {
+                              if (designation.text.trim().isEmpty) {
                                 setState(() {
                                   designationerror = true;
                                   designationmessage =
@@ -966,7 +966,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                               }
 
                               // Validate Email Field
-                              if (email.text.isEmpty) {
+                              if (email.text.trim().isEmpty) {
                                 setState(() {
                                   emailerror = true;
                                   emailmessage = "Email is required";
@@ -977,7 +977,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 });
                               }
 
-                              if (password.text.isEmpty) {
+                              if (password.text.trim().isEmpty) {
                                 setState(() {
                                   passworderror = true;
                                   passwordmessage = "Password is required";
@@ -1007,7 +1007,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 }
                               }
 
-                              if (conpassword.text.isEmpty) {
+                              if (conpassword.text.trim().isEmpty) {
                                 setState(() {
                                   conpassworderror = true;
                                   conpasswordmessage = "Confirm Password is required";
@@ -1058,12 +1058,12 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                   await StaffMemberRepository()
                                       .Edit_staff_member(
                                     adminId: adminId,
-                                    staffmemberName: name.text,
-                                    staffmemberDesignation: designation.text,
-                                    staffmemberPhoneNumber: phonenumber.text,
-                                    staffmemberEmail: email.text,
+                                    staffmemberName: name.text.trim(),
+                                    staffmemberDesignation: designation.text.trim(),
+                                    staffmemberPhoneNumber: phonenumber.text.trim(),
+                                    staffmemberEmail: email.text.trim(),
                                     Sid: widget.staff!.staffmemberId,
-                                    staffmemberPassword: password.text
+                                    staffmemberPassword: password.text.trim(),
                                   );
 
                                   // Update the staff details after successful edit

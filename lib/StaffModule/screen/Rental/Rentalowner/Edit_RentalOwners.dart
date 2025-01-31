@@ -2926,7 +2926,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   bool isFormValid = true;
 
                   // Validate each field and update the state accordingly
-                  if (name.text.isEmpty) {
+                  if (name.text.trim().isEmpty) {
                     setState(() {
                       nameerror = true;
                       namemessage = "required";
@@ -2938,7 +2938,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
 
-                  if (comname.text.isEmpty) {
+                  if (comname.text.trim().isEmpty) {
                     setState(() {
                       comnameerror = true;
                       comnamemessage = "required";
@@ -2950,7 +2950,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
 
-                  if (primaryemail.text.isEmpty) {
+                  if (primaryemail.text.trim().isEmpty) {
                     setState(() {
                       primaryemailerror = true;
                       primaryemailmessage = "required";
@@ -2966,7 +2966,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       primaryemailerror = false;
                     });
                   }
-                  if (alternativeemail.text.isNotEmpty) {
+                  if (alternativeemail.text.trim().isNotEmpty) {
                     if (alternativeemail.text == primaryemail.text) {
                       setState(() {
                         alternativeerror = true;
@@ -3078,7 +3078,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   // Prepare the processor list
                   List<ProcessorList> processorList = [];
                   _controllers.forEach((key, controller) {
-                    if (controller.text.isNotEmpty) {
+                    if (controller.text.trim().isNotEmpty) {
                       processorList.add(ProcessorList(processorId: controller.text));
                     }
                   });
@@ -3090,22 +3090,22 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     await RentalOwnerService().Edit_Rentalowners(
                       adminId: adminId,
                       rentalownerId: widget.rentalOwner.rentalownerId,
-                      rentalOwnerName: name.text,
-                      rentalOwnerCompanyName: comname.text,
-                      rentalOwnerPrimaryEmail: primaryemail.text,
-                      rentalOwnerAlternateEmail: alternativeemail.text,
-                      rentalOwnerPhoneNumber: phonenum.text,
-                      rentalOwnerHomeNumber: homenum.text,
-                      rentalOwnerBusinessNumber: officenum.text,
-                      startDate:reverseFormatDate(startdateController.text),
-                      endDate: reverseFormatDate(enddateController.text),
-                      texpayerId: taxid.text,
-                      textIdentityType: taxtype.text,
-                      city: city2.text,
-                      state: state2.text,
-                      streetAddress: street2.text,
-                      country: county2.text,
-                      postalCode: code2.text,
+                      rentalOwnerName: name.text.trim(),
+                      rentalOwnerCompanyName: comname.text.trim(),
+                      rentalOwnerPrimaryEmail: primaryemail.text.trim(),
+                      rentalOwnerAlternateEmail: alternativeemail.text.trim(),
+                      rentalOwnerPhoneNumber: phonenum.text.trim(),
+                      rentalOwnerHomeNumber: homenum.text.trim(),
+                      rentalOwnerBusinessNumber: officenum.text.trim(),
+                      startDate:reverseFormatDate(startdateController.text.trim()),
+                      endDate: reverseFormatDate(enddateController.text.trim()),
+                      texpayerId: taxid.text.trim(),
+                      textIdentityType: taxtype.text.trim(),
+                      city: city2.text.trim(),
+                      state: state2.text.trim(),
+                      streetAddress: street2.text.trim(),
+                      country: county2.text.trim(),
+                      postalCode: code2.text.trim(),
                       processorList: processorList,
                     );
 

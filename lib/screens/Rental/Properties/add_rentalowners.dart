@@ -2009,7 +2009,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        if (firstname.text.isEmpty) {
+                        if (firstname.text.trim().isEmpty) {
                           setState(() {
                             firstnameerror = true;
                             firstnamemessage = "required";
@@ -2019,7 +2019,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             firstnameerror = false;
                           });
                         }
-                        if (comname.text.isEmpty) {
+                        if (comname.text.trim().isEmpty) {
                           setState(() {
                             comnameerror = true;
                             comnamemessage = "required";
@@ -2029,7 +2029,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             comnameerror = false;
                           });
                         }
-                        if (primaryemail.text.isEmpty) {
+                        if (primaryemail.text.trim().isEmpty) {
                           setState(() {
                             primaryemailerror = true;
                             primaryemailmessage = "required";
@@ -2045,7 +2045,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                           });
                         }
 
-                        if (alternativeemail.text.isNotEmpty) {
+                        if (alternativeemail.text.trim().isNotEmpty) {
                           if (alternativeemail.text == primaryemail.text) {
                             setState(() {
                               alternativeerror = true;
@@ -2175,18 +2175,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             var adminId = prefs.getString("adminId");
                             Ownersdetails = RentalOwner(
                               rentalOwnerId: selectedOwner?.rentalOwnerId,
-                              rentalOwnerPhoneNumber: phonenum.text,
-                              rentalOwnerName: firstname.text,
-                              rentalOwnerCompanyName: comname.text,
-                              rentalOwnerPrimaryEmail: primaryemail.text,
-                              rentalOwnerAlternateEmail: alternativeemail.text,
-                              rentalOwnerHomeNumber: homenum.text,
-                              rentalOwnerBusinessNumber: businessnum.text,
-                              streetAddress: street2.text,
-                              city: city2.text,
-                              country: county2.text,
-                              state: state2.text,
-                              postalCode: code2.text,
+                              rentalOwnerPhoneNumber: phonenum.text.trim(),
+                              rentalOwnerName: firstname.text.trim(),
+                              rentalOwnerCompanyName: comname.text.trim(),
+                              rentalOwnerPrimaryEmail: primaryemail.text.trim(),
+                              rentalOwnerAlternateEmail: alternativeemail.text.trim(),
+                              rentalOwnerHomeNumber: homenum.text.trim(),
+                              rentalOwnerBusinessNumber: businessnum.text.trim(),
+                              streetAddress: street2.text.trim(),
+                              city: city2.text.trim(),
+                              country: county2.text.trim(),
+                              state: state2.text.trim(),
+                              postalCode: code2.text.trim(),
                               processorList: selectedProcessors,
                             );
                             print(Ownersdetails!.toJson());

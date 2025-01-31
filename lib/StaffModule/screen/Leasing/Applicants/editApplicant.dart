@@ -475,30 +475,30 @@ class _EditApplicantState extends State<EditApplicant> {
                                 // Create the applicant data map
                                 Map<String, dynamic> applicantData = {
                                   "applicant_firstName":
-                                  firstName.text.isNotEmpty
-                                      ? firstName.text
+                                  firstName.text.trim().isNotEmpty
+                                      ? firstName.text.trim()
                                       : 'N/A',
-                                  "applicant_lastName": lastName.text.isNotEmpty
-                                      ? lastName.text
+                                  "applicant_lastName": lastName.text.trim().isNotEmpty
+                                      ? lastName.text.trim()
                                       : 'N/A',
-                                  "applicant_email": email.text.isNotEmpty
-                                      ? email.text
+                                  "applicant_email": email.text.trim().isNotEmpty
+                                      ? email.text.trim()
                                       : 'N/A',
                                   "applicant_phoneNumber":
-                                  mobileNumber.text.isNotEmpty
-                                      ? mobileNumber.text
+                                  mobileNumber.text.trim().isNotEmpty
+                                      ? mobileNumber.text.trim()
                                       : 'N/A',
                                   "applicant_homeNumber":
-                                  homeNumber.text.isNotEmpty
-                                      ? homeNumber.text
+                                  homeNumber.text.trim().isNotEmpty
+                                      ? homeNumber.text.trim()
                                       : 'N/A',
                                   "applicant_telephoneNumber":
-                                  telePhoneNumber.text.isNotEmpty
-                                      ? telePhoneNumber.text
+                                  telePhoneNumber.text.trim().isNotEmpty
+                                      ? telePhoneNumber.text.trim()
                                       : 'N/A',
                                   "applicant_businessNumber":
-                                  bussinessNumber.text.isNotEmpty
-                                      ? bussinessNumber.text
+                                  bussinessNumber.text.trim().isNotEmpty
+                                      ? bussinessNumber.text.trim()
                                       : 'N/A',
                                 };
 

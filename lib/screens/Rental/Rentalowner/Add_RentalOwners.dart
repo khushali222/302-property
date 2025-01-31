@@ -3112,7 +3112,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               GestureDetector(
                 onTap: () async {
                   print("callllll");
-                  if (name.text.isEmpty) {
+                  if (name.text.trim().isEmpty) {
                     setState(() {
                       nameerror = true;
                       namemessage = "required";
@@ -3122,7 +3122,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       nameerror = false;
                     });
                   }
-                  if (comname.text.isEmpty) {
+                  if (comname.text.trim().isEmpty) {
                     setState(() {
                       comnameerror = true;
                       comnamemessage = "required";
@@ -3162,7 +3162,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       enddatederror = false;
                     });
                   }*/
-                  if (primaryemail.text.isEmpty) {
+                  if (primaryemail.text.trim().isEmpty) {
                     setState(() {
                       primaryemailerror = true;
                       primaryemailmessage = "required";
@@ -3177,12 +3177,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       primaryemailerror = false;
                     });
                   }
-                 if (alternativeemail.text.isEmpty) {
+                 if (alternativeemail.text.trim().isEmpty) {
                     setState(() {
                       alternativeerror = false;
 
                     });
-                  }else if(alternativeemail.text == primaryemail.text){
+                  }else if(alternativeemail.text.trim() == primaryemail.text.trim()){
                    setState(() {
                      alternativeerror = true;
                      alternativemessage = " email cannot be the same";
@@ -3362,7 +3362,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
 
                     List<ProcessorList> processorList = [];
                     _controllers.forEach((key, controller) {
-                      if (controller.text.isNotEmpty) {
+                      if (controller.text.trim().isNotEmpty) {
                         processorList
                             .add(ProcessorList(processorId: controller.text));
                       }
@@ -3373,24 +3373,24 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     var adminId = prefs.getString("adminId");
                     final RentalOwnerData rentalOwner = RentalOwnerData(
                       adminId: adminId,
-                      rentalOwnername: name.text,
-                      rentalOwnerLastName: lastname.text,
-                      rentalOwnerCompanyName: comname.text,
-                      birthDate: birthdateController.text,
-                      startDate:reverseFormatDate(startdateController.text),
-                      endDate: reverseFormatDate(enddateController.text),
-                      rentalOwnerPrimaryEmail: primaryemail.text,
-                      rentalOwnerAlternateEmail: alternativeemail.text,
-                      rentalOwnerPhoneNumber: phonenum.text,
-                      rentalOwnerHomeNumber: homenum.text,
-                      rentalOwnerBusinessNumber: officenum.text,
-                      streetAddress: street2.text,
-                      city: city2.text,
-                      state: state2.text,
-                      postalCode: code2.text,
-                      country: county2.text,
-                      textIdentityType: taxtype.text,
-                      texpayerId: taxid.text,
+                      rentalOwnername: name.text.trim(),
+                      rentalOwnerLastName: lastname.text.trim(),
+                      rentalOwnerCompanyName: comname.text.trim(),
+                      birthDate: birthdateController.text.trim(),
+                      startDate:reverseFormatDate(startdateController.text.trim()),
+                      endDate: reverseFormatDate(enddateController.text.trim()),
+                      rentalOwnerPrimaryEmail: primaryemail.text.trim(),
+                      rentalOwnerAlternateEmail: alternativeemail.text.trim(),
+                      rentalOwnerPhoneNumber: phonenum.text.trim(),
+                      rentalOwnerHomeNumber: homenum.text.trim(),
+                      rentalOwnerBusinessNumber: officenum.text.trim(),
+                      streetAddress: street2.text.trim(),
+                      city: city2.text.trim(),
+                      state: state2.text.trim(),
+                      postalCode: code2.text.trim(),
+                      country: county2.text.trim(),
+                      textIdentityType: taxtype.text.trim(),
+                      texpayerId: taxid.text.trim(),
                       // processorLists:processorIds,
                       processorList: processorList,
                     );

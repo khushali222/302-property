@@ -2277,12 +2277,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
 
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
-          "parts_quantity": int.tryParse(part['qtyController'].text) ?? 0,
+          "parts_quantity": int.tryParse(part['qtyController'].text.trim()) ?? 0,
           "account": part['selectedAccount'],
-          "description": part['descriptionController'].text,
+          "description": part['descriptionController'].text.trim(),
           "charge_type": "Workorder Charge",
-          "parts_price": double.tryParse(part['priceController'].text) ?? 0.0,
-          "amount": double.tryParse(part['totalController'].text) ?? 0.0,
+          "parts_price": double.tryParse(part['priceController'].text.trim()) ?? 0.0,
+          "amount": double.tryParse(part['totalController'].text.trim()) ?? 0.0,
         };
       }).toList();
       print(parts);
@@ -2290,10 +2290,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
         final workorder = await WorkOrderRepository()
             .addWorkOrder(
           adminId: id,
-          workSubject: subject.text,
+          workSubject: subject.text.trim(),
           staffMemberName: _selectedstaffId,
           workCategory: _selectedCategory,
-          workPerformed: perform.text,
+          workPerformed: perform.text.trim(),
           status: _selectedStatus,
           rentalAddress: properties[_selectedPropertyId],
           rentalUnit: units[_selectedUnitId],
@@ -2302,12 +2302,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           unitid: unitId,
           workOrderImages: _uploadedFileNames,
           vendorId: finalVendorId,
-          vendorNotes: vendornote.text,
+          vendorNotes: vendornote.text.trim(),
           priority: _selectedOption,
           isBillable: isChecked,
           workChargeTo: isChecked == 'Tenants',
           //  workChargeTo: "isbillable true hoy to static tenant mokli devanu",
-          date: _dateController.text,
+          date: _dateController.text.trim(),
           entry: _selectedEntry == 'yes',
           parts: parts,
           notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
@@ -4801,22 +4801,22 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
 
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
-          "parts_quantity": int.tryParse(part['qtyController'].text) ?? 0,
+          "parts_quantity": int.tryParse(part['qtyController'].text.trim()) ?? 0,
           "account": part['selectedAccount'],
-          "description": part['descriptionController'].text,
+          "description": part['descriptionController'].text.trim(),
           "charge_type": "Workorder Charge",
-          "parts_price": double.tryParse(part['priceController'].text) ?? 0.0,
-          "amount": double.tryParse(part['totalController'].text) ?? 0.0,
+          "parts_price": double.tryParse(part['priceController'].text.trim()) ?? 0.0,
+          "amount": double.tryParse(part['totalController'].text.trim()) ?? 0.0,
         };
       }).toList();
       print(parts);
       try {
         final workorder = await WorkOrderRepository().addWorkOrder(
           adminId: id,
-          workSubject: subject.text,
+          workSubject: subject.text.trim(),
           staffMemberName: _selectedStaffs,
           workCategory: _selectedCategory,
-          workPerformed: perform.text,
+          workPerformed: perform.text.trim(),
           status: _selectedStatus,
           rentalAddress: properties[_selectedPropertyId],
           rentalUnit: units[_selectedUnitId],
@@ -4825,12 +4825,12 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           unitid: unitId,
           workOrderImages: [],
           vendorId: vendorId,
-          vendorNotes: vendornote.text,
+          vendorNotes: vendornote.text.trim(),
           priority: _selectedOption,
           isBillable: isChecked,
           workChargeTo: isChecked == 'Tenants',
           //  workChargeTo: "isbillable true hoy to static tenant mokli devanu",
-          date: _dateController.text,
+          date: _dateController.text.trim(),
           entry: _selectedEntry == 'yes',
           parts: parts,
         );

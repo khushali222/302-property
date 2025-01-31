@@ -1791,20 +1791,20 @@ class _AddCardState extends State<AddCard> {
                                                     CardModel
                                                         cardwithOutVaultId =
                                                         CardModel(
-                                                      firstName: firstName.text,
-                                                      lastName: lastName.text,
-                                                      ccnumber: cardNumber.text
+                                                      firstName: firstName.text.trim(),
+                                                      lastName: lastName.text.trim(),
+                                                      ccnumber: cardNumber.text.trim()
                                                           .replaceAll(' ', ''),
                                                       ccexp:
-                                                          expirationDate.text,
-                                                      address1: address.text,
+                                                          expirationDate.text.trim(),
+                                                      address1: address.text.trim(),
                                                       address2: '',
-                                                      city: city.text,
-                                                      state: state.text,
-                                                      zip: zip.text,
-                                                      country: country.text,
-                                                      phone: phoneNumber.text,
-                                                      email: email.text,
+                                                      city: city.text.trim(),
+                                                      state: state.text.trim(),
+                                                      zip: zip.text.trim(),
+                                                      country: country.text.trim(),
+                                                      phone: phoneNumber.text.trim(),
+                                                      email: email.text.trim(),
                                                       company: comapanyName,
                                                       billingId: randomNumber,
                                                       adminId: id,
@@ -1813,32 +1813,32 @@ class _AddCardState extends State<AddCard> {
                                                     CardModel cardwithVaultId =
                                                         CardModel(
                                                             phone: phoneNumber
-                                                                .text,
+                                                                .text.trim(),
                                                             adminId: id,
                                                             company:
                                                                 comapanyName,
                                                             firstName:
-                                                                firstName.text,
+                                                                firstName.text.trim(),
                                                             lastName:
-                                                                lastName.text,
+                                                                lastName.text.trim(),
                                                             ccnumber: cardNumber
-                                                                .text
+                                                                .text.trim()
                                                                 .replaceAll(
                                                                     ' ', ''),
                                                             ccexp:
                                                                 expirationDate
-                                                                    .text,
+                                                                    .text.trim(),
                                                             address1:
-                                                                address.text,
+                                                                address.text.trim(),
                                                             address2: '',
-                                                            zip: zip.text,
-                                                            state: state.text,
-                                                            city: city.text,
+                                                            zip: zip.text.trim(),
+                                                            state: state.text.trim(),
+                                                            city: city.text.trim(),
                                                             billingId:
                                                                 randomNumber,
-                                                            email: email.text,
+                                                            email: email.text.trim(),
                                                             country:
-                                                                country.text,
+                                                                country.text.trim(),
                                                             customervaultid:
                                                                 customervaultid
                                                                     .toString());
@@ -2350,7 +2350,7 @@ class CustomTextFieldState extends State<CustomTextField> {
           validator: widget.optional!
               ? null
               : (value) {
-            if (widget.controller!.text.isEmpty) {
+            if (widget.controller!.text.trim().isEmpty) {
               setState(() {
                 if (widget.label == null)
                   _errorMessage = 'Please ${widget.hintText}';
@@ -2413,7 +2413,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             // }
             else if (widget.phone != null) {
               String formattedPhoneNumber =
-              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+              widget.controller!.text.trim().replaceAll(RegExp(r'\D'), '');
 
               // Removed the empty check
               if (formattedPhoneNumber.length != 10) {
@@ -2423,14 +2423,14 @@ class CustomTextFieldState extends State<CustomTextField> {
                 return '';
               }
             } else if (widget.email != null) {
-              if (!EmailValidator.validate(widget.controller!.text)) {
+              if (!EmailValidator.validate(widget.controller!.text.trim())) {
                 setState(() {
                   _errorMessage = "Email is not valid";
                 });
                 return '';
               }
             } else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text) >
+                double.parse(widget.controller!.text.trim()) >
                     double.parse(widget.max_amount!))
               setState(() {
                 _errorMessage = '${widget.error_mess}';
@@ -2542,7 +2542,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                           }
                         }
                         if (widget.cvv != null&& widget.allerror != null) {
-                          String formattedCVV = widget.controller!.text.replaceAll(RegExp(r'\D'), ''); // Remove non-digit characters
+                          String formattedCVV = widget.controller!.text.trim().replaceAll(RegExp(r'\D'), ''); // Remove non-digit characters
 
                           // Check if the CVV field is empty
                           if (formattedCVV.isEmpty) {

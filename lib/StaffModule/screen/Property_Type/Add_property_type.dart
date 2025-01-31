@@ -294,7 +294,7 @@ class _Add_propertyState extends State<Add_property> {
                           GestureDetector(
                             onTap: () async {
                               if (selectedValue == null ||
-                                  subtype.text.isEmpty) {
+                                  subtype.text.trim().isEmpty) {
                                 setState(() {
                                   iserror = true;
                                 });
@@ -310,7 +310,7 @@ class _Add_propertyState extends State<Add_property> {
                                     .addPropertyType(
                                   adminId: id!,
                                   propertyType: selectedValue,
-                                  propertySubType: subtype.text,
+                                  propertySubType: subtype.text.trim(),
                                   isMultiUnit: isChecked,
                                 )
                                     .then((value) {

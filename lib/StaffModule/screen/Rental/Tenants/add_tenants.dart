@@ -2614,17 +2614,17 @@ class CustomTextFieldState extends State<CustomTextField> {
     } else {
       // Validate uniqueness across all phone number controllers
       if (widget.telephoneController != null &&
-          widget.telephoneController?.text == value) {
+          widget.telephoneController?.text.trim() == value) {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
       } else if (widget.otherController != null &&
-          widget.otherController?.text == value) {
+          widget.otherController?.text.trim() == value) {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
       } else if (widget.businessController != null &&
-          widget.businessController?.text == value) {
+          widget.businessController?.text.trim() == value) {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
@@ -2644,12 +2644,12 @@ class CustomTextFieldState extends State<CustomTextField> {
     } else {
       // Check if email is not the same as another email (example: other controllers)
       if (widget.alterController != null &&
-          widget.alterController?.text == value) {
+          widget.alterController?.text.trim() == value) {
         setState(() {
           _errorMessage = 'Email cannot be the same';
         });
       }else if (widget.emrgencyController != null &&
-          widget.emrgencyController?.text == value) {
+          widget.emrgencyController?.text.trim() == value) {
         setState(() {
           _errorMessage = 'Email cannot be the same';
         });
@@ -2670,7 +2670,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-                  if (widget.controller!.text.isEmpty) {
+                  if (widget.controller!.text.trim().isEmpty) {
                     return null;
                   } else if (widget.phone != null) {
                     // String formattedPhoneNumber =
@@ -2682,7 +2682,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     //   });
                     //   return '';
                     // }
-                    _validatePhoneNumber(widget.controller!.text);
+                    _validatePhoneNumber(widget.controller!.text.trim());
                     return '';
                   }else if (widget.email != null) {
                     // if (!EmailValidator.validate(widget.controller!.text)) {
@@ -2691,12 +2691,12 @@ class CustomTextFieldState extends State<CustomTextField> {
                     //   });
                     //   return '';
                     // }
-                    _validateEmail(widget.controller!.text);
+                    _validateEmail(widget.controller!.text.trim());
 
                     // Return an empty string or handle accordingly
                     return '';
                   } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
+                      double.parse(widget.controller!.text.trim()) >
                           double.parse(widget.max_amount!))
                     setState(() {
                       _errorMessage = '${widget.error_mess}';
@@ -2705,7 +2705,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   return null;
                 }
               : (value) {
-                  if (widget.controller!.text.isEmpty) {
+                  if (widget.controller!.text.trim().isEmpty) {
                     setState(() {
                       if (widget.label == null)
                         _errorMessage = 'Please ${widget.hintText}';
@@ -2726,7 +2726,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     }
                   } else if (widget.pass != null) {
                     String? validationMessage =
-                        ValidatePassword(widget.controller!.text);
+                        ValidatePassword(widget.controller!.text.trim());
                     if (validationMessage != null) {
                       setState(() {
                         _errorMessage = validationMessage;
@@ -2734,14 +2734,14 @@ class CustomTextFieldState extends State<CustomTextField> {
                       return '';
                     }
                   } else if (widget.email != null) {
-                    if (!EmailValidator.validate(widget.controller!.text)) {
+                    if (!EmailValidator.validate(widget.controller!.text.trim())) {
                       setState(() {
                         _errorMessage = "Email is not valid";
                       });
                       return '';
                     }
                   } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
+                      double.parse(widget.controller!.text.trim()) >
                           double.parse(widget.max_amount!))
                     setState(() {
                       _errorMessage = '${widget.error_mess}';

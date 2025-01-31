@@ -2719,7 +2719,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               GestureDetector(
                 onTap: () async {
                   print("callllll");
-                  if (name.text.isEmpty) {
+                  if (name.text.trim().isEmpty) {
                     setState(() {
                       nameerror = true;
                       namemessage = "required";
@@ -2729,7 +2729,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       nameerror = false;
                     });
                   }
-                  if (comname.text.isEmpty) {
+                  if (comname.text.trim().isEmpty) {
                     setState(() {
                       comnameerror = true;
                       comnamemessage = "required";
@@ -2769,12 +2769,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       enddatederror = false;
                     });
                   }*/
-                  if (primaryemail.text.isEmpty) {
+                  if (primaryemail.text.trim().isEmpty) {
                     setState(() {
                       primaryemailerror = true;
                       primaryemailmessage = "required";
                     });
-                  } else if (!EmailValidator.validate(primaryemail.text)) {
+                  } else if (!EmailValidator.validate(primaryemail.text.trim())) {
                     setState(() {
                       primaryemailerror = true;
                       primaryemailmessage = "Email is not valid";
@@ -2794,7 +2794,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       alternativeerror = false;
                     });
                   }*/
-                  if (alternativeemail.text.isEmpty) {
+                  if (alternativeemail.text.trim().isEmpty) {
                     setState(() {
                       alternativeerror = false;
 
@@ -2999,7 +2999,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
 
                     List<ProcessorList> processorList = [];
                     _controllers.forEach((key, controller) {
-                      if (controller.text.isNotEmpty) {
+                      if (controller.text.trim().isNotEmpty) {
                         processorList
                             .add(ProcessorList(processorId: controller.text));
                       }
@@ -3010,23 +3010,23 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     var adminId = prefs.getString("adminId");
                     final RentalOwnerData rentalOwner = RentalOwnerData(
                       adminId: adminId,
-                      rentalOwnername: name.text,
-                      rentalOwnerLastName: lastname.text,
-                      rentalOwnerCompanyName: comname.text,
-                      startDate:reverseFormatDate(startdateController.text),
-                      endDate: reverseFormatDate(enddateController.text),
-                      rentalOwnerPrimaryEmail: primaryemail.text,
+                      rentalOwnername: name.text.trim(),
+                      rentalOwnerLastName: lastname.text.trim(),
+                      rentalOwnerCompanyName: comname.text.trim(),
+                      startDate:reverseFormatDate(startdateController.text.trim()),
+                      endDate: reverseFormatDate(enddateController.text.trim()),
+                      rentalOwnerPrimaryEmail: primaryemail.text.trim(),
                       rentalOwnerAlternateEmail: alternativeemail.text,
-                      rentalOwnerPhoneNumber: phonenum.text,
-                      rentalOwnerHomeNumber: homenum.text,
-                      rentalOwnerBusinessNumber: officenum.text,
-                      streetAddress: street2.text,
-                      city: city2.text,
-                      state: state2.text,
-                      postalCode: code2.text,
-                      country: county2.text,
-                      textIdentityType: taxtype.text,
-                      texpayerId: taxid.text,
+                      rentalOwnerPhoneNumber: phonenum.text.trim(),
+                      rentalOwnerHomeNumber: homenum.text.trim(),
+                      rentalOwnerBusinessNumber: officenum.text.trim(),
+                      streetAddress: street2.text.trim(),
+                      city: city2.text.trim(),
+                      state: state2.text.trim(),
+                      postalCode: code2.text.trim(),
+                      country: county2.text.trim(),
+                      textIdentityType: taxtype.text.trim(),
+                      texpayerId: taxid.text.trim(),
                       // processorLists:processorIds,
                       processorList: processorList,
                     );

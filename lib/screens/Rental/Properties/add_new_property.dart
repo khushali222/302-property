@@ -3913,7 +3913,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             });
                           }
 
-                          if (address.text.isEmpty) {
+                          if (address.text.trim().isEmpty) {
                             setState(() {
                               addresserror = true;
                               addressmessage = "required";
@@ -3923,7 +3923,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               addresserror = false;
                             });
                           }
-                          if (city.text.isEmpty) {
+                          if (city.text.trim().isEmpty) {
                             setState(() {
                               cityerror = true;
                               citymessage = "required";
@@ -3933,7 +3933,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               cityerror = false;
                             });
                           }
-                          if (state.text.isEmpty) {
+                          if (state.text.trim().isEmpty) {
                             setState(() {
                               stateerror = true;
                               statemessage = "required";
@@ -3943,7 +3943,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               stateerror = false;
                             });
                           }
-                          if (country.text.isEmpty) {
+                          if (country.text.trim().isEmpty) {
                             setState(() {
                               countryerror = true;
                               countrymessage = "required";
@@ -3953,7 +3953,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               countryerror = false;
                             });
                           }
-                          if (postalcode.text.isEmpty) {
+                          if (postalcode.text.trim().isEmpty) {
                             setState(() {
                               postalcodeerror = true;
                               postalcodemessage = "required";
@@ -4001,15 +4001,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             final updatedOwner = RentalOwner(
                               rentalOwnerId:
                                   ownerDetails!.rentalOwnerId ?? null,
-                              rentalOwnerName: firstnameController.text,
-                              rentalOwnerCompanyName: comnameController.text,
+                              rentalOwnerName: firstnameController.text.trim(),
+                              rentalOwnerCompanyName: comnameController.text.trim(),
                               rentalOwnerPrimaryEmail:
-                                  primaryemailController.text,
-                              rentalOwnerPhoneNumber: phonenumController.text,
-                              city: cityController.text,
-                              state: stateController.text,
-                              country: countyController.text,
-                              postalCode: codeController.text,
+                                  primaryemailController.text.trim(),
+                              rentalOwnerPhoneNumber: phonenumController.text.trim(),
+                              city: cityController.text.trim(),
+                              state: stateController.text.trim(),
+                              country: countyController.text.trim(),
+                              postalCode: codeController.text.trim(),
                             );
                             Provider.of<OwnerDetailsProvider>(context,
                                     listen: false)
@@ -4038,11 +4038,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   adminId: adminId,
                                   propertyId:
                                       selectedpropertytypedata!.propertyId,
-                                  address: address.text,
-                                  city: city.text,
-                                  state: state.text,
-                                  country: country.text,
-                                  postcode: postalcode.text,
+                                  address: address.text.trim(),
+                                  city: city.text.trim(),
+                                  state: state.text.trim(),
+                                  country: country.text.trim(),
+                                  postcode: postalcode.text.trim(),
                                   staffMemberId: sid,
                                   processor_id: processorId);
 
@@ -4051,7 +4051,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 List<TextEditingController> firstControllers =
                                     propertyGroupControllers[0];
                                 bool isFirstBlank = firstControllers.every(
-                                    (controller) => controller.text.isEmpty);
+                                    (controller) => controller.text.trim().isEmpty);
 
                                 if (isFirstBlank) {
                                   propertyGroupControllers.removeAt(0);
@@ -4067,9 +4067,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   }
                                   List<TextEditingController> controllers =
                                       propertyGroupControllers[i];
-                                  units[i].unit = controllers[0].text;
-                                  units[i].address = controllers[1].text;
-                                  units[i].sqft = controllers[2].text;
+                                  units[i].unit = controllers[0].text.trim();
+                                  units[i].address = controllers[1].text.trim();
+                                  units[i].sqft = controllers[2].text.trim();
                                   units[i].Image = propertyGroupImagenames[i];
                                   //      units[i].bath = controllers[3].text;
                                   //     units[i].bed = controllers[4].text;
@@ -4091,11 +4091,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   }
                                   List<TextEditingController> controllers =
                                       propertyGroupControllers[i];
-                                  units[i].unit = controllers[0].text;
-                                  units[i].address = controllers[1].text;
-                                  units[i].sqft = controllers[2].text;
-                                  units[i].bath = controllers[3].text;
-                                  units[i].bed = controllers[4].text;
+                                  units[i].unit = controllers[0].text.trim();
+                                  units[i].address = controllers[1].text.trim();
+                                  units[i].sqft = controllers[2].text.trim();
+                                  units[i].bath = controllers[3].text.trim();
+                                  units[i].bed = controllers[4].text.trim();
                                   units[i].Image = propertyGroupImagenames[i];
 //                                  units[i].unit = controllers[0].text;
                                 }
@@ -4116,9 +4116,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   List<TextEditingController> controllers =
                                       propertyGroupControllers[i];
                                   // print(controllers.length);
-                                  units[i].sqft = controllers[0].text;
-                                  units[i].bath = controllers[1].text;
-                                  units[i].bed = controllers[2].text;
+                                  units[i].sqft = controllers[0].text.trim();
+                                  units[i].bath = controllers[1].text.trim();
+                                  units[i].bed = controllers[2].text.trim();
                                   units[i].Image = propertyGroupImagenames[i];
 //                                  units[i].unit = controllers[0].text;
                                 }
@@ -4133,7 +4133,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   }
                                   List<TextEditingController> controllers =
                                       propertyGroupControllers[i];
-                                  units[i].sqft = controllers[0].text;
+                                  units[i].sqft = controllers[0].text.trim();
                                   units[i].Image = propertyGroupImagenames[i];
                                 }
 

@@ -356,19 +356,19 @@ class _EditApplicantState extends State<EditApplicant> {
                             bool isFormValid = true;
 
                             // Validate each field and update the state accordingly
-                            if (firstName.text.isEmpty) {
+                            if (firstName.text.trim().isEmpty) {
                               setState(() {
                                 isFormValid = false;
                               });
                             }
 
-                            if (lastName.text.isEmpty) {
+                            if (lastName.text.trim().isEmpty) {
                               setState(() {
                                 isFormValid = false;
                               });
                             }
 
-                            if (email.text.isEmpty) {
+                            if (email.text.trim().isEmpty) {
                               setState(() {
                                 isFormValid = false;
                               });
@@ -408,30 +408,30 @@ class _EditApplicantState extends State<EditApplicant> {
                                 // Create the applicant data map
                                 Map<String, dynamic> applicantData = {
                                   "applicant_firstName":
-                                      firstName.text.isNotEmpty
-                                          ? firstName.text
+                                      firstName.text.trim().isNotEmpty
+                                          ? firstName.text.trim()
                                           : '',
-                                  "applicant_lastName": lastName.text.isNotEmpty
-                                      ? lastName.text
+                                  "applicant_lastName": lastName.text.trim().isNotEmpty
+                                      ? lastName.text.trim()
                                       : '',
-                                  "applicant_email": email.text.isNotEmpty
-                                      ? email.text
+                                  "applicant_email": email.text.trim().isNotEmpty
+                                      ? email.text.trim()
                                       : '',
                                   "applicant_phoneNumber":
-                                      mobileNumber.text.isNotEmpty
-                                          ? mobileNumber.text
+                                      mobileNumber.text.trim().isNotEmpty
+                                          ? mobileNumber.text.trim()
                                           : '',
                                   "applicant_homeNumber":
-                                      homeNumber.text.isNotEmpty
-                                          ? homeNumber.text
+                                      homeNumber.text.trim().isNotEmpty
+                                          ? homeNumber.text.trim()
                                           : '',
                                   "applicant_telephoneNumber":
-                                      telePhoneNumber.text.isNotEmpty
-                                          ? telePhoneNumber.text
+                                      telePhoneNumber.text.trim().isNotEmpty
+                                          ? telePhoneNumber.text.trim()
                                           : '',
                                   "applicant_businessNumber":
-                                      bussinessNumber.text.isNotEmpty
-                                          ? bussinessNumber.text
+                                      bussinessNumber.text.trim().isNotEmpty
+                                          ? bussinessNumber.text.trim()
                                           : '',
                                 };
 
