@@ -89,6 +89,7 @@ dependencies:
   encrypt:
   credit_card_validator:
   url_launcher: ^6.1.10
+  timeago:
   # pdf:
 
 

@@ -332,12 +332,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        if (email.text.isEmpty) {
+                        if (email.text.trim().isEmpty) {
                           setState(() {
                             emailerror = true;
                             emailmessage = "Email is required";
                           });
-                        } else if (!EmailValidator.validate(email.text)) {
+                        } else if (!EmailValidator.validate(email.text.trim())) {
                           setState(() {
                             emailerror = true;
                             emailmessage = "Email is not valid";
@@ -355,7 +355,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       }
                       else if (!emailerror) {
                         // If email is valid, send OTP
-                        sendOTP(email.text);
+                        sendOTP(email.text.trim());
                       }
                     },
                     child: Center(

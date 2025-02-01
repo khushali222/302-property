@@ -2267,7 +2267,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       "memo": selected_account == "rent"
                                           ? "Rent Income"
                                           : "Payment",
-                                      "date": _startDate.text,
+                                      "date": _startDate.text.trim(),
                                       "charge_type": selected_account == "rent"
                                           ? "Rent"
                                           : "Payment",
@@ -2292,7 +2292,7 @@ print('start date ${_startDate.text}');
                                     surcharge: "${surchargeamount}",
                                     amount: "${totalamount}",
                                     tenantId: widget.tenantId,
-                                    date: reverseFormatDate(_startDate.text),
+                                    date: reverseFormatDate(_startDate.text.trim()),
                                     address1: cardDetails[selectedcardindex!]
                                         .address_1!,
                                     processorId: "",

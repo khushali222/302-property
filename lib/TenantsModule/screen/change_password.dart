@@ -1208,7 +1208,7 @@ class _Change_passwordState extends State<Change_password> {
     String? token = prefs.getString('token');
     String? email = prefs.getString('email');
     Map<String,dynamic> values =   {
-    'password':password.text
+    'password':password.text.trim()
     };
 
 
@@ -1227,7 +1227,7 @@ class _Change_passwordState extends State<Change_password> {
     var responseData = json.decode(response.body);
 
     if (responseData["statusCode"] == 200) {
-      _savePassword(password.text);
+      _savePassword(password.text.trim());
       Fluttertoast.showToast(msg: responseData["message"]);
 
       return responseData;
@@ -1302,7 +1302,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       children: <Widget>[
         FormField<String>(
           validator: (value) {
-            if (widget.controller!.text.isEmpty) {
+            if (widget.controller!.text.trim().isEmpty) {
               setState(() {
                 if(widget.label == null)
                   _errorMessage = 'Please ${widget.hintText}';
@@ -1311,7 +1311,7 @@ class CustomTextFieldState extends State<CustomTextField> {
               });
               return '';
             }
-            else if (widget.matchingPasswordController != null && widget.controller!.text != widget.matchingPasswordController!.text) {
+            else if (widget.matchingPasswordController != null && widget.controller!.text.trim() != widget.matchingPasswordController!.text.trim()) {
               setState(() {
                 _errorMessage = 'Password does not match';
               });

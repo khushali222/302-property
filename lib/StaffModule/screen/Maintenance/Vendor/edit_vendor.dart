@@ -2125,7 +2125,7 @@ class CustomTextFieldState extends State<CustomTextField> {
               });
               return '';
             }else if (widget.phone != null) {
-              String formattedPhoneNumber = widget.controller!.text
+              String formattedPhoneNumber = widget.controller!.text.trim()
                   .replaceAll(RegExp(r'\D'), '');
 
               // Removed the empty check
@@ -2136,14 +2136,14 @@ class CustomTextFieldState extends State<CustomTextField> {
                 return '';
               }
             } else if (widget.email != null) {
-              if (!EmailValidator.validate(widget.controller!.text)) {
+              if (!EmailValidator.validate(widget.controller!.text.trim())) {
                 setState(() {
                   _errorMessage = "Email is not valid";
                 });
                 return '';
               }
             } else if (widget.pass != null) {
-              String? validationMessage = ValidatePassword(widget.controller!.text);
+              String? validationMessage = ValidatePassword(widget.controller!.text.trim());
               if (validationMessage != null) {
                 setState(() {
                   _errorMessage =

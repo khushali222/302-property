@@ -5737,6 +5737,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                         () async {
                                                                       if (sqft3
                                                                           .text
+                                                                          .trim()
                                                                           .isEmpty) {
                                                                         setState(
                                                                             () {
@@ -6935,11 +6936,13 @@ class _Summery_pageState extends State<Summery_page>
                                                 if (_uploadedFileNames.length !=
                                                     _images.length)
                                                   await _uploadAllImages();
-                                                if (unitnum.text.isEmpty ||
-                                                    street3.text.isEmpty ||
-                                                    sqft3.text.isEmpty ||
-                                                    bath3.text.isEmpty ||
-                                                    bed3.text.isEmpty) {
+                                                if (unitnum.text.trim().isEmpty ||
+                                                    street3.text
+                                                        .trim()
+                                                        .isEmpty ||
+                                                    sqft3.text.trim().isEmpty ||
+                                                    bath3.text.trim().isEmpty ||
+                                                    bed3.text.trim().isEmpty) {
                                                   setState(() {
                                                     iserror = true;
                                                   });
@@ -6959,15 +6962,18 @@ class _Summery_pageState extends State<Summery_page>
                                                           rentalId: widget
                                                               .properties
                                                               .rentalId,
-                                                          rentalunit:
-                                                              unitnum.text,
+                                                          rentalunit: unitnum
+                                                              .text
+                                                              .trim(),
                                                           rentalunitadress:
-                                                              street3.text,
+                                                              street3.text
+                                                                  .trim(),
                                                           rentalsqft:
-                                                              sqft3.text,
+                                                              sqft3.text.trim(),
                                                           rentalbath:
-                                                              bath3.text,
-                                                          rentalbed: bed3.text,
+                                                              bath3.text.trim(),
+                                                          rentalbed:
+                                                              bed3.text.trim(),
                                                           rentalImages:
                                                               _uploadedFileNames!)
                                                       .then((value) async {
@@ -6984,15 +6990,18 @@ class _Summery_pageState extends State<Summery_page>
                                                           rentalId: widget
                                                               .properties
                                                               .rentalId,
-                                                          rentalunit:
-                                                              unitnum.text,
+                                                          rentalunit: unitnum
+                                                              .text
+                                                              .trim(),
                                                           rentalunitadress:
-                                                              street3.text,
+                                                              street3.text
+                                                                  .trim(),
                                                           rentalsqft:
-                                                              sqft3.text,
+                                                              sqft3.text.trim(),
                                                           rentalbath:
-                                                              bath3.text,
-                                                          rentalbed: bed3.text,
+                                                              bath3.text.trim(),
+                                                          rentalbed:
+                                                              bed3.text.trim(),
                                                           rentalImages:
                                                               _uploadedFileNames!));
                                                     });
@@ -7425,9 +7434,11 @@ class _Summery_pageState extends State<Summery_page>
                                                 if (_uploadedFileNames.length !=
                                                     _images.length)
                                                   await _uploadAllImages();
-                                                if (unitnum.text.isEmpty ||
-                                                    street3.text.isEmpty ||
-                                                    sqft3.text.isEmpty) {
+                                                if (unitnum.text.trim().isEmpty ||
+                                                    street3.text
+                                                        .trim()
+                                                        .isEmpty ||
+                                                    sqft3.text.trim().isEmpty) {
                                                   setState(() {
                                                     iserror = true;
                                                   });
@@ -7450,11 +7461,13 @@ class _Summery_pageState extends State<Summery_page>
                                                               .properties
                                                               .rentalId,
                                                           rentalunitadress:
-                                                              street3.text,
+                                                              street3.text
+                                                                  .trim(),
                                                           rentalsqft:
-                                                              sqft3.text,
-                                                          rentalunit:
-                                                              unitnum.text,
+                                                              sqft3.text.trim(),
+                                                          rentalunit: unitnum
+                                                              .text
+                                                              .trim(),
                                                           rentalImages:
                                                               _uploadedFileNames!)
                                                       .then((value) {
@@ -7468,10 +7481,11 @@ class _Summery_pageState extends State<Summery_page>
                                                             .properties
                                                             .rentalId,
                                                         rentalunitadress:
-                                                            street3.text,
-                                                        rentalsqft: sqft3.text,
+                                                            street3.text.trim(),
+                                                        rentalsqft:
+                                                            sqft3.text.trim(),
                                                         rentalunit:
-                                                            unitnum.text,
+                                                            unitnum.text.trim(),
                                                       ));
                                                     });
                                                     reload_Screen();
@@ -8940,7 +8954,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     GestureDetector(
                                                                                       onTap: () async {
                                                                                         await _uploadAllImages();
-                                                                                        if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty || bath3.text.isEmpty || bed3.text.isEmpty) {
+                                                                                        if (unitnum.text.trim().isEmpty || street3.text.trim().isEmpty || sqft3.text.trim().isEmpty || bath3.text.trim().isEmpty || bed3.text.trim().isEmpty) {
                                                                                           setState(() {
                                                                                             iserror = true;
                                                                                           });
@@ -8954,12 +8968,12 @@ class _Summery_pageState extends State<Summery_page>
                                                                                           String? id = prefs.getString("adminId");
                                                                                           Properies_summery_Repo()
                                                                                               .Editunit(
-                                                                                                  rentalunit: unitnum.text,
+                                                                                                  rentalunit: unitnum.text.trim(),
                                                                                                   rentalImages: _imageUrls,
-                                                                                                  rentalsqft: sqft3.text,
-                                                                                                  rentalunitadress: street3.text,
-                                                                                                  rentalbath: bath3.text,
-                                                                                                  rentalbed: bed3.text,
+                                                                                                  rentalsqft: sqft3.text.trim(),
+                                                                                                  rentalunitadress: street3.text.trim(),
+                                                                                                  rentalbath: bath3.text.trim(),
+                                                                                                  rentalbed: bed3.text.trim(),
                                                                                                   unitId: Propertytype.unitId,
                                                                                                   adminId: id,
                                                                                                   // rentalImages: _imageUrls,
@@ -9791,7 +9805,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     GestureDetector(
                                                                                       onTap: () async {
                                                                                         await _uploadAllImages();
-                                                                                        if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty) {
+                                                                                        if (unitnum.text.trim().isEmpty || street3.text.trim().isEmpty || sqft3.text.trim().isEmpty) {
                                                                                           setState(() {
                                                                                             iserror = true;
                                                                                           });
@@ -9809,10 +9823,10 @@ class _Summery_pageState extends State<Summery_page>
 
                                                                                           Properies_summery_Repo()
                                                                                               .Editunit(
-                                                                                            rentalunit: unitnum.text,
-                                                                                            rentalsqft: sqft3.text,
+                                                                                            rentalunit: unitnum.text.trim(),
+                                                                                            rentalsqft: sqft3.text.trim(),
                                                                                             rentalImages: combinedImageUrls,
-                                                                                            rentalunitadress: street3.text,
+                                                                                            rentalunitadress: street3.text.trim(),
                                                                                             unitId: Propertytype.unitId!,
                                                                                             rentalId: Propertytype.rentalId!,
                                                                                           )
@@ -12074,9 +12088,12 @@ class _Summery_pageState extends State<Summery_page>
                     return SingleChildScrollView(
                       child: Column(
                         children: [
+                          if (data.isNotEmpty)
                           SizedBox(height: 20),
+                          if (data.isNotEmpty)
                           _buildHeaders(),
                           SizedBox(height: 20),
+                          if (data.isNotEmpty)
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
@@ -12543,7 +12560,34 @@ class _Summery_pageState extends State<Summery_page>
                               }).toList(),
                             ),
                           ),
+                          if (data.isNotEmpty)
                           SizedBox(height: 20),
+                          if (data.isEmpty)
+                            Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          if (data.isNotEmpty)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [

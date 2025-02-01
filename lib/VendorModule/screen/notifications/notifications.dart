@@ -5,7 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 import '../../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../../../widgets/titleBar.dart';
@@ -218,14 +218,15 @@ class _notificationsState extends State<notifications> {
                                                 color: blueColor
                                             ),
                                           ),
-                                          Text(   notification['createdAt']?.isEmpty ?? true
-                                              ? 'No date available'
-                                              : formatNotificationDateTime(DateTime.parse(notification['createdAt'] ?? '')),
+                                          Text(
+                                            notification['createdAt']?.isEmpty ?? true
+                                                ? 'No date available'
+                                                : timeago.format(DateTime.parse(notification['createdAt']).toLocal(), locale: 'en_custom'),
                                             style: TextStyle(
                                               color: Colors.black.withOpacity(.7),
-                                              fontSize: 14
-
-                                          ),)
+                                              fontSize: 14,
+                                            ),
+                                          )
                                         ],
                                       ),
                                       Spacer(),

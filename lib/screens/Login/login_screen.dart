@@ -114,7 +114,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       Uri.parse('$Api_url/api/auth/check_role'),
       // Uri.parse('$Api_url/api/admin/check_role'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email.text}),
+      body: jsonEncode({'email': email.text.trim()}),
     );
     print(response.body);
     if (response.statusCode == 200) {
@@ -896,12 +896,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                         ),
                         InkWell(
                           onTap: () {
-                            if (email.text.isEmpty) {
+                            if (email.text.trim().isEmpty) {
                               setState(() {
                                 emailerror = true;
                                 emailmessage = "Email is required";
                               });
-                            } else if (!EmailValidator.validate(email.text)) {
+                            } else if (!EmailValidator.validate(email.text.trim())) {
                               setState(() {
                                 emailerror = true;
                                 emailmessage = "Email is not valid";
@@ -1104,12 +1104,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                         GestureDetector(
                           onTap: () async {
                             setState(() {
-                              if (email.text.isEmpty) {
+                              if (email.text.trim().isEmpty) {
                                 setState(() {
                                   emailerror = true;
                                   emailmessage = "Email is required";
                                 });
-                              } else if (!EmailValidator.validate(email.text)) {
+                              } else if (!EmailValidator.validate(email.text.trim())) {
                                 setState(() {
                                   emailerror = true;
                                   emailmessage = "Email is not valid";
@@ -1120,7 +1120,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   //firstnamemessage = "Firstname is required";
                                 });
                               }
-                              if (password.text.isEmpty) {
+                              if (password.text.trim().isEmpty) {
                                 setState(() {
                                   passworderror = true;
                                   passwordmessage = "Password is required";
@@ -1534,8 +1534,8 @@ class _Login_ScreenState extends State<Login_Screen> {
     // print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
     final response =
         await http.post(Uri.parse('${Api_url}/api/auth/login'), body: {
-      "email": email.text,
-      "password": password.text,
+      "email": email.text.trim(),
+      "password": password.text.trim(),
       "admin_id": adminId,
       "role": rolename.toLowerCase(),
       "company": selectedCompany,
@@ -1572,8 +1572,8 @@ class _Login_ScreenState extends State<Login_Screen> {
     });
     print(selectedrole);
     print({
-      "email": email.text,
-      "password": password.text,
+      "email": email.text.trim(),
+      "password": password.text.trim(),
       "role": selectedrole,
       "admin_id": adminId,
       "user_id": userId,
@@ -1582,8 +1582,8 @@ class _Login_ScreenState extends State<Login_Screen> {
     final response =
         await http.post(Uri.parse('${Api_url}/api/auth/login'),
             body: {
-      "email": email.text,
-      "password": password.text,
+      "email": email.text.trim(),
+      "password": password.text.trim(),
       "role": selectedrole,
       "admin_id": adminId,
           "user_id":userId,

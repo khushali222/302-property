@@ -1826,7 +1826,7 @@ class _enterChargeState extends State<enterCharge> {
                                       }).toList();
 
                                       int totalAmount =
-                                          int.tryParse(Amount.text) ?? 0;
+                                          int.tryParse(Amount.text.trim()) ?? 0;
                                       Charge charge = Charge(
                                         adminId: adminId,
                                         isLeaseAdded: false,

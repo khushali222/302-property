@@ -3575,7 +3575,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
-                                            .text), // Set the date to the desired date
+                                            .text.trim()), // Set the date to the desired date
                                         'balance': charges_balances[
                                             index], // Add balance from charges_balances list
                                       },

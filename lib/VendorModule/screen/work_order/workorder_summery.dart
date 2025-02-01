@@ -110,7 +110,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
         },
       ),
       backgroundColor: Colors.white,
-     /* drawer: Drawer(
+      /* drawer: Drawer(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
@@ -210,7 +210,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
           Row(
             children: [
               Spacer(),
-            /*  GestureDetector(
+              /*  GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -242,14 +242,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
               ),
               GestureDetector(
                 onTap: () async{
-                var getback = await  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Edit_Workorder(workorderId: widget.workorder_id!,)));
-                if(getback == true){
-                  setState(() {
-                    futureworkorderSummary =
-                        WorkOrderRepository.getworkorderSummary(widget.workorder_id!);
-                  });
+                  var getback = await  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Edit_Workorder(workorderId: widget.workorder_id!,)));
+                  if(getback == true){
+                    setState(() {
+                      futureworkorderSummary =
+                          WorkOrderRepository.getworkorderSummary(widget.workorder_id!);
+                    });
 
-                }
+                  }
 
                 },
                 child: Material(
@@ -327,10 +327,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               indicatorWeight: 5,
                               //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
                               indicatorColor:
-                                 blueColor,
+                              blueColor,
                               labelColor:blueColor,
                               unselectedLabelColor:
-                                 blueColor,
+                              blueColor,
                               tabs: [
                                 const Tab(text: 'Summary'),
                                 const Tab(
@@ -481,7 +481,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         height: 8,
                                       ),
                                       Container(
-                                        width: 150,
+                                          width: 150,
                                           child: Text(
                                             '${summery.workPerformed}',
                                             style: TextStyle(color: blueColor),
@@ -547,7 +547,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       ),
                                       Container(
                                           child: Text(
-                                            '${summery.entryAllowed}',
+                                            '${summery.entryAllowed!?"Yes":"No"}',
                                             style: TextStyle(color: blueColor),
                                           )),
                                     ],
@@ -1111,7 +1111,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   4: FlexColumnWidth(2),
                                 },
                                 children: [
-                                   TableRow(children: [
+                                  TableRow(children: [
                                     Padding(
                                       padding: EdgeInsets.all(8.0),
                                       child: Text('QTY',
@@ -1207,7 +1207,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold)),
                                     ),
-                                     Padding(
+                                    Padding(
                                       padding: EdgeInsets.all(8.0),
                                       child: Text("\$${grandTotal.toString()}",style: TextStyle(
                                           fontWeight: FontWeight.bold)),
@@ -1379,23 +1379,67 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width > 500
+                                          ? 200
+                                          : 180,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 1),
                                         child: Text(
                                           '${summery.workSubject}',
-                                          maxLines: 5,
-                                          textAlign: TextAlign.justify,
+                                          maxLines: 5, // Set maximum number of lines
+                                          overflow: TextOverflow
+                                              .ellipsis, // Handle overflow with ellipsis
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold, color: blueColor),
-                                        )),
+                                              fontSize:
+                                              MediaQuery.of(context).size.width <
+                                                  500
+                                                  ? 13
+                                                  : 18,
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                    // Container(
+                                    //     child: Text(
+                                    //       '${summery.workSubject}',
+                                    //       maxLines: 5,
+                                    //       textAlign: TextAlign.justify,
+                                    //       style: TextStyle(
+                                    //           fontWeight: FontWeight.bold, color: blueColor),
+                                    //     )),
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    Container(
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width > 500
+                                          ? 200
+                                          : 180,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 1),
                                         child: Text(
-                                          maxLines: 4,
                                           '${summery.propertyData?.rentaladress}',
-                                          style: TextStyle(color: blueColor),
-                                        )),
+                                          maxLines: 5, // Set maximum number of lines
+                                          overflow: TextOverflow
+                                              .ellipsis, // Handle overflow with ellipsis
+                                          style: TextStyle(
+                                              fontSize:
+                                              MediaQuery.of(context).size.width <
+                                                  500
+                                                  ? 13
+                                                  : 18,
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                    // Container(
+                                    //     child: Text(
+                                    //       maxLines: 4,
+                                    //       '${summery.propertyData?.rentaladress}',
+                                    //       style: TextStyle(color: blueColor),
+                                    //     )),
                                   ],
                                 ),
                               ),
@@ -1424,7 +1468,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 8,
                                   ),
                                   Container(
-                                    width: 150,
+                                      width: 150,
                                       child: Text(
                                         '${summery.workPerformed!.isNotEmpty ? summery.workPerformed : "N/A"}',
                                         style: TextStyle(color: blueColor),
@@ -1490,7 +1534,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   ),
                                   Container(
                                       child: Text(
-                                        '${summery.entryAllowed}',
+                                        '${summery.entryAllowed!?"Yes":"No"}',
                                         style: TextStyle(color: blueColor),
                                       )),
                                 ],
@@ -1718,21 +1762,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SizedBox(
                                   width: 20,
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    showUpdateDialog(context);
-                                  },
-                                  child: Material(
-                                    elevation: 4,
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                    child: Container(
-                                      height: 40,
-                                      width: 70,
-                                      child: Center(child: Text("Update")),
-                                    ),
-                                  ),
-                                )
+
                               ],
                             ),
                             SizedBox(
@@ -1751,7 +1781,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         Text(
-                                          '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                                          '${update.statusUpdatedBy ?? ""} updated this work order (${update.updatedAt != null ? update.updatedAt : update.createdAt ?? "N/A"})',
                                           style: TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                         Divider(color: Colors.black),
@@ -1760,7 +1790,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     ),
                                   );
 
-                                }).toList(),
+                                }).toList().reversed.toList(),
 
                                 // "View More" or "View Less" button
                                 if (summery.workorderUpdates!.length > 5)
@@ -2108,7 +2138,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Text("${summery.propertyData!.rentaladress} (${summery.unitData?.unitName})",textAlign: TextAlign.center,),
+                                Text("${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}",textAlign: TextAlign.center,),
 
                                 SizedBox(
                                   height: 10,
@@ -2161,7 +2191,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
             );
           }
 
-      }
+        }
     );
   }
 
@@ -2437,7 +2467,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         height: 8,
                                       ),
                                       Container(
-                                        width: 150,
+                                          width: 150,
                                           child: Text(
                                             '${summery.vendorNotes!.isNotEmpty ? summery.vendorNotes : "N/A"}',
                                             style: TextStyle(color: blueColor),
@@ -2685,7 +2715,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                      width:150,
+                                      width:180,
 
                                       child: Text(
                                         '${summery.workSubject}',
@@ -2770,7 +2800,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 8,
                                   ),
                                   Container(
-                                    width: 150,
+                                      width: 250,
                                       child: Text(
                                         '${summery.workPerformed!.isNotEmpty ? summery.workPerformed : "N/A"}',
                                         style: TextStyle(color: blueColor),
@@ -2778,36 +2808,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ],
                               ),
                               Spacer(),
-                              Container(
-                                height: 70,
-                                width: MediaQuery.of(context).size.width * .3,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.grey),
-                                ),
-                                child: Column(
-                                  // crossAxisAlignment: CrossAxisAlignment.center,
-                                  // mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "Status",
-                                      style: TextStyle(
-                                        color: blueColor,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text('${summery.status}',
-                                        style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                              ),
+
                               SizedBox(
                                 width: 10,
                               ),
@@ -2822,23 +2823,25 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 width: 10,
                               ),
                               Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Container(
-                                      child: Text(
-                                        'Permission to enter',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold, color: blueColor),
-                                      )),
                                   SizedBox(
-                                    height: 8,
+                                    height: 10,
                                   ),
-                                  Container(
-                                      child: Text(
-                                        '${summery.entryAllowed}',
-                                        style: TextStyle(color: blueColor),
-                                      )),
+                                  Text(
+                                    "Status",
+                                    style: TextStyle(
+                                      color: blueColor,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  Text('${summery.status}',
+                                      style: TextStyle(
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold)),
                                 ],
                               ),
                               Spacer(),
@@ -2894,7 +2897,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 children: [
                                   Container(
                                       child: Text(
-                                        'Vendors Notes',
+                                        'Permission to enter',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold, color: blueColor),
                                       )),
@@ -2902,9 +2905,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 8,
                                   ),
                                   Container(
-                                    width: 150,
                                       child: Text(
-                                        '${summery.vendorNotes!.isNotEmpty ? summery.vendorNotes : "N/A"}',
+                                        '${summery.entryAllowed! ? "Yes": "No" }',
                                         style: TextStyle(color: blueColor),
                                       )),
                                 ],
@@ -2935,6 +2937,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     ),
                                     summery.staffData != null
                                         ? Text('${summery.staffData?.firstname}',
+                                        textAlign:TextAlign.center,
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold))
@@ -3056,7 +3059,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Text("${summery.propertyData!.rentaladress} (${summery.unitData?.unitName})",textAlign: TextAlign.center,),
+                                  Text("${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}",textAlign: TextAlign.center,),
 
                                   SizedBox(
                                     height: 10,
@@ -3109,7 +3112,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
               );
             }
 
-        }
+          }
       ),
     );
   }
@@ -3275,7 +3278,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   child: Container(
                     height: 45,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -3325,7 +3328,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       controller: selectedDate,
                       decoration: InputDecoration(
                         suffixIcon:
-                            Icon(Icons.calendar_today, color: blueColor),
+                        Icon(Icons.calendar_today, color: blueColor),
                         // hintStyle:
                         // TextStyle(fontSize: 13, color: blueColor),
                         border: InputBorder.none,
@@ -3358,7 +3361,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   child: Container(
                     height: 50,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -3429,7 +3432,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   "statusUpdatedBy": "$firstName $lastName(Tenant)"
                 };
                 await WorkOrderRepository.updateworkorderSummary(
-                        values, widget.workorder_id!)
+                    values, widget.workorder_id!)
                     .then((value) {
                   setState(() {
                     futureworkorderSummary =

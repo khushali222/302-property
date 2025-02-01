@@ -141,6 +141,39 @@ class _RenewleaseState extends State<Renewlease> {
     if (response.statusCode == 200) {
       setState(() {
         leasegetdata = LeaseSummary.fromJson(jsonDecode(response.body));
+        print("Renew lease ${leasegetdata.data!.renewLeases!.length}");
+        if (determineStatus(leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
+          // Lease is expired
+          startDateController.text = formatDate(DateTime.now().toString());
+
+          // Set the end date to one month from today's date
+          DateTime newEndDate = DateTime(
+              DateTime.now().year,
+              DateTime.now().month + 1,
+              DateTime.now().day
+          );
+          endDateController.text = formatDate(
+              DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+        }
+        if (leasegetdata.data!.renewLeases != null &&
+            leasegetdata.data!.renewLeases!.isNotEmpty) {
+          // Lease is active
+          if(!determineStatus(leasegetdata.data!.renewLeases!.last.startDate!, leasegetdata.data!.renewLeases!.last.endDate!)){
+            DateTime endDate = formatDates(leasegetdata.data!.renewLeases!.last.endDate!);
+
+            // Set start date to the current lease's end date
+            startDateController.text = formatDate(
+                DateFormat('yyyy-MM-dd').format(endDate).toString()
+            );
+
+            // Extend the lease for one month from the current lease's end date
+            DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+            endDateController.text = formatDate(
+                DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+          }
+
+        }
+
       });
     } else {
       throw Exception('Failed to load lease summary');
@@ -2688,11 +2721,11 @@ class _RenewleaseState extends State<Renewlease> {
                                     "admin_id": leasesummery.data!.adminId,
                                     "lease_type": leasesummery.data!.leaseType,
                                     "start_date": reverseFormatDate(
-                                        startDateController.text),
+                                        startDateController.text.trim()),
                                     "end_date": reverseFormatDate(
-                                        endDateController.text),
-                                    "amount": rent.text, // new amount
-                                    "renewAmount": securitydeposit.text, // new amount
+                                        endDateController.text.trim()),
+                                    "amount": rent.text.trim(), // new amount
+                                    "renewAmount": securitydeposit.text.trim(), // new amount
                                     "lease_amount": widget.rentamount,
                                     "charges": charge,
                                     "renew_fileName":

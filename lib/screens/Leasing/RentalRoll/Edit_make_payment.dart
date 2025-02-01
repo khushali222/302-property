@@ -3310,7 +3310,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
-                                            .text), // Set the date to the desired date
+                                            .text.trim()), // Set the date to the desired date
                                         'balance': charges_balances[
                                             index], // Add balance from charges_balances list
                                       },
@@ -3359,11 +3359,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               cardDetails[selectedcardindex!]
                                                   .billingId!,
                                           surcharge:
-                                              "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
+                                              "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
                                           amount:
-                                              "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
+                                              "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                           tenantId: selectedTenantId!,
-                                          date: _startDate.text,
+                                          date: _startDate.text.trim(),
                                           address1:
                                               cardDetails[selectedcardindex!]
                                                   .address_1!,
@@ -3432,9 +3432,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         emailName: selectedTenant["email"]!,
                                         surcharge: "$surchargecount",
                                         amount:
-                                            "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
+                                            "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                         tenantId: selectedTenantId!,
-                                        date: _startDate.text,
+                                        date: _startDate.text.trim(),
                                         address1: "",
                                         processorId: "",
                                         leaseid: widget.leaseId,
@@ -3444,10 +3444,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         account_type: selectedAccount!,
                                         account_holder_type:
                                             _selectedHoldertype!,
-                                        checkaccount: accountnum.text,
-                                        checkaba: bankrountingnum.text,
+                                        checkaccount: accountnum.text.trim(),
+                                        checkaba: bankrountingnum.text.trim(),
                                         tenantname: tenantname,
-                                        checkname: achname.text,
+                                        checkname: achname.text.trim(),
                                         uploadedFile: _uploadedFileNames)
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
@@ -3506,18 +3506,18 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
                                   surcharge:
-                                      "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
+                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
                                   amount:
-                                      "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
+                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
-                                  date: _startDate.text,
+                                  date: _startDate.text.trim(),
                                   address1: "",
                                   processorId: "",
                                   leaseid: widget.leaseId,
                                   company_name: companyName,
                                   entries: rows,
                                   future_Date: true,
-                                  Check_number: checknumber.text,
+                                  Check_number: checknumber.text.trim(),
                                   Check: true,
                                   uploadedFile: _uploadedFileNames,
                                   payment_method: _selectedPaymentMethod!,
@@ -3551,11 +3551,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
                                   surcharge:
-                                      "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
+                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
                                   amount:
-                                      "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
+                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
-                                  date: _startDate.text,
+                                  date: _startDate.text.trim(),
                                   address1: "",
                                   processorId: "",
                                   leaseid: widget.leaseId,

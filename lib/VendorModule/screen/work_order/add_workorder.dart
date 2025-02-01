@@ -1106,10 +1106,10 @@ class _Add_WorkorderState extends State<Add_Workorder> {
         final workOrder = await WorkOrderRepository().addWorkOrder(
           adminId: admin_id,
           workOrder_images: uploaded_images,
-          workSubject: subject.text,
+          workSubject: subject.text.trim(),
           staffMemberName: "",
           workCategory: _selectedCategory!,
-          workPerformed: perform.text,
+          workPerformed: perform.text.trim(),
           status: 'Pending',
           rentalAddress: properties[_selectedPropertyId]!,
           rentalUnit: units[_selectedUnitId]!,

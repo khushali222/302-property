@@ -1313,7 +1313,7 @@ class _Change_passwordState extends State<Change_password> {
       String? token = prefs.getString('token');
       String? email = prefs.getString('staffemail');
       String? staffid = prefs.getString("staff_id");
-      Map<String, dynamic> values = {'password':password.text};
+      Map<String, dynamic> values = {'password':password.text.trim()};
       final http.Response response = await http.put(
         Uri.parse('$Api_url/api/staffmember/reset_password/$email'),
         headers: <String, String>{
@@ -1328,7 +1328,7 @@ class _Change_passwordState extends State<Change_password> {
       var responseData = json.decode(response.body);
 
       if (responseData["statusCode"] == 200) {
-        await _savePassword(password.text);
+        await _savePassword(password.text.trim());
         Fluttertoast.showToast(msg: responseData["message"]);
         return responseData;
       } else {
@@ -1404,7 +1404,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       children: <Widget>[
         FormField<String>(
           validator: (value) {
-            if (widget.controller!.text.isEmpty) {
+            if (widget.controller!.text.trim().isEmpty) {
               setState(() {
                 if(widget.label == null)
                   _errorMessage = 'Please ${widget.hintText}';
@@ -1413,7 +1413,7 @@ class CustomTextFieldState extends State<CustomTextField> {
               });
               return '';
             }
-            else if (widget.matchingPasswordController != null && widget.controller!.text != widget.matchingPasswordController!.text) {
+            else if (widget.matchingPasswordController != null && widget.controller!.text.trim() != widget.matchingPasswordController!.text.trim()) {
               setState(() {
                 _errorMessage = 'Password does not match';
               });

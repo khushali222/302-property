@@ -3584,7 +3584,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
-                                            .text), // Set the date to the desired date
+                                            .text.trim()), // Set the date to the desired date
                                         'balance': charges_balances[
                                             index], // Add balance from charges_balances list
                                       },
@@ -3725,7 +3725,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   checkaccount: accountnum.text.trim(),
                                   checkaba: bankrountingnum.text.trim(),
                                   tenantname: tenantname,
-                                  checkname: achname.text,
+                                  checkname: achname.text.trim(),
                                   uploadedFile: _uploadedFileNames,
                                   notificationTime: notificationTime,
                                 )
@@ -3884,7 +3884,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
-                                            .text), // Set the date to the desired date
+                                            .text.trim()), // Set the date to the desired date
                                         'balance': charges_balances[
                                             index], // Add balance from charges_balances list
                                       },

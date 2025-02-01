@@ -780,33 +780,33 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         .Edit_profile({
                                                       "first_name":
                                                           _firstNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       "last_name":
                                                           _lastNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       "email":
-                                                          _emailController.text,
+                                                          _emailController.text.trim(),
                                                       "company_name":
                                                           _companyNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       "phone_number":
                                                           _phoneNumberController
-                                                              .text,
+                                                              .text.trim(),
                                                       "company_address":
                                                           _companyAddressController
-                                                              .text,
+                                                              .text.trim(),
                                                       "postal_code":
                                                           _companyPostalCodeController
-                                                              .text,
+                                                              .text.trim(),
                                                       "city":
                                                           _companyCityController
-                                                              .text,
+                                                              .text.trim(),
                                                       "state":
                                                           _companyStateController
-                                                              .text,
+                                                              .text.trim(),
                                                       "country":
                                                           _companyCountryController
-                                                              .text,
+                                                              .text.trim(),
                                                     });
                                                   } else {
                                                     // Optionally, show a message that no changes were made
@@ -1335,13 +1335,13 @@ class _Profile_screenState extends State<Profile_screen> {
                                               prefs.getString("password");
                                           print(pass);
                                           // Validate the new password
-                                          if (password.text.isEmpty) {
+                                          if (password.text.trim().isEmpty) {
                                             setState(() {
                                               passworderror = true;
                                               passwordmessage =
                                                   "Password is required";
                                             });
-                                          } else if (password.text.length < 8) {
+                                          } else if (password.text.trim().length < 8) {
                                             setState(() {
                                               passworderror = true;
                                               passwordmessage =
@@ -1349,13 +1349,13 @@ class _Profile_screenState extends State<Profile_screen> {
                                             });
                                           } else if (!RegExp(
                                                   r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
-                                              .hasMatch(password.text)) {
+                                              .hasMatch(password.text.trim())) {
                                             setState(() {
                                               passworderror = true;
                                               passwordmessage =
                                                   'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
                                             });
-                                          } else if (password.text == pass) {
+                                          } else if (password.text.trim() == pass) {
                                             setState(() {
                                               passworderror = true;
                                               passwordmessage =
@@ -1369,14 +1369,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                           }
 
                                           // Validate the confirmation password
-                                          if (confirmpassword.text.isEmpty) {
+                                          if (confirmpassword.text.trim().isEmpty) {
                                             setState(() {
                                               confirmpassworderror = true;
                                               confirmpasswordmessage =
                                                   "Confirm password is required";
                                             });
-                                          } else if (confirmpassword.text !=
-                                              password.text) {
+                                          } else if (confirmpassword.text.trim() !=
+                                              password.text.trim()) {
                                             setState(() {
                                               confirmpassworderror = true;
                                               confirmpasswordmessage =

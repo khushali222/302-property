@@ -546,7 +546,7 @@ class _Signup2State extends State<Signup2> {
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 GestureDetector(
                   onTap: () {
-                   if(companyname.text.isEmpty){
+                   if(companyname.text.trim().isEmpty){
                     setState(() {
                       companynameerror = true;
                       companynamemessage = "Company name is required";
@@ -557,13 +557,13 @@ class _Signup2State extends State<Signup2> {
                        companynameerror = false;
                      });
                    }
-                   if(phonenumber.text.isEmpty){
+                   if(phonenumber.text.trim().isEmpty){
                      setState(() {
                        phoneerror = true;
                        phonemessage = "Phone number is required";
                      });
                    }
-                   else if(phonenumber.text.length < 9){
+                   else if(phonenumber.text.trim().length < 9){
                      setState(() {
                        phoneerror = true;
                        phonemessage = "Phone number is atleast 10 digit";
@@ -606,19 +606,19 @@ class _Signup2State extends State<Signup2> {
                    //     passworderror = false;
                    //   });
                    // }
-                   if (password.text.isEmpty) {
+                   if (password.text.trim().isEmpty) {
                      setState(() {
                        passworderror = true;
                        passwordmessage = "Password is required";
                      });
-                   } else if (password.text.length < 8) {
+                   } else if (password.text.trim().length < 8) {
                      setState(() {
                        passworderror = true;
                        passwordmessage = "Password must have 8 Characters";
                      });
                    }
                    else {
-                     String? validationMessage = ValidatePassword(password.text);
+                     String? validationMessage = ValidatePassword(password.text.trim());
 
                      if (validationMessage != null) {
                        setState(() {
@@ -633,13 +633,13 @@ class _Signup2State extends State<Signup2> {
                      }
                    }
 
-                   if(confirmpassword.text.isEmpty){
+                   if(confirmpassword.text.trim().isEmpty){
                      setState(() {
                        confirmpassworderror = true;
                        confirmpasswordmessage = "Confirm password is required";
                      });
                    }
-                   else if(confirmpassword.text != password.text){
+                   else if(confirmpassword.text.trim() != password.text.trim()){
                      setState(() {
                        confirmpassworderror = true;
                        confirmpasswordmessage ="Both password is not match";

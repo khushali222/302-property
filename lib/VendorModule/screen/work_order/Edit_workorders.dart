@@ -3183,7 +3183,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Vendors Note *',
+                              Text('Vendors Note ',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -3201,6 +3201,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                   }
                                   return null;
                                 },
+                                optional: true,
                               ),
                               SizedBox(
                                 height: 20,
@@ -3727,10 +3728,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
           .EditWorkOrder(
         adminId: id,
         workOrderid: widget.workorderId,
-        workSubject: subject.text,
+        workSubject: subject.text.trim(),
         staffMemberName: _selectedStaffs,
         workCategory: _selectedCategory,
-        workPerformed: perform.text,
+        workPerformed: perform.text.trim(),
         status: _selectedStatus,
         rentalAddress: properties[_selectedPropertyId],
         rentalUnit: units[_selectedUnitId],
@@ -3739,11 +3740,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         unitid: unitId,
         workOrderImages: [],
         vendorId: _selectedvendorsId,
-        vendorNotes: vendornote.text,
+        vendorNotes: vendornote.text.trim(),
         priority: _selectedOption,
         isBillable: isChecked,
         workChargeTo: isChecked == 'Tenants',
-        date: _dateController.text,
+        date: _dateController.text.trim(),
         entry: _selectedEntry == 'yes',
         parts: parts,
         notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),

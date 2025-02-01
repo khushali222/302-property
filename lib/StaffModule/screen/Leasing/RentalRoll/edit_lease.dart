@@ -5315,8 +5315,8 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       });
       final formData = {
         'account': _selectedProperty ?? '',
-        'amount': _amountController.text,
-        'memo': _memoController.text,
+        'amount': _amountController.text.trim(),
+        'memo': _memoController.text.trim(),
         'charge_type': 'One Time Charge',
         'date': DateTime.now().toString()
       };
@@ -5338,10 +5338,10 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     if (_subFormKey.currentState?.validate() ?? false) {
       final formData = {
         'admin_id': adminId,
-        'account': _accountNameController.text,
+        'account': _accountNameController.text.trim(),
         'account_type': _selectedAccountType ?? '',
         'fund_type': _selectedFundType ?? '',
-        'notes': _notesController.text,
+        'notes': _notesController.text.trim(),
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
@@ -6038,8 +6038,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       });
       final formData = {
         'account': _selectedProperty ?? '',
-        'amount': _amountController.text,
-        'memo': _memoController.text,
+        'amount': _amountController.text.trim(),
+        'memo': _memoController.text.trim(),
         'charge_type': 'Recurring Charge',
       };
       widget.onSave(formData);
@@ -6060,10 +6060,10 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
     if (_subFormKey.currentState?.validate() ?? false) {
       final formData = {
         'admin_id': adminId,
-        'account': _accountNameController.text,
+        'account': _accountNameController.text.trim(),
         'account_type': _selectedAccountType ?? '',
         'fund_type': _selectedFundType ?? '',
-        'notes': _notesController.text,
+        'notes': _notesController.text.trim(),
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
@@ -7094,22 +7094,22 @@ class _AddTenantState extends State<AddTenant> {
                               onTap: () {
                                 if (_formKey.currentState!.validate()) {
                                   final tenant = Tenant(
-                                    tenantFirstName: firstName.text,
-                                    tenantLastName: lastName.text,
-                                    tenantPhoneNumber: phoneNumber.text,
-                                    tenantAlternativeNumber: workNumber.text,
-                                    tenantEmail: email.text,
-                                    tenantAlternativeEmail: alterEmail.text,
-                                    tenantPassword: passWord.text,
-                                    tenantBirthDate: _dateController.text,
-                                    taxPayerId: taxPayerId.text,
-                                    comments: comments.text,
+                                    tenantFirstName: firstName.text.trim(),
+                                    tenantLastName: lastName.text.trim(),
+                                    tenantPhoneNumber: phoneNumber.text.trim(),
+                                    tenantAlternativeNumber: workNumber.text.trim(),
+                                    tenantEmail: email.text.trim(),
+                                    tenantAlternativeEmail: alterEmail.text.trim(),
+                                    tenantPassword: passWord.text.trim(),
+                                    tenantBirthDate: _dateController.text.trim(),
+                                    taxPayerId: taxPayerId.text.trim(),
+                                    comments: comments.text.trim(),
                                     rentshare: "",
                                     emergencyContact: EmergencyContact(
-                                      name: contactName.text,
-                                      relation: relationToTenant.text,
-                                      email: emergencyEmail.text,
-                                      phoneNumber: emergencyPhoneNumber.text,
+                                      name: contactName.text.trim(),
+                                      relation: relationToTenant.text.trim(),
+                                      email: emergencyEmail.text.trim(),
+                                      phoneNumber: emergencyPhoneNumber.text.trim(),
                                     ),
                                   );
                                   Provider.of<SelectedTenantsProvider>(context,
@@ -7562,17 +7562,17 @@ class _AddCosignerState extends State<AddCosigner> {
                         if (_formKey.currentState!.validate()) {
                           if (widget.cosigner == null) {
                             final cosigner = Cosigner(
-                              c_id: firstName.text,
-                              firstName: firstName.text,
-                              lastName: lastName.text,
-                              phoneNumber: phoneNumber.text,
-                              workNumber: workNumber.text,
-                              email: email.text,
-                              alterEmail: alterEmail.text,
-                              streetAddress: streetAddrees.text,
-                              city: city.text,
-                              country: country.text,
-                              postalCode: postalCode.text,
+                              c_id: firstName.text.trim(),
+                              firstName: firstName.text.trim(),
+                              lastName: lastName.text.trim(),
+                              phoneNumber: phoneNumber.text.trim(),
+                              workNumber: workNumber.text.trim(),
+                              email: email.text.trim(),
+                              alterEmail: alterEmail.text.trim(),
+                              streetAddress: streetAddrees.text.trim(),
+                              city: city.text.trim(),
+                              country: country.text.trim(),
+                              postalCode: postalCode.text.trim(),
                             );
                             Provider.of<SelectedCosignersProvider>(context,
                                     listen: false)
@@ -7580,16 +7580,16 @@ class _AddCosignerState extends State<AddCosigner> {
                           } else {
                             final cosigner = Cosigner(
                               //c_id : firstName.text,
-                              firstName: firstName.text,
-                              lastName: lastName.text,
-                              phoneNumber: phoneNumber.text,
-                              workNumber: workNumber.text,
-                              email: email.text,
-                              alterEmail: alterEmail.text,
-                              streetAddress: streetAddrees.text,
-                              city: city.text,
-                              country: country.text,
-                              postalCode: postalCode.text,
+                              firstName: firstName.text.trim(),
+                              lastName: lastName.text.trim(),
+                              phoneNumber: phoneNumber.text.trim(),
+                              workNumber: workNumber.text.trim(),
+                              email: email.text.trim(),
+                              alterEmail: alterEmail.text.trim(),
+                              streetAddress: streetAddrees.text.trim(),
+                              city: city.text.trim(),
+                              country: country.text.trim(),
+                              postalCode: postalCode.text.trim(),
                             );
                             Provider.of<SelectedCosignersProvider>(context,
                                     listen: false)

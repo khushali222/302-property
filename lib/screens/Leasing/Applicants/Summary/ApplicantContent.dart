@@ -1450,75 +1450,75 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           emergencyContact: EmergencyContact(
                                             firstName:
                                                 _emergencyFirstNameController
-                                                    .text,
+                                                    .text.trim(),
                                             lastName:
-                                                _emergencyLastNameController.text,
+                                                _emergencyLastNameController.text.trim(),
                                             relationship:
                                                 _emergencyRelationshipController
-                                                    .text,
-                                            email: _emergencyEmailController.text,
+                                                    .text.trim(),
+                                            email: _emergencyEmailController.text.trim(),
                                             phoneNumber: int.tryParse(
                                                 _emergencyPhoneNumberController
-                                                    .text),
+                                                    .text.trim()),
                                           ),
                                           rentalHistory: RentalHistory(
                                             rentalAdress:
-                                                _rentalAddressController.text,
+                                                _rentalAddressController.text.trim(),
                                             rentalCity:
-                                                _rentalCityController.text,
+                                                _rentalCityController.text.trim(),
                                             rentalState:
-                                                _rentalStateController.text,
+                                                _rentalStateController.text.trim(),
                                             rentalCountry:
-                                                _rentalCountryController.text,
+                                                _rentalCountryController.text.trim(),
                                             rentalPostcode:
-                                                _rentalPostcodeController.text,
+                                                _rentalPostcodeController.text.trim(),
                                             rentalOwnerFirstName:
                                                 _rentalOwnerFirstNameController
-                                                    .text,
+                                                    .text.trim(),
                                             rentalOwnerLastName:
                                                 _rentalOwnerLastNameController
-                                                    .text,
-                                            startDate: _startDateController.text,
-                                            endDate: _endDateController.text,
-                                            rent: _rentController.text,
+                                                    .text.trim(),
+                                            startDate: _startDateController.text.trim(),
+                                            endDate: _endDateController.text.trim(),
+                                            rent: _rentController.text.trim(),
                                             leavingReason:
-                                                _leavingReasonController.text,
+                                                _leavingReasonController.text.trim(),
                                             rentalOwnerPrimaryEmail:
-                                                _rentalOwnerEmailController.text,
+                                                _rentalOwnerEmailController.text.trim(),
                                             rentalOwnerPhoneNumber: int.tryParse(
                                                 _rentalOwnerPhoneNumberController
-                                                    .text),
+                                                    .text.trim()),
                                           ),
                                           employment: Employment(
-                                            name: _employmentNameController.text,
+                                            name: _employmentNameController.text.trim(),
                                             streetAddress:
                                                 _employmentStreetAddressController
                                                     .text,
-                                            city: _employmentCityController.text,
+                                            city: _employmentCityController.text.trim(),
                                             state:
-                                                _employmentStateController.text,
+                                                _employmentStateController.text.trim(),
                                             country:
                                                 _employmentCountryController.text,
                                             postalCode:
                                                 _employmentPostalCodeController
-                                                    .text,
+                                                    .text.trim(),
                                             employmentPrimaryEmail:
                                                 _employmentPrimaryEmailController
                                                     .text,
                                             employmentPhoneNumber: int.tryParse(
                                                 _employmentPhoneNumberController
-                                                    .text),
+                                                    .text.trim()),
                                             employmentPosition:
                                                 _employmentPositionController
-                                                    .text,
+                                                    .text.trim(),
                                             supervisorFirstName:
                                                 _supervisorFirstNameController
-                                                    .text,
+                                                    .text.trim(),
                                             supervisorLastName:
                                                 _supervisorLastNameController
-                                                    .text,
+                                                    .text.trim(),
                                             supervisorTitle:
-                                                _supervisorTitleController.text,
+                                                _supervisorTitleController.text.trim(),
                                           ),
 
                                           applicantId: widget.applicantDetail
@@ -1527,26 +1527,26 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               adminId, // Assuming this value is not set from a controller
                                           applicantStreetAddress:
                                               _applicantStreetAddressController
-                                                  .text,
+                                                  .text.trim(),
                                           applicantCity:
-                                              _applicantCityController.text,
+                                              _applicantCityController.text.trim(),
                                           applicantState:
-                                              _applicantStateController.text,
+                                              _applicantStateController.text.trim(),
                                           applicantCountry:
-                                              _applicantCountryController.text,
+                                              _applicantCountryController.text.trim(),
                                           applicantPostalCode:
-                                              _applicantPostalCodeController.text,
-                                          agreeBy: _agreeByController.text,
+                                              _applicantPostalCodeController.text.trim(),
+                                          agreeBy: _agreeByController.text.trim(),
 
                                           applicantFirstName:
-                                              _applicantFirstNameController.text,
+                                              _applicantFirstNameController.text.trim(),
                                           applicantLastName:
-                                              _applicantLastNameController.text,
+                                              _applicantLastNameController.text.trim(),
                                           applicantEmail:
-                                              _applicantEmailController.text,
+                                              _applicantEmailController.text.trim(),
                                           applicantPhoneNumber:
                                               _applicantPhoneNumberController
-                                                  .text,
+                                                  .text.trim(),
                                           isApplicantDataEmpty:
                                               false, // Default value
                                         );
@@ -3211,100 +3211,100 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         EmergencyContact(
                                                       firstName:
                                                           _emergencyFirstNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       lastName:
                                                           _emergencyLastNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       relationship:
                                                           _emergencyRelationshipController
-                                                              .text,
+                                                              .text.trim(),
                                                       email:
                                                           _emergencyEmailController
-                                                              .text,
+                                                              .text.trim(),
                                                       phoneNumber: int.tryParse(
                                                           _emergencyPhoneNumberController
-                                                              .text),
+                                                              .text.trim()),
                                                     ),
                                                     rentalHistory:
                                                         RentalHistory(
                                                       rentalAdress:
                                                           _rentalAddressController
-                                                              .text,
+                                                              .text.trim(),
                                                       rentalCity:
                                                           _rentalCityController
-                                                              .text,
+                                                              .text.trim(),
                                                       rentalState:
                                                           _rentalStateController
-                                                              .text,
+                                                              .text.trim(),
                                                       rentalCountry:
                                                           _rentalCountryController
-                                                              .text,
+                                                              .text.trim(),
                                                       rentalPostcode:
                                                           _rentalPostcodeController
-                                                              .text,
+                                                              .text.trim(),
                                                       rentalOwnerFirstName:
                                                           _rentalOwnerFirstNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       rentalOwnerLastName:
                                                           _rentalOwnerLastNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       startDate:
                                                           _startDateController
-                                                              .text,
+                                                              .text.trim(),
                                                       endDate:
                                                           _endDateController
-                                                              .text,
+                                                              .text.trim(),
                                                       rent:
-                                                          _rentController.text,
+                                                          _rentController.text.trim(),
                                                       leavingReason:
                                                           _leavingReasonController
-                                                              .text,
+                                                              .text.trim(),
                                                       rentalOwnerPrimaryEmail:
                                                           _rentalOwnerEmailController
-                                                              .text,
+                                                              .text.trim(),
                                                       rentalOwnerPhoneNumber:
                                                           int.tryParse(
                                                               _rentalOwnerPhoneNumberController
-                                                                  .text),
+                                                                  .text.trim()),
                                                     ),
                                                     employment: Employment(
                                                       name:
                                                           _employmentNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       streetAddress:
                                                           _employmentStreetAddressController
-                                                              .text,
+                                                              .text.trim(),
                                                       city:
                                                           _employmentCityController
-                                                              .text,
+                                                              .text.trim(),
                                                       state:
                                                           _employmentStateController
-                                                              .text,
+                                                              .text.trim(),
                                                       country:
                                                           _employmentCountryController
-                                                              .text,
+                                                              .text.trim(),
                                                       postalCode:
                                                           _employmentPostalCodeController
-                                                              .text,
+                                                              .text.trim(),
                                                       employmentPrimaryEmail:
                                                           _employmentPrimaryEmailController
-                                                              .text,
+                                                              .text.trim(),
                                                       employmentPhoneNumber:
                                                           int.tryParse(
                                                               _employmentPhoneNumberController
-                                                                  .text),
+                                                                  .text.trim()),
                                                       employmentPosition:
                                                           _employmentPositionController
-                                                              .text,
+                                                              .text.trim(),
                                                       supervisorFirstName:
                                                           _supervisorFirstNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       supervisorLastName:
                                                           _supervisorLastNameController
-                                                              .text,
+                                                              .text.trim(),
                                                       supervisorTitle:
                                                           _supervisorTitleController
-                                                              .text,
+                                                              .text.trim(),
                                                     ),
 
                                                     applicantId: widget
@@ -3314,34 +3314,34 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         adminId, // Assuming this value is not set from a controller
                                                     applicantStreetAddress:
                                                         _applicantStreetAddressController
-                                                            .text,
+                                                            .text.trim(),
                                                     applicantCity:
                                                         _applicantCityController
-                                                            .text,
+                                                            .text.trim(),
                                                     applicantState:
                                                         _applicantStateController
-                                                            .text,
+                                                            .text.trim(),
                                                     applicantCountry:
                                                         _applicantCountryController
-                                                            .text,
+                                                            .text.trim(),
                                                     applicantPostalCode:
                                                         _applicantPostalCodeController
-                                                            .text,
+                                                            .text.trim(),
                                                     agreeBy:
-                                                        _agreeByController.text,
+                                                        _agreeByController.text.trim(),
 
                                                     applicantFirstName:
                                                         _applicantFirstNameController
-                                                            .text,
+                                                            .text.trim(),
                                                     applicantLastName:
                                                         _applicantLastNameController
-                                                            .text,
+                                                            .text.trim(),
                                                     applicantEmail:
                                                         _applicantEmailController
-                                                            .text,
+                                                            .text.trim(),
                                                     applicantPhoneNumber:
                                                         _applicantPhoneNumberController
-                                                            .text,
+                                                            .text.trim(),
                                                     isApplicantDataEmpty:
                                                         false, // Default value
                                                   );

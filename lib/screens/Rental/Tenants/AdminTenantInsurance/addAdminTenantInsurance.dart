@@ -490,11 +490,11 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
 
     Map<String, dynamic> values = {
       "admin_id": adminId!,
-      "Provider": provider.text,
-      "policy_id": policy.text,
-      "EffectiveDate": reverseFormatDate(effective.text),
-      "ExpirationDate": reverseFormatDate(expiration.text),
-      "LiabilityCoverage": liablity.text,
+      "Provider": provider.text.trim(),
+      "policy_id": policy.text.trim(),
+      "EffectiveDate": reverseFormatDate(effective.text.trim()),
+      "ExpirationDate": reverseFormatDate(expiration.text.trim()),
+      "LiabilityCoverage": liablity.text.trim(),
       "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };
     print(values);

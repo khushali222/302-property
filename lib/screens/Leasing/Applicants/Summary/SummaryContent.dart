@@ -604,7 +604,7 @@ class _SummaryContentState extends State<SummaryContent> {
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
                                 NoteFile noteFiles = NoteFile(
-                                    note: noteController.text,
+                                    note: noteController.text.trim(),
                                     files: _uploadedFileName ?? '');
                                 setState(() {
                                   isNotePost = true;

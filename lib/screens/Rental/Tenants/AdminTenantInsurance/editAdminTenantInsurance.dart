@@ -515,12 +515,12 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                               if (_formkey.currentState!.validate()) {
                                 //  print("calling 22");
 
-                                if( provider.text == widget.data.provider! &&
-                                policy.text == widget.data.policyId! &&
+                                if( provider.text.trim() == widget.data.provider! &&
+                                policy.text.trim() == widget.data.policyId! &&
 
-                                effective.text == formatDate(widget.data.effectiveDate!) &&
-                                expiration.text == formatDate(widget.data.expirationDate!) &&
-                                liablity.text == widget.data.liabilityCoverage.toString()!
+                                effective.text.trim() == formatDate(widget.data.effectiveDate!) &&
+                                expiration.text.trim() == formatDate(widget.data.expirationDate!) &&
+                                liablity.text.trim() == widget.data.liabilityCoverage.toString()!
                                 &&  _uploadedFileNames.contains(widget.data.policy!)
                               ){
                                   Navigator.of(context).pop();
@@ -584,11 +584,11 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     String? token = prefs.getString('token');
     Map<String, dynamic> values = {
       "admin_id": adminId!,
-      "Provider": provider.text,
-      "policy_id": policy.text,
-       "EffectiveDate": reverseFormatDate(effective.text),
-       "ExpirationDate": reverseFormatDate(expiration.text),
-      "LiabilityCoverage": liablity.text,
+      "Provider": provider.text.trim(),
+      "policy_id": policy.text.trim(),
+       "EffectiveDate": reverseFormatDate(effective.text.trim()),
+       "ExpirationDate": reverseFormatDate(expiration.text.trim()),
+      "LiabilityCoverage": liablity.text.trim(),
       "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };
 

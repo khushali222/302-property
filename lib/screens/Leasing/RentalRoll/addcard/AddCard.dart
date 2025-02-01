@@ -1896,12 +1896,12 @@ class _AddCardState extends State<AddCard> {
                                                             lastName:
                                                                 lastName.text.trim(),
                                                             ccnumber: cardNumber
-                                                                .text
+                                                                .text.trim()
                                                                 .replaceAll(
                                                                     ' ', ''),
                                                             ccexp:
                                                                 expirationDate
-                                                                    .text,
+                                                                    .text.trim(),
                                                             address1:
                                                                 address.text.trim(),
                                                             address2: '',

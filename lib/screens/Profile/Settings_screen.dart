@@ -191,14 +191,14 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "surcharge_percent":
-            credit.text.isNotEmpty ? double.parse(credit.text) : null,
+            credit.text.trim().isNotEmpty ? double.parse(credit.text.trim()) : null,
         "surcharge_percent_debit":
-            debit.text.isNotEmpty ? double.parse(debit.text) : null,
-        "surcharge_percent_ACH": percent.text.isNotEmpty
-            ? double.parse(percent.text)
+            debit.text.trim().isNotEmpty ? double.parse(debit.text.trim()) : null,
+        "surcharge_percent_ACH": percent.text.trim().isNotEmpty
+            ? double.parse(percent.text.trim())
             : null, // Add your logic to get this value
-        "surcharge_flat_ACH": flat.text.isNotEmpty
-            ? double.parse(flat.text)
+        "surcharge_flat_ACH": flat.text.trim().isNotEmpty
+            ? double.parse(flat.text.trim())
             : null,
         "surcharge_account":selectedAccount// Add your logic to get this value
       };
@@ -232,14 +232,14 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "surcharge_percent":
-            credit.text.isNotEmpty ? int.parse(credit.text) : null,
+            credit.text.trim().isNotEmpty ? int.parse(credit.text.trim()) : null,
         "surcharge_percent_debit":
-            debit.text.isNotEmpty ? int.parse(debit.text) : null,
-        "surcharge_percent_ACH": percent.text.isNotEmpty
-            ? int.parse(percent.text)
+            debit.text.trim().isNotEmpty ? int.parse(debit.text.trim()) : null,
+        "surcharge_percent_ACH": percent.text.trim().isNotEmpty
+            ? int.parse(percent.text.trim())
             : null, // Add your logic to get this value
-        "surcharge_flat_ACH": flat.text.isNotEmpty
-            ? int.parse(flat.text)
+        "surcharge_flat_ACH": flat.text.trim().isNotEmpty
+            ? int.parse(flat.text.trim())
             : null,
         "surcharge_account":selectedAccount
         // Add your logic to get this value
@@ -271,9 +271,9 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "duration":
-            duration.text.isNotEmpty ? double.parse(duration.text) : null,
+            duration.text.trim().isNotEmpty ? double.parse(duration.text.trim()) : null,
         "late_fee":
-            late_fee.text.isNotEmpty ? double.parse(late_fee.text) : null,
+            late_fee.text.trim().isNotEmpty ? double.parse(late_fee.text.trim()) : null,
       };
 
       bool success =
@@ -330,8 +330,8 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "duration": duration.text.isNotEmpty ? int.parse(duration.text) : null,
-        "late_fee": late_fee.text.isNotEmpty ? int.parse(late_fee.text) : null,
+        "duration": duration.text.trim().isNotEmpty ? int.parse(duration.text.trim()) : null,
+        "late_fee": late_fee.text.trim().isNotEmpty ? int.parse(late_fee.text.trim()) : null,
       };
 
       bool success =
@@ -385,10 +385,10 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "duration": durationmail.text.isNotEmpty
-            ? double.parse(durationmail.text)
+        "duration": durationmail.text.trim().isNotEmpty
+            ? double.parse(durationmail.text.trim())
             : null,
-        "replyToEmail":replyToEmail.text,
+        "replyToEmail":replyToEmail.text.trim(),
       };
 
       bool success = await mailrepository.updateMailData(data);
@@ -415,9 +415,9 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "replyToEmail":replyToEmail.text,
+        "replyToEmail":replyToEmail.text.trim(),
         "duration":
-            durationmail.text.isNotEmpty ? int.parse(durationmail.text) : null,
+            durationmail.text.trim().isNotEmpty ? int.parse(durationmail.text.trim()) : null,
       };
 
       bool success = await mailrepository.AddMailData(id, data);
@@ -6127,7 +6127,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                         child: InkWell(
                           onTap: () async {
                             if (_selectedAccounttype == null ||
-                                accountname.text.isEmpty ||
+                                accountname.text.trim().isEmpty ||
                                 _selectedFundtype == null) {
                               setState(() {
                                 isError = true;
@@ -6145,11 +6145,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                               try {
                                 await accountRepository().addAccount(
                                   adminId: id!,
-                                  account: accountname.text,
+                                  account: accountname.text.trim(),
                                   accounttype: _selectedAccounttype,
                                   fundtype: _selectedFundtype,
                                   chargetype: selectedAccountType,
-                                  notes: note.text,
+                                  notes: note.text.trim(),
                                 );
                                 Navigator.pop(context, true);
                                 _refreshAccounts();

@@ -313,21 +313,69 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 180,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 1),
                                       child: Text(
-                                    '${summery.workSubject}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  )),
+                                        '${summery.workSubject}',
+                                        maxLines: 5, // Set maximum number of lines
+                                        overflow: TextOverflow
+                                            .ellipsis, // Handle overflow with ellipsis
+                                        style: TextStyle(
+                                            fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                500
+                                                ? 13
+                                                : 18,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Container(
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 180,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 1),
                                       child: Text(
-                                    '${summery.propertyData?.rentaladress}',
-                                    style: TextStyle(color: blueColor),
-                                  )),
+                                        '${summery.propertyData?.rentaladress}',
+                                        maxLines: 5, // Set maximum number of lines
+                                        overflow: TextOverflow
+                                            .ellipsis, // Handle overflow with ellipsis
+                                        style: TextStyle(
+                                            fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                500
+                                                ? 13
+                                                : 18,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  // Container(
+                                  //     child: Text(
+                                  //   '${summery.workSubject}',
+                                  //   style: TextStyle(
+                                  //       fontWeight: FontWeight.bold,
+                                  //       color: blueColor),
+                                  // )),
+                                  // SizedBox(
+                                  //   height: 10,
+                                  // ),
+                                  // Container(
+                                  //     child: Text(
+                                  //   '${summery.propertyData?.rentaladress}',
+                                  //   style: TextStyle(color: blueColor),
+                                  // )),
                                 ],
                               )
                             ],
@@ -1283,22 +1331,70 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                  width: MediaQuery.of(context).size.width * .6,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width > 500
+                                    ? 200
+                                    : 180,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 1),
                                   child: Text(
                                     '${summery.workSubject}',
+                                    maxLines: 5, // Set maximum number of lines
+                                    overflow: TextOverflow
+                                        .ellipsis, // Handle overflow with ellipsis
                                     style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  )),
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+
                               SizedBox(
                                 height: 10,
                               ),
-                              Container(
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width > 500
+                                    ? 200
+                                    : 180,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 1),
                                   child: Text(
-                                '${summery.propertyData?.rentaladress}',
-                                style: TextStyle(color: blueColor),
-                              )),
+                                    '${summery.propertyData?.rentaladress}',
+                                    maxLines: 5, // Set maximum number of lines
+                                    overflow: TextOverflow
+                                        .ellipsis, // Handle overflow with ellipsis
+                                    style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              // Container(
+                              //     width: MediaQuery.of(context).size.width * .6,
+                              //     child: Text(
+                              //       '${summery.workSubject}',
+                              //       style: TextStyle(
+                              //           fontWeight: FontWeight.bold,
+                              //           color: blueColor),
+                              //     )),
+                              // SizedBox(
+                              //   height: 10,
+                              // ),
+                              // Container(
+                              //     child: Text(
+                              //   '${summery.propertyData?.rentaladress}',
+                              //   style: TextStyle(color: blueColor),
+                              // )),
                             ],
                           )
                         ],
@@ -4190,8 +4286,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
                 String notificationTime = formatter.format(DateTime.now());
                 Map<String, dynamic> values = {
-                  "date": reverseFormatDate(selectedDate.text),
-                  "message": message.text,
+                  "date": reverseFormatDate(selectedDate.text.trim()),
+                  "message": message.text.trim(),
                   "status": selectedStatus,
                   "statusUpdatedBy": "$firstName $lastName(Tenant)",
                   'notificationTime':notificationTime,

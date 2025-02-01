@@ -1053,10 +1053,10 @@ print("${response.body}");
         final workOrder = await WorkOrderRepository().addWorkOrder(
           adminId: admin_id,
           workOrder_images: uploaded_images,
-          workSubject: subject.text,
+          workSubject: subject.text.trim(),
 
           workCategory: _selectedCategory!,
-          workPerformed: perform.text,
+          workPerformed: perform.text.trim(),
           status: 'New',
           rentalAddress: _selectedRentaId ?? "",
           rentalUnit: units[_selectedUnitId] ?? "",

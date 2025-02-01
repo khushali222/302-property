@@ -484,11 +484,11 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     String? token = prefs.getString('token');
     Map<String, dynamic> values = {
       "admin_id": adminId!,
-      "Provider": provider.text,
-      "policy_id": policy.text,
+      "Provider": provider.text.trim(),
+      "policy_id": policy.text.trim(),
       // "EffectiveDate": reverseFormatDate(effective.text),
       // "ExpirationDate": reverseFormatDate(expiration.text),
-      "LiabilityCoverage": liablity.text,
+      "LiabilityCoverage": liablity.text.trim(),
       "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };
 

@@ -71,8 +71,8 @@ class _SignupState extends State<Signup> {
               context,
               MaterialPageRoute(
                   builder: (context) => Signup2(
-                    firstname: firstname.text,
-                    lastname: lastname.text,
+                    firstname: firstname.text.trim(),
+                    lastname: lastname.text.trim(),
                     email: email,
                   )));
           Fluttertoast.showToast(msg: "added succesfully");
@@ -336,7 +336,7 @@ class _SignupState extends State<Signup> {
               ),
               GestureDetector(
                 onTap: () async {
-                  if (firstname.text.isEmpty) {
+                  if (firstname.text.trim().isEmpty) {
                     setState(() {
                       firstnameerror = true;
                       firstnamemessage = "Firstname is required";
@@ -347,7 +347,7 @@ class _SignupState extends State<Signup> {
                       //firstnamemessage = "Firstname is required";
                     });
                   }
-                  if (lastname.text.isEmpty) {
+                  if (lastname.text.trim().isEmpty) {
                     setState(() {
                       lastnameerror = true;
                       lastnamemessage = "Lastname is required";
@@ -358,18 +358,18 @@ class _SignupState extends State<Signup> {
                       //firstnamemessage = "Firstname is required";
                     });
                   }
-                  if (email.text.isEmpty) {
+                  if (email.text.trim().isEmpty) {
                     setState(() {
                       emailerror = true;
                       emailmessage = "Email is required";
                     });
-                  } else if (!EmailValidator.validate(email.text)) {
+                  } else if (!EmailValidator.validate(email.text.trim())) {
                     setState(() {
                       emailerror = true;
                       emailmessage = "Email is not valid";
                     });
                   } else {
-                    await _checkEmailVerified(email.text);
+                    await _checkEmailVerified(email.text.trim());
                   }
                   if (!firstnameerror == false &&
                       !lastnameerror == false &&
