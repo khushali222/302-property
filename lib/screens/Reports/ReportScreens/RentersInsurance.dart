@@ -299,13 +299,13 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                   });
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 24),
+                  padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Leases",
+                          ? const Text("Tenant",
                               style: TextStyle(color: Colors.white))
-                          : const Text("Leases",
+                          : const Text("Tenant",
                               style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
@@ -331,101 +331,101 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 ),
               ),
             ),
-            // Expanded(
-            //   child: InkWell(
-            //     onTap: () {
-            //       setState(() {
-            //         if (sorting2) {
-            //           sorting1 = false;
-            //           sorting2 = sorting2;
-            //           sorting3 = false;
-            //           ascending2 = sorting2 ? !ascending2 : true;
-            //           ascending1 = false;
-            //           ascending3 = false;
-            //         } else {
-            //           sorting1 = false;
-            //           sorting2 = !sorting2;
-            //           sorting3 = false;
-            //           ascending2 = sorting2 ? !ascending2 : true;
-            //           ascending1 = false;
-            //           ascending3 = false;
-            //         }
-            //         // Sorting logic here
-            //       });
-            //     },
-            //     child: Row(
-            //       children: [
-            //         Text("Address", style: TextStyle(color: Colors.white)),
-            //         SizedBox(width: 5),
-            //         ascending2
-            //             ? Padding(
-            //                 padding: const EdgeInsets.only(top: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortUp,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               )
-            //             : Padding(
-            //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortDown,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // Expanded(
-            //   child: InkWell(
-            //     onTap: () {
-            //       setState(() {
-            //         if (sorting3) {
-            //           sorting1 = false;
-            //           sorting2 = false;
-            //           sorting3 = sorting3;
-            //           ascending3 = sorting3 ? !ascending3 : true;
-            //           ascending2 = false;
-            //           ascending1 = false;
-            //         } else {
-            //           sorting1 = false;
-            //           sorting2 = false;
-            //           sorting3 = !sorting3;
-            //           ascending3 = sorting3 ? !ascending3 : true;
-            //           ascending2 = false;
-            //           ascending1 = false;
-            //         }
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("Ins.Provider", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending2
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3) {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = !sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    }
 
-            //         // Sorting logic here
-            //       });
-            //     },
-            //     child: Row(
-            //       children: [
-            //         Text("Work", style: TextStyle(color: Colors.white)),
-            //         SizedBox(width: 5),
-            //         ascending3
-            //             ? Padding(
-            //                 padding: const EdgeInsets.only(top: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortUp,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               )
-            //             : Padding(
-            //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortDown,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("   Policy Id", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending3
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -458,6 +458,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
           return [
             pw.Header(
               level: 0,
+              padding: pw.EdgeInsets.only(bottom: 10),
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
@@ -467,7 +468,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                     crossAxisAlignment: pw.CrossAxisAlignment.center,
                     children: [
                       pw.Text(
-                        'Completed Work Orders',
+                        'Renters Insurance',
                         style: pw.TextStyle(
                           fontSize: 18,
                           fontWeight: pw.FontWeight.bold,
@@ -477,6 +478,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                       pw.Text('As of $currentDate'),
                     ],
                   ),
+                  pw.SizedBox(width: 50),
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
@@ -540,6 +542,15 @@ class _RentersInsuranceState extends State<RentersInsurance> {
               cellStyle: pw.TextStyle(fontSize: 10),
               cellAlignment: pw.Alignment.centerLeft,
               border: pw.TableBorder.all(color: PdfColor.fromHex('#152B53')),
+              columnWidths: {
+                0: const pw.FixedColumnWidth(80), // Unit
+                1: const pw.FixedColumnWidth(80), // Tenant Name
+                2: const pw.FixedColumnWidth(80), // Insurance Provider
+                3: const pw.FixedColumnWidth(80), // Policy ID
+                4: const pw.FixedColumnWidth(80), // Liability Coverage
+                5: const pw.FixedColumnWidth(80), // Effective Date
+                6: const pw.FixedColumnWidth(80), // Expiration Date
+              },
             ),
           ];
         },
@@ -550,57 +561,37 @@ class _RentersInsuranceState extends State<RentersInsurance> {
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }
-
+  String formateDates(String date){
+    return DateFormat("yyyy-MM-dd").format(DateTime.parse(date)).toString();
+  }
   List<List<String>> _generateTableData(
       List<RentersInsuranceData> rentersInsurance) {
     final List<List<String>> tableData = [];
 
     for (var item in rentersInsurance) {
       tableData.add([
-        item.rentalAddress ?? '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
+        item.unitDetails ?? '',
+        item.tenantName ?? '',
+        item.rentersInsurance!.insuranceCompany ?? '',
+        item.rentersInsurance!.policyId ?? '',
+        "\$${item.rentersInsurance!.liabilityCoverage.toString()}" ?? '',
+        formateDates(item.rentersInsurance!.effectiveDate!) ?? '',
+        formateDates(item.rentersInsurance!.expirationDate!)?? '',
       ]);
 
-      for (var tenant in item.tenants!) {
-        tableData.add([
-          '',
-          tenant.tenantName ?? '',
-          tenant.tenantInsurance?.provider ?? '',
-          tenant.tenantInsurance?.policyId ?? '',
-          tenant.tenantInsurance!.liabilityCoverage.toString() ?? '',
-          tenant.tenantInsurance?.effectiveDate ?? '',
-          tenant.tenantInsurance?.expirationDate ?? '',
-        ]);
-      }
+      // for (var tenant in item.tenants!) {
+      //   tableData.add([
+      //     '',
+      //     tenant.tenantName ?? '',
+      //     tenant.tenantInsurance?.provider ?? '',
+      //     tenant.tenantInsurance?.policyId ?? '',
+      //     tenant.tenantInsurance!.liabilityCoverage.toString() ?? '',
+      //     tenant.tenantInsurance?.effectiveDate ?? '',
+      //     tenant.tenantInsurance?.expirationDate ?? '',
+      //   ]);
+      // }
     }
-    for (var item in rentersInsurance) {
-      tableData.add([
-        item.rentalAddress ?? '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-      ]);
 
-      for (var tenant in item.tenants!) {
-        tableData.add([
-          '',
-          tenant.tenantName ?? '',
-          tenant.tenantInsurance?.provider ?? '',
-          tenant.tenantInsurance?.policyId ?? '',
-          tenant.tenantInsurance!.liabilityCoverage.toString() ?? '',
-          tenant.tenantInsurance?.effectiveDate ?? '',
-          tenant.tenantInsurance?.expirationDate ?? '',
-        ]);
-      }
-    }
 
     return tableData;
   }
@@ -852,27 +843,27 @@ class _RentersInsuranceState extends State<RentersInsurance> {
       rowIndex++; // Move to the next row for tenant details
 
       // Add tenant details in subsequent rows
-      for (var tenant in item.tenants!) {
-        sheet
-            .getRangeByIndex(rowIndex, 1)
-            .setText(item.tenants!.first.unitDetails ?? '');
-        sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantName ?? '');
-        sheet
-            .getRangeByIndex(rowIndex, 3)
-            .setText(tenant.tenantInsurance?.provider ?? '');
-        sheet
-            .getRangeByIndex(rowIndex, 4)
-            .setText(tenant.tenantInsurance?.policyId ?? '');
-        sheet.getRangeByIndex(rowIndex, 5).setText(
-            tenant.tenantInsurance!.liabilityCoverage.toString() ?? '');
-        sheet
-            .getRangeByIndex(rowIndex, 6)
-            .setText(tenant.tenantInsurance?.effectiveDate ?? '');
-        sheet
-            .getRangeByIndex(rowIndex, 7)
-            .setText(tenant.tenantInsurance?.expirationDate ?? '');
-        rowIndex++; // Move to the next row
-      }
+      // for (var tenant in item.tenants!) {
+      //   sheet
+      //       .getRangeByIndex(rowIndex, 1)
+      //       .setText(item.tenants!.first.unitDetails ?? '');
+      //   sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantName ?? '');
+      //   sheet
+      //       .getRangeByIndex(rowIndex, 3)
+      //       .setText(tenant.tenantInsurance?.provider ?? '');
+      //   sheet
+      //       .getRangeByIndex(rowIndex, 4)
+      //       .setText(tenant.tenantInsurance?.policyId ?? '');
+      //   sheet.getRangeByIndex(rowIndex, 5).setText(
+      //       tenant.tenantInsurance!.liabilityCoverage.toString() ?? '');
+      //   sheet
+      //       .getRangeByIndex(rowIndex, 6)
+      //       .setText(tenant.tenantInsurance?.effectiveDate ?? '');
+      //   sheet
+      //       .getRangeByIndex(rowIndex, 7)
+      //       .setText(tenant.tenantInsurance?.expirationDate ?? '');
+      //   rowIndex++; // Move to the next row
+      // }
     }
 
     // Save workbook as a byte stream
@@ -921,20 +912,28 @@ class _RentersInsuranceState extends State<RentersInsurance> {
 
     for (var item in rentersInsurance) {
       // Add main row with rental address
-      rows.add([item.rentalAddress ?? '', '', '', '', '', '', '']);
+      rows.add([
+        item.unitDetails ?? '',
+        item.tenantName ?? '',
+        item.rentersInsurance!.insuranceCompany ?? '',
+        item.rentersInsurance!.policyId ?? '',
+        "\$${item.rentersInsurance!.liabilityCoverage.toString()}" ?? '',
+        formateDates(item.rentersInsurance!.effectiveDate!) ?? '',
+        formateDates(item.rentersInsurance!.expirationDate!)?? '',
+      ]);
 
       // Add tenant details in subsequent rows
-      for (var tenant in item.tenants!) {
-        rows.add([
-          '',
-          tenant.tenantName ?? '',
-          tenant.tenantInsurance?.provider ?? '',
-          tenant.tenantInsurance?.policyId ?? '',
-          tenant.tenantInsurance?.liabilityCoverage ?? '',
-          tenant.tenantInsurance?.effectiveDate ?? '',
-          tenant.tenantInsurance?.expirationDate ?? ''
-        ]);
-      }
+      // for (var tenant in item.tenants!) {
+      //   rows.add([
+      //     '',
+      //     tenant.tenantName ?? '',
+      //     tenant.tenantInsurance?.provider ?? '',
+      //     tenant.tenantInsurance?.policyId ?? '',
+      //     tenant.tenantInsurance?.liabilityCoverage ?? '',
+      //     tenant.tenantInsurance?.effectiveDate ?? '',
+      //     tenant.tenantInsurance?.expirationDate ?? ''
+      //   ]);
+      // }
     }
 
     String csv = const ListToCsvConverter().convert(rows);
@@ -1041,10 +1040,9 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                   item.rentalAddress!
                                       .toLowerCase()
                                       .contains(searchvalue.toLowerCase()) ||
-                                  item.tenants!.any((tenant) => tenant
-                                      .tenantName!
-                                      .toLowerCase()
-                                      .contains(searchvalue.toLowerCase())))
+                                      item.tenantName!
+                                          .toLowerCase()
+                                          .contains(searchvalue.toLowerCase()))
                               .toList();
                         } else {
                           data = snapshot.data!
@@ -1234,14 +1232,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                       ),
                                                     ),
                                                     SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .04),
+                                                        width: 8),
                                                     Expanded(
                                                       child: Text(
-                                                        '${item.rentalAddress ?? '-'}',
+                                                        '${item.tenantName ?? '-'}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1250,333 +1244,359 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                         ),
                                                       ),
                                                     ),
+                                                    SizedBox(
+                                                        width: 8),
+                                                    Expanded(
+                                                      child: Text(
+                                                        '${item.rentersInsurance!.insuranceCompany ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: 8),
+                                                    Expanded(
+                                                      child: Text(
+                                                        '  ${item.rentersInsurance!.policyId ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
                                             ),
-                                            if (isRowExpanded)
-                                              Column(
-                                                children: item.tenants!
-                                                    .asMap()
-                                                    .entries
-                                                    .map((tenantEntry) {
-                                                  int tenantIndex =
-                                                      tenantEntry.key;
-                                                  var tenant =
-                                                      tenantEntry.value;
-                                                  bool isTenantExpanded =
-                                                      expandedTenantIndex[
-                                                              rowIndex] ==
-                                                          tenantIndex;
-
-                                                  return Column(
-                                                    children: <Widget>[
-                                                      Divider(
-                                                        color: blueColor,
-                                                      ),
-                                                      ListTile(
-                                                        contentPadding:
-                                                            EdgeInsets.zero,
-                                                        title: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(2.0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: <Widget>[
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    if (expandedTenantIndex[
-                                                                            rowIndex] ==
-                                                                        tenantIndex) {
-                                                                      expandedTenantIndex[
-                                                                              rowIndex] =
-                                                                          null;
-                                                                    } else {
-                                                                      expandedTenantIndex[
-                                                                              rowIndex] =
-                                                                          tenantIndex;
-                                                                    }
-                                                                  });
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              5),
-                                                                  padding: !isTenantExpanded
-                                                                      ? const EdgeInsets
-                                                                          .only(
-                                                                          bottom:
-                                                                              10)
-                                                                      : const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              10),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            24),
-                                                                    child:
-                                                                        FaIcon(
-                                                                      isTenantExpanded
-                                                                          ? FontAwesomeIcons
-                                                                              .sortUp
-                                                                          : FontAwesomeIcons
-                                                                              .sortDown,
-                                                                      size: 20,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      .02),
-                                                              Expanded(
-                                                                child: RichText(
-                                                                    text: TextSpan(
-                                                                        children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Tenant ${tenantIndex + 1} ',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              grey,
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                          fontSize:
-                                                                              14,
-                                                                        ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            ': ${tenant.tenantName ?? '-'}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          fontSize:
-                                                                              14,
-                                                                        ),
-                                                                      ),
-                                                                    ])),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      if (isTenantExpanded)
-                                                        Container(
-                                                          width:
-                                                              double.infinity,
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            36.0),
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              0),
-                                                                      child: Text
-                                                                          .rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Insurance Provider: ',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 14,
-                                                                              ),
-                                                                            ),
-                                                                            TextSpan(
-                                                                              text: '${tenant.tenantInsurance?.policyId ?? '-'}',
-                                                                              style: TextStyle(
-                                                                                color: grey,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 15,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          10,
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              0),
-                                                                      child: Text
-                                                                          .rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Policy: ',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 14,
-                                                                              ),
-                                                                            ),
-                                                                            TextSpan(
-                                                                              text: '${tenant.tenantInsurance?.policyId ?? '-'}',
-                                                                              style: TextStyle(
-                                                                                color: grey,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 15,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          10,
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              0),
-                                                                      child: Text
-                                                                          .rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Liability Coverage: ',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 14,
-                                                                              ),
-                                                                            ),
-                                                                            TextSpan(
-                                                                              text: '${tenant.tenantInsurance?.liabilityCoverage ?? '-'}',
-                                                                              style: TextStyle(
-                                                                                color: grey,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 15,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          10,
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              0),
-                                                                      child: Text
-                                                                          .rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Effective Date: ',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 14,
-                                                                              ),
-                                                                            ),
-                                                                            TextSpan(
-                                                                              text: '${dateProvider.formatCurrentDate(tenant.tenantInsurance?.effectiveDate ?? '-')}',
-                                                                              style: TextStyle(
-                                                                                color: grey,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 15,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          10,
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              0),
-                                                                      child: Text
-                                                                          .rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Expiration Date: ',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 14,
-                                                                              ),
-                                                                            ),
-                                                                            TextSpan(
-                                                                              text: '${dateProvider.formatCurrentDate(tenant.tenantInsurance?.expirationDate ?? '-')}',
-                                                                              style: TextStyle(
-                                                                                color: grey,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 15,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            8),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                    ],
-                                                  );
-                                                }).toList(),
-                                              ),
+                                            // if (isRowExpanded)
+                                            //   Column(
+                                            //     children: item.tenants!
+                                            //         .asMap()
+                                            //         .entries
+                                            //         .map((tenantEntry) {
+                                            //       int tenantIndex =
+                                            //           tenantEntry.key;
+                                            //       var tenant =
+                                            //           tenantEntry.value;
+                                            //       bool isTenantExpanded =
+                                            //           expandedTenantIndex[
+                                            //                   rowIndex] ==
+                                            //               tenantIndex;
+                                            //
+                                            //       return Column(
+                                            //         children: <Widget>[
+                                            //           Divider(
+                                            //             color: blueColor,
+                                            //           ),
+                                            //           ListTile(
+                                            //             contentPadding:
+                                            //                 EdgeInsets.zero,
+                                            //             title: Padding(
+                                            //               padding:
+                                            //                   const EdgeInsets
+                                            //                       .all(2.0),
+                                            //               child: Row(
+                                            //                 mainAxisAlignment:
+                                            //                     MainAxisAlignment
+                                            //                         .start,
+                                            //                 crossAxisAlignment:
+                                            //                     CrossAxisAlignment
+                                            //                         .center,
+                                            //                 children: <Widget>[
+                                            //                   InkWell(
+                                            //                     onTap: () {
+                                            //                       setState(() {
+                                            //                         if (expandedTenantIndex[
+                                            //                                 rowIndex] ==
+                                            //                             tenantIndex) {
+                                            //                           expandedTenantIndex[
+                                            //                                   rowIndex] =
+                                            //                               null;
+                                            //                         } else {
+                                            //                           expandedTenantIndex[
+                                            //                                   rowIndex] =
+                                            //                               tenantIndex;
+                                            //                         }
+                                            //                       });
+                                            //                     },
+                                            //                     child:
+                                            //                         Container(
+                                            //                       margin:
+                                            //                           const EdgeInsets
+                                            //                               .only(
+                                            //                               left:
+                                            //                                   5),
+                                            //                       padding: !isTenantExpanded
+                                            //                           ? const EdgeInsets
+                                            //                               .only(
+                                            //                               bottom:
+                                            //                                   10)
+                                            //                           : const EdgeInsets
+                                            //                               .only(
+                                            //                               top:
+                                            //                                   10),
+                                            //                       child:
+                                            //                           Padding(
+                                            //                         padding: const EdgeInsets
+                                            //                             .only(
+                                            //                             left:
+                                            //                                 24),
+                                            //                         child:
+                                            //                             FaIcon(
+                                            //                           isTenantExpanded
+                                            //                               ? FontAwesomeIcons
+                                            //                                   .sortUp
+                                            //                               : FontAwesomeIcons
+                                            //                                   .sortDown,
+                                            //                           size: 20,
+                                            //                           color:
+                                            //                               blueColor,
+                                            //                         ),
+                                            //                       ),
+                                            //                     ),
+                                            //                   ),
+                                            //                   SizedBox(
+                                            //                       width: MediaQuery.of(
+                                            //                                   context)
+                                            //                               .size
+                                            //                               .width *
+                                            //                           .02),
+                                            //                   Expanded(
+                                            //                     child: RichText(
+                                            //                         text: TextSpan(
+                                            //                             children: [
+                                            //                           TextSpan(
+                                            //                             text:
+                                            //                                 'Tenant ${tenantIndex + 1} ',
+                                            //                             style:
+                                            //                                 TextStyle(
+                                            //                               color:
+                                            //                                   grey,
+                                            //                               fontWeight:
+                                            //                                   FontWeight.w500,
+                                            //                               fontSize:
+                                            //                                   14,
+                                            //                             ),
+                                            //                           ),
+                                            //                           TextSpan(
+                                            //                             text:
+                                            //                                 ': ${tenant.tenantName ?? '-'}',
+                                            //                             style:
+                                            //                                 TextStyle(
+                                            //                               color:
+                                            //                                   blueColor,
+                                            //                               fontWeight:
+                                            //                                   FontWeight.bold,
+                                            //                               fontSize:
+                                            //                                   14,
+                                            //                             ),
+                                            //                           ),
+                                            //                         ])),
+                                            //                   ),
+                                            //                 ],
+                                            //               ),
+                                            //             ),
+                                            //           ),
+                                            //           if (isTenantExpanded)
+                                            //             Container(
+                                            //               width:
+                                            //                   double.infinity,
+                                            //               child: Column(
+                                            //                 crossAxisAlignment:
+                                            //                     CrossAxisAlignment
+                                            //                         .start,
+                                            //                 children: [
+                                            //                   Padding(
+                                            //                     padding:
+                                            //                         const EdgeInsets
+                                            //                             .only(
+                                            //                             left:
+                                            //                                 36.0),
+                                            //                     child: Column(
+                                            //                       crossAxisAlignment:
+                                            //                           CrossAxisAlignment
+                                            //                               .start,
+                                            //                       children: [
+                                            //                         Padding(
+                                            //                           padding: const EdgeInsets
+                                            //                               .only(
+                                            //                               left:
+                                            //                                   0),
+                                            //                           child: Text
+                                            //                               .rich(
+                                            //                             TextSpan(
+                                            //                               children: [
+                                            //                                 TextSpan(
+                                            //                                   text: 'Insurance Provider: ',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 14,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 TextSpan(
+                                            //                                   text: '${tenant.tenantInsurance?.policyId ?? '-'}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: grey,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 15,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                           ),
+                                            //                         ),
+                                            //                         const SizedBox(
+                                            //                           height:
+                                            //                               10,
+                                            //                         ),
+                                            //                         Padding(
+                                            //                           padding: const EdgeInsets
+                                            //                               .only(
+                                            //                               left:
+                                            //                                   0),
+                                            //                           child: Text
+                                            //                               .rich(
+                                            //                             TextSpan(
+                                            //                               children: [
+                                            //                                 TextSpan(
+                                            //                                   text: 'Policy: ',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 14,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 TextSpan(
+                                            //                                   text: '${tenant.tenantInsurance?.policyId ?? '-'}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: grey,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 15,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                           ),
+                                            //                         ),
+                                            //                         const SizedBox(
+                                            //                           height:
+                                            //                               10,
+                                            //                         ),
+                                            //                         Padding(
+                                            //                           padding: const EdgeInsets
+                                            //                               .only(
+                                            //                               left:
+                                            //                                   0),
+                                            //                           child: Text
+                                            //                               .rich(
+                                            //                             TextSpan(
+                                            //                               children: [
+                                            //                                 TextSpan(
+                                            //                                   text: 'Liability Coverage: ',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 14,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 TextSpan(
+                                            //                                   text: '${tenant.tenantInsurance?.liabilityCoverage ?? '-'}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: grey,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 15,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                           ),
+                                            //                         ),
+                                            //                         const SizedBox(
+                                            //                           height:
+                                            //                               10,
+                                            //                         ),
+                                            //                         Padding(
+                                            //                           padding: const EdgeInsets
+                                            //                               .only(
+                                            //                               left:
+                                            //                                   0),
+                                            //                           child: Text
+                                            //                               .rich(
+                                            //                             TextSpan(
+                                            //                               children: [
+                                            //                                 TextSpan(
+                                            //                                   text: 'Effective Date: ',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 14,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 TextSpan(
+                                            //                                   text: '${dateProvider.formatCurrentDate(tenant.tenantInsurance?.effectiveDate ?? '-')}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: grey,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 15,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                           ),
+                                            //                         ),
+                                            //                         const SizedBox(
+                                            //                           height:
+                                            //                               10,
+                                            //                         ),
+                                            //                         Padding(
+                                            //                           padding: const EdgeInsets
+                                            //                               .only(
+                                            //                               left:
+                                            //                                   0),
+                                            //                           child: Text
+                                            //                               .rich(
+                                            //                             TextSpan(
+                                            //                               children: [
+                                            //                                 TextSpan(
+                                            //                                   text: 'Expiration Date: ',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 14,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 TextSpan(
+                                            //                                   text: '${dateProvider.formatCurrentDate(tenant.tenantInsurance?.expirationDate ?? '-')}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: grey,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 15,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                           ),
+                                            //                         ),
+                                            //                         const SizedBox(
+                                            //                             height:
+                                            //                                 8),
+                                            //                       ],
+                                            //                     ),
+                                            //                   ),
+                                            //                 ],
+                                            //               ),
+                                            //             ),
+                                            //         ],
+                                            //       );
+                                            //     }).toList(),
+                                            //   ),
                                           ],
                                         ),
                                       );
@@ -1696,11 +1716,8 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                               .where((item) =>
                                   item.rentalAddress!
                                       .toLowerCase()
-                                      .contains(searchvalue.toLowerCase()) ||
-                                  item.tenants!.any((tenant) => tenant
-                                      .tenantName!
-                                      .toLowerCase()
-                                      .contains(searchvalue.toLowerCase())))
+                                      .contains(searchvalue.toLowerCase())
+                               )
                               .toList();
                         } else {
                           data = snapshot.data!
@@ -1898,280 +1915,280 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                 ),
                                               ),
                                             ),
-                                            if (isRowExpanded)
-                                              Column(
-                                                children: item.tenants!
-                                                    .asMap()
-                                                    .entries
-                                                    .map((tenantEntry) {
-                                                  int tenantIndex =
-                                                      tenantEntry.key;
-                                                  var tenant =
-                                                      tenantEntry.value;
-                                                  bool isTenantExpanded =
-                                                      expandedTenantIndex[
-                                                              rowIndex] ==
-                                                          tenantIndex;
-
-                                                  return Column(
-                                                    children: <Widget>[
-                                                      Divider(
-                                                        color: blueColor,
-                                                      ),
-                                                      ListTile(
-                                                        contentPadding:
-                                                            EdgeInsets.zero,
-                                                        title: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(2.0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: <Widget>[
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    if (expandedTenantIndex[
-                                                                            rowIndex] ==
-                                                                        tenantIndex) {
-                                                                      expandedTenantIndex[
-                                                                              rowIndex] =
-                                                                          null;
-                                                                    } else {
-                                                                      expandedTenantIndex[
-                                                                              rowIndex] =
-                                                                          tenantIndex;
-                                                                    }
-                                                                  });
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              5),
-                                                                  padding: !isTenantExpanded
-                                                                      ? const EdgeInsets
-                                                                          .only(
-                                                                          bottom:
-                                                                              10)
-                                                                      : const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              10),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            24),
-                                                                    child:
-                                                                        FaIcon(
-                                                                      isTenantExpanded
-                                                                          ? FontAwesomeIcons
-                                                                              .sortUp
-                                                                          : FontAwesomeIcons
-                                                                              .sortDown,
-                                                                      size: 20,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      .02),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  'Tenant ${tenantIndex + 1} : ${tenant.tenantName ?? '-'}',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        16,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      if (isTenantExpanded)
-                                                        Container(
-                                                          width:
-                                                              double.infinity,
-                                                          // color: Colors.amber,
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(16.0),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Row(
-                                                                      children: [
-                                                                        SizedBox(
-                                                                            width:
-                                                                                MediaQuery.of(context).size.width * .01),
-                                                                        Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Text(
-                                                                              'Insurance Provider',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                            Text(
-                                                                              '${tenant.tenantInsurance?.policyId ?? '-'}',
-                                                                              style: TextStyle(
-                                                                                color: Colors.grey[500],
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        SizedBox(
-                                                                            width:
-                                                                                MediaQuery.of(context).size.width * .04),
-                                                                        Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Text(
-                                                                              'Policy',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                            Text(
-                                                                              '${tenant.tenantInsurance?.policyId ?? '-'}',
-                                                                              style: TextStyle(
-                                                                                color: Colors.grey[500],
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        SizedBox(
-                                                                            width:
-                                                                                MediaQuery.of(context).size.width * .04),
-                                                                        Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Text(
-                                                                              'Liability Coverage',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                            Text(
-                                                                              '${tenant.tenantInsurance?.liabilityCoverage ?? '-'}',
-                                                                              style: TextStyle(
-                                                                                color: Colors.grey[500],
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        SizedBox(
-                                                                            width:
-                                                                                MediaQuery.of(context).size.width * .04),
-                                                                        Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Text(
-                                                                              'Effective Date',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                            Text(
-                                                                              '${tenant.tenantInsurance?.effectiveDate ?? '-'}',
-                                                                              style: TextStyle(
-                                                                                color: Colors.grey[500],
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        SizedBox(
-                                                                            width:
-                                                                                MediaQuery.of(context).size.width * .04),
-                                                                        Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Text(
-                                                                              'Expiration Date',
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                            Text(
-                                                                              '${tenant.tenantInsurance?.expirationDate ?? '-'}',
-                                                                              style: TextStyle(
-                                                                                color: Colors.grey[500],
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 16,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          10,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                    ],
-                                                  );
-                                                }).toList(),
-                                              ),
+                                            // if (isRowExpanded)
+                                            //   Column(
+                                            //     children: item.tenants!
+                                            //         .asMap()
+                                            //         .entries
+                                            //         .map((tenantEntry) {
+                                            //       int tenantIndex =
+                                            //           tenantEntry.key;
+                                            //       var tenant =
+                                            //           tenantEntry.value;
+                                            //       bool isTenantExpanded =
+                                            //           expandedTenantIndex[
+                                            //                   rowIndex] ==
+                                            //               tenantIndex;
+                                            //
+                                            //       return Column(
+                                            //         children: <Widget>[
+                                            //           Divider(
+                                            //             color: blueColor,
+                                            //           ),
+                                            //           ListTile(
+                                            //             contentPadding:
+                                            //                 EdgeInsets.zero,
+                                            //             title: Padding(
+                                            //               padding:
+                                            //                   const EdgeInsets
+                                            //                       .all(2.0),
+                                            //               child: Row(
+                                            //                 mainAxisAlignment:
+                                            //                     MainAxisAlignment
+                                            //                         .start,
+                                            //                 crossAxisAlignment:
+                                            //                     CrossAxisAlignment
+                                            //                         .center,
+                                            //                 children: <Widget>[
+                                            //                   InkWell(
+                                            //                     onTap: () {
+                                            //                       setState(() {
+                                            //                         if (expandedTenantIndex[
+                                            //                                 rowIndex] ==
+                                            //                             tenantIndex) {
+                                            //                           expandedTenantIndex[
+                                            //                                   rowIndex] =
+                                            //                               null;
+                                            //                         } else {
+                                            //                           expandedTenantIndex[
+                                            //                                   rowIndex] =
+                                            //                               tenantIndex;
+                                            //                         }
+                                            //                       });
+                                            //                     },
+                                            //                     child:
+                                            //                         Container(
+                                            //                       margin:
+                                            //                           const EdgeInsets
+                                            //                               .only(
+                                            //                               left:
+                                            //                                   5),
+                                            //                       padding: !isTenantExpanded
+                                            //                           ? const EdgeInsets
+                                            //                               .only(
+                                            //                               bottom:
+                                            //                                   10)
+                                            //                           : const EdgeInsets
+                                            //                               .only(
+                                            //                               top:
+                                            //                                   10),
+                                            //                       child:
+                                            //                           Padding(
+                                            //                         padding: const EdgeInsets
+                                            //                             .only(
+                                            //                             left:
+                                            //                                 24),
+                                            //                         child:
+                                            //                             FaIcon(
+                                            //                           isTenantExpanded
+                                            //                               ? FontAwesomeIcons
+                                            //                                   .sortUp
+                                            //                               : FontAwesomeIcons
+                                            //                                   .sortDown,
+                                            //                           size: 20,
+                                            //                           color:
+                                            //                               blueColor,
+                                            //                         ),
+                                            //                       ),
+                                            //                     ),
+                                            //                   ),
+                                            //                   SizedBox(
+                                            //                       width: MediaQuery.of(
+                                            //                                   context)
+                                            //                               .size
+                                            //                               .width *
+                                            //                           .02),
+                                            //                   Expanded(
+                                            //                     child: Text(
+                                            //                       'Tenant ${tenantIndex + 1} : ${tenant.tenantName ?? '-'}',
+                                            //                       style:
+                                            //                           TextStyle(
+                                            //                         color:
+                                            //                             blueColor,
+                                            //                         fontWeight:
+                                            //                             FontWeight
+                                            //                                 .bold,
+                                            //                         fontSize:
+                                            //                             16,
+                                            //                       ),
+                                            //                     ),
+                                            //                   ),
+                                            //                 ],
+                                            //               ),
+                                            //             ),
+                                            //           ),
+                                            //           if (isTenantExpanded)
+                                            //             Container(
+                                            //               width:
+                                            //                   double.infinity,
+                                            //               // color: Colors.amber,
+                                            //               child: Padding(
+                                            //                 padding:
+                                            //                     const EdgeInsets
+                                            //                         .all(16.0),
+                                            //                 child: Column(
+                                            //                   crossAxisAlignment:
+                                            //                       CrossAxisAlignment
+                                            //                           .start,
+                                            //                   children: [
+                                            //                     Column(
+                                            //                       crossAxisAlignment:
+                                            //                           CrossAxisAlignment
+                                            //                               .start,
+                                            //                       children: [
+                                            //                         Row(
+                                            //                           children: [
+                                            //                             SizedBox(
+                                            //                                 width:
+                                            //                                     MediaQuery.of(context).size.width * .01),
+                                            //                             Column(
+                                            //                               crossAxisAlignment:
+                                            //                                   CrossAxisAlignment.start,
+                                            //                               children: [
+                                            //                                 Text(
+                                            //                                   'Insurance Provider',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 Text(
+                                            //                                   '${tenant.tenantInsurance?.policyId ?? '-'}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: Colors.grey[500],
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                             SizedBox(
+                                            //                                 width:
+                                            //                                     MediaQuery.of(context).size.width * .04),
+                                            //                             Column(
+                                            //                               crossAxisAlignment:
+                                            //                                   CrossAxisAlignment.start,
+                                            //                               children: [
+                                            //                                 Text(
+                                            //                                   'Policy',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 Text(
+                                            //                                   '${tenant.tenantInsurance?.policyId ?? '-'}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: Colors.grey[500],
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                             SizedBox(
+                                            //                                 width:
+                                            //                                     MediaQuery.of(context).size.width * .04),
+                                            //                             Column(
+                                            //                               crossAxisAlignment:
+                                            //                                   CrossAxisAlignment.start,
+                                            //                               children: [
+                                            //                                 Text(
+                                            //                                   'Liability Coverage',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 Text(
+                                            //                                   '${tenant.tenantInsurance?.liabilityCoverage ?? '-'}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: Colors.grey[500],
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                             SizedBox(
+                                            //                                 width:
+                                            //                                     MediaQuery.of(context).size.width * .04),
+                                            //                             Column(
+                                            //                               crossAxisAlignment:
+                                            //                                   CrossAxisAlignment.start,
+                                            //                               children: [
+                                            //                                 Text(
+                                            //                                   'Effective Date',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 Text(
+                                            //                                   '${tenant.tenantInsurance?.effectiveDate ?? '-'}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: Colors.grey[500],
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                             SizedBox(
+                                            //                                 width:
+                                            //                                     MediaQuery.of(context).size.width * .04),
+                                            //                             Column(
+                                            //                               crossAxisAlignment:
+                                            //                                   CrossAxisAlignment.start,
+                                            //                               children: [
+                                            //                                 Text(
+                                            //                                   'Expiration Date',
+                                            //                                   style: TextStyle(
+                                            //                                     color: blueColor,
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 Text(
+                                            //                                   '${tenant.tenantInsurance?.expirationDate ?? '-'}',
+                                            //                                   style: TextStyle(
+                                            //                                     color: Colors.grey[500],
+                                            //                                     fontWeight: FontWeight.bold,
+                                            //                                     fontSize: 16,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                           ],
+                                            //                         ),
+                                            //                         const SizedBox(
+                                            //                           height:
+                                            //                               10,
+                                            //                         ),
+                                            //                       ],
+                                            //                     ),
+                                            //                   ],
+                                            //                 ),
+                                            //               ),
+                                            //             ),
+                                            //         ],
+                                            //       );
+                                            //     }).toList(),
+                                            //   ),
                                           ],
                                         ),
                                       );
@@ -2386,49 +2403,49 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     );
   }
 
-  List<TableRow> _buildExpandableRows(int rowIndex, RentersInsuranceData item) {
-    return [
-      TableRow(
-        decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(color: blueColor),
-            right: BorderSide(color: blueColor),
-            top: BorderSide(color: blueColor),
-            bottom: item.tenants!.isEmpty
-                ? BorderSide(color: blueColor)
-                : BorderSide.none,
-          ),
-        ),
-        children: [
-          _buildDataCell(item.rentalAddress ?? '-'),
-          _buildDataCell(''),
-          _buildDataCell(''),
-          _buildDataCell(''),
-          _buildDataCell(''),
-        ],
-      ),
-      for (var tenantEntry in item.tenants!.asMap().entries)
-        TableRow(
-          decoration: BoxDecoration(
-            border: Border(
-              left: BorderSide(color: blueColor),
-              right: BorderSide(color: blueColor),
-              bottom: tenantEntry.key == item.tenants!.length - 1
-                  ? BorderSide(color: blueColor)
-                  : BorderSide.none,
-            ),
-          ),
-          children: [
-            _buildDataCell('${item.tenants!.first.unitDetails ?? '-'}'),
-            _buildDataCell('${tenantEntry.value.tenantName ?? '-'}'),
-            _buildDataCell(
-                '${tenantEntry.value.tenantInsurance?.provider ?? '-'}'),
-            _buildDataCell(
-                ' ${tenantEntry.value.tenantInsurance?.policyId ?? '-'}\n'),
-            _buildDataCell(
-                ' ${tenantEntry.value.tenantInsurance?.liabilityCoverage ?? '-'}\n'),
-          ],
-        ),
-    ];
-  }
+  // List<TableRow> _buildExpandableRows(int rowIndex, RentersInsuranceData item) {
+  //   return [
+  //     TableRow(
+  //       decoration: BoxDecoration(
+  //         border: Border(
+  //           left: BorderSide(color: blueColor),
+  //           right: BorderSide(color: blueColor),
+  //           top: BorderSide(color: blueColor),
+  //           bottom: item.tenants!.isEmpty
+  //               ? BorderSide(color: blueColor)
+  //               : BorderSide.none,
+  //         ),
+  //       ),
+  //       children: [
+  //         _buildDataCell(item.rentalAddress ?? '-'),
+  //         _buildDataCell(''),
+  //         _buildDataCell(''),
+  //         _buildDataCell(''),
+  //         _buildDataCell(''),
+  //       ],
+  //     ),
+  //     for (var tenantEntry in item.tenants!.asMap().entries)
+  //       TableRow(
+  //         decoration: BoxDecoration(
+  //           border: Border(
+  //             left: BorderSide(color: blueColor),
+  //             right: BorderSide(color: blueColor),
+  //             bottom: tenantEntry.key == item.tenants!.length - 1
+  //                 ? BorderSide(color: blueColor)
+  //                 : BorderSide.none,
+  //           ),
+  //         ),
+  //         children: [
+  //           _buildDataCell('${item.tenants!.first.unitDetails ?? '-'}'),
+  //           _buildDataCell('${tenantEntry.value.tenantName ?? '-'}'),
+  //           _buildDataCell(
+  //               '${tenantEntry.value.tenantInsurance?.provider ?? '-'}'),
+  //           _buildDataCell(
+  //               ' ${tenantEntry.value.tenantInsurance?.policyId ?? '-'}\n'),
+  //           _buildDataCell(
+  //               ' ${tenantEntry.value.tenantInsurance?.liabilityCoverage ?? '-'}\n'),
+  //         ],
+  //       ),
+  //   ];
+  // }
 }

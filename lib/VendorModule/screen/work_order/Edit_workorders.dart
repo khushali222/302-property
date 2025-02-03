@@ -582,6 +582,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
             hintText: 'Description',
             controller: partsAndLabor[index]['descriptionController'],
             keyboardType: TextInputType.text,
+            optional: true,
           ),
           SizedBox(height: 10),
           Text(
@@ -1445,7 +1446,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                       ],
                                     ),
 
-                                    Text('Welcome To Be Performed',
+                                    Text('Work To Be Performed',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
@@ -3106,7 +3107,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Welcome To Be Performed',
+                              Text('Work To Be Performed',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,

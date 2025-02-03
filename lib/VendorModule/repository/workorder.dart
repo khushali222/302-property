@@ -162,11 +162,13 @@ class WorkOrderRepository {
 
     final url = Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
     print('$Api_url/api/work-order/workorder_details/$workorderId');
+    print({"authorization" : "CRM $token","id":"CRM $id",});
     final response = await http.get(
         url,
         headers: {"authorization" : "CRM $token","id":"CRM $id",}
     );
 
+  print(response.body);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)["data"];
       return WorkOrderData_summery.fromJson(data);

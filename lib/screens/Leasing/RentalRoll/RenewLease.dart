@@ -60,7 +60,7 @@ class _RenewleaseState extends State<Renewlease> {
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     // _tabController = TabController(length: 3, vsync: this);
     _selectedLeaseType = widget.leasetype;
-    startDateController.text = formatDate(widget.enddate!) ?? "";
+    //startDateController.text = formatDate(widget.enddate!) ?? "";
     DateTime endDate = formatDates(widget.enddate!);
     DateTime startDate = endDate;
     DateTime newEndDate =
@@ -68,8 +68,8 @@ class _RenewleaseState extends State<Renewlease> {
 
     // startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
     //startDateController.text = formatDate(DateTime.now().toString());
-    endDateController.text =
-        formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+    // endDateController.text =
+    //     formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
     rent.text = widget.rentamount ?? "";
 
     // if(widget.renewfileName != "")
@@ -141,7 +141,40 @@ class _RenewleaseState extends State<Renewlease> {
     if (response.statusCode == 200) {
       setState(() {
         leasegetdata = LeaseSummary.fromJson(jsonDecode(response.body));
+        print("Renew lease ${leasegetdata.data!.renewLeases!.length}");
+        if (determineStatus(leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
+          // Lease is expired
+          startDateController.text = formatDate(DateTime.now().toString());
+
+          // Set the end date to one month from today's date
+          DateTime newEndDate = DateTime(
+              DateTime.now().year,
+              DateTime.now().month + 1,
+              DateTime.now().day
+          );
+          endDateController.text = formatDate(
+              DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+        }
+        if (leasegetdata.data!.renewLeases != null &&
+            leasegetdata.data!.renewLeases!.isNotEmpty) {
+          // Lease is active
+          if(!determineStatus(leasegetdata.data!.renewLeases!.last.startDate!, leasegetdata.data!.renewLeases!.last.endDate!)){
+            DateTime endDate = formatDates(leasegetdata.data!.renewLeases!.last.endDate!);
+
+            // Set start date to the current lease's end date
+            startDateController.text = formatDate(
+                DateFormat('yyyy-MM-dd').format(endDate).toString()
+            );
+
+            // Extend the lease for one month from the current lease's end date
+            DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+            endDateController.text = formatDate(
+                DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+          }
+
+        }
       });
+
     } else {
       throw Exception('Failed to load lease summary');
     }
@@ -488,34 +521,45 @@ class _RenewleaseState extends State<Renewlease> {
                   return Center(child: Text('No data found'));
                 } else {
                   final leasesummery = snapshot.data!;
-                  if (determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)) {
-                    // Lease is expired
-                    startDateController.text = formatDate(DateTime.now().toString());
-
-                    // Set the end date to one month from today's date
-                    DateTime newEndDate = DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month + 1,
-                        DateTime.now().day
-                    );
-                    endDateController.text = formatDate(
-                        DateFormat('yyyy-MM-dd').format(newEndDate).toString());
-                  } else if (snapshot.data!.data!.renewLeases != null &&
-                      snapshot.data!.data!.renewLeases!.isNotEmpty) {
-                    // Lease is active
-                    DateTime endDate = formatDates(snapshot.data!.data!.renewLeases!.last.endDate!);
-
-                    // Set start date to the current lease's end date
-                    startDateController.text = formatDate(
-                        DateFormat('yyyy-MM-dd').format(endDate).toString()
-                    );
-
-                    // Extend the lease for one month from the current lease's end date
-                    DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
-                    endDateController.text = formatDate(
-                        DateFormat('yyyy-MM-dd').format(newEndDate).toString());
-                  }
-
+                  // if (determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)) {
+                  //   // Lease is expired
+                  //   startDateController.text = formatDate(DateTime.now().toString());
+                  //
+                  //   // Set the end date to one month from today's date
+                  //   DateTime newEndDate = DateTime(
+                  //       DateTime.now().year,
+                  //       DateTime.now().month + 1,
+                  //       DateTime.now().day
+                  //   );
+                  //   endDateController.text = formatDate(
+                  //       DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                  // }
+                  // if (snapshot.data!.data!.renewLeases != null &&
+                  //     snapshot.data!.data!.renewLeases!.isNotEmpty) {
+                  //   // Lease is active
+                  //   DateTime endDate = formatDates(snapshot.data!.data!.renewLeases!.last.endDate!);
+                  //
+                  //   // Set start date to the current lease's end date
+                  //   startDateController.text = formatDate(
+                  //       DateFormat('yyyy-MM-dd').format(endDate).toString()
+                  //   );
+                  //
+                  //   // Extend the lease for one month from the current lease's end date
+                  //   DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+                  //   endDateController.text = formatDate(
+                  //       DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                  // }
+                  // if (snapshot.data!.data!.renewLeases!.length > 0) {
+                  //     startDateController.text = formatDate(
+                  //         snapshot.data!.data!.renewLeases!.last.endDate!);
+                  //     DateTime endDate = formatDates(
+                  //         snapshot.data!.data!.renewLeases!.last.endDate!);
+                  //     DateTime startDate = endDate;
+                  //     DateTime newEndDate =
+                  //         DateTime(endDate.year , endDate.month+ 1, endDate.day);
+                  //     endDateController.text = formatDate(
+                  //         DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                  //   }
                   // if (determineStatus(snapshot.data!.data!.startDate,
                   //     snapshot.data!.data!.endDate)) {
                   //   startDateController.text =
@@ -960,7 +1004,7 @@ class _RenewleaseState extends State<Renewlease> {
                                               await showDatePicker(
                                             context: context,
                                             initialDate: DateTime.now(),
-                                            firstDate: DateTime(2000),
+                                            firstDate: DateTime(1900),
                                             lastDate: DateTime(2101),
                                             locale: const Locale('en', 'US'),
                                             builder: (BuildContext context,

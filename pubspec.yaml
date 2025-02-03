@@ -76,7 +76,7 @@ dependencies:
   permission_handler: ^11.3.1
   credit_card_type_detector: ^3.0.0
   cached_network_image: ^3.3.1
-  fl_chart:
+  fl_chart: ^0.69.2
   shimmer:
   zxcvbn:
   pdf: ^3.11.0
@@ -88,6 +88,12 @@ dependencies:
   encrypt:
   credit_card_validator:
   url_launcher: ^6.1.10
+  video_player:
+  video_thumbnail:
+  chewie:
+  timeago:
+
+
   # pdf:
 
 

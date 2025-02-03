@@ -9,11 +9,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
+import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
+import 'package:video_player/video_player.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/SettingWorkorder.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
-
+import 'package:chewie/chewie.dart';
 import '../../../constant/constant.dart';
 
 import '../../../model/properties.dart';
@@ -378,6 +381,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
   String tenantId = '';
   bool isChecked = false;
   //for parts and lebours
+  List<bool> isvideo = [];
   List<Map<String, dynamic>> partsAndLabor = [];
 
   void addRow() {
@@ -608,7 +612,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
       });
     }
   }
@@ -616,6 +620,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
 
   File? _image;
   List<File> _images = [];
+  List<File> videofiles = [];
   String? _uploadedFileName;
   List<String> _uploadedFileNames = [];
   Future<String?> uploadImage(File imageFile) async {
@@ -645,15 +650,46 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await _picker.pickMedia();
+
 
     if (image != null) {
+      final File file = File(image.path);
+      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
+      if (isVideo) {
+        String? thumbnailPath = await _generateVideoThumbnail(image.path);
+        if (thumbnailPath != null) {
+          setState(() {
+            _images.add(File(thumbnailPath));
+            isvideo.add(true);
+            videofiles.add(file);
+          });
+        }
+      } else {
+        setState(() {
+          _images.add(file);
+          isvideo.add(false);
+          videofiles.add(file);
+        });
+      }
+
+
       setState(() {
         _image = File(image.path);
-        _images.add(File(image.path));
+       // _images.add(File(image.path));
       });
       _uploadImage(File(image.path));
     }
+  }
+  Future<String?> _generateVideoThumbnail(String videoPath) async {
+    final String? thumbPath = await VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.PNG,
+      maxHeight: 80,
+      quality: 50,
+    );
+    return thumbPath;
   }
 
   Future<void> _uploadImage(File imageFile) async {
@@ -666,6 +702,18 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     } catch (e) {
       print('Image upload failed: $e');
     }
+  }
+
+  void _showVideoDialog(File videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: VideoPlayerDialog(videoFile: videoFile),
+        );
+      },
+    );
   }
 
   @override
@@ -793,6 +841,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                           children: List.generate(
                                             _images.length,
                                             (index) {
+
                                               return Container(
                                                 // color: Colors.green,
                                                 width: 85,
@@ -832,9 +881,28 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        Container(
+
+                                                        isvideo[index]?
+                                                        GestureDetector(
+                                                          onTap: () {
+
+                                                            _showVideoDialog(videofiles[index]);
+                                                          },
+                                                          child: Stack(
+                                                            alignment: Alignment.center,
+                                                            children: [
+                                                              Image.file(
+                                                                _images[index],
+                                                                height: 80,
+                                                                width: 80,
+                                                                fit: BoxFit.cover,
+                                                              ),
+                                                              Icon(Icons.play_circle_fill, color: Colors.white, size: 30),
+                                                            ],
+                                                          ),
+                                                        ):Container(
                                                           // color:Colors.blue,
-                                                          child: Image.file(
+                                                          child:  Image.file(
                                                             _images[index],
                                                             height: 80,
                                                             width: 80,
@@ -5055,5 +5123,76 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
       });
       print('Form is invalid');
     }
+  }
+}
+class VideoPlayerDialog extends StatefulWidget {
+  final File videoFile;
+  const VideoPlayerDialog({Key? key, required this.videoFile}) : super(key: key);
+
+  @override
+  _VideoPlayerDialogState createState() => _VideoPlayerDialogState();
+}
+
+class _VideoPlayerDialogState extends State<VideoPlayerDialog> {
+  late VideoPlayerController _videoPlayerController;
+  ChewieController? _chewieController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePlayer();
+  }
+
+  Future<void> _initializePlayer() async {
+    _videoPlayerController = VideoPlayerController.file(widget.videoFile);
+    await _videoPlayerController.initialize();
+
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      autoPlay: true,
+      looping: false,
+      allowFullScreen: true,
+      allowMuting: true,
+      allowPlaybackSpeedChanging: true,
+    );
+
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    _chewieController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none, // Allows the button to be positioned outside the container
+      children: [
+        Container(
+          padding: EdgeInsets.all(10),
+          child: _chewieController != null &&
+              _chewieController!.videoPlayerController.value.isInitialized
+              ? AspectRatio(
+            aspectRatio: _videoPlayerController.value.aspectRatio,
+            child: Chewie(controller: _chewieController!),
+          )
+              : Padding(
+            padding: const EdgeInsets.all(20),
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        Positioned(
+          top: -50, // Moves the close button above the container
+          right: 0,  // Aligns it to the right
+          child: IconButton(
+            icon: Icon(Icons.close,color: Colors.white, size: 30), // Customize as needed
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+      ],
+    );
   }
 }

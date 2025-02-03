@@ -190,15 +190,16 @@ class DateProvider with ChangeNotifier {
   String get dateFormat => _dateFormat;
   int get _dateformateselect => dateformateselect;
   DateProvider() {
-    _loadDateFormat();
+    print("callingsss");
+    loadDateFormat();
     //_loadSelectedDateFormat();
   }
 
-  Future<void> _loadDateFormat() async {
+  Future<void> loadDateFormat() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-
+    print(token);
     if (token != null) {
       await checkToken(token);
     } else {
@@ -298,22 +299,18 @@ class DateProvider with ChangeNotifier {
       print("date formate calling ${response.body}");
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-        if (jsonData["statusCode"] == 200) {
-          _dateFormat = jsonData['format'].toString();
+
+          _dateFormat = jsonData['themes']['format'].toString();
           dateformateselect = _dateformateselect;
          // _loadSelectedDateFormat();
           notifyListeners();
-        } else {
-          // Handle invalid token case
-          _dateFormat = 'MM-dd-yyyy'; // Reset to default
-          dateformateselect = 0;
-          notifyListeners();
-        }
+
       } else {
         // Handle error
         _dateFormat = 'MM-dd-yyyy'; // Reset to default
       }
     } catch (e) {
+      print(e);
       // Handle error
     }
   }

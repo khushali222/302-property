@@ -408,6 +408,7 @@ class WorkOrderData {
     priority = json['priority'];
     workChargeTo = json['work_charge_to'];
     status = json['status'];
+    print("date $date");
     date = json['date'];
     if (json['workorder_updates'] != null) {
       workorderUpdates = <WorkorderUpdates>[];

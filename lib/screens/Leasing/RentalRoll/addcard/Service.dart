@@ -92,7 +92,7 @@ class AddCardService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-
+    print(addCard.toJson());
     final headers = {
       'Content-Type': 'application/json',
       'authorization': 'CRM $token',

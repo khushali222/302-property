@@ -1,27 +1,41 @@
+import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/Model/tenants.dart';
+import '../../../Model/setting.dart';
 import '../../../constant/constant.dart';
-import '../../../model/LeaseLedgerModel.dart';
+import 'addcard/CardModel.dart';
 import '../../../model/LeaseSummary.dart';
 import '../../../repository/lease.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/titleBar.dart';
 import 'addcard/AddCard.dart';
+import 'package:http/http.dart' as http;
 
 class RecurringPayment extends StatefulWidget {
-  String leaseId;
-  RecurringPayment({super.key, required this.leaseId});
+  // String leaseId;
+  Data leaseData;
+  RecurringPayment({super.key, required this.leaseData});
 
   @override
   State<RecurringPayment> createState() => _RecurringPaymentState();
 }
 
 class _RecurringPaymentState extends State<RecurringPayment> {
-  late Future<LeaseLedger?> _leaseLedgerFuture;
+  // late Future<LeaseLedger?> _leaseLedgerFuture;
+
+  List<int> customervaultid = [];
+  List<BillingData> cardDetails = [];
+  Map<int, List<Map<String?, dynamic?>>> tenantDropdowns =
+      {}; // Stores dropdown values per tenant
+  double totalAmount = 0.0; // Store total amount
+  List<Setting4> accounts = [];
   @override
   void initState() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
@@ -32,17 +46,46 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     });
     checkInternet();
     // TODO: implement initState
+    fetchAccounts();
+    getAllTenantCardData();
 
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
-    // for (var tenant in _tenants) {
-    //   _controllers[tenant.name] = [
-    //     TextEditingController(), // For Amount
-    //     TextEditingController(), // For Charge
-    //   ];
-    // }
+
     super.initState();
   }
 
+  void getAllTenantCardData() async {
+    setState(() {
+      isLoading = true;
+    });
+    if (widget.leaseData.tenantData != null &&
+        widget.leaseData.tenantData!.isNotEmpty) {
+      List<String> tenantIds = widget.leaseData.tenantData!
+          .map((tenant) => tenant.tenantId!)
+          .toList();
+
+      for (String tenantId in tenantIds) {
+        await fetchcreditcard(tenantId);
+       // fetchExistingCards(tenantId,widget.leaseData.leaseId!);
+      }
+
+      print(cardDetails.length);
+      print(customervaultid);
+      print(tenantIds);
+      getcards();
+      setState(() {
+        for (int i = 0; i < tenantIds.length; i++) {
+          tenantDropdowns[i] = [
+            {"selectedCard": null, "selectedDay": null,"selectedAccount":null,"amount":null,"amount": TextEditingController() }
+          ];
+        }
+
+        isLoading = false;
+      });
+
+    }
+  }
+
+  String totalamount = '';
   ConnectivityResult? _connectivityResult;
   void checkInternet() async {
     var connectiondata;
@@ -51,58 +94,91 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       _connectivityResult = connectiondata;
     });
   }
+  void fetchAccounts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
 
-  // void addRow(String tenantName) {
-  //   setState(() {
-  //     _controllers[tenantName]?.add(TextEditingController()); // Add new controller for Amount
-  //     _controllers[tenantName]?.add(TextEditingController());
-  //
-  //   });
-  // }
-  //
-  //
-  // void deleteTextField(String tenantName, int index) {
-  //   setState(() {
-  //     if (index < _controllers[tenantName]!.length) {
-  //       _controllers[tenantName]!.removeAt(index); // Remove the specified controller
-  //     }
-  //   });
-  // }
-  void addRow(Tenant tenant) {
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/accounts/accounts/$id'),
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+      },
+    );
 
-    setState(() {
-      tenant.controllers.add(TextEditingController()); // Add new controller for Amount
-      tenant.controllers.add(TextEditingController()); // Add new controller for Charge
-    });
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      setState(() {
+        accounts.add(Setting4(
+          account: 'Rent Income',
+          chargeType: 'Recurring Charge',
+          createdAt: "123"
+        ));
+        accounts.addAll(jsonResponse.map((data) => Setting4.fromJson(data)).toList());
+        accounts = accounts.where((account)=>account.chargeType == "Recurring Charge").toList();
+
+      });
+
+    } else {
+      print('Failed to fetch settings: ${response.body}');
+      //return [];
+    }
   }
+  void getcards(){
+    for (int i = 0; i < widget.leaseData.tenantData!.length; i++) {
+      fetchExistingCards(widget.leaseData.tenantData![i].tenantId!,widget.leaseData.leaseId!,i);
+    }
+  }
+  void fetchExistingCards(String tenantid,String leaseid,int index) async {
 
-  void deleteTextField(Tenant tenant, int index) {
-    setState(() {
-      if (index < tenant.controllers.length) {
-        tenant.controllers.removeAt(index); // Remove the specified controller
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+
+    final response = await http.post(
+      Uri.parse('${Api_url}/api/recurring-cards/get-cards'),
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+      },
+      body: {
+        "lease_id":leaseid,
+        "tenant_id":tenantid
       }
-    });
+    );
+    print(response.body);
+    Map<String,dynamic> Response = json.decode(response.body);
+    if (Response["statusCode"] == 200) {
+      Map<String,dynamic> jsonResponse = json.decode(response.body)['data'];
+      setState(() {
+       // print(jsonResponse["recurrings"][0]['billing_id']);
+       
+        List<dynamic> recurrings = jsonResponse["recurrings"];
+        tenantDropdowns[index]=[];
+        for(int i = 0 ;i<recurrings!.length;i++){
+          List<Setting4> account = accounts.where((acc)=>acc.account == jsonResponse["recurrings"][i]['account']).toList();
+
+          Setting4? fetchaccount = account.length > 0 ? account[0] : null;
+          tenantDropdowns[index]!.add({"selectedCard": "${jsonResponse["recurrings"][i]['billing_id']}_${jsonResponse["recurrings"][i]['card_type']}", "selectedDay": "${jsonResponse["recurrings"][i]['date']}","selectedAccount":"${fetchaccount!.account}_${fetchaccount!.createdAt}","amount": TextEditingController(text: jsonResponse["recurrings"][i]['amount'].toString()) });
+          // tenantDropdowns[index] = [
+          //
+          // ];
+        }
+
+      });
+      calculateTotal();
+
+    } else {
+      print('Failed to fetch settings: ${response.body}');
+      //return [];
+    }
   }
-
-  List<Tenant> _tenants = [
-    Tenant(
-      name: 'John Doe',
-    ),
-    Tenant(
-      name: 'Eric Smith',
-    ),
-    Tenant(
-      name: 'Bob Smith',
-    ),
-  ];
-
-  List<Map<String, dynamic>> tenant = [];
-
-
-  // List<List<TextEditingController>> _controllers = [];
- // Map<String, List<TextEditingController>> controllers = {};
+  Map<int, String?> selectedCard = {};
+  Map<int, int?> selectedDay = {};
   bool isLoading = false;
-
+  String? messageCardAvailable;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,737 +188,563 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         currentpage: "Rent Roll",
         dropdown: true,
       ),
-      body: FutureBuilder<LeaseLedger?>(
-        future: _leaseLedgerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container();
-            //   SpinKitFadingCircle(
-            //   color: blueColor,
-            //   size: 40.0,
-            // );
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData) {
-            return Center(child: Text('No data found'));
-          } else {
-            final leaseLedger = snapshot.data!;
-            final tenants =
-                leaseLedger.data?.map((item) => item.tenantData).toList() ?? [];
+      body:isLoading? CircularProgressIndicator() :
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+              children: widget.leaseData.tenantData!.asMap()
+              .entries
+              .map((entry) {
+                int index = entry.key;
 
-            //final data = leaseLedger.data!.toList();
-            return ListView.builder(
-              itemCount: _tenants.length,
-              itemBuilder: (context, tenantIndex) {
-                Tenant tenant = _tenants[tenantIndex];
-                return Container(
+                var tenant = widget.leaseData.tenantData![index];
+                int? vaultId = customervaultid.length > index ? customervaultid[index] : null;
+                List<BillingData> tenantCards = cardDetails
+                    .where((card) => card.customerVaultId == vaultId.toString())
+                    .toList();
+
+                return Padding(
+                  padding: EdgeInsets.all(0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 20,
+                      Text(
+                        tenant.tenantFirstName ?? 'Unknown Tenant',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            _tenants[tenantIndex].name,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, color: blueColor),
-                          ),
-                          // Spacer(),
-                          // Align(
-                          //                             alignment: Alignment.centerRight,
-                          //                             child: IconButton(
-                          //                               icon: Icon(Icons.close),
-                          //                               onPressed: () {
-                          //                                 deleteRow(index);
-                          //                               },
-                          //                             ),
-                          //                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
+                      SizedBox(height: 10),
+                      Column(
+                        children: List.generate(
+                          tenantDropdowns[index]!.length,
+                              (rowIndex) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  // Card Dropdown
+                                  Container(
+                                    width: 200,
+                                    padding: EdgeInsets.symmetric(horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: Colors.grey.shade400),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        hint: Text('Select a Card'),
+                                        isExpanded: true,
+                                        value: tenantDropdowns[index]![rowIndex]["selectedCard"],
+                                        items: tenantCards.isNotEmpty
+                                            ? tenantCards.map((card) {
+                                          String uniqueKey = "${card.billingId}_${card.binResult}"; // Unique key
+                                          return DropdownMenuItem<String>(
+                                            value: uniqueKey,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  height: 30,
+                                                  width: 30,
+                                                  child: Image.network(
+                                                      "https://logo.clearbit.com/${card.ccType!.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com"),
+                                                ),
+                                                SizedBox(width: 5),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("${card.ccNumber}", style: TextStyle(fontSize: 12)),
+                                                    Text("${card.billingId}", style: TextStyle(fontSize: 12)),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        }).toList()
+                                            : [
+                                          DropdownMenuItem<String>(
+                                            value: '',
+                                            child: Text('No cards available'),
+                                          ),
+                                        ],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            tenantDropdowns[index]![rowIndex]["selectedCard"] = value;
+                                          });
+                                        },
+                                        selectedItemBuilder: (BuildContext context) {
+                                          return tenantCards.map((card) {
+                                            String uniqueKey = "${card.ccNumber}_${card.billingId}";
+                                            return Align(
+                                              alignment: Alignment.center,  // ✅ Center the selected card number
+                                              child: Text(
+                                                card.ccNumber!, // Show only CC number after selection
+                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
 
-                      // for (int textFieldIndex = 0; textFieldIndex < _controllers[tenantIndex].length; textFieldIndex++) ...
-                      // for (int textFieldIndex = 0;
-                      //     textFieldIndex < _controllers[tenantIndex].length;
-                      //     textFieldIndex += 2) ...[
-                      //   if (textFieldIndex + 1 < _controllers[tenantIndex].length) ...[
-                      // for (int i = 0; i < _controllers[tenantName]!.length; i += 2) ...
-                      // [  if (i + 1 < _controllers[tenantName]!.length) ...[
-                      for (int i = 0; i < tenant.controllers.length; i += 2) ...[
-                          if (i + 1 < tenant.controllers.length) ...[
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: IconButton(
-                              icon: Icon(Icons.close),
-                              onPressed: () {
-                                deleteTextField(tenant, i,);
-                              },
+                                  // Day Dropdown
+                                  Container(
+                                    width: 200,
+                                    padding: EdgeInsets.symmetric(horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: Colors.grey.shade400),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        hint: Text('Day'),
+                                        isExpanded: true,
+                                        menuMaxHeight: 200,
+                                        value: tenantDropdowns[index]![rowIndex]["selectedDay"],
+                                        items: List.generate(28, (i) => i + 1)
+                                            .map((day) => DropdownMenuItem<String>(
+                                          value: day.toString(),
+                                          child: Text('$day'),
+                                        ))
+                                            .toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            tenantDropdowns[index]![rowIndex]["selectedDay"] = value;
+                                          });
+                                        },
+
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  Container(
+                                    width: 200,
+                                    padding: EdgeInsets.symmetric(horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: Colors.grey.shade400),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        hint: Text('select Account'),
+                                        isExpanded: true,
+                                        menuMaxHeight: 200,
+                                        value: tenantDropdowns[index]![rowIndex]["selectedAccount"],
+                                        items:   accounts.isNotEmpty
+                                            ? accounts.map((card) {
+                                          String uniqueKey = "${card.account}_${card.createdAt}"; // Unique key
+                                          return DropdownMenuItem<String>(
+                                            value: uniqueKey,
+                                            child: Row(
+                                              children: [
+                                                Container(
+
+                                                  child:
+                                                  Text("${card.account}", style: TextStyle(fontSize: 16)),
+                                                ),
+                                                SizedBox(width: 5),
+                                                // Column(
+                                                //   crossAxisAlignment: CrossAxisAlignment.start,
+                                                //   children: [
+                                                //     Text("${card.billingId}", style: TextStyle(fontSize: 12)),
+                                                //   ],
+                                                // )
+                                              ],
+                                            ),
+                                          );
+                                        }).toList()
+                                            : [
+                                          DropdownMenuItem<String>(
+                                            value: '',
+                                            child: Text('No cards available'),
+                                          ),
+                                        ],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            tenantDropdowns[index]![rowIndex]["selectedAccount"] = value;
+                                          });
+                                        },
+
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  SizedBox(
+                                    width: 120, // Adjust width as needed
+                                    child: TextField(
+                                      controller: tenantDropdowns[index]?[rowIndex]["amount"],
+                                      keyboardType: TextInputType.number, // Ensures numeric input
+                                      // textAlign: TextAlign.center, // Centers the text inside the field
+                                      onChanged: (value){
+                                        calculateTotal();
+                                      },
+                                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500), // Custom font styling
+                                      decoration: InputDecoration(
+                                        labelText: "Amount",
+                                        labelStyle: TextStyle(color: Colors.grey.shade600, fontSize: 12), // Subtle label styling
+                                        hintText: "Enter amount",
+                                        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 12), // Lighter hint text
+                                        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10), // Padding for better spacing
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8), // Rounded corners
+                                          borderSide: BorderSide(color: Colors.grey.shade400), // Border color
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                          borderSide: BorderSide(color: Colors.blue, width: 2), // Highlight on focus
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                          borderSide: BorderSide(color: Colors.grey.shade300), // Default border
+                                        ),
+                                        // prefixIcon: Icon(Icons.attach_money, size: 18, color: Colors.green), // Money icon
+                                      ),
+                                    ),
+                                  ),
+                                  // Remove Row Icon
+                                  if (tenantDropdowns[index]!.length > 0)
+                                    IconButton(
+                                      icon: Icon(Icons.close, color: Colors.red),
+                                      onPressed: () {
+                                        calculateTotal();
+                                        setState(() {
+                                          tenantDropdowns[index]!.removeAt(rowIndex);
+                                        });
+                                      },
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15, right: 15),
-                                  child: CustomTextField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter amount';
-                                      }
-                                      return null;
-                                    },
-                                    keyboardType: TextInputType.number,
-                                    hintText: 'Enter Amount',
-                                    // controller: _controllers[tenantIndex]
-                                    //     [textFieldIndex],
-                                   // controller: _controllers[tenantName]![i],
-                                    controller: tenant.controllers[i],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15, right: 15),
-                                  child: CustomTextField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter drop';
-                                      }
-                                      return null;
-                                    },
-                                    keyboardType: TextInputType.number,
-                                    hintText: 'Enter drop',
-                                    // controller: _controllers[tenantIndex]
-                                    //     [textFieldIndex + 1],
-                                    // controller:  _controllers[tenantName]![i + 1],
-                                    controller:  tenant.controllers[i + 1],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-]
-                      ],
-                      SizedBox(
-                        height: 10,
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          addRow(tenant);
-                          print("hello");
-                        },
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Icon(
-                              Icons.add,
-                              color: Colors.green,
-                              size: 30,
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              "Add Row",
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 16
-                                          : 17),
-                            ),
-                          ],
                         ),
                       ),
-                      GestureDetector(
-                          onTap: () {
-                            // for (int tenantIndex = 0;
-                            //     tenantIndex < _tenants.length;
-                            //     tenantIndex++) {
-                            //   List<String> values = [];
-                            //   for (var controller
-                            //       in _controllers[tenantIndex]) {
-                            //     values.add(controller.text);
-                            //   }
-                            //   print(
-                            //       'tenant ${_tenants[tenantIndex].name}: $values');
-                            // }
-                            // List<String> values = [];
-                            // for (int i = 0; i < _controllers[tenantName]!.length; i++) {
-                            //   String fieldType = (i % 2 == 0) ? 'Amount' : 'Drop';
-                            //   values.add('$fieldType: ${_controllers[tenantName]![i].text}');
-                            // }
-                            // print('Tenant: $tenantName, Values: $values');
-                            // List<String> values = [];
-                            // for (int i = 0; i < tenant._controllers.length; i++) {
-                            //   String fieldType = (i % 2 == 0) ? 'Amount' : 'Drop';
-                            //   values.add('$fieldType: ${tenant._controllers[i].text}');
-                            //   print('Tenant: ${tenant.name}, Values: $values');
-                            // }
-                            _saveData();
-                          },
-                          child: Text(
-                            "Save",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          )),
+
+                      // Add Row Button
+                      TextButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            tenantDropdowns[index]!.add({"selectedCard": null, "selectedDay": null,"selectedAccount":null,"amount": TextEditingController() });
+                          });
+                        },
+                        icon: Icon(Icons.add, color: Colors.blue),
+                        label: Text("Add Row", style: TextStyle(color: Colors.blue)),
+                      ),
                     ],
                   ),
                 );
-              },
-            );
-            //   ListView(
-            //   scrollDirection: Axis.vertical,
-            //   children: [
-            //     SizedBox(
-            //       height: 25,
-            //     ),
-            //     titleBar(
-            //       width: MediaQuery.of(context).size.width * .88,
-            //       title: 'Rent Roll',
-            //     ),
-            //     SizedBox(
-            //       height: 25,
-            //     ),
-            //     Padding(
-            //       padding: EdgeInsets.only(
-            //           left: MediaQuery.of(context).size.width < 500 ? 25 : 55,
-            //           right: MediaQuery.of(context).size.width < 500 ? 25 : 55),
-            //       child: Material(
-            //         elevation: 6,
-            //         borderRadius: BorderRadius.circular(10),
-            //         child: Container(
-            //           // height: MediaQuery.of(context).size.height * .43,
-            //           width: MediaQuery.of(context).size.width * .99,
-            //           decoration: BoxDecoration(
-            //               color: Colors.white,
-            //               borderRadius: BorderRadius.circular(10),
-            //               border: Border.all(
-            //                 color: blueColor,
-            //               )),
-            //           child: Column(
-            //             children: [
-            //               SizedBox(
-            //                 height: 10,
-            //               ),
-            //               Row(
-            //                 children: [
-            //                   SizedBox(
-            //                     width: 15,
-            //                   ),
-            //                   Text(
-            //                     "Configure Recurring Payment",
-            //                     style: TextStyle(
-            //                         fontWeight: FontWeight.bold,
-            //                         color: blueColor,
-            //                         fontSize:
-            //                             MediaQuery.of(context).size.width < 500
-            //                                 ? 19
-            //                                 : 22),
-            //                   ),
-            //                 ],
-            //               ),
-            //               SizedBox(
-            //                 height: 20,
-            //               ),
-            //               Row(
-            //                 children: [
-            //                   SizedBox(
-            //                     width: 15,
-            //                   ),
-            //                   Text(
-            //                     "Total  Rent Amount : ",
-            //                     style: TextStyle(
-            //                         color: blueColor,
-            //                         // fontWeight: FontWeight.bold,
-            //                         fontSize:
-            //                             MediaQuery.of(context).size.width < 500
-            //                                 ? 16
-            //                                 : 18),
-            //                   ),
-            //                   SizedBox(
-            //                     width: 10,
-            //                   ),
-            //                   Text(
-            //                     "\$ ${leaseLedger.data?.first.totalAmount?.toStringAsFixed(2)}",
-            //                     style: TextStyle(
-            //                         color: blueColor,
-            //                         // fontWeight: FontWeight.bold,
-            //                         fontSize:
-            //                             MediaQuery.of(context).size.width < 500
-            //                                 ? 16
-            //                                 : 18),
-            //                   ),
-            //                 ],
-            //               ),
-            //               SizedBox(
-            //                 height: 5,
-            //               ),
-            //               Row(
-            //                 children: [
-            //                   SizedBox(
-            //                     width: 15,
-            //                   ),
-            //                   Text(
-            //                     "Rmaining Balance   : ",
-            //                     style: TextStyle(
-            //                         color: blueColor,
-            //                         // fontWeight: FontWeight.bold,
-            //                         fontSize:
-            //                             MediaQuery.of(context).size.width < 500
-            //                                 ? 16
-            //                                 : 18),
-            //                   ),
-            //                   SizedBox(
-            //                     width: 10,
-            //                   ),
-            //                 ],
-            //               ),
-            //               SizedBox(
-            //                 height: 10,
-            //               ),
-            //               // ...rows.asMap().entries.map((entry) {
-            //               //   int index = entry.key;
-            //               //   Map<String, dynamic> row = entry.value;
-            //               //   return Padding(
-            //               //     padding: const EdgeInsets.all(10.0),
-            //               //     child: Container(
-            //               //       decoration: BoxDecoration(
-            //               //         color: Colors.white,
-            //               //         borderRadius: BorderRadius.circular(15),
-            //               //       ),
-            //               //       child: Column(
-            //               //         crossAxisAlignment:
-            //               //             CrossAxisAlignment.stretch,
-            //               //         children: [
-            //               //           Align(
-            //               //             alignment: Alignment.centerRight,
-            //               //             child: IconButton(
-            //               //               icon: Icon(Icons.close),
-            //               //               onPressed: () {
-            //               //                 deleteRow(index);
-            //               //               },
-            //               //             ),
-            //               //           ),
-            //               //           Row(
-            //               //             children: [
-            //               //               SizedBox(
-            //               //                 width: 10,
-            //               //               ),
-            //               //               Text(
-            //               //                 "BoB Smith",
-            //               //                 style: TextStyle(
-            //               //                     fontWeight: FontWeight.bold,
-            //               //                     fontSize: 15,
-            //               //                     color: blueColor),
-            //               //               ),
-            //               //             ],
-            //               //           ),
-            //               //           SizedBox(
-            //               //             height: 5,
-            //               //           ),
-            //               //           Row(
-            //               //             children: [
-            //               //               Expanded(
-            //               //                 child: Padding(
-            //               //                   padding: const EdgeInsets.only(
-            //               //                     left: 8,
-            //               //                     right: 8,
-            //               //                   ),
-            //               //                   child: CustomTextField(
-            //               //                     validator: (value) {
-            //               //                       if (value == null ||
-            //               //                           value.isEmpty) {
-            //               //                         return 'Please enter amount';
-            //               //                       }
-            //               //                       return null;
-            //               //                     },
-            //               //                     amount_check: !rows[index]
-            //               //                             ["newfield"]
-            //               //                         ? true
-            //               //                         : null,
-            //               //                     max_amount: rows[index]
-            //               //                             ["charge_amount"]
-            //               //                         .toString(),
-            //               //                     error_mess:
-            //               //                         "Amount must be less than or equal to balance",
-            //               //                     keyboardType:
-            //               //                         TextInputType.number,
-            //               //                     hintText: 'Enter Amount',
-            //               //                     controller: controllers[index],
-            //               //                     // onChanged: (value) =>
-            //               //                     //     updateAmount(index, value),
-            //               //                   ),
-            //               //                 ),
-            //               //               ),
-            //               //               Expanded(
-            //               //                 child: Padding(
-            //               //                   padding: const EdgeInsets.only(
-            //               //                     left: 8,
-            //               //                     right: 8,
-            //               //                   ),
-            //               //                   child: CustomTextField(
-            //               //                     validator: (value) {
-            //               //                       if (value == null ||
-            //               //                           value.isEmpty) {
-            //               //                         return 'Please enter amount';
-            //               //                       }
-            //               //                       return null;
-            //               //                     },
-            //               //                     amount_check: !rows[index]
-            //               //                             ["newfield"]
-            //               //                         ? true
-            //               //                         : null,
-            //               //                     max_amount: rows[index]
-            //               //                             ["charge_amount"]
-            //               //                         .toString(),
-            //               //                     error_mess:
-            //               //                         "Amount must be less than or equal to balance",
-            //               //                     keyboardType:
-            //               //                         TextInputType.number,
-            //               //                     hintText: 'Enter Amount',
-            //               //                     controller: controllers[index],
-            //               //                     // onChanged: (value) =>
-            //               //                     //     updateAmount(index, value),
-            //               //                   ),
-            //               //                 ),
-            //               //               ),
-            //               //             ],
-            //               //           ),
-            //               //         ],
-            //               //       ),
-            //               //     ),
-            //               //   );
-            //               // }).toList(),
-            //
-            //
-            //
-            //               GestureDetector(
-            //                 onTap: () async {
-            //                   addRow();
-            //                 },
-            //                 child: Row(
-            //                   children: [
-            //                     SizedBox(
-            //                       width: 15,
-            //                     ),
-            //                     Icon(
-            //                       Icons.add,
-            //                       color: Colors.green,
-            //                       size: 30,
-            //                     ),
-            //                     SizedBox(
-            //                       width: 6,
-            //                     ),
-            //                     Text(
-            //                       "Add Row",
-            //                       style: TextStyle(
-            //                           color: blueColor,
-            //                           fontWeight: FontWeight.bold,
-            //                           fontSize:
-            //                               MediaQuery.of(context).size.width <
-            //                                       500
-            //                                   ? 16
-            //                                   : 17),
-            //                     ),
-            //                     // GestureDetector(
-            //                     //   onTap: () async {
-            //                     //     addRow();
-            //                     //   },
-            //                     //   child: ClipRRect(
-            //                     //     borderRadius: BorderRadius.circular(5.0),
-            //                     //     child: Container(
-            //                     //       height: MediaQuery.of(context).size.width < 500
-            //                     //           ? 40
-            //                     //           : 50,
-            //                     //       // width: MediaQuery.of(context).size.width * .36,
-            //                     //       width: MediaQuery.of(context).size.width < 500
-            //                     //           ? 90
-            //                     //           : 100,
-            //                     //       decoration: BoxDecoration(
-            //                     //         borderRadius: BorderRadius.circular(5.0),
-            //                     //         color: blueColor,
-            //                     //         boxShadow: [
-            //                     //           BoxShadow(
-            //                     //             color: Colors.grey,
-            //                     //             offset: Offset(0.0, 1.0), //(x,y)
-            //                     //             blurRadius: 6.0,
-            //                     //           ),
-            //                     //         ],
-            //                     //       ),
-            //                     //       child: Center(
-            //                     //         child: isLoading
-            //                     //             ? SpinKitFadingCircle(
-            //                     //           color: Colors.white,
-            //                     //           size: 25.0,
-            //                     //         )
-            //                     //             : Text(
-            //                     //           "Add Row",
-            //                     //           style: TextStyle(
-            //                     //               color: Colors.white,
-            //                     //               fontWeight: FontWeight.bold,
-            //                     //               fontSize: MediaQuery.of(context)
-            //                     //                   .size
-            //                     //                   .width <
-            //                     //                   500
-            //                     //                   ? 14
-            //                     //                   : 17),
-            //                     //         ),
-            //                     //       ),
-            //                     //     ),
-            //                     //   ),
-            //                     // ),
-            //                   ],
-            //                 ),
-            //               ),
-            //
-            //               SizedBox(
-            //                 height: 10,
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     SizedBox(height: 15),
-            //     Row(
-            //       mainAxisAlignment: MainAxisAlignment.end,
-            //       crossAxisAlignment: CrossAxisAlignment.end,
-            //       children: [
-            //         GestureDetector(
-            //           onTap: () {
-            //             Navigator.pop(context);
-            //           },
-            //           child: ClipRRect(
-            //             borderRadius: BorderRadius.circular(5.0),
-            //             child: Container(
-            //               height: 45,
-            //               width: 100,
-            //               decoration: BoxDecoration(
-            //                 borderRadius: BorderRadius.circular(5.0),
-            //                 color: Colors.white,
-            //                 border: Border.all(color: blueColor),
-            //                 boxShadow: [
-            //                   BoxShadow(
-            //                     color: Colors.grey,
-            //                     offset: Offset(0.0, 1.0), //(x,y)
-            //                     blurRadius: 6.0,
-            //                   ),
-            //                 ],
-            //               ),
-            //               child: Center(
-            //                 child: isLoading
-            //                     ? SpinKitFadingCircle(
-            //                         color: Colors.white,
-            //                         size: 25.0,
-            //                       )
-            //                     : Text(
-            //                         "Cancel",
-            //                         style: TextStyle(
-            //                             color: blueColor,
-            //                             fontWeight: FontWeight.bold,
-            //                             fontSize: 16),
-            //                       ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-            //         GestureDetector(
-            //           onTap: () async {},
-            //           child: ClipRRect(
-            //             borderRadius: BorderRadius.circular(5.0),
-            //             child: Container(
-            //               height: 45,
-            //               width: 100,
-            //               decoration: BoxDecoration(
-            //                 borderRadius: BorderRadius.circular(5.0),
-            //                 color: blueColor,
-            //                 boxShadow: [
-            //                   BoxShadow(
-            //                     color: Colors.grey,
-            //                     offset: Offset(0.0, 1.0), // (x,y)
-            //                     blurRadius: 6.0,
-            //                   ),
-            //                 ],
-            //               ),
-            //               child: Center(
-            //                 child: isLoading
-            //                     ? SpinKitFadingCircle(
-            //                         color: Colors.white,
-            //                         size: 25.0,
-            //                       )
-            //                     : Text(
-            //                         "Disable",
-            //                         style: TextStyle(
-            //                           color: Colors.white,
-            //                           fontWeight: FontWeight.bold,
-            //                           fontSize: 16,
-            //                         ),
-            //                       ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //         SizedBox(
-            //           width: MediaQuery.of(context).size.width * 0.03,
-            //         ),
-            //         GestureDetector(
-            //           onTap: () async {},
-            //           child: ClipRRect(
-            //             borderRadius: BorderRadius.circular(5.0),
-            //             child: Container(
-            //               height: 45.0,
-            //               width: 100,
-            //               decoration: BoxDecoration(
-            //                 borderRadius: BorderRadius.circular(5.0),
-            //                 color: blueColor,
-            //                 boxShadow: [
-            //                   BoxShadow(
-            //                     color: Colors.grey,
-            //                     offset: Offset(0.0, 1.0), // (x,y)
-            //                     blurRadius: 6.0,
-            //                   ),
-            //                 ],
-            //               ),
-            //               child: Center(
-            //                 child: isLoading
-            //                     ? SpinKitFadingCircle(
-            //                         color: Colors.white,
-            //                         size: 25.0,
-            //                       )
-            //                     : Text(
-            //                         "Save",
-            //                         style: TextStyle(
-            //                           color: Colors.white,
-            //                           fontWeight: FontWeight.bold,
-            //                           fontSize: 16,
-            //                         ),
-            //                       ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //         SizedBox(
-            //           width: 25,
-            //         ),
-            //       ],
-            //     ),
-            //   ],
-            // );
-          }
-        },
+
+              }).toList(),
+          ),
+              Text("Total Amount : ${totalAmount}"),
+              ElevatedButton(
+                onPressed: () {
+                  List<Map<String, dynamic>> selectedTenantsData = [];
+
+                  for (int i = 0; i < widget.leaseData.tenantData!.length; i++) {
+                    var tenant = widget.leaseData.tenantData![i];
+                    int? vaultId = customervaultid.length > i ? customervaultid[i] : null;
+
+                    // Creating recurrings list
+                    List<Map<String, dynamic>> recurringsList = [];
+
+                    for (var row in tenantDropdowns[i]!) {
+                      if (row['selectedCard'] != null) {
+                        var cardData = row['selectedCard']!.split('_'); // Splitting "ccNumber_billingId"
+                        String billingId = cardData.length > 1 ? cardData[0] : "";
+                        String cardtype = cardData.length > 1 ? cardData[1] : "";
+                        var rec_accounts = row['selectedAccount']!.split('_');
+                        String selectedacc = rec_accounts.length > 1 ? rec_accounts[0] : '';
+                        String amount = row['amount'].text;
+                        recurringsList.add({
+                          "billing_id": billingId,
+                          "amount": amount,  // Amount can be added dynamically if needed
+                          "card_type": cardtype,  // Get card type if required
+                          "account":selectedacc,  // CC Number
+                          "date": row['selectedDay']?.toString() ?? "",  // Selected day
+                        });
+                      }
+                    }
+
+                    // Add only if recurrings list is not empty
+                    if (recurringsList.isNotEmpty) {
+                      selectedTenantsData.add({
+                        "tenant_id": tenant.tenantId,
+                        "lease_id": widget.leaseData.leaseId!,
+                        "customer_vault_id": vaultId?.toString() ?? "",
+                        "date": "",  // Add the date if applicable
+                        "recurrings": recurringsList,
+                      });
+                    }
+                  }
+
+                  // Print the final JSON object
+                  print(selectedTenantsData);
+                  postLease(selectedTenantsData);
+
+                },
+                child: Text("Save Cards"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                 disablecards(widget.leaseData!.leaseId!);
+
+                },
+                child: Text("Disable Cards"),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
-  void _saveData() {
-    List<TenantData> tenantDataList = [];
-
-    for (int tenantIndex = 0; tenantIndex < _tenants.length; tenantIndex++) {
-      Tenant tenant = _tenants[tenantIndex];
-      String? amounts;
-      String? drops;
-
-      if (tenant.controllers.isNotEmpty) {
-        // Assuming the first controller is for amount and the second is for drop
-        if (tenant.controllers.length > 1) {
-          amounts = tenant.controllers[0].text;
-          drops = tenant.controllers[1].text;
+  void calculateTotal() {
+    double total = 0.0;
+    for(int i =0;i<widget.leaseData.tenantData!.length ;i++)
+      {
+        for (var element in tenantDropdowns[i]!) {
+          double value = double.tryParse(element["amount"].text) ?? 0.0;
+          total += value;
         }
-      } else {
-        print('No controllers found for tenant: ${tenant.name}');
       }
 
-      TenantData tenantData = TenantData(
-        tenantName: tenant.name,
-        amounts: amounts ?? '',
-        drops: drops ?? '',
-      );
-      tenantDataList.add(tenantData);
+    setState(() {
+      totalAmount = total;
+    });
+  }
+  Future<void> fetchcreditcard(String tenantId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final response = await http.get(
+      Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
+      headers: {"id": "CRM $id", "authorization": "CRM $token"},
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      int? custvaultid = jsonResponse['customer_vault_id'];
+
+      if (custvaultid != null) {
+        customervaultid.add(custvaultid);
+        List<dynamic> cardDetailsList = jsonResponse['card_detail'];
+
+        for (var cardDetail in cardDetailsList) {
+          print('Billing ID: ${cardDetail['billing_id']}');
+        }
+
+        CustomerData? customerData =
+            await postBillingCustomerVault(custvaultid.toString(),cardDetailsList);
+
+        if (customerData != null) {
+          setState(() {
+            cardDetails.addAll(customerData.billing);
+          });
+        }
+      } else {
+        // Handle case where customer_vault_id is not found
+        print('Customer vault ID not found for tenant: $tenantId');
+        setState(() {
+          customervaultid.add(0); // Adding 0 if vault ID is not found
+        });
+      }
+    } else if (response.statusCode == 404) {
+      print('Customer vault ID not found for tenant: $tenantId');
+      setState(() {
+        customervaultid.add(0); // Adding 0 if vault ID is not found
+      });
+    } else {
+      print('Failed to load credit card data');
     }
 
-    AllTenantsData allTenantsData = AllTenantsData(tenants: tenantDataList);
-    print('Tenant Data: ${allTenantsData.toJson()}');
+    setState(() {
+      isLoading = false;
+    });
   }
 
+  Future<String> binCheck(String ccBin) async {
+    final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
 
-}
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-RapidAPI-Key': '1bd772d3c3msh11c1022dee1c2aep1557bajsn0ac41ea04ef7',
+        'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
+      },
+    );
 
-// class Tenant {
-//   String name;
-//   List<TextEditingController> _controllers;
-//
-//   Tenant({
-//     required this.name,
-//   }) : _controllers = [
-//     TextEditingController(), // For Amount
-//     TextEditingController(), // For Charge
-//   ];
-// }
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      print('BIN check successful: ${jsonResponse['BIN']['type']}');
+      return jsonResponse['BIN']['type'];
+    } else {
+      print('Failed to check BIN: ${response.statusCode}');
+      return '';
+    }
+  }
 
-class Tenant {
-  String name;
-  List<TextEditingController> controllers;
+  Future<CustomerData?> postBillingCustomerVault(String customerVaultId,List<dynamic> cardDetailsList) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? token = prefs.getString('token');
 
-  Tenant({required this.name}) :
-        controllers = List.generate(2, (_) => TextEditingController());
-}
-
-// class TenantData {
-//   String tenantName;
-//   List<String> amounts;
-//   List<String> drops;
-//
-//   TenantData({required this.tenantName, required this.amounts, required this.drops});
-//
-//   Map<String, dynamic> toJson() {
-//     return {
-//       'tenantName': tenantName,
-//       'amounts': amounts,
-//       'drops': drops,
-//     };
-//   }
-// }
-class TenantData {
-  String tenantName;
-  String amounts;
-  String drops;
-
-  TenantData({required this.tenantName, required this.amounts, required this.drops});
-
-  Map<String, dynamic> toJson() {
-    return {
-      'tenantName': tenantName,
-      'amounts': amounts,
-      'drops': drops,
+    Map<String, String> requestBody = {
+      "customer_vault_id": customerVaultId,
+      "admin_id": adminId.toString(),
     };
+    print(requestBody);
+    final response = await http.post(
+      Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
+      headers: {
+        'Content-Type': 'application/json',
+        "id": "CRM $adminId",
+        "authorization": "CRM $token",
+      },
+      body: json.encode(requestBody),
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      print(jsonResponse['data'].toString() == "{}");
+      if (jsonResponse['data'].toString() == "{}") {
+        return null;
+      } else {
+        var customerJson = jsonResponse['data']['customer'];
+        CustomerData customerData = CustomerData.fromJson(customerJson);
+
+        customerData.billing.forEach((billing) {
+          print('CC Bin: ${billing.ccBin}');
+        });
+
+        // List<String> binResults = await performBinChecks(customerData);
+        //
+        // for (int i = 0; i < customerData.billing.length; i++) {
+        //   customerData.billing[i].binResult = binResults[i];
+        // }
+
+        for (int i = 0; i < customerData.billing.length; i++) {
+          customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+        }
+
+
+        return customerData;
+      }
+    } else {
+      print('Failed to post data: ${response.statusCode}');
+      return null;
+    }
+  }
+  postLease( List<Map<String, dynamic>> lease) async {
+    final url = Uri.parse('${Api_url}/api/recurring-cards/add-cards');
+    print(url);
+    //log(jsonEncode(lease.toJson()));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode(lease),
+      );
+
+      var responseData = jsonDecode(response.body);
+      print('Response body of the lease :${response.body}');
+    //  log(response.body);
+   //   print('Lease Object: ${jsonEncode(lease.toJson())}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (responseData['statusCode'] == 200) {
+          print('Response successfully: ${responseData['data']}');
+
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Successfully added lease');
+
+          return true;
+        } else {
+          print('Failed to add lease: ${responseData}');
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to add lease');
+          return false;
+        }
+      } else {
+
+      }
+    } catch (error) {
+      print('Exception occurred: $error');
+      Fluttertoast.showToast(msg: 'An error occurred');
+      return false;
+    }
+  }
+
+  disablecards( String leaseid) async {
+    final url = Uri.parse('${Api_url}/api/recurring-cards/disable-cards/${leaseid}');
+    print(url);
+    //log(jsonEncode(lease.toJson()));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
+       // body: jsonEncode(lease),
+      );
+
+      var responseData = jsonDecode(response.body);
+      print('Response body of the lease :${response.body}');
+      //  log(response.body);
+      //   print('Lease Object: ${jsonEncode(lease.toJson())}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (responseData['statusCode'] == 200) {
+          print('Response successfully: ${responseData['data']}');
+
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Successfully added lease');
+
+          return true;
+        } else {
+          print('Failed to add lease: ${responseData}');
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to add lease');
+          return false;
+        }
+      } else {
+
+      }
+    } catch (error) {
+      print('Exception occurred: $error');
+      Fluttertoast.showToast(msg: 'An error occurred');
+      return false;
+    }
+  }
+  Future<List<String>> performBinChecks(CustomerData customerData) async {
+    List<String> binResults = [];
+    for (BillingData billing in customerData.billing) {
+      String binResult = await binCheck(billing.ccBin ?? '');
+      binResults.add(binResult);
+    }
+    return binResults;
   }
 }
-
-
-class AllTenantsData {
-  List<TenantData> tenants;
-
-  AllTenantsData({required this.tenants});
-
-  Map<String, dynamic> toJson() {
-    return {
-      'tenants': tenants.map((tenant) => tenant.toJson()).toList(),
-    };
-  }
-}
-

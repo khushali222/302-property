@@ -92,9 +92,42 @@ import 'package:credit_card_validator/credit_card_validator.dart';
 //     ),
 //   );
 // }
+import 'package:timeago/timeago.dart' as timeago;
 
+// Custom locale to round days like Moment.js
+class CustomTimeAgo extends timeago.EnMessages {
+  @override
+  String lessThanOneMinute(int seconds) => 'just now';
+  @override
+  String aboutAMinute(int minutes) => 'a minute';
+  @override
+  String minutes(int minutes) => '$minutes minutes';
+  @override
+  String aboutAnHour(int minutes) => 'an hour';
+  @override
+  String hours(int hours) => '$hours hours';
+  @override
+  String aDay(int hours) => 'yesterday';
+  @override
+  String days(int days) {
+    if (days >= 28) {
+      return 'a month'; // Match Moment.js rounding
+    }
+    return '$days days';
+  }
+  @override
+  String aboutAMonth(int days) => 'a month';
+  @override
+  String months(int months) => '$months months';
+  @override
+  String aboutAYear(int year) => 'a year';
+  @override
+  String years(int years) => '$years years';
+}
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  timeago.setLocaleMessages('en_custom', CustomTimeAgo());
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -152,7 +185,7 @@ void main() {
           ChangeNotifierProvider(
             create: (context) => ProfileProvider(),
           ),
-          ChangeNotifierProvider(create: (_) => DateProvider()),
+          ChangeNotifierProvider(create: (context) => DateProvider()),
           ChangeNotifierProvider(create: (_) => DropdownProvider()),
           ChangeNotifierProvider(create: (_) => CheckConnection()),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),

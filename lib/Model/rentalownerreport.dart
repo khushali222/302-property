@@ -70,7 +70,7 @@ class Payment {
   TenantData tenantData;
   RentalData rentalData;
   RentalOwnerData rentalOwnerData;
-  Map<String, dynamic> checkAccount;
+  Map<String, dynamic>? checkAccount;
   String ccType;
   String ccNumber;
   String transactionType;
@@ -96,7 +96,7 @@ class Payment {
     required this.tenantData,
     required this.rentalData,
     required this.rentalOwnerData,
-    required this.checkAccount,
+  //  required this.checkAccount,
     required this.ccType,
     required this.ccNumber,
     required this.transactionType,
@@ -127,10 +127,11 @@ class Payment {
       tenantData: TenantData.fromJson(json['tenant_data'] ?? {}),
       rentalData: RentalData.fromJson(json['rental_data'] ?? {}),
       rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
-      checkAccount: json['check_account'] ?? {},
+
       ccType: json['cc_type'] ?? 'N/A',
       ccNumber: json['cc_number'] ?? 'N/A',
       transactionType: json['transaction_type'] ?? '',
+
     );
   }
 

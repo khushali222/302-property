@@ -24,7 +24,7 @@ class SummaryContent extends StatefulWidget {
 
 class _SummaryContentState extends State<SummaryContent> {
   bool _showAll = false;
-
+  List<String> newItems = [];
   List<String> applicantCheckedChecklist = [
     "CreditCheck",
     "EmploymentVerification",
@@ -209,7 +209,7 @@ class _SummaryContentState extends State<SummaryContent> {
       for (int i = 0; i < itemCount && i < statuses.length; i++) {
         final status = statuses[i];
         final statusMessage =
-            '${status.status} by ${status.statusUpdatedBy} at ${status.updateAt}';
+            status.updateAt != null ?   '${status.status} by ${status.statusUpdatedBy} at ${status.updateAt}':'${status.status} by ${status.statusUpdatedBy} ';
         rows.add(DataRow(cells: [
           DataCell(Text(
             status.status!,
@@ -263,7 +263,7 @@ class _SummaryContentState extends State<SummaryContent> {
                               applicantChecklist.remove(item);
                             }
                           });
-                          updatecheckBox();
+                        //  updatecheckBox();
                         },
                         activeColor: blueColor,
                         // Disable checkbox if amount is not entered
@@ -290,8 +290,8 @@ class _SummaryContentState extends State<SummaryContent> {
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 35.0, // Standard width for checkbox
-                        height: 35.0,
+                        width: 20.0, // Standard width for checkbox
+                        height: 40.0,
                         child: Checkbox(
                           value: widget.summery.applicantCheckedChecklist!
                               .contains(item),
@@ -307,7 +307,7 @@ class _SummaryContentState extends State<SummaryContent> {
                                 applicantChecklist.remove(item);
                               }
                             });
-                            updatecheckBox();
+                            //updatecheckBox();
                           },
                           activeColor:
                               blueColor, // Disable checkbox if amount is not entered
@@ -332,10 +332,22 @@ class _SummaryContentState extends State<SummaryContent> {
                       //     updatecheckBox();
                       //   },
                       // ),
-                      Text(item),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(item , style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 15),),
+                      SizedBox(
+                        width: 5,
+                      ),
                       InkWell(
                           onTap: () {
-                            widget.summery.applicantChecklist!.remove(item);
+                            setState(() {
+                              widget.summery.applicantChecklist!.remove(item);
+
+                            });
                             updatecheckBoxnew(
                                 widget.summery.applicantChecklist!);
                           },
@@ -367,7 +379,9 @@ class _SummaryContentState extends State<SummaryContent> {
                         onTap: () {
                           setState(() {
                             widget.summery.applicantChecklist!.add(checkvalue.text);
+                            //newItems.add(checkvalue.text);
                             checkvalue.text = "";
+
                             addcheckbox = false;
                           });
                           updatecheckBoxnew(widget.summery.applicantChecklist!);
@@ -390,6 +404,7 @@ class _SummaryContentState extends State<SummaryContent> {
                         onTap: () {
                           setState(() {
                             checkvalue.text = "";
+                            addcheckbox = false;
                           });
                         },
                         child: Container(
@@ -414,6 +429,8 @@ class _SummaryContentState extends State<SummaryContent> {
               onTap: () {
                 setState(() {
                   addcheckbox = !addcheckbox;
+                  print(  widget.summery.applicantChecklist);
+                  print(  applicantChecklist);
                 });
                 //  Navigator.pop(context);
               },
@@ -455,6 +472,28 @@ class _SummaryContentState extends State<SummaryContent> {
                 ),
               ),
             ),
+            const SizedBox(
+              height: 15,
+            ),
+            GestureDetector(
+              onTap: (){
+                List<String> stringList = widget.summery.applicantCheckedChecklist
+                    !.map((item) => item.toString()) // Convert each item to String
+                    .toList();
+                updatecheckBox();
+                // updatecheckBoxnew(stringList );
+              },
+              child: Container(
+                height: 45,
+                width: 150,
+                decoration: BoxDecoration(
+                  color: blueColor,
+                  borderRadius: BorderRadius.circular(6)
+                ),
+                child: Center(child: Text("Save Changes",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),)),
+              ),
+            ),
+
             const SizedBox(
               height: 20,
             ),
@@ -926,7 +965,38 @@ class _SummaryContentState extends State<SummaryContent> {
 
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    var checkvalue = {"applicant_checkedChecklist": applicantChecklist};
+    ///var checkvalue = {"applicant_checkedChecklist": applicantChecklist};
+
+    var checkvalue = {"applicant":
+      {
+        "applicant_checkedChecklist": applicantChecklist,
+        "applicant_id": widget.summery.applicantId,
+        // Replace with appropriate ID
+        "admin_id": id,
+        "applicant_firstName": widget.summery.applicantFirstName,
+        "applicant_lastName": widget.summery.applicantLastName,
+        "applicant_email": widget.summery.applicantEmail,
+        "applicant_phoneNumber": widget.summery.applicantPhoneNumber,
+        "applicant_homeNumber": widget.summery.applicantHomeNumber,
+        "applicant_businessNumber": widget.summery.applicantBusinessNumber,
+        "applicant_telephoneNumber": widget.summery.applicantTelephoneNumber,
+        "isMovedin": widget.summery.isMovedin,
+        "createdAt": widget.summery.createdAt,
+        "updatedAt": widget.summery.updatedAt,
+        "isApplicantDataEmpty": widget.summery.isApplicantDataEmpty,
+        "applicant_emailsend_date": widget.summery.applicantEmailsendDate,
+        "lease_data": widget.summery.leaseData?.toJson(),
+        // Serialize nested object
+        "applicant_NotesAndFile": widget.summery.applicantNotesAndFile
+            ?.map((note) => note.toJson()) // Map notes to JSON
+            .toList(),
+        "applicant_status": widget.summery.applicantStatus
+            ?.map((status) => status.toJson()) // Map status to JSON
+            .toList(),
+      }
+    };
+   // print(checkvalue);
+
     final response = await http.put(
       Uri.parse('$Api_url/api/applicant/applicant/${widget.applicant_id}'),
       headers: <String, String>{
@@ -937,7 +1007,7 @@ class _SummaryContentState extends State<SummaryContent> {
       body: jsonEncode(checkvalue),
     );
     if (response.statusCode == 200) {
-      // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
+       Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
 
       setState(() {});
     } else {
@@ -952,7 +1022,8 @@ class _SummaryContentState extends State<SummaryContent> {
 
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    var checkvalue = {"applicant_checklist": applicant};
+      var checkvalue = {"applicant_checklist": applicant};
+    print(applicant);
     final response = await http.put(
       Uri.parse(
           '$Api_url/api/applicant/applicant/${widget.applicant_id}/checklist'),

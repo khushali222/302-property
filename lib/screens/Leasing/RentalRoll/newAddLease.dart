@@ -7732,6 +7732,8 @@ class _AddTenantState extends State<AddTenant> {
                                 Provider.of<SelectedTenantsProvider>(context,
                                         listen: false)
                                     .addTenant(tenant);
+
+                                Navigator.pop(context);
                               }
                             },
                             child: ClipRRect(

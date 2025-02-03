@@ -152,7 +152,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               SizedBox(
                                 width: MediaQuery.of(context).size.width > 500
                                     ? 200
-                                    : 180,
+                                    : MediaQuery.of(context).size.width *.9,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 1),
                                   child: Text(
@@ -876,11 +876,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 onTap: () {
                                                   setState(() {
                                                     //  print("hello");
-                                                    if (_tabController !=
-                                                        null) {
-                                                      _tabController!
-                                                          .animateTo(1);
-                                                    }
+                                                    // if (_tabController !=
+                                                    //     null) {
+                                                    //   _tabController!
+                                                    //       .animateTo(1);
+                                                    // }
+
+                                                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RecurringPayment(leaseData: leasesummery.data!,)));
                                                   });
                                                 },
                                                 child: Text(

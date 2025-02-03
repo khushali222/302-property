@@ -105,6 +105,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
               rentalownerid: selectedrenatalownerid, chargetype: chargedata);
 
       setState(() {
+
         DelinquentTenantsModel = data;
         isLoading = false;
         errorMessage = null; // Reset error message on successful data fetch
@@ -3182,7 +3183,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       setState(() {
                         showTableData = true; // Set to true when the button is pressed
                       });
-                      await fetchDelinquentTenantsData(fromDate.text, toDate.text); // Call the API
+
+                      _futureRentersInsurance =fetchDelinquentTenantsData(fromDate.text, toDate.text); // Call the API
                     },
                     child:
                     Row(

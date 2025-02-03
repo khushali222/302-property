@@ -14,6 +14,7 @@ import 'package:three_zero_two_property/StaffModule/repository/staffpermission_p
 import 'package:three_zero_two_property/StaffModule/screen/dashboard.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/dashboard.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import '../../TenantsModule/repository/permission_provider.dart';
 import '../../VendorModule/screen/dashboard.dart';
@@ -62,6 +63,9 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigateToCorrectScreen() async {
 
     await Future.delayed(Duration(seconds: 5)); // Simulate splash screen delay
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    dateProvider.loadDateFormat(); // Ensure DateProvider initializes data if needed
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
     String role = prefs.getString("role") ??"";

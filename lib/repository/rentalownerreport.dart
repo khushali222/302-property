@@ -28,7 +28,7 @@ class RentalOwnerReportService {
         "authorization": "CRM $token",
         "id": "CRM $id",
       },);
-
+      print(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body)["data"];
 

@@ -96,9 +96,10 @@ class AddCreditCard {
   String? customerVaultId;
   String? responseCode;
   String? billingId;
+  String? cc_bin;
 
   AddCreditCard(
-      {this.tenantId, this.customerVaultId, this.responseCode, this.billingId});
+      {this.tenantId, this.customerVaultId, this.responseCode, this.billingId,this.cc_bin});
 
   AddCreditCard.fromJson(Map<String, dynamic> json) {
     tenantId = json['tenant_id'];
@@ -113,6 +114,7 @@ class AddCreditCard {
     data['customer_vault_id'] = this.customerVaultId;
     data['response_code'] = this.responseCode;
     data['billing_id'] = this.billingId;
+    data['cc_number'] = this.cc_bin;
     return data;
   }
 }

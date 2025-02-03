@@ -15,10 +15,10 @@ class Barchart extends StatefulWidget {
 class _BarchartState extends State<Barchart> {
   List<RevenueData> chartData = [];
   final List<String> items = [
-    'This Year',
+    'Current Year',
     'Previous Year',
   ];
-  String? selectedValue = 'This Year'; // Default selection
+  String? selectedValue = 'Current Year'; // Default selection
   bool isLoading = true;
 
   @override
@@ -48,7 +48,7 @@ class _BarchartState extends State<Barchart> {
         Map<int, double> revenueMap = {};
 
         // Process data for the selected year
-        if (year == 'This Year') {
+        if (year == 'Current Year') {
           for (var item in data['currentYear']) {
             revenueMap[item['month']] = item['totalAmount'].toDouble();
           }
@@ -156,7 +156,7 @@ class _BarchartState extends State<Barchart> {
                   },
                   buttonStyleData: ButtonStyleData(
                     height: 50,
-                    width: 110,
+                    width: 130,
                     padding: const EdgeInsets.only(left: 14, right: 14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
@@ -231,8 +231,50 @@ class _BarchartState extends State<Barchart> {
                     dataLabelSettings: DataLabelSettings(isVisible: false),
                     borderRadius: BorderRadius.circular(10),
                     width: .4, // Rounded corners for bars
+
+
                   )
                 ],
+                tooltipBehavior: TooltipBehavior(
+                  enable: true,
+                  color: Colors.white,
+                  borderColor: Colors.black,
+                  builder: (dynamic data, dynamic point, dynamic series, int pointIndex, int seriesIndex) {
+                    return Container(
+                      padding: EdgeInsets.all(10),
+
+                      decoration: BoxDecoration(
+                      //  color: Colors.blueAccent,
+                        borderRadius: BorderRadius.circular(8),
+
+
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${point.x}', // Display the month
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            '${selectedValue}: \$${point.y.toStringAsFixed(2)}', // Display revenue
+                            style: TextStyle(
+                             // color: Colors.yellowAccent,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
