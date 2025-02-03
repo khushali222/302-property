@@ -503,21 +503,30 @@ class ReportCard extends StatelessWidget {
                   topRight: Radius.circular(12.0),
                 ),
               ),
-              padding: EdgeInsets.all(17.0),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
+              child:
+              Row(
+                children: [
+                  SizedBox(width: 5,),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(width: 5,),
+                ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 16.0,top: 16,right: 10),
               child: Text(
                 description,
+
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,

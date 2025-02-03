@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -55,10 +56,8 @@ class _Workorder_tableState extends State<Workorder_table> {
               .compareTo(a.workOrderData!.workSubject!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.workOrderData!.status!
-              .compareTo(b.workOrderData!.status!)
-          : b.workOrderData!.status!
-              .compareTo(a.workOrderData!.status!));
+          ? a.workOrderData!.status!.compareTo(b.workOrderData!.status!)
+          : b.workOrderData!.status!.compareTo(a.workOrderData!.status!));
     }
   }
 
@@ -572,7 +571,33 @@ class _Workorder_tableState extends State<Workorder_table> {
       ],
     );
   }
+  DateTime parseDate(String dateString) {
+    try {
+      // List of common date formats to try
+      List<String> formats = [
+        'yyyy-MM-dd',       // Example: 2024-11-25
+        'MM/dd/yyyy',       // Example: 11/25/2024
+        'dd/MM/yyyy',       // Example: 25/11/2024
+        'yyyy-MM-dd HH:mm', // Example: 2024-11-25 14:30
+        'yyyy/MM/dd',       // Example: 2024/11/25
+        'MMMM dd, yyyy',    // Example: November 25, 2024
+      ];
 
+      for (String format in formats) {
+        try {
+          return DateFormat(format).parse(dateString);
+        } catch (e) {
+          // Continue trying other formats
+        }
+      }
+
+      // If none of the formats match, throw an error
+      throw FormatException("Unsupported date format: $dateString");
+    } catch (e) {
+      print("Error parsing date: $e");
+      return DateTime.now(); // Fallback to current date if parsing fails
+    }
+  }
   final _scrollController = ScrollController();
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -937,25 +962,45 @@ class _Workorder_tableState extends State<Workorder_table> {
                                           .toLowerCase()
                                           .contains(
                                               searchvalue!.toLowerCase()) ||
-                                          workorder.workOrderData!.createdAt.toString()
-                                              .toLowerCase()
-                                              .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      workorder.workOrderData!.workCategory!
+                                      workorder.workOrderData!.createdAt
+                                          .toString()
                                           .toLowerCase()
                                           .contains(
                                               searchvalue!.toLowerCase()) ||
-                                          (workorder.staffMember?.staffmemberName?.toLowerCase() ?? '')
-                                              .contains(searchvalue.toLowerCase())
-                              )
-                                  .toList();
-                            } else {
-                              data = snapshot.data!
-                                  .where((workorder) =>
-                                      workorder.workOrderData!.status! ==
-                                      selectedValue)
+                                      workorder.workOrderData!.workCategory!
+                                          .toLowerCase()
+                                          .contains(searchvalue!.toLowerCase()) ||
+                                      (workorder.staffMember?.staffmemberName?.toLowerCase() ?? '').contains(searchvalue.toLowerCase()))
                                   .toList();
                             }
+                            else {
+
+                              if(selectedValue =="Over Due"){
+
+                                data = snapshot.data!.where((element) {
+                                  // Check if date is null
+                                  if (element.workOrderData!.date == null) {
+                                    return false; // Include this element without filtering by date
+                                  }
+
+                                  DateTime dueDate = parseDate(element.workOrderData!.date.toString());
+                                  bool isOverDue = dueDate.isBefore(DateTime.now());
+                                  print(element.workOrderData!.status);
+                                  bool isNotCompleted = element.workOrderData!.status != "Completed" && element.workOrderData!.status != "Complete";
+
+                                  return isOverDue && isNotCompleted;
+                                }).toList();
+
+                              }
+                              else{
+                                data = snapshot.data!
+                                    .where((property) =>
+                                property.workOrderData!.status == selectedValue)
+                                    .toList();
+                              }
+
+                            }
+
                             if (isChecked) {
                               data = data
                                   .where((workorder) =>
@@ -1456,7 +1501,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                       _getDisplayValue(workOrder
                                                                           .workOrderData
                                                                           ?.workCategory),
-                                                                     'Created At:',
+                                                                      'Created At:',
                                                                       dateProvider
                                                                           .formatCurrentDate(
                                                                               '${workOrder.workOrderData?.createdAt}')),
@@ -1465,11 +1510,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                       dateProvider
                                                                           .formatCurrentDate(
                                                                               '${workOrder.workOrderData?.updatedAt}'),
-                                                                      '',''
+                                                                      '',
+                                                                      ''
                                                                       // 'Due Date',
                                                                       // _getDisplayValue(workOrder
                                                                       //     .workOrderData?.workorderUpdates?.first.date)
-                                                                    ),
+                                                                      ),
                                                                 ],
                                                               ),
                                                             ),

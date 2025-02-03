@@ -1020,14 +1020,18 @@ class _Workorder_tableState extends State<Workorder_table> {
                       else {
 
                         if(selectedValue =="Over Due"){
+
                           data = snapshot.data!.where((element) {
-                            DateTime dueDate = parseDate(element.workOrderData!.date!.toString());
+                            // Check if date is null
+                            if (element.workOrderData!.date == null) {
+                              return false; // Include this element without filtering by date
+                            }
+
+                            DateTime dueDate = parseDate(element.workOrderData!.date.toString());
                             bool isOverDue = dueDate.isBefore(DateTime.now());
                             print(element.workOrderData!.status);
                             bool isNotCompleted = element.workOrderData!.status != "Completed" && element.workOrderData!.status != "Complete";
 
-
-                            // Adjust based on your date format
                             return isOverDue && isNotCompleted;
                           }).toList();
 

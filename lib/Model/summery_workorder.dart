@@ -313,18 +313,24 @@ class PropertyData {
 class UnitData {
   String? id;
   String? unitName;
+  String? rental_unit;
+  String? unit_id;
 
-  UnitData({this.id, this.unitName});
+  UnitData({this.id, this.unitName,this.rental_unit,this.unit_id});
 
   UnitData.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     unitName = json['rental_unit_adress'];
+    rental_unit = json['rental_unit'];
+    unit_id = json['unit_id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.id;
     data['unit_name'] = this.unitName;
+    data['rental_unit'] = this.rental_unit;
+    data['unit_id'] = this.unit_id;
     return data;
   }
 }

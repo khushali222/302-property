@@ -10,7 +10,7 @@ import '../../constant/constant.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:timeago/timeago.dart' as timeago;
 import '../Leasing/RentalRoll/Financial.dart';
 import '../Maintenance/Workorder/Edit_workorders.dart';
 import '../Leasing/RentalRoll/SummeryPageLease.dart';
@@ -286,9 +286,9 @@ class _notificationsState extends State<notifications> {
                                                 color: blueColor
                                             ),
                                           ),
-                                          Text(   notification['createdAt']?.isEmpty ?? true
+                                          Text(  notification['createdAt']?.isEmpty ?? true
                                               ? 'No date available'
-                                              : formatNotificationDateTime(DateTime.parse(notification['createdAt'] ?? '')),
+                                              : timeago.format(DateTime.parse(notification['createdAt']).toLocal(), locale: 'en_custom'),
                                             style: TextStyle(
                                               color: Colors.black.withOpacity(.7),
                                               fontSize: 14

@@ -214,14 +214,14 @@ class _MakePaymentState extends State<MakePayment> {
           selectedTenantId = tenants.first["tenant_id"];
           fetchChargesForSelectedTenant(selectedTenantId!);
           fetchcreditcard(selectedTenantId!);
-        }else if (tenants.length > 1) {
+        } else if (tenants.length > 1) {
           // If there are multiple tenants, select the first tenant and fetch their charges
           selectedTenantId = tenants.first["tenant_id"];
           tenantname = tenants.first["tenant_name"]!;
         }
         if (selectedTenantId != null) {
-           fetchChargesForSelectedTenant(selectedTenantId!);
-           fetchcreditcard(selectedTenantId!);
+          fetchChargesForSelectedTenant(selectedTenantId!);
+          fetchcreditcard(selectedTenantId!);
         }
         processor_id = data["processor_id"] ?? "";
       });
@@ -682,8 +682,8 @@ class _MakePaymentState extends State<MakePayment> {
         print('Billing ID: ${cardDetail['billing_id']}');
       }
 
-      CustomerData? customerData =
-          await postBillingCustomerVault(customervaultid.toString());
+      CustomerData? customerData = await postBillingCustomerVault(
+          customervaultid.toString(), cardDetailsList);
 
       if (customerData != null) {
         setState(() {
@@ -723,7 +723,8 @@ class _MakePaymentState extends State<MakePayment> {
     }
   }
 
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId) async {
+  Future<CustomerData?> postBillingCustomerVault(
+      String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -756,16 +757,19 @@ class _MakePaymentState extends State<MakePayment> {
         print('CC Bin: ${billing.ccBin}');
       });
 
-      List<String> binResults = await performBinChecks(customerData);
-
+      // List<String> binResults = await performBinChecks(customerData);
+      //
+      // for (int i = 0; i < customerData.billing.length; i++) {
+      //   customerData.billing[i].binResult = binResults[i];
+      // }
+      //
+      // print('Number of BIN check results: ${binResults.length}');
+      // binResults.forEach((result) {
+      //   print('BIN Check Result: $result');
+      // });
       for (int i = 0; i < customerData.billing.length; i++) {
-        customerData.billing[i].binResult = binResults[i];
+        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
       }
-
-      print('Number of BIN check results: ${binResults.length}');
-      binResults.forEach((result) {
-        print('BIN Check Result: $result');
-      });
 
       return customerData;
     } else {
@@ -2813,11 +2817,20 @@ class _MakePaymentState extends State<MakePayment> {
                                                     //                 'account'])
                                                     //         ? ""
                                                     //         : "${row['account']}_${row['charge_type']}",
-                                                    value: liabilityAccounts.contains(row['account'])
+                                                    value: liabilityAccounts
+                                                            .contains(
+                                                                row['account'])
                                                         ? "${row['account']}_Liability Account"
-                                                        : (row['account'] == null || row['account'].isEmpty || row['charge_type'] == null || row['charge_type'].isEmpty)
-                                                        ? null  // Default value that is part of the items
-                                                        : "${row['account']}_${row['charge_type']}",
+                                                        : (row['account'] ==
+                                                                    null ||
+                                                                row['account']
+                                                                    .isEmpty ||
+                                                                row['charge_type'] ==
+                                                                    null ||
+                                                                row['charge_type']
+                                                                    .isEmpty)
+                                                            ? null // Default value that is part of the items
+                                                            : "${row['account']}_${row['charge_type']}",
                                                     items: [
                                                       ...categorizedDataCopy
                                                           .entries
@@ -3584,7 +3597,8 @@ class _MakePaymentState extends State<MakePayment> {
                                       {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
-                                            .text.trim()), // Set the date to the desired date
+                                            .text
+                                            .trim()), // Set the date to the desired date
                                         'balance': charges_balances[
                                             index], // Add balance from charges_balances list
                                       },
@@ -3884,7 +3898,8 @@ class _MakePaymentState extends State<MakePayment> {
                                       {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
-                                            .text.trim()), // Set the date to the desired date
+                                            .text
+                                            .trim()), // Set the date to the desired date
                                         'balance': charges_balances[
                                             index], // Add balance from charges_balances list
                                       },

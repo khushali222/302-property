@@ -445,7 +445,7 @@ class tenant_cards{
       }
 
       CustomerData? customerData =
-      await postBillingCustomerVault(customervaultid.toString());
+      await postBillingCustomerVault(customervaultid.toString(),cardDetailsList);
 
       if (customerData != null) {
         return customerData.billing;
@@ -464,7 +464,7 @@ class tenant_cards{
 
 
   }
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId) async {
+  Future<CustomerData?> postBillingCustomerVault(String customerVaultId ,List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -493,16 +493,19 @@ class tenant_cards{
         print('CC Bin: ${billing.ccBin}');
       });
 
-      List<String> binResults = await performBinChecks(customerData);
-
+      // List<String> binResults = await performBinChecks(customerData);
+      //
+      // for (int i = 0; i < customerData.billing.length; i++) {
+      //   customerData.billing[i].binResult = binResults[i];
+      // }
+      //
+      // print('Number of BIN check results: ${binResults.length}');
+      // binResults.forEach((result) {
+      //   print('BIN Check Result: $result');
+      // });
       for (int i = 0; i < customerData.billing.length; i++) {
-        customerData.billing[i].binResult = binResults[i];
+        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
       }
-
-      print('Number of BIN check results: ${binResults.length}');
-      binResults.forEach((result) {
-        print('BIN Check Result: $result');
-      });
 
       return customerData;
     } else {

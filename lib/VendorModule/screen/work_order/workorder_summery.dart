@@ -577,7 +577,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           height: 4,
                                         ),
                                         Text(
-                                            '${summery.workorderUpdates?.last.date ?? "N/A"} ',
+                                            '${summery.workorderUpdates!.last.date!.isEmpty == true ?
+                                            "N/A" : summery.workorderUpdates?.last.date?.toString()
+                                            }',
                                             style: TextStyle(
                                                 color: blueColor,
                                                 fontWeight: FontWeight.bold)),
@@ -1430,7 +1432,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                   ? 13
                                                   : 18,
                                               color: blueColor,
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
@@ -1564,7 +1566,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        '${summery.workorderUpdates?.last.date ?? "N/A"} ',
+                                        '${summery.workorderUpdates!.last.date!.isEmpty == true ?
+                                        "N/A" : summery.workorderUpdates?.last.date?.toString()
+                                        }',
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -1609,7 +1613,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               ),
                               Spacer(),
                               Container(
-                                height: 70,
+                                //height: 70,
                                 width: MediaQuery.of(context).size.width * .3,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
@@ -1632,14 +1636,32 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     summery.staffData != null
-                                        ? Text('${summery.staffData?.firstname}',
-                                        style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold))
-                                        : Text('N/A',
-                                        style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold)),
+                                        ? Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: Text('${summery.staffData?.firstname}',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold)),
+                                        ),
+                                      ],
+                                    )
+                                        : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text('N/A',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+
+                                    SizedBox(
+                                      height: 5,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -1785,7 +1807,33 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           style: TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                         Divider(color: Colors.black),
-                                        Text('Work Order Is Updated'),
+                                        // Text('Work Order Is Updated'),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Due Date : ${update.date != null ? update.date : update.date ?? "N/A"}',
+                                              style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              'Status : ${update.status != null ? update.status : update.status ?? "N/A"}',
+                                              style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                            ),
+
+                                          ],
+                                        ),
+                                        if(update.staffmemberName != "")
+                                          SizedBox(height: 5,),
+                                        if(update.staffmemberName != "")
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Assigned To : ${update.staffmemberName != null ? update.staffmemberName : update.staffmemberName ?? "N/A"}',
+                                                style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                              ),
+
+                                            ],
+                                          ),
                                       ],
                                     ),
                                   );
@@ -2228,46 +2276,53 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             children: [
                               Row(
                                 children: [
-                                  Container(
-                                    height: 40,
-                                    width: 40,
-                                    decoration: BoxDecoration(
-                                      color: blueColor,
-                                      border: Border.all(
-                                          color:blueColor),
-                                      // color: Colors.blue,
-                                      borderRadius: BorderRadius.circular(10),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 180,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 1),
+                                      child: Text(
+                                        '${summery.workSubject}',
+                                        maxLines: 5, // Set maximum number of lines
+                                        overflow: TextOverflow
+                                            .ellipsis, // Handle overflow with ellipsis
+                                        style: TextStyle(
+                                            fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                500
+                                                ? 13
+                                                : 18,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                    child: Icon(
-                                      Icons.menu,
-                                      color: Colors.white,
-                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    height: 10,
                                   ),
                                   SizedBox(
-                                    width: 20,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                          width:150,
-
-                                          child: Text(
-                                            '${summery.workSubject}',
-
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold, color: blueColor),
-                                          )),
-                                      SizedBox(
-                                        height: 10,
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 180,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 1),
+                                      child: Text(
+                                        '${summery.propertyData?.rentaladress}',
+                                        maxLines: 5, // Set maximum number of lines
+                                        overflow: TextOverflow
+                                            .ellipsis, // Handle overflow with ellipsis
+                                        style: TextStyle(
+                                            fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                500
+                                                ? 13
+                                                : 18,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.w500),
                                       ),
-                                      Container(
-                                          child: Text(
-                                            '${summery.propertyData?.rentaladress}',
-                                            style: TextStyle(color: blueColor),
-                                          )),
-                                    ],
+                                    ),
                                   ),
                                   Spacer(),
                                   if (summery.priority == "High")
@@ -2430,7 +2485,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         SizedBox(
                                           height: 4,
                                         ),
-                                        Text('${summery.workorderUpdates?.last.date ??"N/A"}',
+                                        Text( '${summery.workorderUpdates!.last.date!.isEmpty == true ?
+                                        "N/A" : summery.workorderUpdates?.last.date?.toString()
+                                        }',
                                             style: TextStyle(
                                                 color: blueColor,
                                                 fontWeight: FontWeight.bold)),
@@ -2714,23 +2771,54 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                      width:180,
-
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 180,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 1),
                                       child: Text(
                                         '${summery.workSubject}',
-
+                                        maxLines: 5, // Set maximum number of lines
+                                        overflow: TextOverflow
+                                            .ellipsis, // Handle overflow with ellipsis
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold, color: blueColor),
-                                      )),
+                                            fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                500
+                                                ? 13
+                                                : 18,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                  ),
+
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Container(
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 180,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 1),
                                       child: Text(
-                                        '${summery.propertyData?.rentaladress}',
-                                        style: TextStyle(color: blueColor),
-                                      )),
+                                        '${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}',
+                                        maxLines: 5, // Set maximum number of lines
+                                        overflow: TextOverflow
+                                            .ellipsis, // Handle overflow with ellipsis
+                                        style: TextStyle(
+                                            fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                500
+                                                ? 13
+                                                : 18,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                               Spacer(),
@@ -2868,7 +2956,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     SizedBox(
                                       height: 4,
                                     ),
-                                    Text('${summery.workorderUpdates?.last.date ??"N/A"}',
+                                    Text( '${summery.workorderUpdates!.last.date!.isEmpty == true ?
+                                    "N/A" : summery.workorderUpdates?.last.date?.toString()
+                                    }',
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -2913,7 +3003,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               ),
                               Spacer(),
                               Container(
-                                height: 70,
+                               // height: 70,
                                 width: MediaQuery.of(context).size.width * .3,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
@@ -2936,15 +3026,32 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     summery.staffData != null
-                                        ? Text('${summery.staffData?.firstname}',
-                                        textAlign:TextAlign.center,
-                                        style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold))
-                                        : Text('N/A',
-                                        style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold)),
+                                        ? Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: Text('${summery.staffData?.firstname}',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold)),
+                                        ),
+                                      ],
+                                    )
+                                        : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text('N/A',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+
+                                    SizedBox(
+                                      height: 5,
+                                    ),
                                   ],
                                 ),
                               ),

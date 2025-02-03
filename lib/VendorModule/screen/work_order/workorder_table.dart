@@ -894,7 +894,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                 .contains(searchvalue!.toLowerCase()))
                             .toList();
 
-                      } else {
+                      }
+                    else {
                       if(selectedValue =="Over Due"){
                         data = snapshot.data!.where((element) {
                           DateTime dueDate = DateTime.parse(element.date!);

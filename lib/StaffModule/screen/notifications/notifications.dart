@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/workorder_summery.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/summery_page.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 import '../../../constant/constant.dart';
 import '../../../model/properties.dart';
 import '../../repository/properties.dart';
@@ -255,14 +255,9 @@ class _notificationsState extends State<notifications> {
                                                 color: blueColor),
                                           ),
                                           Text(
-                                            notification['createdAt']
-                                                        ?.isEmpty ??
-                                                    true
-                                                ? 'No date available'
-                                                : formatNotificationDateTime(
-                                                    DateTime.parse(notification[
-                                                            'createdAt'] ??
-                                                        '')),
+                                              notification['createdAt']?.isEmpty ?? true
+                                                  ? 'No date available'
+                                                  : timeago.format(DateTime.parse(notification['createdAt']).toLocal(), locale: 'en_custom'),
                                             style: TextStyle(
                                                 color: Colors.black
                                                     .withOpacity(.7),

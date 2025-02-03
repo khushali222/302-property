@@ -699,7 +699,7 @@ class _MakePaymentState extends State<MakePayment> {
       }
 
       CustomerData? customerData =
-          await postBillingCustomerVault(customervaultid.toString());
+          await postBillingCustomerVault(customervaultid.toString(),cardDetailsList);
 
       if (customerData != null) {
         setState(() {
@@ -739,7 +739,7 @@ class _MakePaymentState extends State<MakePayment> {
     }
   }
 
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId) async {
+  Future<CustomerData?> postBillingCustomerVault(String customerVaultId ,List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? adminid = prefs.getString("adminId");
@@ -774,16 +774,20 @@ class _MakePaymentState extends State<MakePayment> {
         print('CC Bin: ${billing.ccBin}');
       });
 
-      List<String> binResults = await performBinChecks(customerData);
-
+      // List<String> binResults = await performBinChecks(customerData);
+      //
+      // for (int i = 0; i < customerData.billing.length; i++) {
+      //   customerData.billing[i].binResult = binResults[i];
+      // }
+      //
+      // print('Number of BIN check results: ${binResults.length}');
+      // binResults.forEach((result) {
+      //   print('BIN Check Result: $result');
+      // });
       for (int i = 0; i < customerData.billing.length; i++) {
-        customerData.billing[i].binResult = binResults[i];
+        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
       }
 
-      print('Number of BIN check results: ${binResults.length}');
-      binResults.forEach((result) {
-        print('BIN Check Result: $result');
-      });
 
       return customerData;
     } else {
@@ -976,7 +980,7 @@ class _MakePaymentState extends State<MakePayment> {
                               height: 8,
                             ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Received From *8',
+                              const Text('Received From *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
