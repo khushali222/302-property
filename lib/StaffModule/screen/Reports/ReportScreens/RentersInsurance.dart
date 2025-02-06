@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -9,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -303,29 +305,29 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Tenant",
+                          ? const Text("   Tenant",
                           style: TextStyle(color: Colors.white))
-                          : const Text("Tenant",
+                          : const Text("   Tenant",
                           style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
-                      ascending1
-                          ? const Padding(
-                        padding: EdgeInsets.only(top: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortUp,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                      )
-                          : const Padding(
-                        padding: EdgeInsets.only(bottom: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortDown,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                      ),
+                      // ascending1
+                      //     ? const Padding(
+                      //         padding: EdgeInsets.only(top: 7, left: 2),
+                      //         child: FaIcon(
+                      //           FontAwesomeIcons.sortUp,
+                      //           size: 20,
+                      //           color: Colors.white,
+                      //         ),
+                      //       )
+                      //     : const Padding(
+                      //         padding: EdgeInsets.only(bottom: 7, left: 2),
+                      //         child: FaIcon(
+                      //           FontAwesomeIcons.sortDown,
+                      //           size: 20,
+                      //           color: Colors.white,
+                      //         ),
+                      //       ),
                     ],
                   ),
                 ),
@@ -355,25 +357,26 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 },
                 child: Row(
                   children: [
-                    Text("Ins.Provider", style: TextStyle(color: Colors.white)),
+                    Text("Insurance\n Provider",
+                        style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                    // ascending2
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -403,25 +406,25 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 },
                 child: Row(
                   children: [
-                    Text("   Policy Id", style: TextStyle(color: Colors.white)),
+                    Text("     Policy Id", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                    // ascending3
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -823,7 +826,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     workbook.styles.add('headerCellStyle');
     headerCellStyle.bold = true;
     headerCellStyle.backColor = '#D3D3D3';
-    headerCellStyle.hAlign = syncXlsx.HAlignType.center;
+    headerCellStyle.hAlign = syncXlsx.HAlignType.left;
 
     // Add headers to the first row
     for (int i = 0; i < headers.length; i++) {
@@ -833,40 +836,63 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     }
 
     int rowIndex = 2; // Start from the second row
-    for (var item in rentersInsurance) {
-      // Add main row with rental address
-      sheet.getRangeByIndex(rowIndex, 1).setText(item.rentalAddress ?? '');
-      for (int col = 2; col <= 7; col++) {
-        sheet.getRangeByIndex(rowIndex, col).setText('');
-      }
-
-      rowIndex++; // Move to the next row for tenant details
-
-      // Add tenant details in subsequent rows
-      // for (var tenant in item.tenants!) {
-      //   sheet
-      //       .getRangeByIndex(rowIndex, 1)
-      //       .setText(item.tenants!.first.unitDetails ?? '');
-      //   sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantName ?? '');
-      //   sheet
-      //       .getRangeByIndex(rowIndex, 3)
-      //       .setText(tenant.tenantInsurance?.provider ?? '');
-      //   sheet
-      //       .getRangeByIndex(rowIndex, 4)
-      //       .setText(tenant.tenantInsurance?.policyId ?? '');
-      //   sheet.getRangeByIndex(rowIndex, 5).setText(
-      //       tenant.tenantInsurance!.liabilityCoverage.toString() ?? '');
-      //   sheet
-      //       .getRangeByIndex(rowIndex, 6)
-      //       .setText(tenant.tenantInsurance?.effectiveDate ?? '');
-      //   sheet
-      //       .getRangeByIndex(rowIndex, 7)
-      //       .setText(tenant.tenantInsurance?.expirationDate ?? '');
-      //   rowIndex++; // Move to the next row
-      // }
-    }
+    // for (var item in rentersInsurance) {
+    //   // Add main row with rental address
+    //   sheet.getRangeByIndex(rowIndex, 1).setText(item.unitDetails ?? '');
+    //   for (int col = 2; col <= 7; col++) {
+    //     sheet.getRangeByIndex(rowIndex, col).setText('');
+    //   }
+    //
+    //   rowIndex++; // Move to the next row for tenant details
+    //
+    //   // Add tenant details in subsequent rows
+    //   // for (var tenant in item.tenants!) {
+    //   //   sheet
+    //   //       .getRangeByIndex(rowIndex, 1)
+    //   //       .setText(item.tenants!.first.unitDetails ?? '');
+    //   //   sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantName ?? '');
+    //   //   sheet
+    //   //       .getRangeByIndex(rowIndex, 3)
+    //   //       .setText(tenant.tenantInsurance?.provider ?? '');
+    //   //   sheet
+    //   //       .getRangeByIndex(rowIndex, 4)
+    //   //       .setText(tenant.tenantInsurance?.policyId ?? '');
+    //   //   sheet.getRangeByIndex(rowIndex, 5).setText(
+    //   //       tenant.tenantInsurance!.liabilityCoverage.toString() ?? '');
+    //   //   sheet
+    //   //       .getRangeByIndex(rowIndex, 6)
+    //   //       .setText(tenant.tenantInsurance?.effectiveDate ?? '');
+    //   //   sheet
+    //   //       .getRangeByIndex(rowIndex, 7)
+    //   //       .setText(tenant.tenantInsurance?.expirationDate ?? '');
+    //   //   rowIndex++; // Move to the next row
+    //   // }
+    // }
 
     // Save workbook as a byte stream
+    for (var item in rentersInsurance) {
+      if (item.rentersInsurance != null) {
+        sheet.getRangeByIndex(rowIndex, 1).setText(item.unitDetails ?? '');
+        sheet.getRangeByIndex(rowIndex, 2).setText(item.tenantName ?? '');
+        sheet
+            .getRangeByIndex(rowIndex, 3)
+            .setText(item.rentersInsurance!.insuranceCompany ?? '');
+        sheet
+            .getRangeByIndex(rowIndex, 4)
+            .setText(item.rentersInsurance!.policyId ?? '');
+        sheet.getRangeByIndex(rowIndex, 5).setText(
+            item.rentersInsurance!.liabilityCoverage != null
+                ? "\$${item.rentersInsurance!.liabilityCoverage}"
+                : '');
+        sheet
+            .getRangeByIndex(rowIndex, 6)
+            .setText(formateDates(item.rentersInsurance!.effectiveDate.toString()) ?? '');
+        sheet
+            .getRangeByIndex(rowIndex, 7)
+            .setText(formateDates(item.rentersInsurance!.expirationDate.toString()) ?? '');
+        rowIndex++; // Move to the next row
+      }
+    }
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
 
@@ -874,21 +900,18 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'RentersInsuranceReport_$formattedDate.xlsx';
-
     final Directory directory = Platform.isIOS
         ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
-
-    final path = '${directory.path}/$fileName';
+        : Directory ('/storage/emulated/0/Download');
 
     // Create directory if it doesn't exist (for Android)
     if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
-
-    // Write file to the path
+    final path = '${directory.path}/$fileName';
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
 
     // Show success toast message
     Fluttertoast.showToast(
@@ -898,6 +921,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
 
   Future<void> generateRentersInsuranceCsv(
       List<RentersInsuranceData> rentersInsurance) async {
+    final StringBuffer csvBuffer = StringBuffer();
     List<List<dynamic>> rows = [
       [
         'Unit',
@@ -919,7 +943,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
         item.rentersInsurance!.policyId ?? '',
         "\$${item.rentersInsurance!.liabilityCoverage.toString()}" ?? '',
         formateDates(item.rentersInsurance!.effectiveDate!) ?? '',
-        formateDates(item.rentersInsurance!.expirationDate!)?? '',
+        formateDates(item.rentersInsurance!.expirationDate!) ?? '',
       ]);
 
       // Add tenant details in subsequent rows
@@ -937,12 +961,13 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     }
 
     String csv = const ListToCsvConverter().convert(rows);
-
+    final List<int> bytes = utf8.encode(csvBuffer.toString());
     // Define file name with current date and time
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'RentersInsuranceReport_$formattedDate.csv';
 
+    // Define file path
     final Directory directory = Platform.isIOS
         ? await getApplicationDocumentsDirectory()
         : Directory('/storage/emulated/0/Download');
@@ -954,9 +979,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
       await directory.create(recursive: true);
     }
 
-    // Write file to the path
+    // Write CSV file to the path
     final File file = File(path);
-    await file.writeAsString(csv);
+    await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
 
     // Show success toast message
     Fluttertoast.showToast(
@@ -1274,6 +1300,255 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                           ),
                                         ),
                                       ),
+                                      if (isRowExpanded)
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                              left: 2, right: 2),
+                                          margin:
+                                          EdgeInsets.only(bottom: 2),
+                                          child: SingleChildScrollView(
+                                            child: Container(
+                                              //color: Colors.blue,
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .start,
+                                                    children: [
+                                                      FaIcon(
+                                                        isRowExpanded
+                                                            ? FontAwesomeIcons
+                                                            .sortUp
+                                                            : FontAwesomeIcons
+                                                            .sortDown,
+                                                        size: 50,
+                                                        color: Colors
+                                                            .transparent,
+                                                      ),
+                                                      Expanded(
+                                                        child: Table(
+                                                          columnWidths: {
+                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 1: FlexColumnWidth(),
+                                                            0: FlexColumnWidth(), // Distribute columns equally
+                                                            1: FlexColumnWidth(),
+                                                          },
+                                                          children: [
+                                                            buildTableRow(
+                                                              'Effective Date :',
+                                                              getDisplayValue(item.rentersInsurance?.effectiveDate?.isNotEmpty ==
+                                                                  true
+                                                                  ?dateProvider.formatCurrentDate('${item
+                                                                  .rentersInsurance
+                                                                  ?.effectiveDate
+                                                                  ?.split('T')
+                                                                  .first}')
+                                                                  : 'N/A'),
+                                                              'Expiration Date :',
+                                                              getDisplayValue(item.rentersInsurance?.expirationDate?.isNotEmpty ==
+                                                                  true
+                                                                  ? dateProvider.formatCurrentDate('${item
+                                                                  .rentersInsurance
+                                                                  ?.expirationDate
+                                                                  ?.split('T')
+                                                                  .first}')
+
+                                                                  : 'N/A'),
+                                                            ),
+                                                            buildTableRow(
+                                                                'Liability Coverage :',
+                                                                getDisplayValue(item.rentersInsurance?.liabilityCoverage.toString().isNotEmpty ==
+                                                                    true
+                                                                    ? item.rentersInsurance?.liabilityCoverage.toString()
+                                                                    : 'N/A'),
+                                                                '',
+                                                                '')
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      /* Container(
+                                                        width: 40,
+                                                        child: Column(
+                                                          children: [
+                                                            IconButton(
+                                                              icon: FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .edit,
+                                                                size: 20,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
+                                                              ),
+                                                              onPressed:
+                                                                  () async {
+                                                                // handleEdit(Propertytype);
+
+                                                                // var check = await Navigator.push(
+                                                                //     context,
+                                                                //     MaterialPageRoute(
+                                                                //         builder: (context) => Edit_property_type(
+                                                                //           property: Propertytype,
+                                                                //         )));
+                                                                // if (check ==
+                                                                //     true) {
+                                                                //   setState(
+                                                                //           () {});
+                                                                // }
+                                                              },
+                                                            ),
+                                                            IconButton(
+                                                              icon: FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .trashCan,
+                                                                size: 20,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
+                                                              ),
+                                                              onPressed: () {
+                                                                //handleDelete(Propertytype);
+                                                                // _showAlert(
+                                                                //     context,
+                                                                //     Propertytype
+                                                                //         .propertyId!);
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),*/
+                                                    ],
+                                                  ),
+                                                  // Row(
+                                                  //   mainAxisAlignment:
+                                                  //       MainAxisAlignment
+                                                  //           .start,
+                                                  //   children: [
+                                                  //     Row(
+                                                  //       mainAxisAlignment:
+                                                  //           MainAxisAlignment
+                                                  //               .start,
+                                                  //       children: [
+                                                  //         FaIcon(
+                                                  //           isRowExpanded
+                                                  //               ? FontAwesomeIcons
+                                                  //                   .sortUp
+                                                  //               : FontAwesomeIcons
+                                                  //                   .sortDown,
+                                                  //           size: 50,
+                                                  //           color: Colors
+                                                  //               .transparent,
+                                                  //         ),
+                                                  //       ],
+                                                  //     ),
+                                                  //     Column(
+                                                  //       mainAxisAlignment:
+                                                  //           MainAxisAlignment
+                                                  //               .start,
+                                                  //       crossAxisAlignment:
+                                                  //           CrossAxisAlignment
+                                                  //               .start,
+                                                  //       children: [
+                                                  //         Text.rich(
+                                                  //           TextSpan(
+                                                  //             children: [
+                                                  //               TextSpan(
+                                                  //                 text:
+                                                  //                     'Effective Date : ',
+                                                  //                 style: TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight.bold,
+                                                  //                     color: blueColor), // Bold and black
+                                                  //               ),
+                                                  //               TextSpan(
+                                                  //                 text: item.rentersInsurance?.effectiveDate?.isNotEmpty ==
+                                                  //                         true
+                                                  //                     ? item.rentersInsurance?.effectiveDate?.split('T').first
+                                                  //                     : 'N/A',
+                                                  //                 style: TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight.w700,
+                                                  //                     color: grey), // Light and grey
+                                                  //               ),
+                                                  //             ],
+                                                  //           ),
+                                                  //         ),
+                                                  //         SizedBox(
+                                                  //             height: 5),
+                                                  //         Text.rich(
+                                                  //           TextSpan(
+                                                  //             children: [
+                                                  //               TextSpan(
+                                                  //                 text:
+                                                  //                     'Expiration Date : ',
+                                                  //                 style: TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight.bold,
+                                                  //                     color: blueColor), // Bold and black
+                                                  //               ),
+                                                  //               TextSpan(
+                                                  //                 // text: formatDate(
+                                                  //                 //     '${Propertytype.updatedAt}'),
+                                                  //                 text: item.rentersInsurance?.expirationDate?.isNotEmpty ==
+                                                  //                         true
+                                                  //                     ? item.rentersInsurance?.expirationDate?.split('T').first
+                                                  //                     : 'N/A',
+                                                  //                 style: TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight.w700,
+                                                  //                     color: grey), // Light and grey
+                                                  //               ),
+                                                  //             ],
+                                                  //           ),
+                                                  //         ),
+                                                  //         SizedBox(
+                                                  //             height: 5),
+                                                  //         Text.rich(
+                                                  //           TextSpan(
+                                                  //             children: [
+                                                  //               TextSpan(
+                                                  //                 text:
+                                                  //                     'Liability Coverage : ',
+                                                  //                 style: TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight.bold,
+                                                  //                     color: blueColor), // Bold and black
+                                                  //               ),
+                                                  //               TextSpan(
+                                                  //                 // text: formatDate(
+                                                  //                 //     '${Propertytype.updatedAt}'),
+                                                  //                 text: item.rentersInsurance?.liabilityCoverage.toString().isNotEmpty ==
+                                                  //                         true
+                                                  //                     ? item.rentersInsurance?.liabilityCoverage.toString()
+                                                  //                     : 'N/A',
+                                                  //                 style: TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight.w700,
+                                                  //                     color: grey), // Light and grey
+                                                  //               ),
+                                                  //             ],
+                                                  //           ),
+                                                  //         ),
+                                                  //       ],
+                                                  //     ),
+                                                  //     Spacer(),
+                                                  //     SizedBox(width: 5),
+                                                  //   ],
+                                                  // ),
+                                                  SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       // if (isRowExpanded)
                                       //   Column(
                                       //     children: item.tenants!
@@ -1915,7 +2190,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                           ),
                                         ),
                                       ),
-                                      if (isRowExpanded)
+
                                       Container(
                                         padding: EdgeInsets.only(
                                             left: 2, right: 2),

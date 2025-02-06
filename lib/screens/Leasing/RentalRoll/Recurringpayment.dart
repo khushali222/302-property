@@ -180,6 +180,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         ];
         isScrollLeft.add(false);
       });
+
       calculateTotal();
     } else {
       print('Failed to fetch settings: ${response.body}');
@@ -190,6 +191,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   Map<int, String?> selectedCard = {};
   Map<int, int?> selectedDay = {};
   bool isLoading = false;
+  bool isloading = false;
   String? messageCardAvailable;
   List<List<ScrollController>> rowControllers =
       []; // List of List for ScrollControllers
@@ -216,6 +218,32 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     });
   }
 
+  bool isButtonEnabled = false;
+
+  void checkFieldsFilled() {
+    bool allFieldsFilled = true;
+
+    // Loop through all tenant data and check the fields
+
+    tenantDropdowns.forEach((index, tenantData) {
+      print(index);
+      for (int i = 0; i < tenantData.length; i++) {
+        if (tenantData[i]['selectedCard'] == null ||
+            tenantData[i]['selectedAccount'] == null ||
+            tenantData[i]['amount']?.text.isEmpty == true ||
+            tenantData[i]['selectedDay'] == null) {
+          allFieldsFilled = false; // If any field is empty, set to false
+        }
+      }
+
+//
+    });
+
+    setState(() {
+      isButtonEnabled =
+          allFieldsFilled; // Enable button if all fields are filled
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -365,7 +393,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                             .51,
                                                         padding: EdgeInsets
                                                             .symmetric(
-                                                                horizontal: 12),
+                                                                horizontal: 8),
                                                         decoration:
                                                             BoxDecoration(
                                                           color: Colors
@@ -385,8 +413,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         ),
                                                         child:
                                                             DropdownButtonHideUnderline(
-                                                          child: DropdownButton2<
-                                                              String>(
+                                                          child:
+                                                              DropdownButton2<
+                                                                  String>(
                                                             hint: Text(
                                                               'Select a Card',
                                                               style: TextStyle(
@@ -402,47 +431,102 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 "selectedCard"],
                                                             items: tenantCards
                                                                     .isNotEmpty
-                                                                ? tenantCards
-                                                                    .map(
-                                                                        (card) {
-                                                                    String
-                                                                        uniqueKey =
-                                                                        "${card.billingId}_${card.binResult}"; // Unique key
-                                                                    return DropdownMenuItem<
+                                                                ? [
+                                                                    ...tenantCards
+                                                                        .map(
+                                                                            (card) {
+                                                                      String
+                                                                          uniqueKey =
+                                                                          "${card.billingId}_${card.binResult}"; // Unique key
+                                                                      return DropdownMenuItem<
+                                                                          String>(
+                                                                        value:
+                                                                            uniqueKey,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              left: 14,
+                                                                              top: 1),
+                                                                          child:
+                                                                              Container(
+                                                                            // color:Colors.red,
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Container(
+                                                                                  height: 30,
+                                                                                  width: 30,
+                                                                                  child: Image.network("https://logo.clearbit.com/${card.ccType!.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com"),
+                                                                                ),
+                                                                                SizedBox(width: 9),
+                                                                                Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Text("${card.ccNumber}", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                                                                    Row(
+                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                      children: [
+                                                                                        Text("${card.binResult}", style: TextStyle(fontSize: 13)),
+                                                                                        SizedBox(
+                                                                                          width: 52,
+                                                                                        ),
+                                                                                        Text("${card.ccExp}", style: TextStyle(fontSize: 13)),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ],
+                                                                                )
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    }).toList(),
+                                                                    DropdownMenuItem<
                                                                         String>(
                                                                       value:
-                                                                          uniqueKey,
+                                                                          'Add',
                                                                       child:
-                                                                          Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.start,
-                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Container(
-                                                                            height:
-                                                                                30,
-                                                                            width:
-                                                                                30,
-                                                                            child:
-                                                                                Image.network("https://logo.clearbit.com/${card.ccType!.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com"),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              width: 8),
-                                                                          Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              Text("${card.ccNumber}", style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold)),
+                                                                          GestureDetector(
+                                                                        onTap:
+                                                                            () async {
+                                                                          Navigator.push(
+                                                                              context,
+                                                                              MaterialPageRoute(
+                                                                                  builder: (context) => AddCard(
+                                                                                        leaseId: widget.leaseData.leaseId ?? "",
+                                                                                      )));
+                                                                        },
+                                                                        child:
+                                                                            Container(
+                                                                          height:
+                                                                              40,
+                                                                          color:
+                                                                              blueColor, // Change to any color you prefer
+                                                                          child:
                                                                               Row(
-                                                                                children: [
-                                                                                  Text("${card.binResult}", style: TextStyle(fontSize: 12)),
-                                                                                ],
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                width: 10,
+                                                                              ),
+                                                                              Text(
+                                                                                'Add Card',
+                                                                                style: TextStyle(
+                                                                                  fontSize: 14,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  color: Colors.white, // Text color for the tile
+                                                                                ),
                                                                               ),
                                                                             ],
-                                                                          )
-                                                                        ],
+                                                                          ),
+                                                                        ),
                                                                       ),
-                                                                    );
-                                                                  }).toList()
+                                                                    ),
+                                                                  ]
                                                                 : [
                                                                     DropdownMenuItem<
                                                                         String>(
@@ -458,6 +542,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                         rowIndex]
                                                                     [
                                                                     "selectedCard"] = value;
+                                                                print(
+                                                                    "call card $value");
+                                                                //checkFieldsFilled();
                                                               });
                                                             },
                                                             selectedItemBuilder:
@@ -483,28 +570,57 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 );
                                                               }).toList();
                                                             },
-                                                            buttonStyleData: ButtonStyleData(
+                                                            menuItemStyleData:
+                                                                const MenuItemStyleData(
+                                                              height: 40,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                            ),
+                                                            buttonStyleData:
+                                                                ButtonStyleData(
                                                               height: 50,
                                                             ),
-                                                            iconStyleData: const IconStyleData(
+                                                            iconStyleData:
+                                                                const IconStyleData(
                                                               icon: Icon(
-                                                                Icons.arrow_forward_ios_outlined,
+                                                                Icons
+                                                                    .arrow_forward_ios_outlined,
                                                               ),
                                                               iconSize: 14,
-                                                              iconEnabledColor: Colors.black,
-                                                              iconDisabledColor:  Colors.black,
+                                                              iconEnabledColor:
+                                                                  Colors.black,
+                                                              iconDisabledColor:
+                                                                  Colors.black,
                                                             ),
-                                                            dropdownStyleData: DropdownStyleData(
+                                                            dropdownStyleData:
+                                                                DropdownStyleData(
                                                               maxHeight: 200,
-                                                              width: 200,
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(6),
+                                                              width: 184,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            6),
                                                               ),
-                                                              offset: const Offset(0, -5),
-                                                              scrollbarTheme: ScrollbarThemeData(
-                                                                radius: const Radius.circular(40),
-                                                                thickness: MaterialStateProperty.all<double>(6),
-                                                                thumbVisibility: MaterialStateProperty.all<bool>(true),
+                                                              offset:
+                                                                  const Offset(
+                                                                      0, -5),
+                                                              scrollbarTheme:
+                                                                  ScrollbarThemeData(
+                                                                radius:
+                                                                    const Radius
+                                                                        .circular(
+                                                                        40),
+                                                                thickness:
+                                                                    MaterialStateProperty
+                                                                        .all<double>(
+                                                                            6),
+                                                                thumbVisibility:
+                                                                    MaterialStateProperty
+                                                                        .all<bool>(
+                                                                            true),
                                                               ),
                                                             ),
                                                           ),
@@ -570,8 +686,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         ),
                                                         child:
                                                             DropdownButtonHideUnderline(
-                                                          child: DropdownButton2<
-                                                              String>(
+                                                          child:
+                                                              DropdownButton2<
+                                                                  String>(
                                                             hint: Text(
                                                               'Day',
                                                               style: TextStyle(
@@ -581,7 +698,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                           .bold),
                                                             ),
                                                             isExpanded: true,
-                                                           // menuMaxHeight: 200,
+                                                            // menuMaxHeight: 200,
                                                             value: tenantDropdowns[
                                                                         index]![
                                                                     rowIndex]
@@ -608,35 +725,56 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                         rowIndex]
                                                                     [
                                                                     "selectedDay"] = value;
+                                                                checkFieldsFilled();
                                                               });
                                                             },
-                                                            buttonStyleData: ButtonStyleData(
+                                                            buttonStyleData:
+                                                                ButtonStyleData(
                                                               height: 50,
                                                             ),
-                                                            iconStyleData: const IconStyleData(
+                                                            iconStyleData:
+                                                                const IconStyleData(
                                                               icon: Icon(
-                                                                Icons.arrow_forward_ios_outlined,
+                                                                Icons
+                                                                    .arrow_forward_ios_outlined,
                                                               ),
                                                               iconSize: 14,
-                                                              iconEnabledColor: Colors.black,
-                                                              iconDisabledColor:  Colors.black,
+                                                              iconEnabledColor:
+                                                                  Colors.black,
+                                                              iconDisabledColor:
+                                                                  Colors.black,
                                                             ),
-                                                            dropdownStyleData: DropdownStyleData(
+                                                            dropdownStyleData:
+                                                                DropdownStyleData(
                                                               maxHeight: 200,
                                                               width: 110,
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(6),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            6),
                                                               ),
-                                                              offset: const Offset(0, -5),
-                                                              scrollbarTheme: ScrollbarThemeData(
-                                                                radius: const Radius.circular(40),
-                                                                thickness: MaterialStateProperty.all<double>(6),
-                                                                thumbVisibility: MaterialStateProperty.all<bool>(true),
+                                                              offset:
+                                                                  const Offset(
+                                                                      0, -5),
+                                                              scrollbarTheme:
+                                                                  ScrollbarThemeData(
+                                                                radius:
+                                                                    const Radius
+                                                                        .circular(
+                                                                        40),
+                                                                thickness:
+                                                                    MaterialStateProperty
+                                                                        .all<double>(
+                                                                            6),
+                                                                thumbVisibility:
+                                                                    MaterialStateProperty
+                                                                        .all<bool>(
+                                                                            true),
                                                               ),
                                                             ),
-
                                                           ),
-
                                                         ),
                                                       ),
                                                     ),
@@ -677,7 +815,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                             .45,
                                                         padding: EdgeInsets
                                                             .symmetric(
-                                                                horizontal: 12),
+                                                                horizontal: 8),
                                                         decoration:
                                                             BoxDecoration(
                                                           color: Colors
@@ -697,8 +835,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         ),
                                                         child:
                                                             DropdownButtonHideUnderline(
-                                                          child: DropdownButton<
-                                                              String>(
+                                                          child:
+                                                              DropdownButton2<
+                                                                  String>(
                                                             hint: Text(
                                                               'select Account',
                                                               style: TextStyle(
@@ -708,7 +847,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                           .bold),
                                                             ),
                                                             isExpanded: true,
-                                                            menuMaxHeight: 200,
+                                                            // menuMaxHeight: 200,
                                                             value: tenantDropdowns[
                                                                         index]![
                                                                     rowIndex][
@@ -729,7 +868,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                         children: [
                                                                           Container(
                                                                             child:
-                                                                                Text("${card.account}", style: TextStyle(fontSize: 16)),
+                                                                                Text("${card.account}", style: TextStyle(fontSize: 15)),
                                                                           ),
                                                                           SizedBox(
                                                                               width: 5),
@@ -758,8 +897,55 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                         rowIndex]
                                                                     [
                                                                     "selectedAccount"] = value;
+                                                                checkFieldsFilled();
                                                               });
                                                             },
+                                                            buttonStyleData:
+                                                                ButtonStyleData(
+                                                              height: 50,
+                                                            ),
+                                                            iconStyleData:
+                                                                const IconStyleData(
+                                                              icon: Icon(
+                                                                Icons
+                                                                    .arrow_forward_ios_outlined,
+                                                              ),
+                                                              iconSize: 14,
+                                                              iconEnabledColor:
+                                                                  Colors.black,
+                                                              iconDisabledColor:
+                                                                  Colors.black,
+                                                            ),
+                                                            dropdownStyleData:
+                                                                DropdownStyleData(
+                                                              maxHeight: 200,
+                                                              width: 160,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            6),
+                                                              ),
+                                                              offset:
+                                                                  const Offset(
+                                                                      0, -5),
+                                                              scrollbarTheme:
+                                                                  ScrollbarThemeData(
+                                                                radius:
+                                                                    const Radius
+                                                                        .circular(
+                                                                        40),
+                                                                thickness:
+                                                                    MaterialStateProperty
+                                                                        .all<double>(
+                                                                            6),
+                                                                thumbVisibility:
+                                                                    MaterialStateProperty
+                                                                        .all<bool>(
+                                                                            true),
+                                                              ),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
@@ -831,6 +1017,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                             // textAlign: TextAlign.center, // Centers the text inside the field
                                                             onChanged: (value) {
                                                               calculateTotal();
+                                                              checkFieldsFilled();
                                                             },
                                                             style: TextStyle(
                                                                 fontSize: 14,
@@ -931,6 +1118,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                     index]!
                                                                 .removeAt(
                                                                     rowIndex);
+                                                            checkFieldsFilled();
+                                                            print(
+                                                                'tennt lengthh ${tenantDropdowns.length}');
                                                           });
                                                         },
                                                         child: FaIcon(
@@ -962,6 +1152,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                 "scrollController":
                                                     ScrollController(),
                                               });
+                                              checkFieldsFilled();
                                             });
                                           },
                                           child: Padding(
@@ -1041,12 +1232,12 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                           ),
                     Center(
                         child: Text(
-                          "Total Amount : \$${totalAmount}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: blueColor,
-                              fontSize: 14.5),
-                        )),
+                      "Total Amount : \$${totalAmount}",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 14.5),
+                    )),
                     SizedBox(
                       height: 10,
                     ),
@@ -1054,35 +1245,12 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
-                          onTap: (){
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                              height: 45,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: blueColor),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Center(
-                                    child: Text(
-                                      "   Cancel   ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: blueColor),
-                                    )),
-                              )),
-                        ),
-                        GestureDetector(
                           onTap: () {
                             List<Map<String, dynamic>> selectedTenantsData = [];
 
                             for (int i = 0;
-                            i < widget.leaseData.tenantData!.length;
-                            i++) {
+                                i < widget.leaseData.tenantData!.length;
+                                i++) {
                               var tenant = widget.leaseData.tenantData![i];
                               int? vaultId = customervaultid.length > i
                                   ? customervaultid[i]
@@ -1093,21 +1261,24 @@ class _RecurringPaymentState extends State<RecurringPayment> {
 
                               for (var row in tenantDropdowns[i]!) {
                                 if (row['selectedCard'] != null) {
-                                  var cardData = row['selectedCard']!
-                                      .split('_'); // Splitting "ccNumber_billingId"
+                                  var cardData = row['selectedCard']!.split(
+                                      '_'); // Splitting "ccNumber_billingId"
                                   String billingId =
-                                  cardData.length > 1 ? cardData[0] : "";
+                                      cardData.length > 1 ? cardData[0] : "";
                                   String cardtype =
-                                  cardData.length > 1 ? cardData[1] : "";
-                                  var rec_accounts = row['selectedAccount']!.split('_');
-                                  String selectedacc =
-                                  rec_accounts.length > 1 ? rec_accounts[0] : '';
+                                      cardData.length > 1 ? cardData[1] : "";
+                                  var rec_accounts =
+                                      row['selectedAccount']!.split('_');
+                                  String selectedacc = rec_accounts.length > 1
+                                      ? rec_accounts[0]
+                                      : '';
                                   String amount = row['amount'].text;
                                   recurringsList.add({
                                     "billing_id": billingId,
                                     "amount":
-                                    amount, // Amount can be added dynamically if needed
-                                    "card_type": cardtype, // Get card type if required
+                                        amount, // Amount can be added dynamically if needed
+                                    "card_type":
+                                        cardtype, // Get card type if required
                                     "account": selectedacc, // CC Number
                                     "date": row['selectedDay']?.toString() ??
                                         "", // Selected day
@@ -1120,7 +1291,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                 selectedTenantsData.add({
                                   "tenant_id": tenant.tenantId,
                                   "lease_id": widget.leaseData.leaseId!,
-                                  "customer_vault_id": vaultId?.toString() ?? "",
+                                  "customer_vault_id":
+                                      vaultId?.toString() ?? "",
                                   "date": "", // Add the date if applicable
                                   "recurrings": recurringsList,
                                 });
@@ -1134,20 +1306,168 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                           child: Container(
                               height: 45,
                               decoration: BoxDecoration(
-                                color: blueColor,
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(7),
-                                // border: Border.all(color: blueColor),
+                                border: Border.all(color: blueColor),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(
                                     child: Text(
-                                      "     Save     ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: Colors.white),
-                                    )),
+                                  "   Cancel   ",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: blueColor),
+                                )),
+                              )),
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            if (!isButtonEnabled || isloading) return; // Prevent multiple taps
+
+                            setState(() {
+                              isloading = true; // Show loader
+                            });
+
+                            List<Map<String, dynamic>> selectedTenantsData = [];
+
+                            for (int i = 0; i < widget.leaseData.tenantData!.length; i++) {
+                              var tenant = widget.leaseData.tenantData![i];
+                              int? vaultId = customervaultid.length > i ? customervaultid[i] : null;
+                              List<Map<String, dynamic>> recurringsList = [];
+
+                              for (var row in tenantDropdowns[i]!) {
+                                if (row['selectedCard'] != null &&
+                                    row['selectedAccount'] != null &&
+                                    row['amount'].text.isNotEmpty &&
+                                    row['selectedDay'] != null) {
+                                  var cardData = row['selectedCard']!.split('_');
+                                  String billingId = cardData.length > 1 ? cardData[0] : "";
+                                  String cardtype = cardData.length > 1 ? cardData[1] : "";
+                                  var rec_accounts = row['selectedAccount']!.split('_');
+                                  String selectedacc = rec_accounts.length > 1 ? rec_accounts[0] : '';
+                                  String amount = row['amount'].text;
+
+                                  recurringsList.add({
+                                    "billing_id": billingId,
+                                    "amount": amount,
+                                    "card_type": cardtype,
+                                    "account": selectedacc,
+                                    "date": row['selectedDay']?.toString() ?? "",
+                                  });
+                                }
+                              }
+
+                              if (recurringsList.isNotEmpty) {
+                                selectedTenantsData.add({
+                                  "tenant_id": tenant.tenantId,
+                                  "lease_id": widget.leaseData.leaseId!,
+                                  "customer_vault_id": vaultId?.toString() ?? "",
+                                  "recurrings": recurringsList,
+                                });
+                              }
+                            }
+
+                            if (isButtonEnabled) {
+                              try {
+                                await postLease(selectedTenantsData); // API call
+                              } catch (e) {
+                                print("Error: $e");
+                              } finally {
+                                setState(() {
+                                  isloading = false; // Hide loader after operation
+                                });
+                                Navigator.pop(context);
+                              }
+                            }
+                          },
+
+                          // onTap: () {
+                          //   List<Map<String, dynamic>> selectedTenantsData = [];
+                          //
+                          //   for (int i = 0;
+                          //       i < widget.leaseData.tenantData!.length;
+                          //       i++) {
+                          //     var tenant = widget.leaseData.tenantData![i];
+                          //     int? vaultId = customervaultid.length > i
+                          //         ? customervaultid[i]
+                          //         : null;
+                          //
+                          //     // Creating recurrings list
+                          //     List<Map<String, dynamic>> recurringsList = [];
+                          //
+                          //     for (var row in tenantDropdowns[i]!) {
+                          //       if (row['selectedCard'] != null) {
+                          //         var cardData = row['selectedCard']!.split(
+                          //             '_'); // Splitting "ccNumber_billingId"
+                          //         String billingId =
+                          //             cardData.length > 1 ? cardData[0] : "";
+                          //         String cardtype =
+                          //             cardData.length > 1 ? cardData[1] : "";
+                          //         var rec_accounts =
+                          //             row['selectedAccount']!.split('_');
+                          //         String selectedacc = rec_accounts.length > 1
+                          //             ? rec_accounts[0]
+                          //             : '';
+                          //         String amount = row['amount'].text;
+                          //         recurringsList.add({
+                          //           "billing_id": billingId,
+                          //           "amount":
+                          //               amount, // Amount can be added dynamically if needed
+                          //           "card_type":
+                          //               cardtype, // Get card type if required
+                          //           "account": selectedacc, // CC Number
+                          //           "date": row['selectedDay']?.toString() ??
+                          //               "", // Selected day
+                          //         });
+                          //       }
+                          //     }
+                          //
+                          //     // Add only if recurrings list is not empty
+                          //     if (recurringsList.isNotEmpty) {
+                          //       selectedTenantsData.add({
+                          //         "tenant_id": tenant.tenantId,
+                          //         "lease_id": widget.leaseData.leaseId!,
+                          //         "customer_vault_id":
+                          //             vaultId?.toString() ?? "",
+                          //         // "date": "", // Add the date if applicable
+                          //         "recurrings": recurringsList,
+                          //       });
+                          //     }
+                          //   }
+                          //
+                          //   // Print the final JSON object
+                          //   print(selectedTenantsData);
+                          //   postLease(selectedTenantsData);
+                          // },
+                          child: Container(
+                              height: 45,
+                              decoration: BoxDecoration(
+                                color: isButtonEnabled
+                                    ? blueColor
+                                    : blueColorDisabled,
+                                borderRadius: BorderRadius.circular(7),
+                                // border: Border.all(color: blueColor),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child:
+                                isloading
+                                    ? Center(
+                                  child: SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 25.0,
+                                  ),
+                                )
+                                    :Center(
+                                    child: Text(
+                                  "     Save     ",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.white),
+                                )),
                               )),
                         ),
                         GestureDetector(
@@ -1165,12 +1485,12 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(
                                     child: Text(
-                                      "   Disable   ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: Colors.white),
-                                    )),
+                                  "   Disable   ",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.white),
+                                )),
                               )),
                         ),
                       ],
@@ -1179,7 +1499,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                 ),
               ),
             ),
-
             SizedBox(
               height: 4,
             ),
@@ -1229,8 +1548,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
           print('Billing ID: ${cardDetail['billing_id']}');
         }
 
-        CustomerData? customerData =
-            await postBillingCustomerVault(custvaultid.toString(),cardDetailsList);
+        CustomerData? customerData = await postBillingCustomerVault(
+            custvaultid.toString(), cardDetailsList);
 
         if (customerData != null) {
           setState(() {
@@ -1264,7 +1583,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
-       // 'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
         'X-RapidAPI-Key': '46e85a3cb0msh33efbb0c9360ff4p106ebcjsncf1a23d6dda1',
         'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
       },
@@ -1280,7 +1599,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     }
   }
 
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId ,List<dynamic> cardDetailsList) async {
+  Future<CustomerData?> postBillingCustomerVault(
+      String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -1326,7 +1646,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         for (int i = 0; i < cardDetailsList.length; i++) {
           customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
         }
-
 
         return customerData;
       }
