@@ -173,9 +173,12 @@ class _RecurringPaymentState extends State<RecurringPayment> {
             "selectedAccount":
                 "${fetchaccount!.account}_${fetchaccount!.createdAt}",
             "amount": TextEditingController(
-                text: jsonResponse["recurrings"][0]['amount'].toString())
+                text: jsonResponse["recurrings"][0]['amount'].toString()),
+            "scrollController": ScrollController(),
           }
+
         ];
+        isScrollLeft.add(false);
       });
       calculateTotal();
     } else {
@@ -468,7 +471,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 return Align(
                                                                   alignment:
                                                                       Alignment
-                                                                          .center, // ✅ Center the selected card number
+                                                                          .centerLeft, // ✅ Center the selected card number
                                                                   child: Text(
                                                                     card.ccNumber!, // Show only CC number after selection
                                                                     style: TextStyle(
@@ -1038,7 +1041,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                           ),
                     Center(
                         child: Text(
-                          "Total Amount : ${totalAmount}",
+                          "Total Amount : \$${totalAmount}",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: blueColor,
@@ -1051,59 +1054,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            List<Map<String, dynamic>> selectedTenantsData = [];
-
-                            for (int i = 0;
-                            i < widget.leaseData.tenantData!.length;
-                            i++) {
-                              var tenant = widget.leaseData.tenantData![i];
-                              int? vaultId = customervaultid.length > i
-                                  ? customervaultid[i]
-                                  : null;
-
-                              // Creating recurrings list
-                              List<Map<String, dynamic>> recurringsList = [];
-
-                              for (var row in tenantDropdowns[i]!) {
-                                if (row['selectedCard'] != null) {
-                                  var cardData = row['selectedCard']!
-                                      .split('_'); // Splitting "ccNumber_billingId"
-                                  String billingId =
-                                  cardData.length > 1 ? cardData[0] : "";
-                                  String cardtype =
-                                  cardData.length > 1 ? cardData[1] : "";
-                                  var rec_accounts = row['selectedAccount']!.split('_');
-                                  String selectedacc =
-                                  rec_accounts.length > 1 ? rec_accounts[0] : '';
-                                  String amount = row['amount'].text;
-                                  recurringsList.add({
-                                    "billing_id": billingId,
-                                    "amount":
-                                    amount, // Amount can be added dynamically if needed
-                                    "card_type": cardtype, // Get card type if required
-                                    "account": selectedacc, // CC Number
-                                    "date": row['selectedDay']?.toString() ??
-                                        "", // Selected day
-                                  });
-                                }
-                              }
-
-                              // Add only if recurrings list is not empty
-                              if (recurringsList.isNotEmpty) {
-                                selectedTenantsData.add({
-                                  "tenant_id": tenant.tenantId,
-                                  "lease_id": widget.leaseData.leaseId!,
-                                  "customer_vault_id": vaultId?.toString() ?? "",
-                                  "date": "", // Add the date if applicable
-                                  "recurrings": recurringsList,
-                                });
-                              }
-                            }
-
-                            // Print the final JSON object
-                            print(selectedTenantsData);
-                            postLease(selectedTenantsData);
+                          onTap: (){
+                            Navigator.pop(context);
                           },
                           child: Container(
                               height: 45,
@@ -1371,7 +1323,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         // binResults.forEach((result) {
         //   print('BIN Check Result: $result');
         // });
-        for (int i = 0; i < customerData.billing.length; i++) {
+        for (int i = 0; i < cardDetailsList.length; i++) {
           customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
         }
 

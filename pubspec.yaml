@@ -30,14 +30,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-#  flutter_launcher_icons: "^0.13.1"
-#
-#flutter_icons:
-#  android: true
-#  ios: true
-#  image_path: "assets/images/logo.png"
-#  remove_alpha_ios: true
-#  min_sdk_android: 21
+  #  flutter_launcher_icons: "^0.13.1"
+  #
+  #flutter_icons:
+  #  android: true
+  #  ios: true
+  #  image_path: "assets/images/logo.png"
+  #  remove_alpha_ios: true
+  #  min_sdk_android: 21
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -76,10 +76,9 @@ dependencies:
   permission_handler: ^11.3.1
   credit_card_type_detector: ^3.0.0
   cached_network_image: ^3.3.1
-  fl_chart:
+  fl_chart: ^0.69.2
   shimmer:
   zxcvbn:
-  share_plus:
   pdf: ^3.11.0
   flutter_colorpicker:
   keyboard_actions:
@@ -89,7 +88,13 @@ dependencies:
   encrypt:
   credit_card_validator:
   url_launcher: ^6.1.10
+  video_player:
+  video_thumbnail:
+  chewie:
   timeago:
+  share_plus:
+
+
   # pdf:
 
 
@@ -114,7 +119,7 @@ flutter_launcher_icons:
 
   image_path: "assets/images/newlogo.png"
 
-#  this is image
+  #  this is image
   min_sdk_android: 21 # android min sdk min:16, default 21
 
 
@@ -139,12 +144,12 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/
-     - assets/images/
-     - assets/images/tenants/
-     - assets/icons/
-     - assets/images/applogo.png
-     - assets/dumb1.json
+    - assets/
+    - assets/images/
+    - assets/images/tenants/
+    - assets/icons/
+    - assets/images/applogo.png
+    - assets/dumb1.json
 
   #   - images/a_dot_ham.jpeg
 
@@ -160,16 +165,16 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-     - family: mulish
-       fonts:
-         - asset: assets/font/Mulish-ExtraLight.ttf
-     - family: Roboto
-       fonts:
-         - asset: assets/font/Roboto-Bold.ttf
+    - family: mulish
+      fonts:
+        - asset: assets/font/Mulish-ExtraLight.ttf
+    - family: Roboto
+      fonts:
+        - asset: assets/font/Roboto-Bold.ttf
 
-     - family: Poppins
-       fonts:
-         - asset: assets/font/poppins.ttf
+    - family: Poppins
+      fonts:
+        - asset: assets/font/poppins.ttf
 
 
   # For details regarding fonts from package dependencies,

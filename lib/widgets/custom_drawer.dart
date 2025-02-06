@@ -132,7 +132,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                  color: blueColor,
                ),
                "Leasing",
-               ["Rent Roll", "Applicants","Upcoming renewal"],
+               ["Rent Roll", "Applicants","Upcoming renewal","Scheduled Payment"],
                [
                  FaIcon(FontAwesomeIcons.wallet, size: 20,  color: widget.currentpage == "Rent Roll"
                      ? Colors.white

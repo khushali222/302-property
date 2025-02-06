@@ -264,7 +264,8 @@ class DateProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  String formatCurrentDate(String dateTime) {
+  String formatCurrentDate(String dateTime ){
+
     dateTime = dateTime.trim();
 
     List<String> dateFormats = [
@@ -292,9 +293,12 @@ class DateProvider with ChangeNotifier {
     if (parsedDate == null) {
       return dateTime; // Return original if parsing fails
     }
-  print(_dateFormat);
-    
-    return DateFormat(_dateFormat).format(DateTime.parse(dateTime));
+
+    // Convert the parsed date to 'yyyy-MM-dd' format first
+    String standardizedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+
+    // Format the standardized date using _dateFormat
+    return DateFormat(_dateFormat).format(DateTime.parse(standardizedDate));
   }
 
   // Future<void> checkToken(String token) async {
