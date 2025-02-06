@@ -176,6 +176,7 @@ class LeaseTenant {
   String tenantEmail;
   String rentalAddress;
   String rentalUnit;
+  bool? recurring;
 
   LeaseTenant({
     required this.leaseId,
@@ -194,6 +195,7 @@ class LeaseTenant {
     required this.tenantEmail,
     required this.rentalAddress,
     required this.rentalUnit,
+    this.recurring,
   });
 
   factory LeaseTenant.fromJson(Map<String, dynamic> json) {
@@ -216,6 +218,7 @@ class LeaseTenant {
       tenantEmail: json['tenant_email'],
       rentalAddress: json['rental_adress'],
       rentalUnit: json['rental_unit'] ??"",
+      recurring: json['recurring'],
     );
   }
 
@@ -237,6 +240,7 @@ class LeaseTenant {
       'tenant_email': tenantEmail,
       'rental_adress': rentalAddress,
       'rental_unit': rentalUnit,
+      'recurring':recurring,
     };
   }
 }

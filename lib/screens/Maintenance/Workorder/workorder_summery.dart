@@ -1574,7 +1574,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 10,
                                 ),
                                 Text(
-                                  "Due Date",
+                                  "Due Datee",
                                   style: TextStyle(
                                     color: blueColor,
                                   ),
@@ -1587,6 +1587,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     '${summery.workorderUpdates!.last.date!.isEmpty == true ?
                                     "N/A" : summery.workorderUpdates?.last.date?.toString()
                                     }',
+                                    // dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),

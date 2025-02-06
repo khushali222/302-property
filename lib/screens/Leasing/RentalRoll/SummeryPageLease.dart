@@ -81,6 +81,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       _tabController!.animateTo(1);
       _selectedIndex=1;
     }
+    fetchLeaseTenants();
     super.initState();
   }
 
@@ -91,6 +92,23 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       _connectivityResult = connectiondata;
     });
   }
+  List<LeaseTenant> leaseTenants = [];
+
+  void fetchLeaseTenants() async {
+    try {
+      List<LeaseTenant> tenants = await LeaseRepository.fetchLeaseTenants(widget.leaseId);
+      setState(() {
+        leaseTenants = tenants;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching tenants: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
 
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
@@ -673,6 +691,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               SizedBox(
                 height: 10,
               ),
+
+              if(determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) != 'Expired')
               Padding(
                 padding: const EdgeInsets.only(
                     left: 10.0, right: 10.0, bottom: 10.0),
@@ -816,7 +836,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             .size
                                                             .width <
                                                         500
-                                                    ? 45
+                                                    ? 75
                                                     : 45,
                                                 decoration: BoxDecoration(
                                                     color: Colors.white,
@@ -868,31 +888,75 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                       .size
                                                                       .width <
                                                                   500
-                                                              ? 14
+                                                              ? 15
                                                               : 18,
-                                                          color: blueColor),
+                                                          color: blueColor,fontWeight: FontWeight.bold),
                                                     ))),
                                             SizedBox(width: 15),
-                                            GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    //  print("hello");
-                                                    // if (_tabController !=
-                                                    //     null) {
-                                                    //   _tabController!
-                                                    //       .animateTo(1);
-                                                    // }
-                                                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RecurringPayment(leaseData: leasesummery.data!,)));
-                                                  });
-                                                },
-                                                child: Text(
-                                                  "Lease Ledger",
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15,
-                                                  ),
-                                                )),
+                                            Expanded(
+                                              child: Container(
+                                                  height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                      500
+                                                      ? 75
+                                                      : 45,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      border: Border.all(
+                                                          width: 1,
+                                                          color: blueColor),
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0)),
+                                                  child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  5.0)),
+                                                          elevation: 0,
+                                                          backgroundColor:
+                                                          Colors.white),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          //  print("hello");
+                                                          // if (_tabController !=
+                                                          //     null) {
+                                                          //   _tabController!
+                                                          //       .animateTo(1);
+                                                          // }
+                                                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RecurringPayment(leaseData: leasesummery.data!,)));
+                                                        });
+                                                      },
+                                                      child:
+                                                      Row(
+                                                        children: [
+                                                          if (leaseTenants.any((tenant) => tenant.recurring == false))
+                                                            SizedBox(width: 12,),
+
+                                                          Expanded(
+                                                            child: Text(
+                                                              'Configure Recurring Payment',
+                                                              style: TextStyle(
+                                                                  fontSize: MediaQuery.of(
+                                                                      context)
+                                                                      .size
+                                                                      .width <
+                                                                      500
+                                                                      ? 13
+                                                                      : 18,
+                                                                  color: blueColor,fontWeight: FontWeight.bold),
+                                                            ),
+                                                          ),
+                                                          if (leaseTenants.any((tenant) => tenant.recurring!))
+                                                            Icon(CupertinoIcons.check_mark_circled_solid, color: Colors.green),
+
+                                                        ],
+                                                      ))),
+                                            ),
+                                           
                                             // Expanded(
                                             //   child: Container(
                                             //       height: MediaQuery.of(context)
