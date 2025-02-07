@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
@@ -7,14 +8,14 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import '../Model/lease_renter_insurance.dart';
 
 class RentersInsuranceService {
-  Future<List<lease_renter_insurance>> fetchRentersInsurance() async {
+  Future<List<lease_renter_insurance>> fetchRentersInsurance( String leaseid) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
     try {
       final response = await http.get(
-          Uri.parse('$Api_url/api/renter-insurance/policies/$adminId'),
+          Uri.parse('$Api_url/api/renter-insurance/policies/$leaseid'),
           headers: {
             "authorization": "CRM $token",
             "id": "CRM $adminId",
@@ -37,4 +38,39 @@ class RentersInsuranceService {
       return [];
     }
   }
+
+  Future<Map<String, dynamic>> deleteInsurance({
+    required String renters_insurance_id,
+  }) async {
+    try {
+      final Uri uri = Uri.parse('$Api_url/api/renter-insurance/delete-policy/$renters_insurance_id');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+      final http.Response response = await http.delete(
+          uri,
+          headers: <String, String>{
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode({}),
+      );
+
+      var responseData = json.decode(response.body);
+      print(response.body);
+      print(renters_insurance_id);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        return json.decode(response.body);
+      } else {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        throw Exception('Failed to delete lease');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete lease: $e');
+    }
+  }
+
 }

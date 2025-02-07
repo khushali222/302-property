@@ -1531,7 +1531,8 @@ class _FinancialTableState extends State<FinancialTable> {
             ?.planDetail
             ?.planName ==
         'Free Plan';
-    return Container(
+    return
+      Container(
         child: SingleChildScrollView(
           child: Column(
             children: [

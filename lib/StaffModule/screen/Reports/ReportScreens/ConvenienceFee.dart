@@ -433,7 +433,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                 width < 400
                     ? const Text("Lease \nEndDate",
                     style: TextStyle(color: Colors.white))
-                    : const Text("Lease EndDate",
+                    : const Text("Lease \nEndDate",
                     style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending2
