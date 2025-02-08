@@ -661,6 +661,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     print('${adminId}  ${token}');
 
@@ -687,7 +688,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
       Uri.parse('$Api_url/api/renter-insurance/add-policy'),
       headers: <String, String>{
         'authorization': 'CRM $token',
-        'id': 'CRM $adminId',
+        'id': 'CRM $id',
         'Content-Type': 'application/json', // Ensure JSON format is specified
       },
       body: jsonEncode(values), // Encode JSON properly

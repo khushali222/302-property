@@ -8,6 +8,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Recurringpayment.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Renters%20Insurance/Renters_Insurance_table.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import '../../../../model/LeaseLedgerModel.dart';
@@ -55,18 +56,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   late Future<List<LeaseTenant>> futureLeasetenant;
   @override
   void initState() {
-    // TODO: implement initState
-    futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
-    _leaseLedgerFuture =
-        LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
-    futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
-    _tabController = TabController(length: 3, vsync: this);
-    //moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    print(widget.enddate);
-    if (widget.isredirectpayment != null && widget.isredirectpayment!) {
-      _tabController!.animateTo(1);
-    }
-    super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         print(result);
@@ -74,8 +63,48 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       });
     });
     checkInternet();
+    // TODO: implement initState
+    futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
+    futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
+    _leaseLedgerFuture =
+        LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+    _tabController = TabController(length: 3, vsync: this);
+    // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    // moveOutDate = widget.enddate!;
+    // Initialize moveOutDate with the end date or current date
+    //  moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.enddate!));
+
+    print(' get moved out ${widget.enddate}');
+    if (widget.isredirectpayment != null && widget.isredirectpayment!) {
+      _tabController!.animateTo(1);
+      _selectedIndex=1;
+    }
     fetchLeaseTenants();
+    super.initState();
   }
+  // void initState() {
+  //   // TODO: implement initState
+  //   futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
+  //   _leaseLedgerFuture =
+  //       LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+  //   futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
+  //   _tabController = TabController(length: 3, vsync: this);
+  //   //moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  //   print(widget.enddate);
+  //   if (widget.isredirectpayment != null && widget.isredirectpayment!) {
+  //     _tabController!.animateTo(1);
+  //   }
+  //
+  //   super.initState();
+  //   Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+  //     setState(() {
+  //       print(result);
+  //       _connectivityResult = result;
+  //     });
+  //   });
+  //   checkInternet();
+  //   fetchLeaseTenants();
+  // }
 
   List<LeaseTenant> leaseTenants = [];
 
@@ -108,10 +137,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 //  String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   bool isLoading = false;
   bool isMovedOut = false;
+  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
@@ -121,22 +150,26 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? FutureBuilder<LeaseSummary>(
-              future: futureLeaseSummary,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: SpinKitSpinningLines(
-                      color: blueColor,
-                      size: 55.0,
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data == null) {
-                  return Center(child: Text('No data found.'));
-                } else {
-                  return Column(
+          ? SingleChildScrollView(
+        child: FutureBuilder<LeaseSummary>(
+            future: futureLeaseSummary,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 300),
+                  child: SpinKitSpinningLines(
+                    color: blueColor,
+                    size: 55.0,
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data == null) {
+                return Center(child: Text('No data found.'));
+              } else {
+                var lease = snapshot.data!;
+                return
+                  Column(
                     children: <Widget>[
                       const SizedBox(
                         height: 20,
@@ -158,18 +191,18 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             child: Padding(
                               padding: const EdgeInsets.only(left: 1),
                               child: Text(
-                                '${snapshot.data!.data!.rentalAddress}',
+                                '${snapshot.data?.data?.rentalAddress}',
                                 maxLines: 5, // Set maximum number of lines
                                 overflow: TextOverflow
                                     .ellipsis, // Handle overflow with ellipsis
                                 style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                ),
+                                    fontSize:
+                                    MediaQuery.of(context).size.width <
+                                        500
+                                        ? 13
+                                        : 18,
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -194,113 +227,228 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               width: 25,
                             ),
                           Text(
-                              '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}',
-                              style: TextStyle(
-                                  color: _getStatusColor(determineStatus(
-                                      snapshot.data!.data!.startDate,
-                                      snapshot.data!.data!.endDate)),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 16)),
+                            '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) ?? "No status available"} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
+                            style: TextStyle(
+                              color: _getStatusColor(determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)),
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 16,
+                            ),
+                          ),
+
+                          // Text(
+                          //     '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)} ${snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.length > 0 ? " - Renewed" : ""}',
+                          //     style: TextStyle(
+                          //         color: _getStatusColor(determineStatus(
+                          //             snapshot.data!.data?.startDate,
+                          //             snapshot.data!.data?.endDate)),
+                          //         fontWeight: FontWeight.bold,
+                          //         fontSize:
+                          //             MediaQuery.of(context).size.width <
+                          //                     500
+                          //                 ? 13
+                          //                 : 16)),
                         ],
                       ),
                       const SizedBox(
                         height: 20,
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: MediaQuery.of(context).size.width < 500
-                                ? 15
-                                : 18),
+                        padding: EdgeInsets.all(8),
                         height: 60,
-                        padding: const EdgeInsets.all(10),
+                        margin: EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 15),
                         decoration: BoxDecoration(
-                          border: Border.all(color: blueColor),
-                          // color: Colors.blue,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: TabBar(
-                          controller: _tabController,
-                          dividerColor: Colors.transparent,
-                          indicatorWeight: 5,
-                          //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-                          indicatorColor: blueColor,
-                          labelColor: blueColor,
-                          labelStyle: screenWidth > 500
-                              ? TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500)
-                              : TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500),
-                          unselectedLabelColor: blueColor,
-                          tabs: [
-                            const Tab(
-                              text: 'Summary',
-                            ),
-                            const Tab(
-                              text: 'Financial',
-                            ),
-                            StatefulBuilder(
-                              builder: (BuildContext context,
-                                  void Function(void Function()) setState) {
-                                return const Tab(text: 'Tenant');
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
+                            border: Border.all(color: blueColor),
+                            borderRadius: BorderRadius.circular(5)),
+                        // color: Colors.red,
+                        child: Row(
                           children: [
-                            SummaryPage(),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: FinancialTable(
-                                rentalUnit: snapshot.data!.data?.rentalUnit,
-                                rentalAddress:
-                                    snapshot.data!.data?.rentalAddress,
-                                leaseId: widget.leaseId,
-                                status:
-                                    '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}',
-                                tenantId: ' ${snapshot.data!.data!.tenantId}',
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedIndex = 0;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: _selectedIndex == 0
+                                          ? blueColor
+                                          : Colors.white,
+                                      borderRadius:
+                                      BorderRadius.circular(5)),
+                                  child: Center(
+                                      child: Text(
+                                        "Summary",
+                                        style: TextStyle(
+                                          color: _selectedIndex != 0
+                                              ? blueColor
+                                              : Colors.white,
+                                        ),
+                                      )),
+                                ),
                               ),
                             ),
-                            Tenant(context),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedIndex = 1;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: _selectedIndex == 1
+                                          ? blueColor
+                                          : Colors.white,
+                                      borderRadius:
+                                      BorderRadius.circular(5)),
+                                  child: Center(
+                                      child: Text("Finacial",
+                                          style: TextStyle(
+                                            color: _selectedIndex != 1
+                                                ? blueColor
+                                                : Colors.white,
+                                          ))),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedIndex = 2;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: _selectedIndex == 2
+                                          ? blueColor
+                                          : Colors.white,
+                                      borderRadius:
+                                      BorderRadius.circular(5)),
+                                  child: Center(
+                                      child: Text("Tenant",
+                                          style: TextStyle(
+                                            color: _selectedIndex != 2
+                                                ? blueColor
+                                                : Colors.white,
+                                          ))),
+                                ),
+                              ),
+                            ),
+                            // Expanded(
+                            //   child: GestureDetector(
+                            //     onTap: () {
+                            //       setState(() {
+                            //         _selectedIndex = 3;
+                            //       });
+                            //     },
+                            //     child: Container(
+                            //       decoration: BoxDecoration(
+                            //           color: _selectedIndex == 3
+                            //               ? blueColor
+                            //               : Colors.white,
+                            //           borderRadius:
+                            //           BorderRadius.circular(5)),
+                            //       child: Center(
+                            //           child: Text("  Renters\nInsurance",
+                            //               style: TextStyle(
+                            //                 color: _selectedIndex != 3
+                            //                     ? blueColor
+                            //                     : Colors.white,
+                            //               ))),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
+                      _buildTabContent(snapshot.data!, context),
+                      /*  Expanded(
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              SummaryPage(),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: FinancialTable(
+                                  rentalUnit: snapshot.data!.data?.rentalUnit,
+                                  rentalAddress:
+                                      snapshot.data!.data?.rentalAddress,
+                                  leaseId: widget.leaseId,
+                                  status:
+                                      '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate).toString()}',
+                                  tenantId: ' ${snapshot.data!.data?.tenantId}',
+                                ),
+                              ),
+                              Tenant(context),
+                            ],
+                          ),
+                        ),*/
                     ],
                   );
-                }
-              })
+              }
+            }),
+      )
           : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
             ),
+            Text(
+              'No Internet',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
     );
   }
-
+  Widget _buildTabContent(LeaseSummary snapshot, BuildContext context) {
+    switch (_selectedIndex) {
+      case 0:
+        return SummaryPage();
+      case 1:
+        return
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FinancialTable(
+              rentalUnit: snapshot.data?.rentalUnit,
+              rentalAddress: snapshot.data?.rentalAddress,
+              leaseId: widget.leaseId,
+              status: determineStatus(
+                  snapshot.data?.startDate, snapshot.data?.endDate)
+                  .toString(),
+              tenantId: ' ${snapshot.data?.tenantId}',
+            ),
+          );
+      case 2:
+        return Tenant(context);
+      // case 3:
+      //   return
+      //     Padding(
+      //       padding: const EdgeInsets.all(8.0),
+      //       child:
+      //       Renters_Insurance_table(leaseId: widget.leaseId, status: determineStatus(
+      //           snapshot.data?.startDate, snapshot.data?.endDate)
+      //           .toString(), tenantId:' ${snapshot.data?.tenantId}',),
+      //     );
+      default:
+        return Container(); // Fallback for safety
+    }
+  }
   int? expandedIndex;
   bool isExpanded = false;
 
@@ -405,8 +553,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
           return Center(child: Text('No data found.'));
         } else {
           final leasesummery = snapshot.data!;
-          return ListView(
-            scrollDirection: Axis.vertical,
+          return Column(
+
             children: [
               const SizedBox(
                 height: 10,

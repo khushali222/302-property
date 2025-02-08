@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/Model/Renters_Insurnce/Edit_insurnce.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
@@ -23,13 +24,15 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../model/LeaseSummary.dart';
 import '../../../../repository/lease.dart';
+import '../../../../repository/lease_rental_insurance_repo.dart';
 import '../../../../widgets/custom_drawer.dart';
 
 class EditRentersInsurance extends StatefulWidget {
   final String tenantid;
   final String leaseId;
+  final String renters_insurance_id;
   const EditRentersInsurance(
-      {required this.tenantid, required this.leaseId});
+      {required this.tenantid, required this.leaseId, required this.renters_insurance_id});
 
   @override
   State<EditRentersInsurance> createState() =>
@@ -50,8 +53,50 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     super.initState();
 
     fetchTenants();
+    fetchRentersDetails(widget.renters_insurance_id);
   }
+  Future<void> fetchRentersDetails(String renters_insurance_id) async {
+    //try {
+    // await _loadProperties();
+    RentersEdit fetchedDetails =
+    await RentersInsuranceService().fetchRentersDetails(renters_insurance_id);
+    print(renters_insurance_id);
 
+    print('Address ${fetchedDetails.insurancePolicyDocument}');
+
+
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      // print(fetchedDetails.rental.rentalAddress);
+
+
+      //_imageUrls = fetchedDetails.workOrderImages ?? [];
+      company.text = fetchedDetails.insuranceCompany!;
+      number.text = fetchedDetails.insuranceCompanyPhoneNumber!;
+
+      policy.text = fetchedDetails.policyId?? "";
+      // effective.text = fetchedDetails.expirationDate ?? "" ;
+      // expiration.text = fetchedDetails.expirationDate ?? "";
+
+      // Convert int to String
+      effective.text = fetchedDetails.effectiveDate != null
+          ? formatDate(fetchedDetails.effectiveDate!.substring(0, 10))  // Extract YYYY-MM-DD
+          : "";
+      expiration.text = fetchedDetails.expirationDate != null
+          ? formatDate(fetchedDetails.expirationDate!.substring(0, 10))  // Extract YYYY-MM-DD
+          : "";
+      liablity.text = fetchedDetails.liabilityCoverage != null
+          ? fetchedDetails.liabilityCoverage.toString()
+          : "0";
+
+      selectedTenants = fetchedDetails.tenants!;
+
+      if(fetchedDetails.insurancePolicyDocument!.isNotEmpty)
+        _uploadedFileNames.add(fetchedDetails.insurancePolicyDocument!);
+
+    });
+
+  }
   bool isLoading = false;
   List<File> _pdfFiles = [];
 
@@ -564,7 +609,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                                 ? Center(
                               child: SpinKitFadingCircle(
                                 color: Colors.white,
-                                size: 55.0,
+                                size: 50.0,
                               ),
                             )
                                 : Text(
@@ -654,6 +699,10 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
   //   }
   // }
   addinsurance() async {
+    setState(() {
+      isLoading = true; // Start loading
+    });
+    try {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -665,6 +714,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     selectedTenants.map((tenantId) => tenantId.toString()).toList();
 
     Map<String, dynamic> values = {
+    "admin_id":adminId!,
       "lease_id": widget.leaseId,
       "insurance_company": company.text.trim(),
       "insurance_company_phone_number": number.text.trim(),
@@ -675,12 +725,14 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
       "tenants": selectedTenantsList, // Ensure it's properly formatted
       "insurance_policy_document":
       _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
+      "renters_insurance_id"
+          : widget.renters_insurance_id,
     };
 
     print(jsonEncode(values)); // Debugging: Check final JSON format
 
-    final http.Response response = await http.post(
-      Uri.parse('$Api_url/api/renter-insurance/add-policy'),
+    final http.Response response = await http.put(
+      Uri.parse('$Api_url/api/renter-insurance/edit-policy/${widget.renters_insurance_id}'),
       headers: <String, String>{
         'authorization': 'CRM $token',
         'id': 'CRM $adminId',
@@ -692,13 +744,21 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     var responseData = json.decode(response.body);
     print('response body ${response.body}');
     print('$Api_url/api/renter-insurance/add-policy');
-    if (responseData["savedPolicy"] == 200) {
+    if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       Navigator.pop(context, true);
       return responseData;
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to Insurance');
+    }
+    } catch (error) {
+      print('Error: $error');
+      Fluttertoast.showToast(msg: 'Something went wrong');
+    } finally {
+      setState(() {
+        isLoading = false; // Stop loading
+      });
     }
   }
 }

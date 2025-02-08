@@ -155,7 +155,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       return Center(child: Text('No data found.'));
                     } else {
                       var lease = snapshot.data!;
-                      return Column(
+                      return
+                        Column(
                         children: <Widget>[
                           const SizedBox(
                             height: 20,
@@ -338,39 +339,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 //           borderRadius:
                                 //           BorderRadius.circular(5)),
                                 //       child: Center(
-                                //           child: Text("Renters Insurance",
+                                //           child: Text("  Renters\nInsurance",
                                 //               style: TextStyle(
                                 //                 color: _selectedIndex != 3
                                 //                     ? blueColor
                                 //                     : Colors.white,
                                 //               ))),
-                                //     ),
-                                //   ),
-                                // ),
-                                // Expanded(
-                                //   child: GestureDetector(
-                                //     onTap: () {
-                                //       setState(() {
-                                //         _selectedIndex = 3;
-                                //       });
-                                //     },
-                                //     child: Container(
-                                //       decoration: BoxDecoration(
-                                //           color: _selectedIndex == 3
-                                //               ? blueColor
-                                //               : Colors.white,
-                                //           borderRadius:
-                                //               BorderRadius.circular(5)),
-                                //       child: Center(
-                                //           child: Padding(
-                                //             padding: const EdgeInsets.all(8.0),
-                                //             child: Text("Renter's insurance",
-                                //                 style: TextStyle(
-                                //                   color: _selectedIndex != 3
-                                //                       ? blueColor
-                                //                       : Colors.white,
-                                //                 )),
-                                //           )),
                                 //     ),
                                 //   ),
                                 // ),

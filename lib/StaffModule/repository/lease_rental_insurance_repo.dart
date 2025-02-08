@@ -4,22 +4,24 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/Renters_Insurnce/Edit_insurnce.dart';
+import 'package:three_zero_two_property/Model/lease_renter_insurance.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
-import '../Model/lease_renter_insurance.dart';
+
 
 class RentersInsuranceService {
   Future<List<lease_renter_insurance>> fetchRentersInsurance( String leaseid) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     try {
       final response = await http.get(
           Uri.parse('$Api_url/api/renter-insurance/policies/$leaseid'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $adminId",
+            "id": "CRM $id",
           });
 
       if (response.statusCode == 200) {
@@ -48,7 +50,8 @@ class RentersInsuranceService {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      String? id = prefs.getString('adminId');
+      String? adminid = prefs.getString('adminId');
+      String? id = prefs.getString("staff_id");
       final http.Response response = await http.delete(
           uri,
           headers: <String, String>{
@@ -77,7 +80,8 @@ class RentersInsuranceService {
   Future<RentersEdit> fetchRentersDetails(String renters_insurance_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
     final response = await http.get(
       Uri.parse('${Api_url}/api/renter-insurance/policy/$renters_insurance_id'),
       headers: {

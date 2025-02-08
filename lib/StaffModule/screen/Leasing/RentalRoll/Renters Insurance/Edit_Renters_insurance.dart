@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/Model/Renters_Insurnce/Edit_insurnce.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
@@ -23,20 +24,24 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../model/LeaseSummary.dart';
 import '../../../../repository/lease.dart';
+
+
+import '../../../../repository/lease_rental_insurance_repo.dart';
 import '../../../../widgets/custom_drawer.dart';
 
-class LeaseAddRentersInsurance extends StatefulWidget {
+class EditRentersInsurance extends StatefulWidget {
   final String tenantid;
   final String leaseId;
-  const LeaseAddRentersInsurance(
-      {required this.tenantid, required this.leaseId});
+  final String renters_insurance_id;
+  const EditRentersInsurance(
+      {required this.tenantid, required this.leaseId, required this.renters_insurance_id});
 
   @override
-  State<LeaseAddRentersInsurance> createState() =>
-      _LeaseAddRentersInsuranceState();
+  State<EditRentersInsurance> createState() =>
+      _EditRentersInsuranceState();
 }
 
-class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
+class _EditRentersInsuranceState extends State<EditRentersInsurance> {
   TextEditingController company = TextEditingController();
   TextEditingController number = TextEditingController();
   TextEditingController policy = TextEditingController();
@@ -50,8 +55,50 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
     super.initState();
 
     fetchTenants();
+    fetchRentersDetails(widget.renters_insurance_id);
   }
+  Future<void> fetchRentersDetails(String renters_insurance_id) async {
+    //try {
+    // await _loadProperties();
+    RentersEdit fetchedDetails =
+    await RentersInsuranceService().fetchRentersDetails(renters_insurance_id);
+    print(renters_insurance_id);
 
+    print('Address ${fetchedDetails.insurancePolicyDocument}');
+
+
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      // print(fetchedDetails.rental.rentalAddress);
+
+
+      //_imageUrls = fetchedDetails.workOrderImages ?? [];
+      company.text = fetchedDetails.insuranceCompany!;
+      number.text = fetchedDetails.insuranceCompanyPhoneNumber!;
+
+      policy.text = fetchedDetails.policyId?? "";
+      // effective.text = fetchedDetails.expirationDate ?? "" ;
+      // expiration.text = fetchedDetails.expirationDate ?? "";
+
+      // Convert int to String
+      effective.text = fetchedDetails.effectiveDate != null
+          ? formatDate(fetchedDetails.effectiveDate!.substring(0, 10))  // Extract YYYY-MM-DD
+          : "";
+      expiration.text = fetchedDetails.expirationDate != null
+          ? formatDate(fetchedDetails.expirationDate!.substring(0, 10))  // Extract YYYY-MM-DD
+          : "";
+      liablity.text = fetchedDetails.liabilityCoverage != null
+          ? fetchedDetails.liabilityCoverage.toString()
+          : "0";
+
+      selectedTenants = fetchedDetails.tenants!;
+
+      if(fetchedDetails.insurancePolicyDocument!.isNotEmpty)
+        _uploadedFileNames.add(fetchedDetails.insurancePolicyDocument!);
+
+    });
+
+  }
   bool isLoading = false;
   List<File> _pdfFiles = [];
 
@@ -219,7 +266,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
         fetchedTenants.add({
           'tenant_id': tenant['tenant_id'],
           'tenant_name':
-              '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
+          '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
           'tenant_firstname': '${tenant['tenant_firstName']}',
           'tenant_lastName': '${tenant['tenant_lastName']}',
           'tenant_email': '${tenant['tenant_email']}',
@@ -233,7 +280,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
           'tenant_lastName': '${tenant['tenant_lastName']}',
           'tenant_email': '${tenant['tenant_email']}',
           'tenant_phoneNumber':
-              formatPhoneNumberedit('${tenant['tenant_phoneNumber']}'),
+          formatPhoneNumberedit('${tenant['tenant_phoneNumber']}'),
           'rental_adress': "${data['data']['rental_adress']}",
           'rental_city': "${data['data']['rental_city']}",
           'rental_state': "${data['data']['rental_state']}",
@@ -274,7 +321,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                   ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
-                    title: 'New Insurance',
+                    title: 'Update Insurance',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -504,7 +551,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                               child: Column(
                                 children: _uploadedFileNames.map((fileName) {
                                   int index =
-                                      _uploadedFileNames.indexOf(fileName);
+                                  _uploadedFileNames.indexOf(fileName);
                                   return ListTile(
                                     title: Text(
                                       fileName,
@@ -540,7 +587,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                       children: [
                         Container(
                           height: 50,
-                          width: 150,
+                          width: 170,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -562,15 +609,15 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                             },
                             child: isLoading
                                 ? Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.white,
-                                      size: 50.0,
-                                    ),
-                                  )
+                              child: SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 50.0,
+                              ),
+                            )
                                 : Text(
-                                    'Add Insurance',
-                                    style: TextStyle(color: Color(0xFFf7f8f9)),
-                                  ),
+                              'Update Insurance',
+                              style: TextStyle(color: Color(0xFFf7f8f9)),
+                            ),
                           ),
                         ),
                         SizedBox(
@@ -586,7 +633,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                                     backgroundColor: Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(8.0))),
+                                        BorderRadius.circular(8.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
@@ -661,14 +708,16 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     print('${adminId}  ${token}');
 
     // Convert selected tenants to a list of maps
     List<String> selectedTenantsList =
-        selectedTenants.map((tenantId) => tenantId.toString()).toList();
+    selectedTenants.map((tenantId) => tenantId.toString()).toList();
 
     Map<String, dynamic> values = {
+    "admin_id":adminId!,
       "lease_id": widget.leaseId,
       "insurance_company": company.text.trim(),
       "insurance_company_phone_number": number.text.trim(),
@@ -678,16 +727,18 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
       "liability_coverage": liablity.text.trim(),
       "tenants": selectedTenantsList, // Ensure it's properly formatted
       "insurance_policy_document":
-          _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
+      _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
+      "renters_insurance_id"
+          : widget.renters_insurance_id,
     };
 
     print(jsonEncode(values)); // Debugging: Check final JSON format
 
-    final http.Response response = await http.post(
-      Uri.parse('$Api_url/api/renter-insurance/add-policy'),
+    final http.Response response = await http.put(
+      Uri.parse('$Api_url/api/renter-insurance/edit-policy/${widget.renters_insurance_id}'),
       headers: <String, String>{
         'authorization': 'CRM $token',
-        'id': 'CRM $adminId',
+        'id': 'CRM $id',
         'Content-Type': 'application/json', // Ensure JSON format is specified
       },
       body: jsonEncode(values), // Encode JSON properly
@@ -696,7 +747,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
     var responseData = json.decode(response.body);
     print('response body ${response.body}');
     print('$Api_url/api/renter-insurance/add-policy');
-    if (responseData["savedPolicy"] == 200) {
+    if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       Navigator.pop(context, true);
       return responseData;

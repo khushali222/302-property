@@ -105,17 +105,33 @@ class Entry {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final Map<String, dynamic> data = {
       'account': account,
       'amount': amount,
       'charge_type': chargeType,
       'date': date,
       'is_repeatable': isRepeatable,
       'memo': memo,
-      'rent_cycle': rentCycle,
       'tenant_id': tenantId,
-      'entry_id':entry_id
+      'entry_id': entry_id,
     };
+
+
+    if (chargeType != "Recurring Charge") {
+      data['rent_cycle'] = rentCycle;
+    }
+    return data;
+    // return {
+    //   'account': account,
+    //   'amount': amount,
+    //   'charge_type': chargeType,
+    //   'date': date,
+    //   'is_repeatable': isRepeatable,
+    //   'memo': memo,
+    //   'rent_cycle': rentCycle,
+    //   'tenant_id': tenantId,
+    //   'entry_id':entry_id
+    // };
   }
 }
 

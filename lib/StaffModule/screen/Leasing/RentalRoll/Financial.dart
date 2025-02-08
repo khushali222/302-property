@@ -1595,8 +1595,8 @@ class _FinancialTableState extends State<FinancialTable> {
             ?.planDetail
             ?.planName ==
         'Free Plan';
-    return Scaffold(
-      body: Container(
+    return
+      Container(
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -3688,8 +3688,8 @@ class _FinancialTableState extends State<FinancialTable> {
             ],
           ),
         ),
-      ),
-    );
+      );
+
   }
 
   Widget _buildInteractiveCell(String text, VoidCallback onTap) {
