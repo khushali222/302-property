@@ -176,6 +176,7 @@ class LeaseTenant {
   String tenantEmail;
   String rentalAddress;
   String rentalUnit;
+  bool? isSelected;
 
   LeaseTenant({
     required this.leaseId,
@@ -194,6 +195,7 @@ class LeaseTenant {
     required this.tenantEmail,
     required this.rentalAddress,
     required this.rentalUnit,
+    this.isSelected
   });
 
   factory LeaseTenant.fromJson(Map<String, dynamic> json) {

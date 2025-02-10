@@ -689,6 +689,7 @@ class TenantData {
   final List<dynamic>? rentalImages;
   final EmergencyContact? emergencyContact;
   final TextEditingController? controller;
+  bool isSelected;
 
   TenantData({
     this.id,
@@ -735,6 +736,7 @@ class TenantData {
     this.emergencyContact,
     this.recurring,
     this.controller,
+    this.isSelected = false
   });
 
   factory TenantData.fromJson(Map<String, dynamic> json) {

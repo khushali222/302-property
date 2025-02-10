@@ -14,6 +14,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
+import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 import 'ReportScreens/dailytransaction.dart';
 import 'ReportScreens/rentalownerreport.dart';
 class ReportsMainScreen extends StatefulWidget {
@@ -604,5 +605,10 @@ List<ReportCardModel> reportCards = [
     title:"Convenience Fee Override",
     description: "Report shows all leases with convenience fee override",
     destination: ConvenienceFeeReports(),
+  ),
+  ReportCardModel(
+    title:"Recurring Payments Configuration",
+    description: "Report shows all leases recurring payments configured",
+    destination: Recurring_Payments_Configuration_Report(),
   ),
 ];
