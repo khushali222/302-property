@@ -3184,7 +3184,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       setState(() {
                         showTableData = true; // Set to true when the button is pressed
                       });
-                      _futureRentersInsurance =fetchDelinquentTenantsData(fromDate.text, toDate.text); // Call the API
+                      _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text, toDate.text); // Call the API
 
                     },
                     child:

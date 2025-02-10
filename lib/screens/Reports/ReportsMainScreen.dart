@@ -7,6 +7,7 @@ import 'package:three_zero_two_property/screens/Reports/ReportScreens/CompletedW
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ConvenienceFee.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/DelinquentTenants.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ExpiringLeases.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportScreens/Expiring_Insurance.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/OpenWorkOrders.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/Payment_Exception.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/RentersInsurance.dart';
@@ -558,6 +559,11 @@ List<ReportCardModel> reportCards = [
     title: "Renter's Insurance",
     description: "Produces a list of all insured units",
     destination: RentersInsurance(),
+  ),
+  ReportCardModel(
+    title: "Expiring Insurance",
+    description: "Report of Renter's Insurance expiring within the selected time period",
+    destination: ExpiringInsurance(),
   ),
   ReportCardModel(
     title: "Expiring Leases",
