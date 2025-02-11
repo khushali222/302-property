@@ -439,112 +439,118 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                         index]![
                                                                     rowIndex][
                                                                 "selectedCard"],
-                                                            items: tenantCards
-                                                                    .isNotEmpty
-                                                                ? [
-                                                                    ...tenantCards
-                                                                        .map(
-                                                                            (card) {
-                                                                      String
-                                                                          uniqueKey =
-                                                                          "${card.billingId}_${card.binResult}"; // Unique key
-                                                                      return DropdownMenuItem<
-                                                                          String>(
-                                                                        value:
-                                                                            uniqueKey,
+                                                            items: [
+                                                              if (tenantCards
+                                                                  .isNotEmpty)
+                                                                ...tenantCards
+                                                                    .map(
+                                                                        (card) {
+                                                                  String
+                                                                      uniqueKey =
+                                                                      "${card.billingId}_${card.binResult}"; // Unique key
+                                                                  return DropdownMenuItem<
+                                                                      String>(
+                                                                    value:
+                                                                        uniqueKey,
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              14,
+                                                                          top:
+                                                                              0),
+                                                                      child:
+                                                                          Container(
+                                                                        // color:Colors.red,
                                                                         child:
-                                                                            Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .only(
-                                                                              left: 14,
-                                                                              top: 0),
-                                                                          child:
-                                                                              Container(
-                                                                            // color:Colors.red,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Container(
+                                                                              height: 30,
+                                                                              width: 30,
+                                                                              child: Image.network("https://logo.clearbit.com/${card.ccType!.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com"),
+                                                                            ),
+                                                                            SizedBox(width: 9),
+                                                                            Column(
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
-                                                                                Container(
-                                                                                  height: 30,
-                                                                                  width: 30,
-                                                                                  child: Image.network("https://logo.clearbit.com/${card.ccType!.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com"),
-                                                                                ),
-                                                                                SizedBox(width: 9),
-                                                                                Column(
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                Text("${card.ccNumber}", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                                                                Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
-                                                                                    Text("${card.ccNumber}", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                                                                                    Row(
-                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                      children: [
-                                                                                        Text("${card.binResult}", style: TextStyle(fontSize: 13)),
-                                                                                        SizedBox(
-                                                                                          width: 52,
-                                                                                        ),
-                                                                                        Text("${card.ccExp}", style: TextStyle(fontSize: 13)),
-                                                                                      ],
+                                                                                    Text("${card.binResult}", style: TextStyle(fontSize: 13)),
+                                                                                    SizedBox(
+                                                                                      width: 52,
                                                                                     ),
+                                                                                    Text("${card.ccExp}", style: TextStyle(fontSize: 13)),
                                                                                   ],
-                                                                                )
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    }).toList(),
-                                                                    DropdownMenuItem<
-                                                                        String>(
-                                                                      value:
-                                                                          'Add',
-                                                                      child:
-                                                                          GestureDetector(
-                                                                        onTap:
-                                                                            () async {
-                                                                          Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                  builder: (context) => AddCard(
-                                                                                        leaseId: widget.leaseData.leaseId ?? "",
-                                                                                      )));
-                                                                        },
-                                                                        child:
-                                                                            Container(
-                                                                          height:
-                                                                              40,
-                                                                          color:
-                                                                              blueColor, // Change to any color you prefer
-                                                                          child:
-                                                                              Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
-                                                                            children: [
-                                                                              SizedBox(
-                                                                                width: 10,
-                                                                              ),
-                                                                              Text(
-                                                                                'Add Card',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color: Colors.white, // Text color for the tile
                                                                                 ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
+                                                                              ],
+                                                                            )
+                                                                          ],
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                  ]
-                                                                : [
-                                                                    DropdownMenuItem<
-                                                                        String>(
-                                                                      value: '',
-                                                                      child: Text(
-                                                                          'No cards available'),
+                                                                  );
+                                                                }).toList()
+                                                              else
+                                                                DropdownMenuItem<
+                                                                    String>(
+                                                                  value: '',
+                                                                  child: Text(
+                                                                      'No cards available'),
+                                                                ),
+                                                              DropdownMenuItem<
+                                                                  String>(
+                                                                value: 'Add',
+                                                                child:
+                                                                    GestureDetector(
+                                                                  onTap:
+                                                                      () async {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => AddCard(
+                                                                                  leaseId: widget.leaseData.leaseId ?? "",
+                                                                                )));
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 40,
+                                                                    color:
+                                                                        blueColor, // Change to any color you prefer
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              10,
+                                                                        ),
+                                                                        Text(
+                                                                          'Add Card',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                14,
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color:
+                                                                                Colors.white, // Text color for the tile
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                  ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
                                                             onChanged: (value) {
                                                               setState(() {
                                                                 tenantDropdowns[
@@ -877,9 +883,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                           Row(
                                                                         children: [
                                                                           Expanded(
-                                                                            child: Container(
-                                                                              child:
-                                                                                  Text("${card.account}", style: TextStyle(fontSize: 15)),
+                                                                            child:
+                                                                                Container(
+                                                                              child: Text("${card.account}", style: TextStyle(fontSize: 15)),
                                                                             ),
                                                                           ),
                                                                           SizedBox(
