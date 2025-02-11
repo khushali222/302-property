@@ -93,7 +93,7 @@ dependencies:
   chewie:
   timeago:
   share_plus:
-
+  ffmpeg_kit_flutter:
 
   # pdf:
 

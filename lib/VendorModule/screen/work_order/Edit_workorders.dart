@@ -91,8 +91,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     print('entry ${fetchedDetails.entryAllowed}');
     print('entry ${fetchedDetails.staffmemberId}');
     print('_selectedOption  ${fetchedDetails.priority}');
-    print(
-        'Fetched parts and charge data: ${fetchedDetails.partsandchargeData?.first.account}');
+
     String? entryAllowedString;
     if (fetchedDetails.entryAllowed != null) {
       entryAllowedString = fetchedDetails.entryAllowed! ? 'true' : 'false';

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -23,6 +24,7 @@ import 'package:three_zero_two_property/repository/lease.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
+import '../../../widgets/VideoPlayerWidget.dart';
 import '../../../widgets/titleBar.dart';
 import '../../widgets/appbar.dart';
 import '../../widgets/drawer_tiles.dart';
@@ -2633,32 +2635,50 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             runSpacing: 10,
                                             children:
                                             summery.workOrderImages!.map((imageUrl) {
+                                              bool isMp4 = isVideo(imageUrl);
                                               return Container(
-                                                width:
-                                                summery.workOrderImages!.length == 1
-                                                    ? MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                    3
-                                                    : (MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                    3) -
-                                                    10,
+                                                width: summery.workOrderImages!.length == 1
+                                                    ? MediaQuery.of(context).size.width / 3
+                                                    : (MediaQuery.of(context).size.width / 3) - 10,
                                                 decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(10),
                                                 ),
                                                 child: ClipRRect(
                                                   borderRadius: BorderRadius.circular(10),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: "$image_url$imageUrl",
-                                                    placeholder: (context, url) => Center(
-                                                        child:
-                                                        CircularProgressIndicator()),
-                                                    errorWidget: (context, url, error) {
-                                                      print(error);
-                                                      return Container();
+                                                  child: isMp4
+                                                      ? FutureBuilder<String?>(
+                                                    future: generateNetworkVideoThumbnail("$image_url$imageUrl"),
+                                                    builder: (context, snapshot) {
+                                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                                        return Center(child: CircularProgressIndicator());
+                                                      } else if (snapshot.hasData && snapshot.data != null) {
+                                                        return  GestureDetector(
+                                                          onTap: (){
+                                                            _showVideoDialog('$image_url$imageUrl');
+                                                          },
+                                                          child: Stack(
+                                                            alignment: Alignment.center,
+                                                            children: [
+                                                              Image.file(
+                                                                File(snapshot.data!),
+                                                                height: 100,
+                                                                width: 100,
+                                                                fit: BoxFit.cover,
+                                                              ),
+                                                              Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                            ],
+                                                          ),
+                                                        );
+
+                                                      } else {
+                                                        return Icon(Icons.error);
+                                                      }
                                                     },
+                                                  )
+                                                      : CachedNetworkImage(
+                                                    imageUrl: "$image_url$imageUrl",
+                                                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                    errorWidget: (context, url, error) => Icon(Icons.error),
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),
@@ -3121,32 +3141,50 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           runSpacing: 10,
                                           children:
                                           summery.workOrderImages!.map((imageUrl) {
+                                            bool isMp4 = isVideo(imageUrl);
                                             return Container(
-                                              width:
-                                              summery.workOrderImages!.length == 1
-                                                  ? MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3
-                                                  : (MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3) -
-                                                  10,
+                                              width: summery.workOrderImages!.length == 1
+                                                  ? MediaQuery.of(context).size.width / 3
+                                                  : (MediaQuery.of(context).size.width / 3) - 10,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
                                               child: ClipRRect(
                                                 borderRadius: BorderRadius.circular(10),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: "$image_url$imageUrl",
-                                                  placeholder: (context, url) => Center(
-                                                      child:
-                                                      CircularProgressIndicator()),
-                                                  errorWidget: (context, url, error) {
-                                                    print(error);
-                                                    return Container();
+                                                child: isMp4
+                                                    ? FutureBuilder<String?>(
+                                                  future: generateNetworkVideoThumbnail("$image_url$imageUrl"),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                                      return Center(child: CircularProgressIndicator());
+                                                    } else if (snapshot.hasData && snapshot.data != null) {
+                                                      return  GestureDetector(
+                                                        onTap: (){
+                                                          _showVideoDialog('$image_url$imageUrl');
+                                                        },
+                                                        child: Stack(
+                                                          alignment: Alignment.center,
+                                                          children: [
+                                                            Image.file(
+                                                              File(snapshot.data!),
+                                                              height: 100,
+                                                              width: 100,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                            Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                          ],
+                                                        ),
+                                                      );
+
+                                                    } else {
+                                                      return Icon(Icons.error);
+                                                    }
                                                   },
+                                                )
+                                                    : CachedNetworkImage(
+                                                  imageUrl: "$image_url$imageUrl",
+                                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                  errorWidget: (context, url, error) => Icon(Icons.error),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -3224,6 +3262,20 @@ class _Workorder_summeryState extends State<Workorder_summery>
     );
   }
 
+
+  bool isVideo(String url) {
+    return url.toLowerCase().endsWith(".mp4");
+  }
+  void _showVideoDialog(String videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          child: VideoPlayerDialog(videoUrl: videoFile,),
+        );
+      },
+    );
+  }
   //
   // updatecheckBox() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();

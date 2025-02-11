@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -23,8 +26,11 @@ import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:video_player/video_player.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
 import '../../../model/summery_workorder.dart';
+import '../../../widgets/VideoPlayerWidget.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -3653,40 +3659,55 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   if (summery.workorderUpdates != null)
                                     Column(
                                       children: [
-                                        SizedBox(
-                                          height: 10,
-                                        ),
+                                        SizedBox(height: 10),
                                         Wrap(
                                           spacing: 10,
                                           runSpacing: 10,
-                                          children:
-                                          summery.workOrderImages!.map((imageUrl) {
+                                          children: summery.workOrderImages!.map((fileUrl) {
+                                            bool isMp4 = isVideo(fileUrl);
                                             return Container(
-                                              width:
-                                              summery.workOrderImages!.length == 1
-                                                  ? MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3
-                                                  : (MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3) -
-                                                  10,
+                                              width: summery.workOrderImages!.length == 1
+                                                  ? MediaQuery.of(context).size.width / 3
+                                                  : (MediaQuery.of(context).size.width / 3) - 10,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
                                               child: ClipRRect(
                                                 borderRadius: BorderRadius.circular(10),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: "$image_url$imageUrl",
-                                                  placeholder: (context, url) => Center(
-                                                      child:
-                                                      CircularProgressIndicator()),
-                                                  errorWidget: (context, url, error) {
-                                                    print(error);
-                                                    return Container();
+                                                child: isMp4
+                                                    ? FutureBuilder<String?>(
+                                                  future: generateNetworkVideoThumbnail("$image_url$fileUrl"),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                                      return Center(child: CircularProgressIndicator());
+                                                    } else if (snapshot.hasData && snapshot.data != null) {
+                                                      return  GestureDetector(
+                                                        onTap: (){
+                                                          _showVideoDialog('$image_url$fileUrl');
+                                                        },
+                                                        child: Stack(
+                                                          alignment: Alignment.center,
+                                                          children: [
+                                                            Image.file(
+                                                              File(snapshot.data!),
+                                                              height: 100,
+                                                              width: 100,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                            Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                          ],
+                                                        ),
+                                                      );
+
+                                                    } else {
+                                                      return Icon(Icons.error);
+                                                    }
                                                   },
+                                                )
+                                                    : CachedNetworkImage(
+                                                  imageUrl: "$image_url$fileUrl",
+                                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                  errorWidget: (context, url, error) => Icon(Icons.error),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -3763,1054 +3784,27 @@ class _Workorder_summeryState extends State<Workorder_summery>
       ),
     );
   }
+   String imageUrl ="";
+  bool isVideo(String url) {
+    return url.toLowerCase().endsWith(".mp4");
+  }
+  Future<String?> generateNetworkVideoThumbnail(String videoUrl) async {
+    try {
+      final Directory tempDir = await getTemporaryDirectory();
+      final String thumbPath = '${tempDir.path}/thumbnail.png';
 
-  // Task(WorkOrderData_summery summery) {
-  //   final dateProvider = Provider.of<DateProvider>(context);
-  //   print(summery.workOrderImages);
-  //   double grandTotal = 0;
-  //   // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(horizontal: 10),
-  //     child: LayoutBuilder(builder: (context, constraints) {
-  //       if (constraints.maxWidth > 500) {
-  //         return SingleChildScrollView(
-  //           child: Column(
-  //             children: [
-  //               SizedBox(
-  //                 height: 10,
-  //               ),
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.start,
-  //                 children: [
-  //                   SizedBox(
-  //                     height: 10,
-  //                   ),
-  //                   Container(
-  //                     width: MediaQuery.of(context).size.width * .5,
-  //                     padding: const EdgeInsets.all(10),
-  //                     decoration: BoxDecoration(
-  //                       border: Border.all(
-  //                           color:blueColor),
-  //                       // color: Colors.blue,
-  //                       borderRadius: BorderRadius.circular(10),
-  //                     ),
-  //                     child: Column(
-  //                       children: [
-  //                         Row(
-  //                           children: [
-  //                             Container(
-  //                               height: 40,
-  //                               width: 40,
-  //                               decoration: BoxDecoration(
-  //                                 color: blueColor,
-  //                                 border: Border.all(
-  //                                     color:
-  //                                        blueColor),
-  //                                 // color: Colors.blue,
-  //                                 borderRadius: BorderRadius.circular(10),
-  //                               ),
-  //                               child: Icon(
-  //                                 Icons.menu,
-  //                                 color: Colors.white,
-  //                               ),
-  //                             ),
-  //                             SizedBox(
-  //                               width: 20,
-  //                             ),
-  //                             Column(
-  //                               mainAxisAlignment: MainAxisAlignment.start,
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Container(
-  //                                     width: 150,
-  //                                     child: Text(
-  //                                       '${summery.workSubject}',
-  //                                       style: TextStyle(
-  //                                           fontWeight: FontWeight.bold,
-  //                                           color: blueColor),
-  //                                     )),
-  //                                 SizedBox(
-  //                                   height: 10,
-  //                                 ),
-  //                                 Container(
-  //                                     child: Text(
-  //                                   '${summery.propertyData?.rentaladress}',
-  //                                   style: TextStyle(color: blueColor),
-  //                                 )),
-  //                               ],
-  //                             ),
-  //                             Spacer(),
-  //                             if (summery.priority == "High")
-  //                               Container(
-  //                                 height: 35,
-  //                                 width: 70,
-  //                                 decoration: BoxDecoration(
-  //                                   borderRadius: BorderRadius.circular(10),
-  //                                   border:
-  //                                       Border.all(color: Colors.red, width: 3),
-  //                                 ),
-  //                                 child: Center(
-  //                                     child: Text("High",
-  //                                         style: TextStyle(
-  //                                             color: Colors.red,
-  //                                             fontWeight: FontWeight.w400))),
-  //                               ),
-  //                             if (summery.priority == "Medium")
-  //                               Container(
-  //                                 height: 35,
-  //                                 width: 70,
-  //                                 decoration: BoxDecoration(
-  //                                   borderRadius: BorderRadius.circular(10),
-  //                                   border:
-  //                                       Border.all(color: blueColor, width: 3),
-  //                                 ),
-  //                                 child: Center(
-  //                                     child: Text("Medium",
-  //                                         style: TextStyle(
-  //                                             color: blueColor,
-  //                                             fontWeight: FontWeight.w400))),
-  //                               ),
-  //                             if (summery.priority == "Normal")
-  //                               Container(
-  //                                 height: 35,
-  //                                 width: 70,
-  //                                 decoration: BoxDecoration(
-  //                                   borderRadius: BorderRadius.circular(10),
-  //                                   border: Border.all(
-  //                                       color: Colors.grey, width: 3),
-  //                                 ),
-  //                                 child: Center(
-  //                                     child: Text("Normal",
-  //                                         style: TextStyle(
-  //                                             color: Colors.grey,
-  //                                             fontWeight: FontWeight.w400))),
-  //                               )
-  //                           ],
-  //                         ),
-  //                         SizedBox(
-  //                           height: 20,
-  //                         ),
-  //                         Row(
-  //                           children: [
-  //                             SizedBox(
-  //                               width: 10,
-  //                             ),
-  //                             Column(
-  //                               mainAxisAlignment: MainAxisAlignment.start,
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Container(
-  //                                     child: Text(
-  //                                   'Description',
-  //                                   style: TextStyle(
-  //                                       fontWeight: FontWeight.bold,
-  //                                       color: blueColor),
-  //                                 )),
-  //                                 SizedBox(
-  //                                   height: 8,
-  //                                 ),
-  //                                 Container(
-  //                                     child: Text(
-  //                                   '${summery.workPerformed}',
-  //                                   style: TextStyle(color: blueColor),
-  //                                 )),
-  //                               ],
-  //                             ),
-  //                             Spacer(),
-  //                             Container(
-  //                               height: 70,
-  //                               width: MediaQuery.of(context).size.width * .2,
-  //                               decoration: BoxDecoration(
-  //                                 borderRadius: BorderRadius.circular(8),
-  //                                 border: Border.all(color: Colors.grey),
-  //                               ),
-  //                               child: Column(
-  //                                 // crossAxisAlignment: CrossAxisAlignment.center,
-  //                                 // mainAxisAlignment: MainAxisAlignment.start,
-  //                                 children: [
-  //                                   SizedBox(
-  //                                     height: 10,
-  //                                   ),
-  //                                   Text(
-  //                                     "Status",
-  //                                     style: TextStyle(
-  //                                       color: blueColor,
-  //                                     ),
-  //                                   ),
-  //                                   SizedBox(
-  //                                     height: 4,
-  //                                   ),
-  //                                   Text('${summery.status}',
-  //                                       style: TextStyle(
-  //                                           color: blueColor,
-  //                                           fontWeight: FontWeight.bold)),
-  //                                 ],
-  //                               ),
-  //                             ),
-  //                             SizedBox(
-  //                               width: 10,
-  //                             ),
-  //                           ],
-  //                         ),
-  //                         SizedBox(
-  //                           height: 10,
-  //                         ),
-  //                         Row(
-  //                           children: [
-  //                             SizedBox(
-  //                               width: 10,
-  //                             ),
-  //                             Column(
-  //                               mainAxisAlignment: MainAxisAlignment.start,
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Container(
-  //                                     child: Text(
-  //                                   'Permission to enter',
-  //                                   style: TextStyle(
-  //                                       fontWeight: FontWeight.bold,
-  //                                       color: blueColor),
-  //                                 )),
-  //                                 SizedBox(
-  //                                   height: 8,
-  //                                 ),
-  //                                 Container(
-  //                                     child: Text(
-  //                                   '${summery.entryAllowed}',
-  //                                   style: TextStyle(color: blueColor),
-  //                                 )),
-  //                               ],
-  //                             ),
-  //                             Spacer(),
-  //                             Container(
-  //                               height: 70,
-  //                               width: MediaQuery.of(context).size.width * .2,
-  //                               decoration: BoxDecoration(
-  //                                 borderRadius: BorderRadius.circular(8),
-  //                                 border: Border.all(color: Colors.grey),
-  //                               ),
-  //                               child: Column(
-  //                                 // crossAxisAlignment: CrossAxisAlignment.center,
-  //                                 // mainAxisAlignment: MainAxisAlignment.start,
-  //                                 children: [
-  //                                   SizedBox(
-  //                                     height: 10,
-  //                                   ),
-  //                                   Text(
-  //                                     "Due Date",
-  //                                     style: TextStyle(
-  //                                       color: blueColor,
-  //                                     ),
-  //                                   ),
-  //                                   SizedBox(
-  //                                     height: 4,
-  //                                   ),
-  //                                   Text(
-  //                                       dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
-  //                                       style: TextStyle(
-  //                                           color: blueColor,
-  //                                           fontWeight: FontWeight.bold)),
-  //                                   SizedBox(
-  //                                     height: 10,
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ),
-  //                             SizedBox(
-  //                               width: 10,
-  //                             ),
-  //                           ],
-  //                         ),
-  //                         SizedBox(
-  //                           height: 10,
-  //                         ),
-  //                         Row(
-  //                           children: [
-  //                             SizedBox(
-  //                               width: 10,
-  //                             ),
-  //                             Column(
-  //                               mainAxisAlignment: MainAxisAlignment.start,
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Container(
-  //                                     child: Text(
-  //                                   'Vendors Notes',
-  //                                   style: TextStyle(
-  //                                       fontWeight: FontWeight.bold,
-  //                                       color: blueColor),
-  //                                 )),
-  //                                 SizedBox(
-  //                                   height: 8,
-  //                                 ),
-  //                                 SizedBox(
-  //                                   width: MediaQuery.of(context).size.width > 500
-  //                                       ? 200
-  //                                       : 150,
-  //                                   child: Text(
-  //                                     '${summery.vendorNotes}',
-  //                                     maxLines: 4, // Set maximum number of lines
-  //                                     overflow: TextOverflow
-  //                                         .ellipsis,
-  //                                     textAlign: TextAlign.justify,// Handle overflow with ellipsis
-  //                                     style: TextStyle(
-  //                                       fontSize:
-  //                                       MediaQuery.of(context).size.width < 500
-  //                                           ? 13
-  //                                           : 18,
-  //                                       color: blueColor,
-  //                                     ),
-  //                                   ),
-  //                                 ),
-  //                                 // Container(
-  //                                 //     child: Text(
-  //                                 //   '${summery.vendorNotes}',
-  //                                 //   style: TextStyle(color: blueColor),
-  //                                 // )),
-  //                               ],
-  //                             ),
-  //                             Spacer(),
-  //                             Container(
-  //                               height: 70,
-  //                               width: MediaQuery.of(context).size.width * .2,
-  //                               decoration: BoxDecoration(
-  //                                 borderRadius: BorderRadius.circular(8),
-  //                                 border: Border.all(color: Colors.grey),
-  //                               ),
-  //                               child: Column(
-  //                                 // crossAxisAlignment: CrossAxisAlignment.center,
-  //                                 // mainAxisAlignment: MainAxisAlignment.start,
-  //                                 children: [
-  //                                   SizedBox(
-  //                                     height: 10,
-  //                                   ),
-  //                                   Text(
-  //                                     "Assignees",
-  //                                     style: TextStyle(
-  //                                       color: blueColor,
-  //                                     ),
-  //                                   ),
-  //                                   SizedBox(
-  //                                     height: 4,
-  //                                   ),
-  //                                   summery.staffData != null
-  //                                       ? Text(
-  //                                           '${summery.staffData?.firstname}',
-  //                                           style: TextStyle(
-  //                                               color: blueColor,
-  //                                               fontWeight: FontWeight.bold))
-  //                                       : Text('N/A',
-  //                                           style: TextStyle(
-  //                                               color: blueColor,
-  //                                               fontWeight: FontWeight.bold)),
-  //                                 ],
-  //                               ),
-  //                             ),
-  //                             SizedBox(
-  //                               width: 10,
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   SizedBox(
-  //                     width: 10,
-  //                   ),
-  //                   Material(
-  //                     borderOnForeground: true,
-  //                     borderRadius: BorderRadius.circular(10),
-  //                     child: Container(
-  //                       width: MediaQuery.of(context).size.width * 0.43,
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.white,
-  //                         border: Border.all(),
-  //                         borderRadius: BorderRadius.circular(10),
-  //                       ),
-  //                       child: Column(
-  //                         children: [
-  //                           Container(
-  //                             decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.vertical(
-  //                                 top: Radius.circular(10),
-  //                               ),
-  //                             ),
-  //                             child: Material(
-  //                               color: Colors.white,
-  //                               borderRadius: BorderRadius.vertical(
-  //                                 top: Radius.circular(10),
-  //                               ),
-  //                               child: Center(
-  //                                 child: Padding(
-  //                                   padding: const EdgeInsets.all(8.0),
-  //                                   child: Text(
-  //                                     'Images',
-  //                                     style: TextStyle(
-  //                                       color: blueColor,
-  //                                       fontSize: 16,
-  //                                       fontWeight: FontWeight.bold,
-  //                                     ),
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                           Divider(
-  //                             color: blueColor,
-  //                           ),
-  //                           Column(
-  //                             mainAxisAlignment: MainAxisAlignment.center,
-  //                             crossAxisAlignment: CrossAxisAlignment.center,
-  //                             children: [
-  //                               if (summery.workorderUpdates != null)
-  //                                 Column(
-  //                                   children: [
-  //                                     SizedBox(
-  //                                       height: 10,
-  //                                     ),
-  //                                     Wrap(
-  //                                       spacing: 10,
-  //                                       runSpacing: 10,
-  //                                       children: summery.workOrderImages!
-  //                                           .map((imageUrl) {
-  //                                         return Container(
-  //                                           width:
-  //                                               summery.workOrderImages!
-  //                                                           .length ==
-  //                                                       1
-  //                                                   ? MediaQuery.of(context)
-  //                                                           .size
-  //                                                           .width /
-  //                                                       3
-  //                                                   : (MediaQuery.of(context)
-  //                                                               .size
-  //                                                               .width /
-  //                                                           3) -
-  //                                                       10,
-  //                                           decoration: BoxDecoration(
-  //                                             borderRadius:
-  //                                                 BorderRadius.circular(10),
-  //                                           ),
-  //                                           child: ClipRRect(
-  //                                             borderRadius:
-  //                                                 BorderRadius.circular(10),
-  //                                             child: CachedNetworkImage(
-  //                                               imageUrl: "$image_url$imageUrl",
-  //                                               placeholder: (context, url) =>
-  //                                                   Center(
-  //                                                       child:
-  //                                                           CircularProgressIndicator()),
-  //                                               errorWidget:
-  //                                                   (context, url, error) {
-  //                                                 print(error);
-  //                                                 return Container();
-  //                                               },
-  //                                               fit: BoxFit.cover,
-  //                                             ),
-  //                                           ),
-  //                                         );
-  //                                       }).toList(),
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                               if (summery.workOrderImages!.length == 0)
-  //                                 Row(
-  //                                   mainAxisAlignment: MainAxisAlignment.center,
-  //                                   children: [
-  //                                     Text(
-  //                                       "No Images Provided",
-  //                                       style: TextStyle(color: blueColor),
-  //                                     ),
-  //                                     // Text("(${summery.unitData!.unitName})"),
-  //                                   ],
-  //                                 ),
-  //                               SizedBox(
-  //                                 height: 10,
-  //                               ),
-  //                               Text(
-  //                                 "${summery.propertyData!.rentaladress} (${summery.unitData!.unitName})",
-  //                                 textAlign: TextAlign.center,
-  //                                 style: TextStyle(color: blueColor),
-  //                               ),
-  //                               SizedBox(
-  //                                 height: 10,
-  //                               ),
-  //                               Row(
-  //                                 mainAxisAlignment: MainAxisAlignment.center,
-  //                                 children: [
-  //                                   Text(
-  //                                     "${summery.propertyData!.rental_city}, ",
-  //                                     style: TextStyle(color: blueColor),
-  //                                   ),
-  //                                   Text(
-  //                                     "${summery.propertyData!.rental_state}, ",
-  //                                     style: TextStyle(color: blueColor),
-  //                                   ),
-  //                                   Text(
-  //                                     "${summery.propertyData!.rental_country}, ",
-  //                                     style: TextStyle(color: blueColor),
-  //                                   ),
-  //                                   Text(
-  //                                     "${summery.propertyData!.rental_postcode} ",
-  //                                     style: TextStyle(color: blueColor),
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                               SizedBox(
-  //                                 height: 10,
-  //                               ),
-  //                             ],
-  //                           )
-  //                           /*  ListTile(
-  //                             title: Text(
-  //                               "Vendor",
-  //                               style: TextStyle(
-  //                                 color: blueColor,
-  //                                 fontWeight: FontWeight.w500,
-  //                               ),
-  //                             ),
-  //                             subtitle: Text(
-  //                               "Vendor Company Name",
-  //                               style: TextStyle(color: blueColor),
-  //                             ),
-  //                             leading: Container(
-  //                               padding: EdgeInsets.only(top: 3),
-  //                               child: Icon(
-  //                                 Icons.person,
-  //                                 size: 30,
-  //                               ),
-  //                             )
-  //
-  //                           ),*/
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   SizedBox(
-  //                     height: 20,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       } else {
-  //         return SingleChildScrollView(
-  //           child: Column(
-  //             children: [
-  //               SizedBox(
-  //                 height: 10,
-  //               ),
-  //               Container(
-  //                 padding: const EdgeInsets.all(10),
-  //                 decoration: BoxDecoration(
-  //                   border:
-  //                       Border.all(color:blueColor),
-  //                   // color: Colors.blue,
-  //                   borderRadius: BorderRadius.circular(10),
-  //                 ),
-  //                 child: Column(
-  //                   children: [
-  //                     Row(
-  //                       children: [
-  //                         Container(
-  //                           height: 40,
-  //                           width: 40,
-  //                           decoration: BoxDecoration(
-  //                             color: blueColor,
-  //                             border: Border.all(
-  //                                 color:blueColor),
-  //                             // color: Colors.blue,
-  //                             borderRadius: BorderRadius.circular(10),
-  //                           ),
-  //                           child: Icon(
-  //                             Icons.menu,
-  //                             color: Colors.white,
-  //                           ),
-  //                         ),
-  //                         SizedBox(
-  //                           width: 20,
-  //                         ),
-  //                         Column(
-  //                           mainAxisAlignment: MainAxisAlignment.start,
-  //                           crossAxisAlignment: CrossAxisAlignment.start,
-  //                           children: [
-  //                             Container(
-  //                                 width: 150,
-  //                                 child: Text(
-  //                                   '${summery.workSubject}',
-  //                                   style: TextStyle(
-  //                                       fontWeight: FontWeight.bold,
-  //                                       color: blueColor),
-  //                                 )),
-  //                             SizedBox(
-  //                               height: 10,
-  //                             ),
-  //                             Container(
-  //                                 child: Text(
-  //                               '${summery.propertyData?.rentaladress}',
-  //                               style: TextStyle(color: blueColor),
-  //                             )),
-  //                           ],
-  //                         ),
-  //                         Spacer(),
-  //                         if (summery.priority == "High")
-  //                           Container(
-  //                             height: 35,
-  //                             width: 70,
-  //                             decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.circular(10),
-  //                               border: Border.all(color: Colors.red, width: 3),
-  //                             ),
-  //                             child: Center(
-  //                                 child: Text("High",
-  //                                     style: TextStyle(
-  //                                         color: Colors.red,
-  //                                         fontWeight: FontWeight.w400))),
-  //                           ),
-  //                         if (summery.priority == "Medium")
-  //                           Container(
-  //                             height: 35,
-  //                             width: 70,
-  //                             decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.circular(10),
-  //                               border: Border.all(color: blueColor, width: 3),
-  //                             ),
-  //                             child: Center(
-  //                                 child: Text("Medium",
-  //                                     style: TextStyle(
-  //                                         color: blueColor,
-  //                                         fontWeight: FontWeight.w400))),
-  //                           ),
-  //                         if (summery.priority == "Normal")
-  //                           Container(
-  //                             height: 35,
-  //                             width: 70,
-  //                             decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.circular(10),
-  //                               border:
-  //                                   Border.all(color: Colors.grey, width: 3),
-  //                             ),
-  //                             child: Center(
-  //                                 child: Text("Normal",
-  //                                     style: TextStyle(
-  //                                         color: Colors.grey,
-  //                                         fontWeight: FontWeight.w400))),
-  //                           )
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 20,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         SizedBox(
-  //                           width: 10,
-  //                         ),
-  //                         Column(
-  //                           mainAxisAlignment: MainAxisAlignment.start,
-  //                           crossAxisAlignment: CrossAxisAlignment.start,
-  //                           children: [
-  //                             Container(
-  //                                 child: Text(
-  //                               'Description',
-  //                               style: TextStyle(
-  //                                   fontWeight: FontWeight.bold,
-  //                                   color: blueColor),
-  //                             )),
-  //                             SizedBox(
-  //                               height: 8,
-  //                             ),
-  //                             Container(
-  //                                 width: 180,
-  //                                 child: Text(
-  //                               '${summery.workPerformed}',
-  //                               style: TextStyle(color: blueColor),
-  //                             )),
-  //                           ],
-  //                         ),
-  //                         Spacer(),
-  //                         Container(
-  //                           height: 70,
-  //                           width: MediaQuery.of(context).size.width * .3,
-  //                           decoration: BoxDecoration(
-  //                             borderRadius: BorderRadius.circular(8),
-  //                             border: Border.all(color: Colors.grey),
-  //                           ),
-  //                           child: Column(
-  //                             // crossAxisAlignment: CrossAxisAlignment.center,
-  //                             // mainAxisAlignment: MainAxisAlignment.start,
-  //                             children: [
-  //                               SizedBox(
-  //                                 height: 10,
-  //                               ),
-  //                               Text(
-  //                                 "Status",
-  //                                 style: TextStyle(
-  //                                   color: blueColor,
-  //                                 ),
-  //                               ),
-  //                               SizedBox(
-  //                                 height: 4,
-  //                               ),
-  //                               Text('${summery.status}',
-  //                                   style: TextStyle(
-  //                                       color: blueColor,
-  //                                       fontWeight: FontWeight.bold)),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                         SizedBox(
-  //                           width: 10,
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         SizedBox(
-  //                           width: 10,
-  //                         ),
-  //                         Column(
-  //                           mainAxisAlignment: MainAxisAlignment.start,
-  //                           crossAxisAlignment: CrossAxisAlignment.start,
-  //                           children: [
-  //                             Container(
-  //                                 child: Text(
-  //                               'Permission to enter',
-  //                               style: TextStyle(
-  //                                   fontWeight: FontWeight.bold,
-  //                                   color: blueColor),
-  //                             )),
-  //                             SizedBox(
-  //                               height: 8,
-  //                             ),
-  //                             Container(
-  //                                 child: Text(
-  //                               '${summery.entryAllowed}',
-  //                               style: TextStyle(color: blueColor),
-  //                             )),
-  //                           ],
-  //                         ),
-  //                         Spacer(),
-  //                         Container(
-  //                           height: 70,
-  //                           width: MediaQuery.of(context).size.width * .3,
-  //                           decoration: BoxDecoration(
-  //                             borderRadius: BorderRadius.circular(8),
-  //                             border: Border.all(color: Colors.grey),
-  //                           ),
-  //                           child: Column(
-  //                             // crossAxisAlignment: CrossAxisAlignment.center,
-  //                             // mainAxisAlignment: MainAxisAlignment.start,
-  //                             children: [
-  //                               SizedBox(
-  //                                 height: 10,
-  //                               ),
-  //                               Text(
-  //                                 "Due Date",
-  //                                 style: TextStyle(
-  //                                   color: blueColor,
-  //                                 ),
-  //                               ),
-  //                               SizedBox(
-  //                                 height: 4,
-  //                               ),
-  //                               Text(
-  //                                   //dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
-  //                                   '${summery.workorderUpdates?.isEmpty == true ?
-  //                                   "N/A" : summery.workorderUpdates?.last.date?.toString()
-  //                                   }',
-  //                                   style: TextStyle(
-  //                                       color: blueColor,
-  //                                       fontWeight: FontWeight.bold)),
-  //                               SizedBox(
-  //                                 height: 10,
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                         SizedBox(
-  //                           width: 10,
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         SizedBox(
-  //                           width: 10,
-  //                         ),
-  //                         Column(
-  //                           mainAxisAlignment: MainAxisAlignment.start,
-  //                           crossAxisAlignment: CrossAxisAlignment.start,
-  //                           children: [
-  //                             Container(
-  //                                 child: Text(
-  //                               'Vendors Notes',
-  //                               style: TextStyle(
-  //                                   fontWeight: FontWeight.bold,
-  //                                   color: blueColor),
-  //                             )),
-  //                             SizedBox(
-  //                               height: 8,
-  //                             ),
-  //                             SizedBox(
-  //                               width: MediaQuery.of(context).size.width > 500
-  //                                   ? 200
-  //                                   : 150,
-  //                               child: Text(
-  //                                 '${summery.vendorNotes}',
-  //                                 maxLines: 4, // Set maximum number of lines
-  //                                 overflow: TextOverflow
-  //                                     .ellipsis,
-  //                                 textAlign: TextAlign.justify,// Handle overflow with ellipsis
-  //                                 style: TextStyle(
-  //                                   fontSize:
-  //                                   MediaQuery.of(context).size.width < 500
-  //                                       ? 13
-  //                                       : 18,
-  //                                   color: blueColor,
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                             // Container(
-  //                             //     child: Text(
-  //                             //   '${summery.vendorNotes}',
-  //                             //   style: TextStyle(color: blueColor),
-  //                             // )),
-  //                           ],
-  //                         ),
-  //                         Spacer(),
-  //                         Container(
-  //                           height: 70,
-  //                           width: MediaQuery.of(context).size.width * .3,
-  //                           decoration: BoxDecoration(
-  //                             borderRadius: BorderRadius.circular(8),
-  //                             border: Border.all(color: Colors.grey),
-  //                           ),
-  //                           child: Column(
-  //                             // crossAxisAlignment: CrossAxisAlignment.center,
-  //                             // mainAxisAlignment: MainAxisAlignment.start,
-  //                             children: [
-  //                               SizedBox(
-  //                                 height: 10,
-  //                               ),
-  //                               Text(
-  //                                 "Assignees",
-  //                                 style: TextStyle(
-  //                                   color: blueColor,
-  //                                 ),
-  //                               ),
-  //                               SizedBox(
-  //                                 height: 4,
-  //                               ),
-  //                               summery.staffData != null
-  //                                   ? Text('${summery.staffData?.firstname}',
-  //                                       style: TextStyle(
-  //                                           color: blueColor,
-  //                                           fontWeight: FontWeight.bold))
-  //                                   : Text('N/A',
-  //                                       style: TextStyle(
-  //                                           color: blueColor,
-  //                                           fontWeight: FontWeight.bold)),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                         SizedBox(
-  //                           width: 10,
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: 10,
-  //               ),
-  //               IntrinsicHeight(
-  //                 child: Material(
-  //                   borderOnForeground: true,
-  //                   borderRadius: BorderRadius.circular(10),
-  //                   child: Container(
-  //                     decoration: BoxDecoration(
-  //                       color: Colors.white,
-  //                       border: Border.all(),
-  //                       borderRadius: BorderRadius.circular(10),
-  //                     ),
-  //                     child: Column(
-  //                       children: [
-  //                         Container(
-  //                           decoration: BoxDecoration(
-  //                             borderRadius: BorderRadius.vertical(
-  //                               top: Radius.circular(10),
-  //                             ),
-  //                           ),
-  //                           child: Material(
-  //                             color: Colors.white,
-  //                             borderRadius: BorderRadius.vertical(
-  //                               top: Radius.circular(10),
-  //                             ),
-  //                             child: Center(
-  //                               child: Padding(
-  //                                 padding: const EdgeInsets.all(8.0),
-  //                                 child: Text(
-  //                                   'Images',
-  //                                   style: TextStyle(
-  //                                     color: blueColor,
-  //                                     fontSize: 16,
-  //                                     fontWeight: FontWeight.bold,
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                         Divider(
-  //                           color: blueColor,
-  //                         ),
-  //                         Column(
-  //                           mainAxisAlignment: MainAxisAlignment.center,
-  //                           crossAxisAlignment: CrossAxisAlignment.center,
-  //                           children: [
-  //                             if (summery.workorderUpdates != null)
-  //                               Column(
-  //                                 children: [
-  //                                   SizedBox(
-  //                                     height: 10,
-  //                                   ),
-  //                                   Wrap(
-  //                                     spacing: 10,
-  //                                     runSpacing: 10,
-  //                                     children: summery.workOrderImages!
-  //                                         .map((imageUrl) {
-  //                                       return Container(
-  //                                         width:
-  //                                             summery.workOrderImages!
-  //                                                         .length ==
-  //                                                     1
-  //                                                 ? MediaQuery.of(context)
-  //                                                         .size
-  //                                                         .width /
-  //                                                     3
-  //                                                 : (MediaQuery.of(context)
-  //                                                             .size
-  //                                                             .width /
-  //                                                         3) -
-  //                                                     10,
-  //                                         decoration: BoxDecoration(
-  //                                           borderRadius:
-  //                                               BorderRadius.circular(10),
-  //                                         ),
-  //                                         child: ClipRRect(
-  //                                           borderRadius:
-  //                                               BorderRadius.circular(10),
-  //                                           child: CachedNetworkImage(
-  //                                             imageUrl: "$image_url$imageUrl",
-  //                                             placeholder: (context, url) => Center(
-  //                                                 child:
-  //                                                     CircularProgressIndicator()),
-  //                                             errorWidget:
-  //                                                 (context, url, error) {
-  //                                               print(error);
-  //                                               return Container();
-  //                                             },
-  //                                             fit: BoxFit.cover,
-  //                                           ),
-  //                                         ),
-  //                                       );
-  //                                     }).toList(),
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             if (summery.workOrderImages!.length == 0)
-  //                               Row(
-  //                                 mainAxisAlignment: MainAxisAlignment.center,
-  //                                 children: [
-  //                                   Text(
-  //                                     "No Images Provided",
-  //                                     style: TextStyle(color: blueColor),
-  //                                   ),
-  //                                   // Text("(${summery.unitData!.unitName})"),
-  //                                 ],
-  //                               ),
-  //                             SizedBox(
-  //                               height: 10,
-  //                             ),
-  //                             Text(
-  //                               "${summery.propertyData!.rentaladress} ",
-  //                               textAlign: TextAlign.center,
-  //                               style: TextStyle(color: blueColor),
-  //                             ),
-  //                             SizedBox(
-  //                               height: 10,
-  //                             ),
-  //                             Row(
-  //                               mainAxisAlignment: MainAxisAlignment.center,
-  //                               children: [
-  //                                 Text(
-  //                                   "${summery.propertyData!.rental_city}, ",
-  //                                   style: TextStyle(color: blueColor),
-  //                                 ),
-  //                                 Text(
-  //                                   "${summery.propertyData!.rental_state}, ",
-  //                                   style: TextStyle(color: blueColor),
-  //                                 ),
-  //                                 Text(
-  //                                   "${summery.propertyData!.rental_country}, ",
-  //                                   style: TextStyle(color: blueColor),
-  //                                 ),
-  //                                 Text(
-  //                                   "${summery.propertyData!.rental_postcode} ",
-  //                                   style: TextStyle(color: blueColor),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                             SizedBox(
-  //                               height: 10,
-  //                             ),
-  //                           ],
-  //                         )
-  //                         /*  ListTile(
-  //                           title: Text(
-  //                             "Vendor",
-  //                             style: TextStyle(
-  //                               color: blueColor,
-  //                               fontWeight: FontWeight.w500,
-  //                             ),
-  //                           ),
-  //                           subtitle: Text(
-  //                             "Vendor Company Name",
-  //                             style: TextStyle(color: blueColor),
-  //                           ),
-  //                           leading: Container(
-  //                             padding: EdgeInsets.only(top: 3),
-  //                             child: Icon(
-  //                               Icons.person,
-  //                               size: 30,
-  //                             ),
-  //                           )
-  //
-  //                         ),*/
-  //                       ],
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: 20,
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       }
-  //     }),
-  //   );
-  // }
+      // Use FFmpeg to extract a frame from the video URL
+      await FFmpegKit.execute('-i $videoUrl -ss 00:00:01 -vframes 1 $thumbPath');
+
+      if (File(thumbPath).existsSync()) {
+        return thumbPath; // Return local path of thumbnail
+      }
+    } catch (e) {
+      print("Error generating thumbnail: $e");
+    }
+    return null;
+  }
+
 
   void showUpdateDialog(BuildContext context) {
     // Initialize variables to store user input
@@ -5361,6 +4355,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
       },
     );
   }
+  void _showVideoDialog(String videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          child: VideoPlayerDialog(videoUrl: videoFile,),
+        );
+      },
+    );
+  }
 }
 
 class PartWidget extends StatelessWidget {
@@ -5424,4 +4428,5 @@ class PartWidget extends StatelessWidget {
       ),
     );
   }
+
 }

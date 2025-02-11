@@ -224,7 +224,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
   String? _selectedRentaId;
   Future<void> selectImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
+      type: FileType.media,
       allowMultiple: true,
     );
 
@@ -494,6 +494,7 @@ print("${response.body}");
                             spacing: 10,
                             runSpacing: 10,
                             children: uploaded_images.map((imageUrl) {
+                              bool isMp4 = isVideo(imageUrl!);
                               return Container(
                                 width:  uploaded_images.length == 1
                                     ? MediaQuery.of(context).size.width / 4
@@ -507,16 +508,44 @@ print("${response.body}");
                                       uploaded_images.remove(imageUrl);
                                     });
                                   },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: CachedNetworkImage(
-                                      imageUrl: "$image_url$imageUrl",
-                                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                      errorWidget: (context, url, error){
-                                        print(error);
-                                        return Container();
-                                      },
+                                  child:   isMp4 ?  FutureBuilder<String?>(
+                                    future: generateNetworkVideoThumbnail("$image_url${imageUrl}"),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return Center(child: CircularProgressIndicator());
+                                      } else if (snapshot.hasData && snapshot.data != null) {
+                                        return  GestureDetector(
+                                          onTap: (){
+                                          //  _showVideoDialog('$image_url${imageUrl}');
+                                          },
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Image.file(
+                                                File(snapshot.data!),
+                                                height:80,
+                                                width: 80,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                            ],
+                                          ),
+                                        );
+
+                                      } else {
+                                        return Icon(Icons.error);
+                                      }
+                                    },
+                                  ):
+                                  Container(
+                                    child: Image.network(
+                                      "$image_url${imageUrl}",
+                                      height: 80,
+                                      width: 80,
                                       fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Icon(Icons.error); // Placeholder for errors
+                                      },
                                     ),
                                   ),
                                 ),
@@ -1002,6 +1031,10 @@ print("${response.body}");
         ),
       ),
     );
+  }
+
+  bool isVideo(String url) {
+    return url.toLowerCase().endsWith(".mp4");
   }
   Widget buildTextField(String label, String hintText, TextEditingController controller) {
     return Column(
