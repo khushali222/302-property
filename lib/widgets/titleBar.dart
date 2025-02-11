@@ -5,7 +5,8 @@ import '../constant/constant.dart';
 class titleBar extends StatelessWidget {
   final String title;
   final double width;
-  titleBar({required this.title, required this.width});
+   double size;
+  titleBar({required this.title, required this.width,this.size=21});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class titleBar extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: MediaQuery.of(context).size.width < 500
-                    ? 21
+                    ? size
                     : MediaQuery.of(context).size.width * 0.035),
           ),
         ),

@@ -14,6 +14,7 @@ class LeaseMoveoutRepository {
     required String? leaseId,
     required String? moveoutNoticeGivenDate,
     required String? moveoutDate,
+    List<Map<String,dynamic>>? multitenantdata
 
   }) async {
     final Map<String, dynamic> data = {
@@ -29,13 +30,13 @@ class LeaseMoveoutRepository {
 
     print(data);
     final http.Response response = await http.post(
-      Uri.parse('${Api_url}/api/moveout/lease_moveout/$leaseId'),
+      Uri.parse('${Api_url}/api/moveout/lease_multiplemoveout/$leaseId'),
       headers: <String, String>{
         "authorization": "CRM $token",
         "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(data),
+      body: jsonEncode({"moveoutTenants":multitenantdata}),
     );
     var responseData = json.decode(response.body);
     print('$apiUrl$leaseId');

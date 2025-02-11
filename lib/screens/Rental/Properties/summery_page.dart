@@ -3113,7 +3113,7 @@ class _Summery_pageState extends State<Summery_page>
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(color: blueColor),
                                 ),
-                                child: buildTenantCard(tenants[index]),
+                                child: buildTenantCard(tenants[index],tenants: tenants),
                               ),
                             ),
                           ),
@@ -3201,7 +3201,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         "" &&
                                                     ismove)
                                                 ? true
-                                                : false),
+                                                : false,tenants: tenants),
                                   ),
                                 ),
                               );
@@ -4073,7 +4073,7 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
-  Widget buildTenantCard(TenantData tenant, {bool? isMoveouts}) {
+  Widget buildTenantCard(TenantData tenant, {bool? isMoveouts,List<TenantData>? tenants}) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Column(
       children: [
@@ -4157,7 +4157,7 @@ class _Summery_pageState extends State<Summery_page>
                               child: Container(
                                   // width: MediaQuery.of(context).size.width - 10,
                                   width: 900,
-                                  child: buildMoveout(tenant)),
+                                  child: buildMoveout(tenant,tenants: tenants)),
                             ),
                           );
                         },
@@ -4371,116 +4371,144 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
-  Widget buildMoveout(TenantData tenant) {
-    final dateProvider = Provider.of<DateProvider>(context);
+  Widget buildMoveout(TenantData tenant, {List<TenantData>? tenants}) {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     moveOutDate = formatDate(tenant.endDate!);
-    // displayDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(moveOutDate));
     startdateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Move out Tenants",
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: blueColor,
-                fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
-          ),
-          SizedBox(height: 13),
-          Text(
-            "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
-            textAlign: TextAlign.justify,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-              color: Color(0xFF8A95A8),
-            ),
-          ),
-          SizedBox(height: 15),
-          Column(
+    // Convert to stateful list to track selection changes
+    Map<String, TextEditingController> startDateControllers = {};
+    Map<String, TextEditingController> moveoutDateControllers = {};
+    Map<String, String> moveOutDates = {};
+
+    List<TenantData> selectedTenants = tenants ?? [];
+
+    for (var t in selectedTenants!) {
+      if (!startDateControllers.containsKey(t.tenantId)) {
+        startDateControllers[t.tenantId!.first] = TextEditingController();
+      }
+      if (!moveoutDateControllers.containsKey(t.tenantId)) {
+        moveoutDateControllers[t.tenantId!.first] = TextEditingController();
+      }
+
+      // Set default values for each tenant
+      startDateControllers[t.tenantId!.first]!.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+      moveoutDateControllers[t.tenantId!.first]!.text = formatDate(t.endDate!);
+
+      // Set default selection
+      t.isSelected = (t.tenantId == tenant.tenantId);
+    }
+    return StatefulBuilder(
+      builder: (context, setState) {
+
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              Text(
+                "Move out Tenants",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                    fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
+              ),
+              SizedBox(height: 13),
+              Text(
+                "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+                textAlign: TextAlign.justify,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                  color: Color(0xFF8A95A8),
+                ),
+              ),
+              SizedBox(height: 15),
+
+              Column(
                 children: [
-                  Text(
-                    'Property Details',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 16 : 20,
-                        color: blueColor),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: blueColor),
-                ),
-                child: Table(
-                  //border: TableBorder.all(color:blueColor),
-                  border: TableBorder(
-                    horizontalInside: BorderSide(
-                      color: blueColor,
-                      width: 1.0,
-                    ),
-                  ),
-                  columnWidths: {
-                    0: FlexColumnWidth(2),
-                    1: FlexColumnWidth(3),
-                  },
-                  children: [
-                    TableRow(
-                      children: [
-                        buildTableCell(Text(
-                          'Address/Unit',
-                          style: TextStyle(
-                            color: blueColor,
+                  Row(
+                    children: [
+                      Text(
+                        'Property Details',
+                        style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 15
-                                : 17,
-                          ),
-                        )),
-                        buildTableCell(
-                            Text('${widget.properties.rentalAddress}')),
-                      ],
+                            fontSize:
+                            MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                            color: blueColor),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: blueColor),
                     ),
-                    TableRow(
+                    child: Table(
+                      //border: TableBorder.all(color:blueColor),
+                      border: TableBorder(
+                        horizontalInside: BorderSide(
+                          color: blueColor,
+                          width: 1.0,
+                        ),
+                      ),
+                      columnWidths: {
+                        0: FlexColumnWidth(2),
+                        1: FlexColumnWidth(3),
+                      },
                       children: [
-                        buildTableCell(Text('Lease Type',
-                            style: TextStyle(
-                              color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width < 500
-                                  ? 15
-                                  : 17,
-                            ))),
-                        buildTableCell(Text('${tenant.leaseType}')),
+                        TableRow(
+                          children: [
+                            buildTableCell(Text(
+                              'Address/Unit',
+                              style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: MediaQuery.of(context).size.width < 500
+                                    ? 15
+                                    : 17,
+                              ),
+                            )),
+                            buildTableCell(
+                                Text('${widget.properties.rentalAddress}')),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            buildTableCell(Text('Lease Type',
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width < 500
+                                      ? 15
+                                      : 17,
+                                ))),
+                            buildTableCell(Text('${tenant.leaseType}')),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            buildTableCell(Text('Start End',
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width < 500
+                                      ? 15
+                                      : 17,
+                                ))),
+                            buildTableCell(
+                                Text('${tenant.startDate} ${tenant.endDate}')),
+                          ],
+                        ),
                       ],
                     ),
-                    TableRow(
-                      children: [
-                        buildTableCell(Text('Start End',
-                            style: TextStyle(
-                              color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width < 500
-                                  ? 15
-                                  : 17,
-                            ))),
-                        buildTableCell(
-                            Text('${tenant.startDate} ${tenant.endDate}')),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+
+                ],
               ),
               Row(
                 children: [
@@ -4488,255 +4516,204 @@ class _Summery_pageState extends State<Summery_page>
                     'Tenant Details',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
                         color: blueColor),
                   ),
                 ],
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Table(
-                border: TableBorder.all(color: blueColor),
-                columnWidths: {
-                  0: FlexColumnWidth(2),
-                  1: FlexColumnWidth(3),
-                },
-                children: [
-                  TableRow(
+              SizedBox(height: 10),
+
+              // List of checkboxes for tenants
+              Column(
+                children: selectedTenants.map((tenant) {
+                  return Column(
                     children: [
-                      buildTableCell(Text('Tenants',
-                          style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 15
-                                : 17,
-                          ))),
-                      buildTableCell(
-                          Text('${tenant.firstName} ${tenant.lastName}')),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      buildTableCell(Text('Notice Given Date',
-                          style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 15
-                                : 17,
-                          ))),
-                      buildTableCell(buildDateField(startdateController)),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      buildTableCell(Text('Move-Out Date',
-                          style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 15
-                                : 17,
-                          ))),
-                      buildTableCell(
-                        Column(
+                      Container(
+                        //color: Colors.green,
+                        padding: const EdgeInsets.symmetric(vertical: 0.0),
+                        child: Row(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                            Checkbox(
+                              value: tenant.isSelected ?? false,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  tenant.isSelected = value ?? false;
+                                });
+                              },
+                            ),
+                            SizedBox(width: 8),
+                            Text("${tenant.firstName} ${tenant.lastName}"),
+                          ],
+                        ),
+                      ),
+                      if(tenant.isSelected)
+                        Table(
+                          border: TableBorder.all(color: blueColor),
+                          columnWidths: {
+                            0: FlexColumnWidth(2),
+                            1: FlexColumnWidth(3),
+                          },
+                          children: [
+                            TableRow(
                               children: [
-                                // Material(
-                                //   elevation: 2,
-                                //   borderRadius: BorderRadius.circular(8),
-                                //   child: Container(
-                                //     height: 40,
-                                //     width: 130,
-                                //     decoration: BoxDecoration(
-                                //       color: Colors.grey[300],
-                                //       borderRadius: BorderRadius.circular(8),
-                                //     ),
-                                //     child: Center(
-                                //       child: Text(
-                                //         displayDate,
-                                //         style: TextStyle(
-                                //           fontSize: MediaQuery.of(context)
-                                //                       .size
-                                //                       .width <
-                                //                   500
-                                //               ? 15
-                                //               : 17,
-                                //         ),
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Expanded(
-                                  child: Material(
-                                    elevation: 2,
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: Container(
-                                      height: 45,
-                                      // width:130,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Center(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 5,
-                                          ),
-                                          child: TextField(
-                                            enabled: true,
-                                            // controller: displayDate,
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              // hintText: displayDate,
-                                              hintText: moveOutDate,
-                                              suffixIcon: IconButton(
-                                                icon:
-                                                    Icon(Icons.calendar_today),
-                                                onPressed: () async {
-                                                  // DateTime? pickedDate = await showDatePicker(
-                                                  //   context: context,
-                                                  //   initialDate: DateTime.now(),
-                                                  //   firstDate: DateTime(2000),
-                                                  //   lastDate: DateTime(2101),
-                                                  // );
-                                                  // if (pickedDate != null) {
-                                                  //   setState(() {
-                                                  //    // controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
-                                                  //   });
-                                                  // }
-                                                },
-                                              ),
-                                            ),
-                                            readOnly: true,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 1,
+                                buildTableCell(Text('Tenants',
+                                    style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context).size.width < 500
+                                          ? 15
+                                          : 17,
+                                    ))),
+                                buildTableCell(
+                                    Text('${tenant.firstName} ${tenant.lastName}')),
+                              ],
+                            ),
+                            TableRow(
+                              children: [
+                                buildTableCell(Text('Notice Given Date',
+                                    style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context).size.width < 500
+                                          ? 15
+                                          : 17,
+                                    ))),
+                                buildTableCell(buildDateField(startDateControllers[tenant.tenantId!.first]!)),
+                              ],
+                            ),
+                            TableRow(
+                              children: [
+                                buildTableCell(Text('Move-Out Date',
+                                    style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context).size.width < 500
+                                          ? 15
+                                          : 17,
+                                    ))),
+                                buildTableCell(
+                                    buildDateField(moveoutDateControllers[tenant.tenantId!.first]!)
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ),
                     ],
-                  ),
-                ],
+                  );
+                }).toList(),
               ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: Container(
-                    height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                    width: 90,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
+
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                     // print(startDateControllers);
+                       Navigator.pop(context);
+                    },
+                    child: Material(
+                      elevation: 3,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
+                      child: Container(
+                        height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                        child: Center(
+                            child: Text(
+                              "Close",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500 ? 15 : 18,
+                                  color: blueColor),
+                            )),
+                      ),
                     ),
-                    child: Center(
-                        child: Text(
-                      "Close",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 15 : 18,
-                          color: blueColor),
-                    )),
                   ),
-                ),
-              ),
-              SizedBox(width: 10),
-              InkWell(
-                onTap: () async {
-                  // if (selectedValue == null ||
-                  //     subtype.text.isEmpty) {
-                  //   setState(() {
-                  //     iserror = true;
-                  //   });
-                  // } else {
-                  //   setState(() {
-                  //     isLoading = true;
-                  //     iserror = false;
-                  //   });
-                  String? tenantId =
+                  SizedBox(width: 10),
+                  InkWell(
+                    onTap: () async {
+
+                      String? tenantId =
                       tenant.tenantId != null && tenant.tenantId!.isNotEmpty
                           ? tenant.tenantId!.first
                           : null;
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? id = prefs.getString("adminId");
-                  print(moveOutDate);
-                  LeaseMoveoutRepository()
-                      .addMoveoutTenant(
-                    adminId: id!,
-                    tenantId: tenantId,
-                    leaseId: tenant.leaseId,
-                    moveoutDate: moveOutDate,
-                    moveoutNoticeGivenDate: startdateController.text,
-                  )
-                      .then((value) {
-                    setState(() {
-                      isLoading = false;
-                      isMovedOut = true;
-                    });
-                    Navigator.pop(context, true);
-                  }).catchError((e) {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  });
-                },
-                child: Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: Container(
-                    height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                    width: MediaQuery.of(context).size.width < 500 ? 100 : 130,
-                    decoration: BoxDecoration(
-                      color: blueColor,
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      String? id = prefs.getString("adminId");
+
+                       List<Map<String,dynamic>> multipletenant = [];
+                       for(tenant in selectedTenants){
+
+                         if(tenant.isSelected){
+                           String moveoutNoticeGivenDate = startDateControllers[tenant.tenantId!.first]!.text;
+                           String moveoutdate = moveoutDateControllers[tenant.tenantId!.first]!.text;
+                           multipletenant.add({
+                             'admin_id': id,
+                             'tenant_id': tenant.tenantId!.first,
+                             'lease_id': tenant.leaseId,
+                             'moveout_notice_given_date': reverseFormatDate( moveoutNoticeGivenDate!),
+                             'moveout_date': reverseFormatDate(moveoutdate!),
+                           });
+                         }
+                       }
+                       print(multipletenant);
+
+
+
+                      await LeaseMoveoutRepository().addMoveoutTenant(
+                        adminId: id!,
+                        tenantId: tenantId,
+                        leaseId: tenant.leaseId,
+                        moveoutDate: moveOutDate,
+                        moveoutNoticeGivenDate: startdateController.text,
+                        multitenantdata: multipletenant
+                      ).then((value) {
+                        setState(() {
+                          isLoading = false;
+                          isMovedOut = true;
+                        });
+                        reload_Screen();
+                        Navigator.pop(context, true);
+                      }).catchError((e) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      });
+                    },
+                    child: Material(
+                      elevation: 3,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
-                    ),
-                    child: Center(
-                        child: Text(
-                      "Move Out",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 15 : 17,
+                      child: Container(
+                        height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                        width: MediaQuery.of(context).size.width < 500 ? 100 : 130,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                        child: Center(
+                            child: Text(
+                              "Move Out",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500 ? 15 : 17,
+                              ),
+                            )),
                       ),
-                    )),
+                    ),
                   ),
-                ),
+                ],
               ),
+              SizedBox(height: 15),
             ],
           ),
-          SizedBox(height: 15),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -4796,11 +4773,11 @@ class _Summery_pageState extends State<Summery_page>
                       },
                     );
                     if (pickedDate != null) {
-                      setState(() {
+                     // setState(() {
                         controller.text = moveOutDate!;
                         controller.text =
                             DateFormat('dd-MM-yyyy').format(pickedDate);
-                      });
+                      //});
                     }
                   },
                 ),

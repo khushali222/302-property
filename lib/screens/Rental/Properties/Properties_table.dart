@@ -952,8 +952,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         bool isExpanded =
                                             expandedIndex == index;
                                         Rentals rentals = entry.value;
-                                        print(
-                                            'test check city ${rentals.rentalCity}');
+
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           // decoration: BoxDecoration(

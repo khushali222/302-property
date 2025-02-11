@@ -176,6 +176,7 @@ class LeaseTenant {
   String tenantEmail;
   String rentalAddress;
   String rentalUnit;
+  bool? isSelected;
   bool? recurring;
 
   LeaseTenant({
@@ -195,6 +196,7 @@ class LeaseTenant {
     required this.tenantEmail,
     required this.rentalAddress,
     required this.rentalUnit,
+    this.isSelected,
     this.recurring,
   });
 

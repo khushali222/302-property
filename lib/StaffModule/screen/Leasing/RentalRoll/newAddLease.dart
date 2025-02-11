@@ -5103,9 +5103,16 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   void initState() {
     super.initState();
     if (widget.initialData != null) {
-      _selectedProperty = widget.initialData!['property'] ?? '';
+      _selectedProperty = widget.initialData!['account'] ?? '';
       _amountController.text = widget.initialData!['amount'] ?? '';
       _memoController.text = widget.initialData!['memo'] ?? '';
+      String dateString = widget.initialData!['date'] ?? "";
+      if (dateString.isNotEmpty) {
+        DateTime date = DateTime.parse(dateString);
+        selectedDay = date.day.toString(); // Extracts only the day
+      } else {
+        selectedDay = ""; // Handle empty case
+      }
     }
     fetchData();
   }
@@ -5156,7 +5163,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         child: Material(
           child: Container(
             color: Colors.white,
-            height: _isInvalid ? 377 : 380,
+            height: _isInvalid ? 450 : 460,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -5619,6 +5626,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   controller: _memoController,
                   optional: true,
                 ),
+                const SizedBox(height: 10),
                 Text(
                   'Choose Day of Month *',
                   style: TextStyle(
@@ -5737,10 +5745,14 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       String formattedDate = "${nextMonthDate.year}-"
           "${nextMonthDate.month.toString().padLeft(2, '0')}-"
           "${nextMonthDate.day.toString().padLeft(2, '0')}";
+      String? id =  widget.initialData!['entry_id'] != "" ?
+      widget.initialData!['entry_id']
+          : "";
       final formData = {
         'account': _selectedProperty ?? '',
         'amount': _amountController.text.trim(),
         'memo': _memoController.text.trim(),
+        'entry_id':id!,
         'charge_type': 'Recurring Charge',
         'date': formattedDate,
       };

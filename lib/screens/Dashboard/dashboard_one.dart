@@ -18,6 +18,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Dashboard/RentPastDueReport.dart';
+import 'package:three_zero_two_property/screens/Dashboard/dashbordpolices_table.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Vendor/Vendor_table.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
@@ -5179,6 +5180,11 @@ class _DashboardState extends State<Dashboard> {
                                   left: 0, right: 8),
                               child: Barchart(),
                             ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(
+                            //       left: 0, right: 8),
+                            //   child:  Dashboard_Policy_Table(),
+                            // ),
                           ],
                         );
                       } else {
@@ -5217,6 +5223,7 @@ class _DashboardState extends State<Dashboard> {
                                 width: 10,
                               ),
                               Barchart(),
+
                             ],
                           ),
                         );

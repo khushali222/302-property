@@ -874,9 +874,11 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                       child:
                                                                           Row(
                                                                         children: [
-                                                                          Container(
-                                                                            child:
-                                                                                Text("${card.account}", style: TextStyle(fontSize: 15)),
+                                                                          Expanded(
+                                                                            child: Container(
+                                                                              child:
+                                                                                  Text("${card.account}", style: TextStyle(fontSize: 15)),
+                                                                            ),
                                                                           ),
                                                                           SizedBox(
                                                                               width: 5),
