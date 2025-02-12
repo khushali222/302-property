@@ -9,11 +9,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../../constant/constant.dart';
 
+import '../../../../widgets/VideoPlayerWidget.dart';
 import '../../../repository/workorder.dart';
 import '../../../model/properties.dart';
 import '../../../widgets/appbar.dart';
@@ -596,8 +599,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
 
   File? _image;
   List<File> _images = [];
+  List<File> videofiles = [];
   String? _uploadedFileName;
   List<String> _uploadedFileNames = [];
+  List<bool> isvideo = [];
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -625,15 +630,46 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await _picker.pickMedia();
+
 
     if (image != null) {
+      final File file = File(image.path);
+      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
+      if (isVideo) {
+        String? thumbnailPath = await _generateVideoThumbnail(image.path);
+        if (thumbnailPath != null) {
+          setState(() {
+            _images.add(File(thumbnailPath));
+            isvideo.add(true);
+            videofiles.add(file);
+          });
+        }
+      } else {
+        setState(() {
+          _images.add(file);
+          isvideo.add(false);
+          videofiles.add(file);
+        });
+      }
+
+
       setState(() {
         _image = File(image.path);
-        _images.add(File(image.path));
+        // _images.add(File(image.path));
       });
       _uploadImage(File(image.path));
     }
+  }
+  Future<String?> _generateVideoThumbnail(String videoPath) async {
+    final String? thumbPath = await VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.PNG,
+      maxHeight: 80,
+      quality: 50,
+    );
+    return thumbPath;
   }
 
   Future<void> _uploadImage(File imageFile) async {
@@ -646,6 +682,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     } catch (e) {
       print('Image upload failed: $e');
     }
+  }
+
+  void _showVideoDialog(File videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Container(child: VideoPlayerDialog(videoFile: videoFile));
+      },
+    );
   }
 
   @override
@@ -761,81 +806,177 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                           ),
                           _images.isNotEmpty
                               ? Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        //color: Colors.blue,
-                                        child: Wrap(
-                                          spacing:
-                                              8.0, // Horizontal spacing between items
-                                          runSpacing:
-                                              8.0, // Vertical spacing between rows
-                                          children: List.generate(
-                                            _images.length,
-                                            (index) {
-                                              return Container(
-                                                // color: Colors.green,
-                                                width: 85,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  //color: Colors.blue,
+                                  child: Wrap(
+                                    spacing:
+                                    8.0, // Horizontal spacing between items
+                                    runSpacing:
+                                    8.0, // Vertical spacing between rows
+                                    children: List.generate(
+                                      _images.length,
+                                          (index) {
+
+                                        return Container(
+                                          // color: Colors.green,
+                                          width: 85,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment
+                                                .start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 60,
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _images
+                                                            .removeAt(
+                                                            index);
+                                                      });
+                                                    },
+                                                    child: Icon(
+                                                      Icons.close,
+                                                      color:
+                                                      Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .start,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  isvideo[index]?
+                                                  GestureDetector(
+                                                    onTap: () {
+
+                                                      _showVideoDialog(videofiles[index]);
+                                                    },
+                                                    child: Stack(
+                                                      alignment: Alignment.center,
                                                       children: [
-                                                        SizedBox(
-                                                          width: 60,
+                                                        Image.file(
+                                                          _images[index],
+                                                          height: 80,
+                                                          width: 80,
+                                                          fit: BoxFit.cover,
                                                         ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              _images
-                                                                  .removeAt(
-                                                                      index);
-                                                            });
-                                                          },
-                                                          child: Icon(
-                                                            Icons.close,
-                                                            color:
-                                                                Colors.grey,
-                                                          ),
-                                                        ),
+                                                        Icon(Icons.play_circle_fill, color: Colors.white, size: 30),
                                                       ],
                                                     ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          // color:Colors.blue,
-                                                          child: Image.file(
-                                                            _images[index],
-                                                            height: 80,
-                                                            width: 80,
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                        ),
-                                                      ],
+                                                  ):Container(
+                                                    // color:Colors.blue,
+                                                    child:  Image.file(
+                                                      _images[index],
+                                                      height: 80,
+                                                      width: 80,
+                                                      fit: BoxFit.cover,
                                                     ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ),
+                                        );
+                                      },
                                     ),
-                                  ],
-                                )
-                              : Center(
-                                  child: Text("No images selected."),
+                                  ),
                                 ),
+                              ),
+                            ],
+                          )
+                              : Center(
+                            child: Text("No images selected."),
+                          ),
+                          // _images.isNotEmpty
+                          //     ? Row(
+                          //         children: [
+                          //           Expanded(
+                          //             child: Container(
+                          //               //color: Colors.blue,
+                          //               child: Wrap(
+                          //                 spacing:
+                          //                     8.0, // Horizontal spacing between items
+                          //                 runSpacing:
+                          //                     8.0, // Vertical spacing between rows
+                          //                 children: List.generate(
+                          //                   _images.length,
+                          //                   (index) {
+                          //                     return Container(
+                          //                       // color: Colors.green,
+                          //                       width: 85,
+                          //                       child: Column(
+                          //                         mainAxisAlignment:
+                          //                             MainAxisAlignment.start,
+                          //                         crossAxisAlignment:
+                          //                             CrossAxisAlignment
+                          //                                 .start,
+                          //                         children: [
+                          //                           Row(
+                          //                             children: [
+                          //                               SizedBox(
+                          //                                 width: 60,
+                          //                               ),
+                          //                               GestureDetector(
+                          //                                 onTap: () {
+                          //                                   setState(() {
+                          //                                     _images
+                          //                                         .removeAt(
+                          //                                             index);
+                          //                                   });
+                          //                                 },
+                          //                                 child: Icon(
+                          //                                   Icons.close,
+                          //                                   color:
+                          //                                       Colors.grey,
+                          //                                 ),
+                          //                               ),
+                          //                             ],
+                          //                           ),
+                          //                           Row(
+                          //                             mainAxisAlignment:
+                          //                                 MainAxisAlignment
+                          //                                     .start,
+                          //                             crossAxisAlignment:
+                          //                                 CrossAxisAlignment
+                          //                                     .start,
+                          //                             children: [
+                          //                               Container(
+                          //                                 // color:Colors.blue,
+                          //                                 child: Image.file(
+                          //                                   _images[index],
+                          //                                   height: 80,
+                          //                                   width: 80,
+                          //                                   fit: BoxFit.cover,
+                          //                                 ),
+                          //                               ),
+                          //                             ],
+                          //                           ),
+                          //                         ],
+                          //                       ),
+                          //                     );
+                          //                   },
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       )
+                          //     : Center(
+                          //         child: Text("No images selected."),
+                          //       ),
                           SizedBox(
                             height: 10,
                           ),
@@ -2184,7 +2325,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                             ),
                           ),
                           onPressed: _submitForm,
-                          child: isLoading
+                          child: isloading
                               ? Center(
                                   child: SpinKitFadingCircle(
                                     color: Colors.white,
@@ -2261,12 +2402,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
   }
 
   bool isLoading = false;
+  bool isloading = false;
   bool formValid = true;
 
   void _submitForm() async {
     if (_formkey.currentState!.validate()) {
       setState(() {
-        isLoading = true;
+        isloading = true;
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
@@ -2336,7 +2478,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
         print(e);
       } finally {
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
       }
     } else {

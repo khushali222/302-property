@@ -481,7 +481,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                                 Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
-                                                                                    Text("${card.binResult}", style: TextStyle(fontSize: 13)),
+                                                                                    Text("${card.binResult != null ?card.binResult : "N/A"}", style: TextStyle(fontSize: 13)),
                                                                                     SizedBox(
                                                                                       width: 52,
                                                                                     ),

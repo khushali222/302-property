@@ -7,8 +7,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
 import '../../../repository/workorder.dart';
 import 'Add_workorder.dart';
@@ -662,6 +664,7 @@ class _Workorder_tableState extends State<Workorder_table> {
 
   final _scrollController = ScrollController();
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -1269,8 +1272,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             ),
                                                             _buildTableRow(
                                                                 'Updated At:', formatDate('${workOrder.workOrderData?.updatedAt}}'),
-                                                                '', ''
+                                                                'Due Date:', '${workOrder.workOrderData?.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workOrder.workOrderData?.date}') : 'N/A'}'
                                                             ),
+
                                                           ],
                                                         ),
                                                       ),

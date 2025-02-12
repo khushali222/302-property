@@ -33,6 +33,7 @@ import '../../../model/LeaseSummary.dart';
 import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
 import '../../Rental/Properties/moveout/repository.dart';
+import 'Document_Rental/Document_rental_table.dart';
 import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -450,7 +451,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       case 2:
         return Tenant(context);
       // case 3:
-      //   return AddDocument();
+      //   return DocumentRentalTable(leaseId: widget.leaseId,);
       // case 3:
       //   return
       //     Padding(

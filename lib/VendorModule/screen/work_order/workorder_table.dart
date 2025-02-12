@@ -6,7 +6,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -626,7 +628,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       key: key,
       appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
@@ -1146,10 +1148,14 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                 'Assign:', getDisplayValue(workorder.staffMemberName)
                                                             ),
                                                             buildTableRow(
-                                                                'Created At:',formatDate('${workorder.createdAt}'),
-                                                                'Updated At:', formatDate('${workorder.updatedAt}')
+                                                                'Created At:','${workorder.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.createdAt}') : 'N/A'}',
+                                                                'Updated At:','${workorder.updatedAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.updatedAt}') : 'N/A'}'
                                                             ),
-
+                                                            buildTableRow(
+                                                                'Due Date:',
+                                                                '${workorder.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.date}') : 'N/A'}',
+                                                                '',
+                                                                ''),
                                                           ],
                                                         ),
                                                       ),

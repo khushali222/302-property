@@ -89,11 +89,11 @@ dependencies:
   credit_card_validator:
   url_launcher: ^6.1.10
   video_player:
-  video_thumbnail:
+  video_thumbnail: # video image for File only
   chewie:
   timeago:
   share_plus:
-
+  ffmpeg_kit_flutter:  # video image for network video
 
   # pdf:
 

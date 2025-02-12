@@ -1,18 +1,21 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
 String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-//String Api_url = "http://192.168.1.21:4000";
+String Api_url = "http://192.168.1.21:4000";
 
-String Api_url = "https://saas.cloudrentalmanager.com";
+//String Api_url = "https://saas.cloudrentalmanager.com";
 
 String image_upload_url = "https://saas.cloudrentalmanager.com";
 
@@ -391,4 +394,20 @@ String? ValidateExpirationDate(String expirationDate) {
   }
 
   return null; // Indicate the expiration date is valid
+}
+Future<String?> generateNetworkVideoThumbnail(String videoUrl) async {
+  try {
+    final Directory tempDir = await getTemporaryDirectory();
+    final String thumbPath = '${tempDir.path}/thumbnail.png';
+
+    // Use FFmpeg to extract a frame from the video URL
+    await FFmpegKit.execute('-i $videoUrl -ss 00:00:01 -vframes 1 $thumbPath');
+
+    if (File(thumbPath).existsSync()) {
+      return thumbPath; // Return local path of thumbnail
+    }
+  } catch (e) {
+    print("Error generating thumbnail: $e");
+  }
+  return null;
 }

@@ -17,6 +17,7 @@ import 'package:three_zero_two_property/repository/workorder.dart';
 
 import '../../../constant/constant.dart';
 
+import '../../../widgets/VideoPlayerWidget.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
@@ -783,7 +784,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await _picker.pickMedia();
 
     if (image != null) {
       setState(() {
@@ -808,6 +809,22 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   }
 
   List<String> _imageUrls = [];
+
+  bool isVideo(String url) {
+    return url.toLowerCase().endsWith(".mp4");
+  }
+
+  void _showVideoDialog(String videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          child: VideoPlayerDialog(videoUrl: videoFile,),
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -928,6 +945,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                     children: List.generate(
                                       _imageUrls.length,
                                           (index) {
+                                            bool isMp4 = isVideo(_imageUrls[index]);
                                         return Container(
                                           width: 85,
                                           child: Column(
@@ -954,6 +972,39 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
+                                                  isMp4 ?  FutureBuilder<String?>(
+                                                    future: generateNetworkVideoThumbnail("$image_url${_imageUrls[index]}"),
+                                                    builder: (context, snapshot) {
+                                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                                        return Center(
+                                                            child: SpinKitFadingCircle(
+                                                              color: Colors.black,
+                                                              size: 40.0,
+                                                            ));
+                                                      } else if (snapshot.hasData && snapshot.data != null) {
+                                                        return  GestureDetector(
+                                                          onTap: (){
+                                                            _showVideoDialog('$image_url${_imageUrls[index]}');
+                                                          },
+                                                          child: Stack(
+                                                            alignment: Alignment.center,
+                                                            children: [
+                                                              Image.file(
+                                                                File(snapshot.data!),
+                                                                height:80,
+                                                                width: 80,
+                                                                fit: BoxFit.cover,
+                                                              ),
+                                                              Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                            ],
+                                                          ),
+                                                        );
+
+                                                      } else {
+                                                        return Icon(Icons.error);
+                                                      }
+                                                    },
+                                                  ):
                                                   Container(
                                                     child: Image.network(
                                                       "$image_url${_imageUrls[index]}",
@@ -2241,7 +2292,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             ),
                           ),
                           onPressed: _submitForm,
-                          child: isLoading
+                          child: isloading
                               ? Center(
                                   child: SpinKitFadingCircle(
                                     color: Colors.white,
@@ -2318,12 +2369,13 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   }
 
   bool isLoading = false;
+  bool isloading = false;
   bool formValid = true;
 
   void _submitForm() async {
     if (_formkey.currentState!.validate()) {
       setState(() {
-        isLoading = true;
+        isloading = true;
       });
 
       // Check if any fields have changed
@@ -2347,7 +2399,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         print("no changes");
 
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
         Navigator.pop(context,false);
         return; // Exit the method
@@ -2427,7 +2479,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       } finally {
         // Final cleanup
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
       }
     } else {

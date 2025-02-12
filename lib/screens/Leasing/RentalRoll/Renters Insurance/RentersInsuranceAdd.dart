@@ -258,7 +258,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
         drawer: CustomDrawer(
-          currentpage: "Tenants",
+          currentpage: "Rent Roll",
           dropdown: true,
         ),
         body: Form(

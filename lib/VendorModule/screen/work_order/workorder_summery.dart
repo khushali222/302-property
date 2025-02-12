@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -23,6 +24,7 @@ import 'package:three_zero_two_property/repository/lease.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
+import '../../../widgets/VideoPlayerWidget.dart';
 import '../../../widgets/titleBar.dart';
 import '../../widgets/appbar.dart';
 import '../../widgets/drawer_tiles.dart';
@@ -268,7 +270,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     ),
                     child: const Center(
                         child: Text(
-                          "Add Details",
+                          "Edit Details",
                           style: TextStyle(
                               fontWeight: FontWeight.w500, color: Colors.white),
                         )),
@@ -1811,14 +1813,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              'Due Date : ${update.date != null ? update.date : update.date ?? "N/A"}',
-                                              style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              'Status : ${update.status != null ? update.status : update.status ?? "N/A"}',
-                                              style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
-                                            ),
+                                            if(update.status != "")
+                                              Text(
+                                                'Status : ${update.status != "" ? update.status : update.status ?? "N/A"}',
+                                                style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                              ),
+                                            if(update.date != "")
+                                              Text(
+                                                'Due Date : ${update.date != "" ? update.date : update.date ?? "N/A"}',
+                                                style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                              ),
 
                                           ],
                                         ),
@@ -2633,32 +2637,50 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             runSpacing: 10,
                                             children:
                                             summery.workOrderImages!.map((imageUrl) {
+                                              bool isMp4 = isVideo(imageUrl);
                                               return Container(
-                                                width:
-                                                summery.workOrderImages!.length == 1
-                                                    ? MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                    3
-                                                    : (MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                    3) -
-                                                    10,
+                                                width: summery.workOrderImages!.length == 1
+                                                    ? MediaQuery.of(context).size.width / 3
+                                                    : (MediaQuery.of(context).size.width / 3) - 10,
                                                 decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(10),
                                                 ),
                                                 child: ClipRRect(
                                                   borderRadius: BorderRadius.circular(10),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: "$image_url$imageUrl",
-                                                    placeholder: (context, url) => Center(
-                                                        child:
-                                                        CircularProgressIndicator()),
-                                                    errorWidget: (context, url, error) {
-                                                      print(error);
-                                                      return Container();
+                                                  child: isMp4
+                                                      ? FutureBuilder<String?>(
+                                                    future: generateNetworkVideoThumbnail("$image_url$imageUrl"),
+                                                    builder: (context, snapshot) {
+                                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                                        return Center(child: CircularProgressIndicator());
+                                                      } else if (snapshot.hasData && snapshot.data != null) {
+                                                        return  GestureDetector(
+                                                          onTap: (){
+                                                            _showVideoDialog('$image_url$imageUrl');
+                                                          },
+                                                          child: Stack(
+                                                            alignment: Alignment.center,
+                                                            children: [
+                                                              Image.file(
+                                                                File(snapshot.data!),
+                                                                height: 100,
+                                                                width: 100,
+                                                                fit: BoxFit.cover,
+                                                              ),
+                                                              Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                            ],
+                                                          ),
+                                                        );
+
+                                                      } else {
+                                                        return Icon(Icons.error);
+                                                      }
                                                     },
+                                                  )
+                                                      : CachedNetworkImage(
+                                                    imageUrl: "$image_url$imageUrl",
+                                                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                    errorWidget: (context, url, error) => Icon(Icons.error),
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),
@@ -2800,9 +2822,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     width: MediaQuery.of(context).size.width > 500
                                         ? 200
-                                        : 180,
+                                        : 188,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 1),
+                                      padding: const EdgeInsets.only(left: 0),
                                       child: Text(
                                         '${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}',
                                         maxLines: 5, // Set maximum number of lines
@@ -3121,32 +3143,58 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           runSpacing: 10,
                                           children:
                                           summery.workOrderImages!.map((imageUrl) {
+                                            bool isMp4 = isVideo(imageUrl);
                                             return Container(
-                                              width:
-                                              summery.workOrderImages!.length == 1
-                                                  ? MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3
-                                                  : (MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3) -
-                                                  10,
+                                              width: summery.workOrderImages!.length == 1
+                                                  ? MediaQuery.of(context).size.width / 3
+                                                  : (MediaQuery.of(context).size.width / 3) - 10,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
                                               child: ClipRRect(
                                                 borderRadius: BorderRadius.circular(10),
-                                                child: CachedNetworkImage(
+                                                child: isMp4
+                                                    ? FutureBuilder<String?>(
+                                                  future: generateNetworkVideoThumbnail("$image_url$imageUrl"),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                                      return Center(
+                                                          child: SpinKitFadingCircle(
+                                                            color: Colors.black,
+                                                            size: 40.0,
+                                                          ));
+                                                    } else if (snapshot.hasData && snapshot.data != null) {
+                                                      return  GestureDetector(
+                                                        onTap: (){
+                                                          _showVideoDialog('$image_url$imageUrl');
+                                                        },
+                                                        child: Stack(
+                                                          alignment: Alignment.center,
+                                                          children: [
+                                                            Image.file(
+                                                              File(snapshot.data!),
+                                                              height: 100,
+                                                              width: 100,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                            Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                          ],
+                                                        ),
+                                                      );
+
+                                                    } else {
+                                                      return Icon(Icons.error);
+                                                    }
+                                                  },
+                                                )
+                                                    : CachedNetworkImage(
                                                   imageUrl: "$image_url$imageUrl",
                                                   placeholder: (context, url) => Center(
-                                                      child:
-                                                      CircularProgressIndicator()),
-                                                  errorWidget: (context, url, error) {
-                                                    print(error);
-                                                    return Container();
-                                                  },
+                                                      child: SpinKitFadingCircle(
+                                                        color: Colors.black,
+                                                        size: 40.0,
+                                                      )),
+                                                  errorWidget: (context, url, error) => Icon(Icons.error),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -3224,6 +3272,20 @@ class _Workorder_summeryState extends State<Workorder_summery>
     );
   }
 
+
+  bool isVideo(String url) {
+    return url.toLowerCase().endsWith(".mp4");
+  }
+  void _showVideoDialog(String videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          child: VideoPlayerDialog(videoUrl: videoFile,),
+        );
+      },
+    );
+  }
   //
   // updatecheckBox() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();

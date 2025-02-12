@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Document_Rental/Document_rental_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Recurringpayment.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Renters%20Insurance/Renters_Insurance_table.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
@@ -361,6 +362,30 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             //     ),
                             //   ),
                             // ),
+                            // Expanded(
+                            //   child: GestureDetector(
+                            //     onTap: () {
+                            //       setState(() {
+                            //         _selectedIndex = 3;
+                            //       });
+                            //     },
+                            //     child: Container(
+                            //       decoration: BoxDecoration(
+                            //           color: _selectedIndex == 3
+                            //               ? blueColor
+                            //               : Colors.white,
+                            //           borderRadius:
+                            //           BorderRadius.circular(5)),
+                            //       child: Center(
+                            //           child: Text("Document",
+                            //               style: TextStyle(
+                            //                 color: _selectedIndex != 3
+                            //                     ? blueColor
+                            //                     : Colors.white,
+                            //               ))),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
@@ -436,6 +461,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
           );
       case 2:
         return Tenant(context);
+      // case 3:
+      //   return DocumentRentalTable(leaseId: widget.leaseId,);
       // case 3:
       //   return
       //     Padding(
