@@ -2202,7 +2202,7 @@ class _Summery_pageState extends State<Summery_page>
                         ),
                         Container(
                           height: 30,
-                          width: 85,
+                          width:90,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -2232,7 +2232,7 @@ class _Summery_pageState extends State<Summery_page>
                             widget.properties.rentalImage != '')
                           Container(
                             height: 30,
-                            width: 80,
+                            width: 100,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -2489,7 +2489,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .06),
                                                 Expanded(
                                                   child: Text(
                                                     formatPhoneNumber(rentals

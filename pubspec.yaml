@@ -92,8 +92,11 @@ dependencies:
   video_thumbnail: # video image for File only
   chewie:
   timeago:
+  flutter_quill:
   share_plus:
   ffmpeg_kit_flutter:  # video image for network video
+  flutter_cached_pdfview: ^0.4.3
+  syncfusion_flutter_pdfviewer:
 
   # pdf:
 

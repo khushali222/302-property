@@ -358,7 +358,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                             ),
                             Container(
                               height: 40,
-                              width: 125,
+                              width: 140,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
@@ -411,12 +411,12 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(left: 13,top: 4),
                     child: Row(
                       children: [
                         Container(
                           height: 50,
-                          width: 150,
+                          width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -452,7 +452,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                         ),
                         Container(
                             height: 50,
-                            width: 120,
+                            width: 100,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0)),
                             child: ElevatedButton(

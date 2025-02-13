@@ -1644,7 +1644,7 @@ class _enterChargeState extends State<enterCharge> {
                       Container(
                           height: 50,
                           width: MediaQuery.of(context).size.width < 500
-                              ? 130
+                              ? 150
                               : 150,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0)),

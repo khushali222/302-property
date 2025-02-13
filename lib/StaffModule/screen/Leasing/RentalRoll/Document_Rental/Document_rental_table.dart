@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Document_Rental/pdf_view.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import '../../../../../constant/constant.dart';
@@ -485,7 +486,79 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                 ],
                                               ),
                                               SizedBox(height: 5),
-
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        // print("calling");
+                                                        // print( "${image_url}${item["document_name"]}");
+                                                        // const PDF().fromUrl(
+                                                        //  "${image_url}${item["document_name"]}",
+                                                        //   placeholder: (double progress) => Center(child: Text('$progress %')),
+                                                        //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
+                                                        // );
+                                                        String pdfUrl =
+                                                            "${image_url}${item["document_name"]}";
+                                                        print(
+                                                            "Opening PDF: $pdfUrl");
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PDFViewerScreen(
+                                                                    pdfUrl:
+                                                                    pdfUrl),
+                                                          ),
+                                                        );
+                                                        // showPdfDialog(context, pdfUrl);
+                                                      },
+                                                      child: Container(
+                                                        height: 40,
+                                                        decoration:
+                                                        BoxDecoration(
+                                                            color: Colors
+                                                                .grey[350]),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Image.asset(
+                                                              'assets/icons/view.png',
+                                                              color: blueColor,
+                                                            ),
+                                                            // FaIcon(
+                                                            //   FontAwesomeIcons.trashCan,
+                                                            //   size: 15,
+                                                            //   color:blueColor,
+                                                            // ),
+                                                            SizedBox(
+                                                              width: 8,
+                                                            ),
+                                                            Text(
+                                                              "View Document",
+                                                              style: TextStyle(
+                                                                  fontSize: 11,
+                                                                  color:
+                                                                  blueColor,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ),

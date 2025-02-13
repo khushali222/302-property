@@ -1896,7 +1896,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 ),
                                                 SizedBox(
                                                   
-                                                  width: 5,
+                                                  width: 2,
                                                 
                                                 ),
                                                 Icon(

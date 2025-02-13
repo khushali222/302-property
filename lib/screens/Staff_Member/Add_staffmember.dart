@@ -1033,7 +1033,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 height:
                                     MediaQuery.of(context).size.height * .05,
                                 width: MediaQuery.of(context).size.width < 500
-                                    ? 150
+                                    ? 160
                                     : 180,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),

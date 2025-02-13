@@ -479,15 +479,15 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                             Column(
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
-                                                                                Text("${card.ccNumber}", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                                                                Text("${card.ccNumber}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                                                                                 Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
-                                                                                    Text("${card.binResult != null ?card.binResult : "N/A"}", style: TextStyle(fontSize: 13)),
+                                                                                    Text("${card.binResult != null ?card.binResult : "N/A"}", style: TextStyle(fontSize: 11)),
                                                                                     SizedBox(
                                                                                       width: 52,
                                                                                     ),
-                                                                                    Text("${card.ccExp}", style: TextStyle(fontSize: 13)),
+                                                                                    Text("${card.ccExp}", style: TextStyle(fontSize: 11)),
                                                                                   ],
                                                                                 ),
                                                                               ],
