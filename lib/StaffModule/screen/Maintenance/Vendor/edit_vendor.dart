@@ -1036,9 +1036,10 @@ class _edit_vendorState extends State<edit_vendor> {
   String? initialPhoneNumber;
   String? initialEmail;
   String? initialPassword;
+  bool isloading = false;
   Future<void> _fetchVendor() async {
     setState(() {
-      isLoading = true;
+      isloading = true;
     });
 
     try {
@@ -1057,7 +1058,7 @@ class _edit_vendorState extends State<edit_vendor> {
           .showSnackBar(SnackBar(content: Text('Failed to fetch vendor data')));
     } finally {
       setState(() {
-        isLoading = false;
+        isloading = false;
       });
     }
   }

@@ -969,7 +969,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           ),
                           Container(
                             height: 40,
-                            width: 130,
+                            width: 140,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
                             ),

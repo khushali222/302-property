@@ -2944,6 +2944,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     setState(() {
                       primaryemailerror = true;
                       primaryemailmessage = "Email is not valid";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
@@ -2972,11 +2973,13 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
                   if (formattedPhoneNumber.isEmpty) {
                     setState(() {
+                      isFormValid = false;
                       phonenumerror = true;
                       phonenummessage = "required";
                     });
                   } else if (formattedPhoneNumber.length != 10) {
                     setState(() {
+                      isFormValid = false;
                       phonenumerror = true;
                       phonenummessage = "Phone number must be 10 digits";
                     });
@@ -2993,11 +2996,13 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }else if(formattedhomeNumber.length != 10){
                     setState(() {
+                      isFormValid = false;
                       homenumerror = true;
                       homenummessage = "Phone number must be 10 digits";
                     });
                   } else if(formattedhomeNumber == formattedPhoneNumber){
                     setState(() {
+                      isFormValid = false;
                       homenumerror = true;
                       homenummessage = " number cannot be the same";
                     });
@@ -3013,11 +3018,13 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }else if(formattedofficeNumber.length != 10){
                     setState(() {
+                      isFormValid = false;
                       officenumerror = true;
                       officenummessage = "Phone number must be 10 digits";
                     });
                   }else if(formattedofficeNumber == formattedhomeNumber){
                     setState(() {
+                      isFormValid = false;
                       officenumerror = true;
                       officenummessage = " number cannot be the same";
                     });

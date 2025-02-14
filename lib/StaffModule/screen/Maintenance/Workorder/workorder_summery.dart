@@ -1594,7 +1594,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           ),
                           Spacer(),
                           Container(
-                            height: 70,
+                           // height: 70,
                             width: MediaQuery.of(context).size.width * .3,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),

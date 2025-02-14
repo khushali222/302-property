@@ -746,9 +746,11 @@ class _SummaryContentState extends State<SummaryContent> {
                 ),
               ),
             ),
+
             const SizedBox(
               height: 10,
             ),
+            if(widget.summery.applicantStatus!.length >0)
             Material(
               elevation: 6,
               borderRadius: BorderRadius.circular(10),
@@ -818,6 +820,7 @@ class _SummaryContentState extends State<SummaryContent> {
                 ),
               ),
             ),
+            if(widget.summery.applicantStatus!.length >0)
             const SizedBox(
               height: 16,
             ),

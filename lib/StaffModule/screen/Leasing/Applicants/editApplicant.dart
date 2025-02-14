@@ -407,7 +407,7 @@ class _EditApplicantState extends State<EditApplicant> {
                   children: [
                     Container(
                       height: 50,
-                      width: 155,
+                      width: 170,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                       ),

@@ -89,35 +89,9 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                   const SizedBox(
                     height: 15,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: Container(
-                        height: 50.0,
-                        padding: const EdgeInsets.only(top: 8, left: 10),
-                        width: MediaQuery.of(context).size.width * .91,
-                        margin: const EdgeInsets.only(bottom: 6.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          color: blueColor,
-                          boxShadow: [
-                            const BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 6.0,
-                            ),
-                          ],
-                        ),
-                        child: const Text(
-                          "Renter's Insurance Details",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        ),
-                      ),
-                    ),
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .91,
+                    title: "Renter's Insurance Details",
                   ),
                   Padding(
                     padding:
@@ -165,163 +139,171 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                                   TableRow(children: [
                                     const TableCell(
                                         child: Padding(
-                                          padding: EdgeInsets.all(10.0),
-                                          child: Text(
-                                            'Insurance Company',
-                                            style: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                        )),
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'Insurance Company',
+                                        style: TextStyle(
+                                            color: Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    )),
                                     TableCell(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(top: 12),
-                                          child: Text(
-                                            '${rentersData.insuranceCompany?.isNotEmpty == true ? rentersData.insuranceCompany : "N/A"}',
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: blueColor),
-                                          ),
-                                        )),
+                                      padding: const EdgeInsets.only(top: 12),
+                                      child: Text(
+                                        '${rentersData.insuranceCompany?.isNotEmpty == true ? rentersData.insuranceCompany : "N/A"}',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      ),
+                                    )),
                                   ]),
                                   TableRow(children: [
                                     const TableCell(
                                         child: Padding(
-                                          padding: EdgeInsets.all(10.0),
-                                          child: Text(
-                                            'Company Phone Number',
-                                            style: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                        )),
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'Company Phone Number',
+                                        style: TextStyle(
+                                            color: Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    )),
                                     TableCell(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(top: 12),
-                                          child: Text(
-                                            rentersData.insuranceCompanyPhoneNumber != null &&
-                                                rentersData.insuranceCompanyPhoneNumber!.isNotEmpty
-                                                ? formatPhoneNumber(rentersData.insuranceCompanyPhoneNumber!)
-                                                : "N/A",
-                                            // '${(tenantsummery.first.tenantPhoneNumber ?? '').isEmpty ? 'N/A' : tenantsummery.first.tenantPhoneNumber}',
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: blueColor),
-                                          ),
-                                        )),
+                                      padding: const EdgeInsets.only(top: 12),
+                                      child: Text(
+                                        rentersData.insuranceCompanyPhoneNumber !=
+                                                    null &&
+                                                rentersData
+                                                    .insuranceCompanyPhoneNumber!
+                                                    .isNotEmpty
+                                            ? formatPhoneNumber(rentersData
+                                                .insuranceCompanyPhoneNumber!)
+                                            : "N/A",
+                                        // '${(tenantsummery.first.tenantPhoneNumber ?? '').isEmpty ? 'N/A' : tenantsummery.first.tenantPhoneNumber}',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      ),
+                                    )),
                                   ]),
                                   TableRow(children: [
                                     const TableCell(
                                         child: Padding(
-                                          padding: EdgeInsets.all(10.0),
-                                          child: Text(
-                                            'Policy ID',
-                                            style: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                        )),
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'Policy ID',
+                                        style: TextStyle(
+                                            color: Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    )),
                                     TableCell(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(top: 12),
-                                          child: Text(
-                                            rentersData.policyId != null && rentersData.policyId!.isNotEmpty
-                                                ? rentersData.policyId!
-                                                : "N/A",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: blueColor),
-                                          ),
-                                        )),
+                                      padding: const EdgeInsets.only(top: 12),
+                                      child: Text(
+                                        rentersData.policyId != null &&
+                                                rentersData.policyId!.isNotEmpty
+                                            ? rentersData.policyId!
+                                            : "N/A",
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      ),
+                                    )),
                                   ]),
                                   TableRow(children: [
                                     const TableCell(
                                         child: Padding(
-                                          padding: EdgeInsets.all(10.0),
-                                          child: Text(
-                                            'Effective Date',
-                                            style: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                        )),
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'Effective Date',
+                                        style: TextStyle(
+                                            color: Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    )),
                                     TableCell(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(top: 12),
-                                          child: Text(
-                                            rentersData.effectiveDate?.isNotEmpty ==
+                                      padding: const EdgeInsets.only(top: 12),
+                                      child: Text(
+                                        rentersData.effectiveDate?.isNotEmpty ==
                                                 true
-                                                ? dateProvider.formatCurrentDate(
+                                            ? dateProvider.formatCurrentDate(
                                                 '${rentersData?.effectiveDate?.split('T').first}')
-                                                : 'N/A',
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: blueColor),
-                                          ),
-                                        )),
+                                            : 'N/A',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      ),
+                                    )),
                                   ]),
                                   TableRow(children: [
                                     const TableCell(
                                         child: Padding(
-                                          padding: EdgeInsets.all(10.0),
-                                          child: Text(
-                                            'Expiration Date',
-                                            style: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                        )),
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'Expiration Date',
+                                        style: TextStyle(
+                                            color: Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    )),
                                     TableCell(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(top: 12),
-                                          child: Text(
-                                            rentersData.expirationDate
-                                                ?.isNotEmpty ==
+                                      padding: const EdgeInsets.only(top: 12),
+                                      child: Text(
+                                        rentersData.expirationDate
+                                                    ?.isNotEmpty ==
                                                 true
-                                                ? dateProvider.formatCurrentDate(
+                                            ? dateProvider.formatCurrentDate(
                                                 '${rentersData?.expirationDate?.split('T').first}')
-                                                : 'N/A',
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: blueColor),
-                                          ),
-                                        )),
+                                            : 'N/A',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      ),
+                                    )),
                                   ]),
                                   TableRow(children: [
                                     const TableCell(
                                         child: Padding(
-                                          padding: EdgeInsets.all(10.0),
-                                          child: Text(
-                                            'Liability Coverage',
-                                            style: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                        )),
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'Liability Coverage',
+                                        style: TextStyle(
+                                            color: Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    )),
                                     TableCell(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(top: 12),
-                                          child: Text(
-                                            (rentersData.liabilityCoverage != null && rentersData.liabilityCoverage! > 0)
-                                                ? '\$${rentersData.liabilityCoverage}'
-                                                : 'N/A',
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: blueColor),
-                                          ),
-                                        )),
+                                      padding: const EdgeInsets.only(top: 12),
+                                      child: Text(
+                                        (rentersData.liabilityCoverage !=
+                                                    null &&
+                                                rentersData.liabilityCoverage! >
+                                                    0)
+                                            ? '\$${rentersData.liabilityCoverage}'
+                                            : 'N/A',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      ),
+                                    )),
                                   ]),
                                 ],
                               ),
@@ -454,9 +436,11 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                                           decoration: BoxDecoration(
                                             color: Colors
                                                 .white, // Background color
-                                            borderRadius: BorderRadius.circular(
-                                                5),
-                                            border: Border.all(color: Color(0xFF8A95A8)),// Rounded corners
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            border: Border.all(
+                                                color: Color(
+                                                    0xFF8A95A8)), // Rounded corners
                                             // boxShadow: [
                                             //   BoxShadow(
                                             //     color: Colors.grey
@@ -485,7 +469,8 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                                                     'Email : ',
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: Colors.black,
                                                     ),
                                                   ),
@@ -493,7 +478,8 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                                                     '${tenant.tenantEmail ?? ' - '}',
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: blueColor,
                                                     ),
                                                   ),
@@ -538,6 +524,34 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                   ),
                   const SizedBox(
                     height: 10,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 24,
+                      ),
+                      Container(
+                          height: 40,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0)),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: blueColor,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(8.0))),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                'Back',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
+                              ))),
+                    ],
                   ),
                 ],
               );

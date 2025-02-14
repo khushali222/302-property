@@ -48,12 +48,12 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminId = prefs.getString("adminId");
       String? token = prefs.getString('token');
-
+      String? id = prefs.getString("staff_id");
       final response = await http.get(
         Uri.parse('$Api_url/api/recurring-cards/recurring-payment-configuration/$adminId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $adminId",
+          "id": "CRM $id",
         },
       );
 
