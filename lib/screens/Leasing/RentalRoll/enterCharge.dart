@@ -337,8 +337,8 @@ class _enterChargeState extends State<enterCharge> {
         fetchedData["Liability Account"] = [
           "Late Fee Income",
           "Pre-payments",
-          "Security Deposit",
-          'Rent Income'
+          // "Security Deposit",
+          // 'Rent Income'
         ];
 
         for (var item in jsonResponse) {
@@ -1265,8 +1265,8 @@ class _enterChargeState extends State<enterCharge> {
                                             List<String> liabilityAccounts = [
                                               "Late Fee Income",
                                               "Pre-payments",
-                                              "Security Deposit",
-                                              'Rent Income'
+                                              // "Security Deposit",
+                                              // 'Rent Income'
                                             ];
                                             String? surchargetype;
                                             if (selectedCharge == "Surcharge") {
@@ -1300,18 +1300,18 @@ class _enterChargeState extends State<enterCharge> {
                                               ...categorizedDataCopy.entries
                                                   .expand((entry) {
                                                 return [
-                                                  DropdownMenuItem<String>(
-                                                    enabled: false,
-                                                    child: Text(
-                                                      entry.key,
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1),
-                                                      ),
-                                                    ),
-                                                  ),
+                                                  // DropdownMenuItem<String>(
+                                                  //   enabled: false,
+                                                  //   child: Text(
+                                                  //     entry.key,
+                                                  //     style: const TextStyle(
+                                                  //       fontWeight:
+                                                  //           FontWeight.bold,
+                                                  //       color: Color.fromRGBO(
+                                                  //           21, 43, 81, 1),
+                                                  //     ),
+                                                  //   ),
+                                                  // ),
                                                   ...entry.value.map((item) {
                                                     return DropdownMenuItem<
                                                         String>(
@@ -1760,7 +1760,12 @@ class _enterChargeState extends State<enterCharge> {
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
                                           date: reverseFormatDate(row['date']),
-                                          chargeType: row['charge_type'],
+                                          chargeType: (row["account"] == "" ||
+                                              row["account"] == "Late Fee Income" ||
+                                              row["account"] == "Pre-payments")
+                                              ? row["account"]
+                                              : "One Time Charge",
+                                       //   chargeType: row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
                                         );
@@ -1812,6 +1817,7 @@ class _enterChargeState extends State<enterCharge> {
                                           prefs.getString('adminId').toString();
 
                                       List<Entry> entryList = rows.map((row) {
+                                        print(" accocunt ${row["account"]}");
                                         return Entry(
                                           account: row['account'],
                                           amount: row['amount']?.toInt() ?? 0,
@@ -1819,7 +1825,12 @@ class _enterChargeState extends State<enterCharge> {
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
                                           date: reverseFormatDate(row['date']),
-                                          chargeType: row['charge_type'],
+                                          chargeType: (row["account"] == "" ||
+                                              row["account"] == "Late Fee Income" ||
+                                              row["account"] == "Pre-payments")
+                                              ? row["account"]
+                                              : "One Time Charge",
+                                        //  chargeType: row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
                                         );
@@ -1827,6 +1838,7 @@ class _enterChargeState extends State<enterCharge> {
 
                                       int totalAmount =
                                           int.tryParse(Amount.text.trim()) ?? 0;
+
                                       Charge charge = Charge(
                                         adminId: adminId,
                                         isLeaseAdded: false,
@@ -1901,7 +1913,7 @@ class _enterChargeState extends State<enterCharge> {
                                               : 18),
                                     )
                                   : Text(
-                                      'Add charge',
+                                      'Add charger',
                                       style: TextStyle(
                                           color: Color(0xFFf7f8f9),
                                           fontSize: MediaQuery.of(context)

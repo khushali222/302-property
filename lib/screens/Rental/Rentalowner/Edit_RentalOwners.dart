@@ -102,6 +102,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   String? initialTaxType;
   String? initialStartDate;
   String? initialEndDate;
+  List<ProcessorList>? initialprocessorList;
 
   @override
   void initState() {
@@ -151,8 +152,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     initialPostalCode = widget.rentalOwner.postalCode;
     initialTaxId = widget.rentalOwner.texpayerId;
     initialTaxType = widget.rentalOwner.textIdentityType;
-    initialStartDate = widget.rentalOwner.startDate;
-    initialEndDate = widget.rentalOwner.endDate;
+    initialStartDate = formatDate( widget.rentalOwner.startDate!);
+    initialEndDate = formatDate( widget.rentalOwner.endDate!);
+
     fetchPaymentSettings();
   }
 
@@ -3035,6 +3037,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   }
 
                   // Validate other fields similarly...
+                  String? isProcessorListChanged =
+                      widget.rentalOwner.processorList != null && widget.rentalOwner.processorList!.isNotEmpty ? widget.rentalOwner.processorList!.first.processorId:"";
+                  print("Processor List Changed: $isProcessorListChanged");
+
 
                   // Check for changes
                   bool hasChanges = name.text != initialName ||
@@ -3052,8 +3058,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       taxid.text != initialTaxId ||
                       taxtype.text != initialTaxType ||
                       startdateController.text != initialStartDate ||
-                      enddateController.text != initialEndDate;
+                      enddateController.text != initialEndDate || _controllers[0]!.text != isProcessorListChanged;
 
+                  // controller.text = widget.processorid;
+                  //
+                  //
+                  // if(!controller.text == widget.processorid)
                   if (!hasChanges) {
                     print("No changes made, API call not necessary.");
                     Navigator.of(context).pop(false); // Optionally navigate back
@@ -3151,7 +3161,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                         color: Colors.white,
                         size: 20.0,
                       ):  Text(
-                        "Edit  Rental Owner",
+                          "Edit  Rental Owner",
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

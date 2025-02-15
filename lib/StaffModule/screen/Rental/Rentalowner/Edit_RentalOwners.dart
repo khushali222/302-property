@@ -3020,6 +3020,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
                   // Validate other fields similarly...
+                  String? isProcessorListChanged =
+                  widget.rentalOwner.processorList != null && widget.rentalOwner.processorList!.isNotEmpty ? widget.rentalOwner.processorList!.first.processorId:"";
+                  print("Processor List Changed: $isProcessorListChanged");
 
                   // Check for changes
                   bool hasChanges = name.text != initialName ||
@@ -3037,7 +3040,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       taxid.text != initialTaxId ||
                       taxtype.text != initialTaxType ||
                       startdateController.text != initialStartDate ||
-                      enddateController.text != initialEndDate;
+                      enddateController.text != initialEndDate || _controllers[0]!.text != isProcessorListChanged;
 
                   if (!hasChanges) {
                     print("No changes made, API call not necessary.");

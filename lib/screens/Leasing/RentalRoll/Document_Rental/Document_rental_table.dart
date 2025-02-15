@@ -145,45 +145,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     );
   }
 
-  void showPdfDialog(BuildContext context, String pdfUrl) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Container(
-            height: 500, // Set appropriate height
-            width: double.infinity,
-            child: Column(
-              children: [
-                AppBar(
-                  title: Text("View PDF"),
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: PDF().fromUrl(
-                    pdfUrl,
-                    placeholder: (progress) =>
-                        Center(child: Text("$progress % Loading...")),
-                    errorWidget: (error) =>
-                        Center(child: Text("Error: $error")),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
