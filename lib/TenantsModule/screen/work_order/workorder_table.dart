@@ -1326,6 +1326,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                   // 1: FlexColumnWidth(),
                                                                   0: FlexColumnWidth(), // Distribute columns equally
                                                                   1: FlexColumnWidth(),
+                                                                  2: FlexColumnWidth(),
                                                                 },
                                                                 children: [
                                                                   _buildTableRow(
@@ -1342,6 +1343,12 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                       '${workorder.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.createdAt}') : 'N/A'}',
                                                                       'Updated At:',
                                                                       '${workorder.updatedAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.updatedAt}') : 'N/A'}'),
+
+                                                                  _buildTableRow(
+                                                                      'Due Date:',
+                                                                      '${workorder.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.date}') : 'N/A'}',
+                                                                      '',
+                                                                      ''),
                                                                 ],
                                                               ),
                                                             ),

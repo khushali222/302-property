@@ -80,9 +80,9 @@ class ApplicantRepository {
         "authorization": "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(applicantData),
+      body: jsonEncode({"applicant":applicantData}),
     );
-
+    print('abc app ${response.body}');
     if (response.statusCode == 200) {
       // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
       return jsonDecode(response.body);

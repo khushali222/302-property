@@ -212,7 +212,7 @@ class _MakePaymentState extends State<MakePayment> {
         tenants = fetchedTenants;
         if (tenants.length == 1) {
           selectedTenantId = tenants.first["tenant_id"];
-          fetchChargesForSelectedTenant(selectedTenantId!);
+        //  fetchChargesForSelectedTenant(selectedTenantId!);
           fetchcreditcard(selectedTenantId!);
         } else if (tenants.length > 1) {
           // If there are multiple tenants, select the first tenant and fetch their charges
@@ -495,6 +495,7 @@ class _MakePaymentState extends State<MakePayment> {
 
 //for payment
   Future<void> fetchChargesForSelectedTenant(String tenantId) async {
+    print('fetch tenant charges calling');
     setState(() {
       isLoading = true;
       hasError = false;
@@ -535,6 +536,7 @@ class _MakePaymentState extends State<MakePayment> {
             [];
 
         for (var i = 0; i < filteredCharges!.length; i++) {
+
           if (i == 0) {
             double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();
             String formattedChargeAmount = chargeAmount.toStringAsFixed(2);
@@ -547,6 +549,7 @@ class _MakePaymentState extends State<MakePayment> {
             charges_balances.add(double.parse(formattedChargeAmount));
           }
         }
+        print("charges length ${charges_balances.length}");
         print("rows length:- ${rows!.length}");
         /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
@@ -776,7 +779,7 @@ class _MakePaymentState extends State<MakePayment> {
       // binResults.forEach((result) {
       //   print('BIN Check Result: $result');
       // });
-      for (int i = 0; i < customerData.billing.length; i++) {
+      for (int i = 0; i < cardDetailsList.length; i++) {
         customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
       }
 
@@ -964,7 +967,7 @@ class _MakePaymentState extends State<MakePayment> {
                     ],
                   ),
                   child: const Text(
-                    "Make Payments",
+                    "Make Payment",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -2704,7 +2707,7 @@ class _MakePaymentState extends State<MakePayment> {
                       Padding(
                         padding: EdgeInsets.only(left: 10, right: 10),
                         child: Text(
-                            'Current Balances : ${balance.toStringAsFixed(2)}',
+                            'Current Balance : \$${balance.toStringAsFixed(2)}',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,

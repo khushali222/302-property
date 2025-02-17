@@ -100,23 +100,23 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                     width < 400 ? Text("Property ", style: TextStyle(color: Colors.white)) : Text("Property", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
-                    ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    // ascending1
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -405,23 +405,54 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                             } else if (selectedValue == "All") {
                               data = snapshot.data!;
                             } else if (searchvalue.isNotEmpty) {
-                              // data = snapshot.data!
-                              //     .where((applicant) =>
-                              // applicant.rentalAddress!
-                              //     .toLowerCase()
-                              //     .contains(searchvalue.toLowerCase()) ||
-                              //     applicant.tenantNames!.toString()
-                              //         .toLowerCase()
-                              //         .contains(searchvalue.toLowerCase()) ||
-                              //     applicant.remainingDays!.toString()
-                              //         .toLowerCase()
-                              //         .contains(searchvalue.toLowerCase())
-                              // )
-                              //     .toList();
+                              data = snapshot.data!
+                                  .where((applicant) =>
+                              applicant.rentalAddress!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()) ||
+                                  applicant.rentalAddress!.toString()
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase()) ||
+                                  applicant.tenant!.tenantName.toString()
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase())||
+                                  applicant.totalAmount.toString()
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase())||
+                                  applicant.date.toString()
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase())
+                              )
+                                  .toList();
                             } else {
                               data = snapshot.data!.where((applicant) => applicant.rentalAddress == selectedValue).toList();
                             }
-
+                            if (data.isEmpty) {
+                              return Center(
+                                child:
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
                             /* if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
                       } else if (selectedValue == "All") {
@@ -442,7 +473,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                         property.propertyType == selectedValue)
                             .toList();
                       }*/
-                            // sortData(data);
+                             //sortData(data);
                             final totalPages = (data.length / itemsPerPage).ceil();
                             final currentPageData = data.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
                             return SingleChildScrollView(
@@ -554,8 +585,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                           padding: const EdgeInsets.only(left: 10.0),
                                                           child: Text(
                                                             // '${widget.data.createdAt}',
-                                                            formatDate('\$${Propertytype.totalAmount}'),
-
+                                                          '${Propertytype.totalAmount != null ? '\$${Propertytype.totalAmount}' : 'N/A'}',
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight: FontWeight.bold,

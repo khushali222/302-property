@@ -444,6 +444,7 @@ class _AddDocumentState extends State<AddDocument> {
       print('entry');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminId = prefs.getString("adminId");
+      String? id = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       print('${adminId}  ${token}');
 
@@ -457,7 +458,7 @@ class _AddDocumentState extends State<AddDocument> {
         "document_name": _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
         "document_type": "application/pdf",
         "created_date": DateFormat("yyyy-MM-dd h:mm:ss").format(DateTime.now()),
-        "created_by": adminId, // Ensure it's properly formatted
+        "created_by": id, // Ensure it's properly formatted
 
       };
 
@@ -467,7 +468,7 @@ class _AddDocumentState extends State<AddDocument> {
         Uri.parse('$Api_url/api/lease-document/add-document'),
         headers: <String, String>{
           'authorization': 'CRM $token',
-          'id': 'CRM $adminId',
+          'id': 'CRM $id',
           'Content-Type': 'application/json', // Ensure JSON format is specified
         },
         body: jsonEncode(values), // Encode JSON properly

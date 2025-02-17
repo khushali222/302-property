@@ -19,7 +19,7 @@ class Scheduled_Payment_repo{
           "id":"CRM $id",
         }
     );
-    print(response.body);
+    print('shcedule payment ${response.body}');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Scheduled_Payment.fromJson(data)).toList();

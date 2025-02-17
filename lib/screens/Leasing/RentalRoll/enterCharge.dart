@@ -227,9 +227,7 @@ class _enterChargeState extends State<enterCharge> {
     fetchDropdownData();
     fetchTenants();
 
-    if (widget.chargeid != null) {
-      fetchchargeData();
-    }
+
   }
 
   Future<void> fetchchargeData() async {
@@ -362,6 +360,9 @@ class _enterChargeState extends State<enterCharge> {
           categorizedData = fetchedData;
           isLoading = false;
         });
+        if (widget.chargeid != null) {
+          fetchchargeData();
+        }
       } else {
         setState(() {
           hasError = true;
@@ -590,7 +591,7 @@ class _enterChargeState extends State<enterCharge> {
                           ),
                         if (MediaQuery.of(context).size.width < 500)
                           tenants.isEmpty
-                              ? const Center(
+                              ?  Container(
                                   child: SpinKitFadingCircle(
                                     color: Colors.black,
                                     size: 50.0,
@@ -1062,7 +1063,7 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text('Apply Payment to Balances abc',
+                  const Text('Apply Payment to Balances',
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
@@ -1272,8 +1273,8 @@ class _enterChargeState extends State<enterCharge> {
                                             List<String> liabilityAccounts = [
                                               "Late Fee Income",
                                               "Pre-payments",
-                                              "Security Deposit",
-                                              'Rent Income'
+                                              // "Security Deposit",
+                                              // 'Rent Income'
                                             ];
                                             String? surchargetype;
                                             if (selectedCharge == "Surcharge") {
@@ -1307,18 +1308,18 @@ class _enterChargeState extends State<enterCharge> {
                                               ...categorizedDataCopy.entries
                                                   .expand((entry) {
                                                 return [
-                                                  DropdownMenuItem<String>(
-                                                    enabled: false,
-                                                    child: Text(
-                                                      entry.key,
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1),
-                                                      ),
-                                                    ),
-                                                  ),
+                                                  // DropdownMenuItem<String>(
+                                                  //   enabled: false,
+                                                  //   child: Text(
+                                                  //     entry.key,
+                                                  //     style: const TextStyle(
+                                                  //       fontWeight:
+                                                  //           FontWeight.bold,
+                                                  //       color: Color.fromRGBO(
+                                                  //           21, 43, 81, 1),
+                                                  //     ),
+                                                  //   ),
+                                                  // ),
                                                   ...entry.value.map((item) {
                                                     return DropdownMenuItem<
                                                         String>(
@@ -1732,7 +1733,7 @@ class _enterChargeState extends State<enterCharge> {
                       Container(
                           height: 50,
                           width: MediaQuery.of(context).size.width < 500
-                              ? 130
+                              ? 150
                               : 150,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0)),
@@ -1767,7 +1768,12 @@ class _enterChargeState extends State<enterCharge> {
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
                                           date: reverseFormatDate(row['date']),
-                                          chargeType: row['charge_type'],
+                                          chargeType: (row["account"] == "" ||
+                                              row["account"] == "Late Fee Income" ||
+                                              row["account"] == "Pre-payments")
+                                              ? row["account"]
+                                              : "One Time Charge",
+                                       //   chargeType: row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
                                         );
@@ -1819,6 +1825,7 @@ class _enterChargeState extends State<enterCharge> {
                                           prefs.getString('adminId').toString();
 
                                       List<Entry> entryList = rows.map((row) {
+                                        print(" accocunt ${row["account"]}");
                                         return Entry(
                                           account: row['account'],
                                           amount: row['amount']?.toInt() ?? 0,
@@ -1826,7 +1833,12 @@ class _enterChargeState extends State<enterCharge> {
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
                                           date: reverseFormatDate(row['date']),
-                                          chargeType: row['charge_type'],
+                                          chargeType: (row["account"] == "" ||
+                                              row["account"] == "Late Fee Income" ||
+                                              row["account"] == "Pre-payments")
+                                              ? row["account"]
+                                              : "One Time Charge",
+                                        //  chargeType: row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
                                         );
@@ -1834,6 +1846,7 @@ class _enterChargeState extends State<enterCharge> {
 
                                       int totalAmount =
                                           int.tryParse(Amount.text.trim()) ?? 0;
+
                                       Charge charge = Charge(
                                         adminId: adminId,
                                         isLeaseAdded: false,

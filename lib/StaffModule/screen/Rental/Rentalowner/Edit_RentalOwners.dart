@@ -95,9 +95,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     // comname.text = widget.rentalOwner.rentalOwnerCompanyName!;
     primaryemail.text = widget.rentalOwner.rentalOwnerPrimaryEmail!;
     alternativeemail.text = widget.rentalOwner.rentalOwnerAlternateEmail!;
-    phonenum.text = formatPhoneNumberedit(widget.rentalOwner.rentalOwnerPhoneNumber!);
-    homenum.text = formatPhoneNumberedit(widget.rentalOwner.rentalOwnerHomeNumber!);
-    officenum.text = formatPhoneNumberedit(widget.rentalOwner.rentalOwnerBusinessNumber!);
+    phonenum.text =
+        formatPhoneNumberedit(widget.rentalOwner.rentalOwnerPhoneNumber!);
+    homenum.text =
+        formatPhoneNumberedit(widget.rentalOwner.rentalOwnerHomeNumber!);
+    officenum.text =
+        formatPhoneNumberedit(widget.rentalOwner.rentalOwnerBusinessNumber!);
     street2.text = widget.rentalOwner.streetAddress!;
     city2.text = widget.rentalOwner.city!;
     state2.text = widget.rentalOwner.state!;
@@ -107,8 +110,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     taxtype.text = widget.rentalOwner.textIdentityType!;
     taxid.text = widget.rentalOwner.texpayerId!;
     //birthdateController.text = widget.rentalOwner.b;
-    startdateController.text =formatDate( widget.rentalOwner.startDate!);
-    enddateController.text =formatDate( widget.rentalOwner.endDate!);
+    startdateController.text = formatDate(widget.rentalOwner.startDate!);
+    enddateController.text = formatDate(widget.rentalOwner.endDate!);
 
     if (widget.rentalOwner.processorList != null) {
       for (int i = 0; i < widget.rentalOwner.processorList!.length; i++) {
@@ -258,8 +261,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   //   }
   // }
   Future<void> _startDate(BuildContext context) async {
-
-
     DateTime initialDate = startdateController.text.isNotEmpty
         ? DateFormat('dd-MM-yyyy').parse(startdateController.text)
         : DateTime.now();
@@ -267,15 +268,14 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       context: context,
       initialDate: initialDate,
       //  initialDate: startdate ?? DateTime.now(),
-      firstDate:  DateTime(2015, 8),
+      firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor:
-            blueColor, // Header background color
+            primaryColor: blueColor, // Header background color
             // accentColor: Colors.white, // Button text color
-            colorScheme:  ColorScheme.light(
+            colorScheme: ColorScheme.light(
               primary: blueColor, // Selection color
               onPrimary: Colors.white, // Text color
               surface: Colors.white, // Calendar background color
@@ -300,8 +300,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   }
 
   Future<void> _endDate(BuildContext context) async {
-
-
     DateTime initialDate = startdateController.text.isNotEmpty
         ? DateFormat('dd-MM-yyyy').parse(startdateController.text)
         : DateTime.now();
@@ -380,7 +378,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     String? token = prefs.getString('token');
     String? staffid = prefs.getString("staff_id");
     final response = await http.get(
-      Uri.parse('${Api_url}/api/payment/rental_owner/setting/${widget.rentalOwner.rentalownerId}'),
+      Uri.parse(
+          '${Api_url}/api/payment/rental_owner/setting/${widget.rentalOwner.rentalownerId}'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $staffid",
@@ -389,7 +388,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     final jsonData = json.decode(response.body);
     print(' rental added ${jsonData}');
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-
       print(creditcard);
       print(creditcard);
       setState(() {
@@ -409,23 +407,23 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? id = prefs.getString('adminId');
     String? staffid = prefs.getString("staff_id");
     final url = '${Api_url}/api/payment/rental_owner/setting';
     final headers = {
       "authorization": "CRM $token",
-      "id":"CRM $staffid",
+      "id": "CRM $staffid",
       'Content-Type': 'application/json; charset=UTF-8',
-
     };
     final body = json.encode({
       "creditCardAccepted": creditcard,
       "debitCardAccepted": debitcard,
-      "rentalOwnerId":widget.rentalOwner.rentalownerId,
+      "rentalOwnerId": widget.rentalOwner.rentalownerId,
     });
 
     try {
-      final response = await http.post(Uri.parse(url), headers: headers, body: body);
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: body);
 
       var responseData = json.decode(response.body);
       print('update card type ${responseData}');
@@ -433,7 +431,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       if (responseData["statusCode"] == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
-
       } else {
         Fluttertoast.showToast(msg: responseData["message"]);
         throw Exception('Failed to update card type');
@@ -580,8 +577,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: name,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter first name",
                                           hintStyle: TextStyle(
@@ -624,7 +620,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       nameerror
                           ? Row(
                               children: [
-
                                 Text(
                                   namemessage,
                                   style: TextStyle(
@@ -691,8 +686,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: comname,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter company name",
                                           hintStyle: TextStyle(
@@ -735,7 +729,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       comnameerror
                           ? Row(
                               children: [
-
                                 Text(
                                   comnamemessage,
                                   style: TextStyle(
@@ -852,10 +845,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                 Positioned.fill(
                                                   child: TextField(
                                                     controller: entry.value,
-                                                    cursorColor: blueColor
-
-
-,
+                                                    cursorColor: blueColor,
                                                     decoration: InputDecoration(
                                                       border: InputBorder.none,
                                                       contentPadding:
@@ -898,8 +888,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           child: FaIcon(
                                             FontAwesomeIcons.trashCan,
                                             size: 20,
-                                            color:
-                                                blueColor,
+                                            color: blueColor,
                                           ),
                                         ),
                                       ),
@@ -1061,8 +1050,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                             });
                                           },
                                           controller: startdateController,
-                                          cursorColor:
-                                              blueColor,
+                                          cursorColor: blueColor,
                                           decoration: InputDecoration(
                                             hintText: "dd - mm - yyyy",
                                             hintStyle: TextStyle(
@@ -1187,8 +1175,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                             });
                                           },
                                           controller: enddateController,
-                                          cursorColor:
-                                              blueColor,
+                                          cursorColor: blueColor,
                                           decoration: InputDecoration(
                                             hintText: "dd - mm - yyyy",
                                             hintStyle: TextStyle(
@@ -1306,10 +1293,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                   });
                                                 },
                                                 controller: startdateController,
-                                                cursorColor: blueColor
-
-
-,
+                                                cursorColor: blueColor,
                                                 decoration: InputDecoration(
                                                   hintText: "dd - mm - yyyy",
                                                   hintStyle: TextStyle(
@@ -1431,10 +1415,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                   });
                                                 },
                                                 controller: enddateController,
-                                                cursorColor: blueColor
-
-
-,
+                                                cursorColor: blueColor,
                                                 decoration: InputDecoration(
                                                   hintText: "dd - mm - yyyy",
                                                   hintStyle: TextStyle(
@@ -1605,8 +1586,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         controller: primaryemail,
                                         keyboardType:
                                             TextInputType.emailAddress,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter primary e-mail",
                                           hintStyle: TextStyle(
@@ -1643,7 +1623,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       primaryemailerror
                           ? Row(
                               children: [
-
                                 Text(
                                   primaryemailmessage,
                                   style: TextStyle(
@@ -1712,8 +1691,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         controller: alternativeemail,
                                         keyboardType:
                                             TextInputType.emailAddress,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter alternative e-mail ",
                                           hintStyle: TextStyle(
@@ -1750,7 +1728,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       alternativeerror
                           ? Row(
                               children: [
-
                                 Text(
                                   alternativemessage,
                                   style: TextStyle(
@@ -1820,15 +1797,15 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         controller: phonenum,
                                         keyboardType: TextInputType.number,
                                         inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly,
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
                                           LengthLimitingTextInputFormatter(10),
                                           PhoneNumberFormatter(),
                                         ],
                                         // keyboardType:
                                         //     TextInputType.numberWithOptions(
                                         //         signed: true, decimal: true),
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
@@ -1865,7 +1842,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       phonenumerror
                           ? Row(
                               children: [
-
                                 Text(
                                   phonenummessage,
                                   style: TextStyle(
@@ -1935,15 +1911,15 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         focusNode: _nodeText2,
                                         keyboardType: TextInputType.number,
                                         inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly,
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
                                           LengthLimitingTextInputFormatter(10),
                                           PhoneNumberFormatter(),
                                         ],
                                         // keyboardType:
                                         //     TextInputType.numberWithOptions(
                                         //         signed: true, decimal: true),
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter home number",
                                           hintStyle: TextStyle(
@@ -1980,7 +1956,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       homenumerror
                           ? Row(
                               children: [
-
                                 Text(
                                   homenummessage,
                                   style: TextStyle(
@@ -2050,15 +2025,15 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         controller: officenum,
                                         keyboardType: TextInputType.number,
                                         inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly,
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
                                           LengthLimitingTextInputFormatter(10),
                                           PhoneNumberFormatter(),
                                         ],
                                         // keyboardType:
                                         //     TextInputType.numberWithOptions(
                                         //         signed: true, decimal: true),
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter office number",
                                           hintStyle: TextStyle(
@@ -2095,7 +2070,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       officenumerror
                           ? Row(
                               children: [
-
                                 Text(
                                   officenummessage,
                                   style: TextStyle(
@@ -2162,8 +2136,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: street2,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter street address",
                                           hintStyle: TextStyle(
@@ -2268,8 +2241,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: city2,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter city",
                                           hintStyle: TextStyle(
@@ -2374,8 +2346,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: state2,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter state",
                                           hintStyle: TextStyle(
@@ -2480,8 +2451,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: county2,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter country",
                                           hintStyle: TextStyle(
@@ -2563,7 +2533,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       Row(
                         children: [
                           SizedBox(width: 2),
-
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -2586,11 +2555,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                             code2error = false;
                                           });
                                         },
-                                        keyboardType:
-                                          TextInputType.text,
+                                        keyboardType: TextInputType.text,
                                         inputFormatters: [
-                                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
-                                          TextInputFormatter.withFunction((oldValue, newValue) {
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp(r'[a-zA-Z0-9]')),
+                                          TextInputFormatter.withFunction(
+                                              (oldValue, newValue) {
                                             return TextEditingValue(
                                               text: newValue.text.toUpperCase(),
                                               selection: newValue.selection,
@@ -2598,8 +2568,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           }),
                                         ],
                                         controller: code2,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter zip code",
                                           hintStyle: TextStyle(
@@ -2745,8 +2714,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: taxtype,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter tax identify type",
                                           hintStyle: TextStyle(
@@ -2849,8 +2817,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: taxid,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter SSN or EIN",
                                           hintStyle: TextStyle(
@@ -2960,6 +2927,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     setState(() {
                       primaryemailerror = true;
                       primaryemailmessage = "Email is not valid";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
@@ -2973,7 +2941,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                         alternativemessage = "Email cannot be the same";
                         isFormValid = false;
                       });
-                    } else if (!EmailValidator.validate(alternativeemail.text)) {
+                    } else if (!EmailValidator.validate(
+                        alternativeemail.text)) {
                       setState(() {
                         alternativeerror = true;
                         alternativemessage = "Email is not valid";
@@ -2985,57 +2954,65 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       });
                     }
                   }
-                  String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
+                  String formattedPhoneNumber =
+                      phonenum.text.replaceAll(RegExp(r'\D'), '');
                   if (formattedPhoneNumber.isEmpty) {
                     setState(() {
                       phonenumerror = true;
                       phonenummessage = "required";
+                      isFormValid = false;
                     });
                   } else if (formattedPhoneNumber.length != 10) {
                     setState(() {
                       phonenumerror = true;
                       phonenummessage = "Phone number must be 10 digits";
+                      isFormValid = false;
                     });
-                  }else {
+                  } else {
                     setState(() {
                       phonenumerror = false;
                     });
                   }
-                  String formattedhomeNumber = homenum.text.replaceAll(RegExp(r'\D'), '');
+                  String formattedhomeNumber =
+                      homenum.text.replaceAll(RegExp(r'\D'), '');
                   if (formattedhomeNumber.isEmpty) {
                     setState(() {
                       homenumerror = false;
-
                     });
-                  }else if(formattedhomeNumber.length != 10){
+                  } else if (formattedhomeNumber.length != 10) {
                     setState(() {
                       homenumerror = true;
                       homenummessage = "Phone number must be 10 digits";
+                      isFormValid = false;
                     });
-                  } else if(formattedhomeNumber == formattedPhoneNumber){
+                  } else if (formattedhomeNumber == formattedPhoneNumber) {
                     setState(() {
                       homenumerror = true;
                       homenummessage = " number cannot be the same";
+                      isFormValid = false;
                     });
-                  }else {
+                  } else {
                     setState(() {
                       homenumerror = false;
                     });
                   }
-                  String formattedofficeNumber = officenum.text.replaceAll(RegExp(r'\D'), '');
+                  String formattedofficeNumber =
+                      officenum.text.replaceAll(RegExp(r'\D'), '');
                   if (formattedofficeNumber.isEmpty) {
                     setState(() {
                       officenumerror = false;
                     });
-                  }else if(formattedofficeNumber.length != 10){
+                  } else if (formattedofficeNumber.length != 10) {
                     setState(() {
                       officenumerror = true;
                       officenummessage = "Phone number must be 10 digits";
+                      isFormValid = false;
                     });
-                  }else if(formattedofficeNumber == formattedhomeNumber){
+                  } else if (formattedofficeNumber == formattedhomeNumber) {
                     setState(() {
                       officenumerror = true;
                       officenummessage = " number cannot be the same";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
@@ -3043,6 +3020,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
                   // Validate other fields similarly...
+                  String? isProcessorListChanged =
+                  widget.rentalOwner.processorList != null && widget.rentalOwner.processorList!.isNotEmpty ? widget.rentalOwner.processorList!.first.processorId:"";
+                  print("Processor List Changed: $isProcessorListChanged");
 
                   // Check for changes
                   bool hasChanges = name.text != initialName ||
@@ -3060,11 +3040,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       taxid.text != initialTaxId ||
                       taxtype.text != initialTaxType ||
                       startdateController.text != initialStartDate ||
-                      enddateController.text != initialEndDate;
+                      enddateController.text != initialEndDate || _controllers[0]!.text != isProcessorListChanged;
 
                   if (!hasChanges) {
                     print("No changes made, API call not necessary.");
-                    Navigator.of(context).pop(false); // Optionally navigate back
+                    Navigator.of(context)
+                        .pop(false); // Optionally navigate back
                     return;
                   }
 
@@ -3072,14 +3053,16 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     return; // Exit early if the form is not valid
                   }
 
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
                   String? adminId = prefs.getString("adminId");
 
                   // Prepare the processor list
                   List<ProcessorList> processorList = [];
                   _controllers.forEach((key, controller) {
                     if (controller.text.trim().isNotEmpty) {
-                      processorList.add(ProcessorList(processorId: controller.text));
+                      processorList
+                          .add(ProcessorList(processorId: controller.text));
                     }
                   });
 
@@ -3097,7 +3080,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       rentalOwnerPhoneNumber: phonenum.text.trim(),
                       rentalOwnerHomeNumber: homenum.text.trim(),
                       rentalOwnerBusinessNumber: officenum.text.trim(),
-                      startDate:reverseFormatDate(startdateController.text.trim()),
+                      startDate:
+                          reverseFormatDate(startdateController.text.trim()),
                       endDate: reverseFormatDate(enddateController.text.trim()),
                       texpayerId: taxid.text.trim(),
                       textIdentityType: taxtype.text.trim(),
@@ -3112,11 +3096,14 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     setState(() {
                       widget.rentalOwner.rentalOwnername = name.text;
                       widget.rentalOwner.rentalOwnerCompanyName = comname.text;
-                      widget.rentalOwner.rentalOwnerPrimaryEmail = primaryemail.text;
-                      widget.rentalOwner.rentalOwnerAlternateEmail = alternativeemail.text;
+                      widget.rentalOwner.rentalOwnerPrimaryEmail =
+                          primaryemail.text;
+                      widget.rentalOwner.rentalOwnerAlternateEmail =
+                          alternativeemail.text;
                       widget.rentalOwner.rentalOwnerPhoneNumber = phonenum.text;
                       widget.rentalOwner.rentalOwnerHomeNumber = homenum.text;
-                      widget.rentalOwner.rentalOwnerBusinessNumber = officenum.text;
+                      widget.rentalOwner.rentalOwnerBusinessNumber =
+                          officenum.text;
                       widget.rentalOwner.startDate = startdateController.text;
                       widget.rentalOwner.endDate = enddateController.text;
                       widget.rentalOwner.texpayerId = taxid.text;
@@ -3210,9 +3197,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 20
-                                    : 25),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 20
+                                        : 25),
                           ),
                         ],
                       ),
@@ -3230,9 +3217,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -3240,49 +3227,57 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                         height: 5,
                       ),
                       Container(
-
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Transform.scale(
                               scale: 1.2,
-                              child: Checkbox(value: creditcard, onChanged: (value) {
-                                setState(() {
-
-                                  creditcard = value!;
-                                });
-                              },activeColor: blueColor,),
+                              child: Checkbox(
+                                value: creditcard,
+                                onChanged: (value) {
+                                  setState(() {
+                                    creditcard = value!;
+                                  });
+                                },
+                                activeColor: blueColor,
+                              ),
                             ),
                             SizedBox(width: 10),
-                            Text("Credit Card",style: TextStyle(
+                            Text(
+                              "Credit Card",
+                              style: TextStyle(
                                 fontSize: 16,
-                              color: blueColor,
-fontWeight: FontWeight.bold,
-                            ),)
-
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
                           ],
                         ),
                       ),
                       Container(
-
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Transform.scale(
                               scale: 1.2,
-                              child: Checkbox(value: debitcard, onChanged: (value) {
-                                setState(() {
-                                  debitcard = value!;
-                                });
-                              },activeColor: blueColor),
+                              child: Checkbox(
+                                  value: debitcard,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      debitcard = value!;
+                                    });
+                                  },
+                                  activeColor: blueColor),
                             ),
                             SizedBox(width: 10),
-                            Text("Debit Card",style: TextStyle(
+                            Text(
+                              "Debit Card",
+                              style: TextStyle(
                                 fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: blueColor,
-                            ),)
-
+                                fontWeight: FontWeight.bold,
+                                color: blueColor,
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -3298,8 +3293,11 @@ fontWeight: FontWeight.bold,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
-                                height: MediaQuery.of(context).size.height * .045,
-                                width: MediaQuery.of(context).size.width < 500 ? 120 : 190,
+                                height:
+                                    MediaQuery.of(context).size.height * .045,
+                                width: MediaQuery.of(context).size.width < 500
+                                    ? 120
+                                    : 190,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: blueColor,
@@ -3312,23 +3310,27 @@ fontWeight: FontWeight.bold,
                                   ],
                                 ),
                                 child: Center(
-                                  child: isloading ?SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 20.0,
-                                  ):  Text(
-                                    "Update",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width < 500
-                                            ? 15
-                                            : 20),
-                                  ),
+                                  child: isloading
+                                      ? SpinKitFadingCircle(
+                                          color: Colors.white,
+                                          size: 20.0,
+                                        )
+                                      : Text(
+                                          "Update",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 15
+                                                  : 20),
+                                        ),
                                 ),
                               ),
                             ),
                           ),
-
                         ],
                       ),
                     ],

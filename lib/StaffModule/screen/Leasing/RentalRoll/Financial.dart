@@ -1906,7 +1906,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15,
                                                 ),),
-                                                SizedBox(width: 5,),
+                                                SizedBox(width: 2,),
                                                 Icon(Icons.arrow_drop_down,size: 25,),
                                               ],
                                             ),

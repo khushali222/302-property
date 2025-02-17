@@ -33,7 +33,7 @@ class _edit_vendorState extends State<edit_vendor> {
   String? initialPassword;
   Future<void> _fetchVendor() async {
     setState(() {
-      isLoading = true;
+      isloading = true;
     });
 
     try {
@@ -42,7 +42,6 @@ class _edit_vendorState extends State<edit_vendor> {
       initialPhoneNumber = vendor.vendorPhoneNumber;
       initialEmail = vendor.vendorEmail;
       initialPassword = vendor.vendorPassword;
-
       firstName.text = vendor.vendorName!;
       phoneNumber.text = formatPhoneNumberedit(vendor.vendorPhoneNumber!);
       email.text = vendor.vendorEmail!;
@@ -52,7 +51,7 @@ class _edit_vendorState extends State<edit_vendor> {
           .showSnackBar(SnackBar(content: Text('Failed to fetch vendor data')));
     } finally {
       setState(() {
-        isLoading = false;
+        isloading = false;
       });
     }
   }
@@ -67,6 +66,7 @@ class _edit_vendorState extends State<edit_vendor> {
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController passWord = TextEditingController();
   bool isLoading = false;
+  bool isloading = false;
   bool formValid = false;
   @override
   void initState() {

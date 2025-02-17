@@ -1228,7 +1228,7 @@ class _RenewleaseState extends State<Renewlease> {
                                         ),
                                         Container(
                                           height: 40,
-                                          width: 125,
+                                          width: 140,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(8.0),
                                           ),

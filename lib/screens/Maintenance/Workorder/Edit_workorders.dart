@@ -899,7 +899,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           ),
                           Container(
                             height: 40,
-                            width: 130,
+                            width: 140,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -976,7 +976,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     future: generateNetworkVideoThumbnail("$image_url${_imageUrls[index]}"),
                                                     builder: (context, snapshot) {
                                                       if (snapshot.connectionState == ConnectionState.waiting) {
-                                                        return Center(child: CircularProgressIndicator());
+                                                        return Center(
+                                                            child: SpinKitFadingCircle(
+                                                              color: Colors.black,
+                                                              size: 40.0,
+                                                            ));
                                                       } else if (snapshot.hasData && snapshot.data != null) {
                                                         return  GestureDetector(
                                                           onTap: (){
@@ -2288,7 +2292,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             ),
                           ),
                           onPressed: _submitForm,
-                          child: isLoading
+                          child: isloading
                               ? Center(
                                   child: SpinKitFadingCircle(
                                     color: Colors.white,
@@ -2365,12 +2369,13 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   }
 
   bool isLoading = false;
+  bool isloading = false;
   bool formValid = true;
 
   void _submitForm() async {
     if (_formkey.currentState!.validate()) {
       setState(() {
-        isLoading = true;
+        isloading = true;
       });
 
       // Check if any fields have changed
@@ -2394,7 +2399,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         print("no changes");
 
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
         Navigator.pop(context,false);
         return; // Exit the method
@@ -2474,7 +2479,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       } finally {
         // Final cleanup
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
       }
     } else {

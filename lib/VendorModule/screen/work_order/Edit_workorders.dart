@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,10 +9,12 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../screens/Maintenance/Vendor/add_vendor.dart';
+import '../../../widgets/VideoPlayerWidget.dart';
 import '../../model/Edit_workorder.dart';
 import '../../repository/edit_workorder.dart';
 
@@ -108,7 +111,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         "${fetchedDetails.staffData!.staffmember_id}":
             "${fetchedDetails.staffData!.staffName}"
       });
-
+      if (fetchedDetails.workOrderImages != null) {
+        _imageUrls = fetchedDetails.workOrderImages!.map((fileName) {
+          return '$fileName'; // Adjust the path as needed
+        }).toList();
+      }
+print(fetchedDetails.workOrderImages);
       // print(fetchedDetails.rental.rentalAddress);
       subject.text = fetchedDetails.workSubject!;
       _selectedstaffId = fetchedDetails.staffData?.staffName;
@@ -657,6 +665,79 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
   //for tenants
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+
+
+  File? _image;
+  List<File> _images = [];
+  String? _uploadedFileName;
+  List<String> _uploadedFileNames = [];
+  Future<String?> uploadImage(File imageFile) async {
+    print(imageFile.path);
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
+
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+          uploadUrl,
+        ));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
+
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+    print(responseData.body);
+
+    var responseBody = json.decode(responseData.body);
+    if (responseBody['status'] == 'ok') {
+      List file = responseBody['files'];
+      return file.first["filename"];
+    } else {
+      throw Exception('Failed to upload file: ${responseBody['message']}');
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickMedia();
+
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+        _images.add(File(image.path));
+      });
+      _uploadImage(File(image.path));
+    }
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    try {
+      String? fileName = await uploadImage(imageFile);
+      setState(() {
+        _uploadedFileNames.add(fileName!);
+        _uploadedFileName = fileName;
+        _imageUrls.add(fileName!);
+      });
+    } catch (e) {
+      print('Image upload failed: $e');
+    }
+  }
+
+  List<String> _imageUrls = [];
+
+  bool isVideo(String url) {
+    return url.toLowerCase().endsWith(".mp4");
+  }
+
+  void _showVideoDialog(String videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          child: VideoPlayerDialog(videoUrl: videoFile,),
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -734,7 +815,97 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     SizedBox(
                                       height: 10,
                                     ),
+                                    _imageUrls.isNotEmpty
+                                        ? Row(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            child: Wrap(
+                                              spacing: 8.0, // Horizontal spacing between items
+                                              runSpacing: 8.0, // Vertical spacing between rows
+                                              children: List.generate(
+                                                _imageUrls.length,
+                                                    (index) {
+                                                  bool isMp4 = isVideo(_imageUrls[index]);
+                                                  return Container(
+                                                    width: 85,
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(width: 60),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  _imageUrls.removeAt(index);
+                                                                });
+                                                              },
+                                                              child: Icon(
+                                                                Icons.close,
+                                                                color: Colors.grey,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            isMp4 ?  FutureBuilder<String?>(
+                                                              future: generateNetworkVideoThumbnail("$image_url${_imageUrls[index]}"),
+                                                              builder: (context, snapshot) {
+                                                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                  return Center(child: CircularProgressIndicator());
+                                                                } else if (snapshot.hasData && snapshot.data != null) {
+                                                                  return  GestureDetector(
+                                                                    onTap: (){
+                                                                      _showVideoDialog('$image_url${_imageUrls[index]}');
+                                                                    },
+                                                                    child: Stack(
+                                                                      alignment: Alignment.center,
+                                                                      children: [
+                                                                        Image.file(
+                                                                          File(snapshot.data!),
+                                                                          height:80,
+                                                                          width: 80,
+                                                                          fit: BoxFit.cover,
+                                                                        ),
+                                                                        Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                                      ],
+                                                                    ),
+                                                                  );
 
+                                                                } else {
+                                                                  return Icon(Icons.error);
+                                                                }
+                                                              },
+                                                            ):
+                                                            Container(
+                                                              child: Image.network(
+                                                                "$image_url${_imageUrls[index]}",
+                                                                height: 80,
+                                                                width: 80,
+                                                                fit: BoxFit.cover,
+                                                                errorBuilder: (context, error, stackTrace) {
+                                                                  return Icon(Icons.error); // Placeholder for errors
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                        : Center(child: Text("No images selected.")),
                                     SizedBox(
                                       height: 10,
                                     ),
@@ -2296,7 +2467,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                       ),
                                     ),
                                     onPressed: _submitForm,
-                                    child: isLoading
+                                    child: isloading
                                         ? Center(
                                             child: SpinKitFadingCircle(
                                               color: Colors.white,
@@ -2437,6 +2608,102 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               //     ),
                               //   ),
                               // ),
+                              _imageUrls.isNotEmpty
+                                  ? Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      child: Wrap(
+                                        spacing: 8.0, // Horizontal spacing between items
+                                        runSpacing: 8.0, // Vertical spacing between rows
+                                        children: List.generate(
+                                          _imageUrls.length,
+                                              (index) {
+                                            bool isMp4 = isVideo(_imageUrls[index]);
+                                            return Container(
+                                              width: 85,
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  // Row(
+                                                  //   children: [
+                                                  //     SizedBox(width: 60),
+                                                  //     GestureDetector(
+                                                  //       onTap: () {
+                                                  //         setState(() {
+                                                  //           _imageUrls.removeAt(index);
+                                                  //         });
+                                                  //       },
+                                                  //       child: Icon(
+                                                  //         Icons.close,
+                                                  //         color: Colors.grey,
+                                                  //       ),
+                                                  //     ),
+                                                  //   ],
+                                                  // ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      isMp4 ?  FutureBuilder<String?>(
+                                                        future: generateNetworkVideoThumbnail("$image_url${_imageUrls[index]}"),
+                                                        builder: (context, snapshot) {
+                                                          if (snapshot.connectionState == ConnectionState.waiting) {
+                                                            return Center(
+                                                              child: SpinKitFadingCircle(
+                                                                color: Colors.black,
+                                                                size: 40.0,
+                                                              ),
+                                                            );
+                                                          } else if (snapshot.hasData && snapshot.data != null) {
+                                                            return  GestureDetector(
+                                                              onTap: (){
+                                                                _showVideoDialog('$image_url${_imageUrls[index]}');
+                                                              },
+                                                              child: Stack(
+                                                                alignment: Alignment.center,
+                                                                children: [
+                                                                  Image.file(
+                                                                    File(snapshot.data!),
+                                                                    height:80,
+                                                                    width: 80,
+                                                                    fit: BoxFit.cover,
+                                                                  ),
+                                                                  Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                                ],
+                                                              ),
+                                                            );
+
+                                                          } else {
+                                                            return Icon(Icons.error);
+                                                          }
+                                                        },
+                                                      ):
+                                                      Container(
+                                                        child: Image.network(
+                                                          "$image_url${_imageUrls[index]}",
+                                                          height: 80,
+                                                          width: 80,
+                                                          fit: BoxFit.cover,
+                                                          errorBuilder: (context, error, stackTrace) {
+                                                            return Icon(Icons.error); // Placeholder for errors
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                                  : Center(child: Text("")),
                               SizedBox(
                                 height: 10,
                               ),
@@ -3617,7 +3884,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                 ),
                               ),
                               onPressed: _submitForm,
-                              child: isLoading
+                              child: isloading
                                   ? Center(
                                       child: SpinKitFadingCircle(
                                         color: Colors.white,
@@ -3697,12 +3964,13 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   }
 
   bool isLoading = false;
+  bool isloading = false;
   bool formValid = true;
 
   void _submitForm() async {
     if (_formkey.currentState!.validate()) {
       setState(() {
-        isLoading = true;
+        isloading = true;
       });
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -3737,7 +4005,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         tenant: _selectedtenantId,
         rentalid: rentalId,
         unitid: unitId,
-        workOrderImages: [],
+        workOrderImages: _imageUrls,
         vendorId: _selectedvendorsId,
         vendorNotes: vendornote.text.trim(),
         priority: _selectedOption,
@@ -3778,7 +4046,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       }).whenComplete(() {
         // Final cleanup
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
       });
     } else {

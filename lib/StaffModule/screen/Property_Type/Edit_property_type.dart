@@ -364,7 +364,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
                                 height: MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                width:  MediaQuery.of(context).size.width < 500 ? 150 : 165,
+                                width:  MediaQuery.of(context).size.width < 500 ? 160 : 165,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: blueColor,

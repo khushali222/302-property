@@ -270,7 +270,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     ),
                     child: const Center(
                         child: Text(
-                          "Add Details",
+                          "Edit Details",
                           style: TextStyle(
                               fontWeight: FontWeight.w500, color: Colors.white),
                         )),
@@ -1813,14 +1813,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              'Due Date : ${update.date != null ? update.date : update.date ?? "N/A"}',
-                                              style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              'Status : ${update.status != null ? update.status : update.status ?? "N/A"}',
-                                              style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
-                                            ),
+                                            if(update.status != "")
+                                              Text(
+                                                'Status : ${update.status != "" ? update.status : update.status ?? "N/A"}',
+                                                style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                              ),
+                                            if(update.date != "")
+                                              Text(
+                                                'Due Date : ${update.date != "" ? update.date : update.date ?? "N/A"}',
+                                                style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                              ),
 
                                           ],
                                         ),
@@ -2820,9 +2822,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     width: MediaQuery.of(context).size.width > 500
                                         ? 200
-                                        : 180,
+                                        : 188,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 1),
+                                      padding: const EdgeInsets.only(left: 0),
                                       child: Text(
                                         '${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}',
                                         maxLines: 5, // Set maximum number of lines
@@ -3156,7 +3158,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                   future: generateNetworkVideoThumbnail("$image_url$imageUrl"),
                                                   builder: (context, snapshot) {
                                                     if (snapshot.connectionState == ConnectionState.waiting) {
-                                                      return Center(child: CircularProgressIndicator());
+                                                      return Center(
+                                                          child: SpinKitFadingCircle(
+                                                            color: Colors.black,
+                                                            size: 40.0,
+                                                          ));
                                                     } else if (snapshot.hasData && snapshot.data != null) {
                                                       return  GestureDetector(
                                                         onTap: (){
@@ -3183,7 +3189,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                 )
                                                     : CachedNetworkImage(
                                                   imageUrl: "$image_url$imageUrl",
-                                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                  placeholder: (context, url) => Center(
+                                                      child: SpinKitFadingCircle(
+                                                        color: Colors.black,
+                                                        size: 40.0,
+                                                      )),
                                                   errorWidget: (context, url, error) => Icon(Icons.error),
                                                   fit: BoxFit.cover,
                                                 ),

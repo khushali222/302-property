@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/tenants.dart';
@@ -22,6 +24,7 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart
 import 'package:three_zero_two_property/widgets/appbar.dart';
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
 import '../../../../model/summery_workorder.dart';
+import '../../../../widgets/VideoPlayerWidget.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/titleBar.dart';
@@ -200,6 +203,36 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
   List<String> _imageUrls = [];
   int visibleCount = 5;
+  String imageUrl ="";
+  bool isVideo(String url) {
+    return url.toLowerCase().endsWith(".mp4");
+  }
+  Future<String?> generateNetworkVideoThumbnail(String videoUrl) async {
+    try {
+      final Directory tempDir = await getTemporaryDirectory();
+      final String thumbPath = '${tempDir.path}/thumbnail.png';
+
+      // Use FFmpeg to extract a frame from the video URL
+      await FFmpegKit.execute('-i $videoUrl -ss 00:00:01 -vframes 1 $thumbPath');
+
+      if (File(thumbPath).existsSync()) {
+        return thumbPath; // Return local path of thumbnail
+      }
+    } catch (e) {
+      print("Error generating thumbnail: $e");
+    }
+    return null;
+  }
+  void _showVideoDialog(String videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          child: VideoPlayerDialog(videoUrl: videoFile,),
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1561,7 +1594,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           ),
                           Spacer(),
                           Container(
-                            height: 70,
+                           // height: 70,
                             width: MediaQuery.of(context).size.width * .3,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
@@ -1860,14 +1893,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          'Due Date : ${update.date != null ? update.date : update.date ?? "N/A"}',
-                                          style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          'Status : ${update.status != null ? update.status : update.status ?? "N/A"}',
-                                          style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
-                                        ),
+                                        if(update.status != "")
+                                          Text(
+                                            'Status : ${update.status != "" ? update.status : update.status ?? "N/A"}',
+                                            style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                          ),
+                                        if(update.date != "")
+                                          Text(
+                                            'Due Date : ${update.date != "" ? update.date : update.date ?? "N/A"}',
+                                            style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                          ),
 
                                       ],
                                     ),
@@ -3180,9 +3215,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     width: MediaQuery.of(context).size.width > 500
                                         ? 200
-                                        : 180,
+                                        : 188,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 1),
+                                      padding: const EdgeInsets.only(left: 0),
                                       child: Text(
                                         '${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}',
                                         maxLines: 5, // Set maximum number of lines
@@ -3486,6 +3521,85 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   ),
                                 ),
                               ),
+                              // Column(
+                              //   mainAxisAlignment: MainAxisAlignment.center,
+                              //   crossAxisAlignment: CrossAxisAlignment.center,
+                              //   children: [
+                              //     if (summery.workorderUpdates != null)
+                              //       Column(
+                              //         children: [
+                              //           SizedBox(
+                              //             height: 10,
+                              //           ),
+                              //           Wrap(
+                              //             spacing: 10,
+                              //             runSpacing: 10,
+                              //             children:
+                              //             summery.workOrderImages!.map((imageUrl) {
+                              //               return Container(
+                              //                 width:
+                              //                 summery.workOrderImages!.length == 1
+                              //                     ? MediaQuery.of(context)
+                              //                     .size
+                              //                     .width /
+                              //                     3
+                              //                     : (MediaQuery.of(context)
+                              //                     .size
+                              //                     .width /
+                              //                     3) -
+                              //                     10,
+                              //                 decoration: BoxDecoration(
+                              //                   borderRadius: BorderRadius.circular(10),
+                              //                 ),
+                              //                 child: ClipRRect(
+                              //                   borderRadius: BorderRadius.circular(10),
+                              //                   child: CachedNetworkImage(
+                              //                     imageUrl: "$image_url$imageUrl",
+                              //                     placeholder: (context, url) => Center(
+                              //                         child:
+                              //                         CircularProgressIndicator()),
+                              //                     errorWidget: (context, url, error) {
+                              //                       print(error);
+                              //                       return Container();
+                              //                     },
+                              //                     fit: BoxFit.cover,
+                              //                   ),
+                              //                 ),
+                              //               );
+                              //             }).toList(),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     if (summery.workOrderImages!.length == 0)
+                              //       Row(
+                              //         mainAxisAlignment: MainAxisAlignment.center,
+                              //         children: [
+                              //           Text("No Images Provided"),
+                              //           // Text("(${summery.unitData!.unitName})"),
+                              //         ],
+                              //       ),
+                              //     SizedBox(
+                              //       height: 10,
+                              //     ),
+                              //     Text("${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}",textAlign: TextAlign.center,),
+                              //
+                              //     SizedBox(
+                              //       height: 10,
+                              //     ),
+                              //     Row(
+                              //       mainAxisAlignment: MainAxisAlignment.center,
+                              //       children: [
+                              //         Text("${summery.propertyData!.rental_city}, "),
+                              //         Text("${summery.propertyData!.rental_state}, "),
+                              //         Text("${summery.propertyData!.rental_country}, "),
+                              //         Text("${summery.propertyData!.rental_postcode} "),
+                              //       ],
+                              //     ),
+                              //     SizedBox(
+                              //       height: 10,
+                              //     ),
+                              //   ],
+                              // )
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -3493,40 +3607,65 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   if (summery.workorderUpdates != null)
                                     Column(
                                       children: [
-                                        SizedBox(
-                                          height: 10,
-                                        ),
+                                        SizedBox(height: 10),
                                         Wrap(
                                           spacing: 10,
                                           runSpacing: 10,
-                                          children:
-                                          summery.workOrderImages!.map((imageUrl) {
+                                          children: summery.workOrderImages!.map((fileUrl) {
+                                            bool isMp4 = isVideo(fileUrl);
                                             return Container(
-                                              width:
-                                              summery.workOrderImages!.length == 1
-                                                  ? MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3
-                                                  : (MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                                  3) -
-                                                  10,
+                                              width: summery.workOrderImages!.length == 1
+                                                  ? MediaQuery.of(context).size.width / 3
+                                                  : (MediaQuery.of(context).size.width / 3) - 10,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
                                               child: ClipRRect(
                                                 borderRadius: BorderRadius.circular(10),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: "$image_url$imageUrl",
-                                                  placeholder: (context, url) => Center(
-                                                      child:
-                                                      CircularProgressIndicator()),
-                                                  errorWidget: (context, url, error) {
-                                                    print(error);
-                                                    return Container();
+                                                child: isMp4
+                                                    ? FutureBuilder<String?>(
+                                                  future: generateNetworkVideoThumbnail("$image_url$fileUrl"),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                                      return Center(
+                                                        child: SpinKitFadingCircle(
+                                                          color: Colors.black,
+                                                          size: 40.0,
+                                                        ),
+                                                      );
+                                                    } else if (snapshot.hasData && snapshot.data != null) {
+                                                      return  GestureDetector(
+                                                        onTap: (){
+                                                          _showVideoDialog('$image_url$fileUrl');
+                                                        },
+                                                        child: Stack(
+                                                          alignment: Alignment.center,
+                                                          children: [
+                                                            Image.file(
+                                                              File(snapshot.data!),
+                                                              height: 100,
+                                                              width: 100,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                            Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                          ],
+                                                        ),
+                                                      );
+
+                                                    } else {
+                                                      return Icon(Icons.error);
+                                                    }
                                                   },
+                                                )
+                                                    : CachedNetworkImage(
+                                                  imageUrl: "$image_url$fileUrl",
+                                                  placeholder: (context, url) => Center(
+                                                    child: SpinKitFadingCircle(
+                                                      color: Colors.black,
+                                                      size: 40.0,
+                                                    ),
+                                                  ),
+                                                  errorWidget: (context, url, error) => Icon(Icons.error),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),

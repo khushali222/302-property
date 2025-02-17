@@ -326,30 +326,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                 ),
-                                // Expanded(
-                                //   child: GestureDetector(
-                                //     onTap: () {
-                                //       setState(() {
-                                //         _selectedIndex = 3;
-                                //       });
-                                //     },
-                                //     child: Container(
-                                //       decoration: BoxDecoration(
-                                //           color: _selectedIndex == 3
-                                //               ? blueColor
-                                //               : Colors.white,
-                                //           borderRadius:
-                                //           BorderRadius.circular(5)),
-                                //       child: Center(
-                                //           child: Text("  Renters\nInsurance",
-                                //               style: TextStyle(
-                                //                 color: _selectedIndex != 3
-                                //                     ? blueColor
-                                //                     : Colors.white,
-                                //               ))),
-                                //     ),
-                                //   ),
-                                // ),
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () {
@@ -365,7 +341,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           borderRadius:
                                           BorderRadius.circular(5)),
                                       child: Center(
-                                          child: Text("Document",
+                                          child: Text("  Renters\nInsurance",
                                               style: TextStyle(
                                                 color: _selectedIndex != 3
                                                     ? blueColor
@@ -374,6 +350,30 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                 ),
+                                // Expanded(
+                                //   child: GestureDetector(
+                                //     onTap: () {
+                                //       setState(() {
+                                //         _selectedIndex = 3;
+                                //       });
+                                //     },
+                                //     child: Container(
+                                //       decoration: BoxDecoration(
+                                //           color: _selectedIndex == 3
+                                //               ? blueColor
+                                //               : Colors.white,
+                                //           borderRadius:
+                                //           BorderRadius.circular(5)),
+                                //       child: Center(
+                                //           child: Text("Document",
+                                //               style: TextStyle(
+                                //                 color: _selectedIndex != 3
+                                //                     ? blueColor
+                                //                     : Colors.white,
+                                //               ))),
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
@@ -450,17 +450,17 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         );
       case 2:
         return Tenant(context);
-      case 3:
-        return DocumentRentalTable(leaseId: widget.leaseId,);
       // case 3:
-      //   return
-      //     Padding(
-      //     padding: const EdgeInsets.all(8.0),
-      //     child:
-      //     Renters_Insurance_table(leaseId: widget.leaseId, status: determineStatus(
-      //         snapshot.data?.startDate, snapshot.data?.endDate)
-      //         .toString(), tenantId:' ${snapshot.data?.tenantId}',),
-      //   );
+      //   return DocumentRentalTable(leaseId: widget.leaseId,);
+      case 3:
+        return
+          Padding(
+          padding: const EdgeInsets.all(8.0),
+          child:
+          Renters_Insurance_table(leaseId: widget.leaseId, status: determineStatus(
+              snapshot.data?.startDate, snapshot.data?.endDate)
+              .toString(), tenantId:' ${snapshot.data?.tenantId}',),
+        );
       default:
         return Container(); // Fallback for safety
     }

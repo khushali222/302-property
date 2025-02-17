@@ -13,6 +13,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/tenants.dart';
@@ -21,6 +22,7 @@ import 'package:three_zero_two_property/TenantsModule/repository/workorder.dart'
 import 'package:three_zero_two_property/TenantsModule/widgets/drawer_tiles.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
@@ -268,6 +270,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Summery_page(WorkOrderData_summery summery) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
     return LayoutBuilder(builder: (context, constraints) {
@@ -501,9 +504,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        '${summery.workorderUpdates!.last.date!.isEmpty == true ?
-                                        "N/A" : summery.workorderUpdates?.last.date?.toString()
-                                        }',
+                                        dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -1357,18 +1358,17 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   ),
                                 ),
                               ),
-
                               SizedBox(
                                 height: 10,
                               ),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width > 500
                                     ? 200
-                                    : 180,
+                                    : 188,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 1),
+                                  padding: const EdgeInsets.only(left: 0),
                                   child: Text(
-                                    '${summery.propertyData?.rentaladress}',
+                                    '${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}',
                                     maxLines: 5, // Set maximum number of lines
                                     overflow: TextOverflow
                                         .ellipsis, // Handle overflow with ellipsis
@@ -1383,22 +1383,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   ),
                                 ),
                               ),
-                              // Container(
-                              //     width: MediaQuery.of(context).size.width * .6,
-                              //     child: Text(
-                              //       '${summery.workSubject}',
-                              //       style: TextStyle(
-                              //           fontWeight: FontWeight.bold,
-                              //           color: blueColor),
-                              //     )),
-                              // SizedBox(
-                              //   height: 10,
-                              // ),
-                              // Container(
-                              //     child: Text(
-                              //   '${summery.propertyData?.rentaladress}',
-                              //   style: TextStyle(color: blueColor),
-                              // )),
                             ],
                           )
                         ],
@@ -1528,9 +1512,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    '${summery.workorderUpdates!.last.date!.isEmpty == true ?
-                                    "N/A" : summery.workorderUpdates?.last.date?.toString()
-                                    }',
+                                    dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),
@@ -1838,14 +1820,17 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
+                                          if(update.status != "")
+                                            Text(
+                                              'Status : ${update.status != "" ? update.status : update.status ?? "N/A"}',
+                                              style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                            ),
+                                          if(update.date != "")
                                           Text(
-                                            'Due Date : ${update.date != null ? update.date : update.date ?? "N/A"}',
+                                            'Due Date : ${update.date != "" ? update.date : update.date ?? "N/A"}',
                                             style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
                                           ),
-                                          Text(
-                                            'Status : ${update.status != null ? update.status : update.status ?? "N/A"}',
-                                            style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
-                                          ),
+
 
                                         ],
                                       ),
@@ -2218,9 +2203,27 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             SizedBox(
                               height: 10,
                             ),
-                            Text(
-                              "${summery.propertyData!.rentaladress} ",
-                              textAlign: TextAlign.center,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width > 500
+                                  ? 200
+                                  : 188,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 0),
+                                child: Text(
+                                  '${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}',
+                                  maxLines: 5, // Set maximum number of lines
+                                  overflow: TextOverflow
+                                      .ellipsis, // Handle overflow with ellipsis
+                                  style: TextStyle(
+                                      fontSize:
+                                      MediaQuery.of(context).size.width <
+                                          500
+                                          ? 13
+                                          : 18,
+                                      color: blueColor,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
                             ),
                             SizedBox(
                               height: 10,
@@ -2228,12 +2231,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                SizedBox(width: 2,),
                                 Text("${summery.propertyData!.rental_city}, "),
                                 Text("${summery.propertyData!.rental_state}, "),
                                 Text(
                                     "${summery.propertyData!.rental_country}, "),
                                 Text(
                                     "${summery.propertyData!.rental_postcode} "),
+                                SizedBox(width: 2,)
                               ],
                             ),
                             SizedBox(
@@ -2827,9 +2832,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     width: MediaQuery.of(context).size.width > 500
                                         ? 200
-                                        : 180,
+                                        : 188,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 1),
+                                      padding: const EdgeInsets.only(left: 0),
                                       child: Text(
                                         '${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}',
                                         maxLines: 5, // Set maximum number of lines
@@ -3163,7 +3168,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                   future: generateNetworkVideoThumbnail("$image_url$imageUrl"),
                                                   builder: (context, snapshot) {
                                                     if (snapshot.connectionState == ConnectionState.waiting) {
-                                                      return Center(child: CircularProgressIndicator());
+                                                      return Center(
+                                                          child: SpinKitFadingCircle(
+                                                            color: Colors.black,
+                                                            size: 40.0,
+                                                          ));
                                                     } else if (snapshot.hasData && snapshot.data != null) {
                                                       return  GestureDetector(
                                                         onTap: (){
@@ -3190,7 +3199,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                 )
                                                     : CachedNetworkImage(
                                                   imageUrl: "$image_url$imageUrl",
-                                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                  placeholder: (context, url) => Center(
+                                                      child: SpinKitFadingCircle(
+                                                        color: Colors.black,
+                                                        size: 40.0,
+                                                      )),
                                                   errorWidget: (context, url, error) => Icon(Icons.error),
                                                   fit: BoxFit.cover,
                                                 ),

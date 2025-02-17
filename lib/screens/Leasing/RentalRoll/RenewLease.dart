@@ -142,38 +142,36 @@ class _RenewleaseState extends State<Renewlease> {
       setState(() {
         leasegetdata = LeaseSummary.fromJson(jsonDecode(response.body));
         print("Renew lease ${leasegetdata.data!.renewLeases!.length}");
-        if (determineStatus(leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
+        if (determineStatus(
+            leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
           // Lease is expired
           startDateController.text = formatDate(DateTime.now().toString());
 
           // Set the end date to one month from today's date
-          DateTime newEndDate = DateTime(
-              DateTime.now().year,
-              DateTime.now().month + 1,
-              DateTime.now().day
-          );
+          DateTime newEndDate = DateTime(DateTime.now().year,
+              DateTime.now().month + 1, DateTime.now().day);
           endDateController.text = formatDate(
               DateFormat('yyyy-MM-dd').format(newEndDate).toString());
         }
         if (leasegetdata.data!.renewLeases != null &&
             leasegetdata.data!.renewLeases!.isNotEmpty) {
           // Lease is active
-          if(!determineStatus(leasegetdata.data!.renewLeases!.last.startDate!, leasegetdata.data!.renewLeases!.last.endDate!)){
-            DateTime endDate = formatDates(leasegetdata.data!.renewLeases!.last.endDate!);
+          if (!determineStatus(leasegetdata.data!.renewLeases!.last.startDate!,
+              leasegetdata.data!.renewLeases!.last.endDate!)) {
+            DateTime endDate =
+                formatDates(leasegetdata.data!.renewLeases!.last.endDate!);
 
             // Set start date to the current lease's end date
-            startDateController.text = formatDate(
-                DateFormat('yyyy-MM-dd').format(endDate).toString()
-            );
+            startDateController.text =
+                formatDate(DateFormat('yyyy-MM-dd').format(endDate).toString());
 
             // Extend the lease for one month from the current lease's end date
-            DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+            DateTime newEndDate =
+                DateTime(endDate.year, endDate.month + 1, endDate.day);
             endDateController.text = formatDate(
                 DateFormat('yyyy-MM-dd').format(newEndDate).toString());
           }
-
         }
-
       });
     } else {
       throw Exception('Failed to load lease summary');
@@ -292,15 +290,16 @@ class _RenewleaseState extends State<Renewlease> {
       print('lease drop ${response.body}');
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body)['data'];
+        List<String> fetchedAccounts = [];
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
         fetchedData["Liability Account"] = [
           "Late Fee Income",
           "Pre-payments",
-          "Security Deposit",
-          'Rent Income'
+          // "Security Deposit",
+          // 'Rent Income'
         ];
-
+        //
         for (var item in jsonResponse) {
           String chargeType = item['charge_type'];
           String account = item['account'];
@@ -310,9 +309,16 @@ class _RenewleaseState extends State<Renewlease> {
           }
           fetchedData[chargeType]!.add(account);
         }
+      //  fetchedAccounts.addAll(["Late Fee Income", "Pre-payments"]);
 
+        // Collect all account values
+        // for (var item in jsonResponse) {
+        //   String account = item['account'];
+        //   fetchedAccounts.add(account);
+        // }
         setState(() {
-          categorizedData = fetchedData;
+          //categorizedData = {"": fetchedAccounts};
+            categorizedData = fetchedData;
           isLoading = false;
         });
       } else {
@@ -1145,15 +1151,22 @@ class _RenewleaseState extends State<Renewlease> {
                                           // }
 
                                           if (pickedDate != null) {
-                                            String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                            String formattedStartDate =
+                                                "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
 
                                             // Calculate the end date by adding one month
-                                            DateTime endDate = DateTime(pickedDate.year, pickedDate.month + 1, pickedDate.day);
-                                            String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                            DateTime endDate = DateTime(
+                                                pickedDate.year,
+                                                pickedDate.month + 1,
+                                                pickedDate.day);
+                                            String formattedEndDate =
+                                                "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
 
                                             setState(() {
-                                              startDateController.text = formattedStartDate;
-                                              endDateController.text = formattedEndDate; // Set the end date
+                                              startDateController.text =
+                                                  formattedStartDate;
+                                              endDateController.text =
+                                                  formattedEndDate; // Set the end date
                                               _startDate = pickedDate;
                                             });
                                           }
@@ -1198,19 +1211,26 @@ class _RenewleaseState extends State<Renewlease> {
                                       controller: rent,
                                       onChanged: (value) {
                                         // Sanitize input to allow only numbers and a single decimal point
-                                        String sanitizedValue = value.replaceAll(RegExp(r'[^0-9.]'), '');
-                                        sanitizedValue = sanitizedValue.replaceAll(RegExp(r'(\..*?)\..*'), r'$1');
+                                        String sanitizedValue = value
+                                            .replaceAll(RegExp(r'[^0-9.]'), '');
+                                        sanitizedValue =
+                                            sanitizedValue.replaceAll(
+                                                RegExp(r'(\..*?)\..*'), r'$1');
 
                                         // Update the rent value
                                         rent.text = sanitizedValue;
 
                                         // Calculate renewAmount
-                                        double enteredAmount = double.tryParse(sanitizedValue) ?? 0.0;
-                                        num existingAmount = leasesummery.data?.amount ?? 00;
+                                        double enteredAmount =
+                                            double.tryParse(sanitizedValue) ??
+                                                0.0;
+                                        num existingAmount =
+                                            leasesummery.data?.amount ?? 00;
 
-                                        double renewAmount = enteredAmount - existingAmount > 0
-                                            ? enteredAmount - existingAmount
-                                            : 0.0;
+                                        double renewAmount =
+                                            enteredAmount - existingAmount > 0
+                                                ? enteredAmount - existingAmount
+                                                : 0.0;
 
                                         // Update your state (if you're using setState or a state management solution)
                                         setState(() {
@@ -1218,12 +1238,15 @@ class _RenewleaseState extends State<Renewlease> {
                                           // renewLeaseData['renewAmount'] = renewAmount;
 
                                           // Update Security Deposit field dynamically
-                                          securitydeposit.text = renewAmount.toStringAsFixed(2);
+                                          securitydeposit.text =
+                                              renewAmount.toStringAsFixed(2);
                                         });
 
                                         // Move the cursor to the end of the text field
-                                        rent.selection = TextSelection.fromPosition(
-                                            TextPosition(offset: rent.text.length));
+                                        rent.selection =
+                                            TextSelection.fromPosition(
+                                                TextPosition(
+                                                    offset: rent.text.length));
                                       },
                                     ),
                                     const SizedBox(
@@ -1275,7 +1298,7 @@ class _RenewleaseState extends State<Renewlease> {
                                         ),
                                         Container(
                                           height: 40,
-                                          width: 125,
+                                          width: 140,
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
@@ -1464,8 +1487,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                   [
                                                                 "Late Fee Income",
                                                                 "Pre-payments",
-                                                                "Security Deposit",
-                                                                'Rent Income'
+
                                                               ];
                                                               String?
                                                                   surchargetype;
@@ -1526,26 +1548,26 @@ class _RenewleaseState extends State<Renewlease> {
                                                                     .expand(
                                                                         (entry) {
                                                                   return [
-                                                                    DropdownMenuItem<
-                                                                        String>(
-                                                                      enabled:
-                                                                          false,
-                                                                      child:
-                                                                          Text(
-                                                                        entry
-                                                                            .key,
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
-                                                                        ),
-                                                                      ),
-                                                                    ),
+                                                                    // DropdownMenuItem<
+                                                                    //     String>(
+                                                                    //   enabled:
+                                                                    //       false,
+                                                                    //   child:
+                                                                    //       Text(
+                                                                    //     entry
+                                                                    //         .key,
+                                                                    //     style:
+                                                                    //         const TextStyle(
+                                                                    //       fontWeight:
+                                                                    //           FontWeight.bold,
+                                                                    //       color: Color.fromRGBO(
+                                                                    //           21,
+                                                                    //           43,
+                                                                    //           81,
+                                                                    //           1),
+                                                                    //     ),
+                                                                    //   ),
+                                                                    // ),
                                                                     ...entry
                                                                         .value
                                                                         .map(
@@ -1951,6 +1973,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                           break;
                                                                         }
                                                                       }
+                                                                      print('dropdwoun ${value}');
                                                                       setState(
                                                                           () {
                                                                         final parts =
@@ -2526,6 +2549,226 @@ class _RenewleaseState extends State<Renewlease> {
                                                       //     ),
                                                       //   ),
                                                       // ),
+
+                                                      //abc
+                                                      // Padding(
+                                                      //   padding:
+                                                      //       const EdgeInsets
+                                                      //           .all(8),
+                                                      //   child:
+                                                      //       DropdownButtonHideUnderline(
+                                                      //     child:
+                                                      //         FormField<String>(
+                                                      //       validator: (value) {
+                                                      //         if (rows[index][
+                                                      //                     'account'] ==
+                                                      //                 null ||
+                                                      //             rows[index][
+                                                      //                     'account'] ==
+                                                      //                 'Select') {
+                                                      //           return 'Please select an account';
+                                                      //         }
+                                                      //         return null;
+                                                      //       },
+                                                      //       builder:
+                                                      //           (FormFieldState<
+                                                      //                   String>
+                                                      //               state) {
+                                                      //         String?
+                                                      //             selectedAccount =
+                                                      //             rows[index][
+                                                      //                 'account'];
+                                                      //
+                                                      //         // Ensure selected value is in the list
+                                                      //         Map<
+                                                      //                 String,
+                                                      //                 List<
+                                                      //                     String>>
+                                                      //             categorizedDataCopy =
+                                                      //             Map.from(
+                                                      //                 categorizedData);
+                                                      //         if (selectedAccount !=
+                                                      //                 null &&
+                                                      //             !categorizedData
+                                                      //                 .values
+                                                      //                 .expand(
+                                                      //                     (list) =>
+                                                      //                         list)
+                                                      //                 .contains(
+                                                      //                     selectedAccount) &&
+                                                      //             selectedAccount !=
+                                                      //                 'Select') {
+                                                      //           categorizedDataCopy[
+                                                      //               ''] = (categorizedDataCopy[
+                                                      //                   ''] ??
+                                                      //               [])
+                                                      //             ..add(
+                                                      //                 selectedAccount);
+                                                      //         }
+                                                      //
+                                                      //         // Prepare dropdown items including 'Select' as the first item
+                                                      //         List<
+                                                      //                 DropdownMenuItem<
+                                                      //                     String>>
+                                                      //             dropdownItems =
+                                                      //             [
+                                                      //           const DropdownMenuItem<
+                                                      //               String>(
+                                                      //             value:
+                                                      //                 'Select',
+                                                      //             child:
+                                                      //                 Padding(
+                                                      //               padding: EdgeInsets.symmetric(
+                                                      //                   horizontal:
+                                                      //                       12.0,
+                                                      //                   vertical:
+                                                      //                       4.0),
+                                                      //               child: Text(
+                                                      //                 'Select',
+                                                      //                 style:
+                                                      //                     TextStyle(
+                                                      //                   color: Colors
+                                                      //                       .grey,
+                                                      //                   fontWeight:
+                                                      //                       FontWeight.w400,
+                                                      //                   fontSize:
+                                                      //                       14,
+                                                      //                 ),
+                                                      //               ),
+                                                      //             ),
+                                                      //           ),
+                                                      //           ...categorizedDataCopy.values.expand(
+                                                      //                   (entry) {
+                                                      //             return entry.asMap().entries.map(
+                                                      //                     (items) {
+                                                      //                       int index = items.key;
+                                                      //                      String item =
+                                                      //                           items.value;
+                                                      //               return DropdownMenuItem<
+                                                      //                   String>(
+                                                      //                 value:
+                                                      //                    "${item}_${index}",
+                                                      //                 child:
+                                                      //                     Padding(
+                                                      //                   padding: const EdgeInsets
+                                                      //                       .symmetric(
+                                                      //                       horizontal:
+                                                      //                           12.0,
+                                                      //                       vertical:
+                                                      //                           4.0),
+                                                      //                   child:
+                                                      //                       Text(
+                                                      //                     item,
+                                                      //                     style:
+                                                      //                         const TextStyle(
+                                                      //                       color:
+                                                      //                           Colors.black,
+                                                      //                       fontWeight:
+                                                      //                           FontWeight.w400,
+                                                      //                       fontSize:
+                                                      //                           14,
+                                                      //                     ),
+                                                      //                   ),
+                                                      //                 ),
+                                                      //               );
+                                                      //             }).toList();
+                                                      //           }).toList(),
+                                                      //         ];
+                                                      //
+                                                      //         return Column(
+                                                      //           children: [
+                                                      //             // Label
+                                                      //             Container(
+                                                      //               height:45,
+                                                      //               decoration:
+                                                      //                   BoxDecoration(
+                                                      //                 border: Border.all(
+                                                      //                     color: Colors
+                                                      //                         .grey
+                                                      //                         .shade400),
+                                                      //                 borderRadius:
+                                                      //                     BorderRadius.circular(
+                                                      //                         8.0),
+                                                      //                 color: Colors
+                                                      //                     .white,
+                                                      //               ),
+                                                      //               child: DropdownButton2<
+                                                      //                   String>(
+                                                      //                 isExpanded:
+                                                      //                     true,
+                                                      //                 value: selectedAccount ?? 'Select', // Default to 'Select'
+                                                      //                 items:
+                                                      //                     dropdownItems,
+                                                      //                 onChanged:
+                                                      //                     (value) {
+                                                      //                   setState(
+                                                      //                       () {
+                                                      //                     rows[index]
+                                                      //                         [
+                                                      //                         'account'] = value ==
+                                                      //                             'Select'
+                                                      //                         ? null
+                                                      //                         : value;
+                                                      //                     print(' selct account ${selectedAccount}');
+                                                      //                     state.didChange(
+                                                      //                         value);
+                                                      //                   });
+                                                      //                 },
+                                                      //                 buttonStyleData:
+                                                      //                     const ButtonStyleData(
+                                                      //                   padding: EdgeInsets.symmetric(
+                                                      //                       horizontal:
+                                                      //                           12,
+                                                      //                       vertical:
+                                                      //                           8),
+                                                      //                 ),
+                                                      //                 dropdownStyleData:
+                                                      //                     DropdownStyleData(
+                                                      //                   decoration:
+                                                      //                       BoxDecoration(
+                                                      //                     borderRadius:
+                                                      //                         BorderRadius.circular(8),
+                                                      //                     color:
+                                                      //                         Colors.white,
+                                                      //                   ),
+                                                      //                 ),
+                                                      //                 iconStyleData:
+                                                      //                     const IconStyleData(
+                                                      //                   icon: Icon(
+                                                      //                       Icons
+                                                      //                           .keyboard_arrow_down,
+                                                      //                       color:
+                                                      //                           Colors.grey),
+                                                      //                 ),
+                                                      //               ),
+                                                      //             ),
+                                                      //             // Validation message
+                                                      //             if (state
+                                                      //                 .hasError)
+                                                      //               Padding(
+                                                      //                 padding: const EdgeInsets
+                                                      //                     .only(
+                                                      //                     top:
+                                                      //                         4.0,
+                                                      //                     left:
+                                                      //                         4.0),
+                                                      //                 child:
+                                                      //                     Text(
+                                                      //                   state
+                                                      //                       .errorText!,
+                                                      //                   style: const TextStyle(
+                                                      //                       color:
+                                                      //                           Colors.red,
+                                                      //                       fontSize: 12),
+                                                      //                 ),
+                                                      //               ),
+                                                      //           ],
+                                                      //         );
+                                                      //       },
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
+
                                                       Container(
                                                         margin: EdgeInsets.only(
                                                             top: 5),
@@ -2692,7 +2935,13 @@ class _RenewleaseState extends State<Renewlease> {
                                     return {
                                       "account": element["account"],
                                       "amount": element["amount"],
-                                      "charge_type": element["charge_type"],
+                                    //  "charge_type": 'One Time Charge',
+                                      "charge_type":(element["account"] == "" ||
+                                          element["account"] == "Late Fee Income" ||
+                                          element["account"] == "Pre-payments")
+                                          ? element["account"]
+                                          : "One Time Charge",
+                                      //  "charge_type": element["charge_type"],
                                       "memo": element["memo"]
                                     };
                                   }).toList();
@@ -2700,7 +2949,8 @@ class _RenewleaseState extends State<Renewlease> {
                                   Map<String, dynamic> charge = {
                                     "lease_id": widget.leaseId,
                                     "admin_id": leasesummery.data!.adminId,
-                                    "type": "Charge",
+                                    //  "type": "One Time Charge",
+                                    //  "type": "Charge",
                                     "total_amount": totalAmount,
                                     "entry": entries.length > 0
                                         ? entries
@@ -2716,7 +2966,13 @@ class _RenewleaseState extends State<Renewlease> {
 
                                   Map<String, dynamic> leasedata = {
                                     "lease_id": widget.leaseId,
-
+                                    "tenant_id": leasesummery
+                                                .data?.tenantData !=
+                                            null
+                                        ? leasesummery.data!.tenantData!
+                                            .map((tenant) => tenant.tenantId)
+                                            .toList()
+                                        : [],
                                     "renewAmount": widget.rentamount,
                                     "admin_id": leasesummery.data!.adminId,
                                     "lease_type": leasesummery.data!.leaseType,
@@ -2725,7 +2981,8 @@ class _RenewleaseState extends State<Renewlease> {
                                     "end_date": reverseFormatDate(
                                         endDateController.text.trim()),
                                     "amount": rent.text.trim(), // new amount
-                                    "renewAmount": securitydeposit.text.trim(), // new amount
+                                    "renewAmount": securitydeposit.text
+                                        .trim(), // new amount
                                     "lease_amount": widget.rentamount,
                                     "charges": charge,
                                     "renew_fileName":
@@ -2733,7 +2990,8 @@ class _RenewleaseState extends State<Renewlease> {
                                             ? _uploadedFileNames.first
                                             : "",
                                   };
-                                  updatenewrenewallease(leasedata);
+                                  print(leasedata);
+                                 // updatenewrenewallease(leasedata);
                                 },
                                 child: Container(
                                     height:

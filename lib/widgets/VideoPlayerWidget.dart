@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
@@ -63,31 +64,40 @@ class _VideoPlayerDialogState extends State<VideoPlayerDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.black,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            padding: EdgeInsets.all(00),
-            child: _chewieController != null &&
-                _chewieController!.videoPlayerController.value.isInitialized
-                ? AspectRatio(
-              aspectRatio: _videoPlayerController.value.aspectRatio,
-              child: Chewie(controller: _chewieController!),
-            )
-                : Padding(
-              padding: const EdgeInsets.all(20),
-              child: CircularProgressIndicator(),
-            ),
+      child: IntrinsicWidth(
+        child: IntrinsicHeight(
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                padding: EdgeInsets.all(00),
+                child: _chewieController != null &&
+                    _chewieController!.videoPlayerController.value.isInitialized
+                    ? AspectRatio(
+                  aspectRatio: _videoPlayerController.value.aspectRatio,
+                  child: Chewie(controller: _chewieController!),
+                )
+                    : Padding(
+                  padding: const EdgeInsets.all(60),
+                  child: Center(
+                    child: SpinKitFadingCircle(
+                      color: Colors.white,
+                      size: 40.0,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: -50, // Moves the close button above the container
+                right: 0,
+                child: IconButton(
+                  icon: Icon(Icons.close, color: Colors.white, size: 30),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            top: -50, // Moves the close button above the container
-            right: 0,
-            child: IconButton(
-              icon: Icon(Icons.close, color: Colors.white, size: 30),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

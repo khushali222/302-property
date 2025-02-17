@@ -331,7 +331,7 @@ class _Add_propertyState extends State<Add_property> {
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
                                 height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                width: MediaQuery.of(context).size.width < 500 ? 150 : 165,
+                                width: MediaQuery.of(context).size.width < 500 ? 160 : 165,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: blueColor,

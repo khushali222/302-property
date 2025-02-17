@@ -1566,7 +1566,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           ),
                           Spacer(),
                           Container(
-                            height: 70,
+                           // height: 70,
                             width: MediaQuery.of(context).size.width * .3,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
@@ -1590,9 +1590,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ),
                                 Text(
                                     // '${summery.workorderUpdates}'.isEmpty == true ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date.toString()}'),
-                                    '${summery.workorderUpdates!.last.date!.isEmpty == true ?
-                                    "N/A" : summery.workorderUpdates?.last.date?.toString()
-                                    }',
+                                    dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
                                     // dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
                                     style: TextStyle(
                                         color: blueColor,
@@ -2053,14 +2051,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          'Due Date : ${update.date != null ? update.date : update.date ?? "N/A"}',
-                                          style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          'Status : ${update.status != null ? update.status : update.status ?? "N/A"}',
-                                          style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
-                                        ),
+                                        if(update.status != "")
+                                          Text(
+                                            'Status : ${update.status != "" ? update.status : update.status ?? "N/A"}',
+                                            style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                          ),
+                                        if(update.date != "")
+                                          Text(
+                                            'Due Date : ${update.date != "" ? update.date : update.date ?? "N/A"}',
+                                            style: TextStyle(color: greyColor,fontWeight: FontWeight.bold),
+                                          ),
 
                                       ],
                                     ),
@@ -3680,7 +3680,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                   future: generateNetworkVideoThumbnail("$image_url$fileUrl"),
                                                   builder: (context, snapshot) {
                                                     if (snapshot.connectionState == ConnectionState.waiting) {
-                                                      return Center(child: CircularProgressIndicator());
+                                                      return Center(
+                                                          child: SpinKitFadingCircle(
+                                                            color: Colors.black,
+                                                            size: 40.0,
+                                                          ));
                                                     } else if (snapshot.hasData && snapshot.data != null) {
                                                       return  GestureDetector(
                                                         onTap: (){
@@ -3707,7 +3711,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                 )
                                                     : CachedNetworkImage(
                                                   imageUrl: "$image_url$fileUrl",
-                                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                  placeholder: (context, url) => Center(
+                                                      child: SpinKitFadingCircle(
+                                                        color: Colors.black,
+                                                        size: 40.0,
+                                                      )),
                                                   errorWidget: (context, url, error) => Icon(Icons.error),
                                                   fit: BoxFit.cover,
                                                 ),

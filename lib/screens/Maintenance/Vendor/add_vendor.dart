@@ -593,7 +593,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                 children: [
                                   Container(
                                     height: 50,
-                                    width: 120,
+                                    width: 130,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),

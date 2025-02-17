@@ -1360,7 +1360,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                 'Liability Coverage :',
                                                                 getDisplayValue(item.rentersInsurance?.liabilityCoverage.toString().isNotEmpty ==
                                                                     true
-                                                                    ? item.rentersInsurance?.liabilityCoverage.toString()
+                                                                    ? '\$${item.rentersInsurance?.liabilityCoverage.toString()}'
                                                                     : 'N/A'),
                                                                 '',
                                                                 '')

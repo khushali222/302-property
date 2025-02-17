@@ -792,7 +792,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                           ),
                           Container(
                             height: 45,
-                            width: 120,
+                            width: 130,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -881,7 +881,6 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                                 CrossAxisAlignment
                                                     .start,
                                                 children: [
-
                                                   isvideo[index]?
                                                   GestureDetector(
                                                     onTap: () {
@@ -2295,7 +2294,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                     children: [
                       Container(
                         height: 50,
-                        width: 150,
+                        width: 160,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -2307,7 +2306,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                             ),
                           ),
                           onPressed: _submitForm,
-                          child: isLoading
+                          child: isloading
                               ? Center(
                             child: SpinKitFadingCircle(
                               color: Colors.white,
@@ -2384,12 +2383,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
   }
 
   bool isLoading = false;
+  bool isloading = false;
   bool formValid = true;
 
   void _submitForm() async {
     if (_formkey.currentState!.validate()) {
       setState(() {
-        isLoading = true;
+        isloading = true;
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
@@ -2461,7 +2461,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
         print(e);
       } finally {
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
       }
     } else {

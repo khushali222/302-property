@@ -59,10 +59,14 @@ class _EditApplicantState extends State<EditApplicant> {
     // telePhoneNumber.text = widget.applicant.applicantTelephoneNumber == null
     //     ? ''
     //     : formatPhoneNumberedit(widget.applicant.applicantTelephoneNumber!.toString());
-    mobileNumber.text = formatPhoneNumberedit(widget.applicant.applicantPhoneNumber?.toString() ?? '');
-    homeNumber.text = formatPhoneNumberedit(widget.applicant.applicantHomeNumber?.toString() ?? '');
-    bussinessNumber.text = formatPhoneNumberedit(widget.applicant.applicantBusinessNumber?.toString() ?? '');
-    telePhoneNumber.text = formatPhoneNumberedit(widget.applicant.applicantTelephoneNumber?.toString() ?? '');
+    mobileNumber.text = formatPhoneNumberedit(
+        widget.applicant.applicantPhoneNumber?.toString() ?? '');
+    homeNumber.text = formatPhoneNumberedit(
+        widget.applicant.applicantHomeNumber?.toString() ?? '');
+    bussinessNumber.text = formatPhoneNumberedit(
+        widget.applicant.applicantBusinessNumber?.toString() ?? '');
+    telePhoneNumber.text = formatPhoneNumberedit(
+        widget.applicant.applicantTelephoneNumber?.toString() ?? '');
 
     initialFirstName = widget.applicant.applicantFirstName;
     initialLastName = widget.applicant.applicantLastName;
@@ -340,7 +344,7 @@ class _EditApplicantState extends State<EditApplicant> {
                   children: [
                     Container(
                       height: 50,
-                      width: 160,
+                      width: 170,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -411,12 +415,14 @@ class _EditApplicantState extends State<EditApplicant> {
                                       firstName.text.trim().isNotEmpty
                                           ? firstName.text.trim()
                                           : '',
-                                  "applicant_lastName": lastName.text.trim().isNotEmpty
-                                      ? lastName.text.trim()
-                                      : '',
-                                  "applicant_email": email.text.trim().isNotEmpty
-                                      ? email.text.trim()
-                                      : '',
+                                  "applicant_lastName":
+                                      lastName.text.trim().isNotEmpty
+                                          ? lastName.text.trim()
+                                          : '',
+                                  "applicant_email":
+                                      email.text.trim().isNotEmpty
+                                          ? email.text.trim()
+                                          : '',
                                   "applicant_phoneNumber":
                                       mobileNumber.text.trim().isNotEmpty
                                           ? mobileNumber.text.trim()

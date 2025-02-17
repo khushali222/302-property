@@ -1510,12 +1510,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                       dateProvider
                                                                           .formatCurrentDate(
                                                                               '${workOrder.workOrderData?.updatedAt}'),
-                                                                      '',
-                                                                      ''
-                                                                      // 'Due Date',
-                                                                      // _getDisplayValue(workOrder
-                                                                      //     .workOrderData?.workorderUpdates?.first.date)
-                                                                      ),
+                                                                      'Due Date:', '${workOrder.workOrderData?.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workOrder.workOrderData?.date}') : 'N/A'}'
+
+                                                                  ),
                                                                 ],
                                                               ),
                                                             ),

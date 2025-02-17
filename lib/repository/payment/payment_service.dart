@@ -37,7 +37,9 @@ class PaymentService {
     List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
       return {
         ...entry, // Keep existing data
-        'charge_type': entry['sub_charge_type'] ?? entry['charge_type'], // Reassign sub_charge_type to charge_type
+        'charge_type': entry['newfield'] == true
+            ? 'One Time Charge'
+            : (entry['sub_charge_type'] ?? entry['charge_type']), // Apply condition
         // Remove the sub_charge_type by setting it to null
       };
     }).toList();

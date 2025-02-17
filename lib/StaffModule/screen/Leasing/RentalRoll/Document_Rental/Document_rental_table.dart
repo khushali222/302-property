@@ -1,16 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Document_Rental/pdf_view.dart';
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Send_email.dart';
-import '../../../../constant/constant.dart';
-import '../../../../provider/dateProvider.dart';
-import '../../../../widgets/CustomTableShimmer.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Document_Rental/pdf_view.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
+
+import '../../../../../constant/constant.dart';
+import '../../../../../widgets/CustomTableShimmer.dart';
 import 'Add_DocumentRental.dart';
 
 class DocumentRentalTable extends StatefulWidget {
@@ -22,7 +21,8 @@ class DocumentRentalTable extends StatefulWidget {
 }
 
 class _DocumentRentalTableState extends State<DocumentRentalTable> {
-  late Future<List<Map<String, dynamic>>> _futureRentersInsurance;
+
+  late Future<List<Map<String,dynamic>>> _futureRentersInsurance;
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
@@ -40,7 +40,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
   int currentPage = 0;
   int itemsPerPage = 10;
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
-  List<Map<String, dynamic>> rentersInsuranceModel = [];
+  List<Map<String,dynamic>> rentersInsuranceModel = [];
   void _changeRowsPerPage(int selectedRowsPerPage) {
     setState(() {
       _rowsPerPage = selectedRowsPerPage;
@@ -48,10 +48,12 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> fetchRentersInsuranceData() async {
+
+
+  Future<List<Map<String,dynamic>>> fetchRentersInsuranceData() async {
     // RentersInsuranceService service = RentersInsuranceService();
     try {
-      List<Map<String, dynamic>> data =
+      List<Map<String,dynamic>> data =
       await fetchDocumentRental(widget.leaseId);
       setState(() {
         rentersInsuranceModel = data;
@@ -88,6 +90,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
+
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -102,8 +105,9 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                 children: [
                   Text(" Document\nType",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 15)),
+                      style: TextStyle(color: Colors.white,fontSize: 15)),
                   SizedBox(width: 5),
+
                 ],
               ),
             ),
@@ -112,28 +116,28 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                 children: [
                   Text("     Document \n    Name",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 15)),
+                      style: TextStyle(color: Colors.white,fontSize: 15)),
                   SizedBox(width: 5),
+
                 ],
               ),
             ),
+
             Expanded(
               child: InkWell(
+
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
                       width < 400
                           ? const Text("           Date ",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ))
+                          style: TextStyle(color: Colors.white ,fontSize: 15,))
                           : const Text("           Date ",
-                          style:
-                          TextStyle(color: Colors.white, fontSize: 15)),
+                          style: TextStyle(color: Colors.white,fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
+
                     ],
                   ),
                 ),
@@ -146,7 +150,6 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -154,61 +157,9 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         children: [
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10,),
           Row(
             children: [
-              // SizedBox(
-              //   width: 5,
-              // ),
-              // GestureDetector(
-              //   onTap: () async {
-              //     // Provider.of<SelectedTenantsProvider>(context,
-              //     //     listen: false)
-              //     //     .clearTenant();
-              //     // Provider.of<SelectedCosignersProvider>(context,
-              //     //     listen: false)
-              //     //     .clearCosigner();
-              //     // Provider.of<SelectedApplicantProvider>(context,
-              //     //     listen: false)
-              //     //     .clearApplicant();
-              //     final result = await Navigator.of(context).push(
-              //         MaterialPageRoute(
-              //             builder: (context) => SendEmailScreen(leaseId: widget.leaseId,)));
-              //     // if (result == true) {
-              //     //   setState(() {
-              //     //     _futureRentersInsurance =
-              //     //         RentersInsuranceService()
-              //     //             .fetchRentersInsurance(widget.leaseId);
-              //     //     //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-              //     //   });
-              //     // }
-              //   },
-              //   child: Container(
-              //     height: (MediaQuery.of(context).size.width < 500)
-              //         ? 38
-              //         : MediaQuery.of(context).size.width * 0.063,
-              //     width: (MediaQuery.of(context).size.width < 500)
-              //         ? MediaQuery.of(context).size.width * 0.35
-              //         : MediaQuery.of(context).size.width * 0.2,
-              //     decoration: BoxDecoration(
-              //       color: blueColor,
-              //       borderRadius: BorderRadius.circular(5),
-              //     ),
-              //     child: Center(
-              //       child: Text(
-              //         "Email",
-              //         style: TextStyle(
-              //           color: Colors.white,
-              //           fontWeight: FontWeight.bold,
-              //           fontSize:
-              //               MediaQuery.of(context).size.width < 500 ? 14 : 22,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
               Spacer(),
               GestureDetector(
                 onTap: () async {
@@ -221,8 +172,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                   // Provider.of<SelectedApplicantProvider>(context,
                   //     listen: false)
                   //     .clearApplicant();
-                  final result =
-                  await Navigator.of(context).push(MaterialPageRoute(
+                  final result = await Navigator.of(context)
+                      .push(MaterialPageRoute(
                       builder: (context) => AddDocument(
                         leaseId: widget.leaseId,
                       )));
@@ -253,7 +204,9 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize:
-                        MediaQuery.of(context).size.width < 500 ? 14 : 22,
+                        MediaQuery.of(context).size.width < 500
+                            ? 14
+                            : 22,
                       ),
                     ),
                   ),
@@ -264,10 +217,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
               ),
             ],
           ),
-          SizedBox(
-            height: 5,
-          ),
-          FutureBuilder<List<Map<String, dynamic>>>(
+          SizedBox(height: 5,),
+          FutureBuilder<List<Map<String,dynamic>>>(
             future: _futureRentersInsurance,
             builder: (context, snapshot) {
               if (isLoading) {
@@ -276,8 +227,10 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                   child: ColabShimmerLoadingWidget(),
                 );
               } else if (snapshot.hasError) {
-                return Center(child: Text(errorMessage ?? 'Unknown error'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(
+                    child: Text(errorMessage ?? 'Unknown error'));
+              } else if (!snapshot.hasData ||
+                  snapshot.data!.isEmpty) {
                 return Container(
                   height: MediaQuery.of(context).size.height * .45,
                   child: Center(
@@ -310,6 +263,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
 
               // Apply filtering based on selectedValue and searchValue
 
+
               // Pagination logic
               final totalPages = (data.length / itemsPerPage).ceil();
               final currentPageData = data
@@ -319,7 +273,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
 
               return SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 4, right: 4),
+                  padding: const EdgeInsets.only(left: 4,right: 4),
                   child: Column(
                     children: [
                       const SizedBox(height: 5),
@@ -328,15 +282,19 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                       Container(
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromRGBO(152, 162, 179, .5))),
+                                color: Color.fromRGBO(
+                                    152, 162, 179, .5))),
                         // decoration: BoxDecoration(
                         //     border: Border.all(color: blueColor)),
                         child: Column(
-                          children:
-                          currentPageData.asMap().entries.map((entry) {
+                          children: currentPageData
+                              .asMap()
+                              .entries
+                              .map((entry) {
                             int rowIndex = entry.key;
                             var item = entry.value;
-                            bool isRowExpanded = expandedRowIndex == rowIndex;
+                            bool isRowExpanded =
+                                expandedRowIndex == rowIndex;
 
                             return Container(
                               decoration: BoxDecoration(
@@ -344,7 +302,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                     ? Colors.white
                                     : blueColor.withOpacity(0.09),
                                 border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5)),
+                                    color: Color.fromRGBO(
+                                        152, 162, 179, .5)),
                               ),
                               // decoration: BoxDecoration(
                               //   border: Border.all(color: blueColor),
@@ -354,7 +313,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                   ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     title: Padding(
-                                      padding: const EdgeInsets.all(2.0),
+                                      padding:
+                                      const EdgeInsets.all(2.0),
                                       child: Row(
                                         mainAxisAlignment:
                                         MainAxisAlignment.start,
@@ -366,24 +326,29 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                               setState(() {
                                                 if (expandedRowIndex ==
                                                     rowIndex) {
-                                                  expandedRowIndex = null;
+                                                  expandedRowIndex =
+                                                  null;
                                                 } else {
-                                                  expandedRowIndex = rowIndex;
+                                                  expandedRowIndex =
+                                                      rowIndex;
                                                 }
                                               });
                                             },
                                             child: Container(
-                                              margin: const EdgeInsets.only(
-                                                  left: 5),
+                                              margin: const EdgeInsets
+                                                  .only(left: 5),
                                               padding: !isRowExpanded
-                                                  ? const EdgeInsets.only(
+                                                  ? const EdgeInsets
+                                                  .only(
                                                   bottom: 10)
-                                                  : const EdgeInsets.only(
-                                                  top: 10),
+                                                  : const EdgeInsets
+                                                  .only(top: 10),
                                               child: FaIcon(
                                                 isRowExpanded
-                                                    ? FontAwesomeIcons.sortUp
-                                                    : FontAwesomeIcons.sortDown,
+                                                    ? FontAwesomeIcons
+                                                    .sortUp
+                                                    : FontAwesomeIcons
+                                                    .sortDown,
                                                 size: 20,
                                                 color: blueColor,
                                               ),
@@ -394,14 +359,17 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                             flex:
                                             3, // Larger size for the first field
                                             child: Padding(
-                                              padding: const EdgeInsets.only(
+                                              padding:
+                                              const EdgeInsets
+                                                  .only(
                                                   left: 8.0),
                                               child: InkWell(
                                                 onTap: () {
                                                   setState(() {
                                                     if (expandedRowIndex ==
                                                         rowIndex) {
-                                                      expandedRowIndex = null;
+                                                      expandedRowIndex =
+                                                      null;
                                                     } else {
                                                       expandedRowIndex =
                                                           rowIndex;
@@ -414,11 +382,15 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                       TextSpan(
                                                         text:
                                                         '${item["file_type"] ?? '-'}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
+                                                        style:
+                                                        TextStyle(
+                                                          color:
+                                                          blueColor,
                                                           fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 13,
+                                                          FontWeight
+                                                              .bold,
+                                                          fontSize:
+                                                          13,
                                                         ),
                                                       ),
                                                     ],
@@ -434,7 +406,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                               "${item["file_name"]}",
                                               style: TextStyle(
                                                 color: blueColor,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight:
+                                                FontWeight.bold,
                                                 fontSize: 14,
                                               ),
                                             ),
@@ -446,7 +419,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                               "${dateProvider.formatCurrentDate(item["date_created"])}",
                                               style: TextStyle(
                                                 color: blueColor,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight:
+                                                FontWeight.bold,
                                                 fontSize: 14,
                                               ),
                                             ),
@@ -458,9 +432,10 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                   ),
                                   if (isRowExpanded)
                                     Container(
-                                      padding:
-                                      EdgeInsets.only(left: 2, right: 2),
-                                      margin: EdgeInsets.only(bottom: 2),
+                                      padding: EdgeInsets.only(
+                                          left: 2, right: 2),
+                                      margin:
+                                      EdgeInsets.only(bottom: 2),
                                       child: SingleChildScrollView(
                                         child: Container(
                                           //color: Colors.blue,
@@ -468,7 +443,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                             children: [
                                               Row(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                MainAxisAlignment
+                                                    .start,
                                                 children: [
                                                   FaIcon(
                                                     isRowExpanded
@@ -477,7 +453,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                         : FontAwesomeIcons
                                                         .sortDown,
                                                     size: 40,
-                                                    color: Colors.transparent,
+                                                    color: Colors
+                                                        .transparent,
                                                   ),
                                                   Expanded(
                                                     child: Text.rich(
@@ -487,8 +464,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                             text:
                                                             'Created By : ',
                                                             style: TextStyle(
-                                                                fontWeight:
-                                                                FontWeight
+                                                                fontWeight: FontWeight
                                                                     .bold,
                                                                 color:
                                                                 grey), // Bold and black
@@ -497,8 +473,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                             text:
                                                             '${item["adminDetails"]["first_name"]} ${item["adminDetails"]["last_name"]}',
                                                             style: TextStyle(
-                                                                fontWeight:
-                                                                FontWeight
+                                                                fontWeight: FontWeight
                                                                     .bold,
                                                                 color:
                                                                 blueColor), // Bold and black
@@ -507,6 +482,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                       ),
                                                     ),
                                                   ),
+
                                                 ],
                                               ),
                                               SizedBox(height: 5),
@@ -608,16 +584,18 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12.0),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
+                                    border: Border.all(
+                                        color: Colors.grey),
                                   ),
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton<int>(
                                       value: itemsPerPage,
-                                      items:
-                                      itemsPerPageOptions.map((int value) {
+                                      items: itemsPerPageOptions
+                                          .map((int value) {
                                         return DropdownMenuItem<int>(
                                           value: value,
-                                          child: Text(value.toString()),
+                                          child:
+                                          Text(value.toString()),
                                         );
                                       }).toList(),
                                       onChanged: (newValue) {
@@ -650,7 +628,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                   });
                                 },
                               ),
-                              Text('Page ${currentPage + 1} of $totalPages'),
+                              Text(
+                                  'Page ${currentPage + 1} of $totalPages'),
                               IconButton(
                                 icon: FaIcon(
                                   FontAwesomeIcons.circleChevronRight,
@@ -658,7 +637,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                       ? blueColor
                                       : Colors.grey,
                                 ),
-                                onPressed: currentPage < totalPages - 1
+                                onPressed:
+                                currentPage < totalPages - 1
                                     ? () {
                                   setState(() {
                                     currentPage++;
@@ -681,17 +661,18 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     );
   }
 
-  Future<List<Map<String, dynamic>>> fetchDocumentRental(String leaseid) async {
+  Future<List<Map<String,dynamic>>> fetchDocumentRental( String leaseid) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     try {
       final response = await http.get(
           Uri.parse('$Api_url/api/lease-document/get-documents/$leaseid'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $adminId",
+            "id": "CRM $id",
           });
 
       if (response.statusCode == 200) {
@@ -700,8 +681,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         final parsedJson = jsonDecode(response.body);
         print(parsedJson);
         // Check if 'data' exists and is a list
-        if (parsedJson['documents'] != null &&
-            parsedJson['documents'] is List) {
+        if (parsedJson['documents'] != null && parsedJson['documents'] is List) {
           return List<Map<String, dynamic>>.from(parsedJson['documents']);
         } else {
           return []; // Return an empty list instead of null

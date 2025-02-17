@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../widgets/VideoPlayerWidget.dart';
 import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/TenantsModule/repository/workorder.dart';
 import 'package:three_zero_two_property/TenantsModule/widgets/drawer_tiles.dart';
@@ -329,7 +330,14 @@ print("${response.body}");
       // );
     }
   }
-
+  void _showVideoDialog(String videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Container(child: VideoPlayerDialog(videoUrl: videoFile));
+      },
+    );
+  }
   Future<void> _loadUnits(String rentalId) async {
     setState(() {
       _isLoading = true;
@@ -434,7 +442,7 @@ print("${response.body}");
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
@@ -456,24 +464,29 @@ print("${response.body}");
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
                           Container(
-                            height: 50,
-                            width: 150,
+                            height: 45,
+                            width: 120,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
+                                backgroundColor:
+                                blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
                               onPressed: () async {
+                                // _pickImage().then((_) {
+                                //   setState(
+                                //           () {}); // Rebuild the widget after selecting the image
+                                // });
                                 await selectImages();
                               },
                               child: isLoading
@@ -485,7 +498,8 @@ print("${response.body}");
                               )
                                   : Text(
                                 'Upload here',
-                                style: TextStyle(color: Color(0xFFf7f8f9)),
+                                style:
+                                TextStyle(color: Color(0xFFf7f8f9)),
                               ),
                             ),
                           ),
@@ -512,11 +526,15 @@ print("${response.body}");
                                     future: generateNetworkVideoThumbnail("$image_url${imageUrl}"),
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState == ConnectionState.waiting) {
-                                        return Center(child: CircularProgressIndicator());
+                                        return Center(
+                                            child: SpinKitFadingCircle(
+                                              color: Colors.black,
+                                              size: 40.0,
+                                            ));
                                       } else if (snapshot.hasData && snapshot.data != null) {
                                         return  GestureDetector(
                                           onTap: (){
-                                          //  _showVideoDialog('$image_url${imageUrl}');
+                                           _showVideoDialog('$image_url${imageUrl}');
                                           },
                                           child: Stack(
                                             alignment: Alignment.center,
@@ -538,14 +556,34 @@ print("${response.body}");
                                     },
                                   ):
                                   Container(
-                                    child: Image.network(
-                                      "$image_url${imageUrl}",
-                                      height: 80,
-                                      width: 80,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Icon(Icons.error); // Placeholder for errors
-                                      },
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 68),
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  uploaded_images.remove(imageUrl);
+                                                });
+                                              },
+                                              child: Icon(
+                                                Icons.close,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Image.network(
+                                          "$image_url${imageUrl}",
+                                          height: 80,
+                                          width: 80,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Icon(Icons.error); // Placeholder for errors
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -559,7 +597,7 @@ print("${response.body}");
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
@@ -677,11 +715,11 @@ print("${response.body}");
                                 ),
                               ),
                               units.isNotEmpty
-                                  ? const Text('Unit',
+                                  ?  Text('Unit',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey))
+                                      color: blueColor))
                                   : Container(),
                               const SizedBox(height: 0),
                               units.isNotEmpty
@@ -798,69 +836,107 @@ print("${response.body}");
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: Text('Select Category'),
-                              value: _selectedCategory,
-                              items: _category.map((method) {
-                                return DropdownMenuItem<String>(
-                                  value: method,
-                                  child: Text(method),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedCategory = newValue;
-                                  _showTextField = _selectedCategory == 'Other';
-
-                                });
-                                print('Selected category: $_selectedCategory');
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: 50,
-                              //  width: 250,
-                                padding: const EdgeInsets.only(left: 1, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                elevation: 2,
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                ),
-                                iconSize: 24,
-                                iconEnabledColor: Color(0xFFb0b6c3),
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(6),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility: MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
-                            ),
+                          FormField<String>(
+                            validator: (value) {
+                              if (_selectedCategory == null ||
+                                  _selectedCategory!.isEmpty) {
+                                return 'Please select a category';
+                              }
+                              return null;
+                            },
+                            builder: (FormFieldState<String> state) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Text('Select Category'),
+                                      value: _selectedCategory,
+                                      items: _category.map((method) {
+                                        return DropdownMenuItem<String>(
+                                          value: method,
+                                          child: Text(method),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _selectedCategory = newValue;
+                                          _showTextField =
+                                              _selectedCategory == 'Other';
+                                          state.didChange(newValue);
+                                        });
+                                        print(
+                                            'Selected category: $_selectedCategory');
+                                        state.reset();
+                                        // Notify FormField of value change
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 2,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(Icons.arrow_drop_down),
+                                        iconSize: 24,
+                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(6),
+                                          thickness:
+                                          MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                      const MenuItemStyleData(
+                                        height: 50,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                    ),
+                                  ),
+                                  if (state.hasError)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 5, top: 8),
+                                      child: Text(
+                                        state.errorText!,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
                           ),
                           _showTextField
                               ? Padding(
-                                padding: const EdgeInsets.only(top: 10,bottom: 10),
-                                child: buildTextField('Other Category', 'Enter Other Category',other),
-                              )
+                            padding: const EdgeInsets.only(
+                                top: 10, bottom: 10),
+                            child: buildTextField('Other Category',
+                                'Enter Other Category', other),
+                          )
                               : Container(),
                           SizedBox(
                             height: 10,
@@ -869,7 +945,7 @@ print("${response.body}");
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
@@ -936,7 +1012,7 @@ print("${response.body}");
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
@@ -944,6 +1020,7 @@ print("${response.body}");
                             keyboardType: TextInputType.emailAddress,
                             hintText: 'Enter here',
                             controller: perform,
+                            optional: true,
                           ),
                           SizedBox(
                             height: 10,
@@ -972,7 +1049,7 @@ print("${response.body}");
                             ),
                           ),
                           onPressed: _submitForm,
-                          child: isLoading
+                          child: isloading
                               ? Center(
                             child: SpinKitFadingCircle(
                               color: Colors.white,
@@ -1065,6 +1142,7 @@ print("${response.body}");
     );
   }
   bool isLoading = false;
+  bool isloading = false;
   bool formValid = true;
 
   void _submitForm() async {
@@ -1073,7 +1151,7 @@ print("${response.body}");
     String? lastName = prefs.getString("last_name");
     if (_formkey.currentState!.validate()) {
       setState(() {
-        isLoading = true;
+        isloading = true;
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("tenant_id");
@@ -1126,7 +1204,7 @@ print("${response.body}");
         print(e);
       } finally {
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
       }
     } else {
