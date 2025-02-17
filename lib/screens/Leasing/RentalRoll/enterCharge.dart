@@ -1753,13 +1753,14 @@ class _enterChargeState extends State<enterCharge> {
                                           prefs.getString('adminId').toString();
 
                                       List<Entry> entryList = rows.map((row) {
+                                        String formattedDate = reverseFormatDate(row['date'] ?? "");
                                         return Entry(
                                           account: row['account'],
                                           amount: row['amount']?.toInt() ?? 0,
                                           dueAmount:
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
-                                          date: reverseFormatDate(row['date']),
+                                          date: formattedDate,
                                           chargeType: (row["account"] == "" ||
                                               row["account"] == "Late Fee Income" ||
                                               row["account"] == "Pre-payments")
@@ -1818,13 +1819,14 @@ class _enterChargeState extends State<enterCharge> {
 
                                       List<Entry> entryList = rows.map((row) {
                                         print(" accocunt ${row["account"]}");
+                                        String formattedDate = reverseFormatDate(row['date'] ?? "");
                                         return Entry(
                                           account: row['account'],
                                           amount: row['amount']?.toInt() ?? 0,
                                           dueAmount:
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
-                                          date: reverseFormatDate(row['date']),
+                                          date:formattedDate,
                                           chargeType: (row["account"] == "" ||
                                               row["account"] == "Late Fee Income" ||
                                               row["account"] == "Pre-payments")
@@ -1849,6 +1851,9 @@ class _enterChargeState extends State<enterCharge> {
                                         entry: entryList,
                                       );
                                       print('file ${_uploadedFileNames}');
+
+                                      print('add charge ${charge.toJson()}');
+                                      print('add entry ${charge.entry.first.date}');
 
                                       LeaseRepository apiService =
                                           LeaseRepository();

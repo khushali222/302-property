@@ -37,13 +37,18 @@ import 'Document_Rental/Document_rental_table.dart';
 import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
 
+import 'Move_out_lease/Moveout_lease.dart';
 import 'make_payment.dart';
 
 class SummeryPageLease extends StatefulWidget {
   bool? isredirectpayment;
   String leaseId;
   String? enddate;
-  SummeryPageLease({super.key, required this.leaseId, this.isredirectpayment = false ,this.enddate});
+  SummeryPageLease(
+      {super.key,
+      required this.leaseId,
+      this.isredirectpayment = false,
+      this.enddate});
   @override
   State<SummeryPageLease> createState() => _SummeryPageLeaseState();
 }
@@ -78,12 +83,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     // moveOutDate = widget.enddate!;
     // Initialize moveOutDate with the end date or current date
-  //  moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.enddate!));
+    //  moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.enddate!));
 
     print(' get moved out ${widget.enddate}');
     if (widget.isredirectpayment != null && widget.isredirectpayment!) {
       _tabController!.animateTo(1);
-      _selectedIndex=1;
+      _selectedIndex = 1;
     }
     fetchLeaseTenants();
     super.initState();
@@ -96,11 +101,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       _connectivityResult = connectiondata;
     });
   }
+
   List<LeaseTenant> leaseTenants = [];
 
   void fetchLeaseTenants() async {
     try {
-      List<LeaseTenant> tenants = await LeaseRepository.fetchLeaseTenants(widget.leaseId);
+      List<LeaseTenant> tenants =
+          await LeaseRepository.fetchLeaseTenants(widget.leaseId);
       setState(() {
         leaseTenants = tenants;
         isLoading = false;
@@ -112,7 +119,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       });
     }
   }
-
 
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
@@ -157,8 +163,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       return Center(child: Text('No data found.'));
                     } else {
                       var lease = snapshot.data!;
-                      return
-                        Column(
+                      return Column(
                         children: <Widget>[
                           const SizedBox(
                             height: 20,
@@ -218,9 +223,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               Text(
                                 '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) ?? "No status available"} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
                                 style: TextStyle(
-                                  color: _getStatusColor(determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)),
+                                  color: _getStatusColor(determineStatus(
+                                      snapshot.data?.data?.startDate,
+                                      snapshot.data?.data?.endDate)),
                                   fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 16,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 13
+                                          : 16,
                                 ),
                               ),
 
@@ -339,7 +349,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ? blueColor
                                               : Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(5)),
+                                              BorderRadius.circular(5)),
                                       child: Center(
                                           child: Text("  Renters\nInsurance",
                                               style: TextStyle(
@@ -435,8 +445,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       case 0:
         return SummaryPage();
       case 1:
-        return
-          Padding(
+        return Padding(
           padding: const EdgeInsets.all(8.0),
           child: FinancialTable(
             rentalUnit: snapshot.data?.rentalUnit,
@@ -453,13 +462,15 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       // case 3:
       //   return DocumentRentalTable(leaseId: widget.leaseId,);
       case 3:
-        return
-          Padding(
+        return Padding(
           padding: const EdgeInsets.all(8.0),
-          child:
-          Renters_Insurance_table(leaseId: widget.leaseId, status: determineStatus(
-              snapshot.data?.startDate, snapshot.data?.endDate)
-              .toString(), tenantId:' ${snapshot.data?.tenantId}',),
+          child: Renters_Insurance_table(
+            leaseId: widget.leaseId,
+            status: determineStatus(
+                    snapshot.data?.startDate, snapshot.data?.endDate)
+                .toString(),
+            tenantId: ' ${snapshot.data?.tenantId}',
+          ),
         );
       default:
         return Container(); // Fallback for safety
@@ -485,7 +496,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       return 'Active';
     }
   }
-  String determineStatusrenew(String? startDate, String? endDate, bool isRenewed) {
+
+  String determineStatusrenew(
+      String? startDate, String? endDate, bool isRenewed) {
     if (startDate == null || endDate == null) return 'Unknown';
 
     DateTime start = formatDates(startDate);
@@ -495,25 +508,23 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     if (isRenewed) {
       // Renewed lease logic
       if (today.isBefore(start)) {
-        return 'Future';  // Lease starts in the future
+        return 'Future'; // Lease starts in the future
       } else if (today.isAfter(end)) {
-        return 'Expired';  // Lease is expired
+        return 'Expired'; // Lease is expired
       } else {
-        return 'Active';  // Lease is currently active
+        return 'Active'; // Lease is currently active
       }
     } else {
       // Non-renewed lease logic
       if (today.isBefore(start)) {
-        return 'Future';  // Lease starts in the future
+        return 'Future'; // Lease starts in the future
       } else if (today.isAfter(end)) {
-        return 'Not Renewed';  // Lease expired and not renewed
+        return 'Not Renewed'; // Lease expired and not renewed
       } else {
-        return 'Not Renewed';  // Lease is ongoing but not renewed
+        return 'Not Renewed'; // Lease is ongoing but not renewed
       }
     }
   }
-
-
 
   DateTime formatDates(String dateTime) {
     List<String> dateFormats = [
@@ -728,214 +739,155 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               SizedBox(
                 height: 10,
               ),
+              if (determineStatus(snapshot.data?.data?.startDate,
+                      snapshot.data?.data?.endDate) !=
+                  'Expired')
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 10.0, right: 10.0, bottom: 10.0),
+                  child: FutureBuilder<LeaseLedger?>(
+                    future: _leaseLedgerFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container();
+                        //   SpinKitFadingCircle(
+                        //   color: blueColor,
+                        //   size: 40.0,
+                        // );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData) {
+                        return Center(child: Text('No data found'));
+                      } else {
+                        final leaseLedger = snapshot.data!;
 
-              if(determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) != 'Expired')
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 10.0, right: 10.0, bottom: 10.0),
-                child: FutureBuilder<LeaseLedger?>(
-                  future: _leaseLedgerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Container();
-                      //   SpinKitFadingCircle(
-                      //   color: blueColor,
-                      //   size: 40.0,
-                      // );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData) {
-                      return Center(child: Text('No data found'));
-                    } else {
-                      final leaseLedger = snapshot.data!;
-
-                      //final data = leaseLedger.data!.toList();
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 15, right: 15),
-                              child: Material(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: blueColor),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 25,
-                                        right: 25,
-                                        top: 20,
-                                        bottom: 30),
-                                    child: Column(
-                                      children: [
-                                        Table(
-                                          children: [
-                                            TableRow(children: [
-                                              TableCell(
-                                                  child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  'Balance',
-                                                  style: TextStyle(
-                                                      color: const Color(
-                                                          0xFF8A95A8),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
-                                              )),
-                                              TableCell(
-                                                  child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 12),
-                                                child: Text(
-                                                  '\$ ${leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance!.toStringAsFixed(2) : 0.0}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              )),
-                                            ]),
-                                            TableRow(children: [
-                                              TableCell(
-                                                  child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  'Rent',
-                                                  style: TextStyle(
-                                                      color: const Color(
-                                                          0xFF8A95A8),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
-                                              )),
-                                              TableCell(
-                                                  child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 12),
-                                                child: Text(
-                                                  '\$ ${leasesummery.data?.amount}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              )),
-                                            ]),
-                                            TableRow(children: [
-                                              TableCell(
-                                                  child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  'Due date',
-                                                  style: TextStyle(
-                                                      color: const Color(
-                                                          0xFF8A95A8),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
-                                              )),
-                                              TableCell(
-                                                  child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 12),
-                                                child: Text(
-                                                  '${dateProvider.formatCurrentDate(leasesummery.data!.date!)}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              )),
-                                            ]),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 15,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                                height: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        500
-                                                    ? 75
-                                                    : 45,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    border: Border.all(
-                                                        width: 1,
+                        //final data = leaseLedger.data!.toList();
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: blueColor),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 25,
+                                          right: 25,
+                                          top: 20,
+                                          bottom: 30),
+                                      child: Column(
+                                        children: [
+                                          Table(
+                                            children: [
+                                              TableRow(children: [
+                                                TableCell(
+                                                    child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      12.0),
+                                                  child: Text(
+                                                    'Balance',
+                                                    style: TextStyle(
+                                                        color: const Color(
+                                                            0xFF8A95A8),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16),
+                                                  ),
+                                                )),
+                                                TableCell(
+                                                    child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 12),
+                                                  child: Text(
+                                                    '\$ ${leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance!.toStringAsFixed(2) : 0.0}',
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         color: blueColor),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5.0)),
-                                                child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5.0)),
-                                                        elevation: 0,
-                                                        backgroundColor:
-                                                            Colors.white),
-                                                    onPressed: () async {
-                                                      final value =
-                                                          await Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          MakePayment(
-                                                                            leaseId:
-                                                                                widget.leaseId,
-                                                                            tenantId:
-                                                                                ' ${leasesummery.data?.tenantId}',
-                                                                          )));
-                                                      if (value == true) {
-                                                        setState(() {
-                                                          _leaseLedgerFuture =
-                                                              LeaseRepository()
-                                                                  .fetchLeaseLedger(
-                                                                      leaseId:
-                                                                          widget
-                                                                              .leaseId);
-                                                        });
-                                                      }
-                                                    },
-                                                    child: Text(
-                                                      'Make Payment',
-                                                      style: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width <
-                                                                  500
-                                                              ? 15
-                                                              : 18,
-                                                          color: blueColor,fontWeight: FontWeight.bold),
-                                                    ))),
-                                            SizedBox(width: 15),
-                                            Expanded(
-                                              child: Container(
+                                                  ),
+                                                )),
+                                              ]),
+                                              TableRow(children: [
+                                                TableCell(
+                                                    child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      12.0),
+                                                  child: Text(
+                                                    'Rent',
+                                                    style: TextStyle(
+                                                        color: const Color(
+                                                            0xFF8A95A8),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16),
+                                                  ),
+                                                )),
+                                                TableCell(
+                                                    child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 12),
+                                                  child: Text(
+                                                    '\$ ${leasesummery.data?.amount}',
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor),
+                                                  ),
+                                                )),
+                                              ]),
+                                              TableRow(children: [
+                                                TableCell(
+                                                    child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      12.0),
+                                                  child: Text(
+                                                    'Due date',
+                                                    style: TextStyle(
+                                                        color: const Color(
+                                                            0xFF8A95A8),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16),
+                                                  ),
+                                                )),
+                                                TableCell(
+                                                    child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 12),
+                                                  child: Text(
+                                                    '${dateProvider.formatCurrentDate(leasesummery.data!.date!)}',
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor),
+                                                  ),
+                                                )),
+                                              ]),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Container(
                                                   height: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                      500
+                                                              .size
+                                                              .width <
+                                                          500
                                                       ? 75
                                                       : 45,
                                                   decoration: BoxDecoration(
@@ -944,132 +896,212 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                           width: 1,
                                                           color: blueColor),
                                                       borderRadius:
-                                                      BorderRadius.circular(
-                                                          5.0)),
+                                                          BorderRadius.circular(
+                                                              5.0)),
                                                   child: ElevatedButton(
                                                       style: ElevatedButton.styleFrom(
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  5.0)),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5.0)),
                                                           elevation: 0,
                                                           backgroundColor:
-                                                          Colors.white),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          //  print("hello");
-                                                          // if (_tabController !=
-                                                          //     null) {
-                                                          //   _tabController!
-                                                          //       .animateTo(1);
-                                                          // }
-                                                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RecurringPayment(leaseData: leasesummery.data!,)));
-                                                        });
+                                                              Colors.white),
+                                                      onPressed: () async {
+                                                        final value = await Navigator
+                                                            .push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            MakePayment(
+                                                                              leaseId: widget.leaseId,
+                                                                              tenantId: ' ${leasesummery.data?.tenantId}',
+                                                                            )));
+                                                        if (value == true) {
+                                                          setState(() {
+                                                            _leaseLedgerFuture =
+                                                                LeaseRepository()
+                                                                    .fetchLeaseLedger(
+                                                                        leaseId:
+                                                                            widget.leaseId);
+                                                          });
+                                                        }
                                                       },
-                                                      child:
-                                                      Row(
-                                                        children: [
-                                                          if (leaseTenants.any((tenant) => tenant.recurring == false))
-                                                            SizedBox(width: 12,),
-
-                                                          Expanded(
-                                                            child: Text(
-                                                              'Configure Recurring Payment',
-                                                              style: TextStyle(
-                                                                  fontSize: MediaQuery.of(
-                                                                      context)
-                                                                      .size
-                                                                      .width <
-                                                                      500
-                                                                      ? 13
-                                                                      : 18,
-                                                                  color: blueColor,fontWeight: FontWeight.bold),
-                                                            ),
-                                                          ),
-                                                          if (leaseTenants.any((tenant) => tenant.recurring!))
-                                                            Icon(CupertinoIcons.check_mark_circled_solid, color: Colors.green),
-
-                                                        ],
+                                                      child: Text(
+                                                        'Make Payment',
+                                                        style: TextStyle(
+                                                            fontSize: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width <
+                                                                    500
+                                                                ? 15
+                                                                : 18,
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                       ))),
-                                            ),
-                                           
-                                            // Expanded(
-                                            //   child: Container(
-                                            //       height: MediaQuery.of(context)
-                                            //           .size
-                                            //           .width <
-                                            //           500
-                                            //           ? 45
-                                            //           : 45,
-                                            //       decoration: BoxDecoration(
-                                            //           color: Colors.white,
-                                            //           border: Border.all(
-                                            //               width: 1,
-                                            //               color: blueColor
-                                            //
-                                            //
-                                            //           ),
-                                            //           borderRadius:
-                                            //           BorderRadius.circular(
-                                            //               5.0)),
-                                            //       child: ElevatedButton(
-                                            //           style: ElevatedButton.styleFrom(
-                                            //               shape: RoundedRectangleBorder(
-                                            //                   borderRadius:
-                                            //                   BorderRadius.circular(5.0)),
-                                            //               elevation: 0,
-                                            //               backgroundColor: Colors.white),
-                                            //           onPressed: () async {
-                                            //             final value =
-                                            //             await Navigator.push(
-                                            //                 context,
-                                            //                 MaterialPageRoute(
-                                            //                     builder:
-                                            //                         (context) =>
-                                            //                         RecurringPayment(leaseId: widget.leaseId,)
-                                            //                 ));
-                                            //             // if (value == true) {
-                                            //             //   setState(() {
-                                            //             //     _leaseLedgerFuture =
-                                            //             //         LeaseRepository()
-                                            //             //             .fetchLeaseLedger(
-                                            //             //             widget
-                                            //             //                 .leaseId);
-                                            //             //   });
-                                            //             // }
-                                            //           },
-                                            //           child: Text(
-                                            //             'Configure Recurring Payment',
-                                            //             style: TextStyle(
-                                            //                 fontSize: MediaQuery.of(
-                                            //                     context)
-                                            //                     .size
-                                            //                     .width <
-                                            //                     500
-                                            //                     ? 14
-                                            //                     : 18,
-                                            //                 color: blueColor
-                                            //
-                                            //
-                                            //             ),
-                                            //           ))),
-                                            // ),
-                                          ],
-                                        ),
-                                      ],
+                                              SizedBox(width: 15),
+                                              Expanded(
+                                                child: Container(
+                                                    height: MediaQuery.of(context)
+                                                                .size
+                                                                .width <
+                                                            500
+                                                        ? 75
+                                                        : 45,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        border: Border.all(
+                                                            width: 1,
+                                                            color: blueColor),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                5.0)),
+                                                    child: ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5.0)),
+                                                            elevation: 0,
+                                                            backgroundColor:
+                                                                Colors.white),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            //  print("hello");
+                                                            // if (_tabController !=
+                                                            //     null) {
+                                                            //   _tabController!
+                                                            //       .animateTo(1);
+                                                            // }
+                                                            Navigator.of(context).push(
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            RecurringPayment(
+                                                                              leaseData: leasesummery.data!,
+                                                                            )));
+                                                          });
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            if (leaseTenants
+                                                                .any((tenant) =>
+                                                                    tenant
+                                                                        .recurring ==
+                                                                    false))
+                                                              SizedBox(
+                                                                width: 12,
+                                                              ),
+                                                            Expanded(
+                                                              child: Text(
+                                                                'Configure Recurring Payment',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        MediaQuery.of(context).size.width <
+                                                                                500
+                                                                            ? 13
+                                                                            : 18,
+                                                                    color:
+                                                                        blueColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                            ),
+                                                            if (leaseTenants.any(
+                                                                (tenant) => tenant
+                                                                    .recurring!))
+                                                              Icon(
+                                                                  CupertinoIcons
+                                                                      .check_mark_circled_solid,
+                                                                  color: Colors
+                                                                      .green),
+                                                          ],
+                                                        ))),
+                                              ),
+
+                                              // Expanded(
+                                              //   child: Container(
+                                              //       height: MediaQuery.of(context)
+                                              //           .size
+                                              //           .width <
+                                              //           500
+                                              //           ? 45
+                                              //           : 45,
+                                              //       decoration: BoxDecoration(
+                                              //           color: Colors.white,
+                                              //           border: Border.all(
+                                              //               width: 1,
+                                              //               color: blueColor
+                                              //
+                                              //
+                                              //           ),
+                                              //           borderRadius:
+                                              //           BorderRadius.circular(
+                                              //               5.0)),
+                                              //       child: ElevatedButton(
+                                              //           style: ElevatedButton.styleFrom(
+                                              //               shape: RoundedRectangleBorder(
+                                              //                   borderRadius:
+                                              //                   BorderRadius.circular(5.0)),
+                                              //               elevation: 0,
+                                              //               backgroundColor: Colors.white),
+                                              //           onPressed: () async {
+                                              //             final value =
+                                              //             await Navigator.push(
+                                              //                 context,
+                                              //                 MaterialPageRoute(
+                                              //                     builder:
+                                              //                         (context) =>
+                                              //                         RecurringPayment(leaseId: widget.leaseId,)
+                                              //                 ));
+                                              //             // if (value == true) {
+                                              //             //   setState(() {
+                                              //             //     _leaseLedgerFuture =
+                                              //             //         LeaseRepository()
+                                              //             //             .fetchLeaseLedger(
+                                              //             //             widget
+                                              //             //                 .leaseId);
+                                              //             //   });
+                                              //             // }
+                                              //           },
+                                              //           child: Text(
+                                              //             'Configure Recurring Payment',
+                                              //             style: TextStyle(
+                                              //                 fontSize: MediaQuery.of(
+                                              //                     context)
+                                              //                     .size
+                                              //                     .width <
+                                              //                     500
+                                              //                     ? 14
+                                              //                     : 18,
+                                              //                 color: blueColor
+                                              //
+                                              //
+                                              //             ),
+                                              //           ))),
+                                              // ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
-              ),
               Padding(
                 padding: const EdgeInsets.only(
                     left: 25, right: 25, top: 25, bottom: 25),
@@ -1929,7 +1961,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               return Center(child: Text('No data found.'));
             } else {
               final leasetenant = snapshot.data!;
-              print('lease tenant first name ${leasetenant.first.tenantFirstName}');
+              print(
+                  'lease tenant first name ${leasetenant.first.tenantFirstName}');
               // print(status);
               return isTablet
                   ? SingleChildScrollView(
@@ -2316,52 +2349,72 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ),
                                               const Spacer(),
                                               if (snapshot.data![index]
-                                                          .moveoutDate ==
-                                                      "" )
+                                                      .moveoutDate ==
+                                                  "")
                                                 InkWell(
-                                                  onTap: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        bool isChecked =
-                                                            false; // Moved isChecked inside the StatefulBuilder
-                                                        return StatefulBuilder(
-                                                          builder: (BuildContext
-                                                                  context,
-                                                              StateSetter
-                                                                  setState) {
-                                                            return Dialog(
-                                                              backgroundColor:
-                                                                  Colors.white,
-                                                              surfaceTintColor:
-                                                                  Colors.white,
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10.0)),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            16,
-                                                                        right:
-                                                                            16,
-                                                                        top: 10,
-                                                                        bottom:
-                                                                            10),
-                                                                child: Container(
-                                                                    // width: MediaQuery.of(context).size.width - 10,
-                                                                    width: 900,
-                                                                    child: buildMoveout(snapshot.data![index],tenants: snapshot.data)),
-                                                              ),
-                                                            );
-                                                          },
-                                                        );
-                                                      },
+                                                  onTap: () async {
+                                                    // showDialog(
+                                                    //   context: context,
+                                                    //   builder: (BuildContext
+                                                    //       context) {
+                                                    //     bool isChecked =
+                                                    //         false; // Moved isChecked inside the StatefulBuilder
+                                                    //     return StatefulBuilder(
+                                                    //       builder: (BuildContext
+                                                    //               context,
+                                                    //           StateSetter
+                                                    //               setState) {
+                                                    //         return Dialog(
+                                                    //           backgroundColor:
+                                                    //               Colors.white,
+                                                    //           surfaceTintColor:
+                                                    //               Colors.white,
+                                                    //           shape: RoundedRectangleBorder(
+                                                    //               borderRadius:
+                                                    //                   BorderRadius
+                                                    //                       .circular(
+                                                    //                           10.0)),
+                                                    //           child: Padding(
+                                                    //             padding:
+                                                    //                 const EdgeInsets
+                                                    //                     .only(
+                                                    //                     left:
+                                                    //                         16,
+                                                    //                     right:
+                                                    //                         16,
+                                                    //                     top: 10,
+                                                    //                     bottom:
+                                                    //                         10),
+                                                    //             child:
+                                                    //                 Container(
+                                                    //                     // width: MediaQuery.of(context).size.width - 10,
+                                                    //                     width:
+                                                    //                         900,
+                                                    //                     child: buildMoveout(
+                                                    //                         snapshot.data![
+                                                    //                             index],
+                                                    //                         tenants:
+                                                    //                             snapshot.data)),
+                                                    //           ),
+                                                    //         );
+                                                    //       },
+                                                    //     );
+                                                    //   },
+                                                    // );
+                                                    final result =
+                                                  await  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => MoveoutScreen(tenant:  snapshot.data![
+                                                        index], leaseId: widget.leaseId, tenants: leasetenant, enddate: widget.enddate ?? "", moveOutDate: moveOutDate ?? "",),
+                                                      ),
                                                     );
+                                                    if (result == true) {
+                                                      setState(() {
+                                                        futureLeasetenant =
+                                                            LeaseRepository.fetchLeaseTenants(widget.leaseId);
+                                                      });
+                                                    }
                                                   },
                                                   child: Row(
                                                     children: [
@@ -2386,32 +2439,43 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 ),
                                               //   if(isMovedOut || status == 'Expired')
                                               if (snapshot.data![index]
-                                                          .moveoutDate !=
-                                                      "")
+                                                      .moveoutDate !=
+                                                  "")
                                                 InkWell(
-
                                                   onTap: () async {
-                                                  print("calling movein");
-                                                    String? tenantId =
-                                                    snapshot.data?[index].tenantId != null ? snapshot.data![index].tenantId : null;
+                                                    print("calling movein");
+                                                    String? tenantId = snapshot
+                                                                .data?[index]
+                                                                .tenantId !=
+                                                            null
+                                                        ? snapshot.data![index]
+                                                            .tenantId
+                                                        : null;
                                                     SharedPreferences prefs =
-                                                    await SharedPreferences.getInstance();
-                                                    String? id = prefs.getString("adminId");
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    String? id = prefs
+                                                        .getString("adminId");
                                                     LeaseMoveoutRepository()
                                                         .addMoveInTenant(
                                                       adminId: id!,
                                                       tenantId: tenantId,
-                                                      leaseId: snapshot.data![index].leaseId,
+                                                      leaseId: snapshot
+                                                          .data![index].leaseId,
                                                     )
                                                         .then((value) {
                                                       setState(() {
                                                         futureLeasetenant =
-                                                            LeaseRepository.fetchLeaseTenants(widget.leaseId);
+                                                            LeaseRepository
+                                                                .fetchLeaseTenants(
+                                                                    widget
+                                                                        .leaseId);
                                                         isLoading = false;
                                                         // isMovedOut = true;
                                                       });
 
-                                                      Navigator.pop(context, true);
+                                                      Navigator.pop(
+                                                          context, true);
                                                     }).catchError((e) {
                                                       setState(() {
                                                         isLoading = false;
@@ -2421,7 +2485,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   child: Row(
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons.circleArrowLeft,
+                                                        FontAwesomeIcons
+                                                            .circleArrowLeft,
                                                         size: 17,
                                                         color: blueColor,
                                                       ),
@@ -2520,13 +2585,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               // ),
                                             ],
                                           ),
-                                          if (snapshot.data![index]
-                                                      .moveoutDate !=
-                                                  "" )
+                                          if (snapshot
+                                                  .data![index].moveoutDate !=
+                                              "")
                                             SizedBox(height: 15),
-                                          if (snapshot.data![index]
-                                                      .moveoutDate !=
-                                                  "" )
+                                          if (snapshot
+                                                  .data![index].moveoutDate !=
+                                              "")
                                             Row(
                                               children: [
                                                 const SizedBox(width: 65),
@@ -2546,7 +2611,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   width: 5,
                                                 ),
                                                 Text(
-                                                  formatDate('${snapshot.data![index].moveoutNoticeGivenDate}'),
+                                                  formatDate(
+                                                      '${snapshot.data![index].moveoutNoticeGivenDate}'),
                                                   style: TextStyle(
                                                     fontSize: 15,
                                                     color: blueColor,
@@ -2555,13 +2621,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 ),
                                               ],
                                             ),
-                                          if (snapshot.data![index]
-                                                      .moveoutDate !=
-                                                  "")
+                                          if (snapshot
+                                                  .data![index].moveoutDate !=
+                                              "")
                                             SizedBox(height: 15),
-                                          if (snapshot.data![index]
-                                                      .moveoutDate !=
-                                                  "" )
+                                          if (snapshot
+                                                  .data![index].moveoutDate !=
+                                              "")
                                             Row(
                                               children: [
                                                 const SizedBox(width: 65),
@@ -2581,7 +2647,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   width: 5,
                                                 ),
                                                 Text(
-                                                  formatDate('${snapshot.data![index].moveoutDate}'),
+                                                  formatDate(
+                                                      '${snapshot.data![index].moveoutDate}'),
                                                   style: TextStyle(
                                                     fontSize: 15,
                                                     color: blueColor,
@@ -2926,7 +2993,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     );
   }
 
-  Widget buildMoveout(LeaseTenant tenant,{List<LeaseTenant>? tenants}) {
+  Widget buildMoveout(LeaseTenant tenant, {List<LeaseTenant>? tenants}) {
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.enddate!));
 
@@ -2935,8 +3002,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     Map<String, TextEditingController> moveoutDateControllers = {};
     Map<String, String> moveOutDates = {};
 
-    List<LeaseTenant> selectedTenants =tenants!.where((t) => t.moveoutDate == "").toList();
-
+    List<LeaseTenant> selectedTenants =
+        tenants!.where((t) => t.moveoutDate == "").toList();
 
     for (var t in selectedTenants!) {
       if (!startDateControllers.containsKey(t.tenantId)) {
@@ -2947,165 +3014,177 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       }
 
       // Set default values for each tenant
-      startDateControllers[t.tenantId!]!.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+      startDateControllers[t.tenantId!]!.text =
+          DateFormat('dd-MM-yyyy').format(DateTime.now());
       moveoutDateControllers[t.tenantId!]!.text = formatDate(t.endDate!);
 
       // Set default selection
       t!.isSelected = (t.tenantId == tenant.tenantId);
     }
 
-
     moveOutDate = formatDate(widget.enddate!); // Store the original format
     print(formatDate(widget.enddate!));
     //startdateController.text = moveOutDate;
     startdateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    return  StatefulBuilder(
-        builder: (context, setState) {
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Move out Tenants",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: blueColor,
-                    fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
+    return StatefulBuilder(builder: (context, setState) {
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Move out Tenants",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: blueColor,
+                  fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
+            ),
+            SizedBox(height: 13),
+            Text(
+              "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+              textAlign: TextAlign.justify,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                color: Color(0xFF8A95A8),
               ),
-              SizedBox(height: 13),
-              Text(
-                "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
-                textAlign: TextAlign.justify,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                  color: Color(0xFF8A95A8),
-                ),
-              ),
-              SizedBox(height: 15),
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Property Details',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 16 : 20,
-                            color: blueColor),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: blueColor),
+            ),
+            SizedBox(height: 15),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Property Details',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                          color: blueColor),
                     ),
-                    child: Table(
-                      //border: TableBorder.all(color:blueColor),
-                      border: TableBorder(
-                        horizontalInside: BorderSide(
-                          color: blueColor,
-                          width: 1.0,
-                        ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: blueColor),
+                  ),
+                  child: Table(
+                    //border: TableBorder.all(color:blueColor),
+                    border: TableBorder(
+                      horizontalInside: BorderSide(
+                        color: blueColor,
+                        width: 1.0,
                       ),
-                      columnWidths: {
-                        0: FlexColumnWidth(2),
-                        1: FlexColumnWidth(3),
-                      },
-                      children: [
-                        TableRow(
-                          children: [
-                            buildTableCell(Text(
-                              'Address/Unit',
+                    ),
+                    columnWidths: {
+                      0: FlexColumnWidth(2),
+                      1: FlexColumnWidth(3),
+                    },
+                    children: [
+                      TableRow(
+                        children: [
+                          buildTableCell(Text(
+                            'Address/Unit',
+                            style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 15
+                                  : 17,
+                            ),
+                          )),
+                          buildTableCell(Text('${tenant.rentalAddress}')),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          buildTableCell(Text('Lease Type',
                               style: TextStyle(
                                 color: blueColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 17,
-                              ),
-                            )),
-                            buildTableCell(Text('${tenant.rentalAddress}')),
-                          ],
-                        ),
-                        TableRow(
-                          children: [
-                            buildTableCell(Text('Lease Type',
-                                style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width < 500
-                                      ? 15
-                                      : 17,
-                                ))),
-                            buildTableCell(Text('${tenant.leaseType}')),
-                          ],
-                        ),
-                        TableRow(
-                          children: [
-                            buildTableCell(Text('Start End',
-                                style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width < 500
-                                      ? 15
-                                      : 17,
-                                ))),
-                            buildTableCell(
-                                Text('${tenant.startDate} ${tenant.endDate}')),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Tenant Details',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 16 : 20,
-                            color: blueColor),
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 17,
+                              ))),
+                          buildTableCell(Text('${tenant.leaseType}')),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          buildTableCell(Text('Start End',
+                              style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 17,
+                              ))),
+                          buildTableCell(
+                              Text('${tenant.startDate} ${tenant.endDate}')),
+                        ],
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-
-                  Column(
-                    children: selectedTenants.map((tenant) {
-                      return Column(
-                        children: [
-                          Container(
-                            //color: Colors.green,
-                            padding: const EdgeInsets.symmetric(vertical: 0.0),
-                            child: Row(
-                              children: [
-                                Checkbox(
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Tenant Details',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                          color: blueColor),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Column(
+                  children: selectedTenants.map((tenant) {
+                    return Column(
+                      children: [
+                        Container(
+                          //color: Colors.green,
+                          padding: const EdgeInsets.symmetric(vertical: 0.0),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 20.0,
+                                height: 20.0,
+                                child: Checkbox(
                                   value: tenant!.isSelected ?? false,
                                   onChanged: (bool? value) {
                                     setState(() {
                                       tenant!.isSelected = value ?? false;
                                     });
                                   },
+                                  activeColor: blueColor,
                                 ),
-                                SizedBox(width: 8),
-                                Text("${tenant.tenantFirstName} ${tenant.tenantLastName}"),
-                              ],
-                            ),
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                "${tenant.tenantFirstName} ${tenant.tenantLastName}",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
                           ),
-                          if(tenant!.isSelected!)
-                            Table(
+                        ),
+                        // if (tenant!.isSelected!)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            child: Table(
                               border: TableBorder.all(color: blueColor),
                               columnWidths: {
                                 0: FlexColumnWidth(2),
@@ -3118,7 +3197,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width < 500
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
                                               ? 15
                                               : 17,
                                         ))),
@@ -3132,11 +3214,17 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width < 500
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
                                               ? 15
                                               : 17,
                                         ))),
-                                    buildTableCell(buildDateField(startDateControllers[tenant.tenantId]!)),
+                                    buildTableCell(buildDateField(
+                                      startDateControllers[tenant.tenantId]!,
+                                      enabled: tenant.isSelected!,
+                                    )),
                                   ],
                                 ),
                                 TableRow(
@@ -3145,138 +3233,143 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width < 500
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
                                               ? 15
                                               : 17,
                                         ))),
-                                    buildTableCell(
-                                        buildDateField(moveoutDateControllers[tenant.tenantId]!)
-                                    ),
+                                    buildTableCell(buildDateField(
+                                      moveoutDateControllers[tenant.tenantId]!,
+                                      enabled: tenant.isSelected!,
+                                    )),
                                   ],
                                 ),
                               ],
                             ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      child: Container(
-                        height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                        width: 90,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                        ),
-                        child: Center(
-                            child: Text(
-                          "Close",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize:
-                                  MediaQuery.of(context).size.width < 500 ? 15 : 18,
-                              color: blueColor),
-                        )),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  InkWell(
-                    onTap: () async {
-                      String? tenantId =
-                          tenant.tenantId != null ? tenant.tenantId! : null;
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      String? id = prefs.getString("adminId");
-                      List<Map<String,dynamic>> multipletenant = [];
-                      for(tenant in selectedTenants){
-
-                        if(tenant.isSelected!){
-                          String moveoutNoticeGivenDate = startDateControllers[tenant.tenantId!]!.text;
-                          String moveoutdate = moveoutDateControllers[tenant.tenantId!]!.text;
-                          multipletenant.add({
-                            'admin_id': id,
-                            'tenant_id': tenant.tenantId!,
-                            'lease_id': tenant.leaseId,
-                            'moveout_notice_given_date': reverseFormatDate( moveoutNoticeGivenDate!),
-                            'moveout_date': reverseFormatDate(moveoutdate!),
-                          });
-                        }
-                      }
-                      print(multipletenant);
-
-
-                   await   LeaseMoveoutRepository()
-                          .addMoveoutTenant(
-                        adminId: id!,
-                        tenantId: tenantId,
-                        leaseId: tenant.leaseId,
-                        moveoutDate:moveOutDate,
-                        moveoutNoticeGivenDate: startdateController.text,
-                          multitenantdata: multipletenant
-                      )
-                          .then((value) {
-                        setState(() {
-                          futureLeasetenant =
-                              LeaseRepository.fetchLeaseTenants(widget.leaseId);
-
-                          isLoading = false;
-                          isMovedOut = true;
-                        });
-                     print(' moved out after  ${moveOutDate!}');
-                     print(' notice out after ${startdateController.text}');
-                        reload_screen();
-                        Navigator.pop(context, true);
-                      }).catchError((e) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      });
-                    },
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      child: Container(
-                        height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                        width: MediaQuery.of(context).size.width < 500 ? 100 : 130,
-                        decoration: BoxDecoration(
-                          color: blueColor,
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                        ),
-                        child: Center(
-                            child: Text(
-                          "Move Out",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 15 : 17,
                           ),
-                        )),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: Container(
+                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      width: 90,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
                       ),
+                      child: Center(
+                          child: Text(
+                        "Close",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 15
+                                : 18,
+                            color: blueColor),
+                      )),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 15),
-            ],
-          ),
-        );
-      }
-    );
+                ),
+                SizedBox(width: 10),
+                InkWell(
+                  onTap: () async {
+                    String? tenantId =
+                        tenant.tenantId != null ? tenant.tenantId! : null;
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    String? id = prefs.getString("adminId");
+                    List<Map<String, dynamic>> multipletenant = [];
+                    for (tenant in selectedTenants) {
+                      if (tenant.isSelected!) {
+                        String moveoutNoticeGivenDate =
+                            startDateControllers[tenant.tenantId!]!.text;
+                        String moveoutdate =
+                            moveoutDateControllers[tenant.tenantId!]!.text;
+                        multipletenant.add({
+                          'admin_id': id,
+                          'tenant_id': tenant.tenantId!,
+                          'lease_id': tenant.leaseId,
+                          'moveout_notice_given_date':
+                              reverseFormatDate(moveoutNoticeGivenDate!),
+                          'moveout_date': reverseFormatDate(moveoutdate!),
+                        });
+                      }
+                    }
+                    print(multipletenant);
+
+                    await LeaseMoveoutRepository()
+                        .addMoveoutTenant(
+                            adminId: id!,
+                            tenantId: tenantId,
+                            leaseId: tenant.leaseId,
+                            moveoutDate: moveOutDate,
+                            moveoutNoticeGivenDate: startdateController.text,
+                            multitenantdata: multipletenant)
+                        .then((value) {
+                      setState(() {
+                        futureLeasetenant =
+                            LeaseRepository.fetchLeaseTenants(widget.leaseId);
+
+                        isLoading = false;
+                        isMovedOut = true;
+                      });
+                      print(' moved out after  ${moveOutDate!}');
+                      print(' notice out after ${startdateController.text}');
+                      reload_screen();
+                      Navigator.pop(context, true);
+                    }).catchError((e) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    });
+                  },
+                  child: Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: Container(
+                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      width:
+                          MediaQuery.of(context).size.width < 500 ? 100 : 130,
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      child: Center(
+                          child: Text(
+                        "Move Out",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 15 : 17,
+                        ),
+                      )),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 15),
+          ],
+        ),
+      );
+    });
   }
 
   Widget buildTableCell(Widget child) {
@@ -3287,24 +3380,27 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       ),
     );
   }
-  reload_screen(){
-    setState(() {
 
-    });
+  reload_screen() {
+    setState(() {});
   }
-  Widget buildDateField(TextEditingController controller) {
+
+  Widget buildDateField(TextEditingController controller,
+      {bool enabled = false}) {
     return Padding(
       padding: EdgeInsets.only(left: 5, right: 2),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[300],
           borderRadius: BorderRadius.circular(5),
+        // border: Border.all(color: grey),
         ),
         child: Center(
           child: Padding(
             padding: EdgeInsets.only(left: 5),
             child: TextField(
               controller: controller,
+              enabled: enabled,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Select Date',
@@ -3312,7 +3408,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {
                     DateTime? pickedDate = await showDatePicker(
-                      context: context, 
+                      context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2101),
@@ -3339,11 +3435,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       },
                     );
                     if (pickedDate != null) {
-                     // setState(() {
-                        controller.text = moveOutDate!;
-                        controller.text =
-                            DateFormat('dd-MM-yyyy').format(pickedDate);
-                    //  });
+                      // setState(() {
+                      controller.text = moveOutDate!;
+                      controller.text =
+                          DateFormat('dd-MM-yyyy').format(pickedDate);
+                      //  });
                     }
                   },
                 ),

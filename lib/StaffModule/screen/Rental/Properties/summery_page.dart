@@ -43,6 +43,7 @@ import '../../../repository/unit_data.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../Leasing/Applicants/addApplicant.dart';
+import 'moveout/Moveout_properties.dart';
 import 'moveout/repository.dart';
 import '../../Leasing/RentalRoll/newAddLease.dart';
 import '../../Maintenance/Workorder/Add_workorder.dart';
@@ -2307,7 +2308,7 @@ class _Summery_pageState extends State<Summery_page>
                         ),
                         Container(
                           height: 30,
-                          width:90,
+                          width: 90,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -3262,7 +3263,10 @@ class _Summery_pageState extends State<Summery_page>
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: blueColor),
                                     ),
-                                    child: buildTenantCard(tenants[index],
+                                    child:
+                                    buildTenantCard(
+                                        tenants[index],
+                                        tenants: tenants,
                                         isMoveouts: (snapshot
                                                     .data![index].moveoutDate ==
                                                 "")
@@ -3290,7 +3294,8 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
-  Widget buildTenantCard(TenantData tenant, {bool? isMoveouts}) {
+  Widget buildTenantCard(TenantData tenant,
+      {bool? isMoveouts, List<TenantData>? tenants}) {
     print(' notice give date ${tenant.moveoutNoticeGivenDate}');
     return Column(
       children: [
@@ -3356,32 +3361,50 @@ class _Summery_pageState extends State<Summery_page>
 
             if (tenant.moveoutDate == null)
               InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      bool isChecked =
-                          false; // Moved isChecked inside the StatefulBuilder
-                      return StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
-                          return Dialog(
-                            backgroundColor: Colors.white,
-                            surfaceTintColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0)),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 10, bottom: 10),
-                              child: Container(
-                                  // width: MediaQuery.of(context).size.width - 10,
-                                  width: 900,
-                                  child: buildMoveout(tenant)),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                onTap: () async {
+                  // showDialog(
+                  //   context: context,
+                  //   builder: (BuildContext context) {
+                  //     bool isChecked =
+                  //         false; // Moved isChecked inside the StatefulBuilder
+                  //     return StatefulBuilder(
+                  //       builder: (BuildContext context, StateSetter setState) {
+                  //         return Dialog(
+                  //           backgroundColor: Colors.white,
+                  //           surfaceTintColor: Colors.white,
+                  //           shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(10.0)),
+                  //           child: Padding(
+                  //             padding: const EdgeInsets.only(
+                  //                 left: 16, right: 16, top: 10, bottom: 10),
+                  //             child: Container(
+                  //                 // width: MediaQuery.of(context).size.width - 10,
+                  //                 width: 900,
+                  //                 child: buildMoveout(tenant)),
+                  //           ),
+                  //         );
+                  //       },
+                  //     );
+                  //   },
+                  // );
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Moveout_properties(
+                        properties: widget.properties,
+                        moveOutDate: moveOutDate ?? "",
+                        leaseId: widget.tenants?.leaseId ?? "",
+                        tenant: tenant,
+                        tenants: tenants ?? [],
+                      ),
+                    ),
                   );
+                  if (result == true) {
+                    setState(() {
+                      futureUnitsummery = Properies_summery_Repo()
+                          .fetchunit(widget.properties.rentalId ?? "");
+                    });
+                  }
                 },
                 child: Row(
                   children: [
@@ -12950,334 +12973,343 @@ class _Summery_pageState extends State<Summery_page>
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          if (data.isNotEmpty)
+                          if (data.isNotEmpty) SizedBox(height: 20),
+                          if (data.isNotEmpty) _buildHeaders(),
                           SizedBox(height: 20),
                           if (data.isNotEmpty)
-                          _buildHeaders(),
-                          SizedBox(height: 20),
-                          if (data.isNotEmpty)
-                          Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5))),
-                            // decoration: BoxDecoration(
-                            //     border: Border.all(color: blueColor)),
-                            child: Column(
-                              children:
-                                  currentPageData.asMap().entries.map((entry) {
-                                int index = entry.key;
-                                bool isExpanded = expandedIndex == index;
-                                propertiesworkData workOrder = entry.value;
-                                //return CustomExpansionTile(data: Data, index: index);
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: index % 2 != 0
-                                        ? Colors.white
-                                        : blueColor.withOpacity(0.09),
-                                    border: Border.all(
-                                        color:
-                                            Color.fromRGBO(152, 162, 179, .5)),
-                                  ),
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(color: blueColor),
-                                  // ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              InkWell(
-                                                onTap: () {
-                                                  // setState(() {
-                                                  //    isExpanded = !isExpanded;
-                                                  // //  expandedIndex = !expandedIndex;
-                                                  //
-                                                  // });
-                                                  // setState(() {
-                                                  //   if (isExpanded) {
-                                                  //     expandedIndex = null;
-                                                  //     isExpanded = !isExpanded;
-                                                  //   } else {
-                                                  //     expandedIndex = index;
-                                                  //   }
-                                                  // });
-                                                  setState(() {
-                                                    if (expandedIndex ==
-                                                        index) {
-                                                      expandedIndex = null;
-                                                    } else {
-                                                      expandedIndex = index;
-                                                    }
-                                                  });
-                                                },
-                                                child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 5, right: 8),
-                                                  padding: !isExpanded
-                                                      ? EdgeInsets.only(
-                                                          bottom: 10)
-                                                      : EdgeInsets.only(
-                                                          top: 10),
-                                                  child: FaIcon(
-                                                    isExpanded
-                                                        ? FontAwesomeIcons
-                                                            .sortUp
-                                                        : FontAwesomeIcons
-                                                            .sortDown,
-                                                    size: 20,
-                                                    color: blueColor,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(
-                                                  '${workOrder.workSubject}',
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .099),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  '${workOrder.status}',
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .08),
-                                              Expanded(
-                                                flex: 3,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    if (workOrder.isBillable ==
-                                                        true)
-                                                      Icon(
-                                                        Icons.check,
-                                                        color: blueColor,
-                                                      ),
-                                                    if (workOrder.isBillable ==
-                                                        false)
-                                                      Icon(
-                                                        Icons.close,
-                                                        color: blueColor,
-                                                      ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .02),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      if (isExpanded)
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 2),
-                                          margin: EdgeInsets.only(bottom: 1),
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    FaIcon(
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color:
+                                          Color.fromRGBO(152, 162, 179, .5))),
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(color: blueColor)),
+                              child: Column(
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  bool isExpanded = expandedIndex == index;
+                                  propertiesworkData workOrder = entry.value;
+                                  //return CustomExpansionTile(data: Data, index: index);
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: index % 2 != 0
+                                          ? Colors.white
+                                          : blueColor.withOpacity(0.09),
+                                      border: Border.all(
+                                          color: Color.fromRGBO(
+                                              152, 162, 179, .5)),
+                                    ),
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(color: blueColor),
+                                    // ),
+                                    child: Column(
+                                      children: <Widget>[
+                                        ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                InkWell(
+                                                  onTap: () {
+                                                    // setState(() {
+                                                    //    isExpanded = !isExpanded;
+                                                    // //  expandedIndex = !expandedIndex;
+                                                    //
+                                                    // });
+                                                    // setState(() {
+                                                    //   if (isExpanded) {
+                                                    //     expandedIndex = null;
+                                                    //     isExpanded = !isExpanded;
+                                                    //   } else {
+                                                    //     expandedIndex = index;
+                                                    //   }
+                                                    // });
+                                                    setState(() {
+                                                      if (expandedIndex ==
+                                                          index) {
+                                                        expandedIndex = null;
+                                                      } else {
+                                                        expandedIndex = index;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5, right: 8),
+                                                    padding: !isExpanded
+                                                        ? EdgeInsets.only(
+                                                            bottom: 10)
+                                                        : EdgeInsets.only(
+                                                            top: 10),
+                                                    child: FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
                                                               .sortUp
                                                           : FontAwesomeIcons
                                                               .sortDown,
-                                                      size: 30,
-                                                      color: Colors.transparent,
+                                                      size: 20,
+                                                      color: blueColor,
                                                     ),
-                                                    Expanded(
-                                                      child: Table(
-                                                        columnWidths: {
-                                                          0: FlexColumnWidth(), // Distribute columns equally
-                                                          1: FlexColumnWidth(),
-                                                          // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                          // 1: FlexColumnWidth(),
-                                                        },
-                                                        children: [
-                                                          _buildTableRow(
-                                                              'Category :',
-                                                              _getDisplayValue(
-                                                                  workOrder
-                                                                      .workCategory),
-                                                              'Assign:',
-                                                              _getDisplayValue(
-                                                                  workOrder
-                                                                      .staffmemberName)),
-                                                          _buildTableRow(
-                                                              'Created At:',
-                                                              formatDate(
-                                                                  '${workOrder.createdAt}'),
-                                                              'Updated At:',
-                                                              formatDate(
-                                                                  '${workOrder.updatedAt}}')),
-                                                        ],
-                                                      ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Text(
+                                                    '${workOrder.workSubject}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
                                                     ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    // Column(
-                                                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    //   children: [
-                                                    //     IconButton(
-                                                    //       icon: FaIcon(
-                                                    //         FontAwesomeIcons.edit,
-                                                    //         size: 20,
-                                                    //         color:blueColor,
-                                                    //       ),
-                                                    //       onPressed: () async {
-                                                    //         // handleEdit(Propertytype);
-                                                    //
-                                                    //                       var check = await Navigator.push(
-                                                    //                           context,
-                                                    //                           MaterialPageRoute(
-                                                    //                               builder: (context) => ResponsiveEditWorkOrder(
-                                                    //                                     workorderId: workOrder.workOrderData!.workOrderId!,
-                                                    //                                   )));
-                                                    //                       if (check ==
-                                                    //                           true) {
-                                                    //                         setState(() {
-                                                    //                           futureworkorders =
-                                                    //                               WorkOrderRepository()
-                                                    //                                   .fetchWorkOrders();
-                                                    //                         });
-                                                    //                       }
-                                                    //       },
-                                                    //     ),
-                                                    //     IconButton(
-                                                    //       icon: FaIcon(
-                                                    //         FontAwesomeIcons.trashCan,
-                                                    //         size: 20,
-                                                    //         color:blueColor,
-                                                    //       ),
-                                                    //       onPressed: () {
-                                                    //         //handleDelete(Propertytype);
-                                                    //                       _showAlert(
-                                                    //                           context,
-                                                    //                           workOrder
-                                                    //                               .workOrderData!
-                                                    //                               .workOrderId!);
-                                                    //       },
-                                                    //     ),
-                                                    //   ],
-                                                    // ),
-                                                  ],
+                                                  ),
                                                 ),
                                                 SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Row(
-                                                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Expanded(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          Workorder_summery(
-                                                                            workorder_id:
-                                                                                workOrder.workOrderId,
-                                                                          )));
-                                                        },
-                                                        child: Container(
-                                                          height: 40,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      350]),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Image.asset(
-                                                                'assets/icons/view.png',
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                              // FaIcon(
-                                                              //   FontAwesomeIcons.trashCan,
-                                                              //   size: 15,
-                                                              //   color:blueColor,
-                                                              // ),
-                                                              SizedBox(
-                                                                width: 8,
-                                                              ),
-                                                              Text(
-                                                                "View Summery",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        11,
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .099),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    '${workOrder.status}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
                                                     ),
-                                                  ],
+                                                  ),
                                                 ),
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      if (workOrder
+                                                              .isBillable ==
+                                                          true)
+                                                        Icon(
+                                                          Icons.check,
+                                                          color: blueColor,
+                                                        ),
+                                                      if (workOrder
+                                                              .isBillable ==
+                                                          false)
+                                                        Icon(
+                                                          Icons.close,
+                                                          color: blueColor,
+                                                        ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .02),
                                               ],
                                             ),
                                           ),
                                         ),
-                                      //SizedBox(height: 13,),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
+                                        if (isExpanded)
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 2),
+                                            margin: EdgeInsets.only(bottom: 1),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      FaIcon(
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
+                                                        size: 30,
+                                                        color:
+                                                            Colors.transparent,
+                                                      ),
+                                                      Expanded(
+                                                        child: Table(
+                                                          columnWidths: {
+                                                            0: FlexColumnWidth(), // Distribute columns equally
+                                                            1: FlexColumnWidth(),
+                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 1: FlexColumnWidth(),
+                                                          },
+                                                          children: [
+                                                            _buildTableRow(
+                                                                'Category :',
+                                                                _getDisplayValue(
+                                                                    workOrder
+                                                                        .workCategory),
+                                                                'Assign:',
+                                                                _getDisplayValue(
+                                                                    workOrder
+                                                                        .staffmemberName)),
+                                                            _buildTableRow(
+                                                                'Created At:',
+                                                                formatDate(
+                                                                    '${workOrder.createdAt}'),
+                                                                'Updated At:',
+                                                                formatDate(
+                                                                    '${workOrder.updatedAt}}')),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      // Column(
+                                                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      //   children: [
+                                                      //     IconButton(
+                                                      //       icon: FaIcon(
+                                                      //         FontAwesomeIcons.edit,
+                                                      //         size: 20,
+                                                      //         color:blueColor,
+                                                      //       ),
+                                                      //       onPressed: () async {
+                                                      //         // handleEdit(Propertytype);
+                                                      //
+                                                      //                       var check = await Navigator.push(
+                                                      //                           context,
+                                                      //                           MaterialPageRoute(
+                                                      //                               builder: (context) => ResponsiveEditWorkOrder(
+                                                      //                                     workorderId: workOrder.workOrderData!.workOrderId!,
+                                                      //                                   )));
+                                                      //                       if (check ==
+                                                      //                           true) {
+                                                      //                         setState(() {
+                                                      //                           futureworkorders =
+                                                      //                               WorkOrderRepository()
+                                                      //                                   .fetchWorkOrders();
+                                                      //                         });
+                                                      //                       }
+                                                      //       },
+                                                      //     ),
+                                                      //     IconButton(
+                                                      //       icon: FaIcon(
+                                                      //         FontAwesomeIcons.trashCan,
+                                                      //         size: 20,
+                                                      //         color:blueColor,
+                                                      //       ),
+                                                      //       onPressed: () {
+                                                      //         //handleDelete(Propertytype);
+                                                      //                       _showAlert(
+                                                      //                           context,
+                                                      //                           workOrder
+                                                      //                               .workOrderData!
+                                                      //                               .workOrderId!);
+                                                      //       },
+                                                      //     ),
+                                                      //   ],
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            Workorder_summery(
+                                                                              workorder_id: workOrder.workOrderId,
+                                                                            )));
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Image.asset(
+                                                                  'assets/icons/view.png',
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(
+                                                                  width: 8,
+                                                                ),
+                                                                Text(
+                                                                  "View Summery",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          11,
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        //SizedBox(height: 13,),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
                             ),
-                          ),
-                          if (data.isNotEmpty)
-                          SizedBox(height: 20),
+                          if (data.isNotEmpty) SizedBox(height: 20),
                           if (data.isEmpty)
                             Container(
                               height: MediaQuery.of(context).size.height * .5,
@@ -13304,103 +13336,104 @@ class _Summery_pageState extends State<Summery_page>
                               ),
                             ),
                           if (data.isNotEmpty)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  // Text('Rows per page:'),
-                                  SizedBox(width: 10),
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: (newValue) {
-                                            setState(() {
-                                              itemsPerPage = newValue!;
-                                              currentPage =
-                                                  0; // Reset to first page when items per page change
-                                            });
-                                          },
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    // Text('Rows per page:'),
+                                    SizedBox(width: 10),
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.grey),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                itemsPerPage = newValue!;
+                                                currentPage =
+                                                    0; // Reset to first page when items per page change
+                                              });
+                                            },
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: currentPage == 0
-                                          ? Colors.grey
-                                          : blueColor,
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronLeft,
+                                        color: currentPage == 0
+                                            ? Colors.grey
+                                            : blueColor,
+                                      ),
+                                      onPressed: currentPage == 0
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
-                                    onPressed: currentPage == 0
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage--;
-                                            });
-                                          },
-                                  ),
-                                  // IconButton(
-                                  //   icon: Icon(Icons.arrow_back),
-                                  //   onPressed: currentPage > 0
-                                  //       ? () {
-                                  //     setState(() {
-                                  //       currentPage--;
-                                  //     });
-                                  //   }
-                                  //       : null,
-                                  // ),
-                                  Text(
-                                      'Page ${currentPage + 1} of $totalPages'),
-                                  // IconButton(
-                                  //   icon: Icon(Icons.arrow_forward),
-                                  //   onPressed: currentPage < totalPages - 1
-                                  //       ? () {
-                                  //     setState(() {
-                                  //       currentPage++;
-                                  //     });
-                                  //   }
-                                  //       : null,
-                                  // ),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color: currentPage < totalPages - 1
-                                          ? blueColor
-                                          : Colors.grey,
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_back),
+                                    //   onPressed: currentPage > 0
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage--;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    Text(
+                                        'Page ${currentPage + 1} of $totalPages'),
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_forward),
+                                    //   onPressed: currentPage < totalPages - 1
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage++;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronRight,
+                                        color: currentPage < totalPages - 1
+                                            ? blueColor
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: currentPage < totalPages - 1
+                                          ? () {
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
+                                          : null,
                                     ),
-                                    onPressed: currentPage < totalPages - 1
-                                        ? () {
-                                            setState(() {
-                                              currentPage++;
-                                            });
-                                          }
-                                        : null,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  ],
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     );
