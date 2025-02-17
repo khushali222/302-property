@@ -512,7 +512,14 @@ class _MakePaymentState extends State<MakePayment> {
           '$tenantId');
 
       setState(() {
+
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
+          String chargeType = categorizedData.entries.firstWhere(
+                (entryData) => entryData.value.contains(entry.account),
+            orElse: () => MapEntry("Unknown", []), // Default if not found
+          ).key;
+
+          print(chargeType);
               return {
                 'entry_id': entry.entryId,
                 'account': entry.account,
@@ -520,11 +527,13 @@ class _MakePaymentState extends State<MakePayment> {
                 'charge_amount': entry.chargeAmount,
                 'memo': entry.memo?.isNotEmpty == true ? entry.memo : "Payment",
                 'date': entry.date,
-                'charge_type': entry.chargeType,
+                'charge_type': chargeType, // Set matched charge type
+                'sub_charge_type': entry.chargeType, // Set original charge type
                 'newfield': false,
               };
             }).toList() ??
             [];
+
         for (var i = 0; i < filteredCharges!.length; i++) {
           if (i == 0) {
             double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();

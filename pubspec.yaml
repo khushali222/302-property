@@ -94,6 +94,7 @@ dependencies:
   timeago:
   share_plus:
   ffmpeg_kit_flutter:
+  html_editor_enhanced:
 
   # pdf:
 

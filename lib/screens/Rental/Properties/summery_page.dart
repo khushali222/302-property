@@ -3124,35 +3124,36 @@ class _Summery_pageState extends State<Summery_page>
                       scrollDirection: Axis.vertical,
                       child: Column(
                         children: [
-                          if (tenants.length > 0)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 5),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text("Enable Recurring Payments"),
-                                  Switch(
-                                    value: recurringswith,
-                                    onChanged: (value) async {
-                                      if (value == true) {
-                                        recurringCardDialog(tenants);
-                                      } else if (value == false) {
-                                        await tenant_cards()
-                                            .disableCard(
-                                                widget.properties.rentalId!)
-                                            .then((element) {
-                                          setState(() {
-                                            recurringswith = value;
-                                          });
-                                        });
-                                      }
-                                    },
-                                    activeColor: blueColor,
-                                  )
-                                ],
-                              ),
-                            ),
+                          // if (tenants.length > 0)
+                          //   Padding(
+                          //     padding: const EdgeInsets.symmetric(
+                          //         horizontal: 10.0, vertical: 5),
+                          //     child: Row(
+                          //       mainAxisAlignment: MainAxisAlignment.end,
+                          //       children: [
+                          //         Text("Enable Recurring Payments"),
+                          //         Switch(
+                          //           value: recurringswith,
+                          //           onChanged: (value) async {
+                          //             if (value == true) {
+                          //               recurringCardDialog(tenants);
+                          //             } else if (value == false) {
+                          //               await tenant_cards()
+                          //                   .disableCard(
+                          //                       widget.properties.rentalId!)
+                          //                   .then((element) {
+                          //                 setState(() {
+                          //                   recurringswith = value;
+                          //                 });
+                          //               });
+                          //             }
+                          //           },
+                          //           activeColor: blueColor,
+                          //         )
+                          //       ],
+                          //     ),
+                          //   ),
+                          SizedBox(height: 10,),
                           Wrap(
                             alignment: WrapAlignment.start,
                             spacing: MediaQuery.of(context).size.width * 0.03,

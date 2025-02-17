@@ -224,8 +224,9 @@ class _enterChargeState extends State<enterCharge> {
   @override
   void initState() {
     super.initState();
-    fetchTenants();
     fetchDropdownData();
+    fetchTenants();
+
     if (widget.chargeid != null) {
       fetchchargeData();
     }
@@ -260,13 +261,19 @@ class _enterChargeState extends State<enterCharge> {
         //  Memo.text = fetchedCharge["entry"]![0]["memo"];
 
         for (var i = 0; i < fetchedCharge.entry!.length; i++) {
+          String chargeType = categorizedData.entries.firstWhere(
+                (entryData) => entryData.value.contains(fetchedCharge.entry![i].account),
+            orElse: () => MapEntry("Unknown", []), // Default if not found
+          ).key;
           print(fetchedCharge.entry![i].amount);
           rows.add({
             'account': fetchedCharge.entry![i].account,
-            'charge_type': fetchedCharge.entry![i].chargeType,
+           // 'charge_type': fetchedCharge.entry![i].chargeType,
             'amount': fetchedCharge.entry![i].amount,
             'memo': Memo.text,
             'date': _startDate.text,
+            'charge_type': chargeType, // Set matched charge type
+            'sub_charge_type': fetchedCharge.entry![i].chargeType, // Set original charge type
           });
           total += fetchedCharge.entry![i].amount!;
           totalAmount = total;

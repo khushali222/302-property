@@ -8,14 +8,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/tenants.dart';
+import '../../../../constant/constant.dart';
+import '../../../../model/setting.dart';
 import '../../../Model/setting.dart';
-import '../../../constant/constant.dart';
+
 import 'addcard/CardModel.dart';
-import '../../../model/LeaseSummary.dart';
+// import '../../../model/LeaseSummary.dart';
 import '../../../repository/lease.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
-import '../../../widgets/titleBar.dart';
+import '../../../../model/LeaseSummary.dart';
 import 'addcard/AddCard.dart';
 import 'package:http/http.dart' as http;
 
@@ -112,10 +114,10 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   void fetchAccounts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
-
+    String? adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
     final response = await http.get(
-      Uri.parse('${Api_url}/api/accounts/accounts/$id'),
+      Uri.parse('${Api_url}/api/accounts/accounts/$adminid'),
       headers: {
         'authorization': 'CRM $token',
         'id': 'CRM $id',
@@ -151,8 +153,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   void fetchExistingCards(String tenantid, String leaseid, int index) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
-
+    String? adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
     final response = await http
         .post(Uri.parse('${Api_url}/api/recurring-cards/get-cards'), headers: {
       'authorization': 'CRM $token',
@@ -501,7 +503,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                     String>(
                                                                   value: '',
                                                                   child: Text(
-                                                                      ' No cards available'),
+                                                                      'No cards available'),
                                                                 ),
                                                               DropdownMenuItem<
                                                                   String>(
@@ -1499,9 +1501,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
 
   Future<void> fetchcreditcard(String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? staffid = prefs.getString("adminId");
     String? token = prefs.getString('token');
-
+    String? id = prefs.getString("staff_id");
     setState(() {
       isLoading = true;
     });
@@ -1579,7 +1581,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
-
+    String? id = prefs.getString("staff_id");
     Map<String, String> requestBody = {
       "customer_vault_id": customerVaultId,
       "admin_id": adminId.toString(),
@@ -1589,7 +1591,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
-        "id": "CRM $adminId",
+        "id": "CRM $id",
         "authorization": "CRM $token",
       },
       body: json.encode(requestBody),
@@ -1636,7 +1638,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     //log(jsonEncode(lease.toJson()));
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
     try {
       final response = await http.post(
         url,
@@ -1681,7 +1684,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     //log(jsonEncode(lease.toJson()));
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
     try {
       final response = await http.put(
         url,

@@ -23,9 +23,10 @@ class Scheduled_Payment {
     leaseId = json['lease_id'];
     rentalAddress = json['rental_address'];
     rentalUnit = json['rental_unit'];
-    tenant =
-    json['tenant'] != null ? new Tenant.fromJson(json['tenant']) : null;
-    totalAmount = json['total_amount'];
+    tenant = json['tenant'] != null ? Tenant.fromJson(json['tenant']) : null;
+    totalAmount = (json['total_amount'] is int)
+        ? (json['total_amount'] as int).toDouble()
+        : json['total_amount'];
     paymentType = json['payment_type'];
     date = json['date'];
   }

@@ -8,9 +8,11 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Document_Rental/Add_DocumentRental.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Recurringpayment.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/RenewLease.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Insurance/Renters_Insurance_table.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/Model/tenants.dart';
 
@@ -31,8 +33,10 @@ import '../../../model/LeaseSummary.dart';
 import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
 import '../../Rental/Properties/moveout/repository.dart';
+import 'Document_Rental/Document_rental_table.dart';
 import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
+
 import 'make_payment.dart';
 
 class SummeryPageLease extends StatefulWidget {
@@ -81,6 +85,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       _tabController!.animateTo(1);
       _selectedIndex=1;
     }
+    fetchLeaseTenants();
     super.initState();
   }
 
@@ -91,6 +96,23 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       _connectivityResult = connectiondata;
     });
   }
+  List<LeaseTenant> leaseTenants = [];
+
+  void fetchLeaseTenants() async {
+    try {
+      List<LeaseTenant> tenants = await LeaseRepository.fetchLeaseTenants(widget.leaseId);
+      setState(() {
+        leaseTenants = tenants;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching tenants: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
 
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
@@ -135,7 +157,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       return Center(child: Text('No data found.'));
                     } else {
                       var lease = snapshot.data!;
-                      return Column(
+                      return
+                        Column(
                         children: <Widget>[
                           const SizedBox(
                             height: 20,
@@ -153,7 +176,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               SizedBox(
                                 width: MediaQuery.of(context).size.width > 500
                                     ? 200
-                                    : 180,
+                                    : 250,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 1),
                                   child: Text(
@@ -316,20 +339,41 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 //               ? blueColor
                                 //               : Colors.white,
                                 //           borderRadius:
-                                //               BorderRadius.circular(5)),
+                                //           BorderRadius.circular(5)),
                                 //       child: Center(
-                                //           child: Padding(
-                                //             padding: const EdgeInsets.all(8.0),
-                                //             child: Text("Renter's insurance",
-                                //                 style: TextStyle(
-                                //                   color: _selectedIndex != 3
-                                //                       ? blueColor
-                                //                       : Colors.white,
-                                //                 )),
-                                //           )),
+                                //           child: Text("  Renters\nInsurance",
+                                //               style: TextStyle(
+                                //                 color: _selectedIndex != 3
+                                //                     ? blueColor
+                                //                     : Colors.white,
+                                //               ))),
                                 //     ),
                                 //   ),
                                 // ),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = 3;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _selectedIndex == 3
+                                              ? blueColor
+                                              : Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(5)),
+                                      child: Center(
+                                          child: Text("Document",
+                                              style: TextStyle(
+                                                color: _selectedIndex != 3
+                                                    ? blueColor
+                                                    : Colors.white,
+                                              ))),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -391,7 +435,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       case 0:
         return SummaryPage();
       case 1:
-        return Padding(
+        return
+          Padding(
           padding: const EdgeInsets.all(8.0),
           child: FinancialTable(
             rentalUnit: snapshot.data?.rentalUnit,
@@ -405,7 +450,17 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         );
       case 2:
         return Tenant(context);
-
+      case 3:
+        return DocumentRentalTable(leaseId: widget.leaseId,);
+      // case 3:
+      //   return
+      //     Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child:
+      //     Renters_Insurance_table(leaseId: widget.leaseId, status: determineStatus(
+      //         snapshot.data?.startDate, snapshot.data?.endDate)
+      //         .toString(), tenantId:' ${snapshot.data?.tenantId}',),
+      //   );
       default:
         return Container(); // Fallback for safety
     }
@@ -673,6 +728,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               SizedBox(
                 height: 10,
               ),
+
+              if(determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) != 'Expired')
               Padding(
                 padding: const EdgeInsets.only(
                     left: 10.0, right: 10.0, bottom: 10.0),
@@ -816,7 +873,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             .size
                                                             .width <
                                                         500
-                                                    ? 45
+                                                    ? 75
                                                     : 45,
                                                 decoration: BoxDecoration(
                                                     color: Colors.white,
@@ -868,31 +925,75 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                       .size
                                                                       .width <
                                                                   500
-                                                              ? 14
+                                                              ? 15
                                                               : 18,
-                                                          color: blueColor),
+                                                          color: blueColor,fontWeight: FontWeight.bold),
                                                     ))),
                                             SizedBox(width: 15),
-                                            GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    //  print("hello");
-                                                    // if (_tabController !=
-                                                    //     null) {
-                                                    //   _tabController!
-                                                    //       .animateTo(1);
-                                                    // }
-                                                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RecurringPayment(leaseData: leasesummery.data!,)));
-                                                  });
-                                                },
-                                                child: Text(
-                                                  "Lease Ledger",
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15,
-                                                  ),
-                                                )),
+                                            Expanded(
+                                              child: Container(
+                                                  height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                      500
+                                                      ? 75
+                                                      : 45,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      border: Border.all(
+                                                          width: 1,
+                                                          color: blueColor),
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0)),
+                                                  child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  5.0)),
+                                                          elevation: 0,
+                                                          backgroundColor:
+                                                          Colors.white),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          //  print("hello");
+                                                          // if (_tabController !=
+                                                          //     null) {
+                                                          //   _tabController!
+                                                          //       .animateTo(1);
+                                                          // }
+                                                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RecurringPayment(leaseData: leasesummery.data!,)));
+                                                        });
+                                                      },
+                                                      child:
+                                                      Row(
+                                                        children: [
+                                                          if (leaseTenants.any((tenant) => tenant.recurring == false))
+                                                            SizedBox(width: 12,),
+
+                                                          Expanded(
+                                                            child: Text(
+                                                              'Configure Recurring Payment',
+                                                              style: TextStyle(
+                                                                  fontSize: MediaQuery.of(
+                                                                      context)
+                                                                      .size
+                                                                      .width <
+                                                                      500
+                                                                      ? 13
+                                                                      : 18,
+                                                                  color: blueColor,fontWeight: FontWeight.bold),
+                                                            ),
+                                                          ),
+                                                          if (leaseTenants.any((tenant) => tenant.recurring!))
+                                                            Icon(CupertinoIcons.check_mark_circled_solid, color: Colors.green),
+
+                                                        ],
+                                                      ))),
+                                            ),
+                                           
                                             // Expanded(
                                             //   child: Container(
                                             //       height: MediaQuery.of(context)
@@ -2501,320 +2602,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           SizedBox(
                             height: 20,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, right: 10.0, bottom: 10.0),
-                            child: FutureBuilder<LeaseSummary?>(
-                              future:
-                                  futureLeaseSummary, // Your summary API call
-                              builder: (context, summarySnapshot) {
-                                if (summarySnapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Container();
-                                  //   Center(
-                                  //   child: SpinKitSpinningLines(
-                                  //     color: blueColor,
-                                  //     size: 55.0,
-                                  //   ),
-                                  // );
-                                } else if (summarySnapshot.hasError) {
-                                  return Center(
-                                      child: Text(
-                                          'Error: ${summarySnapshot.error}'));
-                                } else if (!summarySnapshot.hasData) {
-                                  return Center(
-                                      child: Text('No summary data found.'));
-                                } else {
-                                  final leaseSummary = summarySnapshot.data!;
 
-                                  return FutureBuilder<LeaseLedger?>(
-                                    future: _leaseLedgerFuture,
-                                    builder: (context, ledgerSnapshot) {
-                                      if (ledgerSnapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Container();
-                                        //   Center(
-                                        //   child: SpinKitSpinningLines(
-                                        //     color: blueColor,
-                                        //     size: 55.0,
-                                        //   ),
-                                        // );
-                                      } else if (ledgerSnapshot.hasError) {
-                                        return Center(
-                                            child: Text(
-                                                'Error: ${ledgerSnapshot.error}'));
-                                      } else if (!ledgerSnapshot.hasData) {
-                                        return Center(
-                                            child:
-                                                Text('No ledger data found'));
-                                      } else {
-                                        final leaseLedger =
-                                            ledgerSnapshot.data!;
-                                        return SingleChildScrollView(
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 15, right: 15),
-                                                child: Material(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: Border.all(
-                                                          color: blueColor),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 25,
-                                                              right: 25,
-                                                              top: 20,
-                                                              bottom: 30),
-                                                      child: Column(
-                                                        children: [
-                                                          Table(
-                                                            children: [
-                                                              TableRow(
-                                                                  children: [
-                                                                    TableCell(
-                                                                        child:
-                                                                            Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          12.0),
-                                                                      child:
-                                                                          Text(
-                                                                        'Balance',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                const Color(0xFF8A95A8),
-                                                                            fontWeight: FontWeight.bold,
-                                                                            fontSize: 16),
-                                                                      ),
-                                                                    )),
-                                                                    TableCell(
-                                                                        child:
-                                                                            Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              12),
-                                                                      child:
-                                                                          Text(
-                                                                        leaseLedger.data != null &&
-                                                                                leaseLedger.data!.isNotEmpty &&
-                                                                                leaseLedger.data!.first.balance != null
-                                                                            ? leaseLedger.data!.first.balance!.toStringAsFixed(2)
-                                                                            : 'N/A',
-                                                                        // '\$ ${leaseLedger.data?.first.balance!.toStringAsFixed(2)}',
-
-                                                                        // '\$ ${leaseLedger.data!.length > 0?leaseLedger.data?.first.balance!.toStringAsFixed(2):0.0}',
-
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                15,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor),
-                                                                      ),
-                                                                    )),
-                                                                  ]),
-                                                              TableRow(
-                                                                  children: [
-                                                                    TableCell(
-                                                                        child:
-                                                                            Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          12.0),
-                                                                      child:
-                                                                          Text(
-                                                                        'Rent',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                const Color(0xFF8A95A8),
-                                                                            fontWeight: FontWeight.bold,
-                                                                            fontSize: 16),
-                                                                      ),
-                                                                    )),
-                                                                    TableCell(
-                                                                        child:
-                                                                            Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              12),
-                                                                      child:
-                                                                          Text(
-                                                                        '\$ ${leaseSummary.data?.amount}', // Replace with the actual rent amount from summary
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                15,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor),
-                                                                      ),
-                                                                    )),
-                                                                  ]),
-                                                              TableRow(
-                                                                  children: [
-                                                                    TableCell(
-                                                                        child:
-                                                                            Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          12.0),
-                                                                      child:
-                                                                          Text(
-                                                                        'Due Date',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                const Color(0xFF8A95A8),
-                                                                            fontWeight: FontWeight.bold,
-                                                                            fontSize: 16),
-                                                                      ),
-                                                                    )),
-                                                                    TableCell(
-                                                                        child:
-                                                                            Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              12),
-                                                                      child:
-                                                                          Text(
-                                                                        '${leaseSummary.data?.date}', // Replace with the actual due date from summary
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                15,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor),
-                                                                      ),
-                                                                    )),
-                                                                  ]),
-                                                            ],
-                                                          ),
-                                                          SizedBox(height: 15),
-                                                          Row(
-                                                            children: [
-                                                              Container(
-                                                                height: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width <
-                                                                        500
-                                                                    ? 45
-                                                                    : 45,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    border: Border.all(
-                                                                        width:
-                                                                            1,
-                                                                        color:
-                                                                            blueColor),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            5.0)),
-                                                                child:
-                                                                    ElevatedButton(
-                                                                  style: ElevatedButton.styleFrom(
-                                                                      shape: RoundedRectangleBorder(
-                                                                          borderRadius: BorderRadius.circular(
-                                                                              5.0)),
-                                                                      elevation:
-                                                                          0,
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .white),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    final value =
-                                                                        await Navigator
-                                                                            .push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                MakePayment(
-                                                                          leaseId:
-                                                                              widget.leaseId,
-                                                                          tenantId:
-                                                                              '${leasetenant.first.tenantId}',
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                    if (value ==
-                                                                        true) {
-                                                                      setState(
-                                                                          () {
-                                                                        _leaseLedgerFuture =
-                                                                            LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
-                                                                      });
-                                                                    }
-                                                                  },
-                                                                  child: Text(
-                                                                    'Make Payment',
-                                                                    style: TextStyle(
-                                                                        fontSize: MediaQuery.of(context).size.width <
-                                                                                500
-                                                                            ? 14
-                                                                            : 18,
-                                                                        color:
-                                                                            blueColor),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: 15),
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    if (_tabController !=
-                                                                        null) {
-                                                                      _tabController!
-                                                                          .animateTo(
-                                                                              1);
-                                                                    }
-                                                                  });
-                                                                },
-                                                                child: Text(
-                                                                  "Lease Ledger",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        15,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  );
-                                }
-                              },
-                            ),
-                          ),
                         ],
                       ),
                     );
@@ -3256,16 +3044,4 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 }
 
-class FinancialPage extends StatefulWidget {
-  const FinancialPage({super.key});
 
-  @override
-  State<FinancialPage> createState() => _FinancialPageState();
-}
-
-class _FinancialPageState extends State<FinancialPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}

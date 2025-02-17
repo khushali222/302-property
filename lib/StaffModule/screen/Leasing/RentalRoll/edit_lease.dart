@@ -586,14 +586,6 @@ class _Edit_leaseState extends State<Edit_lease>
         return AlertDialog(
           backgroundColor: Colors.white,
           contentPadding: EdgeInsets.zero,
-          title: Text(
-            'Add Recurring content',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: blueColor,
-            ),
-          ),
           content: Padding(
             padding: const EdgeInsets.all(8.0),
             child: RecurringChargePopUp(
@@ -3727,7 +3719,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 0.0,
                                             chargeType:
                                                 data['charge_type'] ?? '',
-                                            date: data['date'] ?? '',
+                                            date: data['charge_type'] == 'Recurring Charge'
+                                                ? (data['date'] ?? '')  // Ensuring data['date'] is not null
+                                                : reverseFormatDate(rentNextDueDate.text.trim()),
                                             isRepeatable: data['is_repeatable']
                                                     ?.toLowerCase() ==
                                                 'true',
@@ -5461,9 +5455,16 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   void initState() {
     super.initState();
     if (widget.initialData != null) {
-      _selectedProperty = widget.initialData!['property'] ?? '';
+      _selectedProperty = widget.initialData!['account'] ?? '';
       _amountController.text = widget.initialData!['amount'] ?? '';
       _memoController.text = widget.initialData!['memo'] ?? '';
+      String dateString = widget.initialData!['date'] ?? "";
+      if (dateString.isNotEmpty) {
+        DateTime date = DateTime.parse(dateString);
+        selectedDay = date.day.toString(); // Extracts only the day
+      } else {
+        selectedDay = ""; // Handle empty case
+      }
     }
     fetchData();
   }
@@ -5504,7 +5505,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       );
     }
   }
-
+  String? selectedDay;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -5514,7 +5515,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         child: Material(
           child: Container(
             color: Colors.white,
-            height: _isInvalid ? 377 : 380,
+            height: _isInvalid ? 450 : 460,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -5978,6 +5979,45 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   controller: _memoController,
                   optional: true,
                 ),
+                const SizedBox(height: 10),
+                Text(
+                  'Choose Day of Month *',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  //width: 200,
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade400),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      hint: Text('Day'),
+                      isExpanded: true,
+                      menuMaxHeight: 200,
+                      value: selectedDay,
+                      items: List.generate(28, (i) => i + 1)
+                          .map((day) => DropdownMenuItem<String>(
+                        value: day.toString(),
+                        child: Text('$day'),
+                      ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedDay = value;
+                        });
+                      },
+
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -6036,11 +6076,35 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       setState(() {
         _isInvalid = true;
       });
+      DateTime now = DateTime.now();
+      int selectedYear = now.year;
+      int selectedMonth = now.month;
+
+      // Construct the date using the selected day, current year, and month
+      int selectedDayInt = int.parse(selectedDay!);
+      DateTime currentDate = DateTime(selectedYear, selectedMonth, selectedDayInt);
+
+      // Add one month
+      DateTime nextMonthDate = DateTime(
+        currentDate.year,
+        currentDate.month + 1,
+        currentDate.day,
+      );
+
+      // Format date to always have two-digit months and days
+      String formattedDate = "${nextMonthDate.year}-"
+          "${nextMonthDate.month.toString().padLeft(2, '0')}-"
+          "${nextMonthDate.day.toString().padLeft(2, '0')}";
+      String? id =  widget.initialData!['entry_id'] != "" ?
+      widget.initialData!['entry_id']
+          : "";
       final formData = {
         'account': _selectedProperty ?? '',
         'amount': _amountController.text.trim(),
         'memo': _memoController.text.trim(),
+        'entry_id':id!,
         'charge_type': 'Recurring Charge',
+        'date': formattedDate,
       };
       widget.onSave(formData);
       setState(() {

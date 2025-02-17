@@ -34,7 +34,15 @@ class PaymentService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+      return {
+        ...entry, // Keep existing data
+        'charge_type': entry['sub_charge_type'] ?? entry['charge_type'], // Reassign sub_charge_type to charge_type
+        // Remove the sub_charge_type by setting it to null
+      };
+    }).toList();
 
+    print(updatedEntries);
     print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/sale';
@@ -55,7 +63,7 @@ class PaymentService {
         'tenantName':tenantname,
         'notificationTime':notificationTime,
         'lease_id':leaseid,
-        'entry':entries,
+        'entry':updatedEntries,
       };
       log(paymentDetails.toString());
       final response = await http.post(
@@ -86,7 +94,7 @@ print('card for real ${response.body}');
               paymentType: "Card",
               customerVaultId: customerVaultId,
               billingId: billingId,
-              entries: entries,
+              entries: updatedEntries,
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: [],
@@ -116,7 +124,7 @@ print('card for real ${response.body}');
             paymentType: "Card",
             customerVaultId: customerVaultId,
             billingId: billingId,
-            entries: entries,
+            entries: updatedEntries,
             totalAmount: amount,
             isLeaseAdded: false,
             uploadedFile: [],

@@ -602,6 +602,18 @@ class _Lease_tableState extends State<Lease_table> {
                             Provider.of<SelectedCosignersProvider>(context,
                                     listen: false)
                                 .clearCosigner();
+                            Provider.of<SelectedApplicantProvider>(context,
+                                listen: false)
+                                .clearApplicant();
+                            final result = await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => addLease3()));
+                            if (result == true) {
+                              setState(() {
+                                futureLease = LeaseRepository().fetchLease("");
+                                //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                              });
+                            }
                             // if (leaseCount < leaseCountLimit) {
                             //   final result = await Navigator.of(context).push(
                             //       MaterialPageRoute(
