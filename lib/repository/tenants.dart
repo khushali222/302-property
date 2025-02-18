@@ -251,6 +251,7 @@ class TenantsRepository {
   //     throw Exception('Failed to update tenant');
   //   }
   // }
+
   Future<Map<String, dynamic>> editTenant({
     required String tenantId,
     required String adminId,
@@ -315,9 +316,12 @@ class TenantsRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
+    } else if (responseData["statusCode"] == 201) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Email already exists');
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to edit property type');
+      throw Exception('Failed to edit tenant type');
     }
   }
 

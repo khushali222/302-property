@@ -304,7 +304,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                             width: 3,
                           ),
                           Text(
-                            "Designation",
+                            "Designation *",
                             style: TextStyle(
                                 // color: Colors.grey,
                                 color: Color(0xFF8A95A8),

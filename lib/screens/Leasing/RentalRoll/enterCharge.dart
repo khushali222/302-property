@@ -226,9 +226,10 @@ class _enterChargeState extends State<enterCharge> {
     super.initState();
     fetchTenants();
     fetchDropdownData();
-    if (widget.chargeid != null) {
-      fetchchargeData();
-    }
+    // if (widget.chargeid != null) {
+    //   fetchchargeData();
+    // }
+
   }
 
   Future<void> fetchchargeData() async {
@@ -258,15 +259,22 @@ class _enterChargeState extends State<enterCharge> {
         double total = 0;
 
         //  Memo.text = fetchedCharge["entry"]![0]["memo"];
-
+        // Utility fee Libality Charge
+        // Utility fee as One time charge .....  Utility fee_One charge
         for (var i = 0; i < fetchedCharge.entry!.length; i++) {
+          String chargeType = categorizedData.entries.firstWhere(
+                (entryData) => entryData.value.contains(fetchedCharge.entry![i].account),
+            orElse: () => MapEntry("Unknown", []), // Default if not found
+          ).key;
           print(fetchedCharge.entry![i].amount);
           rows.add({
             'account': fetchedCharge.entry![i].account,
-            'charge_type': fetchedCharge.entry![i].chargeType,
+            // 'charge_type': fetchedCharge.entry![i].chargeType,
             'amount': fetchedCharge.entry![i].amount,
             'memo': Memo.text,
             'date': _startDate.text,
+            'charge_type': chargeType, // Set matched charge type
+            'sub_charge_type': fetchedCharge.entry![i].chargeType, // Set original charge type
           });
           total += fetchedCharge.entry![i].amount!;
           totalAmount = total;
@@ -355,6 +363,9 @@ class _enterChargeState extends State<enterCharge> {
           categorizedData = fetchedData;
           isLoading = false;
         });
+        if (widget.chargeid != null) {
+          fetchchargeData();
+        }
       } else {
         setState(() {
           hasError = true;
@@ -1918,7 +1929,7 @@ class _enterChargeState extends State<enterCharge> {
                                               : 18),
                                     )
                                   : Text(
-                                      'Add charger',
+                                      'Add charge',
                                       style: TextStyle(
                                           color: Color(0xFFf7f8f9),
                                           fontSize: MediaQuery.of(context)

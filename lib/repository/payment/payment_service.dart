@@ -34,6 +34,40 @@ class PaymentService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    // List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+    //   return {
+    //     ...entry, // Keep existing data
+    //     'charge_type': entry['newfield'] == true
+    //         ? 'One Time Charge'
+    //         : (entry['sub_charge_type'] ?? entry['charge_type']), // Apply condition
+    //     // Remove the sub_charge_type by setting it to null
+    //   };
+    // }).toList();
+    List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+      // Determine charge_type based on newfield and account
+      String? chargeType;
+
+      if (entry['newfield'] == true) {
+        // If newfield is true, check account values
+        if (entry['account'] == "Late Fee Income" ||
+            entry['account'] == "Pre-payments" ||
+            entry['account'] == "Security Deposit") {
+          chargeType = entry['account']; // Assign account value as charge_type
+        } else if (entry['account'] == "Rent Income") {
+          chargeType = "Rent"; // Set charge_type as "Rent"
+        } else {
+          chargeType = "One Time Charge"; // Default to "One Time Charge"
+        }
+      } else {
+        // If newfield is false, keep the existing charge_type logic
+        chargeType = entry['sub_charge_type'] ?? entry['charge_type'];
+      }
+
+      return {
+        ...entry, // Keep existing data
+        'charge_type': chargeType, // Set the dynamically calculated charge_type
+      };
+    }).toList();
 
     print("surcharge ${surcharge}");
     if (future_Date == false) {
@@ -55,7 +89,8 @@ class PaymentService {
         'tenantName':tenantname,
         'notificationTime':notificationTime,
         'lease_id':leaseid,
-        'entry':entries,
+        'entry':updatedEntries,
+       // 'entry':entries,
       };
       log(paymentDetails.toString());
       final response = await http.post(
@@ -86,7 +121,8 @@ print('card for real ${response.body}');
               paymentType: "Card",
               customerVaultId: customerVaultId,
               billingId: billingId,
-              entries: entries,
+              entries: updatedEntries,
+            //  entries: entries,
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: [],
@@ -116,7 +152,8 @@ print('card for real ${response.body}');
             paymentType: "Card",
             customerVaultId: customerVaultId,
             billingId: billingId,
-            entries: entries,
+            entries: updatedEntries,
+           // entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
             uploadedFile: [],
@@ -223,7 +260,40 @@ print('card for real ${response.body}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    // List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+    //   return {
+    //     ...entry, // Keep existing data
+    //     'charge_type': entry['newfield'] == true
+    //         ? 'One Time Charge'
+    //         : (entry['sub_charge_type'] ?? entry['charge_type']), // Apply condition
+    //     // Remove the sub_charge_type by setting it to null
+    //   };
+    // }).toList();
+    List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+      // Determine charge_type based on newfield and account
+      String? chargeType;
 
+      if (entry['newfield'] == true) {
+        // If newfield is true, check account values
+        if (entry['account'] == "Late Fee Income" ||
+            entry['account'] == "Pre-payments" ||
+            entry['account'] == "Security Deposit") {
+          chargeType = entry['account']; // Assign account value as charge_type
+        } else if (entry['account'] == "Rent Income") {
+          chargeType = "Rent"; // Set charge_type as "Rent"
+        } else {
+          chargeType = "One Time Charge"; // Default to "One Time Charge"
+        }
+      } else {
+        // If newfield is false, keep the existing charge_type logic
+        chargeType = entry['sub_charge_type'] ?? entry['charge_type'];
+      }
+
+      return {
+        ...entry, // Keep existing data
+        'charge_type': chargeType, // Set the dynamically calculated charge_type
+      };
+    }).toList();
     print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
@@ -247,7 +317,8 @@ print('card for real ${response.body}');
         'tenantName':tenantname,
         'notificationTime':notificationTime,
         'lease_id':leaseid,
-        'entry': entries,
+        'entry': updatedEntries,
+       // 'entry': entries,
       };
       print(paymentDetails);
       final response = await http.post(
@@ -276,7 +347,8 @@ print('card for real ${response.body}');
               tenantId: tenantId,
               leaseId: leaseid,
               paymentType: "ACH",
-              entries: entries,
+              entries: updatedEntries,
+            //  entries: entries,
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: [],
@@ -305,7 +377,8 @@ print('card for real ${response.body}');
             tenantId: tenantId,
             leaseId: leaseid,
             paymentType: "Card",
-            entries: entries,
+            entries: updatedEntries,
+           // entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
             uploadedFile: [],
@@ -411,6 +484,41 @@ print('card for real ${response.body}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    // List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+    //   return {
+    //     ...entry, // Keep existing data
+    //     'charge_type': entry['newfield'] == true
+    //         ? 'One Time Charge'
+    //         : (entry['sub_charge_type'] ?? entry['charge_type']), // Apply condition
+    //     // Remove the sub_charge_type by setting it to null
+    //   };
+    // }).toList();
+    List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+      // Determine charge_type based on newfield and account
+      String? chargeType;
+
+      if (entry['newfield'] == true) {
+        // If newfield is true, check account values
+        if (entry['account'] == "Late Fee Income" ||
+            entry['account'] == "Pre-payments" ||
+            entry['account'] == "Security Deposit") {
+          chargeType = entry['account']; // Assign account value as charge_type
+        } else if (entry['account'] == "Rent Income") {
+          chargeType = "Rent"; // Set charge_type as "Rent"
+        } else {
+          chargeType = "One Time Charge"; // Default to "One Time Charge"
+        }
+      } else {
+        // If newfield is false, keep the existing charge_type logic
+        chargeType = entry['sub_charge_type'] ?? entry['charge_type'];
+      }
+
+      return {
+        ...entry, // Keep existing data
+        'charge_type': chargeType, // Set the dynamically calculated charge_type
+      };
+    }).toList();
+
     print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
@@ -432,7 +540,8 @@ print('card for real ${response.body}');
         'address1': address1,
         'processor_id': processorId,
         'lease_id':leaseid,
-        'entry': entries,
+        'entry': updatedEntries,
+        //'entry': entries,
         // 'notificationTime':notificationTime,
       };
       print(paymentDetails);
@@ -461,7 +570,8 @@ print('card for real ${response.body}');
               tenantId: tenantId,
               leaseId: leaseid,
               paymentType: "ACH",
-              entries: entries,
+              entries: updatedEntries,
+              //entries: entries,
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: [],
@@ -487,7 +597,8 @@ print('card for real ${response.body}');
             tenantId: tenantId,
             leaseId: leaseid,
             paymentType: payment_method,
-            entries: entries,
+            entries: updatedEntries,
+            //entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
             uploadedFile: "",

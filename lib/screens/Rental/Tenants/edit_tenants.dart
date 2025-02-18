@@ -1990,7 +1990,6 @@ class _EditTenantsState extends State<EditTenants> {
                                       tenantBirthDate:  _dateController.text.trim().isNotEmpty
                                     ? reverseFormatDate(_dateController.text.trim())
                                   : "",  // This will ensure no empty string is passed to reverseFormatDate
-
                                       taxPayerId: taxPayerId.text.trim(),
                                       comments: comments.text.trim(),
                                       emergencyContactName: contactName.text.trim(),
@@ -2043,11 +2042,13 @@ class _EditTenantsState extends State<EditTenants> {
 
                                     Navigator.of(context).pop(true);
                                   } catch (e) {
-                                    Fluttertoast.showToast(
-                                        msg: "Failed to update tenant");
+                                    // Fluttertoast.showToast(
+                                    //     msg: "Failed to update tenant");
                                     setState(() {
                                       isLoading = false;
                                     });
+                                    // String errorMessage = e.toString();
+                                    // Fluttertoast.showToast(msg: "$errorMessage");
                                     print(e.toString());
                                   }
                                 }
