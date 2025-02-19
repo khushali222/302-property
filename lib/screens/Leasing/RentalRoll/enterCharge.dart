@@ -245,7 +245,7 @@ class _enterChargeState extends State<enterCharge> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)["data"];
       print(data);
-
+      
       Chargedata fetchedCharge = Chargedata.fromJson(data);
 
       setState(() {
