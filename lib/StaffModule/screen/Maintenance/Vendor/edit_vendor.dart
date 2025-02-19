@@ -1695,7 +1695,7 @@ class _edit_vendorState extends State<edit_vendor> {
                               children: [
                                 Container(
                                   height: 50,
-                                  width: 120,
+                                  width: 150,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
@@ -1810,7 +1810,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                       ),
                                     )
                                         : Text(
-                                      'Edit Vendor',
+                                      'Update Vendor',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xFFf7f8f9)),

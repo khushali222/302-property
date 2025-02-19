@@ -66,7 +66,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
-  Widget _buildHeaders() {
+  Widget _buildHeaders(List<ExpiringRentersInsuranceData> policyList) {
     var width = MediaQuery.of(context).size.width;
     return Column(
       children: [
@@ -92,6 +92,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
             ),
           ),
         ),
+        if(policyList.isNotEmpty)
         Container(
           decoration: BoxDecoration(
             color: Colors.blue.shade50,
@@ -646,24 +647,26 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                       height: MediaQuery.of(context).size.height * .5,
                       child: Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
+                            SizedBox(height: 10),
+                            _buildHeaders([]),
+                            // Image.asset(
+                            //   "assets/images/no_data.jpg",
+                            //   height: 200,
+                            //   width: 200,
+                            // ),
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
+                            // Text(
+                            //   "No Data Available",
+                            //   style: TextStyle(
+                            //       fontWeight: FontWeight.bold,
+                            //       color: blueColor,
+                            //       fontSize: 16),
+                            // )
                           ],
                         ),
                       ),
@@ -686,31 +689,31 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                               property.insuranceCompany == selectedValue)
                           .toList();
                     }
-                    if (data.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
-                          ],
-                        ),
-                      );
-                    }
+                    // if (data.isEmpty) {
+                    //   return Center(
+                    //     child: Column(
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       crossAxisAlignment: CrossAxisAlignment.center,
+                    //       children: [
+                    //         Image.asset(
+                    //           "assets/images/no_data.jpg",
+                    //           height: 200,
+                    //           width: 200,
+                    //         ),
+                    //         SizedBox(
+                    //           height: 10,
+                    //         ),
+                    //         Text(
+                    //           "No Data Available",
+                    //           style: TextStyle(
+                    //               fontWeight: FontWeight.bold,
+                    //               color: blueColor,
+                    //               fontSize: 16),
+                    //         )
+                    //       ],
+                    //     ),
+                    //   );
+                    // }
                     //sortData(data);
                     final totalPages = (data.length / itemsPerPage).ceil();
                     final currentPageData = data
@@ -721,7 +724,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                       child: Column(
                         children: [
                           SizedBox(height: 10),
-                          _buildHeaders(),
+                          _buildHeaders(data),
                           SizedBox(height: 1),
                           Container(
                             decoration: BoxDecoration(

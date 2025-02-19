@@ -105,11 +105,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   @override
   void initState() {
     super.initState();
-    if(widget.isEdit != null)
-      editpayment();
+    fetchDropdownData();
+
     fetchTenants();
     fetchCompany();
-    fetchDropdownData();
+
     fetchSurcharge();
     //totalAmount = chargeAmount + surchargeIncluded;
     // amountController.addListener(_updateTotalAmount);
@@ -135,14 +135,26 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
       print('charge details ${charges!.length}');
         rows = c_data.entry?.map((entry) {
+          String? chargeType = (entry.account == "Late Fee Income" ||
+              entry.account == "Pre-payments" ||
+              entry.account == "Security Deposit")
+              ? entry.account
+              : entry.account == "Rent Income"
+              ? "Rent"
+              : categorizedData.entries.firstWhere(
+                (entryData) => entryData.value.contains(entry.account),
+            orElse: () => MapEntry("Unknown", []), // Default if not found
+          ).key;
+          print(chargeType);
           return {
             'entry_id': entry.entryId,
             'account': entry.account,
-            'amount': 0.0,
+            'amount': entry.amount,
             'charge_amount': entry.amount,
             'memo': entry.memo,
             'date': entry.date,
-            'charge_type': entry.chargeType,
+            'charge_type': chargeType,
+            'sub_charge_type': entry.chargeType,
             'newfield': false,
           };
         }).toList() ??
@@ -259,6 +271,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           categorizedData = fetchedData;
           isLoading = false;
         });
+        if(widget.isEdit != null)
+          editpayment();
       } else {
         setState(() {
           hasError = true;
@@ -431,14 +445,72 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   }
 
 //for payment
+//   Future<void> fetchChargesForSelectedTenant(String tenantId) async {
+//     setState(() {
+//       isLoading = true;
+//       hasError = false;
+//     });
+//     try {
+//       List<Entrycharge>? charges =
+//           await ChargeRepositorys().fetchChargesTable(widget.leaseId);
+//       print('charge details ${charges!.length}');
+//       List<Entrycharge> filteredCharges =
+//           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
+//       print("charges length:- ${charges!.length}");
+//       print('leaseid ${widget.leaseId}');
+//
+//       print('tenantid '
+//           '$tenantId');
+//
+//       setState(() {
+//         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
+//               return {
+//                 'entry_id': entry.entryId,
+//                 'account': entry.account,
+//                 'amount': 0.0,
+//                 'charge_amount': entry.chargeAmount,
+//                 'memo': entry.memo,
+//                 'date': entry.date,
+//                 'charge_type': entry.chargeType,
+//                 'newfield': false,
+//               };
+//             }).toList() ??
+//             [];
+//         for (var i = 0; i < filteredCharges!.length; i++) {
+//           if (i == 0) {
+//             charges_balances[0] = filteredCharges[i].chargeAmount!.toDouble();
+//           } else {
+//             charges_balances.add(filteredCharges[i].chargeAmount!.toDouble());
+//           }
+//         }
+//         print("rows length:- ${rows!.length}");
+//         /*  print(rows.first['account']);
+//         print(rows.first['charge_amount']);
+//         print(rows.first['charge_amount']);*/
+//         controllers = rows.map((row) {
+//           return TextEditingController(text: "".toString());
+//         }).toList();
+//         print(rows);
+//         totalAmount = rows.fold(
+//             0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
+//         isLoading = false;
+//       });
+//     } catch (e) {
+//       setState(() {
+//         hasError = true;
+//         isLoading = false;
+//       });
+//     }
+//   }
   Future<void> fetchChargesForSelectedTenant(String tenantId) async {
+    print('fetch tenant charges calling');
     setState(() {
       isLoading = true;
       hasError = false;
     });
     try {
       List<Entrycharge>? charges =
-          await ChargeRepositorys().fetchChargesTable(widget.leaseId);
+      await ChargeRepositorys().fetchChargesTable(widget.leaseId);
       print('charge details ${charges!.length}');
       List<Entrycharge> filteredCharges =
           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
@@ -449,26 +521,52 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           '$tenantId');
 
       setState(() {
+
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
-              return {
-                'entry_id': entry.entryId,
-                'account': entry.account,
-                'amount': 0.0,
-                'charge_amount': entry.chargeAmount,
-                'memo': entry.memo,
-                'date': entry.date,
-                'charge_type': entry.chargeType,
-                'newfield': false,
-              };
-            }).toList() ??
+          // String chargeType = categorizedData.entries.firstWhere(
+          //       (entryData) => entryData.value.contains(entry.account),
+          //   orElse: () => MapEntry("Unknown", []), // Default if not found
+          // ).key;
+          String? chargeType = (entry.account == "Late Fee Income" ||
+              entry.account == "Pre-payments" ||
+              entry.account == "Security Deposit")
+              ? entry.account
+              : entry.account == "Rent Income"
+              ? "Rent"
+              : categorizedData.entries.firstWhere(
+                (entryData) => entryData.value.contains(entry.account),
+            orElse: () => MapEntry("Unknown", []), // Default if not found
+          ).key;
+          print(chargeType);
+          return {
+            'entry_id': entry.entryId,
+            'account': entry.account,
+            'amount': 0.0,
+            'charge_amount': entry.chargeAmount,
+            'memo': entry.memo?.isNotEmpty == true ? entry.memo : "Payment",
+            'date': entry.date,
+            'charge_type': chargeType, // Set matched charge type libity
+            'sub_charge_type': entry.chargeType, // Set original charge type onetime
+            'newfield': false,
+          };
+        }).toList() ??
             [];
+
         for (var i = 0; i < filteredCharges!.length; i++) {
+
           if (i == 0) {
-            charges_balances[0] = filteredCharges[i].chargeAmount!.toDouble();
+            double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();
+            String formattedChargeAmount = chargeAmount.toStringAsFixed(2);
+            charges_balances[0] = double.parse(formattedChargeAmount);
+            //charges_balances[0] = filteredCharges[i].chargeAmount!.toDouble();
           } else {
-            charges_balances.add(filteredCharges[i].chargeAmount!.toDouble());
+            double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();
+            String formattedChargeAmount = chargeAmount.toStringAsFixed(2);
+            //charges_balances[0] = double.parse(formattedChargeAmount);
+            charges_balances.add(double.parse(formattedChargeAmount));
           }
         }
+        print("charges length ${charges_balances.length}");
         print("rows length:- ${rows!.length}");
         /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
@@ -488,7 +586,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       });
     }
   }
-
   void addRow() {
     setState(() {
       rows.add({
@@ -926,22 +1023,22 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                   Text(tenant['tenant_name']!),
                                             );
                                           }).toList(),
-                                          onChanged: (value) async {
-                                            state.didChange(value);
-                                            setState(() {
-                                              selectedTenantId = value;
-                                              tenantname = tenants.firstWhere(
-                                                  (tenant) =>
-                                                      tenant['tenant_id'] ==
-                                                      value)['tenant_name']!;
-                                              fetchChargesForSelectedTenant(
-                                                  value!);
-                                            });
-                                            state.reset();
-                                            await fetchcreditcard(value!);
-                                            print(
-                                                'Selected tenant_id: $selectedTenantId');
-                                          },
+                                          // onChanged: (value) async {
+                                          //   state.didChange(value);
+                                          //   setState(() {
+                                          //     selectedTenantId = value;
+                                          //     tenantname = tenants.firstWhere(
+                                          //         (tenant) =>
+                                          //             tenant['tenant_id'] ==
+                                          //             value)['tenant_name']!;
+                                          //     fetchChargesForSelectedTenant(
+                                          //         value!);
+                                          //   });
+                                          //   state.reset();
+                                          //   await fetchcreditcard(value!);
+                                          //   print(
+                                          //       'Selected tenant_id: $selectedTenantId');
+                                          // },
                                           buttonStyleData: ButtonStyleData(
                                             height: 45,
                                             width: 250,
@@ -1330,10 +1427,18 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               hintText: 'Enter Amount',
                               controller: amountController,
                               onChanged: (value) => validateAmounts(),
+                              readOnnly: true,
                             ),
-                            const SizedBox(height: 8),
                             const SizedBox(
                               height: 12,
+                            ),
+                            const Text('Payment Method',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            const SizedBox(
+                              height: 8,
                             ),
                             if (isFreePlan)
                               DropdownButtonHideUnderline(
@@ -1347,25 +1452,25 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       child: Text(method),
                                     );
                                   }).toList(),
-                                  onChanged: (String? newValue) {
-                                    // setState(() {
-                                    //   _selectedPaymentMethod = newValue;
-                                    //   //_selectedPaymentMethod = addRow();
-                                    //   if(_selectedPaymentMethod == 'Card')
-                                    //   addRow();
-                                    //   if(_selectedPaymentMethod == 'Check')
-                                    //    Text("hello");
-                                    //
-                                    // });
-                                    setState(() {
-                                      _selectedPaymentMethod = newValue;
-                                      AddFields();
-                                    });
-                                    print(_selectedPaymentMethod == "Card");
-                                    print(
-                                        'Selected payment method: $_selectedPaymentMethod');
-                                    surge_count();
-                                  },
+                                  // onChanged: (String? newValue) {
+                                  //   // setState(() {
+                                  //   //   _selectedPaymentMethod = newValue;
+                                  //   //   //_selectedPaymentMethod = addRow();
+                                  //   //   if(_selectedPaymentMethod == 'Card')
+                                  //   //   addRow();
+                                  //   //   if(_selectedPaymentMethod == 'Check')
+                                  //   //    Text("hello");
+                                  //   //
+                                  //   // });
+                                  //   setState(() {
+                                  //     _selectedPaymentMethod = newValue;
+                                  //     AddFields();
+                                  //   });
+                                  //   print(_selectedPaymentMethod == "Card");
+                                  //   print(
+                                  //       'Selected payment method: $_selectedPaymentMethod');
+                                  //   surge_count();
+                                  // },
                                   buttonStyleData: ButtonStyleData(
                                     height:
                                         MediaQuery.of(context).size.width < 500
@@ -1440,21 +1545,21 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               child: Text(method),
                                             );
                                           }).toList(),
-                                          onChanged: (String? newValue) {
-                                             // Update FormField state
-                                            setState(() {
-                                              _selectedPaymentMethod = newValue;
-                                              state.didChange(
-                                                  newValue);
-                                              AddFields(); // Call your method to add fields
-                                            });
-                                            state.reset();
-                                            print(_selectedPaymentMethod ==
-                                                "Card");
-                                            print(
-                                                'Selected payment method: $_selectedPaymentMethod');
-                                            surge_count(); // Your method call
-                                          },
+                                          // onChanged: (String? newValue) {
+                                          //    // Update FormField state
+                                          //   setState(() {
+                                          //     _selectedPaymentMethod = newValue;
+                                          //     state.didChange(
+                                          //         newValue);
+                                          //     AddFields(); // Call your method to add fields
+                                          //   });
+                                          //   state.reset();
+                                          //   print(_selectedPaymentMethod ==
+                                          //       "Card");
+                                          //   print(
+                                          //       'Selected payment method: $_selectedPaymentMethod');
+                                          //   surge_count(); // Your method call
+                                          // },
                                           buttonStyleData: ButtonStyleData(
                                             height: MediaQuery.of(context)
                                                         .size
@@ -2488,11 +2593,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   padding: const EdgeInsets.all(15.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
+                                    CrossAxisAlignment.stretch,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Charge ${index + 1}',
                                               style: TextStyle(
@@ -2510,11 +2615,17 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         ],
                                       ),
                                       SizedBox(height: 12.0),
-                                      Text("Account",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 8,
+                                          right: 8,
+                                        ),
+                                        child: Text("Account",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                      ),
                                       SizedBox(
-                                        height: 12,
+                                        height: 8,
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -2530,79 +2641,118 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             builder:
                                                 (FormFieldState<String> state) {
                                               String? selectedAccount =
-                                                  row['account'];
+                                              row['account'];
 
                                               // List of all dropdown items, including missing ones
                                               Map<String, List<String>>
-                                                  categorizedDataCopy =
-                                                  Map.from(categorizedData);
+                                              categorizedDataCopy =
+                                              Map.from(categorizedData);
 
                                               // Ensure the selected value is present in the list
                                               if (selectedAccount != null &&
                                                   !categorizedData.values
                                                       .expand((list) => list)
                                                       .contains(
-                                                          selectedAccount)) {
+                                                      selectedAccount)) {
                                                 if (categorizedDataCopy[
-                                                        'Other'] ==
+                                                'Other'] ==
                                                     null) {
                                                   categorizedDataCopy['Other'] =
-                                                      [];
+                                                  [];
                                                 }
                                                 categorizedDataCopy['Other']!
                                                     .add(selectedAccount);
                                               }
+                                              print(row);
+                                              if (row['charge_type'] ==
+                                                  "Rent") {}
+                                              List<String> liabilityAccounts = [
+                                                "Late Fee Income",
+                                                "Pre-payments",
+                                                "Security Deposit",
+                                                'Rent Income'
+                                              ];
+                                              print(
+                                                  "${row['account']}_${row['charge_type']}");
+                                              print(categorizedDataCopy.values
+                                                  .expand((v) => v)
+                                                  .contains(row['account']));
+                                              print(categorizedDataCopy.values);
                                               return Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                                 children: [
                                                   DropdownButton2<String>(
                                                     isExpanded: true,
-                                                    value: row['account'],
+                                                    //value: liabilityAccounts.contains(row['account']) ? "${row['account']}_Liability Account" : "${row['account']}_${row['charge_type']}",
+                                                    // value: liabilityAccounts
+                                                    //         .contains(
+                                                    //             row['account'])
+                                                    //     ? "${row['account']}_Liability Account"
+                                                    //     : liabilityAccounts
+                                                    //             .contains(row[
+                                                    //                 'account'])
+                                                    //         ? ""
+                                                    //         : "${row['account']}_${row['charge_type']}",
+                                                    value: liabilityAccounts
+                                                        .contains(
+                                                        row['account'])
+                                                        ? "${row['account']}_Liability Account"
+                                                        : (row['account'] ==
+                                                        null ||
+                                                        row['account']
+                                                            .isEmpty ||
+                                                        row['charge_type'] ==
+                                                            null ||
+                                                        row['charge_type']
+                                                            .isEmpty)
+                                                        ? null // Default value that is part of the items
+                                                        : "${row['account']}_${row['charge_type']}",
                                                     items: [
                                                       ...categorizedDataCopy
                                                           .entries
                                                           .expand((entry) {
                                                         return [
-                                                          DropdownMenuItem<
-                                                              String>(
-                                                            enabled: false,
-                                                            child: Text(
-                                                              entry.key,
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        81,
-                                                                        1),
-                                                              ),
-                                                            ),
-                                                          ),
+                                                          // DropdownMenuItem<
+                                                          //     String>(
+                                                          //   enabled: false,
+                                                          //   child: Text(
+                                                          //     entry.key,
+                                                          //     style:
+                                                          //     const TextStyle(
+                                                          //       fontWeight:
+                                                          //       FontWeight
+                                                          //           .bold,
+                                                          //       color: Color
+                                                          //           .fromRGBO(
+                                                          //           21,
+                                                          //           43,
+                                                          //           81,
+                                                          //           1),
+                                                          //     ),
+                                                          //   ),
+                                                          // ),
                                                           ...entry.value
                                                               .map((item) {
                                                             return DropdownMenuItem<
                                                                 String>(
-                                                              value: item,
+                                                              value:
+                                                              "${item}_${entry.key}",
                                                               child: Padding(
                                                                 padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            16.0),
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left:
+                                                                    16.0),
                                                                 child: Text(
                                                                   item,
                                                                   style:
-                                                                      const TextStyle(
+                                                                  const TextStyle(
                                                                     color: Colors
                                                                         .black,
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
+                                                                    FontWeight
+                                                                        .w400,
                                                                   ),
                                                                 ),
                                                               ),
@@ -2614,8 +2764,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                     onChanged: (value) {
                                                       dynamic? chargeType;
                                                       for (var entry
-                                                          in categorizedData
-                                                              .entries) {
+                                                      in categorizedData
+                                                          .entries) {
                                                         if (entry.value
                                                             .contains(value)) {
                                                           chargeType =
@@ -2624,73 +2774,84 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                         }
                                                       }
                                                       setState(() {
+                                                        final parts =
+                                                        value!.split('_');
+                                                        final chargeType =
+                                                        parts[0];
+                                                        final selectedValue =
+                                                        parts
+                                                            .sublist(1)
+                                                            .join('_');
                                                         rows[index]['account'] =
-                                                            value;
-                                                        rows[index][
-                                                                'charge_type'] =
                                                             chargeType;
+                                                        rows[index][
+                                                        'charge_type'] =
+                                                            selectedValue;
                                                         state.didChange(
                                                             value); // Update the FormField state
                                                       });
                                                       state.reset();
                                                     },
                                                     buttonStyleData:
-                                                        ButtonStyleData(
+                                                    ButtonStyleData(
                                                       height: 45,
                                                       // width: 220,
                                                       padding:
-                                                          const EdgeInsets.only(
-                                                              left: 0,
-                                                              right: 14),
+                                                      const EdgeInsets.only(
+                                                          left: 0,
+                                                          right: 14),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(6),
+                                                        BorderRadius
+                                                            .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       elevation: 2,
                                                     ),
                                                     iconStyleData:
-                                                        const IconStyleData(
+                                                    const IconStyleData(
                                                       icon: Icon(Icons
                                                           .arrow_drop_down),
                                                       iconSize: 24,
                                                       iconEnabledColor:
-                                                          Color(0xFFb0b6c3),
+                                                      Color(0xFFb0b6c3),
                                                       iconDisabledColor:
-                                                          Colors.grey,
+                                                      Colors.grey,
                                                     ),
                                                     dropdownStyleData:
-                                                        DropdownStyleData(
+                                                    DropdownStyleData(
                                                       width: 250,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(6),
+                                                        BorderRadius
+                                                            .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       scrollbarTheme:
-                                                          ScrollbarThemeData(
+                                                      ScrollbarThemeData(
                                                         radius: const Radius
                                                             .circular(6),
                                                         thickness:
-                                                            MaterialStateProperty
-                                                                .all(6),
+                                                        MaterialStateProperty
+                                                            .all(6),
                                                         thumbVisibility:
-                                                            MaterialStateProperty
-                                                                .all(true),
+                                                        MaterialStateProperty
+                                                            .all(true),
                                                       ),
                                                     ),
-                                                    hint: const Text(
-                                                        'Select an account'),
+                                                    hint: Padding(
+                                                      padding: const EdgeInsets.only(left: 10),
+                                                      child: const Text(
+                                                          'Select an account'),
+                                                    ),
                                                   ),
                                                   if (state
                                                       .hasError) // Display the validation error
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets.only(
-                                                              left: 16.0,
-                                                              top: 5.0),
+                                                      const EdgeInsets.only(
+                                                          left: 16.0,
+                                                          top: 5.0),
                                                       child: Text(
                                                         state.errorText ?? '',
                                                         style: const TextStyle(
@@ -2711,6 +2872,18 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           left: 8,
                                           right: 8,
                                         ),
+                                        child: Text("Amount",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 8,
+                                          right: 8,
+                                        ),
                                         child: CustomTextField(
                                           validator: (value) {
                                             if (value == null ||
@@ -2723,10 +2896,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               ? true
                                               : null,
                                           max_amount: rows[index]
-                                                  ["charge_amount"]
+                                          ["charge_amount"]
                                               .toString(),
                                           error_mess:
-                                              "Amount must be less than or equal to balance",
+                                          "Amount must be less than or equal to balance",
                                           keyboardType: TextInputType.number,
                                           hintText: 'Enter Amount',
                                           controller: controllers[index],
@@ -2734,7 +2907,18 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               updateAmount(index, value),
                                         ),
                                       ),
-                                      SizedBox(height: 15.0),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 8,
+                                          right: 8,
+                                        ),
+                                        child: Text("Balance",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
                                       Padding(
                                         padding: const EdgeInsets.only(
                                           left: 8,
@@ -2743,13 +2927,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         child: Material(
                                           elevation: 3,
                                           borderRadius:
-                                              BorderRadius.circular(10),
+                                          BorderRadius.circular(10),
                                           child: Container(
                                             height: 50,
                                             decoration: BoxDecoration(
                                               color: Color(0xFFb0b6c3),
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                             ),
                                             child: Row(
                                               children: [
@@ -2759,14 +2943,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 Text("Balance :",
                                                     style: TextStyle(
                                                         fontWeight:
-                                                            FontWeight.bold)),
+                                                        FontWeight.bold)),
                                                 SizedBox(width: 12.0),
                                                 Text(
                                                     charges_balances[index]
-                                                        .toString(),
+                                                        .toStringAsFixed(2),
                                                     style: TextStyle(
                                                         fontWeight:
-                                                            FontWeight.bold)),
+                                                        FontWeight.bold)),
                                               ],
                                             ),
                                           ),
@@ -3063,12 +3247,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               padding: EdgeInsets.all(8.0),
                               child: Text('Total',
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  TextStyle(fontWeight: FontWeight.bold)),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child:
-                                  Text('\$${totalAmount.toStringAsFixed(2)}'),
+                              Text('\$${totalAmount.toStringAsFixed(2)}'),
                             ),
                           ],
                         ),

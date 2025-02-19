@@ -5180,11 +5180,11 @@ class _DashboardState extends State<Dashboard> {
                                   left: 0, right: 8),
                               child: Barchart(),
                             ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //       left: 0, right: 8),
-                            //   child:  Dashboard_Policy_Table(),
-                            // ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 0, right: 8),
+                              child:  Dashboard_Policy_Table(),
+                            ),
                           ],
                         );
                       } else {

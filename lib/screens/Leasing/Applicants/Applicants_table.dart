@@ -841,94 +841,94 @@ class _Applicants_tableState extends State<Applicants_table> {
                             ),
                           ),
                         ),
-                        const Spacer(),
-                        DropdownButtonHideUnderline(
-                          child: Material(
-                            elevation: 3,
-                            borderRadius: BorderRadius.circular(8),
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: const Row(
-                                children: [
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      'Type',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        // fontWeight: FontWeight.bold,
-                                        color: Color(0xFF8A95A8),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              items: items
-                                  .map(
-                                      (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ))
-                                  .toList(),
-                              value: selectedValue,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedValue = value;
-                                });
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 45
-                                    : 50,
-                                // width: 180,
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? MediaQuery.of(context).size.width * .39
-                                    : MediaQuery.of(context).size.width * .4,
-                                padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    // color: Colors.black26,
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                  color: Colors.white,
-                                ),
-                                elevation: 0,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: 200,
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  //color: Colors.redAccent,
-                                ),
-                                offset: const Offset(-20, 0),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility:
-                                      MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
-                            ),
-                          ),
-                        ),
+                        // const Spacer(),
+                        // DropdownButtonHideUnderline(
+                        //   child: Material(
+                        //     elevation: 3,
+                        //     borderRadius: BorderRadius.circular(8),
+                        //     child: DropdownButton2<String>(
+                        //       isExpanded: true,
+                        //       hint: const Row(
+                        //         children: [
+                        //           SizedBox(
+                        //             width: 4,
+                        //           ),
+                        //           Expanded(
+                        //             child: Text(
+                        //               'Type',
+                        //               style: TextStyle(
+                        //                 fontSize: 14,
+                        //                 // fontWeight: FontWeight.bold,
+                        //                 color: Color(0xFF8A95A8),
+                        //               ),
+                        //               overflow: TextOverflow.ellipsis,
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       items: items
+                        //           .map(
+                        //               (String item) => DropdownMenuItem<String>(
+                        //                     value: item,
+                        //                     child: Text(
+                        //                       item,
+                        //                       style: const TextStyle(
+                        //                         fontSize: 14,
+                        //                         fontWeight: FontWeight.bold,
+                        //                         color: Colors.black,
+                        //                       ),
+                        //                       overflow: TextOverflow.ellipsis,
+                        //                     ),
+                        //                   ))
+                        //           .toList(),
+                        //       value: selectedValue,
+                        //       onChanged: (value) {
+                        //         setState(() {
+                        //           selectedValue = value;
+                        //         });
+                        //       },
+                        //       buttonStyleData: ButtonStyleData(
+                        //         height: MediaQuery.of(context).size.width < 500
+                        //             ? 45
+                        //             : 50,
+                        //         // width: 180,
+                        //         width: MediaQuery.of(context).size.width < 500
+                        //             ? MediaQuery.of(context).size.width * .39
+                        //             : MediaQuery.of(context).size.width * .4,
+                        //         padding:
+                        //             const EdgeInsets.only(left: 14, right: 14),
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(8),
+                        //           border: Border.all(
+                        //             // color: Colors.black26,
+                        //             color: Color(0xFF8A95A8),
+                        //           ),
+                        //           color: Colors.white,
+                        //         ),
+                        //         elevation: 0,
+                        //       ),
+                        //       dropdownStyleData: DropdownStyleData(
+                        //         maxHeight: 200,
+                        //         width: 200,
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(14),
+                        //           //color: Colors.redAccent,
+                        //         ),
+                        //         offset: const Offset(-20, 0),
+                        //         scrollbarTheme: ScrollbarThemeData(
+                        //           radius: const Radius.circular(40),
+                        //           thickness: MaterialStateProperty.all(6),
+                        //           thumbVisibility:
+                        //               MaterialStateProperty.all(true),
+                        //         ),
+                        //       ),
+                        //       menuItemStyleData: const MenuItemStyleData(
+                        //         height: 40,
+                        //         padding: EdgeInsets.only(left: 14, right: 14),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                         // Column(
                         //   mainAxisAlignment: MainAxisAlignment.end,
                         //   crossAxisAlignment: CrossAxisAlignment.end,

@@ -12,6 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Edit_make_payment.dart';
 import '../../../../provider/dateProvider.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -2909,43 +2910,43 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           Expanded(
                                                             child:
                                                             GestureDetector(
-                                                              // onTap:
-                                                              //     () async {
-                                                              //   final value = await Navigator.push(
-                                                              //       context,
-                                                              //       MaterialPageRoute(
-                                                              //           builder: (context) => EditMakePayment(
-                                                              //             leaseId: widget.leaseId,
-                                                              //             tenantId: data.tenantData["tenant_id"],
-                                                              //             isEdit: true,
-                                                              //             data: data,
-                                                              //           )));
-                                                              //   if (value ==
-                                                              //       true) {
-                                                              //     setState(
-                                                              //             () {
-                                                              //           _leaseLedgerFuture =
-                                                              //               LeaseRepository()
-                                                              //                   .fetchLeaseLedger(leaseId: widget.leaseId);
-                                                              //         });
-                                                              //   }
-                                                              //   // var check = await Navigator.push(
-                                                              //   //   context,
-                                                              //   //   MaterialPageRoute(
-                                                              //   //     builder: (context) => Edit_properties(
-                                                              //   //       properties: rentals,
-                                                              //   //       rentalId: rentals.rentalId!,
-                                                              //   //     ),
-                                                              //   //   ),
-                                                              //   // );
-                                                              //   // if (check == true) {
-                                                              //   //   setState(() {
-                                                              //   //     futureRentalOwners = PropertiesRepository().fetchProperties();
-                                                              //   //
-                                                              //   //   });
-                                                              //   //   // Update State
-                                                              //   // }
-                                                              // },
+                                                              onTap:
+                                                                  () async {
+                                                                final value = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => EditMakePayment(
+                                                                          leaseId: widget.leaseId,
+                                                                          tenantId: data.tenantData["tenant_id"],
+                                                                          isEdit: true,
+                                                                          data: data,
+                                                                        )));
+                                                                if (value ==
+                                                                    true) {
+                                                                  setState(
+                                                                          () {
+                                                                        _leaseLedgerFuture =
+                                                                            LeaseRepository()
+                                                                                .fetchLeaseLedger(leaseId: widget.leaseId);
+                                                                      });
+                                                                }
+                                                                // var check = await Navigator.push(
+                                                                //   context,
+                                                                //   MaterialPageRoute(
+                                                                //     builder: (context) => Edit_properties(
+                                                                //       properties: rentals,
+                                                                //       rentalId: rentals.rentalId!,
+                                                                //     ),
+                                                                //   ),
+                                                                // );
+                                                                // if (check == true) {
+                                                                //   setState(() {
+                                                                //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                                //
+                                                                //   });
+                                                                //   // Update State
+                                                                // }
+                                                              },
                                                               child:
                                                               Container(
                                                                 height: 40,
