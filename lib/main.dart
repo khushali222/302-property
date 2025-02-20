@@ -28,6 +28,8 @@ import 'constant/constant.dart';
 import 'provider/edit_applicant.dart';
 import 'package:credit_card_validator/credit_card_validator.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
+import 'provider/notification_provider.dart';
 // void main() {
 //   runApp(
 //     MultiProvider(providers: [
@@ -157,6 +159,7 @@ void main() {
           ChangeNotifierProvider(create: (_) => DropdownProvider()),
           ChangeNotifierProvider(create: (_) => CheckConnection()),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
+          ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ],
         child: MyApp(),
       ),

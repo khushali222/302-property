@@ -5195,21 +5195,22 @@ class _DashboardState extends State<Dashboard> {
                                             left: 0, right: 8),
                                         child: Barchart(),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 0, right: 8),
-                                        child: Dashboard_leaseExpiring(),
-                                      ),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //       left: 0, right: 8),
+                                      //   child: Dashboard_leaseExpiring(),
+                                      // ),
+                                      SizedBox(height: 8,),
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             left: 0, right: 8),
                                         child: Dashboard_Policy_Table(),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 0, right: 8),
-                                        child: Cronjob_payment_table(),
-                                      ),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //       left: 0, right: 8),
+                                      //   child: Cronjob_payment_table(),
+                                      // ),
                                     ],
                                   );
                                 } else {

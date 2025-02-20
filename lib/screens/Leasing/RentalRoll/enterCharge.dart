@@ -224,7 +224,6 @@ class _enterChargeState extends State<enterCharge> {
   @override
   void initState() {
     super.initState();
-    fetchTenants();
     fetchDropdownData();
     // if (widget.chargeid != null) {
     //   fetchchargeData();
@@ -247,7 +246,7 @@ class _enterChargeState extends State<enterCharge> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)["data"];
       print(data);
-
+      
       Chargedata fetchedCharge = Chargedata.fromJson(data);
 
       setState(() {
@@ -345,8 +344,8 @@ class _enterChargeState extends State<enterCharge> {
         fetchedData["Liability Account"] = [
           "Late Fee Income",
           "Pre-payments",
-          // "Security Deposit",
-          // 'Rent Income'
+          "Security Deposit",
+          'Rent Income'
         ];
 
         for (var item in jsonResponse) {
@@ -594,7 +593,7 @@ class _enterChargeState extends State<enterCharge> {
                           ),
                         if (MediaQuery.of(context).size.width < 500)
                           tenants.isEmpty
-                              ? const Center(
+                              ?  Container(
                                   child: SpinKitFadingCircle(
                                     color: Colors.black,
                                     size: 50.0,
@@ -1066,7 +1065,7 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text('Apply Payment to Balances abc',
+                  const Text('Apply Payment to Balances',
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,

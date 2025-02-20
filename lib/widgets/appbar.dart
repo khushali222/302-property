@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -11,10 +13,11 @@ import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/screens/activity/activity_table.dart';
-
+import 'package:http/http.dart' as http;
 import '../constant/constant.dart';
+import '../provider/notification_provider.dart';
 import '../screens/notifications/notifications.dart';
-
+import 'package:badges/badges.dart' as badges;
 class widget_302 {
   static App_Bar({
     var suffixIcon,
@@ -28,6 +31,10 @@ class widget_302 {
     var arrowNearText,
     required BuildContext context,
   }) {
+
+    Provider.of<NotificationProvider>(context, listen: false)
+        .fetchNotifications(context);
+
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
         .checkplanpurchaseModel
         ?.data
@@ -99,16 +106,47 @@ class widget_302 {
         const SizedBox(
           width: 10,
         ),
-        InkWell(
-          onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const notifications()));
+        Consumer<NotificationProvider>(
+          builder: (context, notificationProvider, child) {
+            if (notificationProvider.isLoading) {
+              return Center(
+                child: FaIcon(
+                  FontAwesomeIcons.bell,
+                  size: 20,
+                  color: blueColor,
+                ),
+              );
+            } else if (notificationProvider.notifications.isNotEmpty) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const notifications(),
+                  ));
+                },
+                child: Center(
+                  child: badges.Badge(
+                    position: badges.BadgePosition.topEnd(top: -4, end: -3),
+                    badgeStyle: badges.BadgeStyle(
+                      badgeColor: Colors.red,
+                    ),
+                    child: FaIcon(
+                      FontAwesomeIcons.bell,
+                      size: 20,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
+              );
+            } else {
+              return Center(
+                child: FaIcon(
+                  FontAwesomeIcons.bell,
+                  size: 20,
+                  color: blueColor,
+                ),
+              );
+            }
           },
-          child: Icon(
-            Icons.notifications_outlined,
-            size:  MediaQuery.of(context).size.width > 500 ?35 :25,
-            color: blueColor,
-          ),
         ),
         const SizedBox(
           width: 10,

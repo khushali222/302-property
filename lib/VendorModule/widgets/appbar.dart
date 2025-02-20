@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/VendorModule/screen/notifications/notifications.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
@@ -13,7 +14,8 @@ import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
 
 import '../../constant/constant.dart';
-
+import '../../provider/notification_provider.dart';
+import 'package:badges/badges.dart' as badges;
 class widget_302  {
     static App_Bar({
       var suffixIcon,
@@ -24,6 +26,7 @@ class widget_302  {
       var arrowNearText,
       required BuildContext context,
     }) {
+      Provider.of<NotificationProvider>(context, listen: false).fetchNotificationsVendor(context);
       return AppBar(
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 3,
@@ -90,20 +93,62 @@ class widget_302  {
           SizedBox(
             width: 10,
           ),
-          InkWell(
-            onTap: (){
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const notifications()));
+          Consumer<NotificationProvider>(
+            builder: (context, notificationProvider, child) {
+              if (notificationProvider.isLoading) {
+                return Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.bell,
+                    size: 20,
+                    color: blueColor,
+                  ),
+                );
+              } else if (notificationProvider.notifications.isNotEmpty) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const notifications(),
+                    ));
+                  },
+                  child: Center(
+                    child: badges.Badge(
+                      position: badges.BadgePosition.topEnd(top: -4, end: -3),
+                      badgeStyle: badges.BadgeStyle(
+                        badgeColor: Colors.red,
+                      ),
+                      child: FaIcon(
+                        FontAwesomeIcons.bell,
+                        size: 20,
+                        color: blueColor,
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                return Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.bell,
+                    size: 20,
+                    color: blueColor,
+                  ),
+                );
+              }
             },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: FaIcon(
-                FontAwesomeIcons.solidBell,
-                size: 25,
-                color: blueColor,
-              ),
-            ),
           ),
+          // InkWell(
+          //   onTap: (){
+          //     Navigator.of(context).push(MaterialPageRoute(
+          //         builder: (context) => const notifications()));
+          //   },
+          //   child: Padding(
+          //     padding: const EdgeInsets.only(top: 15.0),
+          //     child: FaIcon(
+          //       FontAwesomeIcons.solidBell,
+          //       size: 25,
+          //       color: blueColor,
+          //     ),
+          //   ),
+          // ),
           //   FaIcon(
           //     FontAwesomeIcons.bell,
           //     size: 20,

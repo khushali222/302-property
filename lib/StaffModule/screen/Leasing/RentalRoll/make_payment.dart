@@ -1024,7 +1024,7 @@ class _MakePaymentState extends State<MakePayment> {
                     ],
                   ),
                   child: const Text(
-                    "Make Payments",
+                    "Make Payment",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -3325,7 +3325,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                 MaterialStateProperty.all(true),
                                           ),
                                         ),
-                                        hint: const Text('Select an account'),
+                                        hint: const Text('   Select an account'),
                                       ),
                                     ),
                                   ),

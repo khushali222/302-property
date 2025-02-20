@@ -1177,7 +1177,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               ),
                               child: Center(
                                 child: loading
-                                    ? SpinKitFadingCircle(
+                                    ? const SpinKitFadingCircle(
                                         color: Colors.white,
                                         size: 40.0,
                                       )
@@ -1653,6 +1653,19 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                     });
                     widget.onSelected(index);
                   },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                    foregroundColor:
+                        _selectedIndex == index ? Colors.white : blueColor,
+                    backgroundColor:
+                        _selectedIndex == index ? blueColor : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    side: BorderSide(
+                      color: _selectedIndex == index ? blueColor : Colors.grey,
+                    ),
+                  ),
                   child: Row(
                     children: [
                       Icon(
@@ -1689,19 +1702,6 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                       ),
                     ],
                   ),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                    foregroundColor:
-                        _selectedIndex == index ? Colors.white : blueColor,
-                    backgroundColor:
-                        _selectedIndex == index ? blueColor : Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    side: BorderSide(
-                      color: _selectedIndex == index ? blueColor : Colors.grey,
-                    ),
-                  ),
                 ),
               );
             }).toList(),
@@ -1727,6 +1727,19 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                   });
                   widget.onSelected(index);
                 },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  foregroundColor:
+                      _selectedIndex == index ? Colors.white : blueColor,
+                  backgroundColor:
+                      _selectedIndex == index ? blueColor : Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  side: BorderSide(
+                    color: _selectedIndex == index ? blueColor : grey,
+                  ),
+                ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -1738,7 +1751,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                     //       _selectedIndex == index ? Colors.white : blueColor,
                     //   size: 40,
                     // ),
-                    SizedBox(width: 10,),
+                    const SizedBox(width: 10,),
                     Container(
                       width: 30, // Set the width of the container
                       height: 30, // Set the height of the container
@@ -1753,7 +1766,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                       child:Center(
                         child: _selectedIndex == index
                             ?
-                        Icon(
+                        const Icon(
                           Icons.check_sharp,
                           color: Colors.white, // Icon color when selected
                           size: 25, // Set the icon size
@@ -1762,31 +1775,25 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                       ),
                     ),
                     SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                option["userName"]!,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 250,
+                              child: Text(
+                                "${option['userName']!} (${ option['company']!})",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: _selectedIndex == index
                                         ? Colors.white
                                         : Colors.black,
                                     fontSize: 16),
+                                maxLines: 3,
                               ),
-                              SizedBox(width: 5,),
-                              Text(
-                               "(${ option["company"]!})",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: _selectedIndex == index
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontSize: 16),
-                              ),
+                            ),
+
 
                             ],
                           ),
@@ -1801,21 +1808,8 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                           ),
                         ],
                       ),
-                    ),
+
                   ],
-                ),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  foregroundColor:
-                      _selectedIndex == index ? Colors.white : blueColor,
-                  backgroundColor:
-                      _selectedIndex == index ? blueColor : Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  side: BorderSide(
-                    color: _selectedIndex == index ? blueColor : grey,
-                  ),
                 ),
               ),
             );

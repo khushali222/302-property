@@ -640,6 +640,17 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 cellStyle: pw.TextStyle(fontSize: 10),
                 cellAlignment: pw.Alignment.centerLeft,
                 headerAlignment: pw.Alignment.centerLeft,
+                columnWidths: {
+                  0: pw.FlexColumnWidth(2), // Date
+                  1: pw.FlexColumnWidth(1.5), // Address
+                  2: pw.FlexColumnWidth(1), // Work
+                  3: pw.FlexColumnWidth(.8), // Performed
+                  4: pw.FlexColumnWidth(1.3), // Performed
+                  5: pw.FlexColumnWidth(1.5), // Performed
+                  6: pw.FlexColumnWidth(.8), // Performed
+                  7: pw.FlexColumnWidth(1.5), // Performed
+                  8: pw.FlexColumnWidth(1), // Performed
+                },
                 border: null),
             pw.Divider(thickness: 3),
             pw.Padding(
@@ -688,7 +699,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           pw.Padding(
               child: pw.Text(
                 '${property.rentalData!.rentalAddress! ?? 'N/A'}',
-                style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold,),
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               padding: pw.EdgeInsets.only(left: 15)), // Property Name
           pw.Text(
@@ -700,7 +714,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           ), // Property Name
           // Tenant Name
           pw.Text(
-            property.createdAt.toString(),
+            DateFormat("yyyy-MM-dd").format(property.createdAt).toString(),
             style: pw.TextStyle(
               fontWeight: pw.FontWeight.bold,
               fontSize: 10,
@@ -745,30 +759,42 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
               '\$${(property.totalAmount ?? 0.0).toStringAsFixed(2)}',
-              style: pw.TextStyle(fontSize: 10),
+              style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
               // Total Amount formatted to 2 decimal places
               // Align text to the right
             ),
           ),
         ]);
 
-        for (var payment in property.entry) {
+        if (property.response != "FAILURE")
+          for (var payment in property.entry) {
+            tableData.add([
+              pw.Padding(
+                  child: pw.Text('${payment.account ?? 'N/A'}',
+                      style: pw.TextStyle(fontSize: 10)),
+                  padding: pw.EdgeInsets.only(left: 15)), // Account Name
+              '', // Account Amount
+              '', '', '', '', '', '',
+              pw.Align(
+                  alignment: pw.Alignment.centerRight,
+                  child: pw.Text(
+                      '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
+                      style: pw.TextStyle(fontSize: 10),
+                      textAlign: pw.TextAlign.right // Align text to the right
+                      ))
+            ]);
+          }
+        if (property.response == "FAILURE")
           tableData.add([
             pw.Padding(
-                child: pw.Text('${payment.account ?? 'N/A'}',
+                child: pw.Text(
+                    'Failed (reason:${property.responseText ?? 'N/A'})',
                     style: pw.TextStyle(fontSize: 10)),
                 padding: pw.EdgeInsets.only(left: 15)), // Account Name
             '', // Account Amount
             '', '', '', '', '', '',
-            pw.Align(
-                alignment: pw.Alignment.centerRight,
-                child: pw.Text(
-                    '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
-                    style: pw.TextStyle(fontSize: 10),
-                    textAlign: pw.TextAlign.right // Align text to the right
-                    ))
+            ''
           ]);
-        }
 
         // if (property.surcharge != 0.0) {
         //   tableData.add([
@@ -1429,86 +1455,49 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                 _buildHeaders(),
                                 const SizedBox(height: 20),
                                 if (showTableData)
-                                Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5))),
-                                  child: Column(
-                                    children: currentPageData
-                                        .asMap()
-                                        .entries
-                                        .map((entry) {
-                                      int rowIndex = entry.key;
-                                      var item = entry.value;
-                                      bool isRowExpanded =
-                                          expandedRowIndex == rowIndex;
-                                      RentalOwnerReport rental = entry.value;
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Color.fromRGBO(
+                                                152, 162, 179, .5))),
+                                    child: Column(
+                                      children: currentPageData
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        int rowIndex = entry.key;
+                                        var item = entry.value;
+                                        bool isRowExpanded =
+                                            expandedRowIndex == rowIndex;
+                                        RentalOwnerReport rental = entry.value;
 
-                                      return Container(
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
-                                        decoration: BoxDecoration(
-                                          color: rowIndex % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
-                                          border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  152, 162, 179, .5)),
-                                        ),
-                                        child: Column(
-                                          children: <Widget>[
-                                            ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              title: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(2.0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          if (expandedRowIndex ==
-                                                              rowIndex) {
-                                                            expandedRowIndex =
-                                                                null;
-                                                          } else {
-                                                            expandedRowIndex =
-                                                                rowIndex;
-                                                          }
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        margin: const EdgeInsets
-                                                            .only(
-                                                            left: 5, right: 5),
-                                                        padding: !isRowExpanded
-                                                            ? const EdgeInsets
-                                                                .only(
-                                                                bottom: 10)
-                                                            : const EdgeInsets
-                                                                .only(top: 10),
-                                                        child: FaIcon(
-                                                          isRowExpanded
-                                                              ? FontAwesomeIcons
-                                                                  .sortUp
-                                                              : FontAwesomeIcons
-                                                                  .sortDown,
-                                                          size: 20,
-                                                          color: isRowExpanded
-                                                              ? blueColor
-                                                              : blueColor,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 4,
-                                                      child: GestureDetector(
+                                        return Container(
+                                          // decoration: BoxDecoration(
+                                          //   border: Border.all(color: blueColor),
+                                          // ),
+                                          decoration: BoxDecoration(
+                                            color: rowIndex % 2 != 0
+                                                ? Colors.white
+                                                : blueColor.withOpacity(0.09),
+                                            border: Border.all(
+                                                color: Color.fromRGBO(
+                                                    152, 162, 179, .5)),
+                                          ),
+                                          child: Column(
+                                            children: <Widget>[
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(2.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      GestureDetector(
                                                         onTap: () {
                                                           setState(() {
                                                             if (expandedRowIndex ==
@@ -1521,8 +1510,72 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                             }
                                                           });
                                                         },
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 5,
+                                                                  right: 5),
+                                                          padding: !isRowExpanded
+                                                              ? const EdgeInsets
+                                                                  .only(
+                                                                  bottom: 10)
+                                                              : const EdgeInsets
+                                                                  .only(
+                                                                  top: 10),
+                                                          child: FaIcon(
+                                                            isRowExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 20,
+                                                            color: isRowExpanded
+                                                                ? blueColor
+                                                                : blueColor,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex: 4,
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              if (expandedRowIndex ==
+                                                                  rowIndex) {
+                                                                expandedRowIndex =
+                                                                    null;
+                                                              } else {
+                                                                expandedRowIndex =
+                                                                    rowIndex;
+                                                              }
+                                                            });
+                                                          },
+                                                          child: Text(
+                                                            '${item.rentalOwnerName ?? '-'}',
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      // SizedBox(
+                                                      //     width:
+                                                      //     MediaQuery.of(context)
+                                                      //         .size
+                                                      //         .width *
+                                                      //         .3),
+                                                      Expanded(
+                                                        flex: 2,
                                                         child: Text(
-                                                          '${item.rentalOwnerName ?? '-'}',
+                                                          ' Record : ${item.payments.length ?? '-'}',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -1531,327 +1584,215 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 20,
-                                                    ),
-                                                    // SizedBox(
-                                                    //     width:
-                                                    //     MediaQuery.of(context)
-                                                    //         .size
-                                                    //         .width *
-                                                    //         .3),
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Text(
-                                                        ' Record : ${item.payments.length ?? '-'}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
+                                                      SizedBox(
+                                                        width: 5,
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            if (isRowExpanded)
-                                              Column(
-                                                children: item.payments!
-                                                    .asMap()
-                                                    .entries
-                                                    .map((tenantEntry) {
-                                                  int tenantIndex =
-                                                      tenantEntry.key;
-                                                  var tenant =
-                                                      tenantEntry.value;
-                                                  bool isTenantExpanded =
-                                                      expandedTenantIndex[
-                                                              rowIndex] ==
-                                                          tenantIndex;
+                                              if (isRowExpanded)
+                                                Column(
+                                                  children: item.payments!
+                                                      .asMap()
+                                                      .entries
+                                                      .map((tenantEntry) {
+                                                    int tenantIndex =
+                                                        tenantEntry.key;
+                                                    var tenant =
+                                                        tenantEntry.value;
+                                                    bool isTenantExpanded =
+                                                        expandedTenantIndex[
+                                                                rowIndex] ==
+                                                            tenantIndex;
 
-                                                  return Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                if (expandedTenantIndex[
-                                                                        rowIndex] ==
-                                                                    tenantIndex) {
-                                                                  expandedTenantIndex[
-                                                                          rowIndex] =
-                                                                      null;
-                                                                } else {
-                                                                  expandedTenantIndex[
-                                                                          rowIndex] =
-                                                                      tenantIndex;
-                                                                }
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 5,
-                                                                      right: 5),
-                                                              padding: !isTenantExpanded
-                                                                  ? const EdgeInsets
-                                                                      .only(
-                                                                      bottom:
-                                                                          10)
-                                                                  : const EdgeInsets
-                                                                      .only(
-                                                                      top: 10),
-                                                              child: Padding(
-                                                                padding:
+                                                    return Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  if (expandedTenantIndex[
+                                                                          rowIndex] ==
+                                                                      tenantIndex) {
+                                                                    expandedTenantIndex[
+                                                                            rowIndex] =
+                                                                        null;
+                                                                  } else {
+                                                                    expandedTenantIndex[
+                                                                            rowIndex] =
+                                                                        tenantIndex;
+                                                                  }
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                margin:
                                                                     const EdgeInsets
                                                                         .only(
-                                                                        left:
+                                                                        left: 5,
+                                                                        right:
+                                                                            5),
+                                                                padding: !isTenantExpanded
+                                                                    ? const EdgeInsets
+                                                                        .only(
+                                                                        bottom:
+                                                                            10)
+                                                                    : const EdgeInsets
+                                                                        .only(
+                                                                        top:
                                                                             10),
-                                                                child: FaIcon(
-                                                                  isTenantExpanded
-                                                                      ? FontAwesomeIcons
-                                                                          .sortUp
-                                                                      : FontAwesomeIcons
-                                                                          .sortDown,
-                                                                  size: 20,
-                                                                  color: isTenantExpanded
-                                                                      ? blueColor
-                                                                      : blueColor,
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              10),
+                                                                  child: FaIcon(
+                                                                    isTenantExpanded
+                                                                        ? FontAwesomeIcons
+                                                                            .sortUp
+                                                                        : FontAwesomeIcons
+                                                                            .sortDown,
+                                                                    size: 20,
+                                                                    color: isTenantExpanded
+                                                                        ? blueColor
+                                                                        : blueColor,
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                          Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                if (expandedTenantIndex[
-                                                                        rowIndex] ==
-                                                                    tenantIndex) {
-                                                                  expandedTenantIndex[
-                                                                          rowIndex] =
-                                                                      null;
-                                                                } else {
-                                                                  expandedTenantIndex[
-                                                                          rowIndex] =
-                                                                      tenantIndex;
-                                                                }
-                                                              });
-                                                            },
-                                                            child: Text(
-                                                              "${tenant.rentalData!.rentalAddress}",
+                                                            Expanded(
+                                                                child:
+                                                                    GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  if (expandedTenantIndex[
+                                                                          rowIndex] ==
+                                                                      tenantIndex) {
+                                                                    expandedTenantIndex[
+                                                                            rowIndex] =
+                                                                        null;
+                                                                  } else {
+                                                                    expandedTenantIndex[
+                                                                            rowIndex] =
+                                                                        tenantIndex;
+                                                                  }
+                                                                });
+                                                              },
+                                                              child: Text(
+                                                                "${tenant.rentalData!.rentalAddress}",
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor),
+                                                              ),
+                                                            )),
+                                                            Expanded(
+                                                                child: Text(
+                                                              dateProvider
+                                                                  .formatCurrentDate(
+                                                                      '${tenant.createdAt}'),
+                                                              // "${formatDate(tenant.createdAt.toString())}",
                                                               style: TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
                                                                   color:
                                                                       blueColor),
-                                                            ),
-                                                          )),
-                                                          Expanded(
-                                                              child: Text(
-                                                            dateProvider
-                                                                .formatCurrentDate(
-                                                                    '${tenant.createdAt}'),
-                                                            // "${formatDate(tenant.createdAt.toString())}",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    blueColor),
-                                                          ))
-                                                        ],
-                                                      ),
-                                                      if (isTenantExpanded)
-                                                        Column(
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 20,
-                                                                ),
-                                                                Expanded(
-                                                                  child: Table(
-                                                                    columnWidths: {
-                                                                      // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                                      // 1: FlexColumnWidth(),
-                                                                      0: FlexColumnWidth(), // Distribute columns equally
-                                                                      1: FlexColumnWidth(),
-                                                                    },
-                                                                    children: [
-                                                                      _buildTableRow(
-                                                                          'Rental Owners Name:',
-                                                                          _getDisplayValue(item
-                                                                              .rentalOwnerName),
-                                                                          'Property:',
-                                                                          _getDisplayValue(tenant
-                                                                              .rentalData
-                                                                              !.rentalAddress)),
-                                                                      _buildTableRow(
-                                                                          'Tenant Name:',
-                                                                          _getDisplayValue(
-                                                                              "${tenant.tenantData!.tenantFirstName} ${tenant.tenantData!.tenantLastName}"),
-                                                                          'Transaction Id',
-                                                                          _getDisplayValue(
-                                                                              tenant.transactionId)),
-                                                                      _buildTableRow(
-                                                                          'Transaction Date:',
-                                                                          _getDisplayValue(
-                                                                            dateProvider.formatCurrentDate('${tenant.createdAt.toString()}'),
-                                                                            // formatDate(tenant
-                                                                            //     .createdAt
-                                                                            //     .toString())
-                                                                          ),
-                                                                          'Transaction Type:',
-                                                                          _getDisplayValue(
-                                                                              tenant.paymentType)),
-                                                                      _buildTableRow(
-                                                                          'Payment Details:',
-                                                                          _getDisplayValue(
-                                                                              "${tenant.ccType} ${tenant.ccNumber}"),
-                                                                          'Payment Amount:',
-                                                                          _getDisplayValue(
-                                                                              "\$${tenant.totalAmount}")),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            if (item
-                                                                    .payments
-                                                                    .first
-                                                                    .entry
-                                                                    .length >
-                                                                0)
+                                                            ))
+                                                          ],
+                                                        ),
+                                                        if (isTenantExpanded)
+                                                          Column(
+                                                            children: [
                                                               Row(
                                                                 children: [
                                                                   SizedBox(
-                                                                    width: 27,
+                                                                    width: 20,
                                                                   ),
-                                                                  Text.rich(
-                                                                    TextSpan(
+                                                                  Expanded(
+                                                                    child:
+                                                                        Table(
+                                                                      columnWidths: {
+                                                                        // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                                        // 1: FlexColumnWidth(),
+                                                                        0: FlexColumnWidth(), // Distribute columns equally
+                                                                        1: FlexColumnWidth(),
+                                                                      },
                                                                       children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Details Line : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
+                                                                        _buildTableRow(
+                                                                            'Rental Owners Name:',
+                                                                            _getDisplayValue(item.rentalOwnerName),
+                                                                            'Property:',
+                                                                            _getDisplayValue(tenant.rentalData!.rentalAddress)),
+                                                                        _buildTableRow(
+                                                                            'Tenant Name:',
+                                                                            _getDisplayValue("${tenant.tenantData!.tenantFirstName} ${tenant.tenantData!.tenantLastName}"),
+                                                                            'Transaction Id',
+                                                                            _getDisplayValue(tenant.transactionId)),
+                                                                        _buildTableRow(
+                                                                            'Transaction Date:',
+                                                                            _getDisplayValue(
+                                                                              dateProvider.formatCurrentDate('${tenant.createdAt.toString()}'),
+                                                                              // formatDate(tenant
+                                                                              //     .createdAt
+                                                                              //     .toString())
+                                                                            ),
+                                                                            'Transaction Type:',
+                                                                            _getDisplayValue(tenant.paymentType)),
+                                                                        _buildTableRow(
+                                                                            'Payment Details:',
+                                                                            _getDisplayValue("${tenant.ccType} ${tenant.ccNumber}"),
+                                                                            'Payment Amount:',
+                                                                            _getDisplayValue("\$${tenant.totalAmount}")),
                                                                       ],
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
-                                                            if (item
-                                                                    .payments
-                                                                    .first
-                                                                    .entry
-                                                                    .length >
-                                                                0)
-                                                              SizedBox(
-                                                                height: 4,
-                                                              ),
-                                                            if (item
-                                                                    .payments
-                                                                    .first
-                                                                    .entry
-                                                                    .length >
-                                                                0)
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            15,
-                                                                        top: 0),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
+                                                              if (tenant.entry
+                                                                  .isNotEmpty)
+                                                                Row(
                                                                   children: [
-                                                                    FaIcon(
-                                                                      isTenantExpanded
-                                                                          ? FontAwesomeIcons
-                                                                              .sortUp
-                                                                          : FontAwesomeIcons
-                                                                              .sortDown,
-                                                                      size: 20,
-                                                                      color: Colors
-                                                                          .transparent,
+                                                                    const SizedBox(
+                                                                      width: 27,
                                                                     ),
-                                                                    Expanded(
-                                                                      flex: 2,
-                                                                      child:
-                                                                          Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: <Widget>[
-                                                                          Text.rich(
-                                                                            TextSpan(
-                                                                              children: [
-                                                                                TextSpan(
-                                                                                  text: 'Account : ',
-                                                                                  style: TextStyle(
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    color: blueColor,
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                    Expanded(
-                                                                      flex: 2,
-                                                                      child:
-                                                                          Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: <Widget>[
-                                                                          Text.rich(
-                                                                            TextSpan(
-                                                                              children: [
-                                                                                TextSpan(
-                                                                                  text: '  Amount : ',
-                                                                                  style: TextStyle(
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    color: blueColor,
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Details Line : ',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                           ),
                                                                         ],
                                                                       ),
                                                                     ),
                                                                   ],
                                                                 ),
-                                                              ),
-                                                            Column(
-                                                              children: item
-                                                                  .payments
-                                                                  .first
-                                                                  .entry
-                                                                  .map((entry) {
-                                                                return Padding(
-                                                                  padding: const EdgeInsets
-                                                                      .only(
-                                                                      left:
-                                                                          15.0,
-                                                                      bottom:
-                                                                          0),
+                                                              if (tenant.entry
+                                                                      .isNotEmpty &&
+                                                                  tenant.response !=
+                                                                      "FAILURE")
+                                                                const SizedBox(
+                                                                  height: 4,
+                                                                ),
+                                                              if (tenant.entry
+                                                                      .isNotEmpty &&
+                                                                  tenant.response !=
+                                                                      "FAILURE")
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              15,
+                                                                          top:
+                                                                              0),
                                                                   child: Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
@@ -1877,10 +1818,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                               TextSpan(
                                                                                 children: [
                                                                                   TextSpan(
-                                                                                    text: '${entry.account ?? "N/A"}',
+                                                                                    text: 'Account : ',
                                                                                     style: TextStyle(
-                                                                                      fontWeight: FontWeight.w700,
-                                                                                      color: grey,
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      color: blueColor,
                                                                                     ),
                                                                                   ),
                                                                                 ],
@@ -1888,10 +1829,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                             ),
                                                                           ],
                                                                         ),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            15,
                                                                       ),
                                                                       Expanded(
                                                                         flex: 2,
@@ -1904,45 +1841,146 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                               TextSpan(
                                                                                 children: [
                                                                                   TextSpan(
-                                                                                    text: ' \$ ${entry.amount ?? "N/A"}',
+                                                                                    text: '  Amount : ',
                                                                                     style: TextStyle(
-                                                                                      fontWeight: FontWeight.w700,
-                                                                                      color: grey,
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      color: blueColor,
                                                                                     ),
                                                                                   ),
                                                                                 ],
                                                                               ),
                                                                             ),
-                                                                            // Add additional fields if needed
                                                                           ],
                                                                         ),
                                                                       ),
                                                                     ],
                                                                   ),
-                                                                );
-                                                              }).toList(),
-                                                            ),
-                                                          ],
+                                                                ),
+                                                              if (tenant.entry
+                                                                      .isNotEmpty &&
+                                                                  tenant.response !=
+                                                                      "FAILURE")
+                                                                Column(
+                                                                  children: tenant
+                                                                      .entry
+                                                                      .map(
+                                                                          (entry) {
+                                                                    return Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              15.0,
+                                                                          bottom:
+                                                                              0),
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          FaIcon(
+                                                                            isTenantExpanded
+                                                                                ? FontAwesomeIcons.sortUp
+                                                                                : FontAwesomeIcons.sortDown,
+                                                                            size:
+                                                                                20,
+                                                                            color:
+                                                                                Colors.transparent,
+                                                                          ),
+                                                                          Expanded(
+                                                                            flex:
+                                                                                2,
+                                                                            child:
+                                                                                Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                                Text.rich(
+                                                                                  TextSpan(
+                                                                                    children: [
+                                                                                      TextSpan(
+                                                                                        text: '${entry.account ?? "N/A"}',
+                                                                                        style: TextStyle(
+                                                                                          fontWeight: FontWeight.w700,
+                                                                                          color: grey,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                15,
+                                                                          ),
+                                                                          Expanded(
+                                                                            flex:
+                                                                                2,
+                                                                            child:
+                                                                                Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                                Text.rich(
+                                                                                  TextSpan(
+                                                                                    children: [
+                                                                                      TextSpan(
+                                                                                        text: ' \$ ${entry.amount ?? "N/A"}',
+                                                                                        style: TextStyle(
+                                                                                          fontWeight: FontWeight.w700,
+                                                                                          color: grey,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                                // Add additional fields if needed
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    );
+                                                                  }).toList(),
+                                                                ),
+                                                              if (tenant
+                                                                      .response ==
+                                                                  "FAILURE")
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Failed : Reason(${tenant.responseText}) ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                            ],
+                                                          ),
+                                                        SizedBox(
+                                                          height: 8,
                                                         ),
-                                                      SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                      if (item.payments.length -
-                                                              1 !=
-                                                          tenantIndex)
-                                                        Divider(
-                                                          thickness: 2,
-                                                        )
-                                                    ],
-                                                  );
-                                                }).toList(),
-                                              ),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
+                                                        if (item.payments
+                                                                    .length -
+                                                                1 !=
+                                                            tenantIndex)
+                                                          Divider(
+                                                            thickness: 2,
+                                                          )
+                                                      ],
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
                                   ),
-                                ),
                                 const SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -3074,10 +3112,12 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                         DropdownMenuItem<String>(
                           value: 'Check',
                           child: Text('Check'),
-                        ), DropdownMenuItem<String>(
+                        ),
+                        DropdownMenuItem<String>(
                           value: 'Cash',
                           child: Text('Cash'),
-                        ), DropdownMenuItem<String>(
+                        ),
+                        DropdownMenuItem<String>(
                           value: 'Manual',
                           child: Text('Manual'),
                         ),
@@ -3109,59 +3149,59 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 ),
               ),
               const SizedBox(width: 6),
-              if(showTableData)
-              Expanded(
-                child: SizedBox(
-                  //  width: 100,
-                  height: 42,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: blueColor,
-                    ),
-                    onPressed: () {},
-                    child: PopupMenuButton<String>(
-                      onSelected: (value) async {
-                        // Export logic
-                        if (value == 'PDF' && data != null) {
-                          print('pdf');
-                          generateDelinquentTenantsPdf(data);
-                        } else if (value == 'XLSX' && data != null) {
-                          print('XLSX');
-                          generateRentalOwnerReportExcel(data);
-                          //generateDelinquentTenantsExcel(data);
-                        } else if (value == 'CSV' && data != null) {
-                          print('CSV');
-                          generateRentalOwnerReportCsv(data);
-                          //  generateDelinquentTenantsCsv(data);
-                        }
-                      },
-                      itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<String>>[
-                        const PopupMenuItem<String>(
-                            value: 'PDF', child: Text('PDF')),
-                        const PopupMenuItem<String>(
-                            value: 'XLSX', child: Text('XLSX')),
-                        const PopupMenuItem<String>(
-                            value: 'CSV', child: Text('CSV')),
-                      ],
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          istenantDataLoading
-                              ? const Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 21.0,
-                                  ),
-                                )
-                              : Text('Export'),
-                          Icon(Icons.arrow_drop_down),
+              if (showTableData)
+                Expanded(
+                  child: SizedBox(
+                    //  width: 100,
+                    height: 42,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: blueColor,
+                      ),
+                      onPressed: () {},
+                      child: PopupMenuButton<String>(
+                        onSelected: (value) async {
+                          // Export logic
+                          if (value == 'PDF' && data != null) {
+                            print('pdf');
+                            generateDelinquentTenantsPdf(data);
+                          } else if (value == 'XLSX' && data != null) {
+                            print('XLSX');
+                            generateRentalOwnerReportExcel(data);
+                            //generateDelinquentTenantsExcel(data);
+                          } else if (value == 'CSV' && data != null) {
+                            print('CSV');
+                            generateRentalOwnerReportCsv(data);
+                            //  generateDelinquentTenantsCsv(data);
+                          }
+                        },
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                              value: 'PDF', child: Text('PDF')),
+                          const PopupMenuItem<String>(
+                              value: 'XLSX', child: Text('XLSX')),
+                          const PopupMenuItem<String>(
+                              value: 'CSV', child: Text('CSV')),
                         ],
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            istenantDataLoading
+                                ? const Center(
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 21.0,
+                                    ),
+                                  )
+                                : Text('Export'),
+                            Icon(Icons.arrow_drop_down),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
+                )
             ],
           ),
         ),
@@ -3182,24 +3222,23 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                     ),
                     onPressed: () async {
                       setState(() {
-                        showTableData = true; // Set to true when the button is pressed
+                        showTableData =
+                            true; // Set to true when the button is pressed
                       });
-                      _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text, toDate.text); // Call the API
-
+                      _futureRentersInsurance = fetchDelinquentTenantsData(
+                          fromDate.text, toDate.text); // Call the API
                     },
-                    child:
-                    Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         isAddLoading
                             ? const Center(
-                          child: SpinKitFadingCircle(
-                            color: Colors.white,
-                            size: 21.0,
-                          ),
-                        )
+                                child: SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 21.0,
+                                ),
+                              )
                             : Text('Run'),
-
                       ],
                     ),
                   ),

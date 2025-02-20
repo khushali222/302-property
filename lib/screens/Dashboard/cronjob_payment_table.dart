@@ -266,20 +266,27 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             ),
           ),
         if (policyList.isEmpty)
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Container(
-                child: Text(
-                  "No CronJob payment data found.",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: blueColor,
-                      fontSize: 14),
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300, // Background color
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(13),
+                bottomRight: Radius.circular(13),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                "No CronJob payment data found.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: blueColor,
+                  fontSize: 14,
                 ),
               ),
             ),
-          )
+          ),
       ],
     );
   }
@@ -487,6 +494,39 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     return ColabShimmerLoadingWidget();
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return
+                      Container(
+
+                        child: Center(
+                          child: Column(
+                            children: [
+                              _buildHeaders([]),
+                              // Container(
+                              //   padding: EdgeInsets.all(10),
+                              //   decoration: BoxDecoration(
+                              //     color: Colors.grey.shade300, // Background color
+                              //     borderRadius: BorderRadius.only(
+                              //       bottomLeft: Radius.circular(13),
+                              //       bottomRight: Radius.circular(13),
+                              //     ),
+                              //   ),
+                              //   child: Center(
+                              //     child: Text(
+                              //       "No policies are expiring within 90 days.",
+                              //       textAlign: TextAlign.center,
+                              //       style: TextStyle(
+                              //         fontWeight: FontWeight.bold,
+                              //         color: blueColor,
+                              //         fontSize: 14,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        ),
+                      );
                   } else {
                     var data = snapshot.data!;
                     if (selectedValue == null && searchvalue!.isEmpty) {
