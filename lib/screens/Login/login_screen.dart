@@ -1728,6 +1728,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                   widget.onSelected(index);
                 },
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Icon(
                     //   _selectedIndex == index
@@ -1761,43 +1762,45 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                       ),
                     ),
                     SizedBox(width: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              option["userName"]!,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: _selectedIndex == index
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 16),
-                            ),
-                            SizedBox(width: 5,),
-                            Text(
-                             "(${ option["company"]!})",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: _selectedIndex == index
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 16),
-                            ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                option["userName"]!,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: _selectedIndex == index
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontSize: 16),
+                              ),
+                              SizedBox(width: 5,),
+                              Text(
+                               "(${ option["company"]!})",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: _selectedIndex == index
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontSize: 16),
+                              ),
 
-                          ],
-                        ),
-                        Text(
-                          capitalizeFirstLetter(option["role"]!),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: _selectedIndex == index
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 13),
-                        ),
-                      ],
+                            ],
+                          ),
+                          Text(
+                            capitalizeFirstLetter(option["role"]!),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: _selectedIndex == index
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 13),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

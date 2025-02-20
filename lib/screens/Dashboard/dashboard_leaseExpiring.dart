@@ -7,23 +7,24 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../Model/dashboard_polices.dart';
+import '../../Model/Dashbord_table/lease_expiring_table.dart';
 
 import '../../constant/constant.dart';
 
 import '../../provider/dateProvider.dart';
 
-import '../../repository/dashboard_policy.dart';
+import '../../repository/dashboard_table_repo/lease_expiring_table.dart';
 import '../../widgets/CustomTableShimmer.dart';
 
-class Dashboard_Policy_Table extends StatefulWidget {
+class Dashboard_leaseExpiring extends StatefulWidget {
   @override
-  _Dashboard_Policy_TableState createState() => _Dashboard_Policy_TableState();
+  _Dashboard_leaseExpiringState createState() =>
+      _Dashboard_leaseExpiringState();
 }
 
-class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
+class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
   int totalrecords = 0;
-  Future<List<ExpiringRentersInsuranceData>>? futurepolices;
+  Future<List<LeaseDataExpiring>>? futureleaseExpiring;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -35,7 +36,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
     25,
   ]; // Options for items per page
 
-  // void sortData(List<ExpiringRentersInsuranceData> data) {
+  // void sortData(List<LeaseDataExpiring> data) {
   //   if (sorting1) {
   //     data.sort((a, b) => ascending1
   //         ? a.propertyType!.compareTo(b.propertyType!)
@@ -60,7 +61,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
-  Widget _buildHeaders(List<ExpiringRentersInsuranceData> policyList) {
+  Widget _buildHeaders(List<LeaseDataExpiring> policyList) {
     var width = MediaQuery.of(context).size.width;
     return Column(
       children: [
@@ -76,7 +77,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           ),
           child: Center(
             child: Text(
-              "Renter's Insurance Policies Expiring Within 90 Days",
+              "Leases Expiring in the next 60 days",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -138,13 +139,13 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                       child: Row(
                         children: [
                           width < 400
-                              ? Text("Tenant\n Name ",
+                              ? Text("  Rental\n Address",
                                   style: TextStyle(
                                     color: Color.fromRGBO(50, 75, 119, 1),
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ))
-                              : Text("Tenant\n Name",
+                              : Text("  Rental\n Address",
                                   style: TextStyle(
                                     color: Color.fromRGBO(50, 75, 119, 1),
                                     fontSize: 14,
@@ -197,7 +198,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                       },
                       child: Row(
                         children: [
-                          Text("  Rental\n Address",
+                          Text("Tenant\n Name",
                               style: TextStyle(
                                 color: Color.fromRGBO(50, 75, 119, 1),
                                 fontSize: 14,
@@ -271,7 +272,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
               padding: const EdgeInsets.only(top: 10),
               child: Container(
                 child: Text(
-                  "No policies are expiring within 90 days.",
+                  "No leases are expiring within 60 days.",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: blueColor,
@@ -458,8 +459,8 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
       setState(() {
         _connectivityResult = result;
         if (_connectivityResult != ConnectivityResult.none)
-          futurepolices =
-              RentersInsuranceExpiringService().fetchRentersPolicyInsurance();
+          futureleaseExpiring =
+              Lease_expiring_tableService().fetchLease_expiring();
       });
     });
     checkInternet();
@@ -473,17 +474,16 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
     });
 
     if (_connectivityResult != ConnectivityResult.none)
-      futurepolices =
-          RentersInsuranceExpiringService().fetchRentersPolicyInsurance();
+      futureleaseExpiring = Lease_expiring_tableService().fetchLease_expiring();
   }
 
-  List<ExpiringRentersInsuranceData> _tableData = [];
+  List<LeaseDataExpiring> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  List<ExpiringRentersInsuranceData> get _pagedData {
+  List<LeaseDataExpiring> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
@@ -497,7 +497,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(ExpiringRentersInsuranceData d) getField,
+  void _sort<T>(Comparable<T> Function(LeaseDataExpiring d) getField,
       int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -512,7 +512,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
   }
 
   Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(ExpiringRentersInsuranceData d)? getField) {
+      Comparable<T> Function(LeaseDataExpiring d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -644,8 +644,8 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           if (MediaQuery.of(context).size.width < 500)
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: FutureBuilder<List<ExpiringRentersInsuranceData>>(
-                future: futurepolices,
+              child: FutureBuilder<List<LeaseDataExpiring>>(
+                future: futureleaseExpiring,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return ColabShimmerLoadingWidget();
@@ -659,14 +659,14 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                       data = snapshot.data!;
                     } else if (searchvalue!.isNotEmpty) {
                       data = snapshot.data!
-                          .where((property) => property.insuranceCompany!
+                          .where((property) => property.rentalAddress!
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()))
                           .toList();
                     } else {
                       data = snapshot.data!
                           .where((property) =>
-                              property.insuranceCompany == selectedValue)
+                              property.rentalAddress == selectedValue)
                           .toList();
                     }
                     // if (data.isEmpty) {
@@ -717,8 +717,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                   currentPageData.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 bool isExpanded = expandedIndex == index;
-                                ExpiringRentersInsuranceData Propertytype =
-                                    entry.value;
+                                LeaseDataExpiring Propertytype = entry.value;
                                 //return CustomExpansionTile(data: Propertytype, index: index);
                                 return Container(
                                   decoration: BoxDecoration(
@@ -801,7 +800,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                                     });
                                                   },
                                                   child: Text(
-                                                    ' ${Propertytype.tenantName}',
+                                                    ' ${Propertytype.rentalAddress}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -818,7 +817,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                                       .08),
                                               Expanded(
                                                 child: Text(
-                                                  '${Propertytype.rentalAddress}',
+                                                  '${Propertytype.tenantName}',
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,
@@ -836,12 +835,12 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                                   // '${widget.data.createdAt}',
                                                   // formatDate(
                                                   //     '${Propertytype.createdAt}'),
-                                                  Propertytype.expirationDate
+                                                  Propertytype.endDate
                                                               ?.isNotEmpty ==
                                                           true
                                                       ? dateProvider
                                                           .formatCurrentDate(
-                                                              '${Propertytype.expirationDate}')
+                                                              '${Propertytype.endDate}')
                                                       : 'N/A',
 
                                                   style: TextStyle(
@@ -958,8 +957,8 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
               ),
             ),
           if (MediaQuery.of(context).size.width > 500)
-            FutureBuilder<List<ExpiringRentersInsuranceData>>(
-              future: futurepolices,
+            FutureBuilder<List<LeaseDataExpiring>>(
+              future: futureleaseExpiring,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ShimmerTabletTable();
@@ -1000,14 +999,14 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                     _tableData = snapshot.data!;
                   } else if (searchvalue.isNotEmpty) {
                     _tableData = snapshot.data!
-                        .where((property) => property.insuranceCompany!
+                        .where((property) => property.rentalAddress!
                             .toLowerCase()
                             .contains(searchvalue.toLowerCase()))
                         .toList();
                   } else {
                     _tableData = snapshot.data!
                         .where((property) =>
-                            property.insuranceCompany == selectedValue)
+                            property.rentalAddress == selectedValue)
                         .toList();
                   }
                   totalrecords = _tableData.length;
@@ -1055,7 +1054,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                                 'Created At',
                                                 2,
                                                 (property) =>
-                                                    property.expirationDate!),
+                                                    property.endDate!),
                                           ],
                                         ),
                                         TableRow(
@@ -1094,8 +1093,8 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                               _buildDataCell(
                                                   _pagedData[i].rentalAddress!),
                                               _buildDataCell(
-                                                formatDate(_pagedData[i]
-                                                    .expirationDate!),
+                                                formatDate(
+                                                    _pagedData[i].endDate!),
                                               ),
                                             ],
                                           ),
