@@ -327,6 +327,9 @@ class TenantsRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
+    } else if (responseData["statusCode"] == 201) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Email already exists');
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to edit property type');

@@ -42,6 +42,7 @@ import '../../../repository/unit_data.dart';
 
 import '../../Leasing/RentalRoll/addcard/CardModel.dart';
 import '../../Maintenance/Workorder/workorder_summery.dart';
+import 'moveout/Moveout_properties.dart';
 import 'moveout/repository.dart';
 import '../../Leasing/RentalRoll/newAddLease.dart';
 import '../../Maintenance/Workorder/Add_workorder.dart';
@@ -4138,32 +4139,46 @@ class _Summery_pageState extends State<Summery_page>
             const Spacer(),
             if (tenant.moveoutDate == null)
               InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      bool isChecked =
-                          false; // Moved isChecked inside the StatefulBuilder
-                      return StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
-                          return Dialog(
-                            backgroundColor: Colors.white,
-                            surfaceTintColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0)),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 10, bottom: 10),
-                              child: Container(
-                                  // width: MediaQuery.of(context).size.width - 10,
-                                  width: 900,
-                                  child: buildMoveout(tenant,tenants: tenants)),
-                            ),
-                          );
-                        },
+                onTap: () async {
+                  // showDialog(
+                  //   context: context,
+                  //   builder: (BuildContext context) {
+                  //     bool isChecked =
+                  //         false; // Moved isChecked inside the StatefulBuilder
+                  //     return StatefulBuilder(
+                  //       builder: (BuildContext context, StateSetter setState) {
+                  //         return Dialog(
+                  //           backgroundColor: Colors.white,
+                  //           surfaceTintColor: Colors.white,
+                  //           shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(10.0)),
+                  //           child: Padding(
+                  //             padding: const EdgeInsets.only(
+                  //                 left: 16, right: 16, top: 10, bottom: 10),
+                  //             child: Container(
+                  //                 // width: MediaQuery.of(context).size.width - 10,
+                  //                 width: 900,
+                  //                 child: buildMoveout(tenant,tenants: tenants)),
+                  //           ),
+                  //         );
+                  //       },
+                  //     );
+                  //   },
+                  // );
+                  final result =
+                      await  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Moveout_properties(properties: widget.properties,moveOutDate: moveOutDate ?? "", leaseId: widget.tenants?.leaseId ?? "", tenant:tenant, tenants:tenants ?? [],
+                      ),
+                  ),
                       );
-                    },
-                  );
+                  if (result == true) {
+                    setState(() {
+                      futureUnitsummery =
+                          Properies_summery_Repo().fetchunit(widget.properties.rentalId ?? "");
+                    });
+                  }
                 },
                 child: Row(
                   children: [
@@ -4209,7 +4224,7 @@ class _Summery_pageState extends State<Summery_page>
                       futurePropertysummery = Properies_summery_Repo()
                           .fetchPropertiessummery(widget.properties.rentalId!);
                       isLoading = false;
-                      // isMovedOut = true;
+                       isMovedOut = true;
                     });
 
                     Navigator.pop(context, true);

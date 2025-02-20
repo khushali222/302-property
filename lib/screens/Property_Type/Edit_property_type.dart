@@ -376,7 +376,6 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   });
                                 });
                               } else {
-
                                 Navigator.of(context).pop(false);
                               }
 

@@ -14,6 +14,7 @@ import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import '../../../../model/LeaseLedgerModel.dart';
 
+import 'Move_out_lease/Moveout_lease.dart';
 import 'make_payment.dart';
 import 'package:three_zero_two_property/Model/tenants.dart';
 
@@ -2420,49 +2421,63 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       .moveoutDate ==
                                                   "")
                                                 InkWell(
-                                                  onTap: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        bool isChecked =
-                                                            false; // Moved isChecked inside the StatefulBuilder
-                                                        return StatefulBuilder(
-                                                          builder: (BuildContext
-                                                                  context,
-                                                              StateSetter
-                                                                  setState) {
-                                                            return Dialog(
-                                                              backgroundColor:
-                                                                  Colors.white,
-                                                              surfaceTintColor:
-                                                                  Colors.white,
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10.0)),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            16,
-                                                                        right:
-                                                                            16,
-                                                                        top: 10,
-                                                                        bottom:
-                                                                            10),
-                                                                child: Container(
-                                                                    // width: MediaQuery.of(context).size.width - 10,
-                                                                    width: 900,
-                                                                    child: buildMoveout(snapshot.data![index])),
-                                                              ),
-                                                            );
-                                                          },
-                                                        );
-                                                      },
+                                                  onTap: () async {
+                                                    // showDialog(
+                                                    //   context: context,
+                                                    //   builder: (BuildContext
+                                                    //       context) {
+                                                    //     bool isChecked =
+                                                    //         false; // Moved isChecked inside the StatefulBuilder
+                                                    //     return StatefulBuilder(
+                                                    //       builder: (BuildContext
+                                                    //               context,
+                                                    //           StateSetter
+                                                    //               setState) {
+                                                    //         return Dialog(
+                                                    //           backgroundColor:
+                                                    //               Colors.white,
+                                                    //           surfaceTintColor:
+                                                    //               Colors.white,
+                                                    //           shape: RoundedRectangleBorder(
+                                                    //               borderRadius:
+                                                    //                   BorderRadius
+                                                    //                       .circular(
+                                                    //                           10.0)),
+                                                    //           child: Padding(
+                                                    //             padding:
+                                                    //                 const EdgeInsets
+                                                    //                     .only(
+                                                    //                     left:
+                                                    //                         16,
+                                                    //                     right:
+                                                    //                         16,
+                                                    //                     top: 10,
+                                                    //                     bottom:
+                                                    //                         10),
+                                                    //             child: Container(
+                                                    //                 // width: MediaQuery.of(context).size.width - 10,
+                                                    //                 width: 900,
+                                                    //                 child: buildMoveout(snapshot.data![index])),
+                                                    //           ),
+                                                    //         );
+                                                    //       },
+                                                    //     );
+                                                    //   },
+                                                    // );
+                                                    final result =
+                                                        await  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => MoveoutScreen(tenant:  snapshot.data![
+                                                        index], leaseId: widget.leaseId, tenants: leasetenant, enddate: widget.enddate ?? "", moveOutDate: moveOutDate ?? "",),
+                                                      ),
                                                     );
+                                                    if (result == true) {
+                                                      setState(() {
+                                                        futureLeasetenant =
+                                                            LeaseRepository.fetchLeaseTenants(widget.leaseId);
+                                                      });
+                                                    }
                                                   },
                                                   child: Row(
                                                     children: [

@@ -74,6 +74,7 @@ class Payment {
   String? ccType;
   String? ccNumber;
   String? transactionType;
+  String? responseText;
 
   Payment({
      this.paymentId,
@@ -100,6 +101,7 @@ class Payment {
      this.ccType,
      this.ccNumber,
      this.transactionType,
+    this.responseText
   });
 
   factory Payment.fromJson(Map<String, dynamic> json) {
@@ -146,6 +148,7 @@ class Payment {
             : {},
         ccType: ccType,
         ccNumber: ccNumber,
+        responseText: json['responseText'],
         transactionType: transactionType,
       );
     } catch (e) {

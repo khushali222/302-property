@@ -561,11 +561,11 @@ List<ReportCardModel> reportCards = [
     description: "Produces a list of all insured units",
     destination: RentersInsurance(),
   ),
-  // ReportCardModel(
-  //   title: "Expiring Insurance",
-  //   description: "Report of Renter's Insurance expiring within the selected time period",
-  //   destination: ExpiringInsurance(),
-  // ),
+  ReportCardModel(
+    title: "Expiring Insurance",
+    description: "Report of Renter's Insurance expiring within the selected time period",
+    destination: ExpiringInsurance(),
+  ),
   ReportCardModel(
     title: "Expiring Leases",
     description: "Lists all leases that will end during a specified timeframe",

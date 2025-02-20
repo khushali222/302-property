@@ -536,7 +536,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Name",
+                            "Name *",
                             style: TextStyle(
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
@@ -646,7 +646,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Company Name",
+                            "Company Name *",
                             style: TextStyle(
                                 // color: Colors.grey,
                                 color: Color(0xFF8A95A8),

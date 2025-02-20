@@ -2453,7 +2453,7 @@ print(fetchedDetails.workOrderImages);
                               children: [
                                 Container(
                                   height: 50,
-                                  width: 150,
+                                  width: 180,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
@@ -2475,7 +2475,7 @@ print(fetchedDetails.workOrderImages);
                                             ),
                                           )
                                         : Text(
-                                            'Edit Work Order',
+                                            'Update Work Order',
                                             style: TextStyle(
                                                 color: Color(0xFFf7f8f9)),
                                           ),

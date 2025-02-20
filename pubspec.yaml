@@ -97,7 +97,7 @@ dependencies:
   ffmpeg_kit_flutter:  # video image for network video
   flutter_cached_pdfview: ^0.4.3
   syncfusion_flutter_pdfviewer:
-
+  badges: ^3.1.2
   # pdf:
 
 

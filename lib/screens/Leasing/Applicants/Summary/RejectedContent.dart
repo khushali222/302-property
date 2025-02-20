@@ -208,7 +208,7 @@ class _RejectedContentState extends State<RejectedContent> {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
-                      height: 165,
+                    //  height: 165,
                       width: MediaQuery.of(context).size.width * .9,
                       margin: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
@@ -296,20 +296,42 @@ class _RejectedContentState extends State<RejectedContent> {
                                 color: blueColor,
                               ),
                               const SizedBox(width: 5),
-                              Text(
-                                '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
-                                style:  TextStyle(
-                                  fontSize: 12,
-                                  color: blueColor,
-                                  fontWeight: FontWeight.w500,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width > 500
+                                    ? 200
+                                    : 180,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 1),
+                                  child: Text(
+                                    '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
+                                    maxLines: 5, // Set maximum number of lines
+                                    overflow: TextOverflow
+                                        .ellipsis, // Handle overflow with ellipsis
+                                    style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ),
+                              // Text(
+                              //   '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
+                              //   style:  TextStyle(
+                              //     fontSize: 12,
+                              //     color: blueColor,
+                              //     fontWeight: FontWeight.w500,
+                              //   ),
+                              // ),
                             ],
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           const Row(
                             children: [
-                              SizedBox(width: 65),
+                              SizedBox(width: 68),
                               Text(
                                 'Rejected',
                                 style: TextStyle(
@@ -320,6 +342,7 @@ class _RejectedContentState extends State<RejectedContent> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     ),

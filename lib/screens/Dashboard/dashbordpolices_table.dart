@@ -66,7 +66,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
-  Widget _buildHeaders() {
+  Widget _buildHeaders(List<ExpiringRentersInsuranceData> policyList) {
     var width = MediaQuery.of(context).size.width;
     return Column(
       children: [
@@ -92,6 +92,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
             ),
           ),
         ),
+        if(policyList.isNotEmpty)
         Container(
           decoration: BoxDecoration(
             color: Colors.blue.shade50,
@@ -270,173 +271,33 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
             ),
           ),
         ),
+        if(policyList.isEmpty)
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300, // Background color
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(13),
+                bottomRight: Radius.circular(13),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                "No policies are expiring within 90 days.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: blueColor,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
 
-  // Widget _buildHeaders() {
-  //   var width = MediaQuery.of(context).size.width;
-  //   return
-  //     Container(
-  //     decoration: BoxDecoration(
-  //       color: blueColor,
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(13),
-  //         topRight: Radius.circular(13),
-  //       ),
-  //     ),
-  //     child: ListTile(
-  //       contentPadding: EdgeInsets.zero,
-  //       // leading: Container(
-  //       //   child: Icon(
-  //       //     Icons.expand_less,
-  //       //     color: Colors.transparent,
-  //       //   ),
-  //       // ),
-  //       title: Row(
-  //         mainAxisAlignment: MainAxisAlignment.start,
-  //         children: <Widget>[
-  //           Container(
-  //             child: Icon(
-  //               Icons.expand_less,
-  //               color: Colors.transparent,
-  //             ),
-  //           ),
-  //           Expanded(
-  //             child: InkWell(
-  //               onTap: () {
-  //                 setState(() {
-  //                   if (sorting1 == true) {
-  //                     sorting2 = false;
-  //                     sorting3 = false;
-  //                     ascending1 = sorting1 ? !ascending1 : true;
-  //                     ascending2 = false;
-  //                     ascending3 = false;
-  //                   } else {
-  //                     sorting1 = !sorting1;
-  //                     sorting2 = false;
-  //                     sorting3 = false;
-  //                     ascending1 = sorting1 ? !ascending1 : true;
-  //                     ascending2 = false;
-  //                     ascending3 = false;
-  //                   }
-  //
-  //                   // Sorting logic here
-  //                 });
-  //               },
-  //               child: Row(
-  //                 children: [
-  //                   width < 400
-  //                       ? Text("Tenant\n Name ",
-  //                           style: TextStyle(color: Colors.white,fontSize: 13))
-  //                       : Text("Tenant\n Name",
-  //                           style: TextStyle(color: Colors.white,fontSize: 13)),
-  //                   // Text("Property", style: TextStyle(color: Colors.white)),
-  //                   SizedBox(width: 3),
-  //                   // ascending1
-  //                   //     ? Padding(
-  //                   //         padding: const EdgeInsets.only(top: 7, left: 2),
-  //                   //         child: FaIcon(
-  //                   //           FontAwesomeIcons.sortUp,
-  //                   //           size: 20,
-  //                   //           color: Colors.white,
-  //                   //         ),
-  //                   //       )
-  //                   //     : Padding(
-  //                   //         padding: const EdgeInsets.only(bottom: 7, left: 2),
-  //                   //         child: FaIcon(
-  //                   //           FontAwesomeIcons.sortDown,
-  //                   //           size: 20,
-  //                   //           color: Colors.white,
-  //                   //         ),
-  //                   //       ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //           Expanded(
-  //             child: InkWell(
-  //               onTap: () {
-  //                 setState(() {
-  //                   if (sorting2) {
-  //                     sorting1 = false;
-  //                     sorting2 = sorting2;
-  //                     sorting3 = false;
-  //                     ascending2 = sorting2 ? !ascending2 : true;
-  //                     ascending1 = false;
-  //                     ascending3 = false;
-  //                   } else {
-  //                     sorting1 = false;
-  //                     sorting2 = !sorting2;
-  //                     sorting3 = false;
-  //                     ascending2 = sorting2 ? !ascending2 : true;
-  //                     ascending1 = false;
-  //                     ascending3 = false;
-  //                   }
-  //                   // Sorting logic here
-  //                 });
-  //               },
-  //               child: Row(
-  //                 children: [
-  //                   Text("  Rental\n Address", style: TextStyle(color: Colors.white,fontSize: 13)),
-  //                   // SizedBox(width: 5),
-  //                   // ascending2
-  //                   //     ? Padding(
-  //                   //         padding: const EdgeInsets.only(top: 7, left: 2),
-  //                   //         child: FaIcon(
-  //                   //           FontAwesomeIcons.sortUp,
-  //                   //           size: 20,
-  //                   //           color: Colors.white,
-  //                   //         ),
-  //                   //       )
-  //                   //     : Padding(
-  //                   //         padding: const EdgeInsets.only(bottom: 7, left: 2),
-  //                   //         child: FaIcon(
-  //                   //           FontAwesomeIcons.sortDown,
-  //                   //           size: 20,
-  //                   //           color: Colors.white,
-  //                   //         ),
-  //                   //       ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //           Expanded(
-  //             child: InkWell(
-  //               onTap: () {
-  //                 setState(() {
-  //                   if (sorting3) {
-  //                     sorting1 = false;
-  //                     sorting2 = false;
-  //                     sorting3 = sorting3;
-  //                     ascending3 = sorting3 ? !ascending3 : true;
-  //                     ascending2 = false;
-  //                     ascending1 = false;
-  //                   } else {
-  //                     sorting1 = false;
-  //                     sorting2 = false;
-  //                     sorting3 = !sorting3;
-  //                     ascending3 = sorting3 ? !ascending3 : true;
-  //                     ascending2 = false;
-  //                     ascending1 = false;
-  //                   }
-  //
-  //                   // Sorting logic here
-  //                 });
-  //               },
-  //               child: Row(
-  //                 children: [
-  //                   Text("   Expiration\n      Date", style: TextStyle(color: Colors.white,fontSize: 13)),
-  //                   SizedBox(width: 5),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+
 
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
@@ -643,27 +504,29 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
-                      height: MediaQuery.of(context).size.height * .5,
+                     // height: MediaQuery.of(context).size.height * .5,
                       child: Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
+                            SizedBox(height: 10),
+                            _buildHeaders([]),
+                            // Image.asset(
+                            //   "assets/images/no_data.jpg",
+                            //   height: 200,
+                            //   width: 200,
+                            // ),
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
+                            // Text(
+                            //   "No Data Available",
+                            //   style: TextStyle(
+                            //       fontWeight: FontWeight.bold,
+                            //       color: blueColor,
+                            //       fontSize: 16),
+                            // )
                           ],
                         ),
                       ),
@@ -686,31 +549,31 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                               property.insuranceCompany == selectedValue)
                           .toList();
                     }
-                    if (data.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
-                          ],
-                        ),
-                      );
-                    }
+                    // if (data.isEmpty) {
+                    //   return Center(
+                    //     child: Column(
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       crossAxisAlignment: CrossAxisAlignment.center,
+                    //       children: [
+                    //         Image.asset(
+                    //           "assets/images/no_data.jpg",
+                    //           height: 200,
+                    //           width: 200,
+                    //         ),
+                    //         SizedBox(
+                    //           height: 10,
+                    //         ),
+                    //         Text(
+                    //           "No Data Available",
+                    //           style: TextStyle(
+                    //               fontWeight: FontWeight.bold,
+                    //               color: blueColor,
+                    //               fontSize: 16),
+                    //         )
+                    //       ],
+                    //     ),
+                    //   );
+                    // }
                     //sortData(data);
                     final totalPages = (data.length / itemsPerPage).ceil();
                     final currentPageData = data
@@ -721,7 +584,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                       child: Column(
                         children: [
                           SizedBox(height: 10),
-                          _buildHeaders(),
+                          _buildHeaders(data),
                           SizedBox(height: 1),
                           Container(
                             decoration: BoxDecoration(
