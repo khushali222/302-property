@@ -116,6 +116,9 @@ class ChargeData {
   final List<EntryData>? entry;
   final double? totalAmount;
   final String? type;
+  final String? cc_type;
+  final String? cc_number;
+  final String? reason;
   final List<dynamic>? paymentAttachment;
   final String? updatedAt;
   final bool? isDelete;
@@ -137,6 +140,9 @@ class ChargeData {
     this.entry,
     this.totalAmount,
     this.type,
+    this.cc_type,
+    this.cc_number,
+    this.reason,
     this.paymentAttachment,
     this.updatedAt,
     this.isDelete,
@@ -162,6 +168,9 @@ class ChargeData {
           .toList(),
       totalAmount: (json['total_amount'] as num?)?.toDouble(),
       type: json['type'],
+      cc_type: json['cc_type'],
+      cc_number: json['cc_number'],
+      reason: json['reason'],
       paymentAttachment: json['payment_attachment'],
       updatedAt: json['updatedAt'],
       isDelete: json['is_delete'],
@@ -192,6 +201,9 @@ class ChargeData {
       'entry': entry?.map((e) => e.toJson()).toList(),
       'total_amount': totalAmount,
       'type': type,
+      'cc_type': cc_type,
+      'cc_number': cc_number,
+      'reason': reason,
       'payment_attachment': paymentAttachment,
       'updatedAt': updatedAt,
       'is_delete': isDelete,
