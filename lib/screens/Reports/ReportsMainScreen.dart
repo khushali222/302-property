@@ -608,13 +608,14 @@ List<ReportCardModel> reportCards = [
     destination: PaymentExceptionReports(),
   ),
   ReportCardModel(
+    title:"Recurring Payments Configuration",
+    description: "Report shows all leases recurring payments configured",
+    destination: Recurring_Payments_Configuration_Report(),
+  ),
+  ReportCardModel(
     title:"Convenience Fee Override",
     description: "Report shows all leases with convenience fee override",
     destination: ConvenienceFeeReports(),
   ),
-  // ReportCardModel(
-  //   title:"Recurring Payments Configuration",
-  //   description: "Report shows all leases recurring payments configured",
-  //   destination: Recurring_Payments_Configuration_Report(),
-  // ),
+
 ];

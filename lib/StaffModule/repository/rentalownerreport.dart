@@ -14,7 +14,7 @@ class RentalOwnerReportService {
    // String? id = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final String endpoint = '/todayspaymentrentalowner/$adminId';
+    final String endpoint = '/todayspaymentrentalownerpdf/$adminId';
     String url = '$baseUrl$endpoint?selectedStartDate=$selectedStartDate&selectedEndDate=$selectedEndDate';
     if(rentalownerid != null){
       url = '$url&rentalowner_id=$rentalownerid';
