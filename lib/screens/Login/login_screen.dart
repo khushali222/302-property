@@ -1741,6 +1741,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                   ),
                 ),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Icon(
                     //   _selectedIndex == index
@@ -1794,19 +1795,20 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                             ),
 
 
-                          ],
-                        ),
-                        Text(
-                          capitalizeFirstLetter(option["role"]!),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: _selectedIndex == index
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 13),
-                        ),
-                      ],
-                    ),
+                            ],
+                          ),
+                          Text(
+                            capitalizeFirstLetter(option["role"]!),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: _selectedIndex == index
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 13),
+                          ),
+                        ],
+                      ),
+
                   ],
                 ),
               ),

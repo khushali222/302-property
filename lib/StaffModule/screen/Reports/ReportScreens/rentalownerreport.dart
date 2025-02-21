@@ -25,7 +25,7 @@ import 'package:three_zero_two_property/repository/DelinquentTenantsService.dart
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:pdf/pdf.dart';
@@ -38,6 +38,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../Model/rentalownerreport.dart';
 import '../../../../provider/dateProvider.dart';
 import '../../../repository/rentalownerreport.dart';
+import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class RentalOwnerReports extends StatefulWidget {
@@ -1261,7 +1262,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       drawer: CustomDrawer(
-        currentpage: "Report",
+        currentpage: "Reports",
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none

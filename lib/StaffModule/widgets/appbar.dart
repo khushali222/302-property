@@ -13,7 +13,8 @@ import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 
 import 'package:three_zero_two_property/widgets/test.dart';
-
+import 'package:badges/badges.dart' as badges;
+import '../../provider/notification_provider.dart';
 import '../model/staffpermission.dart';
 import '../repository/staffpermission_provider.dart';
 import '../screen/notifications/notifications.dart';
@@ -27,6 +28,7 @@ class widget_302 {
     var arrowNearText,
     required BuildContext context,
   }) {
+    Provider.of<NotificationProvider>(context, listen: false).fetchNotificationsStaff(context);
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
     StaffPermission? permissions = permissionProvider.permissions;
     return AppBar(
@@ -86,20 +88,62 @@ class widget_302 {
         SizedBox(
           width: 10,
         ),
-        GestureDetector(
-          onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const notifications()));
+        Consumer<NotificationProvider>(
+          builder: (context, notificationProvider, child) {
+            if (notificationProvider.isLoading) {
+              return Center(
+                child: FaIcon(
+                  FontAwesomeIcons.bell,
+                  size: 20,
+                  color: blueColor,
+                ),
+              );
+            } else if (notificationProvider.notifications.isNotEmpty) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const notifications(),
+                  ));
+                },
+                child: Center(
+                  child: badges.Badge(
+                    position: badges.BadgePosition.topEnd(top: -4, end: -3),
+                    badgeStyle: badges.BadgeStyle(
+                      badgeColor: Colors.red,
+                    ),
+                    child: FaIcon(
+                      FontAwesomeIcons.bell,
+                      size: 20,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
+              );
+            } else {
+              return Center(
+                child: FaIcon(
+                  FontAwesomeIcons.bell,
+                  size: 20,
+                  color: blueColor,
+                ),
+              );
+            }
           },
-          child:  Padding(
-            padding: const EdgeInsets.only(top: 15.0),
-            child: FaIcon(
-              FontAwesomeIcons.solidBell,
-              size: 25,
-              color: blueColor,
-            ),
-          ),
         ),
+        // GestureDetector(
+        //   onTap: (){
+        //     Navigator.of(context).push(MaterialPageRoute(
+        //         builder: (context) => const notifications()));
+        //   },
+        //   child:  Padding(
+        //     padding: const EdgeInsets.only(top: 15.0),
+        //     child: FaIcon(
+        //       FontAwesomeIcons.solidBell,
+        //       size: 25,
+        //       color: blueColor,
+        //     ),
+        //   ),
+        // ),
         //   FaIcon(
         //     FontAwesomeIcons.bell,
         //     size: 20,
