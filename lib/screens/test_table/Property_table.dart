@@ -124,7 +124,7 @@ class _ExpandTableState extends State<ExpandTable> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         )
       ],
     ).show();

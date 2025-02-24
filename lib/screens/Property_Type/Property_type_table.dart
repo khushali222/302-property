@@ -342,7 +342,7 @@ class _PropertyTableState extends State<PropertyTable> {
             }
 
           },
-          color: Colors.red,
+          color: blueColor,
         ),
         DialogButton(
           child: Text(

@@ -460,7 +460,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
               });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color:blueColor,
         )
       ],
     ).show();

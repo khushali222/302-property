@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/StaffModule/repository/staffpermission_repo.dart';
-  
-import '../model/staffpermission.dart';
+
+import '../model/vendor_permission_model.dart';
+
+import 'vendor_permission_repo.dart';
 
 
-class StaffPermissionProvider with ChangeNotifier {
-  StaffPermission? _permissions;
+class VendorPermission with ChangeNotifier {
+  UserPermissions? _permissions;
   bool _isLoading = true;
 
-  StaffPermission? get permissions => _permissions;
+  UserPermissions? get permissions => _permissions;
   bool get isLoading => _isLoading;
 
   Future<void> fetchPermissions() async {
     try {
-      StaffPermission fetchedPermissions = await StaffPermissionService.fetchPermissions();
+      UserPermissions fetchedPermissions = await PermissionService.fetchPermissions();
       _permissions = fetchedPermissions;
     } catch (e) {
       // Handle error

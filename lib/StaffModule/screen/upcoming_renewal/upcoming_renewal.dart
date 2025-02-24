@@ -281,7 +281,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
             updatenotrenewallease(id);
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         )
       ],
     ).show();

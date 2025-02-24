@@ -248,7 +248,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
               });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         )
       ],
     ).show();

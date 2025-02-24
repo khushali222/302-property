@@ -24,6 +24,7 @@ import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart
 
 import 'StaffModule/repository/staffpermission_provider.dart';
 import 'TenantsModule/repository/permission_provider.dart';
+import 'VendorModule/repository/vendor_permission.dart';
 import 'constant/constant.dart';
 import 'provider/edit_applicant.dart';
 import 'package:credit_card_validator/credit_card_validator.dart';
@@ -160,6 +161,7 @@ void main() {
           ChangeNotifierProvider(create: (_) => CheckConnection()),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
           ChangeNotifierProvider(create: (_) => NotificationProvider()),
+          ChangeNotifierProvider(create: (_) => VendorPermission()),
         ],
         child: MyApp(),
       ),

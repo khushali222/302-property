@@ -345,7 +345,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               Navigator.pop(context);
             }
           },
-          color: Colors.red,
+          color: blueColor,
         ),
               DialogButton(
                 child: Text(

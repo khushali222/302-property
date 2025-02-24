@@ -394,7 +394,7 @@ class _StaffTableState extends State<StaffTable> {
               Navigator.pop(context);
             }
           },
-          color: Colors.red,
+          color: blueColor ,
         ),
         DialogButton(
           child: Text(

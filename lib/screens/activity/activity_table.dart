@@ -326,7 +326,7 @@ class _ActivityTableState extends State<ActivityTable> {
             }
 
           },
-          color: Colors.red,
+          color: blueColor,
         )
       ],
     ).show();
@@ -939,7 +939,7 @@ class _ActivityTableState extends State<ActivityTable> {
                                                     // formatDate(
                                                     //     '${Propertytype.createdAt}'),
                                                     Propertytype.createdAt?.isNotEmpty == true
-                                                        ? dateProvider.formatCurrentDate('${Propertytype.createdAt}')
+                                                        ? DateFormat("yyyy-MM-dd HH:mm").format(DateTime.parse(Propertytype.createdAt!).toLocal())
                                                         : 'N/A',
 
                                                     style: TextStyle(

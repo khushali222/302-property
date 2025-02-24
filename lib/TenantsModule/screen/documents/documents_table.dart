@@ -384,7 +384,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         )
       ],
     ).show();

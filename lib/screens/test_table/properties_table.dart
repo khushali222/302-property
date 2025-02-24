@@ -131,7 +131,7 @@ class _Properties_tableState extends State<Properties_table> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         )
       ],
     ).show();

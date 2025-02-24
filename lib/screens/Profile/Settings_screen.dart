@@ -682,7 +682,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         ),
       ],
     ).show();

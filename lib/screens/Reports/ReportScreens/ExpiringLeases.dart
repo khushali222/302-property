@@ -128,16 +128,16 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
   }
 
   Future<void> generatePdf(List<ReportExpiringLeaseData> leaseData) async {
-      final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
     try {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
-      // Handle error
       print("Error fetching profile data: $e");
       return;
     }
+
     final pdf = pw.Document();
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
@@ -145,76 +145,88 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
 
     pdf.addPage(
-      pw.Page(
-        margin: pw.EdgeInsets.all(30), // Adjust margin as needed
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4.portrait,
+        margin: const pw.EdgeInsets.all(30),
+        footer: (pw.Context context) {
+          return pw.Container(
+            alignment: pw.Alignment.centerRight,
+            margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
+            child: pw.Text(
+              'Page ${context.pageNumber} of ${context.pagesCount}',
+              style: pw.TextStyle(color: PdfColors.grey),
+            ),
+          );
+        },
+        header: (pw.Context context) => pw.Column(children: [
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              pw.Image(image, width: 50, height: 50),
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
-                  pw.Image(image, width: 50, height: 50),
-                  pw.SizedBox(width: 50),
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.center,
-                    children: [
-                      pw.Text(
-                        'Expiring Lease',
-                        style: pw.TextStyle(
-                          fontSize: 24,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text('As of $currentDate'),
-                    ],
+                  pw.Text(
+                    'Expiring Lease',
+                    style: pw.TextStyle(
+                      fontSize: 24,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.end,
-                    children: [
-                      pw.Text(
-                        profileData?.companyName?.isNotEmpty == true
-                            ? profileData!.companyName!
-                            : 'N/A',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        profileData?.companyAddress?.isNotEmpty == true
-                            ? profileData!.companyAddress!
-                            : 'N/A',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        profileData?.companyPostalCode?.isNotEmpty == true
-                            ? profileData!.companyPostalCode!
-                            : 'N/A',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                  pw.SizedBox(height: 10),
+                  pw.Text('As of $currentDate'),
                 ],
               ),
-              pw.SizedBox(height: 20),
-              pw.Table.fromTextArray(
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                children: [
+                  pw.Text(
+                    profileData?.companyName?.isNotEmpty == true
+                        ? profileData!.companyName!
+                        : 'N/A',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Text(
+                    profileData?.companyAddress?.isNotEmpty == true
+                        ? profileData!.companyAddress!
+                        : 'N/A',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Text(
+                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
+                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Text(
+                    profileData?.companyPostalCode?.isNotEmpty == true
+                        ? profileData!.companyPostalCode!
+                        : 'N/A',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  //  pw.SizedBox(height: 30)
+                ],
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 20)
+        ]),
+        build: (pw.Context context) {
+          return [
+            pw.Table.fromTextArray(
                 headers: [
                   'Property',
                   'Unit',
@@ -225,34 +237,6 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   'Lease End',
                   'Status',
                 ],
-                data: leaseData.map((lease) {
-                  return [
-                    lease.rentalAddress ?? '',
-                    lease.rentalUnit ?? '',
-                    lease.tenantNames ?? '',
-                    lease.amount?.toString() ?? '',
-                    lease.recurring?.toString() ?? '',
-                    formatDate(lease.startDate ?? ''),
-                    formatDate(lease.endDate ?? ''),
-                    lease.status ?? '',
-                  ];
-                }).toList(),
-                border: pw.TableBorder.all(
-                  color: PdfColor.fromInt(0xFFBDBDBD), // Gray[400] color
-                  width: 1,
-                ),
-                cellAlignment: pw.Alignment.centerLeft,
-                headerDecoration: pw.BoxDecoration(
-                  color: PdfColors.grey300,
-                ),
-                headerStyle: pw.TextStyle(
-                  fontWeight: pw.FontWeight.bold,
-                  fontSize: 12,
-                ),
-                cellStyle: pw.TextStyle(
-                  fontSize: 10,
-                ),
-                cellHeight: 30,
                 columnWidths: {
                   0: pw.FlexColumnWidth(1.5), // Property
                   1: pw.FlexColumnWidth(0.7), // Unit
@@ -263,9 +247,20 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   6: pw.FlexColumnWidth(1.2), // Lease End
                   7: pw.FlexColumnWidth(1), // Status
                 },
-              ),
-            ],
-          );
+                data: _generateTableData(leaseData),
+                headerStyle: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+                headerDecoration: pw.BoxDecoration(
+                  color: PdfColor.fromHex("#5A86D5"),
+                  //color:PdfColor.fromRYB(90, 134, 213,)
+                ),
+                cellStyle: pw.TextStyle(fontSize: 10),
+                cellAlignment: pw.Alignment.centerLeft,
+                headerAlignment: pw.Alignment.centerLeft,
+                border: null),
+
+
+          ];
         },
       ),
     );
@@ -273,6 +268,126 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+  }
+  List<List<dynamic>> _generateTableData(
+      List<ReportExpiringLeaseData> rentalOwnerReports) {
+    final List<List<dynamic>> tableData = [];
+    double total = 0.0;
+
+    for (var owner in rentalOwnerReports) {
+      // Main row for the rental owner name
+      tableData.add([
+        pw.Text(owner.rentalAddress!,
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10,)),
+        pw.Text(owner.rentalUnit??"N/A"!,
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10,)),
+        pw.Text(owner.tenantNames!,
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10,)),
+        pw.Text("\$${owner.amount.toString()!}",
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10,)),
+        pw.Text("\$${owner.recurring.toString()!}",
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10,)),
+        pw.Text(owner.startDate!,
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10,)),
+        pw.Text(owner.endDate!,
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10,)),
+        pw.Text(owner.status!,
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10,)),
+
+
+
+      ]);
+
+      // for (var property in owner.payments) {
+      //   tableData.add([
+      //     pw.Padding(
+      //         child: pw.Text(
+      //           '${property.rentalData!.rentalAddress ?? 'N/A'}',
+      //           style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold),
+      //         ),
+      //         padding: pw.EdgeInsets.only(left: 15)),
+      //     pw.Text( '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),),// Property Name
+      //     // Tenant Name
+      //     pw.Text(property.createdAt.toString(), style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),),// Payment Date
+      //     pw.Text(property.paymentType ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),), // Payment Type
+      //     pw.Text(property.transactionId ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),), // Transaction ID
+      //     pw.Text( property.paymentId ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),), // References
+      //     pw.Text(property.ccType ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),),// Card Type
+      //     pw.Text(property.ccNumber ?? '',  style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),),// Card Number
+      //     pw.Align(
+      //       alignment: pw.Alignment.centerRight,
+      //       child: pw.Text(
+      //         '\$${(property.totalAmount ?? 0.0).toStringAsFixed(2)}',
+      //         style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold),
+      //         // Total Amount formatted to 2 decimal places
+      //         // Align text to the right
+      //       ),
+      //     ),
+      //   ]);
+      //
+      //   for (var payment in property.entry) {
+      //     tableData.add([
+      //       pw.Padding(
+      //           child: pw.Text('${payment.account ?? 'N/A'}',
+      //               style: pw.TextStyle(fontSize: 10)),
+      //           padding: pw.EdgeInsets.only(left: 15)), // Account Name
+      //       '', // Account Amount
+      //       '', '', '', '', '', '',
+      //       pw.Align(
+      //           alignment: pw.Alignment.centerRight,
+      //           child: pw.Text(
+      //               '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
+      //               style: pw.TextStyle(fontSize: 10),
+      //               textAlign: pw.TextAlign.right // Align text to the right
+      //           ))
+      //     ]);
+      //   }
+      //
+      //   if (property.surcharge != 0.0) {
+      //     tableData.add([
+      //       pw.Padding(
+      //           child: pw.Text(
+      //             'Surcharge',
+      //             style: pw.TextStyle(fontSize: 10),
+      //           ),
+      //           padding: pw.EdgeInsets.only(left: 15)),
+      //       '', // Account Amount
+      //       '', '', '', '', '', '',
+      //       pw.Align(
+      //           alignment: pw.Alignment.centerRight,
+      //           child: pw.Text(
+      //               '\$${(property.surcharge ?? 0.0).toStringAsFixed(2)}', // Surcharge formatted to 2 decimal places
+      //               style: pw.TextStyle(fontSize: 10),
+      //               textAlign: pw.TextAlign.right // Align text to the right
+      //           ))
+      //     ]);
+      //   }
+      // }
+
+      // Subtotal row for the rental owner
+      // tableData.add([
+      //   pw.Padding(
+      //       child: pw.Text('Subtotal ${owner.rentalOwnerName ?? 'N/A'}',
+      //           style:
+      //           pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+      //       padding: pw.EdgeInsets.only(
+      //           left: 15)), // Label for rental owner subtotal
+      //   '', '', '', '', '', '', '',
+      //   pw.Text(
+      //       '\$${(owner.subTotal ?? 0.0).toStringAsFixed(2)}', // Subtotal formatted to 2 decimal places
+      //       style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+      //       textAlign: pw.TextAlign.right // Align text to the right
+      //   )
+      // ]);
+      //
+      // total += owner.subTotal;
+    }
+
+    // setState(() {
+    //   grandtotal = total;
+    // });
+
+    return tableData;
   }
 
   Future<void> generateExcel(List<ReportExpiringLeaseData> leaseData) async {

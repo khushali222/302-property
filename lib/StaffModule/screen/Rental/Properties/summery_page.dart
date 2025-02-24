@@ -14034,7 +14034,7 @@ class _LeasesTableState extends State<LeasesTable> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         ),
       ],
     ).show();
@@ -15154,7 +15154,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         ),
       ],
     ).show();

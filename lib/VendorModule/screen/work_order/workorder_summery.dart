@@ -13,6 +13,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/tenants.dart';
@@ -26,6 +27,8 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
 import '../../../widgets/VideoPlayerWidget.dart';
 import '../../../widgets/titleBar.dart';
+import '../../model/vendor_permission_model.dart';
+import '../../repository/vendor_permission.dart';
 import '../../widgets/appbar.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../repository/workorder.dart';
@@ -96,12 +99,18 @@ class _Workorder_summeryState extends State<Workorder_summery>
     setState(() {
       _connectivityResult = connectiondata;
     });
+    await Provider.of<VendorPermission>(context, listen: false)
+        .fetchPermissions();
 
   }
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   int visibleCount = 5;
   @override
   Widget build(BuildContext context) {
+ //   Provider.of<NotificationProvider>(context, listen: false).fetchNotificationsStaff(context);
+    final permissionProvider = Provider.of<VendorPermission>(context);
+    UserPermissions? permissions = permissionProvider.permissions;
+      
     return Scaffold(
       // appBar: widget302.,
       key: key,
@@ -242,6 +251,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
               const SizedBox(
                 width: 20,
               ),
+              if(permissions!.workorderEdit)
               GestureDetector(
                 onTap: () async{
                   var getback = await  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Edit_Workorder(workorderId: widget.workorder_id!,)));
@@ -2160,7 +2170,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                if (summery.propertyData!.rental_image != null)
+                                if (summery.propertyData!.rental_image != null && summery.propertyData!.rental_image!.isNotEmpty)
                                   Column(
                                     children: [
                                       SizedBox(
@@ -2195,14 +2205,19 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("${summery.propertyData!.rental_city}, "),
-                                    Text("${summery.propertyData!.rental_state}, "),
-                                    Text("${summery.propertyData!.rental_country}, "),
-                                    Text("${summery.propertyData!.rental_postcode} "),
-                                  ],
+                                SizedBox(
+                                  width: 300,
+                                  child: Wrap(
+                                    alignment: WrapAlignment.center,
+                                    spacing: 4.0, // Space between texts horizontally
+                                    runSpacing: 4.0, // Space between lines when wrapping
+                                    children: [
+                                      Text("${summery.propertyData!.rental_city}, "),
+                                      Text("${summery.propertyData!.rental_state}, "),
+                                      Text("${summery.propertyData!.rental_country}, "),
+                                      Text("${summery.propertyData!.rental_postcode}"),
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(
                                   height: 10,
@@ -3187,16 +3202,21 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                     }
                                                   },
                                                 )
-                                                    : CachedNetworkImage(
-                                                  imageUrl: "$image_url$imageUrl",
-                                                  placeholder: (context, url) => Center(
-                                                      child: SpinKitFadingCircle(
-                                                        color: Colors.black,
-                                                        size: 40.0,
-                                                      )),
-                                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                                  fit: BoxFit.cover,
-                                                ),
+                                                    : GestureDetector(
+                                                  onTap: (){
+                                                    _showVideoDialog(imageUrl,isImage: true);
+                                                  },
+                                                      child: CachedNetworkImage(
+                                                                                                        imageUrl: "$image_url$imageUrl",
+                                                                                                        placeholder: (context, url) => Center(
+                                                        child: SpinKitFadingCircle(
+                                                          color: Colors.black,
+                                                          size: 40.0,
+                                                        )),
+                                                                                                        errorWidget: (context, url, error) => Icon(Icons.error),
+                                                                                                        fit: BoxFit.cover,
+                                                                                                      ),
+                                                    ),
                                               ),
                                             );
                                           }).toList(),
@@ -3219,14 +3239,19 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text("${summery.propertyData!.rental_city}, "),
-                                      Text("${summery.propertyData!.rental_state}, "),
-                                      Text("${summery.propertyData!.rental_country}, "),
-                                      Text("${summery.propertyData!.rental_postcode} "),
-                                    ],
+                                  SizedBox(
+                                    width: 300,
+                                    child: Wrap(
+                                      alignment: WrapAlignment.center,
+                                      spacing: 4.0, // Space between texts horizontally
+                                      runSpacing: 4.0, // Space between lines when wrapping
+                                      children: [
+                                        Text("${summery.propertyData!.rental_city}, "),
+                                        Text("${summery.propertyData!.rental_state}, "),
+                                        Text("${summery.propertyData!.rental_country}, "),
+                                        Text("${summery.propertyData!.rental_postcode}"),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -3276,11 +3301,40 @@ class _Workorder_summeryState extends State<Workorder_summery>
   bool isVideo(String url) {
     return url.toLowerCase().endsWith(".mp4");
   }
-  void _showVideoDialog(String videoFile) {
+  void _showVideoDialog(String videoFile,{bool isImage =false}) {
     showDialog(
       context: context,
       builder: (context) {
-        return Container(
+        return isImage ? Dialog(
+          backgroundColor: Colors.black,
+          child: IntrinsicWidth(
+            child: IntrinsicHeight(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: "$image_url$videoFile",
+                    placeholder: (context, url) => Center(
+                        child: SpinKitFadingCircle(
+                          color: Colors.black,
+                          size: 40.0,
+                        )),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    top: -50, // Moves the close button above the container
+                    right: 0,
+                    child: IconButton(
+                      icon: Icon(Icons.close, color: Colors.white, size: 30),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ) : Container(
           child: VideoPlayerDialog(videoUrl: videoFile,),
         );
       },

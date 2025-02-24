@@ -16,6 +16,7 @@ import 'package:three_zero_two_property/TenantsModule/screen/dashboard.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import '../../TenantsModule/repository/permission_provider.dart';
+import '../../VendorModule/repository/vendor_permission.dart';
 import '../../VendorModule/screen/dashboard.dart';
 import '../../VendorModule/screen/mainScreen.dart';
 import '../../provider/Plan Purchase/plancheckProvider.dart';
@@ -134,6 +135,7 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     }
     else if(role == "Vendor"){
+      await Provider.of<VendorPermission>(context, listen: false).fetchPermissions();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

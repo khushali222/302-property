@@ -21,6 +21,7 @@ import '../../StaffModule/repository/staffpermission_provider.dart';
 import '../../StaffModule/screen/dashboard.dart';
 import '../../TenantsModule/repository/permission_provider.dart';
 import '../../TenantsModule/screen/dashboard.dart';
+import '../../VendorModule/repository/vendor_permission.dart';
 import '../../VendorModule/screen/mainScreen.dart';
 import '../../constant/constant.dart';
 import '../../provider/Plan Purchase/plancheckProvider.dart';
@@ -1476,7 +1477,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('email', jsonData['vendor_email']);
       // prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
-
+      await Provider.of<VendorPermission>(context, listen: false)
+          .fetchPermissions();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainScreen()));
     } else {
