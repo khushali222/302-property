@@ -885,8 +885,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 },
                 child: Row(
                   children: [
-                    Text("       Subtotal", style: TextStyle(color: Colors.white)),
-
+                    Text("       Subtotal",
+                        style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -916,8 +916,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 },
                 child: Row(
                   children: [
-                    Text("        Record", style: TextStyle(color: Colors.white)),
-
+                    Text("        Record",
+                        style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -1988,10 +1988,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                          width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width *
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
                                                               .07),
                                                       Expanded(
                                                         flex: 2,
