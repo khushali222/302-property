@@ -100,6 +100,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
 
       String? chargedata = chargeType == "All" ? null : chargeType;
 
+      selectedrenatalownerid = selectedRentalOwnerIds.join(',');
       List<RentalOwnerReport> data = await RentalOwnerReportService()
           .fetchRentalOwnerReport(
               id!, reverseFormatDate(fromDate), reverseFormatDate(toDate),
@@ -1529,7 +1530,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                     .sortUp
                                                                 : FontAwesomeIcons
                                                                     .sortDown,
-                                                            size: 20,
+                                                              size: 20,
                                                             color: isRowExpanded
                                                                 ? blueColor
                                                                 : blueColor,
@@ -2853,7 +2854,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         ),
     ];
   }
-
+  List<String> selectedRentalOwnerIds = [];
   filters({List<RentalOwnerReport>? data}) {
     return Column(
       children: [
@@ -2867,42 +2868,133 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             children: [
               Expanded(
                 child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      hint: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Text(
+                          selectedRentalOwnerIds.isEmpty
+                              ? "Select Rental Owners"
+                              : selectedRentalOwnerIds
+                              .map((id) => rentalowners.firstWhere(
+                                  (owner) => owner['rentalowner_id'] == id)['rentalOwner_name'])
+                              .join(', '),
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      items: rentalowners.map((owner) {
+                        return DropdownMenuItem<String>(
+                          value: owner['rentalowner_id'],
+                          child: StatefulBuilder(
+                            builder: (context, setState) {
+                              bool isSelected =
+                              selectedRentalOwnerIds.contains(owner['rentalowner_id']);
+                              return CheckboxListTile(
+                                value: isSelected,
+                                title: Text(
+                                  owner['rentalOwner_name']!,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                controlAffinity: ListTileControlAffinity.leading,
+                                onChanged: (bool? checked) {
+                                  setState(() {
+                                    if (checked == true) {
+                                      selectedRentalOwnerIds.add(owner['rentalowner_id']!);
+                                    } else {
+                                      selectedRentalOwnerIds.remove(owner['rentalowner_id']!);
+                                    }
+                                  });
+                                  // Update the outer state
+                                  this.setState(() {});
+                                },
+                              );
+                            },
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (_) {},
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Container(
                   height: 42,
-                  //width: 160,
+                  // width: 170,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Colors.grey)),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
-                      value: selectedrenatalownerid,
+                      value: chargeType,
                       padding: EdgeInsets.symmetric(horizontal: 5),
                       hint: Text(
-                        "Rental Owner",
+                        "Charge type",
                         style: TextStyle(fontSize: 14, color: Colors.black),
                       ),
-                      items: rentalowners.map((property) {
-                        return DropdownMenuItem<String>(
-                          value: property['rentalowner_id'],
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * .34,
-                            child: Text(
-                              property['rentalOwner_name']!,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black87,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                      items: const [
+                        DropdownMenuItem<String>(
+                          value: 'Card',
+                          child: Text('Card'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'ACH',
+                          child: Text('ACH'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Check',
+                          child: Text('Check'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Cash',
+                          child: Text('Cash'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Manual',
+                          child: Text('Manual'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Money Order',
+                          child: Text('Money Order'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "Cashier's Check",
+                          child: Text("Cashier's Check"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "All",
+                          child: Text('All'),
+                        ),
+                      ],
                       onChanged: (value) {
                         setState(() {
-                          selectedrenatalownerid = value;
+                          chargeType = value;
                           // _futureRentersInsurance = fetchDelinquentTenantsData(
                           //     fromDate.text, toDate.text,
-                          //     rentalownerid: value);
+                          //     charge: value);
                         });
                         // Handle the selected charge type
                         print(value);
@@ -2965,7 +3057,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                 .toString());
                             toDate.text = formatDate(now
                                 .add(Duration(
-                                    days: DateTime.daysPerWeek - now.weekday))
+                                days: DateTime.daysPerWeek - now.weekday))
                                 .toString());
                           } else if (value == "This Month") {
                             customdate = false;
@@ -3004,6 +3096,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 ),
               ),
               const SizedBox(width: 6),
+
             ],
           ),
         ),
@@ -3079,76 +3172,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             ],
           ),
         ),
+
         const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Container(
-                  height: 42,
-                  // width: 170,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: chargeType,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      hint: Text(
-                        "Charge type",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'Card',
-                          child: Text('Card'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'ACH',
-                          child: Text('ACH'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Check',
-                          child: Text('Check'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Cash',
-                          child: Text('Cash'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Manual',
-                          child: Text('Manual'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Money Order',
-                          child: Text('Money Order'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: "Cashier's Check",
-                          child: Text("Cashier's Check"),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: "All",
-                          child: Text('All'),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          chargeType = value;
-                          // _futureRentersInsurance = fetchDelinquentTenantsData(
-                          //     fromDate.text, toDate.text,
-                          //     charge: value);
-                        });
-                        // Handle the selected charge type
-                        print(value);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
               if (showTableData)
                 Expanded(
                   child: SizedBox(
@@ -3176,7 +3206,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           }
                         },
                         itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
+                        <PopupMenuEntry<String>>[
                           const PopupMenuItem<String>(
                               value: 'PDF', child: Text('PDF')),
                           const PopupMenuItem<String>(
@@ -3189,11 +3219,11 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           children: [
                             istenantDataLoading
                                 ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.white,
-                                      size: 21.0,
-                                    ),
-                                  )
+                              child: SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 21.0,
+                              ),
+                            )
                                 : Text('Export'),
                             Icon(Icons.arrow_drop_down),
                           ],
@@ -3201,17 +3231,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       ),
                     ),
                   ),
-                )
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Spacer(),
+                ),
+              if(!showTableData)
+                Spacer(),
+              const SizedBox(width: 10),
               Expanded(
                 child: SizedBox(
                   //  width: 100,
@@ -3225,6 +3248,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                         showTableData =
                             true; // Set to true when the button is pressed
                       });
+                      print("idss $selectedRentalOwnerIds");
                       _futureRentersInsurance = fetchDelinquentTenantsData(
                           fromDate.text, toDate.text); // Call the API
                     },
