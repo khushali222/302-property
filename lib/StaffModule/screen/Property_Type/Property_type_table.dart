@@ -344,7 +344,7 @@ class _PropertyTableState extends State<PropertyTable> {
               Navigator.pop(context);
             }
           },
-          color: Colors.red,
+          color: blueColor,
         ),
         DialogButton(
           child: Text(

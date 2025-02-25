@@ -633,7 +633,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color:blueColor,
         ),
       ],
     ).show();
@@ -1173,62 +1173,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 15,),
-                  SizedBox(
-                    height:
-                    MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                    width:
-                    MediaQuery.of(context).size.width < 500 ? 850 : 900,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                issurge = false;
-                                ismail = false;
-                                isaccounts = true;
-                                islatefee = false;
-                              });
-                            },
-                            child: Visibility(
-                              visible: false,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: blueColor),
-                                  color: !isaccounts
-                                      ? Colors.white
-                                      : blueColor,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Manage Accounts",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: isaccounts
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 15
-                                            : 20),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
 
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 15,),
-                  Divider(
-                    color: grey,
-                  ),
+
+
 
                   if (issurge)
                     Column(

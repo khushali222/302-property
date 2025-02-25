@@ -758,7 +758,7 @@ class _FinancialTableState extends State<FinancialTable> {
               });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         )
       ],
     ).show();

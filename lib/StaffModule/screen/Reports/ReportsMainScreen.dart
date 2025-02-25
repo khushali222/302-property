@@ -15,6 +15,8 @@ import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
+import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:three_zero_two_property/constant/constant.dart';
 // import 'package:three_zero_two_property/screens/Reports/ReportScreens/CompletedWorkOrders.dart';
@@ -626,13 +628,14 @@ List<ReportCardModel> reportCards = [
     destination: PaymentExceptionReports(),
   ),
   ReportCardModel(
+    title:"Recurring Payments Configuration",
+    description: "Report shows all leases recurring payments configured",
+    destination: Recurring_Payments_Configuration_Report(),
+  ),
+  ReportCardModel(
     title: "Convenience Fee Override",
     description: "Report shows all leases with convenience fee override",
     destination: ConvenienceFeeReports(),
   ),
-  // ReportCardModel(
-  //   title:"Recurring Payments Configuration",
-  //   description: "Report shows all leases recurring payments configured",
-  //   destination: Recurring_Payments_Configuration_Report(),
-  // ),
+
 ];

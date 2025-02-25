@@ -1357,7 +1357,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       drawer: CustomDrawer(
-        currentpage: "Report",
+        currentpage: "Reports",
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none

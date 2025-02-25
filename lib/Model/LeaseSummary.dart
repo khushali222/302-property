@@ -49,6 +49,7 @@ class Data {
   String? rentalOwnerCompanyName;
   String? rentalOwnerPrimaryEmail;
   String? rentalOwnerPhoneNumber;
+  List<RecurringEntry>? entry;
   int? amount;
   String? date;
   List<RenewLeases>? renewLeases;
@@ -79,7 +80,8 @@ class Data {
     this.date,
     this.moveout_date,
     this.moveout_notice_given_date,
-    this.renewLeases
+    this.renewLeases,
+    this.entry
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -113,6 +115,12 @@ class Data {
     moveout_notice_given_date = json['moveout_notice_given_date'];
     moveout_date = json['moveout_date'];
     is_renewing = json['is_renewing'];
+    if (json['entry'] != null) {
+      entry = <RecurringEntry>[];
+      json['entry'].forEach((v) {
+        entry!.add(new RecurringEntry.fromJson(v));
+      });
+    }
 
 
     amount = json['amount'];
@@ -337,6 +345,47 @@ class RenewLeases {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['__v'] = this.iV;
+    return data;
+  }
+}
+
+class RecurringEntry {
+  String? entryId;
+  String? account;
+  double? amount;
+  String? date;
+  String? chargeType;
+  String? memo;
+  String? sId;
+
+  RecurringEntry(
+      {this.entryId,
+        this.account,
+        this.amount,
+        this.date,
+        this.chargeType,
+        this.memo,
+        this.sId});
+
+  RecurringEntry.fromJson(Map<String, dynamic> json) {
+    entryId = json['entry_id'];
+    account = json['account'];
+    amount = json['amount'].toDouble();
+    date = json['date'];
+    chargeType = json['charge_type'];
+    memo = json['memo'];
+    sId = json['_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['entry_id'] = this.entryId;
+    data['account'] = this.account;
+    data['amount'] = this.amount;
+    data['date'] = this.date;
+    data['charge_type'] = this.chargeType;
+    data['memo'] = this.memo;
+    data['_id'] = this.sId;
     return data;
   }
 }

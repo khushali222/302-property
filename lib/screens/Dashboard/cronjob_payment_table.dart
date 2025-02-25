@@ -76,7 +76,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           ),
           child: Center(
             child: Text(
-              "CronJob Payments",
+              "Failed Payment Log",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -277,7 +277,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             ),
             child: Center(
               child: Text(
-                "No CronJob payment data found.",
+                "No failed payment data found.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,

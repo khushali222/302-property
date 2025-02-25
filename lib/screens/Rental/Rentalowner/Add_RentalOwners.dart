@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -10,7 +13,7 @@ import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-
+import 'package:http/http.dart' as http;
 import '../../../Model/RentalOwnersData.dart';
 import '../../../repository/Rental_ownersData.dart';
 import '../../../repository/Staffmember.dart';
@@ -3466,7 +3469,6 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                   child: Text("Cancel")),
             ],
           ),
-
           SizedBox(
             height: 20,
           ),
@@ -3474,4 +3476,51 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       ),
     );
   }
+
+  bool isloading = false;
+  // Future<void> updatePaymentSettings(String rentalownerId) async {
+  //   setState(() {
+  //     isloading = true; // Show loading indicator
+  //   });
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   String?  id = prefs.getString('adminId');
+  //   final url = '${Api_url}/api/payment/rental_owner/setting';
+  //   final headers = {
+  //     "authorization": "CRM $token",
+  //     "id":"CRM $id",
+  //     'Content-Type': 'application/json; charset=UTF-8',
+  //
+  //   };
+  //   final body = json.encode({
+  //     "creditCardAccepted": creditcard,
+  //     "debitCardAccepted": debitcard,
+  //     "rentalOwnerId": rentalownerId,
+  //   });
+  //
+  //   try {
+  //     final response = await http.post(Uri.parse(url), headers: headers, body: body);
+  //
+  //     var responseData = json.decode(response.body);
+  //     print('update card type ${responseData}');
+  //     print('update card type ${response.body}');
+  //     if (responseData["statusCode"] == 200) {
+  //       Fluttertoast.showToast(msg: responseData["message"]);
+  //       return json.decode(response.body);
+  //
+  //     } else {
+  //       Fluttertoast.showToast(msg: responseData["message"]);
+  //       throw Exception('Failed to update card type');
+  //     }
+  //   } catch (error) {
+  //     // Handle network error
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('An error occurred: $error')),
+  //     );
+  //   } finally {
+  //     setState(() {
+  //       isloading = false; // Hide loading indicator
+  //     });
+  //   }
+  // }
 }

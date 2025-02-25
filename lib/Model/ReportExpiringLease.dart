@@ -60,9 +60,7 @@ class ReportExpiringLeaseData {
   });
 
   factory ReportExpiringLeaseData.fromJson(Map<String, dynamic> json) {
-    json.forEach((key, value) {
-      print('Key: $key, Value: $value');
-    });
+
 
     return ReportExpiringLeaseData(
       leaseId: json['lease_id'],

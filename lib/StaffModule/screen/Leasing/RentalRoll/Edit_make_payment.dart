@@ -21,6 +21,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 
 import '../../../../model/LeaseLedgerModel.dart';
+import '../../../repository/payment/Edit_payment.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
@@ -29,7 +30,7 @@ import '../../../../model/payments/fetch_payment_table.dart';
 import '../../../../model/setting.dart';
 import '../../../../provider/Plan Purchase/plancheckProvider.dart';
 import '../../../repository/payment/charge_responce.dart';
-import '../../../repository/payment/payment_service.dart';
+
 import '../../../repository/setting.dart';
 import '../../../repository/tenants.dart';
 import 'addcard/AddCard.dart';
@@ -124,30 +125,29 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     });
   }
 
-  editpayment(){
+  editpayment() {
     Data c_data = widget.data!;
     setState(() {
       selectedTenantId = widget.tenantId;
       tenantname = "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
-      _startDate.text = c_data.entry!.first.date!;
+      _startDate.text = formatDate(c_data.entry!.first.date!);
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
-      if(_selectedPaymentMethod != "Cash")
-        checknumber.text = c_data!.check_number ?? "";
+      if (_selectedPaymentMethod != "Cash") checknumber.text = c_data!.check_number ?? "";
       reference.text = c_data!.reference ?? "";
 
       print('charge details ${charges!.length}');
       rows = c_data.entry?.map((entry) {
-        String? chargeType = (entry.account == "Late Fee Income" ||
-            entry.account == "Pre-payments" ||
-            entry.account == "Security Deposit")
+        String? chargeType = (entry.account == "Late Fee Income" || entry.account == "Pre-payments" || entry.account == "Security Deposit")
             ? entry.account
             : entry.account == "Rent Income"
             ? "Rent"
-            : categorizedData.entries.firstWhere(
+            : categorizedData.entries
+            .firstWhere(
               (entryData) => entryData.value.contains(entry.account),
           orElse: () => MapEntry("Unknown", []), // Default if not found
-        ).key;
+        )
+            .key;
         print(chargeType);
         return {
           'entry_id': entry.entryId,
@@ -179,7 +179,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       print(rows);
       totalAmount = c_data.totalAmount!;
       isLoading = false;
-
     });
     AddFields();
   }
@@ -512,11 +511,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       hasError = false;
     });
     try {
-      List<Entrycharge>? charges =
-      await ChargeRepositorys().fetchChargesTable(widget.leaseId);
+      List<Entrycharge>? charges = await ChargeRepositorys().fetchChargesTable(widget.leaseId);
       print('charge details ${charges!.length}');
-      List<Entrycharge> filteredCharges =
-          charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
+      List<Entrycharge> filteredCharges = charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
       print("charges length:- ${charges!.length}");
       print('leaseid ${widget.leaseId}');
 
@@ -524,22 +521,21 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           '$tenantId');
 
       setState(() {
-
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
           // String chargeType = categorizedData.entries.firstWhere(
           //       (entryData) => entryData.value.contains(entry.account),
           //   orElse: () => MapEntry("Unknown", []), // Default if not found
           // ).key;
-          String? chargeType = (entry.account == "Late Fee Income" ||
-              entry.account == "Pre-payments" ||
-              entry.account == "Security Deposit")
+          String? chargeType = (entry.account == "Late Fee Income" || entry.account == "Pre-payments" || entry.account == "Security Deposit")
               ? entry.account
               : entry.account == "Rent Income"
               ? "Rent"
-              : categorizedData.entries.firstWhere(
+              : categorizedData.entries
+              .firstWhere(
                 (entryData) => entryData.value.contains(entry.account),
             orElse: () => MapEntry("Unknown", []), // Default if not found
-          ).key;
+          )
+              .key;
           print(chargeType);
           return {
             'entry_id': entry.entryId,
@@ -556,7 +552,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
             [];
 
         for (var i = 0; i < filteredCharges!.length; i++) {
-
           if (i == 0) {
             double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();
             String formattedChargeAmount = chargeAmount.toStringAsFixed(2);
@@ -578,8 +573,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           return TextEditingController(text: "".toString());
         }).toList();
         print(rows);
-        totalAmount = rows.fold(
-            0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
+        totalAmount = rows.fold(0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
       });
     } catch (e) {
@@ -648,8 +642,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
           for (var i = 0; i < rows.length; i++) {
             print(rows[i]["amount"]);
-            if (rows[i]["amount"] != 0.0)
-              totalAmount = totalAmount + rows[i]["amount"];
+            if (rows[i]["amount"] != 0.0) totalAmount = totalAmount + rows[i]["amount"];
           }
         } else {
           double amount = double.tryParse(value) ?? 0.0;
@@ -664,8 +657,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
           for (var i = 0; i < rows.length; i++) {
             print(rows[i]["amount"]);
-            if (rows[i]["amount"] != 0.0)
-              totalAmount = totalAmount + rows[i]["amount"];
+            if (rows[i]["amount"] != 0.0) totalAmount = totalAmount + rows[i]["amount"];
           }
         }
 
@@ -3489,76 +3481,58 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0))),
                           onPressed: () async {
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
                             String? id = prefs.getString('adminId');
-                            if ((_formKey.currentState?.validate() ?? false) &&
-                                validationMessage == null) {
+                            if ((_formKey.currentState?.validate() ?? false) && validationMessage == null) {
                               rows = rows
                                   .asMap()
                                   .map((index, entry) {
-                                    return MapEntry(
-                                      index,
-                                      {
-                                        ...entry,
-                                        'date': reverseFormatDate(_startDate
-                                            .text.trim()), // Set the date to the desired date
-                                        'balance': charges_balances[
-                                            index], // Add balance from charges_balances list
-                                      },
-                                    );
-                                  })
+                                return MapEntry(
+                                  index,
+                                  {
+                                    ...entry,
+                                    'date': reverseFormatDate(_startDate.text.trim()), // Set the date to the desired date
+                                    'balance': charges_balances[index], // Add balance from charges_balances list
+                                  },
+                                );
+                              })
                                   .values
                                   .toList();
                               setState(() {
                                 _isLoading = true;
                               });
                               if (_selectedPaymentMethod == null) {
-                                Fluttertoast.showToast(
-                                    msg: "Please select the payment method");
+                                Fluttertoast.showToast(msg: "Please select the payment method");
                                 setState(() {
                                   _isLoading = false;
                                 });
-                              } else if (_selectedPaymentMethod == "Card") {
+                              }
+                              /*  else if (_selectedPaymentMethod == "Card") {
                                 print("adminId ${id}");
-                                print(
-                                    "adminId ${cardDetails[selectedcardindex!].company}");
+                                print("adminId ${cardDetails[selectedcardindex!].company}");
                                 if (processor_id == "zzz") {
                                   showFailedPaymentAlert(context);
                                   setState(() {
                                     _isLoading = false;
                                   });
                                 } else {
-                                  List<Map<String, String>> filteredTenants =
-                                      tenants.where((tenant) {
-                                    return tenant['tenant_id'] ==
-                                        selectedTenantId;
+                                  List<Map<String, String>> filteredTenants = tenants.where((tenant) {
+                                    return tenant['tenant_id'] == selectedTenantId;
                                   }).toList();
-                                  Map<String, String> selectedTenant =
-                                      filteredTenants.first;
+                                  Map<String, String> selectedTenant = filteredTenants.first;
                                   await PaymentService()
                                       .makePaymentforcard(
                                           adminId: id ?? "",
-                                          firstName:
-                                              selectedTenant["first_name"]!,
-                                          lastName:
-                                              selectedTenant["last_name"]!,
+                                          firstName: selectedTenant["first_name"]!,
+                                          lastName: selectedTenant["last_name"]!,
                                           emailName: selectedTenant["email"]!,
-                                          customerVaultId:
-                                              cardDetails[selectedcardindex!]
-                                                  .customerVaultId!,
-                                          billingId:
-                                              cardDetails[selectedcardindex!]
-                                                  .billingId!,
-                                          surcharge:
-                                              "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
-                                          amount:
-                                              "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                          customerVaultId: cardDetails[selectedcardindex!].customerVaultId!,
+                                          billingId: cardDetails[selectedcardindex!].billingId!,
+                                          surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                          amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                           tenantId: selectedTenantId!,
                                           date: _startDate.text.trim(),
-                                          address1:
-                                              cardDetails[selectedcardindex!]
-                                                  .address_1!,
+                                          address1: cardDetails[selectedcardindex!].address_1!,
                                           processorId: "",
                                           leaseid: widget.leaseId,
                                           company_name: companyName,
@@ -3573,11 +3547,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     });
                                     Navigator.pop(context, true);
                                   }).catchError((e) {
-                                    print(e
-                                        .toString()
-                                        .split("Exception")[1]
-                                        .toString()
-                                        .trimLeft());
+                                    print(e.toString().split("Exception")[1].toString().trimLeft());
                                     setState(() {
                                       _isLoading = false;
                                     });
@@ -3585,8 +3555,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       context: context,
                                       type: AlertType.warning,
                                       title: "Payment Failed!",
-                                      desc:
-                                          "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                      desc: "${e.toString().split('Exception:')[1].toString().trimLeft()}",
                                       style: AlertStyle(
                                         backgroundColor: Colors.white,
                                         //  overlayColor: Colors.black.withOpacity(.8)
@@ -3595,36 +3564,29 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         DialogButton(
                                           child: Text(
                                             "Ok",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18),
+                                            style: TextStyle(color: Colors.white, fontSize: 18),
                                           ),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
+                                          onPressed: () => Navigator.pop(context),
                                           color: blueColor,
                                         ),
                                       ],
                                     ).show();
                                   });
                                 }
-                              } else if (_selectedPaymentMethod == "ACH") {
-                                List<Map<String, String>> filteredTenants =
-                                    tenants.where((tenant) {
-                                  return tenant['tenant_id'] ==
-                                      selectedTenantId;
+                              }
+                              else if (_selectedPaymentMethod == "ACH") {
+                                List<Map<String, String>> filteredTenants = tenants.where((tenant) {
+                                  return tenant['tenant_id'] == selectedTenantId;
                                 }).toList();
-                                Map<String, String> selectedTenant =
-                                    filteredTenants.first;
+                                Map<String, String> selectedTenant = filteredTenants.first;
                                 await PaymentService()
                                     .makePaymentforach(
                                         adminId: id ?? "",
-                                        firstName:
-                                            selectedTenant["first_name"]!,
+                                        firstName: selectedTenant["first_name"]!,
                                         lastName: selectedTenant["last_name"]!,
                                         emailName: selectedTenant["email"]!,
                                         surcharge: "$surchargecount",
-                                        amount:
-                                            "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                        amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                         tenantId: selectedTenantId!,
                                         date: _startDate.text.trim(),
                                         address1: "",
@@ -3634,8 +3596,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         entries: rows,
                                         future_Date: futuredate!,
                                         account_type: selectedAccount!,
-                                        account_holder_type:
-                                            _selectedHoldertype!,
+                                        account_holder_type: _selectedHoldertype!,
                                         checkaccount: accountnum.text.trim(),
                                         checkaba: bankrountingnum.text.trim(),
                                         tenantname: tenantname,
@@ -3648,11 +3609,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   });
                                   Navigator.pop(context, true);
                                 }).catchError((e) {
-                                  print(e
-                                      .toString()
-                                      .split("Exception")[1]
-                                      .toString()
-                                      .trimLeft());
+                                  print(e.toString().split("Exception")[1].toString().trimLeft());
                                   setState(() {
                                     _isLoading = false;
                                   });
@@ -3660,8 +3617,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     context: context,
                                     type: AlertType.warning,
                                     title: "Payment Failed!",
-                                    desc:
-                                        "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                    desc: "${e.toString().split('Exception:')[1].toString().trimLeft()}",
                                     style: AlertStyle(
                                       backgroundColor: Colors.white,
                                       //  overlayColor: Colors.black.withOpacity(.8)
@@ -3670,9 +3626,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       DialogButton(
                                         child: Text(
                                           "Ok",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18),
+                                          style: TextStyle(color: Colors.white, fontSize: 18),
                                         ),
                                         onPressed: () => Navigator.pop(context),
                                         color: blueColor,
@@ -3680,27 +3634,20 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     ],
                                   ).show();
                                 });
-                              } else if (_selectedPaymentMethod == "Check" ||
-                                  _selectedPaymentMethod == "Money Order" ||
-                                  _selectedPaymentMethod ==
-                                      "Cashier 's Check") {
-                                List<Map<String, String>> filteredTenants =
-                                    tenants.where((tenant) {
-                                  return tenant['tenant_id'] ==
-                                      selectedTenantId;
+                              }*/
+                              else if (_selectedPaymentMethod == "Check" || _selectedPaymentMethod == "Money Order" || _selectedPaymentMethod == "Cashier 's Check") {
+                                List<Map<String, String>> filteredTenants = tenants.where((tenant) {
+                                  return tenant['tenant_id'] == selectedTenantId;
                                 }).toList();
-                                Map<String, String> selectedTenant =
-                                    filteredTenants.first;
+                                Map<String, String> selectedTenant = filteredTenants.first;
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
-                                  amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                  surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                  amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
                                   date: _startDate.text.trim(),
                                   address1: "",
@@ -3709,6 +3656,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   company_name: companyName,
                                   entries: rows,
                                   future_Date: true,
+                                  paymentId: widget.data!.paymentId!,
                                   Check_number: checknumber.text.trim(),
                                   Check: true,
                                   uploadedFile: _uploadedFileNames,
@@ -3724,28 +3672,23 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   setState(() {
                                     _isLoading = false;
                                   });
-                                  Fluttertoast.showToast(
-                                      msg: "Payment failed $e");
+                                  Fluttertoast.showToast(msg: "Payment failed $e");
                                 });
-                              } else if (_selectedPaymentMethod == "Cash" ||
-                                  _selectedPaymentMethod == "Manual") {
-                                List<Map<String, String>> filteredTenants =
-                                    tenants.where((tenant) {
-                                  return tenant['tenant_id'] ==
-                                      selectedTenantId;
+                              }
+                              else if (_selectedPaymentMethod == "Cash" || _selectedPaymentMethod == "Manual") {
+                                List<Map<String, String>> filteredTenants = tenants.where((tenant) {
+                                  return tenant['tenant_id'] == selectedTenantId;
                                 }).toList();
-                                Map<String, String> selectedTenant =
-                                    filteredTenants.first;
+                                Map<String, String> selectedTenant = filteredTenants.first;
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
+                                  paymentId: widget.data!.paymentId!,
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
-                                  amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                  surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                  amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
                                   date: _startDate.text.trim(),
                                   address1: "",
@@ -3771,13 +3714,301 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   setState(() {
                                     _isLoading = false;
                                   });
-                                  Fluttertoast.showToast(
-                                      msg: "Payment failed $e");
+                                  Fluttertoast.showToast(msg: "Payment failed $e");
                                 });
                               }
 
                               //print(_selectedPaymentMethod);
                             }
+                            // SharedPreferences prefs =
+                            //     await SharedPreferences.getInstance();
+                            // String? id = prefs.getString('adminId');
+                            // if ((_formKey.currentState?.validate() ?? false) &&
+                            //     validationMessage == null) {
+                            //   rows = rows
+                            //       .asMap()
+                            //       .map((index, entry) {
+                            //         return MapEntry(
+                            //           index,
+                            //           {
+                            //             ...entry,
+                            //             'date': reverseFormatDate(_startDate
+                            //                 .text.trim()), // Set the date to the desired date
+                            //             'balance': charges_balances[
+                            //                 index], // Add balance from charges_balances list
+                            //           },
+                            //         );
+                            //       })
+                            //       .values
+                            //       .toList();
+                            //   setState(() {
+                            //     _isLoading = true;
+                            //   });
+                            //   if (_selectedPaymentMethod == null) {
+                            //     Fluttertoast.showToast(
+                            //         msg: "Please select the payment method");
+                            //     setState(() {
+                            //       _isLoading = false;
+                            //     });
+                            //   } else if (_selectedPaymentMethod == "Card") {
+                            //     print("adminId ${id}");
+                            //     print(
+                            //         "adminId ${cardDetails[selectedcardindex!].company}");
+                            //     if (processor_id == "zzz") {
+                            //       showFailedPaymentAlert(context);
+                            //       setState(() {
+                            //         _isLoading = false;
+                            //       });
+                            //     } else {
+                            //       List<Map<String, String>> filteredTenants =
+                            //           tenants.where((tenant) {
+                            //         return tenant['tenant_id'] ==
+                            //             selectedTenantId;
+                            //       }).toList();
+                            //       Map<String, String> selectedTenant =
+                            //           filteredTenants.first;
+                            //       await PaymentService()
+                            //           .makePaymentforcard(
+                            //               adminId: id ?? "",
+                            //               firstName:
+                            //                   selectedTenant["first_name"]!,
+                            //               lastName:
+                            //                   selectedTenant["last_name"]!,
+                            //               emailName: selectedTenant["email"]!,
+                            //               customerVaultId:
+                            //                   cardDetails[selectedcardindex!]
+                            //                       .customerVaultId!,
+                            //               billingId:
+                            //                   cardDetails[selectedcardindex!]
+                            //                       .billingId!,
+                            //               surcharge:
+                            //                   "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                            //               amount:
+                            //                   "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                            //               tenantId: selectedTenantId!,
+                            //               date: _startDate.text.trim(),
+                            //               address1:
+                            //                   cardDetails[selectedcardindex!]
+                            //                       .address_1!,
+                            //               processorId: "",
+                            //               leaseid: widget.leaseId,
+                            //               company_name: companyName,
+                            //               entries: rows,
+                            //               tenantname: tenantname,
+                            //               future_Date: futuredate!,
+                            //               uploadedFile: _uploadedFileNames)
+                            //           .then((value) {
+                            //         Fluttertoast.showToast(msg: "$value");
+                            //         setState(() {
+                            //           _isLoading = false;
+                            //         });
+                            //         Navigator.pop(context, true);
+                            //       }).catchError((e) {
+                            //         print(e
+                            //             .toString()
+                            //             .split("Exception")[1]
+                            //             .toString()
+                            //             .trimLeft());
+                            //         setState(() {
+                            //           _isLoading = false;
+                            //         });
+                            //         Alert(
+                            //           context: context,
+                            //           type: AlertType.warning,
+                            //           title: "Payment Failed!",
+                            //           desc:
+                            //               "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                            //           style: AlertStyle(
+                            //             backgroundColor: Colors.white,
+                            //             //  overlayColor: Colors.black.withOpacity(.8)
+                            //           ),
+                            //           buttons: [
+                            //             DialogButton(
+                            //               child: Text(
+                            //                 "Ok",
+                            //                 style: TextStyle(
+                            //                     color: Colors.white,
+                            //                     fontSize: 18),
+                            //               ),
+                            //               onPressed: () =>
+                            //                   Navigator.pop(context),
+                            //               color: blueColor,
+                            //             ),
+                            //           ],
+                            //         ).show();
+                            //       });
+                            //     }
+                            //   } else if (_selectedPaymentMethod == "ACH") {
+                            //     List<Map<String, String>> filteredTenants =
+                            //         tenants.where((tenant) {
+                            //       return tenant['tenant_id'] ==
+                            //           selectedTenantId;
+                            //     }).toList();
+                            //     Map<String, String> selectedTenant =
+                            //         filteredTenants.first;
+                            //     await PaymentService()
+                            //         .makePaymentforach(
+                            //             adminId: id ?? "",
+                            //             firstName:
+                            //                 selectedTenant["first_name"]!,
+                            //             lastName: selectedTenant["last_name"]!,
+                            //             emailName: selectedTenant["email"]!,
+                            //             surcharge: "$surchargecount",
+                            //             amount:
+                            //                 "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                            //             tenantId: selectedTenantId!,
+                            //             date: _startDate.text.trim(),
+                            //             address1: "",
+                            //             processorId: "",
+                            //             leaseid: widget.leaseId,
+                            //             company_name: companyName,
+                            //             entries: rows,
+                            //             future_Date: futuredate!,
+                            //             account_type: selectedAccount!,
+                            //             account_holder_type:
+                            //                 _selectedHoldertype!,
+                            //             checkaccount: accountnum.text.trim(),
+                            //             checkaba: bankrountingnum.text.trim(),
+                            //             tenantname: tenantname,
+                            //             checkname: achname.text.trim(),
+                            //             uploadedFile: _uploadedFileNames)
+                            //         .then((value) {
+                            //       Fluttertoast.showToast(msg: "$value");
+                            //       setState(() {
+                            //         _isLoading = false;
+                            //       });
+                            //       Navigator.pop(context, true);
+                            //     }).catchError((e) {
+                            //       print(e
+                            //           .toString()
+                            //           .split("Exception")[1]
+                            //           .toString()
+                            //           .trimLeft());
+                            //       setState(() {
+                            //         _isLoading = false;
+                            //       });
+                            //       Alert(
+                            //         context: context,
+                            //         type: AlertType.warning,
+                            //         title: "Payment Failed!",
+                            //         desc:
+                            //             "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                            //         style: AlertStyle(
+                            //           backgroundColor: Colors.white,
+                            //           //  overlayColor: Colors.black.withOpacity(.8)
+                            //         ),
+                            //         buttons: [
+                            //           DialogButton(
+                            //             child: Text(
+                            //               "Ok",
+                            //               style: TextStyle(
+                            //                   color: Colors.white,
+                            //                   fontSize: 18),
+                            //             ),
+                            //             onPressed: () => Navigator.pop(context),
+                            //             color: blueColor,
+                            //           ),
+                            //         ],
+                            //       ).show();
+                            //     });
+                            //   } else if (_selectedPaymentMethod == "Check" ||
+                            //       _selectedPaymentMethod == "Money Order" ||
+                            //       _selectedPaymentMethod ==
+                            //           "Cashier 's Check") {
+                            //     List<Map<String, String>> filteredTenants =
+                            //         tenants.where((tenant) {
+                            //       return tenant['tenant_id'] ==
+                            //           selectedTenantId;
+                            //     }).toList();
+                            //     Map<String, String> selectedTenant =
+                            //         filteredTenants.first;
+                            //     await PaymentService()
+                            //         .makePaymentfornormal(
+                            //       adminId: id ?? "",
+                            //       firstName: selectedTenant["first_name"]!,
+                            //       lastName: selectedTenant["last_name"]!,
+                            //       emailName: selectedTenant["email"]!,
+                            //       surcharge:
+                            //           "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                            //       amount:
+                            //           "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                            //       tenantId: selectedTenantId!,
+                            //       date: _startDate.text.trim(),
+                            //       address1: "",
+                            //       processorId: "",
+                            //       leaseid: widget.leaseId,
+                            //       company_name: companyName,
+                            //       entries: rows,
+                            //       future_Date: true,
+                            //       Check_number: checknumber.text.trim(),
+                            //       Check: true,
+                            //       uploadedFile: _uploadedFileNames,
+                            //       payment_method: _selectedPaymentMethod!,
+                            //     )
+                            //         .then((value) {
+                            //       Fluttertoast.showToast(msg: "$value");
+                            //       setState(() {
+                            //         _isLoading = false;
+                            //       });
+                            //       Navigator.pop(context, true);
+                            //     }).catchError((e) {
+                            //       setState(() {
+                            //         _isLoading = false;
+                            //       });
+                            //       Fluttertoast.showToast(
+                            //           msg: "Payment failed $e");
+                            //     });
+                            //   } else if (_selectedPaymentMethod == "Cash" ||
+                            //       _selectedPaymentMethod == "Manual") {
+                            //     List<Map<String, String>> filteredTenants =
+                            //         tenants.where((tenant) {
+                            //       return tenant['tenant_id'] ==
+                            //           selectedTenantId;
+                            //     }).toList();
+                            //     Map<String, String> selectedTenant =
+                            //         filteredTenants.first;
+                            //     await PaymentService()
+                            //         .makePaymentfornormal(
+                            //       adminId: id ?? "",
+                            //       firstName: selectedTenant["first_name"]!,
+                            //       lastName: selectedTenant["last_name"]!,
+                            //       emailName: selectedTenant["email"]!,
+                            //       surcharge:
+                            //           "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                            //       amount:
+                            //           "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                            //       tenantId: selectedTenantId!,
+                            //       date: _startDate.text.trim(),
+                            //       address1: "",
+                            //       processorId: "",
+                            //       leaseid: widget.leaseId,
+                            //       company_name: companyName,
+                            //       entries: rows,
+                            //       future_Date: true,
+                            //       Check_number: "",
+                            //       payment_method: _selectedPaymentMethod!,
+                            //       Check: false,
+                            //       uploadedFile: _uploadedFileNames,
+                            //     )
+                            //         .then((value) {
+                            //       Fluttertoast.showToast(msg: "$value");
+                            //       setState(() {
+                            //         _isLoading = false;
+                            //       });
+                            //       Navigator.pop(context, true);
+                            //     }).catchError((e) {
+                            //       print(e);
+                            //       Fluttertoast.showToast(msg: e);
+                            //       setState(() {
+                            //         _isLoading = false;
+                            //       });
+                            //       Fluttertoast.showToast(
+                            //           msg: "Payment failed $e");
+                            //     });
+                            //   }
+                            //
+                            //   //print(_selectedPaymentMethod);
+                            // }
                             /* print(cardDetails[selectedcardindex!].ccNumber);
                               print(cardDetails[selectedcardindex!].firstName);
                               print(cardDetails[selectedcardindex!].lastName);

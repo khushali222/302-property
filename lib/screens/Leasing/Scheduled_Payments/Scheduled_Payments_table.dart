@@ -259,7 +259,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                 });
               Navigator.pop(context);
           },
-          color: Colors.red,
+          color:blueColor,
         ),
         DialogButton(
           child: Text(

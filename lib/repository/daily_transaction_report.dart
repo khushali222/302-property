@@ -72,6 +72,21 @@ import '../constant/constant.dart';
 //   }).toList();
 // }
 
+class DailyTransactionReportData {
+  int statusCode;
+  double grandTotal; // Added grandTotal field
+  List<DailyTransactionReport> data;
+
+  DailyTransactionReportData({required this.statusCode, required this.grandTotal, required this.data});
+
+  factory DailyTransactionReportData.fromJson(Map<String, dynamic> json) {
+    return DailyTransactionReportData(
+      statusCode: json['statusCode'],
+      grandTotal: (json['grandTotal'] as num).toDouble(), // Parsing grandTotal
+      data: List<DailyTransactionReport>.from(json['data'].map((x) => DailyTransactionReport.fromJson(x))),
+    );
+  }
+}
 class DailyTransactionReport {
   final String? date;
   final double? subtotal;
@@ -307,7 +322,7 @@ class DailyTrasactionReport {
 
   final String baseUrl = '$Api_url/api/payment/todayspayment';
 
-  Future<List<DailyTransactionReport>> fetchDailyTransactions(
+  Future<DailyTransactionReportData> fetchDailyTransactions(
       String adminId, String selectedStartDate, String selectedEndDate,
       {String? chargetype}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -334,21 +349,65 @@ class DailyTrasactionReport {
       print("report daily transaction ${response.body}");
 
       if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body)["data"];
-
-        // If the response is a list of RentalOwnerReport objects, map them to the model class
-        return jsonData
-            .map((data) => DailyTransactionReport.fromJson(data))
-            .toList();
+        final parsedJson = jsonDecode(response.body);
+        print(parsedJson);
+        return DailyTransactionReportData.fromJson(parsedJson);
       } else {
         // Handle error response
         print('Failed to load report. Status code: ${response.statusCode}');
-        return [];
+        throw Exception('Failed to load renters insurance');
       }
     } catch (error) {
       // Handle error during fetch
       print('Error fetching daily transaction reportsd: $error');
-      return [];
+      throw Exception('Failed to load renters insurance');
+    }
+  }
+}
+class DailyTrasactionReportStaff {
+
+  final String baseUrl = '$Api_url/api/payment/todayspayment';
+
+  Future<DailyTransactionReportData> fetchDailyTransactionsstaff(
+      String adminId, String selectedStartDate, String selectedEndDate,
+      {String? chargetype}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminid = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("staff_id");
+    final String endpoint = '/$adminId';
+    String url =
+        '$baseUrl$endpoint?selectedDate=$selectedStartDate&selectedToDate=$selectedEndDate';
+
+    if (chargetype != null) {
+      url = '$url&selectedChargeType=$chargetype';
+    }
+    print(url);
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+      print("report daily transaction ${response.body}");
+
+      if (response.statusCode == 200) {
+        final parsedJson = jsonDecode(response.body);
+        print(parsedJson);
+        return DailyTransactionReportData.fromJson(parsedJson);
+      } else {
+        // Handle error response
+        print('Failed to load report. Status code: ${response.statusCode}');
+        throw Exception('Failed to load renters insurance');
+      }
+    } catch (error) {
+      // Handle error during fetch
+      print('Error fetching daily transaction reportsd: $error');
+      throw Exception('Failed to load renters insurance');
     }
   }
 }

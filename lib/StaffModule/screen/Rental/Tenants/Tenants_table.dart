@@ -339,7 +339,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               Navigator.pop(context);
             }
           },
-          color: Colors.red,
+          color: blueColor,
         ),
         DialogButton(
           child: Text(

@@ -2269,7 +2269,7 @@ class _AddTenantState extends State<AddTenant> {
                                 formValid = true;
                               });
                               print("work number ${workNumber.text}");
-                              if (_formkey.currentState!.validate()) {
+                              if (_formkey.currentState!.validate() && overRideFeeError =="" ) {
                                 setState(() {
                                   formValid = false;
                                 });

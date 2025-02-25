@@ -359,7 +359,7 @@ class _Vendor_tableState extends State<Vendor_table> {
               Navigator.pop(context);
             }
           },
-          color: Colors.red,
+          color: blueColor,
         ),
         DialogButton(
           child: Text(

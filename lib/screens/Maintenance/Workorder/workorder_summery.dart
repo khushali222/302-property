@@ -2692,7 +2692,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            if (summery.propertyData!.rental_image != null)
+                            if (summery.propertyData!.rental_image != null && summery.propertyData!.rental_image!.isNotEmpty)
                               Column(
                                 children: [
                                   SizedBox(
@@ -2732,26 +2732,19 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             SizedBox(
                               height: 10,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "${summery.propertyData!.rental_city}, ",
-                                  style: TextStyle(color: blueColor),
-                                ),
-                                Text(
-                                  "${summery.propertyData!.rental_state}, ",
-                                  style: TextStyle(color: blueColor),
-                                ),
-                                Text(
-                                  "${summery.propertyData!.rental_country}, ",
-                                  style: TextStyle(color: blueColor),
-                                ),
-                                Text(
-                                  "${summery.propertyData!.rental_postcode} ",
-                                  style: TextStyle(color: blueColor),
-                                ),
-                              ],
+                            SizedBox(
+                              width: 300,
+                              child: Wrap(
+                                alignment: WrapAlignment.center,
+                                spacing: 4.0, // Space between texts horizontally
+                                runSpacing: 4.0, // Space between lines when wrapping
+                                children: [
+                                  Text("${summery.propertyData!.rental_city}, "),
+                                  Text("${summery.propertyData!.rental_state}, "),
+                                  Text("${summery.propertyData!.rental_country}, "),
+                                  Text("${summery.propertyData!.rental_postcode}"),
+                                ],
+                              ),
                             ),
                             SizedBox(
                               height: 10,
@@ -3227,14 +3220,19 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text("${summery.propertyData!.rental_city}, "),
-                                        Text("${summery.propertyData!.rental_state}, "),
-                                        Text("${summery.propertyData!.rental_country}, "),
-                                        Text("${summery.propertyData!.rental_postcode} "),
-                                      ],
+                                    SizedBox(
+                                      width: 300,
+                                      child: Wrap(
+                                        alignment: WrapAlignment.center,
+                                        spacing: 4.0, // Space between texts horizontally
+                                        runSpacing: 4.0, // Space between lines when wrapping
+                                        children: [
+                                          Text("${summery.propertyData!.rental_city}, "),
+                                          Text("${summery.propertyData!.rental_state}, "),
+                                          Text("${summery.propertyData!.rental_country}, "),
+                                          Text("${summery.propertyData!.rental_postcode}"),
+                                        ],
+                                      ),
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -3741,14 +3739,19 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text("${summery.propertyData!.rental_city}, "),
-                                      Text("${summery.propertyData!.rental_state}, "),
-                                      Text("${summery.propertyData!.rental_country}, "),
-                                      Text("${summery.propertyData!.rental_postcode} "),
-                                    ],
+                                  SizedBox(
+                                    width: 300,
+                                    child: Wrap(
+                                      alignment: WrapAlignment.center,
+                                      spacing: 4.0, // Space between texts horizontally
+                                      runSpacing: 4.0, // Space between lines when wrapping
+                                      children: [
+                                        Text("${summery.propertyData!.rental_city}, "),
+                                        Text("${summery.propertyData!.rental_state}, "),
+                                        Text("${summery.propertyData!.rental_country}, "),
+                                        Text("${summery.propertyData!.rental_postcode}"),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(
                                     height: 10,

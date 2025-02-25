@@ -540,8 +540,8 @@ class DailyTransactions extends StatefulWidget {
 }
 
 class _DailyTransactionsState extends State<DailyTransactions> {
-  late Future<List<DailyTransactionReport>> _futureDailytrnsaction;
-  List<DailyTransactionReport> DelinquentTenantsModel = [];
+  late Future<DailyTransactionReportData> _futureDailytrnsaction;
+  DailyTransactionReportData? DelinquentTenantsModel;
   bool isLoading = true;
   String? errorMessage;
   int? expandedRowIndex;
@@ -578,13 +578,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     });
     DateTime time = DateTime.now();
     DateTime date = DateFormat('yyyy-MM-dd').parse(time.toString());
-    _futureDailytrnsaction = fetchDelinquentTenantsData(
-        formatDate(date.toString()), formatDate(date.toString()));
+    _futureDailytrnsaction = fetchDelinquentTenantsData(formatDate(date.toString()), formatDate(date.toString()));
   }
 
-  Future<List<DailyTransactionReport>> fetchDelinquentTenantsData(
-      String fromDate, String toDate,
-      {String? charge}) async {
+  Future<DailyTransactionReportData> fetchDelinquentTenantsData(String fromDate, String toDate, {String? charge}) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
@@ -592,10 +589,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
       String? chargedata = chargeType == "All" ? null : chargeType;
 
-      List<DailyTransactionReport> data = await DailyTrasactionReport()
-          .fetchDailyTransactions(
-              id!, reverseFormatDate(fromDate), reverseFormatDate(toDate),
-              chargetype: chargedata);
+      DailyTransactionReportData data = await DailyTrasactionReport().fetchDailyTransactions(id!, reverseFormatDate(fromDate), reverseFormatDate(toDate), chargetype: chargedata);
 
       setState(() {
         DelinquentTenantsModel = data;
@@ -606,10 +600,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     } catch (e) {
       setState(() {
         isLoading = false;
-        errorMessage =
-            'Failed to load renters insurance data. Please try again later.';
+        errorMessage = 'Failed to load renters insurance data. Please try again later.';
       });
-      return [];
+      return DelinquentTenantsModel!;
     }
   }
 
@@ -712,9 +705,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronRight,
-            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
-                ? Colors.grey
-                : blueColor, // Change color based on availability
+            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length ? Colors.grey : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -728,8 +719,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     );
   }
 
-  Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(DailyTransactionReport d)? getField) {
+  Widget _buildHeader<T>(String text, int columnIndex, Comparable<T> Function(DailyTransactionReport d)? getField) {
     return TableCell(
       child: GestureDetector(
         onTap: getField != null
@@ -741,13 +731,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           padding: const EdgeInsets.all(18.0),
           child: Row(
             children: [
-              Text(text,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18)),
-              if (_sortColumnIndex == columnIndex)
-                Icon(_sortAscending
-                    ? Icons.arrow_drop_down_outlined
-                    : Icons.arrow_drop_up_outlined),
+              Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex) Icon(_sortAscending ? Icons.arrow_drop_down_outlined : Icons.arrow_drop_up_outlined),
             ],
           ),
         ),
@@ -755,8 +740,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     );
   }
 
-  void _sort<T>(Comparable<T> Function(DailyTransactionReport d) getField,
-      int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(DailyTransactionReport d) getField, int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -832,11 +816,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
-                      width < 400
-                          ? const Text("   Date",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("   Date",
-                              style: TextStyle(color: Colors.white)),
+                      width < 400 ? const Text("   Date", style: TextStyle(color: Colors.white)) : const Text("   Date", style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       // const SizedBox(width: 3),
                       // ascending1
@@ -885,8 +865,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 },
                 child: Row(
                   children: [
-                    Text("       Subtotal",
-                        style: TextStyle(color: Colors.white)),
+                    Text("       Subtotal", style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -916,8 +895,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 },
                 child: Row(
                   children: [
-                    Text("        Record",
-                        style: TextStyle(color: Colors.white)),
+                    Text("        Record", style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -928,656 +906,629 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     );
   }
 
-  // DailyTransactionReport? globalDelinquentTenantsData;
-  // Future<DailyTransactionReport?> fetchDelinquentTenantsGrandTotal() async {
-  //   print('Fetching delinquent tenants');
-  //
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? adminId = prefs.getString("adminId");
-  //   String? token = prefs.getString('token');
-  //
-  //   try {
-  //     final response = await http
-  //         .get(Uri.parse('$Api_url/api/charge/delinquent/$adminId'), headers: {
-  //       "authorization": "CRM $token",
-  //       "id": "CRM $adminId",
-  //     });
-  //
-  //     if (response.statusCode == 200) {
-  //       final parsedJson = jsonDecode(response.body);
-  //       if (parsedJson['grandtotal'] != null) {
-  //         globalDelinquentTenantsData =
-  //             DailyTransactionReport.fromJson(parsedJson['grandtotal']);
-  //         return globalDelinquentTenantsData;
-  //       } else {
-  //         throw Exception('Grand total data is not available');
-  //       }
-  //     } else {
-  //       throw Exception('Failed to load delinquent tenants');
-  //     }
-  //   } catch (e) {
-  //     print('Error fetching data: $e');
-  //     return null;
-  //   }
-  // }
-  //
-  // bool istenantDataLoading = false;
-  // bool isAddLoading = false;
-  // bool customdate = false;
-  // Future<void> generateDelinquentTenantsPdf(
-  //     List<DailyTransactionReport> delinquentTenantsData) async {
-  //   final GetAddressAdminPdfService service = GetAddressAdminPdfService();
-  //   profile? profileData;
-  //
-  //   try {
-  //     profileData = await service.fetchAdminAddress();
-  //   } catch (e) {
-  //     // Handle error
-  //     print("Error fetching profile data: $e");
-  //     return;
-  //   }
-  //   setState(() {
-  //     istenantDataLoading = true;
-  //   });
-  //   await fetchDelinquentTenantsGrandTotal();
-  //   setState(() {
-  //     istenantDataLoading = false;
-  //   });
-  //   final pdf = pw.Document();
-  //   final image = pw.MemoryImage(
-  //     (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
-  //   );
-  //   final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
-  //
-  //   pdf.addPage(
-  //     pw.MultiPage(
-  //       pageFormat: PdfPageFormat.a4.landscape,
-  //       margin: const pw.EdgeInsets.all(30),
-  //       footer: (pw.Context context) {
-  //         return pw.Container(
-  //           alignment: pw.Alignment.centerRight,
-  //           margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
-  //           child: pw.Text(
-  //             'Page ${context.pageNumber} of ${context.pagesCount}',
-  //             style: pw.TextStyle(color: PdfColors.grey),
-  //           ),
-  //         );
-  //       },
-  //       header: (pw.Context context) => pw.Column(children: [
-  //         pw.Row(
-  //           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-  //           children: [
-  //             pw.Image(image, width: 50, height: 50),
-  //             pw.Column(
-  //               crossAxisAlignment: pw.CrossAxisAlignment.center,
-  //               mainAxisAlignment: pw.MainAxisAlignment.center,
-  //               children: [
-  //                 pw.Text(
-  //                   'Rental Owner Reports',
-  //                   style: pw.TextStyle(
-  //                     fontSize: 18,
-  //                     fontWeight: pw.FontWeight.bold,
-  //                   ),
-  //                 ),
-  //                 pw.Text(
-  //                   'Date : - ${fromDate.text}',
-  //                   style: pw.TextStyle(
-  //                     fontSize: 14,
-  //                     fontWeight: pw.FontWeight.bold,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //             pw.Column(
-  //               crossAxisAlignment: pw.CrossAxisAlignment.end,
-  //               children: [
-  //                 pw.Text(
-  //                   profileData?.companyName?.isNotEmpty == true
-  //                       ? profileData!.companyName!
-  //                       : 'N/A',
-  //                   style: pw.TextStyle(
-  //                     fontSize: 10,
-  //                     fontWeight: pw.FontWeight.bold,
-  //                   ),
-  //                 ),
-  //                 pw.Text(
-  //                   profileData?.companyAddress?.isNotEmpty == true
-  //                       ? profileData!.companyAddress!
-  //                       : 'N/A',
-  //                   style: pw.TextStyle(
-  //                     fontSize: 10,
-  //                     fontWeight: pw.FontWeight.bold,
-  //                   ),
-  //                 ),
-  //                 pw.Text(
-  //                   '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-  //                       '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-  //                       '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-  //                   style: pw.TextStyle(
-  //                     fontSize: 10,
-  //                     fontWeight: pw.FontWeight.bold,
-  //                   ),
-  //                 ),
-  //                 pw.Text(
-  //                   profileData?.companyPostalCode?.isNotEmpty == true
-  //                       ? profileData!.companyPostalCode!
-  //                       : 'N/A',
-  //                   style: pw.TextStyle(
-  //                     fontSize: 10,
-  //                     fontWeight: pw.FontWeight.bold,
-  //                   ),
-  //                 ),
-  //                 //  pw.SizedBox(height: 30)
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //         pw.SizedBox(height: 20)
-  //       ]),
-  //       build: (pw.Context context) {
-  //         return [
-  //           pw.Table.fromTextArray(
-  //               headers: [
-  //                 'Property',
-  //                 'Tenant',
-  //                 'Date',
-  //                 'Pmt Type',
-  //                 'Txn ID',
-  //                 'Reference',
-  //                 'Crd Type',
-  //                 'Crd No',
-  //                 'Total',
-  //               ],
-  //               data: _generateTableData(delinquentTenantsData),
-  //               headerStyle: pw.TextStyle(
-  //                   fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-  //               headerDecoration: pw.BoxDecoration(
-  //                 color: PdfColor.fromHex("#5A86D5"),
-  //                 //color:PdfColor.fromRYB(90, 134, 213,)
-  //               ),
-  //               cellStyle: pw.TextStyle(fontSize: 10),
-  //               cellAlignment: pw.Alignment.centerLeft,
-  //               headerAlignment: pw.Alignment.centerLeft,
-  //               columnWidths: {
-  //                 0: pw.FlexColumnWidth(2), // Date
-  //                 1: pw.FlexColumnWidth(1.5), // Address
-  //                 2: pw.FlexColumnWidth(1), // Work
-  //                 3: pw.FlexColumnWidth(.8), // Performed
-  //                 4: pw.FlexColumnWidth(1.3), // Performed
-  //                 5: pw.FlexColumnWidth(1.5), // Performed
-  //                 6: pw.FlexColumnWidth(.8), // Performed
-  //                 7: pw.FlexColumnWidth(1.5), // Performed
-  //                 8: pw.FlexColumnWidth(1), // Performed
-  //               },
-  //               border: null),
-  //           pw.Divider(thickness: 3),
-  //           pw.Padding(
-  //               padding: pw.EdgeInsets.symmetric(horizontal: 5),
-  //               child: pw.Row(
-  //                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-  //                   children: [
-  //                     pw.Text('Grand Total',
-  //                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-  //                     pw.Text('\$${grandtotal.toStringAsFixed(2)}',
-  //                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
-  //                   ])),
-  //         ];
-  //       },
-  //     ),
-  //   );
-  //
-  //   await Printing.layoutPdf(
-  //     format: PdfPageFormat.a4.landscape,
-  //     onLayout: (PdfPageFormat format) async => pdf.save(),
-  //   );
-  // }
-  //
-  // List<List<dynamic>> _generateTableData(
-  //     List<DailyTransactionReport> rentalOwnerReports) {
-  //   final List<List<dynamic>> tableData = [];
-  //   double total = 0.0;
-  //
-  //   for (var owner in rentalOwnerReports) {
-  //     // Main row for the rental owner name
-  //     tableData.add([
-  //       pw.Text(owner.rentalData!.rentalAddress!,
-  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-  //       '',
-  //       '',
-  //       '',
-  //       '',
-  //       '',
-  //       '',
-  //       '',
-  //       ''
-  //     ]);
-  //
-  //     for (var property in owner.payments) {
-  //       tableData.add([
-  //         pw.Padding(
-  //             child: pw.Text(
-  //               '${property.rentalData!.rentalAddress! ?? 'N/A'}',
-  //               style: pw.TextStyle(
-  //                 fontSize: 10,
-  //                 fontWeight: pw.FontWeight.bold,
-  //               ),
-  //             ),
-  //             padding: pw.EdgeInsets.only(left: 15)), // Property Name
-  //         pw.Text(
-  //           '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
-  //           style: pw.TextStyle(
-  //             fontWeight: pw.FontWeight.bold,
-  //             fontSize: 10,
-  //           ),
-  //         ), // Property Name
-  //         // Tenant Name
-  //         pw.Text(
-  //           DateFormat("yyyy-MM-dd").format(property.createdAt).toString(),
-  //           style: pw.TextStyle(
-  //             fontWeight: pw.FontWeight.bold,
-  //             fontSize: 10,
-  //           ),
-  //         ), // Payment Date
-  //         pw.Text(
-  //           property.paymentType ?? '',
-  //           style: pw.TextStyle(
-  //             fontWeight: pw.FontWeight.bold,
-  //             fontSize: 10,
-  //           ),
-  //         ), // Payment Type
-  //         pw.Text(
-  //           property.transactionId ?? '',
-  //           style: pw.TextStyle(
-  //             fontWeight: pw.FontWeight.bold,
-  //             fontSize: 10,
-  //           ),
-  //         ), // Transaction ID
-  //         pw.Text(
-  //           property.paymentId ?? '',
-  //           style: pw.TextStyle(
-  //             fontWeight: pw.FontWeight.bold,
-  //             fontSize: 10,
-  //           ),
-  //         ), // References
-  //         pw.Text(
-  //           property.ccType ?? '',
-  //           style: pw.TextStyle(
-  //             fontWeight: pw.FontWeight.bold,
-  //             fontSize: 10,
-  //           ),
-  //         ), // Card Type
-  //         pw.Text(
-  //           property.ccNumber ?? '',
-  //           style: pw.TextStyle(
-  //             fontWeight: pw.FontWeight.bold,
-  //             fontSize: 10,
-  //           ),
-  //         ), // Card Number
-  //         pw.Align(
-  //           alignment: pw.Alignment.centerRight,
-  //           child: pw.Text(
-  //             '\$${(property.totalAmount ?? 0.0).toStringAsFixed(2)}',
-  //             style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
-  //             // Total Amount formatted to 2 decimal places
-  //             // Align text to the right
-  //           ),
-  //         ),
-  //       ]);
-  //
-  //       if (property.response != "FAILURE")
-  //         for (var payment in property.entry) {
-  //           tableData.add([
-  //             pw.Padding(
-  //                 child: pw.Text('${payment.account ?? 'N/A'}',
-  //                     style: pw.TextStyle(fontSize: 10)),
-  //                 padding: pw.EdgeInsets.only(left: 15)), // Account Name
-  //             '', // Account Amount
-  //             '', '', '', '', '', '',
-  //             pw.Align(
-  //                 alignment: pw.Alignment.centerRight,
-  //                 child: pw.Text(
-  //                     '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
-  //                     style: pw.TextStyle(fontSize: 10),
-  //                     textAlign: pw.TextAlign.right // Align text to the right
-  //                 ))
-  //           ]);
-  //         }
-  //       if (property.response == "FAILURE")
-  //         tableData.add([
-  //           pw.Padding(
-  //               child: pw.Text(
-  //                   'Failed (reason:${property.responseText ?? 'N/A'})',
-  //                   style: pw.TextStyle(fontSize: 10)),
-  //               padding: pw.EdgeInsets.only(left: 15)), // Account Name
-  //           '', // Account Amount
-  //           '', '', '', '', '', '',
-  //           ''
-  //         ]);
-  //
-  //       // if (property.surcharge != 0.0) {
-  //       //   tableData.add([
-  //       //     pw.Padding(
-  //       //         child: pw.Text(
-  //       //           'Surcharge',
-  //       //           style: pw.TextStyle(fontSize: 10),
-  //       //         ),
-  //       //         padding: pw.EdgeInsets.only(left: 15)),
-  //       //     '', // Account Amount
-  //       //     '', '', '', '', '', '',
-  //       //     pw.Align(
-  //       //         alignment: pw.Alignment.centerRight,
-  //       //         child: pw.Text(
-  //       //             '\$${(property.surcharge ?? 0.0).toStringAsFixed(2)}', // Surcharge formatted to 2 decimal places
-  //       //             style: pw.TextStyle(fontSize: 10),
-  //       //             textAlign: pw.TextAlign.right // Align text to the right
-  //       //             ))
-  //       //   ]);
-  //       // }
-  //     }
-  //
-  //     // Subtotal row for the rental owner
-  //     tableData.add([
-  //       pw.Padding(
-  //           child: pw.Text('Subtotal ${owner.rentalOwnerName ?? 'N/A'}',
-  //               style:
-  //               pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-  //           padding: pw.EdgeInsets.only(
-  //               left: 15)), // Label for rental owner subtotal
-  //       '', '', '', '', '', '', '',
-  //       pw.Text(
-  //           '\$${(owner.subTotal ?? 0.0).toStringAsFixed(2)}', // Subtotal formatted to 2 decimal places
-  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
-  //           textAlign: pw.TextAlign.right // Align text to the right
-  //       )
-  //     ]);
-  //
-  //     total += owner.subTotal;
-  //   }
-  //
-  //   setState(() {
-  //     grandtotal = total;
-  //   });
-  //
-  //   return tableData;
-  // }
-  //
-  // Future<void> generateRentalOwnerReportExcel(
-  //     List<DailyTransactionReport> rentalOwnerReports) async {
-  //   final syncXlsx.Workbook workbook = syncXlsx.Workbook();
-  //   final syncXlsx.Worksheet sheet = workbook.worksheets[0];
-  //
-  //   sheet.getRangeByName('A1:I1').columnWidth = 20;
-  //
-  //   final List<String> headers = [
-  //     'Property',
-  //     'Tenant',
-  //     'Date',
-  //     'Pmt Type',
-  //     'Txn ID',
-  //     'Reference',
-  //     'Crd Type',
-  //     'Crd No',
-  //     'Total',
-  //   ];
-  //
-  //   final syncXlsx.Style headerCellStyle =
-  //   workbook.styles.add('headerCellStyle');
-  //   headerCellStyle.bold = true;
-  //   headerCellStyle.backColor = '#5A86D5';
-  //   headerCellStyle.fontColor = '#FFFFFF';
-  //   headerCellStyle.fontSize = 16;
-  //   headerCellStyle.hAlign = syncXlsx.HAlignType.center;
-  //
-  //   final syncXlsx.Style currencyCellStyle =
-  //   workbook.styles.add('currencyCellStyle');
-  //   currencyCellStyle.numberFormat = '\$#,##0.00'; // Currency format
-  //   currencyCellStyle.hAlign = syncXlsx.HAlignType.right; // Right-align amounts
-  //
-  //   final syncXlsx.Style boldAmountStyle =
-  //   workbook.styles.add('boldAmountStyle');
-  //   boldAmountStyle.bold = true;
-  //   boldAmountStyle.numberFormat = '\$#,##0.00';
-  //   boldAmountStyle.hAlign = syncXlsx.HAlignType.right;
-  //   final syncXlsx.Style AmountTitleStyle =
-  //   workbook.styles.add('AmountTitleStyle');
-  //   boldAmountStyle.bold = true;
-  //   boldAmountStyle.numberFormat = '\$#,##0.00';
-  //
-  //   for (int i = 0; i < headers.length; i++) {
-  //     final cell = sheet.getRangeByIndex(1, i + 1);
-  //     cell.setText(headers[i]);
-  //     cell.cellStyle = headerCellStyle;
-  //   }
-  //
-  //   int rowIndex = 2;
-  //   double grandTotal = 0.0;
-  //
-  //   for (var owner in rentalOwnerReports) {
-  //     final rentalOwnerCell = sheet.getRangeByIndex(rowIndex, 1);
-  //     rentalOwnerCell.setText(owner.rentalOwnerName ?? '');
-  //     rentalOwnerCell.cellStyle.bold = true;
-  //     sheet.getRangeByName('A$rowIndex:I$rowIndex').merge();
-  //     rowIndex++;
-  //
-  //     for (var property in owner.payments) {
-  //       sheet
-  //           .getRangeByIndex(rowIndex, 1)
-  //           .setText(property.rentalData!.rentalAddress ?? 'N/A');
-  //       sheet.getRangeByIndex(rowIndex, 2).setText(
-  //           '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}');
-  //       sheet
-  //           .getRangeByIndex(rowIndex, 3)
-  //           .setText(property.createdAt.toString());
-  //       sheet.getRangeByIndex(rowIndex, 4).setText(property.paymentType ?? '');
-  //       sheet
-  //           .getRangeByIndex(rowIndex, 5)
-  //           .setText(property.transactionId ?? '');
-  //       sheet.getRangeByIndex(rowIndex, 6).setText(property.paymentId ?? '');
-  //       sheet.getRangeByIndex(rowIndex, 7).setText(property.ccType ?? '');
-  //       sheet.getRangeByIndex(rowIndex, 8).setText(property.ccNumber ?? '');
-  //       sheet
-  //           .getRangeByIndex(rowIndex, 9)
-  //           .setNumber(property.totalAmount ?? 0.0);
-  //       sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
-  //       rowIndex++;
-  //
-  //       for (var payment in property.entry) {
-  //         sheet.getRangeByIndex(rowIndex, 1).setText(payment.account ?? 'N/A');
-  //         sheet.getRangeByIndex(rowIndex, 9).setNumber(payment.amount);
-  //         sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
-  //         rowIndex++;
-  //       }
-  //
-  //       // if (property.surcharge != 0.0) {
-  //       //   sheet.getRangeByIndex(rowIndex, 1).setText('Surcharge');
-  //       //   sheet.getRangeByIndex(rowIndex, 9).setNumber(property.surcharge);
-  //       //   sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
-  //       //   rowIndex++;
-  //       // }
-  //     }
-  //
-  //     sheet
-  //         .getRangeByIndex(rowIndex, 1)
-  //         .setText('Subtotal - ${owner.rentalOwnerName}');
-  //     sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
-  //     sheet.getRangeByIndex(rowIndex, 9).setNumber(owner.subTotal ?? 0.0);
-  //     sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
-  //     sheet.getRangeByName('A$rowIndex:H$rowIndex').merge();
-  //     rowIndex++;
-  //
-  //     grandTotal += owner.subTotal ?? 0.0;
-  //   }
-  //
-  //   sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total');
-  //   sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
-  //   sheet.getRangeByIndex(rowIndex, 9).setNumber(grandTotal);
-  //   sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
-  //   sheet.getRangeByName('A$rowIndex:H$rowIndex').merge();
-  //
-  //   final List<int> bytes = workbook.saveAsStream();
-  //   workbook.dispose();
-  //
-  //   final DateTime now = DateTime.now();
-  //   final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-  //   final String fileName = 'RentalOwnerReport_$formattedDate.xlsx';
-  //
-  //   final Directory directory = Platform.isIOS
-  //       ? await getApplicationDocumentsDirectory()
-  //       : Directory('/storage/emulated/0/Download');
-  //
-  //   final path = '${directory.path}/$fileName';
-  //
-  //   // Create directory if it doesn't exist (for Android)
-  //   if (!await directory.exists() && !Platform.isIOS) {
-  //     await directory.create(recursive: true);
-  //   }
-  //
-  //   final File file = File(path);
-  //   await file.writeAsBytes(bytes, flush: true);
-  //   Share.shareXFiles([XFile(path)]);
-  //   Fluttertoast.showToast(
-  //     msg: 'Excel file saved to $path',
-  //   );
-  // }
-  //
-  // Future<void> generateRentalOwnerReportCsv(
-  //     List<DailyTransactionReport> rentalOwnerReports) async {
-  //   // Define headers for CSV
-  //   final List<String> headers = [
-  //     'Property',
-  //     'Tenant',
-  //     'Date',
-  //     'Pmt Type',
-  //     'Txn ID',
-  //     'Reference',
-  //     'Crd Type',
-  //     'Crd No',
-  //     'Total',
-  //   ];
-  //
-  //   // Create a buffer to store CSV data
-  //   final StringBuffer csvBuffer = StringBuffer();
-  //
-  //   // Add headers to the CSV file
-  //   csvBuffer.writeln(headers.join(','));
-  //
-  //   double grandTotal = 0.0;
-  //
-  //   // Iterate through each rental owner report
-  //   for (var owner in rentalOwnerReports) {
-  //     // Add rental owner name as a row
-  //     csvBuffer.writeln('${owner.rentalOwnerName ?? ''}');
-  //
-  //     // Iterate through each property for the current rental owner
-  //     for (var property in owner.payments) {
-  //       // Replace commas in the rental address with spaces
-  //       final String sanitizedAddress =
-  //       (property.rentalData!.rentalAddress ?? 'N/A').replaceAll(',', ' ');
-  //
-  //       // Add property and tenant details
-  //       csvBuffer.writeln([
-  //         sanitizedAddress,
-  //         '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
-  //         property.createdAt.toString(),
-  //         property.paymentType ?? '',
-  //         property.transactionId ?? '',
-  //         property.paymentId ?? '',
-  //         property.ccType ?? '',
-  //         property.ccNumber ?? '',
-  //         '\$${property.totalAmount?.toStringAsFixed(2) ?? '0.00'}'
-  //       ].join(','));
-  //
-  //       // Iterate through payment entries for the current property
-  //       for (var payment in property.entry) {
-  //         csvBuffer.writeln([
-  //           payment.account ?? 'N/A',
-  //           '',
-  //           '',
-  //           '',
-  //           '',
-  //           '',
-  //           '',
-  //           '',
-  //           '\$${payment.amount.toStringAsFixed(2)}'
-  //         ].join(','));
-  //       }
-  //
-  //       // Add surcharge row if applicable
-  //       // if (property.surcharge != 0.0) {
-  //       //   csvBuffer.writeln([
-  //       //     'Surcharge',
-  //       //     '',
-  //       //     '',
-  //       //     '',
-  //       //     '',
-  //       //     '',
-  //       //     '',
-  //       //     '',
-  //       //     '\$${property.surcharge.toStringAsFixed(2)}'
-  //       //   ].join(','));
-  //       // }
-  //     }
-  //
-  //     // Add subtotal row for the current rental owner
-  //     csvBuffer.writeln([
-  //       'Subtotal - ${owner.rentalOwnerName}',
-  //       '',
-  //       '',
-  //       '',
-  //       '',
-  //       '',
-  //       '',
-  //       '',
-  //       '\$${(owner.subTotal ?? 0.0).toStringAsFixed(2)}'
-  //     ].join(','));
-  //
-  //     // Accumulate grand total
-  //     grandTotal += owner.subTotal ?? 0.0;
-  //   }
-  //
-  //   // Add grand total row at the end
-  //   csvBuffer.writeln([
-  //     'Grand Total',
-  //     '',
-  //     '',
-  //     '',
-  //     '',
-  //     '',
-  //     '',
-  //     '',
-  //     '\$${grandTotal.toStringAsFixed(2)}'
-  //   ].join(','));
-  //
-  //   // Convert buffer to list of bytes for CSV file
-  //   final List<int> bytes = utf8.encode(csvBuffer.toString());
-  //
-  //   // Define file name with current date and time
-  //   final DateTime now = DateTime.now();
-  //   final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-  //   final String fileName = 'RentalOwnerReport_$formattedDate.csv';
-  //
-  //   // Define file path
-  //   final Directory directory = Platform.isIOS
-  //       ? await getApplicationDocumentsDirectory()
-  //       : Directory('/storage/emulated/0/Download');
-  //
-  //   final path = '${directory.path}/$fileName';
-  //
-  //   // Create directory if it doesn't exist (for Android)
-  //   if (!await directory.exists() && !Platform.isIOS) {
-  //     await directory.create(recursive: true);
-  //   }
-  //
-  //   // Write CSV file to the path
-  //   final File file = File(path);
-  //   await file.writeAsBytes(bytes, flush: true);
-  //   Share.shareXFiles([XFile(path)]);
-  //   // Show success toast message
-  //   Fluttertoast.showToast(
-  //     msg: 'CSV file saved to $path',
-  //   );
-  // }
-  //
+
+
+
+  bool istenantDataLoading = false;
+  bool isAddLoading = false;
+//  bool customdate = false;
+  Future<void> generateDelinquentTenantsPdf(
+      List<DailyTransactionReport> delinquentTenantsData) async {
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
+
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      // Handle error
+      print("Error fetching profile data: $e");
+      return;
+    }
+    setState(() {
+      istenantDataLoading = true;
+    });
+
+    setState(() {
+      istenantDataLoading = false;
+    });
+    final pdf = pw.Document();
+    final image = pw.MemoryImage(
+      (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
+    );
+    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4.landscape,
+        margin: const pw.EdgeInsets.all(30),
+        footer: (pw.Context context) {
+          return pw.Container(
+            alignment: pw.Alignment.centerRight,
+            margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
+            child: pw.Text(
+              'Page ${context.pageNumber} of ${context.pagesCount}',
+              style: pw.TextStyle(color: PdfColors.grey),
+            ),
+          );
+        },
+        header: (pw.Context context) => pw.Column(children: [
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Image(image, width: 50, height: 50),
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    'Daily Transaction Report',
+                    style: pw.TextStyle(
+                      fontSize: 18,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Text(
+                    'Date : - ${fromDate.text} to ${toDate.text}',
+                    style: pw.TextStyle(
+                      fontSize: 14,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                children: [
+                  pw.Text(
+                    profileData?.companyName?.isNotEmpty == true
+                        ? profileData!.companyName!
+                        : 'N/A',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Text(
+                    profileData?.companyAddress?.isNotEmpty == true
+                        ? profileData!.companyAddress!
+                        : 'N/A',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Text(
+                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
+                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Text(
+                    profileData?.companyPostalCode?.isNotEmpty == true
+                        ? profileData!.companyPostalCode!
+                        : 'N/A',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  //  pw.SizedBox(height: 30)
+                ],
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 20)
+        ]),
+        build: (pw.Context context) {
+          return [
+            pw.Table.fromTextArray(
+                headers: [
+                  'Property',
+                  'Tenant',
+                  'Date',
+                  'Pmt Type',
+                  'Txn ID',
+                  'Reference',
+                  'Crd Type',
+                  'Crd No',
+                  'Total',
+                ],
+                data: _generateTableData(delinquentTenantsData),
+                headerStyle: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+                headerDecoration: pw.BoxDecoration(
+                  color: PdfColor.fromHex("#5A86D5"),
+                  //color:PdfColor.fromRYB(90, 134, 213,)
+                ),
+                cellStyle: pw.TextStyle(fontSize: 10),
+                cellAlignment: pw.Alignment.centerLeft,
+                headerAlignment: pw.Alignment.centerLeft,
+                columnWidths: {
+                  0: pw.FlexColumnWidth(2), // Date
+                  1: pw.FlexColumnWidth(1.5), // Address
+                  2: pw.FlexColumnWidth(1), // Work
+                  3: pw.FlexColumnWidth(.8), // Performed
+                  4: pw.FlexColumnWidth(1.3), // Performed
+                  5: pw.FlexColumnWidth(1.5), // Performed
+                  6: pw.FlexColumnWidth(.8), // Performed
+                  7: pw.FlexColumnWidth(1.5), // Performed
+                  8: pw.FlexColumnWidth(1), // Performed
+                },
+                border: null),
+            pw.Divider(thickness: 3),
+            pw.Padding(
+                padding: pw.EdgeInsets.symmetric(horizontal: 5),
+                child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('Grand Total',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      pw.Text('\$${grandtotal.toStringAsFixed(2)}',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
+                    ])),
+          ];
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      format: PdfPageFormat.a4.landscape,
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
+  }
+
+  List<List<dynamic>> _generateTableData(
+      List<DailyTransactionReport> rentalOwnerReports) {
+    final List<List<dynamic>> tableData = [];
+    double total = 0.0;
+
+    for (var owner in rentalOwnerReports) {
+      // Main row for the rental owner name
+      tableData.add([
+        pw.Text(owner.date!,
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        ''
+      ]);
+
+      for (var property in owner.charges!) {
+        tableData.add([
+          pw.Padding(
+              child: pw.Text(
+                '${property.rentalData!.rentalAddress! ?? 'N/A'}',
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              padding: pw.EdgeInsets.only(left: 15)), // Property Name
+          pw.Text(
+            '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Property Name
+          // Tenant Name
+          pw.Text(
+            DateFormat("yyyy-MM-dd").format(DateTime.parse(property.updatedAt!)).toString(),
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Payment Date
+          pw.Text(
+            property.paymentType ?? '',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Payment Type
+          pw.Text(
+            property.transactionId ?? 'N/A',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Transaction ID
+          pw.Text(
+            property.paymentId ?? '',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // References
+          pw.Text(
+            property.cc_type ?? 'N/A',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Card Type
+          pw.Text(
+            property.cc_number ?? 'N/A',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Card Number
+          pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text(
+              '\$${(property.totalAmount ?? 0.0).toStringAsFixed(2)}',
+              style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+              // Total Amount formatted to 2 decimal places
+              // Align text to the right
+            ),
+          ),
+        ]);
+        print(property.response);
+        if (property.response != "FAILURE" && property.isDelete == false)
+          for (var payment in property.entry!) {
+            tableData.add([
+              pw.Padding(
+                  child: pw.Text('${payment.account ?? 'N/A'}',
+                      style: pw.TextStyle(fontSize: 10)),
+                  padding: pw.EdgeInsets.only(left: 15)), // Account Name
+              '', // Account Amount
+              '', '', '', '', '', '',
+              pw.Align(
+                  alignment: pw.Alignment.centerRight,
+                  child: pw.Text(
+                      '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
+                      style: pw.TextStyle(fontSize: 10,),
+                      textAlign: pw.TextAlign.right // Align text to the right
+                  ))
+            ]);
+          }
+        // if (property.response == "FAILURE")
+        //   tableData.add([
+        //     pw.Padding(
+        //         child: pw.Text(
+        //             'Failed (reason:${property.responseText ?? 'N/A'})',
+        //             style: pw.TextStyle(fontSize: 10)),
+        //         padding: pw.EdgeInsets.only(left: 15)), // Account Name
+        //     '', // Account Amount
+        //     '', '', '', '', '', '',
+        //     ''
+        //   ]);
+
+        // if (property.surcharge != 0.0) {
+        //   tableData.add([
+        //     pw.Padding(
+        //         child: pw.Text(
+        //           'Surcharge',
+        //           style: pw.TextStyle(fontSize: 10),
+        //         ),
+        //         padding: pw.EdgeInsets.only(left: 15)),
+        //     '', // Account Amount
+        //     '', '', '', '', '', '',
+        //     pw.Align(
+        //         alignment: pw.Alignment.centerRight,
+        //         child: pw.Text(
+        //             '\$${(property.surcharge ?? 0.0).toStringAsFixed(2)}', // Surcharge formatted to 2 decimal places
+        //             style: pw.TextStyle(fontSize: 10),
+        //             textAlign: pw.TextAlign.right // Align text to the right
+        //             ))
+        //   ]);
+        // }
+      }
+
+      // Subtotal row for the rental owner
+      tableData.add([
+        '', // Label for rental owner subtotal
+        '', '', '', '', '', '', pw.Padding(
+            child: pw.Text('Subtotal :-',
+                style:
+                pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+            padding: pw.EdgeInsets.only(
+                left: 15)),
+        pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text(
+                '\$${(owner.subtotal ?? 0.0).toStringAsFixed(2)}',
+                style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold),
+                textAlign: pw.TextAlign.right // Align text to the right
+            ))
+      ]);
+
+      total += owner.subtotal!;
+    }
+
+    setState(() {
+      grandtotal = total;
+    });
+
+    return tableData;
+  }
+
+  Future<void> generateRentalOwnerReportExcel(
+      List<DailyTransactionReport> rentalOwnerReports) async {
+    final syncXlsx.Workbook workbook = syncXlsx.Workbook();
+    final syncXlsx.Worksheet sheet = workbook.worksheets[0];
+
+    sheet.getRangeByName('A1:I1').columnWidth = 20;
+
+    final List<String> headers = [
+      'Property',
+      'Tenant',
+      'Date',
+      'Pmt Type',
+      'Txn ID',
+      'Reference',
+      'Crd Type',
+      'Crd No',
+      'Total',
+    ];
+
+    final syncXlsx.Style headerCellStyle =
+    workbook.styles.add('headerCellStyle');
+    headerCellStyle.bold = true;
+    headerCellStyle.backColor = '#5A86D5';
+    headerCellStyle.fontColor = '#FFFFFF';
+    headerCellStyle.fontSize = 16;
+    headerCellStyle.hAlign = syncXlsx.HAlignType.center;
+
+    final syncXlsx.Style currencyCellStyle =
+    workbook.styles.add('currencyCellStyle');
+    currencyCellStyle.numberFormat = '\$#,##0.00'; // Currency format
+    currencyCellStyle.hAlign = syncXlsx.HAlignType.right; // Right-align amounts
+
+    final syncXlsx.Style boldAmountStyle =
+    workbook.styles.add('boldAmountStyle');
+    boldAmountStyle.bold = true;
+    boldAmountStyle.numberFormat = '\$#,##0.00';
+    boldAmountStyle.hAlign = syncXlsx.HAlignType.right;
+    final syncXlsx.Style AmountTitleStyle =
+    workbook.styles.add('AmountTitleStyle');
+    boldAmountStyle.bold = true;
+    boldAmountStyle.numberFormat = '\$#,##0.00';
+
+    for (int i = 0; i < headers.length; i++) {
+      final cell = sheet.getRangeByIndex(1, i + 1);
+      cell.setText(headers[i]);
+      cell.cellStyle = headerCellStyle;
+    }
+
+    int rowIndex = 2;
+    double grandTotal = 0.0;
+
+    for (var owner in rentalOwnerReports) {
+      final rentalOwnerCell = sheet.getRangeByIndex(rowIndex, 1);
+      rentalOwnerCell.setText(owner.date ?? '');
+      rentalOwnerCell.cellStyle.bold = true;
+      sheet.getRangeByName('A$rowIndex:I$rowIndex').merge();
+      rowIndex++;
+
+      for (var property in owner.charges!) {
+        sheet
+            .getRangeByIndex(rowIndex, 1)
+            .setText(property.rentalData!.rentalAddress ?? 'N/A');
+        sheet.getRangeByIndex(rowIndex, 2).setText(
+            '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}');
+        sheet
+            .getRangeByIndex(rowIndex, 3)
+            .setText(property.updatedAt.toString());
+        sheet.getRangeByIndex(rowIndex, 4).setText(property.paymentType ?? 'N/A');
+        sheet
+            .getRangeByIndex(rowIndex, 5)
+            .setText(property.transactionId ?? 'N/A');
+        sheet.getRangeByIndex(rowIndex, 6).setText(property.paymentId ?? 'N/A');
+        sheet.getRangeByIndex(rowIndex, 7).setText(property.cc_type ?? 'N/A');
+        sheet.getRangeByIndex(rowIndex, 8).setText(property.cc_number ?? 'N/A');
+        sheet
+            .getRangeByIndex(rowIndex, 9)
+            .setNumber(property.totalAmount ?? 0.0);
+        sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
+        rowIndex++;
+
+        if(property.response != "FAILURE" && property.isDelete!=true)
+        for (var payment in property.entry!) {
+          sheet.getRangeByIndex(rowIndex, 1).setText(payment.account ?? 'N/A');
+          sheet.getRangeByIndex(rowIndex, 9).setNumber(payment.amount);
+          sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
+          rowIndex++;
+        }
+
+        // if (property.surcharge != 0.0) {
+        //   sheet.getRangeByIndex(rowIndex, 1).setText('Surcharge');
+        //   sheet.getRangeByIndex(rowIndex, 9).setNumber(property.surcharge);
+        //   sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
+        //   rowIndex++;
+        // }
+      }
+
+      sheet
+          .getRangeByIndex(rowIndex, 1)
+          .setText('Subtotal - ${owner.date}');
+      sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
+      sheet.getRangeByIndex(rowIndex, 9).setNumber(owner.subtotal ?? 0.0);
+      sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
+      sheet.getRangeByName('A$rowIndex:H$rowIndex').merge();
+      rowIndex++;
+
+      grandTotal += owner.subtotal ?? 0.0;
+    }
+
+    sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total');
+    sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
+    sheet.getRangeByIndex(rowIndex, 9).setNumber(grandTotal);
+    sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
+    sheet.getRangeByName('A$rowIndex:H$rowIndex').merge();
+
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
+
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'Daily_transaction_report_$formattedDate.xlsx';
+
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
+    final path = '${directory.path}/$fileName';
+
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
+    Fluttertoast.showToast(
+      msg: 'Excel file saved to $path',
+    );
+  }
+
+  Future<void> generateRentalOwnerReportCsv(
+      List<DailyTransactionReport> rentalOwnerReports) async {
+    // Define headers for CSV
+    final List<String> headers = [
+      'Property',
+      'Tenant',
+      'Date',
+      'Pmt Type',
+      'Txn ID',
+      'Reference',
+      'Crd Type',
+      'Crd No',
+      'Total',
+    ];
+
+    // Create a buffer to store CSV data
+    final StringBuffer csvBuffer = StringBuffer();
+
+    // Add headers to the CSV file
+    csvBuffer.writeln(headers.join(','));
+
+    double grandTotal = 0.0;
+
+    // Iterate through each rental owner report
+    for (var owner in rentalOwnerReports) {
+      // Add rental owner name as a row
+      csvBuffer.writeln('${owner.date ?? ''}');
+
+      // Iterate through each property for the current rental owner
+      for (var property in owner.charges!) {
+        // Replace commas in the rental address with spaces
+        final String sanitizedAddress =
+        (property.rentalData!.rentalAddress ?? 'N/A').replaceAll(',', ' ');
+
+        // Add property and tenant details
+        csvBuffer.writeln([
+          sanitizedAddress,
+          '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
+          property.updatedAt.toString(),
+          property.paymentType ?? 'N/A',
+          property.transactionId ?? 'N/A',
+          property.paymentId ?? 'N/A',
+          property.cc_type ?? 'N/A',
+          property.cc_number ?? 'N/A',
+          '\$${property.totalAmount?.toStringAsFixed(2) ?? '0.00'}'
+        ].join(','));
+
+        // Iterate through payment entries for the current property
+        for (var payment in property.entry!) {
+          csvBuffer.writeln([
+            payment.account ?? 'N/A',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '\$${payment.amount!.toStringAsFixed(2)}'
+          ].join(','));
+        }
+
+        // Add surcharge row if applicable
+        // if (property.surcharge != 0.0) {
+        //   csvBuffer.writeln([
+        //     'Surcharge',
+        //     '',
+        //     '',
+        //     '',
+        //     '',
+        //     '',
+        //     '',
+        //     '',
+        //     '\$${property.surcharge.toStringAsFixed(2)}'
+        //   ].join(','));
+        // }
+      }
+
+      // Add subtotal row for the current rental owner
+      csvBuffer.writeln([
+        'Subtotal - ${owner.date}',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '\$${(owner.subtotal ?? 0.0).toStringAsFixed(2)}'
+      ].join(','));
+
+      // Accumulate grand total
+      grandTotal += owner.subtotal ?? 0.0;
+    }
+
+    // Add grand total row at the end
+    csvBuffer.writeln([
+      'Grand Total',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '\$${grandTotal.toStringAsFixed(2)}'
+    ].join(','));
+
+    // Convert buffer to list of bytes for CSV file
+    final List<int> bytes = utf8.encode(csvBuffer.toString());
+
+    // Define file name with current date and time
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'Daily_transaction_report_$formattedDate.csv';
+
+    // Define file path
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
+    final path = '${directory.path}/$fileName';
+
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+
+    // Write CSV file to the path
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
+    // Show success toast message
+    Fluttertoast.showToast(
+      msg: 'CSV file saved to $path',
+    );
+  }
+
   // Future<void> generateDelinquentTenantsCsv(
   //     List<DelinquentTenantsData> delinquentTenantsData) async {
   //   setState(() {
@@ -1699,10 +1650,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       setState(() {
         _selectedDate = picked;
 
-        fromDate.text = DateFormat('yyyy-MM-dd')
-            .parse(picked.toString())
-            .toString()
-            .split(" ")[0];
+        fromDate.text = DateFormat('yyyy-MM-dd').parse(picked.toString()).toString().split(" ")[0];
         fromDate.text = formatDate(fromDate.text);
 
         // _futureDailytrnsaction =
@@ -1739,10 +1687,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       setState(() {
         _selectedDate = picked;
 
-        toDate.text = DateFormat('yyyy-MM-dd')
-            .parse(picked.toString())
-            .toString()
-            .split(" ")[0];
+        toDate.text = DateFormat('yyyy-MM-dd').parse(picked.toString()).toString().split(" ")[0];
         toDate.text = formatDate(toDate.text);
         // _futureDailytrnsaction =
         //     fetchDelinquentTenantsData(fromDate.text, toDate.text);
@@ -1776,17 +1721,14 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     title: 'Rental Owner Report',
                     width: MediaQuery.of(context).size.width * .91,
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 16),
+                  if (MediaQuery.of(context).size.width > 500) const SizedBox(height: 16),
                   if (MediaQuery.of(context).size.width < 500)
-                    FutureBuilder<List<DailyTransactionReport>>(
+                    FutureBuilder<DailyTransactionReportData>(
                       future: _futureDailytrnsaction,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
                           return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Column(
                               children: [
                                 filters(),
@@ -1797,23 +1739,18 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                               ],
                             ),
                           );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
+                        } else if (!snapshot.hasData || snapshot.data!.data.isEmpty) {
                           return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Column(
                               children: [
                                 filters(),
                                 Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * .5,
+                                  height: MediaQuery.of(context).size.height * .5,
                                   child: Center(
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Image.asset(
                                           "assets/images/no_data.jpg",
@@ -1825,10 +1762,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                         ),
                                         Text(
                                           "No Data Available",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor,
-                                              fontSize: 16),
+                                          style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
                                         )
                                       ],
                                     ),
@@ -1839,109 +1773,78 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           );
                         }
 
-                        var data = snapshot.data!;
+                        var data = snapshot.data!.data;
 
                         // Pagination logic
                         final totalPages = (data.length / itemsPerPage).ceil();
-                        final currentPageData = data
-                            .skip(currentPage * itemsPerPage)
-                            .take(itemsPerPage)
-                            .toList();
+                        final currentPageData = data.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
 
                         return SingleChildScrollView(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 5),
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5),
                             child: Column(
                               children: [
                                 SizedBox(
                                   height: 5,
                                 ),
                                 filters(data: data),
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    Text("Grand total ",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: blueColor),),
+                                    Spacer(),
+                                    Text("\$${snapshot.data?.grandTotal.toStringAsFixed(2)} ",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: blueColor),),
+
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
                                 _buildHeaders(),
                                 const SizedBox(height: 20),
                                 if (showTableData)
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+                                    decoration: BoxDecoration(border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                                     child: Column(
-                                      children: currentPageData
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
+                                      children: currentPageData.asMap().entries.map((entry) {
                                         int rowIndex = entry.key;
                                         var item = entry.value;
-                                        bool isRowExpanded =
-                                            expandedRowIndex == rowIndex;
-                                        DailyTransactionReport rental =
-                                            entry.value;
-                                        print(
-                                            'abc test add ${rental.charges?.first.rentalData?.rentalAddress}');
+                                        bool isRowExpanded = expandedRowIndex == rowIndex;
+                                        DailyTransactionReport rental = entry.value;
+
                                         return Container(
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
                                           // ),
                                           decoration: BoxDecoration(
-                                            color: rowIndex % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
-                                            border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                            color: rowIndex % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                            border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                           ),
                                           child: Column(
                                             children: <Widget>[
                                               ListTile(
                                                 contentPadding: EdgeInsets.zero,
                                                 title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
+                                                  padding: const EdgeInsets.all(2.0),
                                                   child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
                                                     children: <Widget>[
                                                       GestureDetector(
                                                         onTap: () {
                                                           setState(() {
-                                                            if (expandedRowIndex ==
-                                                                rowIndex) {
-                                                              expandedRowIndex =
-                                                                  null;
+                                                            if (expandedRowIndex == rowIndex) {
+                                                              expandedRowIndex = null;
                                                             } else {
-                                                              expandedRowIndex =
-                                                                  rowIndex;
+                                                              expandedRowIndex = rowIndex;
                                                             }
                                                           });
                                                         },
                                                         child: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 5,
-                                                                  right: 5),
-                                                          padding: !isRowExpanded
-                                                              ? const EdgeInsets
-                                                                  .only(
-                                                                  bottom: 10)
-                                                              : const EdgeInsets
-                                                                  .only(
-                                                                  top: 10),
+                                                          margin: const EdgeInsets.only(left: 5, right: 5),
+                                                          padding: !isRowExpanded ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(top: 10),
                                                           child: FaIcon(
-                                                            isRowExpanded
-                                                                ? FontAwesomeIcons
-                                                                    .sortUp
-                                                                : FontAwesomeIcons
-                                                                    .sortDown,
+                                                            isRowExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
                                                             size: 20,
-                                                            color: isRowExpanded
-                                                                ? blueColor
-                                                                : blueColor,
+                                                            color: isRowExpanded ? blueColor : blueColor,
                                                           ),
                                                         ),
                                                       ),
@@ -1950,13 +1853,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                         child: GestureDetector(
                                                           onTap: () {
                                                             setState(() {
-                                                              if (expandedRowIndex ==
-                                                                  rowIndex) {
-                                                                expandedRowIndex =
-                                                                    null;
+                                                              if (expandedRowIndex == rowIndex) {
+                                                                expandedRowIndex = null;
                                                               } else {
-                                                                expandedRowIndex =
-                                                                    rowIndex;
+                                                                expandedRowIndex = rowIndex;
                                                               }
                                                             });
                                                           },
@@ -1964,9 +1864,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                             '${rental.date ?? '-'}',
                                                             style: TextStyle(
                                                               color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                              fontWeight: FontWeight.bold,
                                                               fontSize: 14,
                                                             ),
                                                           ),
@@ -1981,26 +1879,19 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                           '\$${item.subtotal}',
                                                           style: TextStyle(
                                                             color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                            fontWeight: FontWeight.bold,
                                                             fontSize: 14,
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .07),
+                                                      SizedBox(width: MediaQuery.of(context).size.width * .07),
                                                       Expanded(
                                                         flex: 2,
                                                         child: Text(
                                                           ' Record : ${rental.charges?.length ?? '-'} ',
                                                           style: TextStyle(
                                                             color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                            fontWeight: FontWeight.bold,
                                                             fontSize: 14,
                                                           ),
                                                         ),
@@ -2016,18 +1907,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                 Column(
                                                   children: [
                                                     Column(
-                                                      children: item.charges!
-                                                          .asMap()
-                                                          .entries
-                                                          .map((tenantEntry) {
-                                                        int tenantIndex =
-                                                            tenantEntry.key;
-                                                        var tenant =
-                                                            tenantEntry.value;
-                                                        bool isTenantExpanded =
-                                                            expandedTenantIndex[
-                                                                    rowIndex] ==
-                                                                tenantIndex;
+                                                      children: item.charges!.asMap().entries.map((tenantEntry) {
+                                                        int tenantIndex = tenantEntry.key;
+                                                        var tenant = tenantEntry.value;
+                                                        bool isTenantExpanded = expandedTenantIndex[rowIndex] == tenantIndex;
 
                                                         return Column(
                                                           children: [
@@ -2035,92 +1918,48 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                               children: [
                                                                 GestureDetector(
                                                                   onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      if (expandedTenantIndex[
-                                                                              rowIndex] ==
-                                                                          tenantIndex) {
-                                                                        expandedTenantIndex[rowIndex] =
-                                                                            null;
+                                                                    setState(() {
+                                                                      if (expandedTenantIndex[rowIndex] == tenantIndex) {
+                                                                        expandedTenantIndex[rowIndex] = null;
                                                                       } else {
-                                                                        expandedTenantIndex[rowIndex] =
-                                                                            tenantIndex;
+                                                                        expandedTenantIndex[rowIndex] = tenantIndex;
                                                                       }
                                                                     });
                                                                   },
-                                                                  child:
-                                                                      Container(
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        left: 5,
-                                                                        right:
-                                                                            5),
-                                                                    padding: !isTenantExpanded
-                                                                        ? const EdgeInsets
-                                                                            .only(
-                                                                            bottom:
-                                                                                10)
-                                                                        : const EdgeInsets
-                                                                            .only(
-                                                                            top:
-                                                                                10),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              10),
-                                                                      child:
-                                                                          FaIcon(
-                                                                        isTenantExpanded
-                                                                            ? FontAwesomeIcons.sortUp
-                                                                            : FontAwesomeIcons.sortDown,
-                                                                        size:
-                                                                            20,
-                                                                        color: isTenantExpanded
-                                                                            ? blueColor
-                                                                            : blueColor,
+                                                                  child: Container(
+                                                                    margin: const EdgeInsets.only(left: 5, right: 5),
+                                                                    padding: !isTenantExpanded ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(top: 10),
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.only(left: 10),
+                                                                      child: FaIcon(
+                                                                        isTenantExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                                                        size: 20,
+                                                                        color: isTenantExpanded ? blueColor : blueColor,
                                                                       ),
                                                                     ),
                                                                   ),
                                                                 ),
                                                                 Expanded(
-                                                                    child:
-                                                                        GestureDetector(
+                                                                    child: GestureDetector(
                                                                   onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      if (expandedTenantIndex[
-                                                                              rowIndex] ==
-                                                                          tenantIndex) {
-                                                                        expandedTenantIndex[rowIndex] =
-                                                                            null;
+                                                                    setState(() {
+                                                                      if (expandedTenantIndex[rowIndex] == tenantIndex) {
+                                                                        expandedTenantIndex[rowIndex] = null;
                                                                       } else {
-                                                                        expandedTenantIndex[rowIndex] =
-                                                                            tenantIndex;
+                                                                        expandedTenantIndex[rowIndex] = tenantIndex;
                                                                       }
                                                                     });
                                                                   },
                                                                   child: Text(
                                                                     "${tenant.rentalData!.rentalAddress}",
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor),
+                                                                    style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                                                                   ),
                                                                 )),
                                                                 Expanded(
                                                                     child: Text(
                                                                   '${tenant.tenantData?.tenantFirstName} ${tenant.tenantData?.tenantLastName}',
                                                                   // "${formatDate(tenant.createdAt.toString())}",
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor),
+                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                                                                 ))
                                                               ],
                                                             ),
@@ -2130,12 +1969,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                   Row(
                                                                     children: [
                                                                       SizedBox(
-                                                                        width:
-                                                                            20,
+                                                                        width: 20,
                                                                       ),
                                                                       Expanded(
-                                                                        child:
-                                                                            Table(
+                                                                        child: Table(
                                                                           columnWidths: {
                                                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                                             // 1: FlexColumnWidth(),
@@ -2143,29 +1980,27 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                             1: FlexColumnWidth(),
                                                                           },
                                                                           children: [
+                                                                            _buildTableRow('Type:', _getDisplayValue(tenant.paymentType), 'Txn Date:', _getDisplayValue(tenant.entry?.first.date)),
                                                                             _buildTableRow(
-                                                                                'Type:',
-                                                                                _getDisplayValue(tenant.paymentType),
-                                                                                'Txn Date:',
-                                                                                _getDisplayValue(tenant.entry?.first.date)),
-                                                                            _buildTableRow(
-                                                                                'Payment Details:',
-                                                                                _getDisplayValue("${tenant.cc_type} ${tenant.cc_number}"),
-                                                                                '	Total:',
-                                                                                _getDisplayValue("\$${tenant.totalAmount}")),
+                                                                              'Payment Details:',
+                                                                              _getDisplayValue(
+                                                                                  (tenant.cc_type != null && tenant.cc_number != null && tenant.cc_type!.isNotEmpty && tenant.cc_number!.isNotEmpty)
+                                                                                      ? "${tenant.cc_type} ${tenant.cc_number}"
+                                                                                      : "N/A"
+                                                                              ),
+                                                                              'Total:',
+                                                                              _getDisplayValue("\$${tenant.totalAmount ?? '0.00'}"),
+                                                                            )
                                                                           ],
                                                                         ),
                                                                       ),
                                                                     ],
                                                                   ),
-                                                                  if (tenant
-                                                                      .entry!
-                                                                      .isNotEmpty)
+                                                                  if (tenant.entry!.isNotEmpty)
                                                                     Row(
                                                                       children: [
                                                                         const SizedBox(
-                                                                          width:
-                                                                              27,
+                                                                          width: 27,
                                                                         ),
                                                                         Text.rich(
                                                                           TextSpan(
@@ -2179,45 +2014,24 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                  if (tenant
-                                                                          .entry!
-                                                                          .isNotEmpty &&
-                                                                      tenant.response !=
-                                                                          "FAILURE")
+                                                                  if (tenant.entry!.isNotEmpty && tenant.response != "FAILURE")
                                                                     const SizedBox(
                                                                       height: 4,
                                                                     ),
-                                                                  if (tenant
-                                                                          .entry!
-                                                                          .isNotEmpty &&
-                                                                      tenant.response !=
-                                                                          "FAILURE")
+                                                                  if (tenant.entry!.isNotEmpty && tenant.response != "FAILURE" && tenant.isDelete != true)
                                                                     Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              15,
-                                                                          top:
-                                                                              0),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
+                                                                      padding: const EdgeInsets.only(left: 15, top: 0),
+                                                                      child: Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.start,
                                                                         children: [
                                                                           FaIcon(
-                                                                            isTenantExpanded
-                                                                                ? FontAwesomeIcons.sortUp
-                                                                                : FontAwesomeIcons.sortDown,
-                                                                            size:
-                                                                                20,
-                                                                            color:
-                                                                                Colors.transparent,
+                                                                            isTenantExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                                                            size: 20,
+                                                                            color: Colors.transparent,
                                                                           ),
                                                                           Expanded(
-                                                                            flex:
-                                                                                2,
-                                                                            child:
-                                                                                Column(
+                                                                            flex: 2,
+                                                                            child: Column(
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: <Widget>[
                                                                                 Text.rich(
@@ -2237,10 +2051,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                             ),
                                                                           ),
                                                                           Expanded(
-                                                                            flex:
-                                                                                2,
-                                                                            child:
-                                                                                Column(
+                                                                            flex: 2,
+                                                                            child: Column(
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: <Widget>[
                                                                                 Text.rich(
@@ -2262,25 +2074,13 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                         ],
                                                                       ),
                                                                     ),
-                                                                  if (tenant
-                                                                          .entry!
-                                                                          .isNotEmpty &&
-                                                                      tenant.response !=
-                                                                          "FAILURE")
+                                                                  if (tenant.entry!.isNotEmpty && tenant.response != "FAILURE" && tenant.isDelete != true)
                                                                     Column(
-                                                                      children: tenant
-                                                                          .entry!
-                                                                          .map(
-                                                                              (entry) {
+                                                                      children: tenant.entry!.map((entry) {
                                                                         return Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .only(
-                                                                              left: 15.0,
-                                                                              bottom: 0),
-                                                                          child:
-                                                                              Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
+                                                                          padding: const EdgeInsets.only(left: 15.0, bottom: 0),
+                                                                          child: Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.start,
                                                                             children: [
                                                                               FaIcon(
                                                                                 isTenantExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
@@ -2338,30 +2138,41 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                         );
                                                                       }).toList(),
                                                                     ),
-                                                                  if (tenant
-                                                                          .response ==
-                                                                      "FAILURE")
+                                                                  if (tenant.response == "FAILURE")
                                                                     Text.rich(
                                                                       TextSpan(
                                                                         children: [
                                                                           TextSpan(
-                                                                            text:
-                                                                                'Failed : Reason(${tenant.reason}) ',
-                                                                            style:
-                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                            text: 'Failed : Reason(${tenant.reason}) ',
+                                                                            style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                           ),
                                                                         ],
                                                                       ),
                                                                     ),
+                                                                  if(tenant.isDelete!)
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.only(left:30.0),
+                                                                      child: Align(
+                                                                        alignment: Alignment.centerLeft,
+                                                                        child: Text.rich(
+                                                                          TextSpan(
+                                                                            children: [
+                                                                              TextSpan(
+                                                                                text: 'Void (Reason :- ${tenant.reason})',
+                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
                                                                 ],
                                                               ),
+                                                            
                                                             SizedBox(
                                                               height: 8,
                                                             ),
-                                                            if (item.charges!
-                                                                        .length -
-                                                                    1 !=
-                                                                tenantIndex)
+                                                            if (item.charges!.length - 1 != tenantIndex)
                                                               Divider(
                                                                 thickness: 2,
                                                               )
@@ -2388,28 +2199,23 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           elevation: 3,
                                           child: Container(
                                             height: 40,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0),
+                                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
                                             decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey),
+                                              border: Border.all(color: Colors.grey),
                                             ),
                                             child: DropdownButtonHideUnderline(
                                               child: DropdownButton<int>(
                                                 value: itemsPerPage,
-                                                items: itemsPerPageOptions
-                                                    .map((int value) {
+                                                items: itemsPerPageOptions.map((int value) {
                                                   return DropdownMenuItem<int>(
                                                     value: value,
-                                                    child:
-                                                        Text(value.toString()),
+                                                    child: Text(value.toString()),
                                                   );
                                                 }).toList(),
                                                 onChanged: (newValue) {
                                                   setState(() {
                                                     itemsPerPage = newValue!;
-                                                    currentPage =
-                                                        0; // Reset to first page when items per page change
+                                                    currentPage = 0; // Reset to first page when items per page change
                                                   });
                                                 },
                                               ),
@@ -2423,9 +2229,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                         IconButton(
                                           icon: FaIcon(
                                             FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPage == 0
-                                                ? Colors.grey
-                                                : blueColor,
+                                            color: currentPage == 0 ? Colors.grey : blueColor,
                                           ),
                                           onPressed: currentPage == 0
                                               ? null
@@ -2435,23 +2239,19 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                   });
                                                 },
                                         ),
-                                        Text(
-                                            'Page ${currentPage + 1} of $totalPages'),
+                                        Text('Page ${currentPage + 1} of $totalPages'),
                                         IconButton(
                                           icon: FaIcon(
                                             FontAwesomeIcons.circleChevronRight,
-                                            color: currentPage < totalPages - 1
-                                                ? blueColor
-                                                : Colors.grey,
+                                            color: currentPage < totalPages - 1 ? blueColor : Colors.grey,
                                           ),
-                                          onPressed:
-                                              currentPage < totalPages - 1
-                                                  ? () {
-                                                      setState(() {
-                                                        currentPage++;
-                                                      });
-                                                    }
-                                                  : null,
+                                          onPressed: currentPage < totalPages - 1
+                                              ? () {
+                                                  setState(() {
+                                                    currentPage++;
+                                                  });
+                                                }
+                                              : null,
                                         ),
                                       ],
                                     ),
@@ -3155,8 +2955,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     return (value == null || value.trim().isEmpty) ? 'N/A' : value;
   }
 
-  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
-      String rightValue) {
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
     return TableRow(
       children: [
         TableCell(
@@ -3167,8 +2966,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
               children: [
                 Text(
                   leftLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -3187,8 +2985,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
               children: [
                 Text(
                   rightLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -3311,9 +3108,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
               Expanded(
                 child: Container(
                   height: 42,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey)),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: daterange,
@@ -3349,35 +3144,24 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           daterange = value;
                           if (value == "Today") {
                             customdate = false;
-                            fromDate.text =
-                                formatDate(DateTime.now().toString());
+                            fromDate.text = formatDate(DateTime.now().toString());
                             toDate.text = formatDate(DateTime.now().toString());
                           } else if (value == "This Week") {
                             DateTime now = DateTime.now();
                             //  fromDate.text = formatDate(now.toString());
                             customdate = false;
-                            fromDate.text = formatDate(now
-                                .subtract(Duration(days: now.weekday - 1))
-                                .toString());
-                            toDate.text = formatDate(now
-                                .add(Duration(
-                                    days: DateTime.daysPerWeek - now.weekday))
-                                .toString());
+                            fromDate.text = formatDate(now.subtract(Duration(days: now.weekday - 1)).toString());
+                            toDate.text = formatDate(now.add(Duration(days: DateTime.daysPerWeek - now.weekday)).toString());
                           } else if (value == "This Month") {
                             customdate = false;
                             DateTime now = DateTime.now();
-                            fromDate.text = formatDate(
-                                DateTime(now.year, now.month, 1).toString());
-                            toDate.text = formatDate(
-                                DateTime(now.year, now.month + 1, 0)
-                                    .toString());
+                            fromDate.text = formatDate(DateTime(now.year, now.month, 1).toString());
+                            toDate.text = formatDate(DateTime(now.year, now.month + 1, 0).toString());
                           } else if (value == "This Year") {
                             customdate = false;
                             DateTime now = DateTime.now();
-                            fromDate.text =
-                                formatDate(DateTime(now.year, 1, 1).toString());
-                            toDate.text = formatDate(
-                                DateTime(now.year, 12, 31).toString());
+                            fromDate.text = formatDate(DateTime(now.year, 1, 1).toString());
+                            toDate.text = formatDate(DateTime(now.year, 12, 31).toString());
                           } else if (value == "Custom") {
                             customdate = true;
                           }
@@ -3425,8 +3209,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     textInputAction: TextInputAction.next,
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10), //Imp Line
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), //Imp Line
                       isDense: true,
 
                       hintText: "From",
@@ -3457,8 +3240,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     textInputAction: TextInputAction.next,
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10), //Imp Line
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), //Imp Line
                       isDense: true,
                       hintText: "To",
 
@@ -3485,9 +3267,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 child: Container(
                   height: 42,
                   // width: 170,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey)),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: chargeType,
@@ -3560,25 +3340,21 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           // Export logic
                           if (value == 'PDF' && data != null) {
                             print('pdf');
-                            //  generateDelinquentTenantsPdf(data);
+                              generateDelinquentTenantsPdf(data);
                           } else if (value == 'XLSX' && data != null) {
                             print('XLSX');
-                            // generateRentalOwnerReportExcel(data);
+                            generateRentalOwnerReportExcel(data);
                             //generateDelinquentTenantsExcel(data);
                           } else if (value == 'CSV' && data != null) {
                             print('CSV');
-                            // generateRentalOwnerReportCsv(data);
+                            generateRentalOwnerReportCsv(data);
                             //  generateDelinquentTenantsCsv(data);
                           }
                         },
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                              value: 'PDF', child: Text('PDF')),
-                          const PopupMenuItem<String>(
-                              value: 'XLSX', child: Text('XLSX')),
-                          const PopupMenuItem<String>(
-                              value: 'CSV', child: Text('CSV')),
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(value: 'PDF', child: Text('PDF')),
+                          const PopupMenuItem<String>(value: 'XLSX', child: Text('XLSX')),
+                          const PopupMenuItem<String>(value: 'CSV', child: Text('CSV')),
                         ],
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -3611,11 +3387,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     ),
                     onPressed: () async {
                       setState(() {
-                        showTableData =
-                            true; // Set to true when the button is pressed
+                        showTableData = true; // Set to true when the button is pressed
                       });
-                      _futureDailytrnsaction = fetchDelinquentTenantsData(
-                          fromDate.text, toDate.text); // Call the API
+                      _futureDailytrnsaction = fetchDelinquentTenantsData(fromDate.text, toDate.text); // Call the API
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,

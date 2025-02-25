@@ -429,16 +429,25 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                             Row(
                               children: [
                                 SizedBox(width: width * 0.05),
-                                Text(
-                                  "Hello $firstname $lastname, Welcome back",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: MediaQuery.of(context).size.width > 500?MediaQuery.of(context).size.width * 0.03 : MediaQuery.of(context).size.width * 0.04,
+                                SizedBox(
+                                  width:300,
+                                  child: Text(
+                                    "Hello $firstname $lastname, Welcome back",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: MediaQuery.of(context).size.width > 500
+                                          ? MediaQuery.of(context).size.width * 0.03
+                                          : MediaQuery.of(context).size.width * 0.04,
+                                    ),
+                                    maxLines: 2, // Allows wrapping into two lines
+                                    overflow: TextOverflow.visible, // Ensures the text wraps naturally
+                                    softWrap: true, // Enables line wrapping
                                   ),
                                 ),
                               ],
                             ),
-                         //   SizedBox(height: 3),
+
+                            //   SizedBox(height: 3),
                             // My Dashboard
                             Row(
                               children: [

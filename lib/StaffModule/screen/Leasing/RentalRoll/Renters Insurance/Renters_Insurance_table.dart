@@ -485,7 +485,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         ),
         DialogButton(
           child: Text(

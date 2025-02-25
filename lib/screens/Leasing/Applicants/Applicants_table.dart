@@ -359,7 +359,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               Navigator.pop(context);
             }
           },
-          color: Colors.red,
+          color: blueColor,
         ),
         DialogButton(
           child: const Text(
@@ -404,7 +404,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         )
       ],
     ).show();

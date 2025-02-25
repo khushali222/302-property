@@ -442,7 +442,7 @@ class _Lease_tableState extends State<Lease_table> {
               Navigator.pop(context);
             }
           },
-          color: Colors.red,
+          color: blueColor,
         ),
         DialogButton(
           child: Text(
