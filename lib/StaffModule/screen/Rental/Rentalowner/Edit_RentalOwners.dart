@@ -158,7 +158,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   String? initialTaxType;
   String? initialStartDate;
   String? initialEndDate;
-
+  bool? initialcreditcard;
+  bool? initialdebitcard;
   // Add a text field
   void _addTextField() {
     int nextIndex = _controllers.length;
@@ -393,6 +394,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       setState(() {
         creditcard = jsonData['data']['creditCardAccepted'];
         debitcard = jsonData['data']['debitCardAccepted'];
+        initialdebitcard = debitcard;
+        initialcreditcard = creditcard;
       });
     } else {
       throw Exception('Failed to load data');
@@ -429,7 +432,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       print('update card type ${responseData}');
       print('update card type ${response.body}');
       if (responseData["statusCode"] == 200) {
-        Fluttertoast.showToast(msg: responseData["message"]);
+       // Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
       } else {
         Fluttertoast.showToast(msg: responseData["message"]);
@@ -879,7 +882,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                   .size
                                                   .width *
                                               .02),
-                                      InkWell(
+                                      /*   InkWell(
                                         onTap: () {
                                           _removeTextField(entry.key);
                                         },
@@ -888,10 +891,11 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           child: FaIcon(
                                             FontAwesomeIcons.trashCan,
                                             size: 20,
-                                            color: blueColor,
+                                            color:
+                                                blueColor,
                                           ),
                                         ),
-                                      ),
+                                      ),*/
                                     ],
                                   ),
                                 );
@@ -900,7 +904,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             SizedBox(
                               height: 10,
                             ),
-                            Row(
+                            /*Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 GestureDetector(
@@ -949,7 +953,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   ),
                                 ),
                               ],
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -2880,6 +2884,179 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
           SizedBox(
             height: 20,
           ),
+          Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25),
+            child: Material(
+              elevation: 6,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: blueColor),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25, right: 25, top: 20, bottom: 30),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Card Transaction Type \nManagement ",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                // fontSize: 18
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 20
+                                        : 25),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Select the type of card you wish to \naccept",
+                            style: TextStyle(
+                                color: Color(0xFF8A95A8),
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Checkbox(
+                                value: creditcard,
+                                onChanged: (value) {
+                                  setState(() {
+                                    creditcard = value!;
+                                  });
+                                },
+                                activeColor: blueColor,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              "Credit Card",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Checkbox(
+                                  value: debitcard,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      debitcard = value!;
+                                    });
+                                  },
+                                  activeColor: blueColor),
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              "Debit Card",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: blueColor,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      // SizedBox(
+                      //   height: 20,
+                      // ),
+                      // Row(
+                      //   children: [
+                      //     GestureDetector(
+                      //       onTap: () async {
+                      //         updatePaymentSettings();
+                      //       },
+                      //       child: ClipRRect(
+                      //         borderRadius: BorderRadius.circular(5.0),
+                      //         child: Container(
+                      //           height:
+                      //           MediaQuery.of(context).size.height * .045,
+                      //           width: MediaQuery.of(context).size.width < 500
+                      //               ? 120
+                      //               : 190,
+                      //           decoration: BoxDecoration(
+                      //             borderRadius: BorderRadius.circular(5.0),
+                      //             color: blueColor,
+                      //             boxShadow: [
+                      //               BoxShadow(
+                      //                 color: Colors.grey,
+                      //                 offset: Offset(0.0, 1.0), //(x,y)
+                      //                 blurRadius: 6.0,
+                      //               ),
+                      //             ],
+                      //           ),
+                      //           child: Center(
+                      //             child: isloading
+                      //                 ? SpinKitFadingCircle(
+                      //               color: Colors.white,
+                      //               size: 20.0,
+                      //             )
+                      //                 : Text(
+                      //               "Update",
+                      //               style: TextStyle(
+                      //                   color: Colors.white,
+                      //                   fontWeight: FontWeight.bold,
+                      //                   fontSize: MediaQuery.of(context)
+                      //                       .size
+                      //                       .width <
+                      //                       500
+                      //                       ? 15
+                      //                       : 20),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
           Row(
             children: [
               if (MediaQuery.of(context).size.width < 500)
@@ -3021,7 +3198,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   }
                   // Validate other fields similarly...
                   String? isProcessorListChanged =
-                  widget.rentalOwner.processorList != null && widget.rentalOwner.processorList!.isNotEmpty ? widget.rentalOwner.processorList!.first.processorId:"";
+                      widget.rentalOwner.processorList != null &&
+                              widget.rentalOwner.processorList!.isNotEmpty
+                          ? widget.rentalOwner.processorList!.first.processorId
+                          : "";
                   print("Processor List Changed: $isProcessorListChanged");
 
                   // Check for changes
@@ -3039,8 +3219,11 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       code2.text != initialPostalCode ||
                       taxid.text != initialTaxId ||
                       taxtype.text != initialTaxType ||
+                      creditcard != initialcreditcard ||
+                      debitcard != initialdebitcard ||
                       startdateController.text != initialStartDate ||
-                      enddateController.text != initialEndDate || _controllers[0]!.text != isProcessorListChanged;
+                      enddateController.text != initialEndDate ||
+                      _controllers[0]!.text != isProcessorListChanged;
 
                   if (!hasChanges) {
                     print("No changes made, API call not necessary.");
@@ -3116,8 +3299,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       widget.rentalOwner.processorList = processorList;
                       isLoading = false;
                     });
-
                     Navigator.pop(context, true);
+                    await updatePaymentSettings();
                   } catch (e) {
                     setState(() {
                       isLoading = false;
@@ -3142,15 +3325,21 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       ],
                     ),
                     child: Center(
-                      child: Text(
-                        "Edit  Rental Owner",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 15
-                                : 20),
-                      ),
+                      child: isLoading
+                          ? SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 20.0,
+                            )
+                          : Text(
+                              "Edit  Rental Owner",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 15
+                                          : 20),
+                            ),
                     ),
                   ),
                 ),
@@ -3169,179 +3358,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
             height: 20,
           ),
           //card transaction type
-          Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
-            child: Material(
-              elevation: 6,
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: blueColor),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 25, right: 25, top: 20, bottom: 30),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Card Transaction Type \nManagement ",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                // fontSize: 18
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 20
-                                        : 25),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Select the type of card you wish to \naccept",
-                            style: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 15
-                                        : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Transform.scale(
-                              scale: 1.2,
-                              child: Checkbox(
-                                value: creditcard,
-                                onChanged: (value) {
-                                  setState(() {
-                                    creditcard = value!;
-                                  });
-                                },
-                                activeColor: blueColor,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              "Credit Card",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Transform.scale(
-                              scale: 1.2,
-                              child: Checkbox(
-                                  value: debitcard,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      debitcard = value!;
-                                    });
-                                  },
-                                  activeColor: blueColor),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              "Debit Card",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: blueColor,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              updatePaymentSettings();
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Container(
-                                height:
-                                    MediaQuery.of(context).size.height * .045,
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? 120
-                                    : 190,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  color: blueColor,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
-                                      blurRadius: 6.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: isloading
-                                      ? SpinKitFadingCircle(
-                                          color: Colors.white,
-                                          size: 20.0,
-                                        )
-                                      : Text(
-                                          "Update",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20),
-                                        ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
         ],
       ),
     );

@@ -1484,13 +1484,20 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                             Expanded(
                                                               child:
                                                                   GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
+                                                                onTap: () async{
+                                                                  bool? refreshNeeded = await  Navigator.push(
                                                                       context,
                                                                       MaterialPageRoute(
                                                                           builder: (context) => applicant_summery(
                                                                                 applicant_id: applicant.applicantId,
                                                                               )));
+
+                                                                  if(refreshNeeded == true){
+                                                                    setState(() {
+                                                                      futureApplicantdata = ApplicantRepository().fetchApplicants();
+                                                                    });
+                                                                  }
+
                                                                 },
                                                                 child:
                                                                     Container(

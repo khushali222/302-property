@@ -60,7 +60,7 @@ class _applicant_summeryState extends State<applicant_summery>
     "IncomeVerification": "Income verification",
     "LandlordVerification": "Landlord verification",
   };
-
+  bool isapplicantupdate = false;
   bool addcheckbox = false;
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
@@ -166,531 +166,538 @@ class _applicant_summeryState extends State<applicant_summery>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: widget302.,
-      appBar: widget_302.App_Bar(context: context),
-      backgroundColor: Colors.white,
-      drawer: CustomDrawer(
-        currentpage: "Applicants",
-        dropdown: true,
-      ),
-      body:
-      _connectivityResult !=ConnectivityResult.none ?
-      SingleChildScrollView(
-        child: FutureBuilder<applicant_summery_details>(
-            future: futureLeaseSummary,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container(
-                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height *.45),
-                  child: const Center(
-                    child: SpinKitSpinningLines(
-                      color: Colors.black,
-                      size: 55.0,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, isapplicantupdate); // Pass back whether refresh is needed
+        return false; // Prevent default pop behavior since we're handling it
+      },
+      child: Scaffold(
+        // appBar: widget302.,
+        appBar: widget_302.App_Bar(context: context),
+        backgroundColor: Colors.white,
+        drawer: CustomDrawer(
+          currentpage: "Applicants",
+          dropdown: true,
+        ),
+        body:
+        _connectivityResult !=ConnectivityResult.none ?
+        SingleChildScrollView(
+          child: FutureBuilder<applicant_summery_details>(
+              future: futureLeaseSummary,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height *.45),
+                    child: const Center(
+                      child: SpinKitSpinningLines(
+                        color: Colors.black,
+                        size: 55.0,
+                      ),
                     ),
-                  ),
-                );
-              } else if (!snapshot.hasData || snapshot.data == null) {
-                return const Center(child: Text('No data found.'));
-              } else {
-                final applicantSummary = snapshot.data!;
-                if (snapshot.data!.applicantStatus != null &&
-                    snapshot.data!.applicantStatus!.isNotEmpty) {
-                  final status = snapshot.data!.applicantStatus!.last.status;
-                  if (status == "Approved" || status == "Rejected") {
-                    _selectedValue = status;
+                  );
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return const Center(child: Text('No data found.'));
+                } else {
+                  final applicantSummary = snapshot.data!;
+                  if (snapshot.data!.applicantStatus != null &&
+                      snapshot.data!.applicantStatus!.isNotEmpty) {
+                    final status = snapshot.data!.applicantStatus!.last.status;
+                    if (status == "Approved" || status == "Rejected") {
+                      _selectedValue = status;
+                    } else {
+                      _selectedValue = 'Select';
+                    }
                   } else {
                     _selectedValue = 'Select';
                   }
-                } else {
-                  _selectedValue = 'Select';
-                }
-        
-                print('Move in is: ${applicantSummary.isMovedin ?? 'Unknown'}');
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                      'Applicant : ',
-                                      style:  TextStyle(
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      )),
-                                  Text(
-                                     ' ${snapshot.data!.applicantFirstName} ${snapshot.data!.applicantLastName}',
-                                      style:  TextStyle(
-                                          color: grey,
-                                          fontWeight: FontWeight.bold,
-                                      fontSize: 15)),
 
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 4,
-                              ),
-                              SizedBox(
-                                width:
-                                MediaQuery.of(context).size.width > 500 ? 200 : 240,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 1),
-                                  child: Text(
-                                    '${snapshot.data!.leaseData!.rentalAdress}',
-                                    textAlign: TextAlign.justify,
-                                    maxLines: 5, // Set maximum number of lines
-                                    overflow: TextOverflow
-                                        .ellipsis, // Handle overflow with ellipsis
-                                    style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // Text('${snapshot.data!.leaseData!.rentalAdress}',
-                              //     style:  TextStyle(
-                              //         color: grey,
-                              //         fontWeight: FontWeight.bold,
-                              //         fontSize: 15
-                              //     )),
-                            ],
-                          ),
-                          const Spacer(),
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(5),
-                                  ),
-                                  child: Container(
-                                    height: 40,
-                                    width: 70,
-                                    decoration:  BoxDecoration(
-                                      color: blueColor,
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(7),
-                                      ),
-                                    ),
-                                    child: const Center(
-                                        child: Text(
-                                      "Back",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                      fontSize: 15),
-                                    )),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          DropdownButtonHideUnderline(
-                            child: Material(
-                              elevation: 3,
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                hint: const Row(
+                  print('Move in is: ${applicantSummary.isMovedin ?? 'Unknown'}');
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: <Widget>[
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    SizedBox(
-                                      width: 4,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        '',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
+                                    Text(
+                                        'Applicant : ',
+                                        style:  TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        )),
+                                    Text(
+                                       ' ${snapshot.data!.applicantFirstName} ${snapshot.data!.applicantLastName}',
+                                        style:  TextStyle(
+                                            color: grey,
+                                            fontWeight: FontWeight.bold,
+                                        fontSize: 15)),
+
                                   ],
                                 ),
-                                items: items
-                                    .map((String item) => DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style:  TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ))
-                                    .toList(),
-                                value: _selectedValue,
-                                onChanged: snapshot.data!.isMovedin!
-                                    ? null
-                                    : (value) async {
-                                        setState(() {
-                                          _selectedValue = value;
-                                        });
-                                        if (value != null) {
-                                          final rentalId =
-                                              snapshot.data!.leaseData!.rentalId;
-                                          final unitId =
-                                              snapshot.data!.leaseData!.unitId;
-
-                                          // Call the API to update the applicant status
-                                          bool success =
-                                              await updateApplicantStatus(
-                                                  widget.applicant_id!,
-                                                  value,
-                                                  rentalId!,
-                                                  unitId!);
-
-                                          if (success) {
-                                            print('Status update successful');
-                                            Navigator.pop(context);
-                                          } else {
-                                            print('Status update failed');
-                                          }
-                                        }
-                                      },
-                                buttonStyleData: ButtonStyleData(
-                                  height: MediaQuery.of(context).size.width < 500
-                                      ? 40
-                                      : 50,
-                                  width: MediaQuery.of(context).size.width < 500
-                                      ? MediaQuery.of(context).size.width * .34
-                                      : MediaQuery.of(context).size.width * .4,
-                                  padding:
-                                      const EdgeInsets.only(left: 14, right: 14),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(2),
-                                    border: Border.all(
-                                      color: snapshot.data!.isMovedin!
-                                          ? Colors.grey
-                                          : Color(0xFF8A95A8),
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                SizedBox(
+                                  width:
+                                  MediaQuery.of(context).size.width > 500 ? 200 : 240,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 1),
+                                    child: Text(
+                                      '${snapshot.data!.leaseData!.rentalAdress}',
+                                      textAlign: TextAlign.justify,
+                                      maxLines: 5, // Set maximum number of lines
+                                      overflow: TextOverflow
+                                          .ellipsis, // Handle overflow with ellipsis
+                                      style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                    color: snapshot.data!.isMovedin!
-                                        ? Colors.grey.shade300
-                                        : Colors.white,
-                                  ),
-                                  elevation: 0,
-                                ),
-                                dropdownStyleData: DropdownStyleData(
-                                  maxHeight: 200,
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  offset: const Offset(-20, 0),
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    radius: const Radius.circular(40),
-                                    thickness: MaterialStateProperty.all(6),
-                                    thumbVisibility:
-                                        MaterialStateProperty.all(true),
                                   ),
                                 ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
-                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                // Text('${snapshot.data!.leaseData!.rentalAdress}',
+                                //     style:  TextStyle(
+                                //         color: grey,
+                                //         fontWeight: FontWeight.bold,
+                                //         fontSize: 15
+                                //     )),
+                              ],
+                            ),
+                            const Spacer(),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Material(
+                                    elevation: 3,
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                    child: Container(
+                                      height: 40,
+                                      width: 70,
+                                      decoration:  BoxDecoration(
+                                        color: blueColor,
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(7),
+                                        ),
+                                      ),
+                                      child: const Center(
+                                          child: Text(
+                                        "Back",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                        fontSize: 15),
+                                      )),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          children: [
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            DropdownButtonHideUnderline(
+                              child: Material(
+                                elevation: 3,
+                                child: DropdownButton2<String>(
+                                  isExpanded: true,
+                                  hint: const Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          '',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xFF8A95A8),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  items: items
+                                      .map((String item) => DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style:  TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: blueColor,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
+                                      .toList(),
+                                  value: _selectedValue,
+                                  onChanged: snapshot.data!.isMovedin!
+                                      ? null
+                                      : (value) async {
+                                          setState(() {
+                                            _selectedValue = value;
+                                            isapplicantupdate = true;
+                                          });
+                                          if (value != null) {
+                                            final rentalId =
+                                                snapshot.data!.leaseData!.rentalId;
+                                            final unitId =
+                                                snapshot.data!.leaseData!.unitId;
+
+                                            // Call the API to update the applicant status
+                                            bool success =
+                                                await updateApplicantStatus(
+                                                    widget.applicant_id!,
+                                                    value,
+                                                    rentalId!,
+                                                    unitId!);
+
+                                            if (success) {
+                                              print('Status update successful');
+                                              Navigator.pop(context,true);
+                                            } else {
+                                              print('Status update failed');
+                                            }
+                                          }
+                                        },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: MediaQuery.of(context).size.width < 500
+                                        ? 40
+                                        : 50,
+                                    width: MediaQuery.of(context).size.width < 500
+                                        ? MediaQuery.of(context).size.width * .34
+                                        : MediaQuery.of(context).size.width * .4,
+                                    padding:
+                                        const EdgeInsets.only(left: 14, right: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(2),
+                                      border: Border.all(
+                                        color: snapshot.data!.isMovedin!
+                                            ? Colors.grey
+                                            : Color(0xFF8A95A8),
+                                      ),
+                                      color: snapshot.data!.isMovedin!
+                                          ? Colors.grey.shade300
+                                          : Colors.white,
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 200,
+                                    width: 200,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    offset: const Offset(-20, 0),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(40),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 40,
+                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          _selectedValue == 'Rejected' || _selectedValue == "Select"
-                              ? Container()
-                              : ElevatedButton(
-                                  style: ButtonStyle(
-                                    elevation: MaterialStateProperty.all(3),
-                                    backgroundColor:
-                                        MaterialStateProperty.resolveWith<Color>(
-                                      (Set<MaterialState> states) {
-                                        if (states
-                                            .contains(MaterialState.disabled)) {
-                                          return Colors.grey; // Disabled color
-                                        }
-                                        return blueColor
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            _selectedValue == 'Rejected' || _selectedValue == "Select"
+                                ? Container()
+                                : ElevatedButton(
+                                    style: ButtonStyle(
+                                      elevation: MaterialStateProperty.all(3),
+                                      backgroundColor:
+                                          MaterialStateProperty.resolveWith<Color>(
+                                        (Set<MaterialState> states) {
+                                          if (states
+                                              .contains(MaterialState.disabled)) {
+                                            return Colors.grey; // Disabled color
+                                          }
+                                          return blueColor
 
 
-                  ; // Enabled color
-                                      },
-                                    ),
-                                    shape: MaterialStateProperty.all(
-                                      const RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(5)),
-                                      ),
-                                    ),
-                                    minimumSize: MaterialStateProperty.all(
-                                        const Size(80, 40)),
-                                  ),
-                                  onPressed: snapshot.data!.isMovedin!
-                                      ? null
-                                      : () {
-                                    Provider.of<SelectedCosignersProvider>(
-                                        context,
-                                        listen:
-                                        false)
-                                        .clearCosigner();
-                                    Provider.of<SelectedTenantsProvider>(
-                                        context,
-                                        listen:
-                                        false)
-                                        .clearTenant();
-                                    Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => addLease3(
-                                                applicantId: widget.applicant_id,
-                                                rentalId: snapshot
-                                                    .data!.leaseData!.rentalId,
-                                                unitId: snapshot
-                                                    .data!.leaseData!.unitId,
-                                                leaseId: snapshot.data?.leaseData?.leaseId,
-                                              ),
-                                            ),
-                                          );
-                                          print('applicant lease ${snapshot.data?.leaseData?.leaseId}');
+                    ; // Enabled color
                                         },
-                                  child: const Center(
-                                    child: Text(
-                                      "MOVE IN",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                      ),
+                                      shape: MaterialStateProperty.all(
+                                        const RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.all(Radius.circular(5)),
+                                        ),
+                                      ),
+                                      minimumSize: MaterialStateProperty.all(
+                                          const Size(80, 40)),
+                                    ),
+                                    onPressed: snapshot.data!.isMovedin!
+                                        ? null
+                                        : () {
+                                      Provider.of<SelectedCosignersProvider>(
+                                          context,
+                                          listen:
+                                          false)
+                                          .clearCosigner();
+                                      Provider.of<SelectedTenantsProvider>(
+                                          context,
+                                          listen:
+                                          false)
+                                          .clearTenant();
+                                      Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => addLease3(
+                                                  applicantId: widget.applicant_id,
+                                                  rentalId: snapshot
+                                                      .data!.leaseData!.rentalId,
+                                                  unitId: snapshot
+                                                      .data!.leaseData!.unitId,
+                                                  leaseId: snapshot.data?.leaseData?.leaseId,
+                                                ),
+                                              ),
+                                            );
+                                            print('applicant lease ${snapshot.data?.leaseData?.leaseId}');
+                                          },
+                                    child: const Center(
+                                      child: Text(
+                                        "MOVE IN",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                        ],
-                      ),
-                      /* Row(
-                        children: [
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                              '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}',
-                              style: TextStyle(
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12)),
-                        ],
-                      ),*/
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 2,right: 2,top: 5,bottom: 5),
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          height: 50,
-                         margin: EdgeInsets.all(5),
-                         decoration: BoxDecoration(
-                           border: Border.all(color: blueColor)
-                               ,borderRadius: BorderRadius.circular(5)
-                         ),
-                         // color: Colors.red,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = 0;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: _selectedIndex == 0 ? blueColor : Colors.white,
-                                        borderRadius: BorderRadius.circular(5)
+                          ],
+                        ),
+                        /* Row(
+                          children: [
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                                '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}',
+                                style: TextStyle(
+                                    color: Color(0xFF8A95A8),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12)),
+                          ],
+                        ),*/
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 2,right: 2,top: 5,bottom: 5),
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            height: 50,
+                           margin: EdgeInsets.all(5),
+                           decoration: BoxDecoration(
+                             border: Border.all(color: blueColor)
+                                 ,borderRadius: BorderRadius.circular(5)
+                           ),
+                           // color: Colors.red,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = 0;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _selectedIndex == 0 ? blueColor : Colors.white,
+                                          borderRadius: BorderRadius.circular(5)
+                                      ),
+                                      child: Center(child: Text("Summary",style: TextStyle(color:  _selectedIndex != 0 ? blueColor : Colors.white,fontWeight: FontWeight.bold),)),
                                     ),
-                                    child: Center(child: Text("Summary",style: TextStyle(color:  _selectedIndex != 0 ? blueColor : Colors.white,fontWeight: FontWeight.bold),)),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = 1;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: _selectedIndex == 1 ? blueColor : Colors.white,
-                                      borderRadius: BorderRadius.circular(5)
-                                    ),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = 1;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: _selectedIndex == 1 ? blueColor : Colors.white,
+                                        borderRadius: BorderRadius.circular(5)
+                                      ),
 
-                                    child: Center(child: Text("Application",style: TextStyle(color:  _selectedIndex != 1 ? blueColor : Colors.white,fontWeight: FontWeight.bold))),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = 2;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: _selectedIndex == 2 ? blueColor : Colors.white,
-                                        borderRadius: BorderRadius.circular(5)
+                                      child: Center(child: Text("Application",style: TextStyle(color:  _selectedIndex != 1 ? blueColor : Colors.white,fontWeight: FontWeight.bold))),
                                     ),
-                                    child: Center(child: Text("Approved",style: TextStyle(color:  _selectedIndex != 2 ? blueColor : Colors.white,fontWeight: FontWeight.bold))),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = 3;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: _selectedIndex == 3 ? blueColor : Colors.white,
-                                        borderRadius: BorderRadius.circular(5)
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = 2;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _selectedIndex == 2 ? blueColor : Colors.white,
+                                          borderRadius: BorderRadius.circular(5)
+                                      ),
+                                      child: Center(child: Text("Approved",style: TextStyle(color:  _selectedIndex != 2 ? blueColor : Colors.white,fontWeight: FontWeight.bold))),
                                     ),
-                                    child: Center(child: Text("Rejected",style: TextStyle(color:  _selectedIndex != 3 ? blueColor : Colors.white,fontWeight: FontWeight.bold))),
                                   ),
                                 ),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = 3;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _selectedIndex == 3 ? blueColor : Colors.white,
+                                          borderRadius: BorderRadius.circular(5)
+                                      ),
+                                      child: Center(child: Text("Rejected",style: TextStyle(color:  _selectedIndex != 3 ? blueColor : Colors.white,fontWeight: FontWeight.bold))),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        _buildTabContent(snapshot.data!),
+
+                       /* Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          height: 60,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color:blueColor),
+                            // color: Colors.blue,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: TabBar(
+                            controller: _tabController,
+                            dividerColor: Colors.transparent,
+                            indicatorWeight: 5,
+                            //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
+                            indicatorColor:blueColor,
+                            labelColor:blueColor,
+                            unselectedLabelColor:blueColor,
+                            tabs: [
+                              const Tab(text: 'Summary'),
+                              const Tab(
+                                text: 'Application',
+                              ),
+                              const Tab(
+                                text: 'Approved',
+                              ),
+                              StatefulBuilder(
+                                builder: (BuildContext context,
+                                    void Function(void Function()) setState) {
+                                  return const Tab(text: 'Rejected');
+                                },
                               ),
                             ],
                           ),
                         ),
-                      ),
-
-                      _buildTabContent(snapshot.data!),
-
-                     /* Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-                        height: 60,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color:blueColor),
-                          // color: Colors.blue,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: TabBar(
-                          controller: _tabController,
-                          dividerColor: Colors.transparent,
-                          indicatorWeight: 5,
-                          //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-                          indicatorColor:blueColor,
-                          labelColor:blueColor,
-                          unselectedLabelColor:blueColor,
-                          tabs: [
-                            const Tab(text: 'Summary'),
-                            const Tab(
-                              text: 'Application',
-                            ),
-                            const Tab(
-                              text: 'Approved',
-                            ),
-                            StatefulBuilder(
-                              builder: (BuildContext context,
-                                  void Function(void Function()) setState) {
-                                return const Tab(text: 'Rejected');
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            SummaryContent(
-                              applicant_id: widget.applicant_id!,
-                              summery: snapshot.data!,
-                            ),
-                            ApplicantContent(
-                              applicant_id: widget.applicant_id!,
-                              applicantDetail: snapshot.data!,
-                            ),
-                            ApprovedContent(
-                              applicantId: widget.applicant_id!,
-                              applicantDetail: snapshot.data!,
-                            ),
-                            RejectedContent(
-                              applicantId: widget.applicant_id!,
-                              applicantDetail: snapshot.data!,
-                            ),
-                            *//*  SummaryPage(),
-                            FinancialTable(
-                                leaseId: widget.leaseId,
-                                status:
-                                '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}'),
-                            Tenant(context),*//*
-                          ],
-                        ),
-                      ),*/
-                    ],
-                  ),
-                );
-              }
-            }),
-      ):SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
-            ),
-            Text(
-              'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
+                        Expanded(
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              SummaryContent(
+                                applicant_id: widget.applicant_id!,
+                                summery: snapshot.data!,
+                              ),
+                              ApplicantContent(
+                                applicant_id: widget.applicant_id!,
+                                applicantDetail: snapshot.data!,
+                              ),
+                              ApprovedContent(
+                                applicantId: widget.applicant_id!,
+                                applicantDetail: snapshot.data!,
+                              ),
+                              RejectedContent(
+                                applicantId: widget.applicant_id!,
+                                applicantDetail: snapshot.data!,
+                              ),
+                              *//*  SummaryPage(),
+                              FinancialTable(
+                                  leaseId: widget.leaseId,
+                                  status:
+                                  '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}'),
+                              Tenant(context),*//*
+                            ],
+                          ),
+                        ),*/
+                      ],
+                    ),
+                  );
+                }
+              }),
+        ):SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Lottie.asset(
+                'assets/no_internet.json',
+                width: 200,
+                height: 200,
+                fit: BoxFit.fill,
+              ),
+              Text(
+                'No Internet',
+                style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Check your internet connection',
+                style: TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
         ),
       ),
     );

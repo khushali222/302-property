@@ -579,6 +579,12 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     DateTime time = DateTime.now();
     DateTime date = DateFormat('yyyy-MM-dd').parse(time.toString());
     _futureDailytrnsaction = fetchDelinquentTenantsData(formatDate(date.toString()), formatDate(date.toString()));
+    // If data is available, show the table automatically
+    if (_futureDailytrnsaction != null) {
+      setState(() {
+        showTableData = true;
+      });
+    }
   }
 
   Future<DailyTransactionReportData> fetchDelinquentTenantsData(String fromDate, String toDate, {String? charge}) async {
@@ -1718,7 +1724,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 children: [
                   const SizedBox(height: 16),
                   titleBar(
-                    title: 'Rental Owner Report',
+                    title: 'Daily Transaction Report',
                     width: MediaQuery.of(context).size.width * .91,
                   ),
                   if (MediaQuery.of(context).size.width > 500) const SizedBox(height: 16),

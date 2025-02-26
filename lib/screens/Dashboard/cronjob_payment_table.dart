@@ -2,17 +2,20 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../../Model/Dashbord_table/cronjob_payment_table.dart';
 
 import '../../constant/constant.dart';
 
 import '../../provider/dateProvider.dart';
-
+import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+import '../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
 import '../../repository/dashboard_table_repo/cronjob_payment_table.dart';
 import '../../widgets/CustomTableShimmer.dart';
 
@@ -60,6 +63,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
+
+  final TextEditingController startDateController = TextEditingController();
+  DateTime? _startDate;
+  final TextEditingController endDateController = TextEditingController();
   Widget _buildHeaders(List<LeaseDatacronjob> policyList) {
     var width = MediaQuery.of(context).size.width;
     return Column(
@@ -474,6 +481,174 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
 
   ConnectivityResult? _connectivityResult;
   final _scrollController = ScrollController();
+  bool failureacknowledged = true;
+  void _showAlertAcknowledgement(
+    BuildContext context,
+    String id,
+    bool failureacknowledged,
+  ) {
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Payment Acknowledgement",
+      desc: "Are you sure you want to acknowledge this payment as Failed?",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Confirm",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            var data = await PaymentCronjobRepository().Paymentacknowledge(
+                paymentid: id, failureacknowledged: failureacknowledged);
+            // Add your delete logic here
+            if (data != null)
+              setState(() {
+                futurecronjobpayment =
+                    cronjob_payment_tableService().fetchCronjob_payment();
+              });
+            Navigator.pop(context);
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+      ],
+    ).show();
+  }
+
+  void _showAlertRetry(BuildContext context, String id) {
+    TextEditingController retrydate = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Payment Retry",
+      desc:
+          "Please select a payment date to retry. The date must be tomorrow or later :",
+      content: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 60,
+            child: CustomTextField(
+              onTap: () async {
+                DateTime now = DateTime.now();
+                DateTime tomorrow = now.add(Duration(days: 1));
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: tomorrow,
+                  firstDate:
+                      tomorrow, // Restrict selection to tomorrow and future dates
+                  lastDate: DateTime(2101),
+                  locale: const Locale('en', 'US'),
+                  builder: (BuildContext context, Widget? child) {
+                    return Theme(
+                      data: ThemeData.light().copyWith(
+                        colorScheme: ColorScheme.light(
+                          primary: blueColor, // header background color
+                          onPrimary: Colors.white, // header text color
+                          onSurface: blueColor, // body text color
+                        ),
+                        textButtonTheme: TextButtonThemeData(
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: blueColor, // button text color
+                          ),
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+
+                if (pickedDate != null) {
+                  setState(() {
+                    retrydate.text =
+                        pickedDate.toLocal().toString().split(' ')[0];
+                    // This ensures the date appears as selected in yyyy-MM-dd format
+                  });
+                }
+              },
+              readOnnly: true,
+              suffixIcon: IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.date_range_rounded),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select end date';
+                }
+                return null;
+              },
+              optional: true,
+              keyboardType: TextInputType.text,
+              hintText: 'Select a date',
+              controller: retrydate,
+            ),
+          ),
+
+          // if (_errorText)
+          //   Text(
+          //     "Please fill in all fields correctly.",
+          //     style: TextStyle(color: Colors.redAccent),
+          //   ),
+        ],
+      ),
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Confirm",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          // onPressed: (){},
+          onPressed: () async {
+            if (retrydate.text.isEmpty) {
+              // setState(() {
+              //  _errorText == true;
+              // });
+              Fluttertoast.showToast(msg: "Please select the retry date");
+            } else {
+              var data = await PaymentCronjobRepository().PaymentRetry(
+                retryDate: retrydate.text,
+                paymentid: id,
+              );
+              // Add your delete logic here
+              if (data != null)
+                setState(() {
+                  futurecronjobpayment =
+                      cronjob_payment_tableService().fetchCronjob_payment();
+                });
+              Navigator.pop(context);
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+      ],
+    ).show();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -495,38 +670,36 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return
-                      Container(
-
-                        child: Center(
-                          child: Column(
-                            children: [
-                              _buildHeaders([]),
-                              // Container(
-                              //   padding: EdgeInsets.all(10),
-                              //   decoration: BoxDecoration(
-                              //     color: Colors.grey.shade300, // Background color
-                              //     borderRadius: BorderRadius.only(
-                              //       bottomLeft: Radius.circular(13),
-                              //       bottomRight: Radius.circular(13),
-                              //     ),
-                              //   ),
-                              //   child: Center(
-                              //     child: Text(
-                              //       "No policies are expiring within 90 days.",
-                              //       textAlign: TextAlign.center,
-                              //       style: TextStyle(
-                              //         fontWeight: FontWeight.bold,
-                              //         color: blueColor,
-                              //         fontSize: 14,
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
-                          ),
+                    return Container(
+                      child: Center(
+                        child: Column(
+                          children: [
+                            _buildHeaders([]),
+                            // Container(
+                            //   padding: EdgeInsets.all(10),
+                            //   decoration: BoxDecoration(
+                            //     color: Colors.grey.shade300, // Background color
+                            //     borderRadius: BorderRadius.only(
+                            //       bottomLeft: Radius.circular(13),
+                            //       bottomRight: Radius.circular(13),
+                            //     ),
+                            //   ),
+                            //   child: Center(
+                            //     child: Text(
+                            //       "No policies are expiring within 90 days.",
+                            //       textAlign: TextAlign.center,
+                            //       style: TextStyle(
+                            //         fontWeight: FontWeight.bold,
+                            //         color: blueColor,
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
                         ),
-                      );
+                      ),
+                    );
                   } else {
                     var data = snapshot.data!;
                     if (selectedValue == null && searchvalue!.isEmpty) {
@@ -880,6 +1053,95 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                                 .size
                                                                 .width *
                                                             .03),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 15),
+                                                Row(
+                                                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      child: GestureDetector(
+                                                        onTap: () async {
+                                                          _showAlertAcknowledgement(
+                                                              context,
+                                                              Propertytype.id!,
+                                                              failureacknowledged);
+                                                        },
+                                                        child: Container(
+                                                          height: 40,
+                                                          decoration: BoxDecoration(
+                                                              color: Colors
+                                                                      .grey[
+                                                                  350]), // color:Colors.grey[100],
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .check,
+                                                                size: 15,
+                                                                color:
+                                                                    blueColor,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Expanded(
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          _showAlertRetry(
+                                                              context,
+                                                              Propertytype.id!);
+                                                        },
+                                                        child: Container(
+                                                          height: 40,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      350]),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .rotateRight,
+                                                                size: 15,
+                                                                color:
+                                                                    blueColor,
+                                                              ),
+                                                              // SizedBox(
+                                                              //   width: 10,
+                                                              // ),
+                                                              // Text(
+                                                              //   "Delete",
+                                                              //   style: TextStyle(
+                                                              //       color:
+                                                              //       blueColor,
+                                                              //       fontWeight:
+                                                              //       FontWeight
+                                                              //           .bold),
+                                                              // ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ],

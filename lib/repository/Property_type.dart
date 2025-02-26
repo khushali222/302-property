@@ -103,7 +103,7 @@ class PropertyTypeRepository {
 
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to add property type');
+      throw Exception('Failed to edit property type');
     }
   }
 

@@ -486,7 +486,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       final result = await Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (context) => Add_rentalowners()));
-                      if (result == true) {
+                      if (result != "") {
                         setState(() {
                           futureRentalOwners =
                               RentalOwnerService().fetchRentalOwners("");

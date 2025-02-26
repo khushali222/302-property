@@ -35,75 +35,105 @@ class RentalOwnerService {
       // throw Exception('Failed to load data');
     }
   }
-  // Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
-  //   final response = await http.post(
-  //     Uri.parse("$Api_url/api/rental_owner/rental_owner"),
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: jsonEncode(rentalOwner.toJson()),
-  //   );
-  //
-  //   print(response.body);
-  //   if (response.statusCode == 200 || response.statusCode == 201) {
-  //     // Success
-  //     print('Rental owner added successfully');
-  //     return true;
-  //   } else {
-  //     // Failure
-  //     return false;
-  //     throw Exception('Failed to add rental owner');
-  //   }
-  // }
-
-
-  Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
+  Future<String?> addRentalOwner(RentalOwnerData rentalOwner) async {
     final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? adminid = prefs.getString("adminId");
-    String? id = prefs.getString("staff_id");
+    String? id = prefs.getString('adminId');
+
     print(url);
     print(rentalOwner.processorList!.length);
-    print(' Body: ${jsonEncode(rentalOwner.toJson())}');
+    print('Body: ${jsonEncode(rentalOwner.toJson())}');
+
     try {
       final response = await http.post(
         url,
         headers: {
-          "authorization" : "CRM $token",
-          "id":"CRM $id",
-          'Content-Type': 'application/json'},
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json',
+        },
         body: jsonEncode(rentalOwner.toJson()),
       );
-       print(jsonEncode(rentalOwner.toJson()));
+
       var responseData = jsonDecode(response.body);
       print(responseData);
-     print(response.body);
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
-          Fluttertoast.showToast(
-              msg: responseData['message'] ?? 'Successfully added rentalowners');
+          String rentalOwnerId = responseData['data']['rentalowner_id']; // Extracting rentalOwnerId
+          print('Rental Owner ID: $rentalOwnerId');
 
-          return true;
-        } else {
-          print('Failed to add rentalowners: ${responseData}');
           Fluttertoast.showToast(
-              msg: responseData['message'] ?? 'Failed to add rentalowners');
-          return false;
+              msg: responseData['message'] ?? 'Successfully added rental owner');
+          return rentalOwnerId;
+        } else {
+          print('Failed to add rental owner: $responseData');
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to add rental owner');
+          return null;
         }
       } else {
-        print('Failed to add tenant: ${responseData}');
+        print('Failed to add rental owner: $responseData');
         Fluttertoast.showToast(
-            msg: responseData['message'] ?? 'Failed to add rentalowners');
-        return false;
+            msg: responseData['message'] ?? 'Failed to add rental owner');
+        return null;
       }
     } catch (error) {
       print('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
-      return false;
+      return null;
     }
   }
+
+
+  // Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
+  //   final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   String? adminid = prefs.getString("adminId");
+  //   String? id = prefs.getString("staff_id");
+  //   print(url);
+  //   print(rentalOwner.processorList!.length);
+  //   print(' Body: ${jsonEncode(rentalOwner.toJson())}');
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {
+  //         "authorization" : "CRM $token",
+  //         "id":"CRM $id",
+  //         'Content-Type': 'application/json'},
+  //       body: jsonEncode(rentalOwner.toJson()),
+  //     );
+  //      print(jsonEncode(rentalOwner.toJson()));
+  //     var responseData = jsonDecode(response.body);
+  //     print(responseData);
+  //    print(response.body);
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       if (responseData['statusCode'] == 200) {
+  //         print('Response successfully: ${responseData['data']}');
+  //         Fluttertoast.showToast(
+  //             msg: responseData['message'] ?? 'Successfully added rentalowners');
+  //
+  //         return true;
+  //       } else {
+  //         print('Failed to add rentalowners: ${responseData}');
+  //         Fluttertoast.showToast(
+  //             msg: responseData['message'] ?? 'Failed to add rentalowners');
+  //         return false;
+  //       }
+  //     } else {
+  //       print('Failed to add tenant: ${responseData}');
+  //       Fluttertoast.showToast(
+  //           msg: responseData['message'] ?? 'Failed to add rentalowners');
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     print('Exception occurred: $error');
+  //     Fluttertoast.showToast(msg: 'An error occurred');
+  //     return false;
+  //   }
+  // }
 
   // Future<void> updateRentalOwner(RentalOwnerData rentalOwner) async {
   //

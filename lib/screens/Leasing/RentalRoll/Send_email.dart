@@ -27,58 +27,28 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
   }
 
   List<String> events = ['Invitation', 'Lease Creation', 'Lease and Reminder'];
-  List<Map<String, String>> tenants = [];
-  List<String> selectedTenants = [];
+  List<Map<String, dynamic>> tenants = [];
+  List selectedTenants = [];
+
   Future<void> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print("token $token");
-    print("Admin $id");
     final response = await http.get(
-      Uri.parse('$Api_url/api/leases/lease_tenant/${id}'),
-      headers: {"id": "CRM $id", "authorization": "CRM $token"},
-    );
-
+    Uri.parse("${Api_url}/api/tenant/lease-tenant/${adminId}"),
+    headers: {
+    "authorization": "CRM $token",
+    "id": "CRM $adminId",
+    });
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      print(data);
-      final List<Map<String, String>> fetchedTenants = [];
-      //print(firstName.text = data['tenant_firstName'] ?? "");
-      for (var tenant in data['data']['tenants']) {
-        fetchedTenants.add({
-          'tenant_id': tenant['tenant_id'],
-          'tenant_name':
-              '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
-          'tenant_firstname': '${tenant['tenant_firstName']}',
-          'tenant_lastName': '${tenant['tenant_lastName']}',
-          'tenant_email': '${tenant['tenant_email']}',
-          'tenant_phoneNumber': '${tenant['tenant_phoneNumber']}',
-          'rental_adress': "${data['data']['rental_adress']}",
-          'rental_city': "${data['data']['rental_city']}",
-          'rental_state': "${data['data']['rental_state']}",
-          'rental_country': "${data['data']['rental_country']}",
-          'rental_zip': "${data['data']['rental_zip']}",
-          'tenant_firstName': '${tenant['tenant_firstName']}',
-          'tenant_lastName': '${tenant['tenant_lastName']}',
-          'tenant_email': '${tenant['tenant_email']}',
-          'tenant_phoneNumber':
-              formatPhoneNumberedit('${tenant['tenant_phoneNumber']}'),
-          'rental_adress': "${data['data']['rental_adress']}",
-          'rental_city': "${data['data']['rental_city']}",
-          'rental_state': "${data['data']['rental_state']}",
-          'rental_country': "${data['data']['rental_country']}",
-          'rental_zip': "${data['data']['rental_zip']}",
+      final data = json.decode(response.body);
+      if (data["data"] != null) {
+        setState(() {
+          tenants = List<Map<String, dynamic>>.from(data["data"]);
         });
       }
-      final rentalAddress = {
-        'rental_adress': data['data']['rental_adress'] ?? "",
-      };
-      setState(() {
-        tenants = fetchedTenants;
-      });
     } else {
-      throw Exception('Failed to load tenants');
+      throw Exception("Failed to load tenants");
     }
   }
 
@@ -106,43 +76,47 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: PopupMenuButton<String>(
-                  onSelected: (String tenantId) {
-                    setState(() {
-                      if (selectedTenants.contains(tenantId)) {
-                        selectedTenants.remove(tenantId);
-                      } else {
-                        selectedTenants.add(tenantId);
-                      }
-                    });
-                  },
+                  onSelected: (String tenantId) {}, // Do nothing here, handle in onChanged
                   itemBuilder: (context) {
                     return tenants.map((tenant) {
                       return PopupMenuItem<String>(
-                        value: tenant['tenant_id']!,
+                        value: tenant['tenant_id'],
                         child: StatefulBuilder(
                           builder: (context, setStatePopup) {
-                            return Row(
-                              children: [
-                                Checkbox(
-                                  value: selectedTenants.contains(tenant['tenant_id']),
-                                  onChanged: (bool? value) {
-                                    setStatePopup(() {
-                                      if (value == true) {
-                                        selectedTenants.add(tenant['tenant_id']!);
-                                      } else {
-                                        selectedTenants.remove(tenant['tenant_id']);
-                                      }
-                                    });
-                                    setState(() {}); // Ensure UI updates
-                                  },
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    tenant['tenant_name'] ?? "",
-                                    overflow: TextOverflow.ellipsis,
+                            return InkWell(
+                              onTap: () {
+                                setStatePopup(() {
+                                  if (selectedTenants.contains(tenant['tenant_id'])) {
+                                    selectedTenants.remove(tenant['tenant_id']);
+                                  } else {
+                                    selectedTenants.add(tenant['tenant_id']);
+                                  }
+                                });
+                                setState(() {}); // Update parent widget
+                              },
+                              child: Row(
+                                children: [
+                                  Checkbox(
+                                    value: selectedTenants.contains(tenant['tenant_id']),
+                                    onChanged: (bool? value) {
+                                      setStatePopup(() {
+                                        if (value == true) {
+                                          selectedTenants.add(tenant['tenant_id']);
+                                        } else {
+                                          selectedTenants.remove(tenant['tenant_id']);
+                                        }
+                                      });
+                                      setState(() {}); // Ensure UI updates
+                                    },
                                   ),
-                                ),
-                              ],
+                                  Expanded(
+                                    child: Text(
+                                      tenant['tenant_firstName'] + " " + tenant['tenant_lastName'],
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           },
                         ),
@@ -155,7 +129,11 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
                       Text(
                         selectedTenants.isEmpty
                             ? "Select Tenants"
-                            : "${selectedTenants.length} Selected",
+                            : selectedTenants.map((id) {
+                          final tenant = tenants.firstWhere(
+                                (tenant) => tenant['tenant_id'] == id);
+                          return tenant != null ? "${tenant['tenant_firstName']} ${tenant['tenant_lastName']}" : "";
+                        }).where((name) => name.isNotEmpty).join(", "),
                       ),
                       Icon(Icons.arrow_drop_down),
                     ],
@@ -163,7 +141,6 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
                 ),
               ),
             ),
-
             SizedBox(height: 10),
 
             // Subject Input Field

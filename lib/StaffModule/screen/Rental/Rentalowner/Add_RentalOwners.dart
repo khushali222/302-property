@@ -1,8 +1,11 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -253,7 +256,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       ],
     );
   }
-
+  bool creditcard = false;
+  bool debitcard = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -2706,6 +2710,120 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
             ),
           ),
           SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25),
+            child: Material(
+              elevation: 6,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: blueColor),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25, right: 25, top: 20, bottom: 30),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Card Transaction Type \nManagement ",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                // fontSize: 18
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 20
+                                    : 25),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Select the type of card you wish to \naccept",
+                            style: TextStyle(
+                                color: Color(0xFF8A95A8),
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 15
+                                    : 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Checkbox(value: creditcard, onChanged: (value) {
+                                setState(() {
+
+                                  creditcard = value!;
+                                });
+                              },activeColor: blueColor,),
+                            ),
+                            SizedBox(width: 10),
+                            Text("Credit Card",style: TextStyle(
+                                fontSize: 16
+                            ),)
+
+                          ],
+                        ),
+                      ),
+                      Container(
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Checkbox(value: debitcard, onChanged: (value) {
+                                setState(() {
+                                  debitcard = value!;
+                                });
+                              },activeColor: blueColor),
+                            ),
+                            SizedBox(width: 10),
+                            Text("Debit Card",style: TextStyle(
+                                fontSize: 16
+                            ),)
+
+                          ],
+                        ),
+                      ),
+
+
+
+
+
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
             height: 20,
           ),
           Row(
@@ -3042,12 +3160,16 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     // }
                     RentalOwnerService()
                         .addRentalOwner(rentalOwner)
-                        .then((result) {
+                        .then((result) async {
                       setState(() {
                         loading = false;
                       });
-                      if (result) {
+                      if (result != "") {
+                        print("sucess");
                         Navigator.of(context).pop(result);
+                        await updatePaymentSettings(result);
+                        print('rentaloid ${result}');
+
                       } else {
                         print("Failed to add rental owner");
                       }
@@ -3109,5 +3231,54 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         ],
       ),
     );
+  }
+  bool isloading = false;
+  Future<void> updatePaymentSettings(String? rentalownerId) async {
+    if (!mounted) return; // Prevents calling setState if widget is disposed
+
+    setState(() {
+      isloading = true;
+    });
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+
+      final url = '${Api_url}/api/payment/rental_owner/setting';
+      final headers = {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+
+      final body = json.encode({
+        "creditCardAccepted": creditcard,
+        "debitCardAccepted": debitcard,
+        "rentalOwnerId": rentalownerId ?? "",
+      });
+
+      final response = await http.post(Uri.parse(url), headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        //Fluttertoast.showToast(msg: responseData["message"]);
+      } else {
+        final responseData = json.decode(response.body);
+        throw Exception(responseData["message"] ?? 'Failed to update card type');
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An error occurred: $error')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isloading = false;
+        });
+      }
+    }
   }
 }
