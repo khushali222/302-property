@@ -503,15 +503,16 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
+            Navigator.pop(context);
             var data = await PaymentCronjobRepository().Paymentacknowledge(
-                paymentid: id, failureacknowledged: failureacknowledged);
+                paymentid: id, failureacknowledged: failureacknowledged, context: context);
             // Add your delete logic here
             if (data != null)
               setState(() {
                 futurecronjobpayment =
                     cronjob_payment_tableService().fetchCronjob_payment();
               });
-            Navigator.pop(context);
+
           },
           color: blueColor,
         ),
@@ -623,9 +624,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               // });
               Fluttertoast.showToast(msg: "Please select the retry date");
             } else {
+              Navigator.pop(context);
               var data = await PaymentCronjobRepository().PaymentRetry(
                 retryDate: retrydate.text,
-                paymentid: id,
+                paymentid: id, context: context,
               );
               // Add your delete logic here
               if (data != null)
@@ -633,7 +635,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   futurecronjobpayment =
                       cronjob_payment_tableService().fetchCronjob_payment();
                 });
-              Navigator.pop(context);
+              // Navigator.pop(context);
             }
           },
           color: blueColor,

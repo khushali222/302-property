@@ -369,7 +369,7 @@ class CustomTimeAgo extends timeago.EnMessages {
   @override
   String hours(int hours) => '$hours hours';
   @override
-  String aDay(int hours) => 'yesterday';
+  String aDay(int hours) => '1 day';
   @override
   String days(int days) {
     if (days >= 28) {

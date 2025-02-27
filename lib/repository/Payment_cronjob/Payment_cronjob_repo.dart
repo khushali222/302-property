@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constant/constant.dart';
@@ -8,6 +11,7 @@ import '../../constant/constant.dart';
 class PaymentCronjobRepository {
   final String apiUrl = '${Api_url}/api/payment/payment_acknowledge';
   Future<Map<String, dynamic>> Paymentacknowledge({
+    required BuildContext context,
     String? paymentid,
     bool? failureacknowledged = false,
   }) async {
@@ -34,8 +38,28 @@ class PaymentCronjobRepository {
     print('responce of crojob Acknowledgement ${response.body}');
 
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(
-          msg: responseData["message"] ?? "Acknowledgment successful");
+      // Fluttertoast.showToast(
+      //     msg: responseData["message"] ?? "Acknowledgment successful");
+      Alert(
+        context: context,
+        type: AlertType.success,
+        title: "Success",
+        desc:
+        responseData["message"] ?? "Failed Payment Acknowledge Successfully!",
+        style: AlertStyle(
+          backgroundColor: Colors.white,
+        ),
+        buttons: [
+          DialogButton(
+            child: Text(
+              "Ok",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            onPressed: () => Navigator.pop(context),
+            color: blueColor,
+          ),
+        ],
+      ).show();
       return responseData;
       // return json.decode(response.body);
     } else {
@@ -46,6 +70,7 @@ class PaymentCronjobRepository {
   }
 
   Future<Map<String, dynamic>> PaymentRetry({
+    required BuildContext context,
     String? paymentid,
     String? retryDate,
   }) async {
@@ -72,12 +97,35 @@ class PaymentCronjobRepository {
     print('responce of crojob Retry ${response.body}');
 
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(
-          msg: responseData["message"] ?? "Payment retry scheduled successfully!");
+      // Fluttertoast.showToast(
+      //     msg: responseData["message"] ??
+      //         "Payment retry scheduled successfully!");
+
+      Alert(
+        context: context,
+        type: AlertType.success,
+        title: "Success",
+        desc:
+            responseData["message"] ?? "Payment retry scheduled successfully!",
+        style: AlertStyle(
+          backgroundColor: Colors.white,
+        ),
+        buttons: [
+          DialogButton(
+            child: Text(
+              "Ok",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            onPressed: () => Navigator.pop(context),
+            color: blueColor,
+          ),
+        ],
+      ).show();
       return responseData;
       // return json.decode(response.body);
     } else {
-      Fluttertoast.showToast(msg: responseData["message"] ?? "Payment retry scheduled failed");
+      Fluttertoast.showToast(
+          msg: responseData["message"] ?? "Payment retry scheduled failed");
       throw Exception('Failed to Acknowledgement payment');
     }
   }
