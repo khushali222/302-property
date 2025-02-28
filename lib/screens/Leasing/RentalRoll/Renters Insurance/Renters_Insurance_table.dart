@@ -585,8 +585,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                           //     .clearApplicant();
                           final result = await Navigator.of(context)
                               .push(MaterialPageRoute(
-                              builder: (context) => SendEmailScreen(
-                                leaseId: widget.leaseId,
+                              builder: (context) => EmailTemplateScreen(
+                                // leaseId: widget.leaseId,
                               )));
                           if (result == true) {
                             setState(() {

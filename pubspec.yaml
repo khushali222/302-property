@@ -100,7 +100,7 @@ dependencies:
   syncfusion_flutter_pdfviewer:
   badges: ^3.1.2
   html:
-  vsc_quill_delta_to_html:
+  html_editor_enhanced:
   # pdf:
 
 

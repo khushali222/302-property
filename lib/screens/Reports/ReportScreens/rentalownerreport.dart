@@ -2754,7 +2754,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             ),
     );
   }
-
+    
   String _getDisplayValue(String? value) {
     // Return 'N/A' if the value is null or empty, otherwise return the value
     return (value == null || value.trim().isEmpty) ? 'N/A' : value;
