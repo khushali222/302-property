@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -3674,39 +3674,63 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                               child: ClipRRect(
                                                 borderRadius: BorderRadius.circular(10),
                                                 child: isMp4
-                                                    ? FutureBuilder<String?>(
-                                                  future: generateNetworkVideoThumbnail("$image_url$fileUrl"),
-                                                  builder: (context, snapshot) {
-                                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                                      return Center(
-                                                          child: SpinKitFadingCircle(
-                                                            color: Colors.black,
-                                                            size: 40.0,
-                                                          ));
-                                                    } else if (snapshot.hasData && snapshot.data != null) {
-                                                      return  GestureDetector(
-                                                        onTap: (){
-                                                          _showVideoDialog('$image_url$fileUrl');
-                                                        },
-                                                        child: Stack(
-                                                          alignment: Alignment.center,
-                                                          children: [
-                                                            Image.file(
-                                                              File(snapshot.data!),
-                                                              height: 100,
-                                                              width: 100,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                            Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
-                                                          ],
-                                                        ),
-                                                      );
-
-                                                    } else {
-                                                      return Icon(Icons.error);
-                                                    }
-                                                  },
+                                                    ?
+                                                Container(
+                                                  height: 80,
+                                                  width: 80,
+                                                  child: GestureDetector(
+                                                    onTap: (){
+                                                      _showVideoDialog('$image_url$fileUrl');
+                                                    },
+                                                    child: Stack(
+                                                      alignment: Alignment.center,
+                                                      children: [
+                                                        // Image.file(
+                                                        //   File(snapshot.data!),
+                                                        //   height: 100,
+                                                        //   width: 100,
+                                                        //   fit: BoxFit.cover,
+                                                        // ),
+                                                        VideoItem(url: '$image_url$fileUrl',),
+                                                        Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 )
+                                                // FutureBuilder<String?>(
+                                                //   future: generateNetworkVideoThumbnail("$image_url$fileUrl"),
+                                                //   builder: (context, snapshot) {
+                                                //     if (snapshot.connectionState == ConnectionState.waiting) {
+                                                //       return Center(
+                                                //           child: SpinKitFadingCircle(
+                                                //             color: Colors.black,
+                                                //             size: 40.0,
+                                                //           ));
+                                                //     } else if (snapshot.hasData && snapshot.data != null) {
+                                                //       return
+                                                //         GestureDetector(
+                                                //         onTap: (){
+                                                //           _showVideoDialog('$image_url$fileUrl');
+                                                //         },
+                                                //         child: Stack(
+                                                //           alignment: Alignment.center,
+                                                //           children: [
+                                                //             Image.file(
+                                                //               File(snapshot.data!),
+                                                //               height: 100,
+                                                //               width: 100,
+                                                //               fit: BoxFit.cover,
+                                                //             ),
+                                                //             Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                //           ],
+                                                //         ),
+                                                //       );
+                                                //
+                                                //     } else {
+                                                //       return Icon(Icons.error);
+                                                //     }
+                                                //   },
+                                                // )
                                                     : CachedNetworkImage(
                                                   imageUrl: "$image_url$fileUrl",
                                                   placeholder: (context, url) => Center(
@@ -3740,6 +3764,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 10,
                                   ),
                                   SizedBox(
+                                    height: 50,
                                     width: 300,
                                     child: Wrap(
                                       alignment: WrapAlignment.center,
@@ -3753,11 +3778,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       ],
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
+                                  // SizedBox(
+                                  //   height: 10,
+                                  // ),
                                 ],
                               )
+
                               /*  ListTile(
                             title: Text(
                               "Vendor",
@@ -3800,22 +3826,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   bool isVideo(String url) {
     return url.toLowerCase().endsWith(".mp4");
   }
-  Future<String?> generateNetworkVideoThumbnail(String videoUrl) async {
-    try {
-      final Directory tempDir = await getTemporaryDirectory();
-      final String thumbPath = '${tempDir.path}/thumbnail.png';
 
-      // Use FFmpeg to extract a frame from the video URL
-      await FFmpegKit.execute('-i $videoUrl -ss 00:00:01 -vframes 1 $thumbPath');
-
-      if (File(thumbPath).existsSync()) {
-        return thumbPath; // Return local path of thumbnail
-      }
-    } catch (e) {
-      print("Error generating thumbnail: $e");
-    }
-    return null;
-  }
 
 
   void showUpdateDialog(BuildContext context) {

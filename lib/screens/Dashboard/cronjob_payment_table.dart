@@ -505,14 +505,15 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           onPressed: () async {
             Navigator.pop(context);
             var data = await PaymentCronjobRepository().Paymentacknowledge(
-                paymentid: id, failureacknowledged: failureacknowledged, context: context);
+                paymentid: id,
+                failureacknowledged: failureacknowledged,
+                context: context);
             // Add your delete logic here
             if (data != null)
               setState(() {
                 futurecronjobpayment =
                     cronjob_payment_tableService().fetchCronjob_payment();
               });
-
           },
           color: blueColor,
         ),
@@ -534,6 +535,52 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       context: context,
       type: AlertType.warning,
       title: "Payment Retry",
+      desc: "Retry this payment now?",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Yes",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          // onPressed: (){},
+          onPressed: () async {
+            Navigator.pop(context);
+            var data = await PaymentCronjobRepository().PaymentRetry(
+              retryDate: retrydate.text,
+              paymentid: id,
+              context: context,
+            );
+            // Add your delete logic here
+            if (data != null)
+              setState(() {
+                futurecronjobpayment =
+                    cronjob_payment_tableService().fetchCronjob_payment();
+              });
+            // Navigator.pop(context);
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "No",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+      ],
+    ).show();
+  }
+
+  void _showAlertSchedule(BuildContext context, String id) {
+    TextEditingController retrydate = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Payment ReSchedule",
       desc:
           "Please select a payment date to retry. The date must be tomorrow or later :",
       content: Column(
@@ -625,9 +672,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               Fluttertoast.showToast(msg: "Please select the retry date");
             } else {
               Navigator.pop(context);
-              var data = await PaymentCronjobRepository().PaymentRetry(
+              var data = await PaymentCronjobRepository().PaymentReSchedule(
                 retryDate: retrydate.text,
-                paymentid: id, context: context,
+                paymentid: id,
+                context: context,
               );
               // Add your delete logic here
               if (data != null)
@@ -1123,6 +1171,55 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                               FaIcon(
                                                                 FontAwesomeIcons
                                                                     .rotateRight,
+                                                                size: 15,
+                                                                color:
+                                                                    blueColor,
+                                                              ),
+                                                              // SizedBox(
+                                                              //   width: 10,
+                                                              // ),
+                                                              // Text(
+                                                              //   "Delete",
+                                                              //   style: TextStyle(
+                                                              //       color:
+                                                              //       blueColor,
+                                                              //       fontWeight:
+                                                              //       FontWeight
+                                                              //           .bold),
+                                                              // ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Expanded(
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          _showAlertSchedule(
+                                                              context,
+                                                              Propertytype.id!);
+                                                        },
+                                                        child: Container(
+                                                          height: 40,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      350]),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .solidCalendarAlt,
                                                                 size: 15,
                                                                 color:
                                                                     blueColor,

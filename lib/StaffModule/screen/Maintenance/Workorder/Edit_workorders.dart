@@ -114,6 +114,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     fetchWorkordersDetails(widget.workorderId);
     partsAndLabor.clear();
   }
+
   String? initialSubject;
   String? initialPerform;
   String? initialVendorNote;
@@ -174,32 +175,37 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       initialSelectedpriority = fetchedDetails.priority;
       initialSelectedbillable = fetchedDetails.isBillable!;
       initialSelectedimage = fetchedDetails.workOrderImages;
-      initialSelectedparts = fetchedDetails.partsandchargeData?.map<Map<String, dynamic>>((data) {
-        TextEditingController qtyController = TextEditingController(text:data.partsQuantity!.toString() );
-        TextEditingController priceController = TextEditingController(text: data.partsPrice!.toString());
-        TextEditingController totalController = TextEditingController(text: data.amount!.toString());
-        TextEditingController subtotalcontroller = TextEditingController();
-        qtyController.addListener(() {
-          calculateTotal(qtyController, priceController, totalController,
-              subtotalcontroller);
-        });
-        priceController.addListener(() {
-          calculateTotal(qtyController, priceController, totalController,
-              subtotalcontroller);
-        });
-        print('part id ${data.partsQuantity}');
-        print('part account ${data.account}');
-        return {
-          "parts_id": data.partsId,
-          "qtyController": qtyController,
-          "selectedAccount": data.account ?? '',
-          "descriptionController":
-          TextEditingController(text: data.description ?? ''),
-          "priceController": priceController,
-          "totalController": totalController,
-        };
-      }).toList() ??
-          [];
+      initialSelectedparts =
+          fetchedDetails.partsandchargeData?.map<Map<String, dynamic>>((data) {
+                TextEditingController qtyController =
+                    TextEditingController(text: data.partsQuantity!.toString());
+                TextEditingController priceController =
+                    TextEditingController(text: data.partsPrice!.toString());
+                TextEditingController totalController =
+                    TextEditingController(text: data.amount!.toString());
+                TextEditingController subtotalcontroller =
+                    TextEditingController();
+                qtyController.addListener(() {
+                  calculateTotal(qtyController, priceController,
+                      totalController, subtotalcontroller);
+                });
+                priceController.addListener(() {
+                  calculateTotal(qtyController, priceController,
+                      totalController, subtotalcontroller);
+                });
+                print('part id ${data.partsQuantity}');
+                print('part account ${data.account}');
+                return {
+                  "parts_id": data.partsId,
+                  "qtyController": qtyController,
+                  "selectedAccount": data.account ?? '',
+                  "descriptionController":
+                      TextEditingController(text: data.description ?? ''),
+                  "priceController": priceController,
+                  "totalController": totalController,
+                };
+              }).toList() ??
+              [];
 
       //_imageUrls = fetchedDetails.workOrderImages ?? [];
       subject.text = fetchedDetails.workSubject!;
@@ -500,7 +506,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     'On Hold',
     'Completed',
     'Pending',
-        'Closed'
+    'Closed'
   ];
   final List<String> _account = [
     'Advertising',
@@ -888,11 +894,14 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       context: context,
       builder: (context) {
         return Container(
-          child: VideoPlayerDialog(videoUrl: videoFile,),
+          child: VideoPlayerDialog(
+            videoUrl: videoFile,
+          ),
         );
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -975,8 +984,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    blueColor,
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
@@ -1006,98 +1014,112 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           ),
                           _imageUrls.isNotEmpty
                               ? Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  child: Wrap(
-                                    spacing: 8.0, // Horizontal spacing between items
-                                    runSpacing: 8.0, // Vertical spacing between rows
-                                    children: List.generate(
-                                      _imageUrls.length,
-                                          (index) {
-                                        bool isMp4 = isVideo(_imageUrls[index]);
-                                        return Container(
-                                          width: 85,
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  SizedBox(width: 60),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        _imageUrls.removeAt(index);
-                                                      });
-                                                    },
-                                                    child: Icon(
-                                                      Icons.close,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  isMp4 ?  FutureBuilder<String?>(
-                                                    future: generateNetworkVideoThumbnail("$image_url${_imageUrls[index]}"),
-                                                    builder: (context, snapshot) {
-                                                      if (snapshot.connectionState == ConnectionState.waiting) {
-                                                        return Center(
-                                                            child: SpinKitFadingCircle(
-                                                              color: Colors.black,
-                                                              size: 40.0,
-                                                            ));
-                                                      } else if (snapshot.hasData && snapshot.data != null) {
-                                                        return  GestureDetector(
-                                                          onTap: (){
-                                                            _showVideoDialog('$image_url${_imageUrls[index]}');
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        child: Wrap(
+                                          spacing:
+                                              8.0, // Horizontal spacing between items
+                                          runSpacing:
+                                              8.0, // Vertical spacing between rows
+                                          children: List.generate(
+                                            _imageUrls.length,
+                                            (index) {
+                                              bool isMp4 =
+                                                  isVideo(_imageUrls[index]);
+                                              return Container(
+                                                width: 85,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        SizedBox(width: 60),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              _imageUrls
+                                                                  .removeAt(
+                                                                      index);
+                                                            });
                                                           },
-                                                          child: Stack(
-                                                            alignment: Alignment.center,
-                                                            children: [
-                                                              Image.file(
-                                                                File(snapshot.data!),
-                                                                height:80,
-                                                                width: 80,
-                                                                fit: BoxFit.cover,
-                                                              ),
-                                                              Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
-                                                            ],
+                                                          child: Icon(
+                                                            Icons.close,
+                                                            color: Colors.grey,
                                                           ),
-                                                        );
-
-                                                      } else {
-                                                        return Icon(Icons.error);
-                                                      }
-                                                    },
-                                                  ):
-                                                  Container(
-                                                    child: Image.network(
-                                                      "$image_url${_imageUrls[index]}",
-                                                      height: 80,
-                                                      width: 80,
-                                                      fit: BoxFit.cover,
-                                                      errorBuilder: (context, error, stackTrace) {
-                                                        return Icon(Icons.error); // Placeholder for errors
-                                                      },
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        isMp4
+                                                            ? Container(
+                                                          height: 80,
+                                                          width: 80,
+                                                              child: GestureDetector(
+                                                                  onTap: () {
+                                                                    _showVideoDialog(
+                                                                        '$image_url${_imageUrls[index]}');
+                                                                  },
+                                                                  child: Stack(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    children: [
+                                                                      VideoItem(
+                                                                        url:
+                                                                            '$image_url${_imageUrls[index]}',
+                                                                      ),
+                                                                      Icon(
+                                                                          Icons
+                                                                              .play_circle_fill,
+                                                                          color: Colors
+                                                                              .white,
+                                                                          size:
+                                                                              40),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                            )
+                                                            : Container(
+                                                                child: Image
+                                                                    .network(
+                                                                  "$image_url${_imageUrls[index]}",
+                                                                  height: 80,
+                                                                  width: 80,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  errorBuilder:
+                                                                      (context,
+                                                                          error,
+                                                                          stackTrace) {
+                                                                    return Icon(
+                                                                        Icons
+                                                                            .error); // Placeholder for errors
+                                                                  },
+                                                                ),
+                                                              ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
                                           ),
-                                        );
-                                      },
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
+                                  ],
+                                )
                               : Center(child: Text("No images selected.")),
                           // _imageUrls.isNotEmpty
                           //     ? Row(
@@ -1204,8 +1226,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       DropdownButtonHideUnderline(
-                                        child:
-                                            DropdownButtonFormField2<String>(
+                                        child: DropdownButtonFormField2<String>(
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             errorText: state
@@ -1219,8 +1240,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   'Select Property',
                                                   style: TextStyle(
                                                     fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.w400,
+                                                    fontWeight: FontWeight.w400,
                                                     color: Color(0xFFb0b6c3),
                                                   ),
                                                   overflow:
@@ -1240,8 +1260,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   fontWeight: FontWeight.w400,
                                                   color: Colors.black87,
                                                 ),
-                                                overflow:
-                                                    TextOverflow.ellipsis,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             );
                                           }).toList(),
@@ -1283,24 +1302,19 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               Icons.arrow_drop_down,
                                             ),
                                             iconSize: 24,
-                                            iconEnabledColor:
-                                                Color(0xFFb0b6c3),
+                                            iconEnabledColor: Color(0xFFb0b6c3),
                                             iconDisabledColor: Colors.grey,
                                           ),
-                                          dropdownStyleData:
-                                              DropdownStyleData(
+                                          dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
-                                            scrollbarTheme:
-                                                ScrollbarThemeData(
-                                              radius:
-                                                  const Radius.circular(6),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(6),
                                               thickness:
-                                                  MaterialStateProperty.all(
-                                                      6),
+                                                  MaterialStateProperty.all(6),
                                               thumbVisibility:
                                                   MaterialStateProperty.all(
                                                       true),
@@ -1346,8 +1360,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                         }
                                         return null;
                                       },
-                                      builder:
-                                          (FormFieldState<String> state) {
+                                      builder: (FormFieldState<String> state) {
                                         return Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -1370,8 +1383,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                           fontSize: 14,
                                                           fontWeight:
                                                               FontWeight.w400,
-                                                          color: Color(
-                                                              0xFFb0b6c3),
+                                                          color:
+                                                              Color(0xFFb0b6c3),
                                                         ),
                                                         overflow: TextOverflow
                                                             .ellipsis,
@@ -1379,8 +1392,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     ),
                                                   ],
                                                 ),
-                                                items:
-                                                    units.keys.map((unitId) {
+                                                items: units.keys.map((unitId) {
                                                   return DropdownMenuItem<
                                                       String>(
                                                     value: unitId,
@@ -1392,12 +1404,16 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                             FontWeight.w400,
                                                         color: Colors.black87,
                                                       ),
-                                                      overflow: TextOverflow
-                                                          .ellipsis,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   );
                                                 }).toList(),
-                                                value: _selectedUnitId.toString().isNotEmpty? _selectedUnitId : null,
+                                                value: _selectedUnitId
+                                                        .toString()
+                                                        .isNotEmpty
+                                                    ? _selectedUnitId
+                                                    : null,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     unitId = value.toString();
@@ -1420,8 +1436,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   width: 160,
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 14,
-                                                          right: 14),
+                                                          left: 14, right: 14),
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -1471,9 +1486,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             ),
                                             if (state.hasError)
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.only(
-                                                        left: 14, top: 8),
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, top: 8),
                                                 child: Text(
                                                   state.errorText!,
                                                   style: const TextStyle(
@@ -1626,8 +1640,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       DropdownButtonHideUnderline(
-                                        child:
-                                            DropdownButtonFormField2<String>(
+                                        child: DropdownButtonFormField2<String>(
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             hintText: 'Select here',
@@ -1645,8 +1658,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   'Select here',
                                                   style: TextStyle(
                                                     fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.w400,
+                                                    fontWeight: FontWeight.w400,
                                                     color: Color(0xFFb0b6c3),
                                                   ),
                                                   overflow:
@@ -1665,8 +1677,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   fontWeight: FontWeight.w400,
                                                   color: Colors.black87,
                                                 ),
-                                                overflow:
-                                                    TextOverflow.ellipsis,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             );
                                           }).toList(),
@@ -1707,24 +1718,19 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               Icons.arrow_drop_down,
                                             ),
                                             iconSize: 24,
-                                            iconEnabledColor:
-                                                Color(0xFFb0b6c3),
+                                            iconEnabledColor: Color(0xFFb0b6c3),
                                             iconDisabledColor: Colors.grey,
                                           ),
-                                          dropdownStyleData:
-                                              DropdownStyleData(
+                                          dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
-                                            scrollbarTheme:
-                                                ScrollbarThemeData(
-                                              radius:
-                                                  const Radius.circular(6),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(6),
                                               thickness:
-                                                  MaterialStateProperty.all(
-                                                      6),
+                                                  MaterialStateProperty.all(6),
                                               thumbVisibility:
                                                   MaterialStateProperty.all(
                                                       true),
@@ -1790,8 +1796,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
                                 //width: 200,
-                                padding: const EdgeInsets.only(
-                                    left: 14, right: 14),
+                                padding:
+                                    const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
@@ -1851,8 +1857,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       DropdownButtonHideUnderline(
-                                        child:
-                                            DropdownButtonFormField2<String>(
+                                        child: DropdownButtonFormField2<String>(
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             hintText: 'Select here',
@@ -1870,8 +1875,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   'Select here',
                                                   style: TextStyle(
                                                     fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.w400,
+                                                    fontWeight: FontWeight.w400,
                                                     color: Color(0xFFb0b6c3),
                                                   ),
                                                   overflow:
@@ -1880,8 +1884,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             ],
                                           ),
-                                          items: staffs.keys
-                                              .map((staffmemberId) {
+                                          items:
+                                              staffs.keys.map((staffmemberId) {
                                             return DropdownMenuItem<String>(
                                               value: staffmemberId,
                                               child: Text(
@@ -1891,13 +1895,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   fontWeight: FontWeight.w400,
                                                   color: Colors.black87,
                                                 ),
-                                                overflow:
-                                                    TextOverflow.ellipsis,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             );
                                           }).toList(),
-                                          value: staffs.containsKey(
-                                                  _selectedstaffId)
+                                          value: staffs
+                                                  .containsKey(_selectedstaffId)
                                               ? _selectedstaffId
                                               : null,
                                           onChanged: (value) {
@@ -1935,24 +1938,19 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               Icons.arrow_drop_down,
                                             ),
                                             iconSize: 24,
-                                            iconEnabledColor:
-                                                Color(0xFFb0b6c3),
+                                            iconEnabledColor: Color(0xFFb0b6c3),
                                             iconDisabledColor: Colors.grey,
                                           ),
-                                          dropdownStyleData:
-                                              DropdownStyleData(
+                                          dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
-                                            scrollbarTheme:
-                                                ScrollbarThemeData(
-                                              radius:
-                                                  const Radius.circular(6),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(6),
                                               thickness:
-                                                  MaterialStateProperty.all(
-                                                      6),
+                                                  MaterialStateProperty.all(6),
                                               thumbVisibility:
                                                   MaterialStateProperty.all(
                                                       true),
@@ -2047,8 +2045,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                   )),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                    '\$${totalAmount.toStringAsFixed(2)}'),
+                                child:
+                                    Text('\$${totalAmount.toStringAsFixed(2)}'),
                               ),
                             ],
                           ),
@@ -2074,10 +2072,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             controller: vendornote,
                             keyboardType: TextInputType.text,
                             hintText: 'Enter here',
-
                             optional: true,
-
-
                           ),
                           SizedBox(
                             height: 20,
@@ -2101,9 +2096,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                       isChecked = value ?? false;
                                     });
                                   },
-                                  activeColor: isChecked
-                                      ? blueColor
-                                      : Colors.black,
+                                  activeColor:
+                                      isChecked ? blueColor : Colors.black,
                                 ),
                               ),
                             ],
@@ -2135,12 +2129,10 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                       color: Colors.grey)),
                                               SizedBox(height: 2),
                                               DropdownButtonHideUnderline(
-                                                child:
-                                                    DropdownButtonFormField2<
-                                                        String>(
+                                                child: DropdownButtonFormField2<
+                                                    String>(
                                                   decoration: InputDecoration(
-                                                      border:
-                                                          InputBorder.none),
+                                                      border: InputBorder.none),
                                                   isExpanded: true,
                                                   hint: const Row(
                                                     children: [
@@ -2150,14 +2142,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                           style: TextStyle(
                                                             fontSize: 14,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w400,
+                                                                FontWeight.w400,
                                                             color: Color(
                                                                 0xFFb0b6c3),
                                                           ),
-                                                          overflow:
-                                                              TextOverflow
-                                                                  .ellipsis,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
                                                       ),
                                                     ],
@@ -2169,28 +2159,26 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                       value: tenantId,
                                                       child: Text(
                                                         tenants[tenantId]!,
-                                                        style:
-                                                            const TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14,
                                                           fontWeight:
                                                               FontWeight.w400,
-                                                          color:
-                                                              Colors.black87,
+                                                          color: Colors.black87,
                                                         ),
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                       ),
                                                     );
                                                   }).toList(),
-                                                  value: tenants.containsKey(_selectedtenantId)
+                                                  value: tenants.containsKey(
+                                                          _selectedtenantId)
                                                       ? _selectedtenantId
-                                                      : null ,
+                                                      : null,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       tenantId =
                                                           value.toString();
-                                                      _selectedtenantId =
-                                                          value;
+                                                      _selectedtenantId = value;
                                                       _selectedTenants = tenants[
                                                           value]; // Store selected tenant name
                                                       print(
@@ -2207,16 +2195,16 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                             right: 14),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius
-                                                              .circular(6),
+                                                          BorderRadius.circular(
+                                                              6),
                                                       color: Colors.white,
                                                     ),
                                                     elevation: 2,
                                                   ),
                                                   iconStyleData:
                                                       const IconStyleData(
-                                                    icon: Icon(Icons
-                                                        .arrow_drop_down),
+                                                    icon: Icon(
+                                                        Icons.arrow_drop_down),
                                                     iconSize: 24,
                                                     iconEnabledColor:
                                                         Color(0xFFb0b6c3),
@@ -2227,14 +2215,15 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                       DropdownStyleData(
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius
-                                                              .circular(6),
+                                                          BorderRadius.circular(
+                                                              6),
                                                       color: Colors.white,
                                                     ),
                                                     scrollbarTheme:
                                                         ScrollbarThemeData(
-                                                      radius: const Radius
-                                                          .circular(6),
+                                                      radius:
+                                                          const Radius.circular(
+                                                              6),
                                                       thickness:
                                                           MaterialStateProperty
                                                               .all(6),
@@ -2335,8 +2324,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
                                 //width: 200,
-                                padding: const EdgeInsets.only(
-                                    left: 14, right: 14),
+                                padding:
+                                    const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
@@ -2563,7 +2552,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         setState(() {
           isLoading = false;
         });
-        Navigator.pop(context,false);
+        Navigator.pop(context, false);
         return; // Exit the method
       }
 
@@ -2578,11 +2567,13 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
           'parts_id': part['parts_id'],
-          "parts_quantity": int.tryParse(part['qtyController'].text.trim()) ?? 0,
+          "parts_quantity":
+              int.tryParse(part['qtyController'].text.trim()) ?? 0,
           "account": part['selectedAccount'],
           "description": part['descriptionController'].text.trim(),
           "charge_type": "Workorder Charge",
-          "parts_price": double.tryParse(part['priceController'].text.trim()) ?? 0.0,
+          "parts_price":
+              double.tryParse(part['priceController'].text.trim()) ?? 0.0,
           "amount": double.tryParse(part['totalController'].text.trim()) ?? 0.0,
         };
       }).toList();
@@ -2610,7 +2601,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           date: _dateController.text.trim(),
           entry: _selectedEntry == 'Yes',
           parts: parts,
-          notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+          notificationTime:
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         );
 
         // Success
@@ -3028,7 +3020,13 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     'false',
   ];
   String? _selectedStatus;
-  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Closed'];
+  final List<String> _status = [
+    'New',
+    'In Progress',
+    'On Hold',
+    'Completed',
+    'Closed'
+  ];
   final List<String> _account = [
     'Advertising',
     'Association Fees',
@@ -3434,13 +3432,11 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                     height: 50,
                                     width: 150,
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            blueColor,
+                                        backgroundColor: blueColor,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
@@ -3563,19 +3559,18 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                             Row(
                                                               children: [
                                                                 SizedBox(
-                                                                    width:
-                                                                        60),
+                                                                    width: 60),
                                                                 GestureDetector(
                                                                   onTap: () {
                                                                     setState(
                                                                         () {
                                                                       _imageUrls
-                                                                          .removeAt(index);
+                                                                          .removeAt(
+                                                                              index);
                                                                     });
                                                                   },
                                                                   child: Icon(
-                                                                    Icons
-                                                                        .close,
+                                                                    Icons.close,
                                                                     color: Colors
                                                                         .grey,
                                                                   ),
@@ -3594,16 +3589,17 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                   child: Image
                                                                       .network(
                                                                     "$image_url${_imageUrls[index]}",
-                                                                    height:
-                                                                        80,
+                                                                    height: 80,
                                                                     width: 80,
                                                                     fit: BoxFit
                                                                         .cover,
-                                                                    errorBuilder: (context,
-                                                                        error,
-                                                                        stackTrace) {
+                                                                    errorBuilder:
+                                                                        (context,
+                                                                            error,
+                                                                            stackTrace) {
                                                                       return Icon(
-                                                                          Icons.error); // Placeholder for errors
+                                                                          Icons
+                                                                              .error); // Placeholder for errors
                                                                     },
                                                                   ),
                                                                 ),
@@ -3636,8 +3632,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             Text('Property *',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
@@ -3654,8 +3649,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           fontSize: 14,
                                                           fontWeight:
                                                               FontWeight.w400,
-                                                          color: Color(
-                                                              0xFFb0b6c3),
+                                                          color:
+                                                              Color(0xFFb0b6c3),
                                                         ),
                                                         overflow: TextOverflow
                                                             .ellipsis,
@@ -3676,8 +3671,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                             FontWeight.w400,
                                                         color: Colors.black87,
                                                       ),
-                                                      overflow: TextOverflow
-                                                          .ellipsis,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   );
                                                 }).toList(),
@@ -3688,14 +3683,11 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _selectedUnitId = null;
-                                                    _selectedPropertyId =
-                                                        value;
-                                                    _selectedProperty =
-                                                        properties[
-                                                            value]; // Store selected rental_adress
+                                                    _selectedPropertyId = value;
+                                                    _selectedProperty = properties[
+                                                        value]; // Store selected rental_adress
 
-                                                    renderId =
-                                                        value.toString();
+                                                    renderId = value.toString();
 
                                                     print(
                                                         'Selected Property: $_selectedProperty');
@@ -3712,8 +3704,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                   width: 160,
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 14,
-                                                          right: 14),
+                                                          left: 14, right: 14),
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -3805,8 +3796,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           Expanded(
                                                             child: Text(
                                                               'Select Unit',
-                                                              style:
-                                                                  TextStyle(
+                                                              style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
@@ -3843,11 +3833,15 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           ),
                                                         );
                                                       }).toList(),
-                                                      value: _selectedUnitId.toString().isNotEmpty? _selectedUnitId : null,
+                                                      value: _selectedUnitId
+                                                              .toString()
+                                                              .isNotEmpty
+                                                          ? _selectedUnitId
+                                                          : null,
                                                       onChanged: (value) {
                                                         setState(() {
-                                                          unitId = value
-                                                              .toString();
+                                                          unitId =
+                                                              value.toString();
                                                           _selectedUnitId =
                                                               value;
                                                           _selectedUnit = units[
@@ -3872,8 +3866,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                             BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(
-                                                                      6),
+                                                                  .circular(6),
                                                           color: Colors.white,
                                                         ),
                                                         elevation: 2,
@@ -3894,8 +3887,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                             BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(
-                                                                      6),
+                                                                  .circular(6),
                                                           color: Colors.white,
                                                         ),
                                                         scrollbarTheme:
@@ -3940,8 +3932,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                     height: 10,
                                   ),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Expanded(
                                         child: Column(
@@ -3953,8 +3944,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             Text('Category',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(
                                               height: 10,
@@ -3964,16 +3954,14 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                 isExpanded: true,
                                                 hint: Text('Select Category'),
                                                 value: _selectedCategory,
-                                                items:
-                                                    _category.map((method) {
+                                                items: _category.map((method) {
                                                   return DropdownMenuItem<
                                                       String>(
                                                     value: method,
                                                     child: Text(method),
                                                   );
                                                 }).toList(),
-                                                onChanged:
-                                                    (String? newValue) {
+                                                onChanged: (String? newValue) {
                                                   setState(() {
                                                     _selectedCategory =
                                                         newValue;
@@ -3990,8 +3978,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                   width: 250,
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 14,
-                                                          right: 14),
+                                                          left: 14, right: 14),
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -4052,8 +4039,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             Text('Entery allowed ',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(
                                               height: 10,
@@ -4070,8 +4056,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                     child: Text(method),
                                                   );
                                                 }).toList(),
-                                                onChanged:
-                                                    (String? newValue) {
+                                                onChanged: (String? newValue) {
                                                   setState(() {
                                                     _selectedEntry = newValue;
                                                     // _selectedPaymentMethod = addRow();
@@ -4087,8 +4072,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                   width: 200,
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 14,
-                                                          right: 14),
+                                                          left: 14, right: 14),
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -4150,16 +4134,14 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             Text('Assigned To *',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(
                                               height: 2,
                                             ),
                                             _isLoadingstaff
                                                 ? const Center(
-                                                    child:
-                                                        SpinKitFadingCircle(
+                                                    child: SpinKitFadingCircle(
                                                       color: Colors.black,
                                                       size: 50.0,
                                                     ),
@@ -4212,8 +4194,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                     staffmember_id]!,
                                                                 style:
                                                                     const TextStyle(
-                                                                  fontSize:
-                                                                      14,
+                                                                  fontSize: 14,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -4253,16 +4234,15 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                 const EdgeInsets
                                                                     .only(
                                                                     left: 14,
-                                                                    right:
-                                                                        14),
+                                                                    right: 14),
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
                                                                           6),
-                                                              color: Colors
-                                                                  .white,
+                                                              color:
+                                                                  Colors.white,
                                                             ),
                                                             elevation: 2,
                                                           ),
@@ -4287,8 +4267,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                   BorderRadius
                                                                       .circular(
                                                                           6),
-                                                              color: Colors
-                                                                  .white,
+                                                              color:
+                                                                  Colors.white,
                                                             ),
                                                             scrollbarTheme:
                                                                 ScrollbarThemeData(
@@ -4308,17 +4288,14 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           menuItemStyleData:
                                                               const MenuItemStyleData(
                                                             height: 40,
-                                                            padding: EdgeInsets
-                                                                .only(
+                                                            padding:
+                                                                EdgeInsets.only(
                                                                     left: 14,
-                                                                    right:
-                                                                        14),
+                                                                    right: 14),
                                                           ),
                                                           validator: (value) {
-                                                            if (value ==
-                                                                    null ||
-                                                                value
-                                                                    .isEmpty) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
                                                               return 'Please select an option';
                                                             }
                                                             return null;
@@ -4364,10 +4341,11 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           child:
                                                               DropdownButtonFormField2<
                                                                   String>(
-                                                            decoration: InputDecoration(
-                                                                border:
-                                                                    InputBorder
-                                                                        .none),
+                                                            decoration:
+                                                                InputDecoration(
+                                                                    border:
+                                                                        InputBorder
+                                                                            .none),
                                                             isExpanded: true,
                                                             hint: const Row(
                                                               children: [
@@ -4379,7 +4357,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                       fontSize:
                                                                           14,
                                                                       fontWeight:
-                                                                          FontWeight.w400,
+                                                                          FontWeight
+                                                                              .w400,
                                                                       color: Color(
                                                                           0xFFb0b6c3),
                                                                     ),
@@ -4390,8 +4369,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                 ),
                                                               ],
                                                             ),
-                                                            items: vendors
-                                                                .keys
+                                                            items: vendors.keys
                                                                 .map(
                                                                     (vender_id) {
                                                               return DropdownMenuItem<
@@ -4419,8 +4397,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                             }).toList(),
                                                             value:
                                                                 _selectedvendorsId,
-                                                            onChanged:
-                                                                (value) {
+                                                            onChanged: (value) {
                                                               setState(() {
                                                                 // _selectedUnitId = null;
                                                                 _selectedvendorsId =
@@ -4444,8 +4421,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                               padding:
                                                                   const EdgeInsets
                                                                       .only(
-                                                                      left:
-                                                                          14,
+                                                                      left: 14,
                                                                       right:
                                                                           14),
                                                               decoration:
@@ -4485,13 +4461,13 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                               ),
                                                               scrollbarTheme:
                                                                   ScrollbarThemeData(
-                                                                radius: const Radius
-                                                                    .circular(
-                                                                    6),
+                                                                radius:
+                                                                    const Radius
+                                                                        .circular(
+                                                                        6),
                                                                 thickness:
                                                                     MaterialStateProperty
-                                                                        .all(
-                                                                            6),
+                                                                        .all(6),
                                                                 thumbVisibility:
                                                                     MaterialStateProperty
                                                                         .all(
@@ -4503,13 +4479,11 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                               height: 40,
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          14,
+                                                                      left: 14,
                                                                       right:
                                                                           14),
                                                             ),
-                                                            validator:
-                                                                (value) {
+                                                            validator: (value) {
                                                               if (value ==
                                                                       null ||
                                                                   value
@@ -4543,8 +4517,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                 height: 10,
                                               ),
                                               CustomTextField(
-                                                keyboardType: TextInputType
-                                                    .emailAddress,
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
                                                 hintText: 'Enter here',
                                                 controller: perform,
                                                 optional: true,
@@ -4618,72 +4592,48 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                       4: FlexColumnWidth(2),
                                     },
                                     children: [
-                                       TableRow(children: [
+                                      TableRow(children: [
                                         Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('QTY',
                                               style: TextStyle(
-                                                  color: blueColor
-
-
-,
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                         Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('Account',
                                               style: TextStyle(
-                                                  color: blueColor
-
-
-,
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                         Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('Description',
                                               style: TextStyle(
-                                                  color: blueColor
-
-
-,
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                         Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('Price',
                                               style: TextStyle(
-                                                  color: blueColor
-
-
-,
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                         Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('Amount',
                                               style: TextStyle(
-                                                  color: blueColor
-
-
-,
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                         Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('',
                                               style: TextStyle(
-                                                  color: blueColor
-
-
-,
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                       ]),
                                       /* ...summery.partsandchargeData!.asMap().entries.map((entry) {
@@ -4731,14 +4681,13 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
-                                            child:
-                                                DropdownButtonHideUnderline(
+                                            child: DropdownButtonHideUnderline(
                                               child: DropdownButton2<String>(
                                                 isExpanded: true,
                                                 hint: Text('Select'),
                                                 value: _account.contains(
-                                                        partsAndLabor[index][
-                                                            'selectedAccount'])
+                                                        partsAndLabor[index]
+                                                            ['selectedAccount'])
                                                     ? partsAndLabor[index]
                                                         ['selectedAccount']
                                                     : null,
@@ -4749,8 +4698,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                     child: Text(method),
                                                   );
                                                 }).toList(),
-                                                onChanged:
-                                                    (String? newValue) {
+                                                onChanged: (String? newValue) {
                                                   setState(() {
                                                     partsAndLabor[index][
                                                             'selectedAccount'] =
@@ -4819,8 +4767,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                               hintText: 'Description',
                                               controller: partsAndLabor[index]
                                                   ['descriptionController'],
-                                              keyboardType:
-                                                  TextInputType.text,
+                                              keyboardType: TextInputType.text,
                                             ),
                                           ),
                                           Padding(
@@ -4872,29 +4819,25 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('Total',
                                               style: TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                         const Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('',
                                               style: TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                         const Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('',
                                               style: TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                         const Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: Text('',
                                               style: TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                                  fontWeight: FontWeight.bold)),
                                         ),
                                         /* const Padding(
                                         padding: EdgeInsets.all(8.0),
@@ -5049,9 +4992,12 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                           'Select Tenant',
                                                                           style:
                                                                               TextStyle(
-                                                                            fontSize: 14,
-                                                                            fontWeight: FontWeight.w400,
-                                                                            color: Color(0xFFb0b6c3),
+                                                                            fontSize:
+                                                                                14,
+                                                                            fontWeight:
+                                                                                FontWeight.w400,
+                                                                            color:
+                                                                                Color(0xFFb0b6c3),
                                                                           ),
                                                                           overflow:
                                                                               TextOverflow.ellipsis,
@@ -5085,30 +5031,31 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                       ),
                                                                     );
                                                                   }).toList(),
-                                                                  value:
-                                                                  tenants.containsKey(_selectedtenantId)
+                                                                  value: tenants
+                                                                          .containsKey(
+                                                                              _selectedtenantId)
                                                                       ? _selectedtenantId
-                                                                      : null ,
+                                                                      : null,
                                                                   onChanged:
                                                                       (value) {
                                                                     setState(
                                                                         () {
                                                                       tenantId =
-                                                                          value.toString();
+                                                                          value
+                                                                              .toString();
                                                                       _selectedtenantId =
                                                                           value;
                                                                       _selectedTenants =
-                                                                          tenants[value]; // Store selected tenant name
+                                                                          tenants[
+                                                                              value]; // Store selected tenant name
                                                                       print(
                                                                           'Selected Tenant: $_selectedTenants');
                                                                     });
                                                                   },
                                                                   buttonStyleData:
                                                                       ButtonStyleData(
-                                                                    height:
-                                                                        45,
-                                                                    width:
-                                                                        160,
+                                                                    height: 45,
+                                                                    width: 160,
                                                                     padding: const EdgeInsets
                                                                         .only(
                                                                         left:
@@ -5118,7 +5065,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
-                                                                          BorderRadius.circular(6),
+                                                                          BorderRadius.circular(
+                                                                              6),
                                                                       color: Colors
                                                                           .white,
                                                                     ),
@@ -5127,9 +5075,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                   ),
                                                                   iconStyleData:
                                                                       const IconStyleData(
-                                                                    icon: Icon(
-                                                                        Icons
-                                                                            .arrow_drop_down),
+                                                                    icon: Icon(Icons
+                                                                        .arrow_drop_down),
                                                                     iconSize:
                                                                         24,
                                                                     iconEnabledColor:
@@ -5144,7 +5091,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
-                                                                          BorderRadius.circular(6),
+                                                                          BorderRadius.circular(
+                                                                              6),
                                                                       color: Colors
                                                                           .white,
                                                                     ),
@@ -5154,15 +5102,16 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                           .circular(
                                                                           6),
                                                                       thickness:
-                                                                          MaterialStateProperty.all(6),
+                                                                          MaterialStateProperty.all(
+                                                                              6),
                                                                       thumbVisibility:
-                                                                          MaterialStateProperty.all(true),
+                                                                          MaterialStateProperty.all(
+                                                                              true),
                                                                     ),
                                                                   ),
                                                                   menuItemStyleData:
                                                                       const MenuItemStyleData(
-                                                                    height:
-                                                                        40,
+                                                                    height: 40,
                                                                     padding: EdgeInsets.only(
                                                                         left:
                                                                             14,
@@ -5210,7 +5159,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       TextInputType.text,
                                                   hintText: 'Enter here',
                                                   controller: vendornote,
-
                                                   optional: true,
                                                 ),
                                               ],
@@ -5368,8 +5316,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                     ],
                                   ),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
@@ -5380,8 +5327,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                           leading: Radio<String>(
                                             value: 'High',
                                             groupValue: _selectedOption,
-                                            onChanged:
-                                                _handleRadioValueChange,
+                                            onChanged: _handleRadioValueChange,
                                           ),
                                         ),
                                       ),
@@ -5392,8 +5338,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                           leading: Radio<String>(
                                             value: 'Normal',
                                             groupValue: _selectedOption,
-                                            onChanged:
-                                                _handleRadioValueChange,
+                                            onChanged: _handleRadioValueChange,
                                           ),
                                         ),
                                       ),
@@ -5404,8 +5349,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                           leading: Radio<String>(
                                             value: 'Low',
                                             groupValue: _selectedOption,
-                                            onChanged:
-                                                _handleRadioValueChange,
+                                            onChanged: _handleRadioValueChange,
                                           ),
                                         ),
                                       ),
@@ -5432,8 +5376,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             Text('Status *',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(
                                               height: 10,
@@ -5450,11 +5393,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                     child: Text(method),
                                                   );
                                                 }).toList(),
-                                                onChanged:
-                                                    (String? newValue) {
+                                                onChanged: (String? newValue) {
                                                   setState(() {
-                                                    _selectedStatus =
-                                                        newValue;
+                                                    _selectedStatus = newValue;
                                                   });
                                                   print(
                                                       'Selected category: $_selectedStatus');
@@ -5465,8 +5406,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                   width: 200,
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 14,
-                                                          right: 14),
+                                                          left: 14, right: 14),
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -5532,8 +5472,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             const Text('Due Date',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             const SizedBox(
                                               height: 10,
@@ -5577,8 +5516,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       fontSize: 13,
-                                                      color:
-                                                          Color(0xFFb0b6c3)),
+                                                      color: Color(0xFFb0b6c3)),
                                                   border: InputBorder.none,
                                                   // labelText: 'Select Date',
                                                   hintText: 'yyyy-mm-dd',
@@ -5627,11 +5565,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        blueColor,
+                                    backgroundColor: blueColor,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
                                   ),
                                   onPressed: _submitForm,
@@ -5656,22 +5592,20 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                   height: 50,
                                   width: 120,
                                   decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0)),
+                                      borderRadius: BorderRadius.circular(8.0)),
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Color(0xFFffffff),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      8.0))),
+                                                  BorderRadius.circular(8.0))),
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
                                       child: Text(
                                         'Cancel',
-                                        style: TextStyle(
-                                            color: Color(0xFF748097)),
+                                        style:
+                                            TextStyle(color: Color(0xFF748097)),
                                       )))
                             ],
                           ),
@@ -5735,11 +5669,13 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
           'parts_id': part['parts_id'],
-          "parts_quantity": int.tryParse(part['qtyController'].text.trim()) ?? 0,
+          "parts_quantity":
+              int.tryParse(part['qtyController'].text.trim()) ?? 0,
           "account": part['selectedAccount'],
           "description": part['descriptionController'].text.trim(),
           "charge_type": "Workorder Charge",
-          "parts_price": double.tryParse(part['priceController'].text.trim()) ?? 0.0,
+          "parts_price":
+              double.tryParse(part['priceController'].text.trim()) ?? 0.0,
           "amount": double.tryParse(part['totalController'].text.trim()) ?? 0.0,
         };
       }).toList();
@@ -5769,7 +5705,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         date: _dateController.text.trim(),
         entry: _selectedEntry == 'yes',
         parts: parts,
-        notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+        notificationTime:
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )
           .then((value) {
         setState(() {

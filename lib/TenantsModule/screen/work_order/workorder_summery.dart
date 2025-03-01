@@ -3170,38 +3170,28 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                               child: ClipRRect(
                                                 borderRadius: BorderRadius.circular(10),
                                                 child: isMp4
-                                                    ? FutureBuilder<String?>(
-                                                  future: generateNetworkVideoThumbnail("$image_url$imageUrl"),
-                                                  builder: (context, snapshot) {
-                                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                                      return Center(
-                                                          child: SpinKitFadingCircle(
-                                                            color: Colors.black,
-                                                            size: 40.0,
-                                                          ));
-                                                    } else if (snapshot.hasData && snapshot.data != null) {
-                                                      return  GestureDetector(
-                                                        onTap: (){
-                                                          _showVideoDialog('$image_url$imageUrl');
-                                                        },
-                                                        child: Stack(
-                                                          alignment: Alignment.center,
-                                                          children: [
-                                                            Image.file(
-                                                              File(snapshot.data!),
-                                                              height: 100,
-                                                              width: 100,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                            Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
-                                                          ],
-                                                        ),
-                                                      );
-
-                                                    } else {
-                                                      return Icon(Icons.error);
-                                                    }
-                                                  },
+                                                    ?
+                                                Container(
+                                                  height: 80,
+                                                  width: 80,
+                                                  child: GestureDetector(
+                                                    onTap: (){
+                                                      _showVideoDialog('$image_url${imageUrl}');
+                                                    },
+                                                    child: Stack(
+                                                      alignment: Alignment.center,
+                                                      children: [
+                                                        // Image.file(
+                                                        //   File(snapshot.data!),
+                                                        //   height:80,
+                                                        //   width: 80,
+                                                        //   fit: BoxFit.cover,
+                                                        // ),
+                                                        VideoItem(url: '$image_url${imageUrl}'),
+                                                        Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 )
                                                     : CachedNetworkImage(
                                                   imageUrl: "$image_url$imageUrl",

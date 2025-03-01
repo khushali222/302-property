@@ -522,38 +522,28 @@ print("${response.body}");
                                       uploaded_images.remove(imageUrl);
                                     });
                                   },
-                                  child:   isMp4 ?  FutureBuilder<String?>(
-                                    future: generateNetworkVideoThumbnail("$image_url${imageUrl}"),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
-                                        return Center(
-                                            child: SpinKitFadingCircle(
-                                              color: Colors.black,
-                                              size: 40.0,
-                                            ));
-                                      } else if (snapshot.hasData && snapshot.data != null) {
-                                        return  GestureDetector(
-                                          onTap: (){
-                                           _showVideoDialog('$image_url${imageUrl}');
-                                          },
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: [
-                                              Image.file(
-                                                File(snapshot.data!),
-                                                height:80,
-                                                width: 80,
-                                                fit: BoxFit.cover,
-                                              ),
-                                              Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
-                                            ],
-                                          ),
-                                        );
-
-                                      } else {
-                                        return Icon(Icons.error);
-                                      }
-                                    },
+                                  child:   isMp4 ?
+                                  Container(
+                                    height: 80,
+                                    width: 80,
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        _showVideoDialog('$image_url${imageUrl}');
+                                      },
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          // Image.file(
+                                          //   File(snapshot.data!),
+                                          //   height:80,
+                                          //   width: 80,
+                                          //   fit: BoxFit.cover,
+                                          // ),
+                                          VideoItem(url: '$image_url${imageUrl}'),
+                                          Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                        ],
+                                      ),
+                                    ),
                                   ):
                                   Container(
                                     child: Column(

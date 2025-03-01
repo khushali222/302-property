@@ -106,17 +106,17 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
             "${fetchedDetails.propertyData!.address}"
       });
 
-      if(fetchedDetails.staffData != null)
-      staffs.addAll({
-        "${fetchedDetails.staffData!.staffmember_id}":
-            "${fetchedDetails.staffData!.staffName}"
-      });
+      if (fetchedDetails.staffData != null)
+        staffs.addAll({
+          "${fetchedDetails.staffData!.staffmember_id}":
+              "${fetchedDetails.staffData!.staffName}"
+        });
       if (fetchedDetails.workOrderImages != null) {
         _imageUrls = fetchedDetails.workOrderImages!.map((fileName) {
           return '$fileName'; // Adjust the path as needed
         }).toList();
       }
-print(fetchedDetails.workOrderImages);
+      print(fetchedDetails.workOrderImages);
       // print(fetchedDetails.rental.rentalAddress);
       subject.text = fetchedDetails.workSubject!;
       _selectedstaffId = fetchedDetails.staffData?.staffName;
@@ -134,7 +134,7 @@ print(fetchedDetails.workOrderImages);
           fetchedDetails.vendorId!.isEmpty ? null : fetchedDetails.vendorId;
       _selectedstaffId = fetchedDetails.staffmemberId;
       _selectedtenantId =
-           fetchedDetails.tenantId == null ? null : fetchedDetails.tenantId;
+          fetchedDetails.tenantId == null ? null : fetchedDetails.tenantId;
       _selectedEntry = entryAllowedString;
 
       partsAndLabor =
@@ -415,7 +415,6 @@ print(fetchedDetails.workOrderImages);
     'Other Expenses',
     'Postage and Delivery',
     'Repairs',
-
   ];
   List<Map<String, dynamic>> rows = [];
   bool _showTextField = false;
@@ -666,7 +665,6 @@ print(fetchedDetails.workOrderImages);
   //for tenants
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
 
-
   File? _image;
   List<File> _images = [];
   String? _uploadedFileName;
@@ -733,11 +731,14 @@ print(fetchedDetails.workOrderImages);
       context: context,
       builder: (context) {
         return Container(
-          child: VideoPlayerDialog(videoUrl: videoFile,),
+          child: VideoPlayerDialog(
+            videoUrl: videoFile,
+          ),
         );
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -751,7 +752,6 @@ print(fetchedDetails.workOrderImages);
         },
       ),
       backgroundColor: Colors.white,
-
       body: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth > 500) {
           return Form(
@@ -817,103 +817,119 @@ print(fetchedDetails.workOrderImages);
                                     ),
                                     _imageUrls.isNotEmpty
                                         ? Row(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            child: Wrap(
-                                              spacing: 8.0, // Horizontal spacing between items
-                                              runSpacing: 8.0, // Vertical spacing between rows
-                                              children: List.generate(
-                                                _imageUrls.length,
-                                                    (index) {
-                                                  bool isMp4 = isVideo(_imageUrls[index]);
-                                                  return Container(
-                                                    width: 85,
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            SizedBox(width: 60),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _imageUrls.removeAt(index);
-                                                                });
-                                                              },
-                                                              child: Icon(
-                                                                Icons.close,
-                                                                color: Colors.grey,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            isMp4 ?  FutureBuilder<String?>(
-                                                              future: generateNetworkVideoThumbnail("$image_url${_imageUrls[index]}"),
-                                                              builder: (context, snapshot) {
-                                                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                                                  return Center(child: CircularProgressIndicator());
-                                                                } else if (snapshot.hasData && snapshot.data != null) {
-                                                                  return  GestureDetector(
-                                                                    onTap: (){
-                                                                      _showVideoDialog('$image_url${_imageUrls[index]}');
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  child: Wrap(
+                                                    spacing:
+                                                        8.0, // Horizontal spacing between items
+                                                    runSpacing:
+                                                        8.0, // Vertical spacing between rows
+                                                    children: List.generate(
+                                                      _imageUrls.length,
+                                                      (index) {
+                                                        bool isMp4 = isVideo(
+                                                            _imageUrls[index]);
+                                                        return Container(
+                                                          width: 85,
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                      width:
+                                                                          60),
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      setState(
+                                                                          () {
+                                                                        _imageUrls
+                                                                            .removeAt(index);
+                                                                      });
                                                                     },
-                                                                    child: Stack(
-                                                                      alignment: Alignment.center,
-                                                                      children: [
-                                                                        Image.file(
-                                                                          File(snapshot.data!),
-                                                                          height:80,
-                                                                          width: 80,
-                                                                          fit: BoxFit.cover,
-                                                                        ),
-                                                                        Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
-                                                                      ],
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .close,
+                                                                      color: Colors
+                                                                          .grey,
                                                                     ),
-                                                                  );
-
-                                                                } else {
-                                                                  return Icon(Icons.error);
-                                                                }
-                                                              },
-                                                            ):
-                                                            Container(
-                                                              child: Image.network(
-                                                                "$image_url${_imageUrls[index]}",
-                                                                height: 80,
-                                                                width: 80,
-                                                                fit: BoxFit.cover,
-                                                                errorBuilder: (context, error, stackTrace) {
-                                                                  return Icon(Icons.error); // Placeholder for errors
-                                                                },
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  isMp4
+                                                                      ? GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            _showVideoDialog('$image_url${_imageUrls[index]}');
+                                                                          },
+                                                                          child:
+                                                                              Stack(
+                                                                            alignment:
+                                                                                Alignment.center,
+                                                                            children: [
+                                                                              // Image.file(
+                                                                              // File(snapshot.data!),
+                                                                              // height:80,
+                                                                              // width: 80,
+                                                                              // fit: BoxFit.cover,
+                                                                              // ),
+                                                                              VideoItem(url: '$image_url${_imageUrls[index]}'),
+                                                                              Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                                                                            ],
+                                                                          ),
+                                                                        )
+                                                                      : Container(
+                                                                          child:
+                                                                              Image.network(
+                                                                            "$image_url${_imageUrls[index]}",
+                                                                            height:
+                                                                                80,
+                                                                            width:
+                                                                                80,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                            errorBuilder: (context,
+                                                                                error,
+                                                                                stackTrace) {
+                                                                              return Icon(Icons.error); // Placeholder for errors
+                                                                            },
+                                                                          ),
+                                                                        ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      },
                                                     ),
-                                                  );
-                                                },
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                        : Center(child: Text("No images selected.")),
+                                            ],
+                                          )
+                                        : Center(
+                                            child: Text("No images selected.")),
                                     SizedBox(
                                       height: 10,
                                     ),
                                     Row(
                                       children: [
                                         Expanded(
-                                          child:
-                                          Column(
+                                          child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             crossAxisAlignment:
@@ -1215,7 +1231,6 @@ print(fetchedDetails.workOrderImages);
                                     SizedBox(
                                       height: 2,
                                     ),
-
                                     SizedBox(
                                       height: 10,
                                     ),
@@ -1367,7 +1382,6 @@ print(fetchedDetails.workOrderImages);
                                                   buttonStyleData:
                                                       ButtonStyleData(
                                                     height: 45,
-
                                                     padding:
                                                         const EdgeInsets.only(
                                                             left: 14,
@@ -1614,7 +1628,6 @@ print(fetchedDetails.workOrderImages);
                                         ),
                                       ],
                                     ),
-
                                     Text('Welcome To Be Performed',
                                         style: TextStyle(
                                             fontSize: 13,
@@ -1692,15 +1705,12 @@ print(fetchedDetails.workOrderImages);
                                         4: FlexColumnWidth(2),
                                       },
                                       children: [
-                                         TableRow(children: [
+                                        TableRow(children: [
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('QTY',
                                                 style: TextStyle(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1708,10 +1718,7 @@ print(fetchedDetails.workOrderImages);
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Account',
                                                 style: TextStyle(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1719,10 +1726,7 @@ print(fetchedDetails.workOrderImages);
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Description',
                                                 style: TextStyle(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1730,10 +1734,7 @@ print(fetchedDetails.workOrderImages);
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Price',
                                                 style: TextStyle(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1741,10 +1742,7 @@ print(fetchedDetails.workOrderImages);
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Amount',
                                                 style: TextStyle(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1752,10 +1750,7 @@ print(fetchedDetails.workOrderImages);
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('',
                                                 style: TextStyle(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -2026,7 +2021,8 @@ print(fetchedDetails.workOrderImages);
                                       ],
                                     ),
                                     ElevatedButton(
-                                      style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: blueColor),
                                       onPressed: addRow,
                                       child: Text('Add Row'),
                                     ),
@@ -2459,8 +2455,7 @@ print(fetchedDetails.workOrderImages);
                                   ),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          blueColor,
+                                      backgroundColor: blueColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(8.0),
@@ -2532,7 +2527,6 @@ print(fetchedDetails.workOrderImages);
                       width: MediaQuery.of(context).size.width * .91,
                       title: 'Edit Work Order',
                     ),
-
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Container(
@@ -2610,99 +2604,114 @@ print(fetchedDetails.workOrderImages);
                               // ),
                               _imageUrls.isNotEmpty
                                   ? Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      child: Wrap(
-                                        spacing: 8.0, // Horizontal spacing between items
-                                        runSpacing: 8.0, // Vertical spacing between rows
-                                        children: List.generate(
-                                          _imageUrls.length,
-                                              (index) {
-                                            bool isMp4 = isVideo(_imageUrls[index]);
-                                            return Container(
-                                              width: 85,
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  // Row(
-                                                  //   children: [
-                                                  //     SizedBox(width: 60),
-                                                  //     GestureDetector(
-                                                  //       onTap: () {
-                                                  //         setState(() {
-                                                  //           _imageUrls.removeAt(index);
-                                                  //         });
-                                                  //       },
-                                                  //       child: Icon(
-                                                  //         Icons.close,
-                                                  //         color: Colors.grey,
-                                                  //       ),
-                                                  //     ),
-                                                  //   ],
-                                                  // ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      isMp4 ?  FutureBuilder<String?>(
-                                                        future: generateNetworkVideoThumbnail("$image_url${_imageUrls[index]}"),
-                                                        builder: (context, snapshot) {
-                                                          if (snapshot.connectionState == ConnectionState.waiting) {
-                                                            return Center(
-                                                              child: SpinKitFadingCircle(
-                                                                color: Colors.black,
-                                                                size: 40.0,
-                                                              ),
-                                                            );
-                                                          } else if (snapshot.hasData && snapshot.data != null) {
-                                                            return  GestureDetector(
-                                                              onTap: (){
-                                                                _showVideoDialog('$image_url${_imageUrls[index]}');
-                                                              },
-                                                              child: Stack(
-                                                                alignment: Alignment.center,
-                                                                children: [
-                                                                  Image.file(
-                                                                    File(snapshot.data!),
-                                                                    height:80,
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            child: Wrap(
+                                              spacing:
+                                                  8.0, // Horizontal spacing between items
+                                              runSpacing:
+                                                  8.0, // Vertical spacing between rows
+                                              children: List.generate(
+                                                _imageUrls.length,
+                                                (index) {
+                                                  bool isMp4 = isVideo(
+                                                      _imageUrls[index]);
+                                                  return Container(
+                                                    width: 85,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Row(
+                                                        //   children: [
+                                                        //     SizedBox(width: 60),
+                                                        //     GestureDetector(
+                                                        //       onTap: () {
+                                                        //         setState(() {
+                                                        //           _imageUrls.removeAt(index);
+                                                        //         });
+                                                        //       },
+                                                        //       child: Icon(
+                                                        //         Icons.close,
+                                                        //         color: Colors.grey,
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            isMp4
+                                                                ? Container(
+                                                                    height: 80,
                                                                     width: 80,
-                                                                    fit: BoxFit.cover,
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        _showVideoDialog(
+                                                                            '$image_url${_imageUrls[index]}');
+                                                                      },
+                                                                      child:
+                                                                          Stack(
+                                                                        alignment:
+                                                                            Alignment.center,
+                                                                        children: [
+                                                                          // Image.file(
+                                                                          //   File(snapshot.data!),
+                                                                          //   height: 80,
+                                                                          //   width: 80,
+                                                                          //   fit: BoxFit.cover,
+                                                                          // ),
+                                                                          VideoItem(
+                                                                              url: '$image_url${_imageUrls[index]}'),
+                                                                          Icon(
+                                                                              Icons.play_circle_fill,
+                                                                              color: Colors.white,
+                                                                              size: 40),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : Container(
+                                                                    child: Image
+                                                                        .network(
+                                                                      "$image_url${_imageUrls[index]}",
+                                                                      height:
+                                                                          80,
+                                                                      width: 80,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      errorBuilder: (context,
+                                                                          error,
+                                                                          stackTrace) {
+                                                                        return Icon(
+                                                                            Icons.error); // Placeholder for errors
+                                                                      },
+                                                                    ),
                                                                   ),
-                                                                  Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
-                                                                ],
-                                                              ),
-                                                            );
-
-                                                          } else {
-                                                            return Icon(Icons.error);
-                                                          }
-                                                        },
-                                                      ):
-                                                      Container(
-                                                        child: Image.network(
-                                                          "$image_url${_imageUrls[index]}",
-                                                          height: 80,
-                                                          width: 80,
-                                                          fit: BoxFit.cover,
-                                                          errorBuilder: (context, error, stackTrace) {
-                                                            return Icon(Icons.error); // Placeholder for errors
-                                                          },
+                                                          ],
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
                                               ),
-                                            );
-                                          },
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
+                                      ],
+                                    )
                                   : Center(child: Text("")),
                               SizedBox(
                                 height: 10,
@@ -2890,7 +2899,10 @@ print(fetchedDetails.workOrderImages);
                                                       ),
                                                     );
                                                   }).toList(),
-                                                  value: _selectedUnitId!.isEmpty ? null : _selectedUnitId,
+                                                  value:
+                                                      _selectedUnitId!.isEmpty
+                                                          ? null
+                                                          : _selectedUnitId,
                                                   onChanged:
                                                       null /*(value) {
                                         setState(() {
@@ -2958,7 +2970,6 @@ print(fetchedDetails.workOrderImages);
                                                     padding: EdgeInsets.only(
                                                         left: 14, right: 14),
                                                   ),
-
                                                 ),
                                               )
                                             : Container(),
@@ -2998,7 +3009,6 @@ print(fetchedDetails.workOrderImages);
                                   ,
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
-
                                     padding: const EdgeInsets.only(
                                         left: 1, right: 14),
                                     decoration: BoxDecoration(
@@ -3198,7 +3208,6 @@ print(fetchedDetails.workOrderImages);
                                   ,
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
-
                                     padding: const EdgeInsets.only(
                                         left: 1, right: 14),
                                     decoration: BoxDecoration(
@@ -3443,7 +3452,8 @@ print(fetchedDetails.workOrderImages);
                               ),
                               ElevatedButton(
                                 onPressed: addRow,
-                                style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: blueColor),
                                 child: Text('Add Row'),
                               ),
                               SizedBox(
@@ -3620,7 +3630,7 @@ print(fetchedDetails.workOrderImages);
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                /*  Expanded(
+                                  /*  Expanded(
                                     child: ListTile(
                                         contentPadding: EdgeInsets.zero,
                                       title: const Text(' High'),
@@ -3645,23 +3655,25 @@ print(fetchedDetails.workOrderImages);
                                   Row(
                                     children: [
                                       Container(
-
                                         width: 25,
-                                        child:  Radio<String>(
+                                        child: Radio<String>(
                                           value: 'High',
                                           groupValue: _selectedOption,
                                           onChanged: _handleRadioValueChange,
                                         ),
                                       ),
-                                      SizedBox(width: 5,),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
                                       Text(' High')
                                     ],
                                   ),
-                                  SizedBox(width: 20,),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
                                   Row(
                                     children: [
                                       Container(
-
                                         width: 25,
                                         child: Radio<String>(
                                           value: 'Normal',
@@ -3669,27 +3681,32 @@ print(fetchedDetails.workOrderImages);
                                           onChanged: _handleRadioValueChange,
                                         ),
                                       ),
-                                      SizedBox(width: 5,),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
                                       Text(' Normal')
                                     ],
                                   ),
-                                  SizedBox(width: 20,),
-                                 Row(
-                                   children: [
-                                     Container(
-
-                                       width: 25,
-                                       child: Radio<String>(
-                                         value: 'Low',
-                                         groupValue: _selectedOption,
-                                         onChanged: _handleRadioValueChange,
-                                       ),
-                                     ),
-                                     SizedBox(width: 5,),
-                                     Text(' Low')
-                                   ],
-                                 )
-                                 /* ListTile(
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 25,
+                                        child: Radio<String>(
+                                          value: 'Low',
+                                          groupValue: _selectedOption,
+                                          onChanged: _handleRadioValueChange,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(' Low')
+                                    ],
+                                  )
+                                  /* ListTile(
 
                                     tileColor: Colors.amber,
                                     contentPadding: EdgeInsets.only(left:5),
@@ -3711,12 +3728,12 @@ print(fetchedDetails.workOrderImages);
                               SizedBox(
                                 height: 10,
                               ),
-                            
                               Row(
                                 children: [
                                   Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text('Status *',
                                           style: TextStyle(
@@ -3750,7 +3767,8 @@ print(fetchedDetails.workOrderImages);
                                             padding: const EdgeInsets.only(
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(6),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             elevation: 2,
@@ -3765,30 +3783,38 @@ print(fetchedDetails.workOrderImages);
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(6),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
-                                              thickness: MaterialStateProperty.all(6),
+                                              thickness:
+                                                  MaterialStateProperty.all(6),
                                               thumbVisibility:
-                                                  MaterialStateProperty.all(true),
+                                                  MaterialStateProperty.all(
+                                                      true),
                                             ),
                                           ),
-                                          menuItemStyleData: const MenuItemStyleData(
+                                          menuItemStyleData:
+                                              const MenuItemStyleData(
                                             height: 40,
-                                            padding:
-                                                EdgeInsets.only(left: 14, right: 14),
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  SizedBox(width: 10,),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
                                   Expanded(
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text('Due Date',
                                             style: TextStyle(
@@ -3800,14 +3826,15 @@ print(fetchedDetails.workOrderImages);
                                         ),
                                         Material(
                                           elevation: 3,
-                                          borderRadius: BorderRadius.circular(6.0),
+                                          borderRadius:
+                                              BorderRadius.circular(6.0),
                                           child: Container(
                                             height: 45,
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 12.0, vertical: 0),
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
-                                               /* boxShadow: [
+                                                /* boxShadow: [
                                                   const BoxShadow(
                                                     color: Colors.black26,
                                                     offset: Offset(1.0,
@@ -3819,13 +3846,17 @@ print(fetchedDetails.workOrderImages);
                                                   ),
                                                 ],*/
                                                 border: Border.all(
-                                                    width: 0, color: Colors.white),
-                                                borderRadius: BorderRadius.circular(6.0)),
+                                                    width: 0,
+                                                    color: Colors.white),
+                                                borderRadius:
+                                                    BorderRadius.circular(6.0)),
                                             child: TextFormField(
                                               style: const TextStyle(
-                                                color: Color(0xFF8898aa), // Text color
+                                                color: Color(
+                                                    0xFF8898aa), // Text color
                                                 fontSize: 16.0, // Text size
-                                                fontWeight: FontWeight.w400, // Text weight
+                                                fontWeight: FontWeight
+                                                    .w400, // Text weight
                                               ),
                                               controller: _dateController,
                                               decoration: InputDecoration(
@@ -3837,7 +3868,8 @@ print(fetchedDetails.workOrderImages);
                                                 // labelText: 'Select Date',
                                                 hintText: 'dd-mm-yyyy',
                                                 suffixIcon: IconButton(
-                                                  icon: const Icon(Icons.calendar_today),
+                                                  icon: const Icon(
+                                                      Icons.calendar_today),
                                                   onPressed: () {
                                                     _selectDate(context);
                                                   },
@@ -3850,7 +3882,6 @@ print(fetchedDetails.workOrderImages);
                                             ),
                                           ),
                                         ),
-
                                       ],
                                     ),
                                   ),
@@ -3859,8 +3890,6 @@ print(fetchedDetails.workOrderImages);
                               SizedBox(
                                 height: 15,
                               ),
-                            
-
                             ],
                           ),
                         ),
@@ -4014,8 +4043,10 @@ print(fetchedDetails.workOrderImages);
         date: _dateController.text.trim(),
         entry: _selectedEntry == 'yes',
         parts: parts,
-        notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-      ).then((value) {
+        notificationTime:
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+      )
+          .then((value) {
         setState(() {
           widget.property?.workSubject = subject.text;
         });
@@ -4030,7 +4061,6 @@ print(fetchedDetails.workOrderImages);
           fontSize: 16.0,
         );
         Navigator.pop(context, true);
-
       }).catchError((e) {
         // Error
         Fluttertoast.showToast(
