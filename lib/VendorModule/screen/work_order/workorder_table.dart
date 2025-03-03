@@ -259,7 +259,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
     );
   }
 
-  final List<String> items = ['New', "In Progress", "On Hold","Completed","Over Due","All"];
+  final List<String> items = ['New', "In Progress", "On Hold","Completed","Over Due",'Closed',"All"];
   String? selectedValue;
   String searchvalue = "";
   @override
@@ -777,7 +777,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                             ),
                             Expanded(
                               child: Text(
-                                'Type',
+                                'Status',
                                 style: TextStyle(
                                   fontSize: 14,
                                   // fontWeight: FontWeight.bold,

@@ -268,6 +268,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
     "On Hold",
     "Completed",
     "Over Due",
+    'Closed',
     "All"
   ];
   String? selectedValue;
@@ -914,7 +915,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                   ),
                                   Expanded(
                                     child: Text(
-                                      'Type',
+                                      'Status',
                                       style: TextStyle(
                                         fontSize: 14,
                                         // fontWeight: FontWeight.bold,
@@ -1046,34 +1047,29 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                               //    print(snapshot.data!.length);
                               data = snapshot.data!
                                   .where((workorder) =>
-                              workorder.workSubject!
-                                  .toLowerCase()
-                                  .contains(
-                                  searchvalue!.toLowerCase()) ||
-                                  workorder.status!
-                                      .toLowerCase()
-                                      .contains(
-                                      searchvalue!.toLowerCase()) ||
-                                  workorder.isBillable!
-                                      .toString()
-                                      .toLowerCase()
-                                      .contains(
-                                      searchvalue!.toLowerCase()) ||
-                                  workorder.rentalAddress!
-                                      .toLowerCase()
-                                      .contains(
-                                      searchvalue!.toLowerCase()) ||
-                                  workorder.createdAt
-                                      .toString()
-                                      .toLowerCase()
-                                      .contains(
-                                      searchvalue!.toLowerCase()) ||
-                                  workorder.workCategory!
-                                      .toLowerCase()
-                                      .contains(searchvalue!.toLowerCase()) ||
-                                  (workorder.staffMemberName?.toLowerCase() ?? '').contains(searchvalue.toLowerCase()))
+                                      workorder.workSubject!.toLowerCase().contains(
+                                          searchvalue!.toLowerCase()) ||
+                                      workorder.status!.toLowerCase().contains(
+                                          searchvalue!.toLowerCase()) ||
+                                      workorder.isBillable!
+                                          .toString()
+                                          .toLowerCase()
+                                          .contains(
+                                              searchvalue!.toLowerCase()) ||
+                                      workorder.rentalAddress!
+                                          .toLowerCase()
+                                          .contains(
+                                              searchvalue!.toLowerCase()) ||
+                                      workorder.createdAt
+                                          .toString()
+                                          .toLowerCase()
+                                          .contains(
+                                              searchvalue!.toLowerCase()) ||
+                                      workorder.workCategory!.toLowerCase().contains(
+                                          searchvalue!.toLowerCase()) ||
+                                      (workorder.staffMemberName?.toLowerCase() ?? '')
+                                          .contains(searchvalue.toLowerCase()))
                                   .toList();
-
                             } else {
                               if (selectedValue == "Over Due") {
                                 data = snapshot.data!.where((element) {
@@ -1343,7 +1339,6 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                       '${workorder.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.createdAt}') : 'N/A'}',
                                                                       'Updated At:',
                                                                       '${workorder.updatedAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.updatedAt}') : 'N/A'}'),
-
                                                                   _buildTableRow(
                                                                       'Due Date:',
                                                                       '${workorder.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.date}') : 'N/A'}',

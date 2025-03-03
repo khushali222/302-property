@@ -461,7 +461,6 @@
 //     );
 //   }
 // }
-import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
@@ -797,184 +796,143 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
                     padding: const EdgeInsets.all(2.0),
                     child: Column(
                       children: [
-                        Container(
-                          height: 55,
-                          child: HtmlEditor(
-                            controller: _htmlEditorController,
-                            htmlEditorOptions: HtmlEditorOptions(
-                              hint: "Edit your email content here...",
-                              //  shouldEnsureVisible: true,
-                            ),
-                            otherOptions: OtherOptions(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(4),
-                                    topRight: Radius.circular(4)),
-                              ),
-                            ),
-                            htmlToolbarOptions: HtmlToolbarOptions(
-                              // toolbarType: ToolbarType.nativeExpandable,
-                              customToolbarButtons: [
-                                PopupMenuButton<String>(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text("Paragraph",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                            )),
-                                        Icon(Icons
-                                            .arrow_drop_down), // Dropdown indicator
-                                      ],
-                                    ),
-                                  ),
-                                  tooltip: "Paragraph",
-                                  onSelected: (String format) {
-                                    _htmlEditorController.execCommand(
-                                        "formatBlock",
-                                        argument: format);
-                                  },
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                      value: "h1",
-                                      child: Text("Heading 1",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                    PopupMenuItem(
-                                      value: "h2",
-                                      child: Text("Heading 2",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                    PopupMenuItem(
-                                      value: "h3",
-                                      child: Text("Heading 3",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                    PopupMenuItem(
-                                      value: "p",
-                                      child: Text("Paragraph",
-                                          style: TextStyle(fontSize: 14)),
-                                    ),
-                                  ],
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.format_quote),
-                                  tooltip: "Insert Quote",
-                                  onPressed: () {
-                                    _htmlEditorController.execCommand(
-                                        "formatBlock",
-                                        argument: "blockquote");
-                                  },
-                                ),
-                                PopupMenuButton<String>(
-                                  icon: Icon(Icons.text_fields),
-                                  tooltip: "Font Size",
-                                  onSelected: (String text) {
-                                    _htmlEditorController.execCommand(
-                                        "fontSize",
-                                        argument: text);
-                                  },
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                        value: "1", child: Text("tiny")),
-                                    PopupMenuItem(
-                                        value: "2", child: Text("small")),
-                                    PopupMenuItem(
-                                        value: "3", child: Text("default")),
-                                    PopupMenuItem(
-                                        value: "5", child: Text("big")),
-                                    PopupMenuItem(
-                                        value: "7", child: Text("huge")),
-                                  ],
-                                ),
-                              ],
-                              defaultToolbarButtons: [
-                                OtherButtons(
-                                    fullscreen: false,
-                                    help: false,
-                                    codeview: false,
-                                    undo: true,
-                                    redo: true,
-                                    copy: false,
-                                    paste: false),
-                                FontButtons(
-                                  bold: true,
-                                  italic: true,
-                                  underline: false,
-                                  strikethrough: false,
-                                  subscript: false,
-                                  superscript: false,
-                                  clearAll: false,
-                                ),
-                                InsertButtons(
-                                  picture: false,
-                                  video: false,
-                                  audio: false,
-                                  table: true,
-                                  hr: false,
-                                ),
-                                ListButtons(
-                                  ul: true,
-                                  ol: true,
-                                  listStyles: false,
-                                ),
-                                ParagraphButtons(
-                                  textDirection: false,
-                                  lineHeight: false,
-                                  caseConverter: false,
-                                  decreaseIndent: false,
-                                  increaseIndent: false,
-                                ),
-                                ColorButtons(),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // SizedBox(
-                        //   height: 10,
-                        // ),
                         HtmlEditor(
-                          callbacks: Callbacks(
-                            onInit: () {
-                              _htmlEditorController.setFullScreen();
-                            },
-                          ),
                           controller: _htmlEditorController,
                           htmlEditorOptions: HtmlEditorOptions(
-                            webInitialScripts: UnmodifiableListView([
-                              WebScript(
-                                  name: "editorBG",
-                                  script:
-                                      "document.getElementsByClassName('note-editable')[0].style.backgroundColor='blue';"),
-                            ]),
+                            adjustHeightForKeyboard: false,
                             hint: "Edit your email content here...",
-                            autoAdjustHeight: false,
                             //  shouldEnsureVisible: true,
                           ),
                           otherOptions: OtherOptions(
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.black),
                               borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(4),
-                                  bottomRight: Radius.circular(4)),
+                                  topLeft: Radius.circular(4),
+                                  topRight: Radius.circular(4)),
                             ),
                           ),
                           htmlToolbarOptions: HtmlToolbarOptions(
                             // toolbarType: ToolbarType.nativeExpandable,
-                            // toolbarPosition: ToolbarPosition.belowEditor,
-                            customToolbarButtons: [],
-                            defaultToolbarButtons: [],
-                            toolbarType: ToolbarType.nativeGrid,
+                            customToolbarButtons: [
+                              PopupMenuButton<String>(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text("Paragraph",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          )),
+                                      Icon(Icons
+                                          .arrow_drop_down), // Dropdown indicator
+                                    ],
+                                  ),
+                                ),
+                                tooltip: "Paragraph",
+                                onSelected: (String format) {
+                                  _htmlEditorController.execCommand(
+                                      "formatBlock",
+                                      argument: format);
+                                },
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    value: "h1",
+                                    child: Text("Heading 1",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  PopupMenuItem(
+                                    value: "h2",
+                                    child: Text("Heading 2",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  PopupMenuItem(
+                                    value: "h3",
+                                    child: Text("Heading 3",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  PopupMenuItem(
+                                    value: "p",
+                                    child: Text("Paragraph",
+                                        style: TextStyle(fontSize: 14)),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.format_quote),
+                                tooltip: "Insert Quote",
+                                onPressed: () {
+                                  _htmlEditorController.execCommand(
+                                      "formatBlock",
+                                      argument: "blockquote");
+                                },
+                              ),
+                              PopupMenuButton<String>(
+                                icon: Icon(Icons.text_fields),
+                                tooltip: "Font Size",
+                                onSelected: (String text) {
+                                  _htmlEditorController.execCommand("fontSize",
+                                      argument: text);
+                                },
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                      value: "1", child: Text("tiny")),
+                                  PopupMenuItem(
+                                      value: "2", child: Text("small")),
+                                  PopupMenuItem(
+                                      value: "3", child: Text("default")),
+                                  PopupMenuItem(value: "5", child: Text("big")),
+                                  PopupMenuItem(
+                                      value: "7", child: Text("huge")),
+                                ],
+                              ),
+                            ],
+                            defaultToolbarButtons: [
+                              OtherButtons(
+                                  fullscreen: false,
+                                  help: false,
+                                  codeview: false,
+                                  undo: true,
+                                  redo: true,
+                                  copy: false,
+                                  paste: false),
+                              FontButtons(
+                                bold: true,
+                                italic: true,
+                                underline: false,
+                                strikethrough: false,
+                                subscript: false,
+                                superscript: false,
+                                clearAll: false,
+                              ),
+                              InsertButtons(
+                                picture: false,
+                                video: false,
+                                audio: false,
+                                table: true,
+                                hr: false,
+                              ),
+                              ListButtons(
+                                ul: true,
+                                ol: true,
+                                listStyles: false,
+                              ),
+                              ParagraphButtons(
+                                textDirection: false,
+                                lineHeight: false,
+                                caseConverter: false,
+                                decreaseIndent: false,
+                                increaseIndent: false,
+                              ),
+                              ColorButtons(),
+                            ],
                           ),
                         ),
                       ],
