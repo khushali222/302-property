@@ -287,6 +287,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
     });
     checkInternet();
     futureworkorder = WorkOrderRepository().fetchWorkOrders();
+    Provider.of<PermissionProvider>(context, listen: false).fetchPermissions();
     selectedValue = widget.filter;
   }
 
@@ -761,16 +762,19 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                     height: 20,
                   ),
                   //add propertytype
-                  if (permissions!.workorderAdd)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 0, right: 0),
-                      child: Row(
-                        // mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          titleBar(
-                            width: MediaQuery.of(context).size.width * .65,
-                            title: 'Work Orders',
-                          ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        titleBar(
+                          width: permissions!.workorderAdd
+                              ? MediaQuery.of(context).size.width * .65
+                              : MediaQuery.of(context).size.width * .93,
+                          title: 'Work Orders',
+                        ),
+                        if (permissions!.workorderAdd)
                           GestureDetector(
                             onTap: () async {
                               final result = await Navigator.of(context).push(
@@ -822,13 +826,13 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                               ),
                             ),
                           ),
-                          if (MediaQuery.of(context).size.width < 500)
-                            SizedBox(width: 6),
-                          if (MediaQuery.of(context).size.width > 500)
-                            SizedBox(width: 22),
-                        ],
-                      ),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: permissions!.workorderAdd ? 6 : 0),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 22),
+                      ],
                     ),
+                  ),
                   SizedBox(height: 10),
 
                   SizedBox(height: 10),

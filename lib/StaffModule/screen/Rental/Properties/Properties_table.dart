@@ -308,6 +308,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
     });
     checkInternet();
     futureRentalOwners = PropertiesRepository().fetchProperties();
+    Provider.of<StaffPermissionProvider>(context, listen: false).fetchPermissions();
     fetchRentaladded();
   }
 
@@ -541,8 +542,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   SizedBox(
                     height: 20,
                   ),
-                  if (permissions!.propertyAdd == true)
-                    Padding(
+                  Padding(
                       padding: const EdgeInsets.only(left: 0, right: 0),
                       child: Row(
                         //mainAxisAlignment: MainAxisAlignment.end,
@@ -550,10 +550,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: titleBar(
-                              width: MediaQuery.of(context).size.width * .65,
+                              width: permissions!.propertyAdd! ?MediaQuery.of(context).size.width * .65 :MediaQuery.of(context).size.width * .93,
                               title: 'Properties',
                             ),
                           ),
+                          if (permissions!.propertyAdd!)
                           GestureDetector(
                             onTap: () async {
                               // if (rentalCount < propertyCountLimit) {
@@ -633,28 +634,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             ),
                           ),
                           if (MediaQuery.of(context).size.width < 500)
-                            SizedBox(width: 6),
+                            SizedBox(width:permissions!.propertyAdd! ? 6 :0),
                           if (MediaQuery.of(context).size.width > 500)
                             SizedBox(width: 22),
                         ],
                       ),
                     ),
-                  if (permissions!.propertyAdd != true)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 0, right: 0),
-                      child: Row(
-                        //mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: titleBar(
-                              width: MediaQuery.of(context).size.width * .93,
-                              title: 'Properties',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+
                   // SizedBox(height: 10),
                   SizedBox(height: 10),
                   Padding(
@@ -1534,6 +1520,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
+                                                            if (permissions.propertyEdit!)
                                                             Expanded(
                                                               child:
                                                                   GestureDetector(
@@ -1605,9 +1592,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 ),
                                                               ),
                                                             ),
+                                                            if (permissions.propertyEdit!)
                                                             SizedBox(
                                                               width: 5,
                                                             ),
+                                                            if (permissions.propertyDelete!)
                                                             Expanded(
                                                               child:
                                                                   GestureDetector(
@@ -1659,9 +1648,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 ),
                                                               ),
                                                             ),
+                                                            if (permissions.propertyDelete!)
                                                             SizedBox(
                                                               width: 5,
                                                             ),
+                                                            if (permissions.propertyView!)
                                                             Expanded(
                                                               child:
                                                                   GestureDetector(

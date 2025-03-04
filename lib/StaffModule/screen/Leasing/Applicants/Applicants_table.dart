@@ -9,13 +9,16 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import '../../../model/staffpermission.dart';
 import '../../../repository/Property_type.dart';
 import '../../../repository/applicants.dart';
+import '../../../repository/staffpermission_provider.dart';
 import 'Summary/applicant_summery2.dart';
 import 'addApplicant.dart';
 import 'editApplicant.dart';
@@ -272,6 +275,7 @@ class _Applicants_tableState extends State<Applicants_table> {
       });
     });
     checkInternet();
+    Provider.of<StaffPermissionProvider>(context, listen: false).fetchPermissions();
     futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
     futureApplicantdata = ApplicantRepository().fetchApplicants();
     fetchapplicantadded();
@@ -665,6 +669,8 @@ class _Applicants_tableState extends State<Applicants_table> {
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    StaffPermission? permissions = permissionProvider.permissions;
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -685,10 +691,12 @@ class _Applicants_tableState extends State<Applicants_table> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: titleBar(
-                      width: MediaQuery.of(context).size.width * .65,
+                      width:permissions!.applicantAdd! ? MediaQuery.of(context).size.width * .65 :MediaQuery.of(context).size.width * .93,
                       title: 'Applicants',
                     ),
-                  ),                  GestureDetector(
+                  ),
+                  if(permissions!.applicantAdd!)
+                  GestureDetector(
                     onTap: () async {
                       print(applicantCount);
                       print(applicantCountLimit);
@@ -759,7 +767,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                     ),
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 6),
+                     SizedBox(width:permissions!.applicantAdd! ? 6 :0),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(width: 22),
                 ],
@@ -1322,6 +1330,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
+                                                      if(permissions!.applicantEdit!)
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap:()async{
@@ -1363,7 +1372,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if(permissions!.applicantEdit!)
                                                       SizedBox(width: 5,),
+                                                      if(permissions!.applicantDelete!)
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap:(){
@@ -1396,7 +1407,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if(permissions!.applicantDelete!)
                                                       SizedBox(width: 5,),
+                                                      if(permissions!.applicantView!)
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {
