@@ -210,6 +210,7 @@ class _AddCardState extends State<AddCard> {
         setState(() {
           customervaultid = jsonResponse['customer_vault_id'];
           cardDetails = customerData.billing;
+
           messageCardAvailable = '';
         });
       }
@@ -283,7 +284,15 @@ class _AddCardState extends State<AddCard> {
       customerData.billing.forEach((billing) {
         print('CC Bin: ${billing.ccBin}');
       });
+      Set<String> cardBillingIds = cardDetailsList
+          .map((card) => card['billing_id'].toString()) // Ensure conversion to string
+          .toSet();
 
+      // Filter customerData.billing to only include matching billing IDs
+      List<BillingData> filteredCards = customerData.billing
+          .where((billing) => cardBillingIds.contains(billing.billingId))
+          .toList();
+      customerData.billing = filteredCards;
       // List<String> binResults = await performBinChecks(customerData);
       //
       // for (int i = 0; i < customerData.billing.length; i++) {
@@ -294,7 +303,7 @@ class _AddCardState extends State<AddCard> {
       // binResults.forEach((result) {
       //   print('BIN Check Result: $result');
       // });
-      for (int i = 0; i < customerData.billing.length; i++) {
+      for (int i = 0; i < cardDetailsList.length; i++) {
         customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
       }
 

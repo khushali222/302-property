@@ -19,22 +19,22 @@ class CardModel {
 
   CardModel(
       {this.firstName,
-        this.lastName,
-        this.ccnumber,
-        this.ccexp,
-        this.address1,
-        this.address2,
-        this.city,
-        this.state,
-        this.zip,
-        this.cvv,
-        this.country,
-        this.company,
-        this.phone,
-        this.email,
-        this.adminId,
-        this.billingId,
-        this.customervaultid});
+      this.lastName,
+      this.ccnumber,
+      this.ccexp,
+      this.address1,
+      this.address2,
+      this.city,
+      this.state,
+      this.zip,
+      this.cvv,
+      this.country,
+      this.company,
+      this.phone,
+      this.email,
+      this.adminId,
+      this.billingId,
+      this.customervaultid});
 
   CardModel.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
@@ -121,6 +121,7 @@ class AddCreditCard {
     return data;
   }
 }
+
 class BillingData {
   String? firstName;
   String? cardType;
@@ -137,23 +138,21 @@ class BillingData {
   String? company;
   String? email;
 
-
-
   BillingData(
       {this.cardType,
-        this.firstName,
-        this.lastName,
-        this.ccNumber,
-        this.cvv,
-        this.ccExp,
-        this.ccType,
-        this.ccBin,
-        this.customerVaultId,
-        this.binResult,
-        this.email,
-        this.address_1,
-        this.company,// Initialize the bin result
-        this.billingId});
+      this.firstName,
+      this.lastName,
+      this.ccNumber,
+      this.cvv,
+      this.ccExp,
+      this.ccType,
+      this.ccBin,
+      this.customerVaultId,
+      this.binResult,
+      this.email,
+      this.address_1,
+      this.company, // Initialize the bin result
+      this.billingId});
 
   factory BillingData.fromJson(Map<String, dynamic> json) {
     print(json);
@@ -168,7 +167,7 @@ class BillingData {
     } else if (json["last_name"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       lastName =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
     }
 
     String? firstName;
@@ -177,7 +176,7 @@ class BillingData {
     } else if (json["first_name"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       firstName =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
     }
     String? ccType;
     if (json["cc_type"] is String) {
@@ -185,7 +184,7 @@ class BillingData {
     } else if (json["cc_type"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       ccType =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
     }
     String? ccNumber;
     if (json["cc_number"] is String) {
@@ -193,7 +192,7 @@ class BillingData {
     } else if (json["cc_number"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       ccNumber =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
     }
     String? ccExp;
     if (json["cc_exp"] is String) {
@@ -201,7 +200,7 @@ class BillingData {
     } else if (json["cc_exp"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       ccExp =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
     }
     String? ccBin;
     if (json["cc_bin"] is String) {
@@ -209,7 +208,7 @@ class BillingData {
     } else if (json["cc_bin"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       ccBin =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
     }
     String? companyName;
     if (json["company"] is String) {
@@ -217,7 +216,7 @@ class BillingData {
     } else if (json["company"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       companyName =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
     }
 
     String? customerVaultId;
@@ -227,7 +226,7 @@ class BillingData {
     } else if (json["customer_vault_id"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       customerVaultId =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
     }
 
     String? cvv;
@@ -237,7 +236,7 @@ class BillingData {
     } else if (json["cvv"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       cvv =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
     }
 
     String? billingId;
@@ -248,7 +247,7 @@ class BillingData {
     } else if (json["billing_id"] is Map) {
       // Handle the case when last_name is a Map, set it to null or extract specific value
       billingId =
-      null; // Or json["last_name"]["some_field"] if you need a specific value
+          null; // Or json["last_name"]["some_field"] if you need a specific value
       print('billing_id is ${json["billing_id"]}');
     }
 
@@ -259,20 +258,18 @@ class BillingData {
         ccExp: ccExp,
         ccType: ccType,
         ccBin: ccBin,
-        cvv:cvv,
+        cvv: cvv,
         customerVaultId: customerVaultId,
         billingId: json["@attributes"]["id"].toString(),
         email: json["email"].runtimeType == Map ? null : json["email"],
-        address_1: json["address_1"].runtimeType == Map ? null : json["address_1"],
-        company: companyName
-
-    );
-
+        address_1:
+            json["address_1"].runtimeType == Map ? null : json["address_1"],
+        company: companyName);
   }
 }
 
 class CustomerData {
-  final List<BillingData> billing;
+  List<BillingData> billing;
 
   CustomerData({required this.billing});
 
@@ -313,4 +310,3 @@ class cardModelFordelete {
     };
   }
 }
-

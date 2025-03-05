@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:super_tooltip/super_tooltip.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
@@ -16,57 +20,52 @@ class Add_Email_templet extends StatefulWidget {
 }
 
 class _Add_Email_templetState extends State<Add_Email_templet> {
-  List<Map<String, dynamic>> templates = [];
-  List<String> events = [];
   String? selectedTemplateId;
+  GlobalKey<TooltipState> _tooltipKey = GlobalKey<TooltipState>();
   final HtmlEditorController _htmlEditorController = HtmlEditorController();
   final TextEditingController name = TextEditingController();
   final TextEditingController subject = TextEditingController();
-  String htmlName = ""; // Store HTML content
-  String htmlBody = ""; // Store HTML content
-  String htmlsubject = ""; // Store HTML content
-
+  GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final _controller = SuperTooltipController();
+  FocusNode? _subjectFocusNode;
+  FocusNode? _bodyFocusNode;
+  FocusNode? _nameFocusNode;
+  String? nameError;
+  bool? nameErrorr;
+  String? subjectError;
+  String? bodyError;
+  bool isLoading = false;
+  String? _selectedEvent;
+  List<String> events = [
+    'Reset password',
+    'Invitation',
+    'Property assign',
+    'Lease creation',
+    'Work Orders',
+    'Payment receipt',
+    'LateFee reminder',
+    'Lease end Reminder',
+    'Express Payment',
+    'Payment refund',
+    'Applicant application',
+    'Applicant status',
+    'Payment failure',
+    'Manual Tenant',
+  ];
   @override
   void initState() {
     super.initState();
-    fetchTemplates();
+    _subjectFocusNode = FocusNode();
+    _nameFocusNode = FocusNode();
   }
 
-  Future<void> fetchTemplates() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
-    String? token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("${Api_url}/api/templates/get/1739444432258"),
-      headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $adminId",
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data["statusCode"] == 200 && data.containsKey("template")) {
-        setState(() {
-          templates = [data["template"]]; // Store in list
-          events = [data["template"]["name"] as String]; // Extract name
-          selectedTemplateId =
-              data["template"]["template_id"]; // Select default
-          htmlName = data["template"]["name"]; // Get HTML content
-          htmlBody = data["template"]["body"]; // Get HTML content
-          htmlsubject = data["template"]["subject"]; // Get HTML content
-          _htmlEditorController
-              .setText(replaceSpanTags(htmlBody)); // Set editor content
-          //_htmlEditorController.setText(htmlBody);
-        });
-      }
-    } else {
-      print("Failed to load templates");
-    }
-  }
-
-  Future<void> saveTemplate() async {
+  void saveTemplate() async {
+    setState(() {
+      isLoading = true;
+      nameError = null;
+      subjectError = null;
+      bodyError = null; // Start loading
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString("token");
@@ -76,22 +75,26 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
 
     print("body of ${updatedHtmlBody}");
 
-    print("updated body after replace.. ${replaceFontTags(updatedHtmlBody)}");
+    if (name.text.trim().isEmpty || subject.text.trim().isEmpty || updatedHtmlBody.trim().isEmpty) {
+      setState(() {
+        isLoading = false;
+        nameError = name.text.trim().isEmpty ? "Template name cannot be empty" : null;
+        subjectError = subject.text.trim().isEmpty ? "Email subject cannot be empty" : null;
+        bodyError = "Email body cannot be empty"; // Set the error message
+      });
+      return; // Stop execution
+    }
     Map<String, dynamic> updatedTemplate = {
-      "template_id": selectedTemplateId,
       "admin_id": adminId,
-      "name": "Invitation",
-      "subject": "Welcome to Smith test",
-      // "body": updatedHtmlBody, // Send updated HTML
-      "body": replaceFontTags(updatedHtmlBody), // Send updated HTML
+      "name": name.text,
+      "subject": subject.text,
+      "body": updatedHtmlBody,
       "type": "E-mail",
-      "mail_type": "Invitation",
-      "is_delete": false,
-      "is_active": false,
+      "mail_type": _selectedEvent,
     };
 
-    final response = await http.put(
-      Uri.parse("${Api_url}/api/templates/$selectedTemplateId"),
+    final response = await http.post(
+      Uri.parse("${Api_url}/api/templates"),
       headers: {
         "Content-Type": "application/json",
         "authorization": "CRM $token",
@@ -99,151 +102,148 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
       },
       body: json.encode(updatedTemplate),
     );
-
+    print(" templet post ${response.body}");
+    setState(() {
+      isLoading = false; // Stop loading
+    });
     if (response.statusCode == 200) {
-      print("Template updated successfully!");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Template updated successfully!"),
-        backgroundColor: Colors.green,
-      ));
+      Fluttertoast.showToast(
+        msg: "Template posted successfully!",
+      );
+      Navigator.pop(context, true);
     } else {
-      print("Failed to update template");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to update template"),
-        backgroundColor: Colors.red,
-      ));
+      print("Failed to add template");
+      Fluttertoast.showToast(msg: "Failed to post template");
     }
   }
 
-  String replaceFontTags(String html) {
-    final Map<String, String> fontSizeMap = {
-      '1': 'text-tiny',
-      '2': 'text-small',
-      '3': 'text-default',
-      '5': 'text-big',
-      '7': 'text-huge',
-    };
+  Map<String, List<Map<String, String>>> tipsObject = {
+    "Reset password": [
+      {r"${Name}": "Receiver Name"},
+      {r"${Url}": "Reset password link"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Invitation": [
+      {r"${Name}": "Receiver Name"},
+      {r"${EmailAddress}": "Email Address"},
+      {r"${Password}": "Password"},
+      {r"${Url}": "Login Link"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Property assign": [
+      {r"${Name}": "Receiver Name"},
+      {r"${RentalOwner}": "Rental Owner Name"},
+      {r"${RentalAddress}": "Rental Address"},
+      {r"${Unit}": "Unit Address"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Lease creation": [
+      {r"${Name}": "Receiver Name"},
+      {r"${RentalOwner}": "Rental Owner Name"},
+      {r"${RentalAddress}": "Rental Address"},
+      {r"${Unit}": "Unit Address"},
+      {r"${StartDate}": "Start Date"},
+      {r"${EndDate}": "End Date"},
+      {r"${Rent}": "Rent Amount"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Work Orders": [
+      {r"${Name}": "Receiver Name"},
+      {r"${RentalOwner}": "Rental Owner Name"},
+      {r"${RentalAddress}": "Rental Address"},
+      {r"${Unit}": "Unit Address"},
+      {r"${Title}": "title"},
+      {r"${Category}": "Category"},
+      {r"${Priority}": "Priority"},
+      {r"${Work_Perform}": "Work to be performed"},
+      {r"${Status}": "Status"},
+      {r"${DueDate}": "Due Date"},
+      {r"${Entry_Allowed}": "Entry allowed"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Payment receipt": [
+      {r"${Name}": "Receiver Name"},
+      {r"${RentalOwner}": "Rental Owner Name"},
+      {r"${RentalAddress}": "Rental Address"},
+      {r"${PaymentDate}": "Payment Date"},
+      {r"${CurrentDate}": "Current Date"},
+      {r"${AmountPaid}": "Amount Paid"},
+      {r"${AmountDue}": "Due Amount"},
+      {r"${TransactionId}": "Transaction Id"},
+      {r"${PaymentMethod}": "Payment Method"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "LateFee reminder": [
+      {r"${Name}": "Receiver Name"},
+      {r"${Amount}": "Rent amount"},
+      {r"${LateFee}": "Late Fee percentage"},
+      {r"${Duration}": "late fee duration"},
+      {r"${RentalAddress}": "Rental Address"},
+      // { "${Unit}": "Unit Name" },
+      {r"${DueDate}": "Due date to pay Rent"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Lease end Reminder": [
+      {r"${Name}": "Receivers Name"},
+      {r"${EndDate}": "Lease End Date"},
+      {r"${RentalAddress}": "Rental Address"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Express Payment": [
+      {r"${Name}": "Receivers Name"},
+      {r"${RentalOwner}": "Rental Owner Name"},
+      {r"${RentalAddress}": "Rental Address"},
+      {r"${Url}": "Express Payment URL"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+      {r"${Duration}": "link valid untill days"},
+    ],
+    "Payment refund": [
+      {r"${Name}": "Receiver Name"},
+      {r"${Amount}": "Refund Amount"},
+      {r"${TransactionId}": "Transaction Id"},
+      {r"${Date}": "Refund Date"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Applicant application": [
+      {r"${Name}": "Receiver Name"},
+      {r"${RentalAddress}": "Rental Address"},
+      {r"${Url}": "Application link"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Applicant status": [
+      {r"${Name}": "Receiver Name"},
+      {r"${RentalAddress}": "Rental Address"},
+      {r"${Status}": "Applicant Status"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Payment failure": [
+      {r"${Name}": "Receiver Name"},
+      {r"${RentalAddress}": "Rental Address"},
+      {r"${PaymentDate}": "Payment Date"},
+      {r"${AmountPaid}": "Amount Paid"},
+      {r"${PaymentFailureReason}": "Payment Failure Reason"},
+      {r"${PaymentMethod}": "Payment Method"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+    "Manual Tenant": [
+      {r"${Name}": "Receiver Name"},
+      {r"${EmailAddress}": "E-mail Address"},
+      {r"${CompanyName}": "Company Name"},
+    ],
+  };
 
-    return html.replaceAllMapped(
-      RegExp(
-        r'<font\s+(?:size="(\d+)")?(?:\s*style="([^"]*)")?(?:\s*size="(\d+)")?>(.*?)<\/font>',
-        caseSensitive: false,
-      ),
-      (match) {
-        // Extract size (either from group 1 or 3, since size can appear first or last)
-        String size = match.group(1) ?? match.group(3) ?? '';
-        String style = match.group(2) ?? ''; // Extract style if present
-        String text = match.group(4) ?? ''; // Extract inner text
-
-        // Get class name based on size
-        String? className = fontSizeMap[size];
-
-        // Construct <span> tag
-        if (className != null) {
-          return style.isNotEmpty
-              ? '<span class="$className" style="$style">$text</span>'
-              : '<span class="$className">$text</span>';
-        }
-
-        return match.group(0)!; // Return original if no match
-      },
-    );
-  }
-
-  String replaceSpanTags(String html) {
-    // Mapping class names to corresponding font sizes
-    final Map<String, String> classToFontSizeMap = {
-      'text-tiny': '1',
-      'text-small': '2',
-      'text-default': '3',
-      'text-big': '5',
-      'text-huge': '7',
-    };
-
-    // Regular expression to extract class and style attributes separately
-    return html.replaceAllMapped(
-      RegExp(
-          r'<span[^>]*class="([^"]*)"[^>]*style="([^"]*)"[^>]*>(.*?)<\/span>',
-          caseSensitive: false),
-      (match) {
-        String classNames = match.group(1) ?? ''; // Extract class names
-        String style = match.group(2) ?? ''; // Extract inline styles
-        String text = match.group(3) ?? ''; // Extract inner text
-
-        // Extract the first matching class from the known map
-        String? fontSize = classNames
-            .split(' ')
-            .map((cls) => classToFontSizeMap[cls])
-            .firstWhere((size) => size != null, orElse: () => null);
-
-        // If a font size is found, replace <span> with <font>
-        return fontSize != null
-            ? '<font size="$fontSize" style="$style">$text</font>'
-            : match.group(0)!;
-      },
-    );
-  }
-
-  // String replaceSpanTags(String html) {
-  //   // Mapping class names to corresponding font sizes
-  //   final Map<String, String> classToFontSizeMap = {
-  //     'text-tiny': '1',
-  //     'text-small': '2',
-  //     'text-default': '3',
-  //     'text-big': '5',
-  //     'text-huge': '7',
-  //   };
-  //
-  //   // Regular expression to match <span class="X">...</span>
-  //   return html.replaceAllMapped(
-  //     RegExp(r'<span\s+class="(.*?)">(.*?)<\/span>', caseSensitive: false),
-  //     (match) {
-  //       String className = match.group(1) ?? ''; // Get class name
-  //       String text = match.group(2) ?? ''; // Get inner text
-  //       String? fontSize =
-  //           classToFontSizeMap[className]; // Get corresponding font size
-  //
-  //       // If class name is found in the map, replace with <font>, else keep original
-  //       return fontSize != null
-  //           ? '<font size="$fontSize">$text</font>'
-  //           : match.group(0)!;
-  //     },
-  //   );
-  // }
-  //
-  // String replaceFontTags(String html) {
-  //   // Mapping font sizes to corresponding class names
-  //   final Map<String, String> fontSizeMap = {
-  //     '1': 'text-tiny',
-  //     '2': 'text-small',
-  //     '3': 'text-default',
-  //     '5': 'text-big',
-  //     '7': 'text-huge',
-  //   };
-  //
-  //   // Regular expression to match <font size="X">...</font>
-  //   return html.replaceAllMapped(
-  //     RegExp(r'<font\s+size="(\d+)">(.*?)<\/font>', caseSensitive: false),
-  //     (match) {
-  //       String size = match.group(1) ?? ''; // Get font size
-  //       String text = match.group(2) ?? ''; // Get inner text
-  //       String? className = fontSizeMap[size]; // Get corresponding class
-  //
-  //       // If the size is found in the map, replace with <span>, else keep original
-  //       return className != null
-  //           ? '<span class="$className">$text</span>'
-  //           : match.group(0)!;
-  //     },
-  //   );
-  // }
-
-  Widget separatorWidget = const VerticalDivider(
-    width: 10, // Space between toolbar items
-    thickness: 1, // Line thickness
-    color: Colors.grey, // Divider color
-    indent: 2, // Space from top
-    endIndent: 2, // Space from bottom
-  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -258,336 +258,551 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(2.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text('Name',
+            child: Form(
+              key: _formkey,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text('Name',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Material(
+                                  elevation: 2,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Container(
+                                    height: 47,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.0, vertical: 0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      //border: Border.all(color: blueColor),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.2),
+                                          offset: Offset(4, 4),
+                                          blurRadius: 3,
+                                        ),
+                                      ],
+                                    ),
+                                    child: TextFormField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          nameErrorr = false;
+                                        });
+                                      },
+                                      focusNode: _nameFocusNode,
+                                      controller: name,
+                                      decoration: InputDecoration(
+                                        hintStyle: TextStyle(
+                                            fontSize: 13, color: Colors.grey),
+                                        border: InputBorder.none,
+                                        hintText: "Enter name",
+                                      ),
+                                      onTapOutside: (_) {
+                                        _nameFocusNode?.unfocus();
+                                        FocusScope.of(context)
+                                            .requestFocus(_bodyFocusNode);
+                                        _htmlEditorController.setFocus();
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (nameErrorr != null)
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5, left: 3),
+                                      child: Text(
+                                        nameError!,
+                                        style: TextStyle(color: Colors.red, fontSize: 14),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 1,
+                      ),
+                      Expanded(
+                        child: Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(
+                                  "Event Type",
                                   style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: CustomTextField(
-                                hintText: 'Enter name',
-                                controller: name,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 1,
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                "Event Type",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                //border: Border.all(color: Colors.black),
-                                borderRadius: BorderRadius.circular(8),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    offset: Offset(4, 4),
-                                    blurRadius: 3,
-                                  ),
-                                ],
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  isExpanded: true,
-                                  value: selectedTemplateId,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      selectedTemplateId = newValue;
-                                      var selectedTemplate =
-                                          templates.firstWhere(
-                                        (template) =>
-                                            template["template_id"] == newValue,
-                                        orElse: () => {},
-                                      );
-                                      htmlBody = selectedTemplate["body"] ?? "";
-                                      htmlName = selectedTemplate["name"] ?? "";
-                                      htmlsubject =
-                                          selectedTemplate["subject"] ?? "";
-                                      _htmlEditorController
-                                          .setText(replaceSpanTags(htmlBody));
-                                      name.text = htmlName;
-                                      subject.text = htmlsubject;
-                                      print("name ${htmlName}");
-                                      print("subject ${htmlsubject}");
-                                    });
-                                  },
-                                  items: templates.map((template) {
-                                    return DropdownMenuItem<String>(
-                                      value: template["template_id"],
-                                      child: Text(template["name"]),
-                                    );
-                                  }).toList(),
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 2,
-                    ),
-                    Text('Subject',
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: blueColor)),
-                  ],
-                ),
-                SizedBox(height: 5),
-                Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: CustomTextField(
-                    // keyboardType: TextInputType.emailAddress,
-                    hintText: 'Enter subject',
-                    controller: subject,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 2,
-                    ),
-                    Text(
-                      "Body",
-                      style: TextStyle(
-                          color: blueColor, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Column(
-                      children: [
-                        HtmlEditor(
-                          controller: _htmlEditorController,
-                          htmlEditorOptions: HtmlEditorOptions(
-                            adjustHeightForKeyboard: false,
-                            hint: "Edit your email content here...",
-                            //  shouldEnsureVisible: true,
-                          ),
-                          otherOptions: OtherOptions(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  topRight: Radius.circular(4)),
-                            ),
-                          ),
-                          htmlToolbarOptions: HtmlToolbarOptions(
-                            // toolbarType: ToolbarType.nativeExpandable,
-                            customToolbarButtons: [
-                              PopupMenuButton<String>(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
+                              FormField<String>(
+                                validator: (value) {
+                                  if (_selectedEvent == null ||
+                                      _selectedEvent!.isEmpty) {
+                                    return 'Please select a event';
+                                  }
+                                  return null;
+                                },
+                                builder: (FormFieldState<String> state) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text("Paragraph",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                          )),
-                                      Icon(Icons
-                                          .arrow_drop_down), // Dropdown indicator
+                                      DropdownButtonHideUnderline(
+                                        child: DropdownButton2<String>(
+                                          isExpanded: true,
+                                          hint: const Text('Select Event'),
+                                          value: _selectedEvent,
+                                          items: events.map((method) {
+                                            return DropdownMenuItem<String>(
+                                              value: method,
+                                              child: Text(method),
+                                            );
+                                          }).toList(),
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              _selectedEvent = newValue;
+
+                                              state.didChange(newValue);
+                                            });
+                                            print(
+                                                'Selected Event: $_selectedEvent');
+                                            state.reset();
+                                            // Notify FormField of value change
+                                          },
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            elevation: 2,
+                                          ),
+                                          iconStyleData: const IconStyleData(
+                                            icon: Icon(Icons.arrow_drop_down),
+                                            iconSize: 24,
+                                            iconEnabledColor: Color(0xFFb0b6c3),
+                                            iconDisabledColor: Colors.grey,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(6),
+                                              thickness:
+                                                  MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                            ),
+                                          ),
+                                          menuItemStyleData:
+                                              const MenuItemStyleData(
+                                            height: 50,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
+                                          ),
+                                        ),
+                                      ),
+                                      if (state.hasError)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 14, top: 8),
+                                          child: Text(
+                                            state.errorText!,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
                                     ],
-                                  ),
-                                ),
-                                tooltip: "Paragraph",
-                                onSelected: (String format) {
-                                  _htmlEditorController.execCommand(
-                                      "formatBlock",
-                                      argument: format);
+                                  );
                                 },
-                                itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                    value: "h1",
-                                    child: Text("Heading 1",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  PopupMenuItem(
-                                    value: "h2",
-                                    child: Text("Heading 2",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  PopupMenuItem(
-                                    value: "h3",
-                                    child: Text("Heading 3",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  PopupMenuItem(
-                                    value: "p",
-                                    child: Text("Paragraph",
-                                        style: TextStyle(fontSize: 14)),
-                                  ),
-                                ],
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.format_quote),
-                                tooltip: "Insert Quote",
-                                onPressed: () {
-                                  _htmlEditorController.execCommand(
-                                      "formatBlock",
-                                      argument: "blockquote");
-                                },
-                              ),
-                              PopupMenuButton<String>(
-                                icon: Icon(Icons.text_fields),
-                                tooltip: "Font Size",
-                                onSelected: (String text) {
-                                  _htmlEditorController.execCommand("fontSize",
-                                      argument: text);
-                                },
-                                itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                      value: "1", child: Text("tiny")),
-                                  PopupMenuItem(
-                                      value: "2", child: Text("small")),
-                                  PopupMenuItem(
-                                      value: "3", child: Text("default")),
-                                  PopupMenuItem(value: "5", child: Text("big")),
-                                  PopupMenuItem(
-                                      value: "7", child: Text("huge")),
-                                ],
                               ),
                             ],
-                            defaultToolbarButtons: [
-                              OtherButtons(
-                                  fullscreen: false,
-                                  help: false,
-                                  codeview: false,
-                                  undo: true,
-                                  redo: true,
-                                  copy: false,
-                                  paste: false),
-                              FontButtons(
-                                bold: true,
-                                italic: true,
-                                underline: false,
-                                strikethrough: false,
-                                subscript: false,
-                                superscript: false,
-                                clearAll: false,
-                              ),
-                              InsertButtons(
-                                picture: false,
-                                video: false,
-                                audio: false,
-                                table: true,
-                                hr: false,
-                              ),
-                              ListButtons(
-                                ul: true,
-                                ol: true,
-                                listStyles: false,
-                              ),
-                              ParagraphButtons(
-                                textDirection: false,
-                                lineHeight: false,
-                                caseConverter: false,
-                                decreaseIndent: false,
-                                increaseIndent: false,
-                              ),
-                              ColorButtons(),
-                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text('Subject',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: blueColor)),
+                    ],
+                  ),
+                  if (subjectError != null)
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5, left: 3),
+                          child: Text(
+                            subjectError!,
+                            style: TextStyle(color: Colors.red, fontSize: 14),
                           ),
                         ),
                       ],
                     ),
+                  SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Material(
+                          elevation: 2,
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Container(
+                            height: 47,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0),
+                              //border: Border.all(color: blueColor),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  offset: Offset(4, 4),
+                                  blurRadius: 3,
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
+                              focusNode: _subjectFocusNode,
+                              controller: subject,
+                              decoration: InputDecoration(
+                                hintStyle: TextStyle(
+                                    fontSize: 13, color: Color(0xFFb0b6c3)),
+                                border: InputBorder.none,
+                                hintText: "Enter subject",
+                              ),
+                              onTapOutside: (_) {
+                                _subjectFocusNode?.unfocus();
+                                FocusScope.of(context)
+                                    .requestFocus(_bodyFocusNode);
+                                _htmlEditorController
+                                    .setFocus(); // Move focus to the editor
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: saveTemplate,
-                      style: ElevatedButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "Body",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      SuperTooltip(
+                        controller: _controller,
+                        popupDirection: TooltipDirection.down,
+                        backgroundColor: Color(0xff2f2d2f),
+                        arrowTipDistance: 20.0,
+                        touchThroughAreaShape: ClipAreaShape.rectangle,
+                        touchThroughAreaCornerRadius: 30,
+                        barrierColor: Color.fromARGB(26, 47, 45, 47),
+                        content: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            tipsObject[_selectedEvent] != null &&
+                                    tipsObject[_selectedEvent]!.isNotEmpty
+                                ? 'You can personalize transaction templates using the following dynamic variables :\n' +
+                                    tipsObject[_selectedEvent]!
+                                        .map((e) => e.entries.first)
+                                        .map((entry) =>
+                                            "${entry.key}: ${entry.value}")
+                                        .join("\n")
+                                : 'You can personalize transaction templates using the following dynamic variables :',
+                            softWrap: true,
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
                         ),
-                        backgroundColor: blueColor,
-                      ),
-                      child: Text(
-                        "Save",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                        child: Icon(
+                          Icons.error,
+                          color: blueColor,
                         ),
-                        backgroundColor: Colors.white,
                       ),
-                      child: Text(
-                        "Cancel",
-                        style: TextStyle(fontSize: 16, color: blueColor),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Column(
+                        children: [
+                          Focus(
+                            focusNode: _bodyFocusNode,
+                            child: HtmlEditor(
+                              controller: _htmlEditorController,
+                              htmlEditorOptions: HtmlEditorOptions(
+                                adjustHeightForKeyboard: false,
+                                hint: "Edit your email content here...",
+                                //  shouldEnsureVisible: true,
+                              ),
+                              otherOptions: OtherOptions(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(4),
+                                      topRight: Radius.circular(4)),
+                                ),
+                              ),
+                              htmlToolbarOptions: HtmlToolbarOptions(
+                                // toolbarType: ToolbarType.nativeExpandable,
+                                customToolbarButtons: [
+                                  PopupMenuButton<String>(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text("Paragraph",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                              )),
+                                          Icon(Icons
+                                              .arrow_drop_down), // Dropdown indicator
+                                        ],
+                                      ),
+                                    ),
+                                    tooltip: "Paragraph",
+                                    onSelected: (String format) {
+                                      _htmlEditorController.execCommand(
+                                          "formatBlock",
+                                          argument: format);
+                                    },
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        value: "h1",
+                                        child: Text("Heading 1",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      PopupMenuItem(
+                                        value: "h2",
+                                        child: Text("Heading 2",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      PopupMenuItem(
+                                        value: "h3",
+                                        child: Text("Heading 3",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      PopupMenuItem(
+                                        value: "p",
+                                        child: Text("Paragraph",
+                                            style: TextStyle(fontSize: 14)),
+                                      ),
+                                    ],
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.format_quote),
+                                    tooltip: "Insert Quote",
+                                    onPressed: () {
+                                      _htmlEditorController.execCommand(
+                                          "formatBlock",
+                                          argument: "blockquote");
+                                    },
+                                  ),
+                                  PopupMenuButton<String>(
+                                    icon: Icon(Icons.text_fields),
+                                    tooltip: "Font Size",
+                                    onSelected: (String text) {
+                                      _htmlEditorController.execCommand(
+                                          "fontSize",
+                                          argument: text);
+                                    },
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                          value: "1", child: Text("tiny")),
+                                      PopupMenuItem(
+                                          value: "2", child: Text("small")),
+                                      PopupMenuItem(
+                                          value: "3", child: Text("default")),
+                                      PopupMenuItem(
+                                          value: "5", child: Text("big")),
+                                      PopupMenuItem(
+                                          value: "7", child: Text("huge")),
+                                    ],
+                                  ),
+                                ],
+                                defaultToolbarButtons: [
+                                  OtherButtons(
+                                      fullscreen: false,
+                                      help: false,
+                                      codeview: false,
+                                      undo: true,
+                                      redo: true,
+                                      copy: false,
+                                      paste: false),
+                                  FontButtons(
+                                    bold: true,
+                                    italic: true,
+                                    underline: false,
+                                    strikethrough: false,
+                                    subscript: false,
+                                    superscript: false,
+                                    clearAll: false,
+                                  ),
+                                  InsertButtons(
+                                    picture: false,
+                                    video: false,
+                                    audio: false,
+                                    table: true,
+                                    hr: false,
+                                  ),
+                                  ListButtons(
+                                    ul: true,
+                                    ol: true,
+                                    listStyles: false,
+                                  ),
+                                  ParagraphButtons(
+                                    textDirection: false,
+                                    lineHeight: false,
+                                    caseConverter: false,
+                                    decreaseIndent: false,
+                                    increaseIndent: false,
+                                  ),
+                                  ColorButtons(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  if (bodyError != null)
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5, left: 3),
+                          child: Text(
+                            bodyError!,
+                            style: TextStyle(color: Colors.red, fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          if (name.text.trim().isEmpty) {
+                            setState(() {
+                              nameErrorr = true;
+                              nameError = "Name is required";
+                            });
+                          } else {
+                            setState(() {
+                              nameErrorr = false;
+                            });
+                          }
+                          // if (_formkey.currentState?.validate() ?? false) {
+                          //   print('valid');
+                          //
+                          //   saveTemplate();
+                          // } else {
+                          //   print('invalid');
+                          // }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: blueColor,
+                        ),
+                        child: isLoading
+                            ? SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 25.0,
+                              )
+                            : Text(
+                                "Save",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: Colors.white,
+                        ),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(fontSize: 16, color: blueColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

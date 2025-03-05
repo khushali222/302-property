@@ -7,12 +7,13 @@ import '../../constant/constant.dart';
 class DonutChart extends StatelessWidget {
   final int newWorkOrders;
   final int overdueWorkOrders;
+  final int totalWorkOrders;
 
-  DonutChart({required this.newWorkOrders, required this.overdueWorkOrders});
+  DonutChart({required this.newWorkOrders, required this.overdueWorkOrders,required this.totalWorkOrders});
 
   @override
   Widget build(BuildContext context) {
-    int totalWorkOrders = newWorkOrders + overdueWorkOrders;
+   //int totalWorkOrders = newWorkOrders + overdueWorkOrders;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -107,7 +108,7 @@ class DonutChart extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Total Work \nOrders',
+                          'Total Work \n   Orders',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
