@@ -215,47 +215,47 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
               ),
-              // buildDropdownListTile(
-              //   context,
-              //   FaIcon(
-              //     FontAwesomeIcons.comments,
-              //     size: 20,
-              //     color: blueColor,
-              //   ),
-              //   "Communication",
-              //   [
-              //     "Send E-mail",
-              //     "E-mail Logs",
-              //     "Templates",
-              //
-              //   ],
-              //   [
-              //     FaIcon(
-              //       FontAwesomeIcons.envelopeCircleCheck,
-              //       size: 20,
-              //       color: widget.currentpage == "Communication"
-              //           ? Colors.white
-              //           : blueColor,
-              //     ), // Icon for Properties
-              //     FaIcon(
-              //       FontAwesomeIcons.envelopeOpenText,
-              //       size: 20,
-              //       color: widget.currentpage == "E-mail Logs"
-              //           ? Colors.white
-              //           : blueColor,
-              //     ),
-              //
-              //     FaIcon(
-              //       FontAwesomeIcons.wallet,
-              //       size: 20,
-              //       color: widget.currentpage == "Templates"
-              //           ? Colors.white
-              //           : blueColor,
-              //     ), // Icon for RentalOwner
-              //     //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
-              //   ],
-              //   selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
-              // ),
+              buildDropdownListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.comments,
+                  size: 20,
+                  color: blueColor,
+                ),
+                "Communication",
+                [
+                  "Send E-mail",
+                  "E-mail Logs",
+                  "Templates",
+
+                ],
+                [
+                  FaIcon(
+                    FontAwesomeIcons.envelopeCircleCheck,
+                    size: 20,
+                    color: widget.currentpage == "Communication"
+                        ? Colors.white
+                        : blueColor,
+                  ), // Icon for Properties
+                  FaIcon(
+                    FontAwesomeIcons.envelopeOpenText,
+                    size: 20,
+                    color: widget.currentpage == "E-mail Logs"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+
+                  FaIcon(
+                    FontAwesomeIcons.wallet,
+                    size: 20,
+                    color: widget.currentpage == "Templates"
+                        ? Colors.white
+                        : blueColor,
+                  ), // Icon for RentalOwner
+                  //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
+                ],
+                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+              ),
               buildListTile(
                 context,
                 FaIcon(

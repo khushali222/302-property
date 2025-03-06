@@ -36,7 +36,7 @@ Widget buildListTile(
   bool active,
 ) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
       color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
@@ -109,7 +109,7 @@ Widget buildDropdownListTile(
   bool isExpanded = selectedSubtopic != null && subTopics.contains(selectedSubtopic);
 
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: EdgeInsets.symmetric(horizontal: 14),
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: ExpansionTile(
       initiallyExpanded: isExpanded,

@@ -11,6 +11,7 @@ import 'package:super_tooltip/super_tooltip.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 
+import '../../../repository/Communication/Templet_Repo.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -30,10 +31,17 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
   FocusNode? _subjectFocusNode;
   FocusNode? _bodyFocusNode;
   FocusNode? _nameFocusNode;
-  String? nameError;
-  bool? nameErrorr;
-  String? subjectError;
-  String? bodyError;
+
+  bool nameError = false;
+  bool subjectError = false;
+  bool bodyError = false;
+  bool eventError = false;
+
+  String namemessage = "";
+  String submessage = "";
+  String bodymessage = "";
+  String eventmessage = "";
+
   bool isLoading = false;
   String? _selectedEvent;
   List<String> events = [
@@ -59,63 +67,65 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
     _nameFocusNode = FocusNode();
   }
 
-  void saveTemplate() async {
-    setState(() {
-      isLoading = true;
-      nameError = null;
-      subjectError = null;
-      bodyError = null; // Start loading
-    });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
-    String? token = prefs.getString("token");
-
-    String updatedHtmlBody =
-        await _htmlEditorController.getText(); // Get updated HTML content
-
-    print("body of ${updatedHtmlBody}");
-
-    if (name.text.trim().isEmpty || subject.text.trim().isEmpty || updatedHtmlBody.trim().isEmpty) {
-      setState(() {
-        isLoading = false;
-        nameError = name.text.trim().isEmpty ? "Template name cannot be empty" : null;
-        subjectError = subject.text.trim().isEmpty ? "Email subject cannot be empty" : null;
-        bodyError = "Email body cannot be empty"; // Set the error message
-      });
-      return; // Stop execution
-    }
-    Map<String, dynamic> updatedTemplate = {
-      "admin_id": adminId,
-      "name": name.text,
-      "subject": subject.text,
-      "body": updatedHtmlBody,
-      "type": "E-mail",
-      "mail_type": _selectedEvent,
-    };
-
-    final response = await http.post(
-      Uri.parse("${Api_url}/api/templates"),
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": "CRM $token",
-        "id": "CRM $adminId",
-      },
-      body: json.encode(updatedTemplate),
-    );
-    print(" templet post ${response.body}");
-    setState(() {
-      isLoading = false; // Stop loading
-    });
-    if (response.statusCode == 200) {
-      Fluttertoast.showToast(
-        msg: "Template posted successfully!",
-      );
-      Navigator.pop(context, true);
-    } else {
-      print("Failed to add template");
-      Fluttertoast.showToast(msg: "Failed to post template");
-    }
-  }
+  // void saveTemplate() async {
+  //   setState(() {
+  //     isLoading = true;
+  //     nameError = null;
+  //     subjectError = null;
+  //     bodyError = null; // Start loading
+  //   });
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? adminId = prefs.getString("adminId");
+  //   String? token = prefs.getString("token");
+  //
+  //   String updatedHtmlBody =
+  //       await _htmlEditorController.getText(); // Get updated HTML content
+  //
+  //   print("body of ${updatedHtmlBody}");
+  //
+  //   if (name.text.trim().isEmpty ||
+  //       subject.text.trim().isEmpty ||
+  //       updatedHtmlBody.trim().isEmpty) {
+  //     setState(() {
+  //       isLoading = false;
+  //       nameError = name.text.trim().isEmpty ? "required" : null;
+  //       subjectError = subject.text.trim().isEmpty ? "required" : null;
+  //       bodyError = "required"; // Set the error message
+  //     });
+  //     return; // Stop execution
+  //   }
+  //   Map<String, dynamic> updatedTemplate = {
+  //     "admin_id": adminId,
+  //     "name": name.text,
+  //     "subject": subject.text,
+  //     "body": updatedHtmlBody,
+  //     "type": "E-mail",
+  //     "mail_type": _selectedEvent,
+  //   };
+  //
+  //   final response = await http.post(
+  //     Uri.parse("${Api_url}/api/templates"),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "authorization": "CRM $token",
+  //       "id": "CRM $adminId",
+  //     },
+  //     body: json.encode(updatedTemplate),
+  //   );
+  //   print(" templet post ${response.body}");
+  //   setState(() {
+  //     isLoading = false; // Stop loading
+  //   });
+  //   if (response.statusCode == 200) {
+  //     Fluttertoast.showToast(
+  //       msg: "Template posted successfully!",
+  //     );
+  //     Navigator.pop(context, true);
+  //   } else {
+  //     print("Failed to add template");
+  //     Fluttertoast.showToast(msg: "Failed to post template");
+  //   }
+  // }
 
   Map<String, List<Map<String, String>>> tipsObject = {
     "Reset password": [
@@ -265,6 +275,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                   Row(
                     children: [
                       Expanded(
+                        flex: 3,
                         child: Container(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -272,7 +283,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(4.0),
-                                child: Text('Name',
+                                child: Text('Name *',
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
@@ -299,42 +310,81 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                         ),
                                       ],
                                     ),
-                                    child: TextFormField(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          nameErrorr = false;
-                                        });
-                                      },
-                                      focusNode: _nameFocusNode,
-                                      controller: name,
-                                      decoration: InputDecoration(
-                                        hintStyle: TextStyle(
-                                            fontSize: 13, color: Colors.grey),
-                                        border: InputBorder.none,
-                                        hintText: "Enter name",
-                                      ),
-                                      onTapOutside: (_) {
-                                        _nameFocusNode?.unfocus();
-                                        FocusScope.of(context)
-                                            .requestFocus(_bodyFocusNode);
-                                        _htmlEditorController.setFocus();
-                                      },
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: TextField(
+                                            focusNode: _nameFocusNode,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                nameError = false;
+                                              });
+                                            },
+                                            controller: name,
+                                            cursorColor: blueColor,
+                                            onTapOutside: (_) {
+                                              _nameFocusNode?.unfocus();
+                                              FocusScope.of(context)
+                                                  .requestFocus(_bodyFocusNode);
+                                              _htmlEditorController.setFocus();
+                                            },
+                                            decoration: InputDecoration(
+                                              hintStyle: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Color(0xFFb0b6c3)),
+                                              border: InputBorder.none,
+                                              hintText: "Enter name",
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
-                              if (nameErrorr != null)
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 5, left: 3),
-                                      child: Text(
-                                        nameError!,
-                                        style: TextStyle(color: Colors.red, fontSize: 14),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              SizedBox(height: 3),
+                              nameError
+                                  ? Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 2,
+                                        ),
+                                        Text(
+                                          namemessage,
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .035),
+                                        ),
+                                        SizedBox(
+                                          width: 2,
+                                        ),
+                                      ],
+                                    )
+                                  : eventError
+                                      ? Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 3,
+                                            ),
+                                            Text(
+                                              eventmessage,
+                                              style: TextStyle(
+                                                  color: Colors.transparent,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .035),
+                                            ),
+                                            SizedBox(
+                                              width: 2,
+                                            ),
+                                          ],
+                                        )
+                                      : Container(),
                             ],
                           ),
                         ),
@@ -343,6 +393,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                         width: 1,
                       ),
                       Expanded(
+                        flex: 3,
                         child: Container(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -351,103 +402,119 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                               Padding(
                                 padding: const EdgeInsets.all(4.0),
                                 child: Text(
-                                  "Event Type",
+                                  "Event Type *",
                                   style: TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              FormField<String>(
-                                validator: (value) {
-                                  if (_selectedEvent == null ||
-                                      _selectedEvent!.isEmpty) {
-                                    return 'Please select a event';
-                                  }
-                                  return null;
-                                },
-                                builder: (FormFieldState<String> state) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      DropdownButtonHideUnderline(
-                                        child: DropdownButton2<String>(
-                                          isExpanded: true,
-                                          hint: const Text('Select Event'),
-                                          value: _selectedEvent,
-                                          items: events.map((method) {
-                                            return DropdownMenuItem<String>(
-                                              value: method,
-                                              child: Text(method),
-                                            );
-                                          }).toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              _selectedEvent = newValue;
+                              DropdownButtonHideUnderline(
+                                child: DropdownButton2<String>(
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.black),
+                                  isExpanded: true,
+                                  hint: const Text(
+                                    'Select Event',
 
-                                              state.didChange(newValue);
-                                            });
-                                            print(
-                                                'Selected Event: $_selectedEvent');
-                                            state.reset();
-                                            // Notify FormField of value change
-                                          },
-                                          buttonStyleData: ButtonStyleData(
-                                            height: 45,
-                                            padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 2,
-                                          ),
-                                          iconStyleData: const IconStyleData(
-                                            icon: Icon(Icons.arrow_drop_down),
-                                            iconSize: 24,
-                                            iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
-                                          ),
-                                          dropdownStyleData: DropdownStyleData(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            scrollbarTheme: ScrollbarThemeData(
-                                              radius: const Radius.circular(6),
-                                              thickness:
-                                                  MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
-                                            ),
-                                          ),
-                                          menuItemStyleData:
-                                              const MenuItemStyleData(
-                                            height: 50,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
-                                          ),
-                                        ),
-                                      ),
-                                      if (state.hasError)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 14, top: 8),
-                                          child: Text(
-                                            state.errorText!,
-                                            style: const TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  );
-                                },
+                                  ),
+                                  value: _selectedEvent,
+                                  items: events.map((method) {
+                                    return DropdownMenuItem<String>(
+                                      value: method,
+                                      child: Text(method),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedEvent = newValue;
+                                      eventError = false;
+                                    });
+                                    print('Selected Event: $_selectedEvent');
+
+                                    // Notify FormField of value change
+                                  },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 46,
+
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 3),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(Icons.arrow_drop_down),
+                                    iconSize: 24,
+                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                    iconDisabledColor: Colors.grey,
+                                  ),
+                                  // iconStyleData: const IconStyleData(
+                                  //   icon: SizedBox.shrink(), // Hides the dropdown icon
+                                  // ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(6),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 50,
+                                    padding:
+                                        EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                ),
                               ),
+                              SizedBox(height: 3),
+                              eventError
+                                  ? Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 3,
+                                        ),
+                                        Text(
+                                          eventmessage,
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .035),
+                                        ),
+                                        SizedBox(
+                                          width: 2,
+                                        ),
+                                      ],
+                                    )
+                                  : nameError
+                                      ? Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 3,
+                                            ),
+                                            Text(
+                                              eventmessage,
+                                              style: TextStyle(
+                                                  color: Colors.transparent,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .035),
+                                            ),
+                                            SizedBox(
+                                              width: 2,
+                                            ),
+                                          ],
+                                        )
+                                      : Container(),
                             ],
                           ),
                         ),
@@ -460,28 +527,17 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                       SizedBox(
                         width: 2,
                       ),
-                      Text('Subject',
+                      Text('Subject *',
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                               color: blueColor)),
                     ],
                   ),
-                  if (subjectError != null)
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5, left: 3),
-                          child: Text(
-                            subjectError!,
-                            style: TextStyle(color: Colors.red, fontSize: 14),
-                          ),
-                        ),
-                      ],
-                    ),
                   SizedBox(height: 5),
                   Row(
                     children: [
+                      SizedBox(width: 2),
                       Expanded(
                         child: Material(
                           elevation: 2,
@@ -502,28 +558,62 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                 ),
                               ],
                             ),
-                            child: TextFormField(
-                              focusNode: _subjectFocusNode,
-                              controller: subject,
-                              decoration: InputDecoration(
-                                hintStyle: TextStyle(
-                                    fontSize: 13, color: Color(0xFFb0b6c3)),
-                                border: InputBorder.none,
-                                hintText: "Enter subject",
-                              ),
-                              onTapOutside: (_) {
-                                _subjectFocusNode?.unfocus();
-                                FocusScope.of(context)
-                                    .requestFocus(_bodyFocusNode);
-                                _htmlEditorController
-                                    .setFocus(); // Move focus to the editor
-                              },
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: TextField(
+                                    focusNode: _subjectFocusNode,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        subjectError = false;
+                                      });
+                                    },
+                                    controller: subject,
+                                    cursorColor: blueColor,
+                                    onTapOutside: (_) {
+                                      _subjectFocusNode?.unfocus();
+                                      FocusScope.of(context)
+                                          .requestFocus(_bodyFocusNode);
+                                      _htmlEditorController
+                                          .setFocus(); // Move focus to the editor
+                                    },
+                                    decoration: InputDecoration(
+                                      hintStyle: TextStyle(
+                                          fontSize: 13,
+                                          color: Color(0xFFb0b6c3)),
+                                      border: InputBorder.none,
+                                      hintText: "Enter subject",
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
+                      SizedBox(width: 2),
                     ],
                   ),
+                  SizedBox(height: 5),
+                  subjectError
+                      ? Row(
+                          children: [
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              submessage,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * .035),
+                            ),
+                            SizedBox(
+                              width: 2,
+                            ),
+                          ],
+                        )
+                      : Container(),
                   SizedBox(height: 10),
                   Row(
                     children: [
@@ -723,42 +813,115 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                       ),
                     ),
                   ),
-                  if (bodyError != null)
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5, left: 3),
-                          child: Text(
-                            bodyError!,
-                            style: TextStyle(color: Colors.red, fontSize: 14),
-                          ),
-                        ),
-                      ],
-                    ),
+                  SizedBox(height: 5),
+                  bodyError
+                      ? Row(
+                          children: [
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              bodymessage,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * .035),
+                            ),
+                            SizedBox(
+                              width: 2,
+                            ),
+                          ],
+                        )
+                      : Container(),
                   SizedBox(
                     height: 15,
                   ),
                   Row(
                     children: [
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          // Validate name
                           if (name.text.trim().isEmpty) {
                             setState(() {
-                              nameErrorr = true;
-                              nameError = "Name is required";
+                              nameError = true;
+                              namemessage = "required";
                             });
                           } else {
                             setState(() {
-                              nameErrorr = false;
+                              nameError = false;
                             });
                           }
-                          // if (_formkey.currentState?.validate() ?? false) {
-                          //   print('valid');
-                          //
-                          //   saveTemplate();
-                          // } else {
-                          //   print('invalid');
-                          // }
+
+                          // Validate designation
+                          if (subject.text.trim().isEmpty) {
+                            setState(() {
+                              subjectError = true;
+                              submessage = "required";
+                            });
+                          } else {
+                            setState(() {
+                              subjectError = false;
+                            });
+                          }
+                          if (_selectedEvent == null) {
+                            setState(() {
+                              eventError = true;
+                              eventmessage = "required";
+                            });
+                          } else {
+                            setState(() {
+                              eventError = false;
+                            });
+                          }
+                          String updatedHtmlBody =
+                              await _htmlEditorController.getText();
+                          if (updatedHtmlBody.trim().isEmpty) {
+                            setState(() {
+                              bodyError = true;
+                              bodymessage = "required";
+                            });
+                          } else {
+                            setState(() {
+                              bodyError = false;
+                            });
+                          }
+
+                          // Now, only proceed if all fields are filled and valid
+                          if (!nameError &&
+                              !subjectError &&
+                              !eventError &&
+                              !bodyError) {
+                            // Fixed the extra check
+                            setState(() {
+                              isLoading = true;
+                            });
+
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            String? adminId = prefs.getString("adminId");
+
+                            if (adminId != null) {
+                              try {
+                                await TempletRepository().addTemplet(
+                                  adminId: adminId,
+                                  name: name.text.trim(),
+                                  subject: subject.text.trim(),
+                                  body: updatedHtmlBody,
+                                  type: "E-mail",
+                                  mail_type: _selectedEvent,
+                                );
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Navigator.of(context).pop(true);
+                              } catch (e) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                // Handle error here
+                              }
+                            }
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(

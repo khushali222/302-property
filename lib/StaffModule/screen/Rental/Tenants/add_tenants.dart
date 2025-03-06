@@ -2683,6 +2683,9 @@ class CustomTextFieldState extends State<CustomTextField> {
                     //   return '';
                     // }
                     _validatePhoneNumber(widget.controller!.text.trim());
+                    if(_errorMessage == null){
+                      return null;
+                    }
                     return '';
                   }else if (widget.email != null) {
                     // if (!EmailValidator.validate(widget.controller!.text)) {
@@ -2694,6 +2697,9 @@ class CustomTextFieldState extends State<CustomTextField> {
                     _validateEmail(widget.controller!.text.trim());
 
                     // Return an empty string or handle accordingly
+                    if(_errorMessage == null){
+                      return null;
+                    }
                     return '';
                   } else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text.trim()) >

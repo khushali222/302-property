@@ -582,36 +582,42 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
       '1': 'text-tiny',
       '2': 'text-small',
       '3': 'text-default',
+      '4': 'text-medium',  // Added missing size 4
       '5': 'text-big',
+      '6': 'text-larger',  // Added missing size 6
       '7': 'text-huge',
     };
 
     return html.replaceAllMapped(
       RegExp(
-        r'<font\s+(?:size="(\d+)")?(?:\s*style="([^"]*)")?(?:\s*size="(\d+)")?>(.*?)<\/font>',
+        r'<font\s+([^>]*)>(.*?)<\/font>',
         caseSensitive: false,
       ),
           (match) {
-        // Extract size (either from group 1 or 3, since size can appear first or last)
-        String size = match.group(1) ?? match.group(3) ?? '';
-        String style = match.group(2) ?? ''; // Extract style if present
-        String text = match.group(4) ?? ''; // Extract inner text
+        String attributes = match.group(1) ?? ''; // Get all attributes inside <font>
+        String text = match.group(2) ?? ''; // Get the inner text
 
-        // Get class name based on size
+        // Extract size attribute
+        RegExpMatch? sizeMatch = RegExp(r'size="(\d+)"').firstMatch(attributes);
+        String? size = sizeMatch?.group(1);
+
+        // Extract color attribute
+        RegExpMatch? colorMatch = RegExp(r'color="([^"]+)"').firstMatch(attributes);
+        String? color = colorMatch?.group(1);
+
+        // Get the corresponding class name for size
         String? className = fontSizeMap[size];
 
-        // Construct <span> tag
-        if (className != null) {
-          return style.isNotEmpty
-              ? '<span class="$className" style="$style">$text</span>'
-              : '<span class="$className">$text</span>';
-        }
+        // Build the <span> tag
+        String spanClass = className != null ? 'class="$className"' : '';
+        String spanStyle = color != null ? 'style="color: $color;"' : '';
 
-        return match.group(0)!; // Return original if no match
+        return '<span $spanClass $spanStyle>$text</span>';
       },
     );
   }
   String replaceSpanTags(String html) {
+    print("spn${html}");
     // Mapping class names to corresponding font sizes
     final Map<String, String> classToFontSizeMap = {
       'text-tiny': '1',
@@ -621,26 +627,90 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
       'text-huge': '7',
     };
 
-    // Regular expression to extract class and style attributes separately
+    // Regex to match <span> with class and/or style attributes
     return html.replaceAllMapped(
-      RegExp(r'<span[^>]*class="([^"]*)"[^>]*style="([^"]*)"[^>]*>(.*?)<\/span>', caseSensitive: false),
+      RegExp(r'<span([^>]*)>(.*?)<\/span>', caseSensitive: false),
           (match) {
-        String classNames = match.group(1) ?? ''; // Extract class names
-        String style = match.group(2) ?? ''; // Extract inline styles
-        String text = match.group(3) ?? ''; // Extract inner text
+        String attributes = match.group(1) ?? ''; // Extract attributes inside <span>
+        String text = match.group(2) ?? ''; // Extract inner text
+
+        // Extract class names
+        RegExpMatch? classMatch = RegExp(r'class="([^"]+)"').firstMatch(attributes);
+        String classNames = classMatch?.group(1) ?? '';
+
+        // Extract styles
+        RegExpMatch? styleMatch = RegExp(r'style="([^"]+)"').firstMatch(attributes);
+        String style = styleMatch?.group(1) ?? '';
+
+        // Extract color from style
+        RegExpMatch? colorMatch = RegExp(r'color:\s*([^;]+)').firstMatch(style);
+        String? color = colorMatch?.group(1);
 
         // Extract the first matching class from the known map
         String? fontSize = classNames
             .split(' ')
             .map((cls) => classToFontSizeMap[cls])
             .firstWhere((size) => size != null, orElse: () => null);
+        // print(hslToHex(color!));
+        // Build the <font> tag
+        if (fontSize != null) {
+          String fontTag = '<font size="$fontSize"';
+          if (color != null) fontTag += ' color="${hslToHex(color!)}"';
+          fontTag += '>$text</font>';
+          return fontTag;
+        }
 
-        // If a font size is found, replace <span> with <font>
-        return fontSize != null
-            ? '<font size="$fontSize" style="$style">$text</font>'
-            : match.group(0)!;
+        return match.group(0)!; // Return original <span> if no match
       },
     );
+  }
+
+  String hslToHex(String hsl) {
+    // Remove spaces and extract numbers
+    RegExp regExp = RegExp(r'hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)');
+    Match? match = regExp.firstMatch(hsl);
+
+    if (match == null) {
+      return hsl;
+    }
+
+    int h = int.parse(match.group(1)!);
+    double s = int.parse(match.group(2)!) / 100;
+    double l = int.parse(match.group(3)!) / 100;
+
+    double c = (1 - (2 * l - 1).abs())*s;
+    double x = c * (1 - ((h / 60) % 2 - 1).abs());
+    double m = l - c / 2;
+
+    double r = 0, g = 0, b = 0;
+
+    if (h < 60) {
+      r = c;
+      g = x;
+    } else if (h < 120) {
+      r = x;
+      g = c;
+    } else if (h < 180) {
+      g = c;
+      b = x;
+    } else if (h < 240) {
+      g = x;
+      b = c;
+    } else if (h < 300) {
+      r = x;
+      b = c;
+    } else {
+      r = c;
+      b = x;
+    }
+
+    int red = ((r + m) * 255).round();
+    int green = ((g + m) * 255).round();
+    int blue = ((b + m) * 255).round();
+
+    return "#${red.toRadixString(16).padLeft(2, '0')}"
+        "${green.toRadixString(16).padLeft(2, '0')}"
+        "${blue.toRadixString(16).padLeft(2, '0')}";
   }
 
   // String replaceSpanTags(String html) {
@@ -877,8 +947,93 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
                             ),
                           ),
                           htmlToolbarOptions: HtmlToolbarOptions(
+
                             // toolbarType: ToolbarType.nativeExpandable,
                             customToolbarButtons: [
+                              PopupMenuButton<String>(
+                                icon: Icon(Icons.format_list_bulleted),
+                                tooltip: "Unordered List",
+                                offset: Offset(0, 40), // Adjusts dropdown position
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Rounded corners
+                                onSelected: (String style) {
+                                  _htmlEditorController.execCommand("insertHTML", argument: '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
+                                },
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    value: "disc",
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.circle, size: 16, color: Colors.black),
+                                        SizedBox(width: 10),
+                                        Text("Disc"),
+                                      ],
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: "circle",
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.circle_outlined, size: 16, color: Colors.black),
+                                        SizedBox(width: 10),
+                                        Text("Circle"),
+                                      ],
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: "square",
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.square, size: 16, color: Colors.black),
+                                        SizedBox(width: 10),
+                                        Text("Square"),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              // OL (Ordered List) Style Dropdown
+                              PopupMenuButton<String>(
+                                constraints: BoxConstraints(
+                                  minWidth: 100, // Minimum width of the popup
+                                  maxWidth: 120, // Maximum width
+                                ),
+                                icon: Icon(Icons.format_list_numbered), // Ordered List Button
+                                tooltip: "Ordered List",
+                                offset: Offset(0, 40),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                onSelected: (String style) {
+                                  _htmlEditorController.execCommand(
+                                      "insertHTML",
+                                      argument: '<ol style="list-style-type: $style;"><li>List Item</li></ol>'
+                                  );
+                                },
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    enabled: false, // Disable selection on this item
+                                    child: Container(
+
+                                      width: 100, // Adjust width as needed
+                                      child: GridView.count(
+                                        shrinkWrap: true,
+                                        crossAxisCount: 3, // 3 items in a row
+                                        mainAxisSpacing: 5,
+                                        crossAxisSpacing: 5,
+                                        childAspectRatio: .85,
+                                        // Adjust for better layout
+                                        children: [
+                                          _buildListItem("decimal", "1"),
+                                          _buildListItem("decimal-leading-zero", "01"),
+                                          _buildListItem("lower-roman", "i"),
+                                          _buildListItem("upper-roman", "I"),
+                                          _buildListItem("lower-alpha", "a"),
+                                          _buildListItem("upper-alpha", "A"),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                               PopupMenuButton<String>(
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
@@ -903,21 +1058,22 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
                                 },
                                 itemBuilder: (context) => [
                                   PopupMenuItem(
-                                    value: "h1",
+                                    value: "h2",
                                     child: Text("Heading 1",
                                         style: TextStyle(
                                             fontSize: 20,
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold)
+                                    ),
                                   ),
                                   PopupMenuItem(
-                                    value: "h2",
+                                    value: "h3",
                                     child: Text("Heading 2",
                                         style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold)),
                                   ),
                                   PopupMenuItem(
-                                    value: "h3",
+                                    value: "h4",
                                     child: Text("Heading 3",
                                         style: TextStyle(
                                             fontSize: 16,
@@ -999,6 +1155,23 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
                               ColorButtons(),
                             ],
                           ),
+                            plugins: [
+
+                              SummernoteAtMention(
+                                //returns the dropdown items on mobile
+                                  getSuggestionsMobile: (String value) {
+                                    List<String> mentions = ['Name', 'Url', 'EmailAddress'];
+                                    return mentions
+                                        .where((element) => element.contains(value))
+                                        .toList();
+                                  },
+                                  //returns the dropdown items on web
+                                  mentionsWeb: ['test1', 'test2', 'test3'],
+                                  onSelect: (String value) {
+                                    print(value);
+                                  }
+                              ),
+                            ]
                         ),
                       ],
                     ),
@@ -1050,6 +1223,25 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+  Widget _buildListItem(String value, String text) {
+    return GestureDetector(
+      onTap: () {
+        // Execute the command when an item is clicked
+        _htmlEditorController.execCommand(
+            "insertHTML",
+            argument: '<ol style="list-style-type: $value;"><li>List Item</li></ol>'
+        );
+      },
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
