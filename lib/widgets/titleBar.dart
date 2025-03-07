@@ -14,7 +14,8 @@ class titleBar extends StatelessWidget {
       padding: const EdgeInsets.only(left: 13, right: 13),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(5.0),
-        child: Container(
+        child:
+        Container(
           // height: 50.0,
           height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.width < 500 ? 9 :5, left: 10),

@@ -19,7 +19,6 @@ import '../../../repository/Communication/Templet_Repo.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'Add_mail.dart';
 
-
 class TempletTable extends StatefulWidget {
   @override
   _TempletTableState createState() => _TempletTableState();
@@ -412,8 +411,7 @@ class _TempletTableState extends State<TempletTable> {
                             builder: (context) => Add_Email_templet()));
                     if (result == true) {
                       setState(() {
-                        // futurePropertyTypes = PropertyTypeRepository()
-                        //     .fetchPropertyTypes();
+                        futureTemplet = TempletRepository().fetchTemplets();
                       });
                     }
                   },
@@ -748,8 +746,9 @@ class _TempletTableState extends State<TempletTable> {
                                                                           .body!
                                                                           .isEmpty
                                                                       ? 'N/A'
-                                                                      :  extractText(rentals
-                                                                      .body!),
+                                                                      : extractText(
+                                                                          rentals
+                                                                              .body!),
                                                                   style:
                                                                       TextStyle(
                                                                     fontWeight:
@@ -766,7 +765,6 @@ class _TempletTableState extends State<TempletTable> {
                                                             overflow: TextOverflow
                                                                 .ellipsis, // Show "..." if the text is too long
                                                           ),
-
                                                           SizedBox(
                                                             height: MediaQuery.of(
                                                                         context)
@@ -791,19 +789,17 @@ class _TempletTableState extends State<TempletTable> {
                                                     Expanded(
                                                       child: GestureDetector(
                                                         onTap: () async {
-                                                          // var check = await Navigator
-                                                          //     .push(
-                                                          //     context,
-                                                          //     MaterialPageRoute(
-                                                          //         builder: (context) =>
-                                                          //             Edit_rentalowners(
-                                                          //               rentalOwner: rentals,
-                                                          //             )));
-                                                          // if (check == true) {
-                                                          //   setState(() {
-                                                          //     futureTemplet = RentalOwnerService().fetchRentalOwners("");
-                                                          //   });
-                                                          // }
+                                                          var check = await Navigator
+                                                                  .of(context)
+                                                              .push(MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          Add_Email_templet(templetid: rentals.templateId,)));
+                                                          if (check == true) {
+                                                            setState(() {
+                                                              futureTemplet = TempletRepository().fetchTemplets();
+                                                            });
+                                                          }
                                                         },
                                                         child: Container(
                                                           height: 40,
@@ -1082,6 +1078,7 @@ class _TempletTableState extends State<TempletTable> {
       ),
     );
   }
+
   String extractText(String htmlString) {
     var document = htmlParser.parse(htmlString);
     return document.body?.text.trim().replaceAll(RegExp(r'\s+'), ' ') ?? '';

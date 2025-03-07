@@ -18,6 +18,7 @@ import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart'
 import '../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
 import '../../repository/dashboard_table_repo/cronjob_payment_table.dart';
 import '../../widgets/CustomTableShimmer.dart';
+import '../../widgets/titleBar.dart';
 
 class Cronjob_payment_table extends StatefulWidget {
   @override
@@ -26,11 +27,11 @@ class Cronjob_payment_table extends StatefulWidget {
 
 class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   int totalrecords = 0;
-  Future<List<LeaseDatacronjob>>? futurecronjobpayment;
+  Future<LeaseResponse>? futurecronjobpayment;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
-  int currentPage = 0;
+  int currentPage = 1;
   int itemsPerPage = 5;
   List<int> itemsPerPageOptions = [
     5,
@@ -308,8 +309,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       setState(() {
         _connectivityResult = result;
         if (_connectivityResult != ConnectivityResult.none)
-          futurecronjobpayment =
-              cronjob_payment_tableService().fetchCronjob_payment();
+          futurecronjobpayment = cronjob_payment_tableService()
+              .fetchCronjob_payment(limit: 5, page: 1);
       });
     });
     checkInternet();
@@ -327,18 +328,17 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           cronjob_payment_tableService().fetchCronjob_payment();
   }
 
-  List<LeaseDatacronjob> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  List<LeaseDatacronjob> get _pagedData {
-    int startIndex = _currentPage * _rowsPerPage;
-    int endIndex = startIndex + _rowsPerPage;
-    return _tableData.sublist(startIndex,
-        endIndex > _tableData.length ? _tableData.length : endIndex);
-  }
+  // LeaseResponse get _pagedData {
+  //   int startIndex = _currentPage * _rowsPerPage;
+  //   int endIndex = startIndex + _rowsPerPage;
+  //   return _tableData.sublist(startIndex,
+  //       endIndex > _tableData.length ? _tableData.length : endIndex);
+  // }
 
   void _changeRowsPerPage(int selectedRowsPerPage) {
     setState(() {
@@ -346,30 +346,30 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       _currentPage = 0; // Reset to the first page when changing rows per page
     });
   }
-
-  void _sort<T>(Comparable<T> Function(LeaseDatacronjob d) getField,
-      int columnIndex, bool ascending) {
-    setState(() {
-      _sortColumnIndex = columnIndex;
-      _sortAscending = ascending;
-      _tableData.sort((a, b) {
-        final aValue = getField(a);
-        final bValue = getField(b);
-        final result = aValue.compareTo(bValue as T);
-        return _sortAscending ? result : -result;
-      });
-    });
-  }
+  //
+  // void _sort<T>(Comparable<T> Function(LeaseDatacronjob d) getField,
+  //     int columnIndex, bool ascending) {
+  //   setState(() {
+  //     _sortColumnIndex = columnIndex;
+  //     _sortAscending = ascending;
+  //     _tableData.sort((a, b) {
+  //       final aValue = getField(a);
+  //       final bValue = getField(b);
+  //       final result = aValue.compareTo(bValue as T);
+  //       return _sortAscending ? result : -result;
+  //     });
+  //   });
+  // }
 
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(LeaseDatacronjob d)? getField) {
     return TableCell(
       child: InkWell(
-        onTap: getField != null
-            ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
-            : null,
+        // onTap: getField != null
+        //     ? () {
+        //         _sort(getField, columnIndex, !_sortAscending);
+        //       }
+        //     : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Row(
@@ -397,87 +397,87 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     );
   }
 
-  Widget _buildPaginationControls() {
-    int numorpages = 1;
-    numorpages = (totalrecords / _rowsPerPage).ceil();
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        // Text('Rows per page: '),
-        // SizedBox(width: 10),
-        Material(
-          elevation: 2,
-          color: Colors.white,
-          child: Container(
-            height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(4.0),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<int>(
-                value: _rowsPerPage,
-                items: [10, 25, 50, 100].map((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text(value.toString()),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    _changeRowsPerPage(newValue);
-                  }
-                },
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  size: 40,
-                ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
-                dropdownColor: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: 10),
-        IconButton(
-          icon: FaIcon(
-            FontAwesomeIcons.circleChevronLeft,
-            size: 30,
-            color: _currentPage == 0 ? Colors.grey : blueColor,
-          ),
-          onPressed: _currentPage == 0
-              ? null
-              : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
-        ),
-        Text(
-          'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
-        ),
-        IconButton(
-          icon: FaIcon(
-            size: 30,
-            FontAwesomeIcons.circleChevronRight,
-            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
-                ? Colors.grey
-                : blueColor, // Change color based on availability
-          ),
-          onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
-              ? null
-              : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
-        ),
-      ],
-    );
-  }
+  // Widget _buildPaginationControls() {
+  //   int numorpages = 1;
+  //   numorpages = (totalrecords / _rowsPerPage).ceil();
+  //
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.end,
+  //     children: [
+  //       // Text('Rows per page: '),
+  //       // SizedBox(width: 10),
+  //       Material(
+  //         elevation: 2,
+  //         color: Colors.white,
+  //         child: Container(
+  //           height: 55,
+  //           padding: EdgeInsets.symmetric(horizontal: 12.0),
+  //           decoration: BoxDecoration(
+  //             border: Border.all(color: Colors.grey),
+  //             borderRadius: BorderRadius.circular(4.0),
+  //           ),
+  //           child: DropdownButtonHideUnderline(
+  //             child: DropdownButton<int>(
+  //               value: _rowsPerPage,
+  //               items: [10, 25, 50, 100].map((int value) {
+  //                 return DropdownMenuItem<int>(
+  //                   value: value,
+  //                   child: Text(value.toString()),
+  //                 );
+  //               }).toList(),
+  //               onChanged: (newValue) {
+  //                 if (newValue != null) {
+  //                   _changeRowsPerPage(newValue);
+  //                 }
+  //               },
+  //               icon: Icon(
+  //                 Icons.arrow_drop_down,
+  //                 size: 40,
+  //               ),
+  //               style: TextStyle(color: Colors.black, fontSize: 17),
+  //               dropdownColor: Colors.white,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //       SizedBox(width: 10),
+  //       IconButton(
+  //         icon: FaIcon(
+  //           FontAwesomeIcons.circleChevronLeft,
+  //           size: 30,
+  //           color: _currentPage == 0 ? Colors.grey : blueColor,
+  //         ),
+  //         onPressed: _currentPage == 0
+  //             ? null
+  //             : () {
+  //                 setState(() {
+  //                   _currentPage--;
+  //                 });
+  //               },
+  //       ),
+  //       Text(
+  //         'Page ${_currentPage + 1} of $numorpages',
+  //         style: TextStyle(fontSize: 18),
+  //       ),
+  //       IconButton(
+  //         icon: FaIcon(
+  //           size: 30,
+  //           FontAwesomeIcons.circleChevronRight,
+  //           color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+  //               ? Colors.grey
+  //               : blueColor, // Change color based on availability
+  //         ),
+  //         onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+  //             ? null
+  //             : () {
+  //                 setState(() {
+  //                   _currentPage++;
+  //                 });
+  //               },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   ConnectivityResult? _connectivityResult;
   final _scrollController = ScrollController();
@@ -511,8 +511,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             // Add your delete logic here
             if (data != null)
               setState(() {
-                futurecronjobpayment =
-                    cronjob_payment_tableService().fetchCronjob_payment();
+                futurecronjobpayment = cronjob_payment_tableService()
+                    .fetchCronjob_payment(limit: itemsPerPage);
               });
           },
           color: blueColor,
@@ -556,8 +556,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             // Add your delete logic here
             if (data != null)
               setState(() {
-                futurecronjobpayment =
-                    cronjob_payment_tableService().fetchCronjob_payment();
+                futurecronjobpayment = cronjob_payment_tableService()
+                    .fetchCronjob_payment(limit: itemsPerPage);
               });
             // Navigator.pop(context);
           },
@@ -680,10 +680,302 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               // Add your delete logic here
               if (data != null)
                 setState(() {
-                  futurecronjobpayment =
-                      cronjob_payment_tableService().fetchCronjob_payment();
+                  futurecronjobpayment = cronjob_payment_tableService()
+                      .fetchCronjob_payment(limit: itemsPerPage);
                 });
               // Navigator.pop(context);
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+      ],
+    ).show();
+  }
+
+  void _showAlertRefund(BuildContext context, String id) {
+    TextEditingController retrydate = TextEditingController();
+    TextEditingController reason = TextEditingController();
+    TextEditingController memo = TextEditingController();
+    Alert(
+      context: context,
+      content: Column(
+        children: <Widget>[
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  // height: 50.0,
+                  height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.width < 500 ? 9 : 5,
+                      left: 10),
+                  margin: const EdgeInsets.only(bottom: 6.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: blueColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0),
+                        blurRadius: 6.0,
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    "Make Refund",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Text(
+                "Date",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: blueColor),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 4,
+          ),
+          SizedBox(
+            height: 60,
+            child: CustomTextField(
+              onTap: () async {
+                DateTime now = DateTime.now();
+                DateTime tomorrow = now.add(Duration(days: 1));
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: tomorrow,
+                  firstDate: DateTime(
+                      2000), // Restrict selection to tomorrow and future dates
+                  lastDate: DateTime(2101),
+                  locale: const Locale('en', 'US'),
+                  builder: (BuildContext context, Widget? child) {
+                    return Theme(
+                      data: ThemeData.light().copyWith(
+                        colorScheme: ColorScheme.light(
+                          primary: blueColor, // header background color
+                          onPrimary: Colors.white, // header text color
+                          onSurface: blueColor, // body text color
+                        ),
+                        textButtonTheme: TextButtonThemeData(
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: blueColor, // button text color
+                          ),
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+
+                if (pickedDate != null) {
+                  setState(() {
+                    retrydate.text =
+                        pickedDate.toLocal().toString().split(' ')[0];
+                    // This ensures the date appears as selected in yyyy-MM-dd format
+                  });
+                }
+              },
+              readOnnly: true,
+              suffixIcon: IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.date_range_rounded),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select end date';
+                }
+                return null;
+              },
+              optional: true,
+              keyboardType: TextInputType.text,
+              hintText: 'Select a date',
+              controller: retrydate,
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Text(
+                "Refund Amount*",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: blueColor),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 4,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for void',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Text(
+                "Memo",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: blueColor),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 4,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: memo,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "if left blank , will show'Payment'",
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+        ],
+      ),
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Confirm",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          // onPressed: (){},
+          onPressed: () async {
+            if (retrydate.text.isEmpty) {
+              // setState(() {
+              //  _errorText == true;
+              // });
+              Fluttertoast.showToast(msg: "Please select the retry date");
+            } else {
+              Navigator.pop(context);
+              var data = await PaymentCronjobRepository().PaymentReSchedule(
+                retryDate: retrydate.text,
+                paymentid: id,
+                context: context,
+              );
+              // Add your delete logic here
+              if (data != null)
+                setState(() {
+                  futurecronjobpayment = cronjob_payment_tableService()
+                      .fetchCronjob_payment(limit: itemsPerPage);
+                });
+              // Navigator.pop(context);
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+      ],
+    ).show();
+  }
+
+  void _showAlertvoid(BuildContext context, String id) {
+    print("calling");
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure you want to void this payment?",
+      desc: "A void can be issued on this payment until it is settled",
+      content: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for void',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+          // if (_errorText)
+          //   Text(
+          //     "Please fill in all fields correctly.",
+          //     style: TextStyle(color: Colors.redAccent),
+          //   ),
+        ],
+      ),
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            if (reason.text.isEmpty) {
+              // setState(() {
+              //  _errorText == true;
+              // });
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              Navigator.pop(context);
+              var data = await PaymentCronjobRepository().VoidCron(
+                  pay_id: id, void_reason: reason.text, context: context);
+              // Add your delete logic here
+              if (data != null)
+                setState(() {
+                  futurecronjobpayment = cronjob_payment_tableService()
+                      .fetchCronjob_payment(limit: itemsPerPage);
+                });
             }
           },
           color: blueColor,
@@ -712,14 +1004,15 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           if (MediaQuery.of(context).size.width < 500)
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: FutureBuilder<List<LeaseDatacronjob>>(
+              child: FutureBuilder<LeaseResponse>(
                 future: futurecronjobpayment,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return ColabShimmerLoadingWidget();
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.data!.isEmpty) {
                     return Container(
                       child: Center(
                         child: Column(
@@ -751,23 +1044,24 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                       ),
                     );
                   } else {
-                    var data = snapshot.data!;
-                    if (selectedValue == null && searchvalue!.isEmpty) {
-                      data = snapshot.data!;
-                    } else if (selectedValue == "All") {
-                      data = snapshot.data!;
-                    } else if (searchvalue!.isNotEmpty) {
-                      data = snapshot.data!
-                          .where((property) => property.rentalAddress!
-                              .toLowerCase()
-                              .contains(searchvalue!.toLowerCase()))
-                          .toList();
-                    } else {
-                      data = snapshot.data!
-                          .where((property) =>
-                              property.rentalAddress == selectedValue)
-                          .toList();
-                    }
+                    var data = snapshot.data!.data!;
+                    print("data ${data.length}");
+                    // if (selectedValue == null && searchvalue!.isEmpty) {
+                    //   data = snapshot.data!;
+                    // } else if (selectedValue == "All") {
+                    //   data = snapshot.data!;
+                    // } else if (searchvalue!.isNotEmpty) {
+                    //   data = snapshot.data!
+                    //       .where((property) => property.rentalAddress!
+                    //           .toLowerCase()
+                    //           .contains(searchvalue!.toLowerCase()))
+                    //       .toList();
+                    // } else {
+                    //   data = snapshot.data!
+                    //       .where((property) =>
+                    //           property.rentalAddress == selectedValue)
+                    //       .toList();
+                    // }
                     // if (data.isEmpty) {
                     //   return Center(
                     //     child: Column(
@@ -794,11 +1088,14 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     //   );
                     // }
                     //sortData(data);
-                    final totalPages = (data.length / itemsPerPage).ceil();
-                    final currentPageData = data
-                        .skip(currentPage * itemsPerPage)
-                        .take(itemsPerPage)
-                        .toList();
+                    final totalPages =
+                        (snapshot.data!.metadata!.total! / itemsPerPage).ceil();
+
+                    // final currentPageData = data
+                    //     .skip(currentPage * itemsPerPage)
+                    //     .take(itemsPerPage)
+                    //     .toList();
+                    final currentPageData = data;
                     return SingleChildScrollView(
                       child: Column(
                         children: [
@@ -817,6 +1114,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                 int index = entry.key;
                                 bool isExpanded = expandedIndex == index;
                                 LeaseDatacronjob Propertytype = entry.value;
+
                                 //return CustomExpansionTile(data: Propertytype, index: index);
                                 return Container(
                                   decoration: BoxDecoration(
@@ -1067,7 +1365,42 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Response Text : ',
+                                                                      'Type : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  // text: formatDate(
+                                                                  //     '${Propertytype.updatedAt}'),
+                                                                  text: Propertytype
+                                                                              .paymenttype
+                                                                              ?.isNotEmpty ==
+                                                                          true
+                                                                      ? '${Propertytype.paymenttype}'
+                                                                      : 'N/A',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 4,
+                                                          ),
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Description : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1082,7 +1415,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                                               .responseText
                                                                               ?.isNotEmpty ==
                                                                           true
-                                                                      ? '${Propertytype.responseText}'
+                                                                      ? ' ${Propertytype.responseText}'
                                                                       : 'N/A',
                                                                   style: TextStyle(
                                                                       fontWeight:
@@ -1106,143 +1439,235 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                   ],
                                                 ),
                                                 SizedBox(height: 15),
-                                                Row(
-                                                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Expanded(
-                                                      child: GestureDetector(
-                                                        onTap: () async {
-                                                          _showAlertAcknowledgement(
-                                                              context,
-                                                              Propertytype.id!,
-                                                              failureacknowledged);
-                                                        },
-                                                        child: Container(
-                                                          height: 40,
-                                                          decoration: BoxDecoration(
-                                                              color: Colors
-                                                                      .grey[
-                                                                  350]), // color:Colors.grey[100],
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .check,
-                                                                size: 15,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ],
+                                                if (Propertytype.response ==
+                                                    "FAILURE")
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            _showAlertAcknowledgement(
+                                                                context,
+                                                                Propertytype
+                                                                    .id!,
+                                                                failureacknowledged);
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .check,
+                                                                  size: 15,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Expanded(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          _showAlertRetry(
-                                                              context,
-                                                              Propertytype.id!);
-                                                        },
-                                                        child: Container(
-                                                          height: 40,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      350]),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .rotateRight,
-                                                                size: 15,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                              // SizedBox(
-                                                              //   width: 10,
-                                                              // ),
-                                                              // Text(
-                                                              //   "Delete",
-                                                              //   style: TextStyle(
-                                                              //       color:
-                                                              //       blueColor,
-                                                              //       fontWeight:
-                                                              //       FontWeight
-                                                              //           .bold),
-                                                              // ),
-                                                            ],
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            _showAlertRetry(
+                                                                context,
+                                                                Propertytype
+                                                                    .id!);
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .rotateRight,
+                                                                  size: 15,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                                // SizedBox(
+                                                                //   width: 10,
+                                                                // ),
+                                                                // Text(
+                                                                //   "Delete",
+                                                                //   style: TextStyle(
+                                                                //       color:
+                                                                //       blueColor,
+                                                                //       fontWeight:
+                                                                //       FontWeight
+                                                                //           .bold),
+                                                                // ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Expanded(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          _showAlertSchedule(
-                                                              context,
-                                                              Propertytype.id!);
-                                                        },
-                                                        child: Container(
-                                                          height: 40,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      350]),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .solidCalendarAlt,
-                                                                size: 15,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                              // SizedBox(
-                                                              //   width: 10,
-                                                              // ),
-                                                              // Text(
-                                                              //   "Delete",
-                                                              //   style: TextStyle(
-                                                              //       color:
-                                                              //       blueColor,
-                                                              //       fontWeight:
-                                                              //       FontWeight
-                                                              //           .bold),
-                                                              // ),
-                                                            ],
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            _showAlertSchedule(
+                                                                context,
+                                                                Propertytype
+                                                                    .id!);
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .solidCalendarAlt,
+                                                                  size: 15,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                                // SizedBox(
+                                                                //   width: 10,
+                                                                // ),
+                                                                // Text(
+                                                                //   "Delete",
+                                                                //   style: TextStyle(
+                                                                //       color:
+                                                                //       blueColor,
+                                                                //       fontWeight:
+                                                                //       FontWeight
+                                                                //           .bold),
+                                                                // ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                    ],
+                                                  ),
+                                                if (Propertytype.response ==
+                                                        "SUCCESS" &&
+                                                    Propertytype.state ==
+                                                        "settled")
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            _showAlertRefund(
+                                                                context,
+                                                                Propertytype
+                                                                    .id!);
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .reply,
+                                                                  size: 15,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                if (Propertytype.response ==
+                                                        "SUCCESS" &&
+                                                    Propertytype.state ==
+                                                        "settling")
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            print("call");
+                                                            _showAlertvoid(
+                                                                context,
+                                                                Propertytype
+                                                                    .id!);
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .dollarSign,
+                                                                  size: 15,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                               ],
                                             ),
                                           ),
@@ -1254,89 +1679,105 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                             ),
                           ),
                           SizedBox(height: 20),
-                          if (data.length > 5)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
+                          // if (data.length > 5)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  // Text('Rows per page:'),
+                                  SizedBox(width: 10),
+                                  Material(
+                                    elevation: 3,
+                                    child: Container(
+                                      height: 40,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 12.0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<int>(
+                                          value: itemsPerPage,
+                                          items: itemsPerPageOptions
+                                              .map((int value) {
+                                            return DropdownMenuItem<int>(
+                                              value: value,
+                                              child: Text(value.toString()),
+                                            );
+                                          }).toList(),
+                                          onChanged: snapshot
+                                                      .data!.metadata!.total! >
+                                                  itemsPerPageOptions
+                                                      .first // Condition to check if dropdown should be enabled
+                                              ? (newValue) {
+                                                  setState(() {
+                                                    itemsPerPage = newValue!;
+                                                    currentPage =
+                                                        1; // Reset to first page when items per page change
+                                                    futurecronjobpayment =
+                                                        cronjob_payment_tableService()
+                                                            .fetchCronjob_payment(
+                                                                limit:
+                                                                    itemsPerPage,
+                                                                page:
+                                                                    currentPage);
+                                                  });
+                                                }
+                                              : null,
                                         ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: data.length >
-                                                    itemsPerPageOptions
-                                                        .first // Condition to check if dropdown should be enabled
-                                                ? (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue!;
-                                                      currentPage =
-                                                          0; // Reset to first page when items per page change
-                                                    });
-                                                  }
-                                                : null,
-                                          ),
-                                        ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : blueColor,
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronLeft,
+                                      color: currentPage == 1
+                                          ? Colors.grey
+                                          : blueColor,
                                     ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1
-                                            ? blueColor
-                                            : Colors.grey,
-                                      ),
-                                      onPressed: currentPage < totalPages - 1
-                                          ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
-                                          : null,
+                                    onPressed: currentPage == 1
+                                        ? null
+                                        : () {
+                                            setState(() {
+                                              currentPage--;
+                                              futurecronjobpayment =
+                                                  cronjob_payment_tableService()
+                                                      .fetchCronjob_payment(
+                                                          limit: itemsPerPage,
+                                                          page: currentPage);
+                                            });
+                                          },
+                                  ),
+                                  Text('Page ${currentPage} of $totalPages'),
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronRight,
+                                      color: currentPage < totalPages
+                                          ? blueColor
+                                          : Colors.grey,
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    onPressed: currentPage < totalPages
+                                        ? () {
+                                            setState(() {
+                                              currentPage++;
+                                              futurecronjobpayment =
+                                                  cronjob_payment_tableService()
+                                                      .fetchCronjob_payment(
+                                                          limit: itemsPerPage,
+                                                          page: currentPage);
+                                            });
+                                          }
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     );
@@ -1344,162 +1785,162 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 },
               ),
             ),
-          if (MediaQuery.of(context).size.width > 500)
-            FutureBuilder<List<LeaseDatacronjob>>(
-              future: futurecronjobpayment,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return ShimmerTabletTable();
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Container(
-                    height: MediaQuery.of(context).size.height * .5,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/no_data.jpg",
-                            height: 200,
-                            width: 200,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "No Data Available",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: blueColor,
-                                fontSize: 16),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                } else {
-                  _tableData = snapshot.data!;
-                  if (selectedValue == null && searchvalue.isEmpty) {
-                    _tableData = snapshot.data!;
-                  } else if (selectedValue == "All") {
-                    _tableData = snapshot.data!;
-                  } else if (searchvalue.isNotEmpty) {
-                    _tableData = snapshot.data!
-                        .where((property) => property.rentalAddress!
-                            .toLowerCase()
-                            .contains(searchvalue.toLowerCase()))
-                        .toList();
-                  } else {
-                    _tableData = snapshot.data!
-                        .where((property) =>
-                            property.rentalAddress == selectedValue)
-                        .toList();
-                  }
-                  totalrecords = _tableData.length;
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24.0, vertical: 5),
-                            child: Column(
-                              children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .91,
-                                    child: Table(
-                                      defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
-                                      children: [
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                // color: blueColor
-                                                ),
-                                          ),
-                                          children: [
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            _buildHeader(
-                                                'Main Type',
-                                                0,
-                                                (property) => property
-                                                    .tenant!.tenantName!),
-                                            _buildHeader(
-                                                'Subtype',
-                                                1,
-                                                (property) =>
-                                                    property.rentalAddress!),
-                                            _buildHeader('Created At', 2,
-                                                (property) => property.date!),
-                                          ],
-                                        ),
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border.symmetric(
-                                                horizontal: BorderSide.none),
-                                          ),
-                                          children: List.generate(
-                                              3,
-                                              (index) => TableCell(
-                                                  child:
-                                                      Container(height: 20))),
-                                        ),
-                                        for (var i = 0;
-                                            i < _pagedData.length;
-                                            i++)
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                left: BorderSide(
-                                                    color: blueColor),
-                                                right: BorderSide(
-                                                    color: blueColor),
-                                                top: BorderSide(
-                                                    color: blueColor),
-                                                bottom:
-                                                    i == _pagedData.length - 1
-                                                        ? BorderSide(
-                                                            color: blueColor)
-                                                        : BorderSide.none,
-                                              ),
-                                            ),
-                                            children: [
-                                              _buildDataCell(_pagedData[i]
-                                                  .tenant!
-                                                  .tenantName!),
-                                              _buildDataCell(
-                                                  _pagedData[i].rentalAddress!),
-                                              _buildDataCell(
-                                                formatDate(_pagedData[i].date!),
-                                              ),
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 25),
-                                _buildPaginationControls(),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 25),
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
+          // if (MediaQuery.of(context).size.width > 500)
+          //   FutureBuilder<LeaseResponse>(
+          //     future: futurecronjobpayment,
+          //     builder: (context, snapshot) {
+          //       if (snapshot.connectionState == ConnectionState.waiting) {
+          //         return ShimmerTabletTable();
+          //       } else if (snapshot.hasError) {
+          //         return Center(child: Text('Error: ${snapshot.error}'));
+          //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          //         return Container(
+          //           height: MediaQuery.of(context).size.height * .5,
+          //           child: Center(
+          //             child: Column(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               crossAxisAlignment: CrossAxisAlignment.center,
+          //               children: [
+          //                 Image.asset(
+          //                   "assets/images/no_data.jpg",
+          //                   height: 200,
+          //                   width: 200,
+          //                 ),
+          //                 SizedBox(
+          //                   height: 10,
+          //                 ),
+          //                 Text(
+          //                   "No Data Available",
+          //                   style: TextStyle(
+          //                       fontWeight: FontWeight.bold,
+          //                       color: blueColor,
+          //                       fontSize: 16),
+          //                 )
+          //               ],
+          //             ),
+          //           ),
+          //         );
+          //       } else {
+          //         _tableData = snapshot.data!;
+          //         if (selectedValue == null && searchvalue.isEmpty) {
+          //           _tableData = snapshot.data!;
+          //         } else if (selectedValue == "All") {
+          //           _tableData = snapshot.data!;
+          //         } else if (searchvalue.isNotEmpty) {
+          //           _tableData = snapshot.data!
+          //               .where((property) => property.rentalAddress!
+          //                   .toLowerCase()
+          //                   .contains(searchvalue.toLowerCase()))
+          //               .toList();
+          //         } else {
+          //           _tableData = snapshot.data!
+          //               .where((property) =>
+          //                   property.rentalAddress == selectedValue)
+          //               .toList();
+          //         }
+          //         totalrecords = _tableData.length;
+          //         return SingleChildScrollView(
+          //           child: Column(
+          //             children: [
+          //               Container(
+          //                 child: Padding(
+          //                   padding: const EdgeInsets.symmetric(
+          //                       horizontal: 24.0, vertical: 5),
+          //                   child: Column(
+          //                     children: [
+          //                       SingleChildScrollView(
+          //                         scrollDirection: Axis.horizontal,
+          //                         child: Container(
+          //                           width:
+          //                               MediaQuery.of(context).size.width * .91,
+          //                           child: Table(
+          //                             defaultColumnWidth:
+          //                                 IntrinsicColumnWidth(),
+          //                             children: [
+          //                               TableRow(
+          //                                 decoration: BoxDecoration(
+          //                                   border: Border.all(
+          //                                       // color: blueColor
+          //                                       ),
+          //                                 ),
+          //                                 children: [
+          //                                   // TableCell(child: Text('yash')),
+          //                                   // TableCell(child: Text('yash')),
+          //                                   // TableCell(child: Text('yash')),
+          //                                   // TableCell(child: Text('yash')),
+          //                                   // TableCell(child: Text('yash')),
+          //                                   _buildHeader(
+          //                                       'Main Type',
+          //                                       0,
+          //                                       (property) => property
+          //                                           .tenant!.tenantName!),
+          //                                   _buildHeader(
+          //                                       'Subtype',
+          //                                       1,
+          //                                       (property) =>
+          //                                           property.rentalAddress!),
+          //                                   _buildHeader('Created At', 2,
+          //                                       (property) => property.date!),
+          //                                 ],
+          //                               ),
+          //                               TableRow(
+          //                                 decoration: BoxDecoration(
+          //                                   border: Border.symmetric(
+          //                                       horizontal: BorderSide.none),
+          //                                 ),
+          //                                 children: List.generate(
+          //                                     3,
+          //                                     (index) => TableCell(
+          //                                         child:
+          //                                             Container(height: 20))),
+          //                               ),
+          //                               for (var i = 0;
+          //                                   i < _pagedData.length;
+          //                                   i++)
+          //                                 TableRow(
+          //                                   decoration: BoxDecoration(
+          //                                     border: Border(
+          //                                       left: BorderSide(
+          //                                           color: blueColor),
+          //                                       right: BorderSide(
+          //                                           color: blueColor),
+          //                                       top: BorderSide(
+          //                                           color: blueColor),
+          //                                       bottom:
+          //                                           i == _pagedData.length - 1
+          //                                               ? BorderSide(
+          //                                                   color: blueColor)
+          //                                               : BorderSide.none,
+          //                                     ),
+          //                                   ),
+          //                                   children: [
+          //                                     _buildDataCell(_pagedData[i]
+          //                                         .tenant!
+          //                                         .tenantName!),
+          //                                     _buildDataCell(
+          //                                         _pagedData[i].rentalAddress!),
+          //                                     _buildDataCell(
+          //                                       formatDate(_pagedData[i].date!),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                             ],
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       SizedBox(height: 25),
+          //                       _buildPaginationControls(),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ),
+          //               SizedBox(height: 25),
+          //             ],
+          //           ),
+          //         );
+          //       }
+          //     },
+          //   ),
         ],
       ),
     );

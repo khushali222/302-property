@@ -44,8 +44,8 @@ class PaymentCronjobRepository {
         context: context,
         type: AlertType.success,
         title: "Success",
-        desc:
-        responseData["message"] ?? "Failed Payment Acknowledge Successfully!",
+        desc: responseData["message"] ??
+            "Failed Payment Acknowledge Successfully!",
         style: AlertStyle(
           backgroundColor: Colors.white,
         ),
@@ -129,6 +129,7 @@ class PaymentCronjobRepository {
       throw Exception('Failed to Acknowledgement payment');
     }
   }
+
   Future<Map<String, dynamic>> PaymentReSchedule({
     required BuildContext context,
     String? paymentid,
@@ -165,8 +166,7 @@ class PaymentCronjobRepository {
         context: context,
         type: AlertType.success,
         title: "Success",
-        desc:
-        responseData["message"] ?? "Payment rescheduled successfully!",
+        desc: responseData["message"] ?? "Payment rescheduled successfully!",
         style: AlertStyle(
           backgroundColor: Colors.white,
         ),
@@ -189,4 +189,60 @@ class PaymentCronjobRepository {
       throw Exception('Failed to Acknowledgement payment');
     }
   }
+
+  Future<Map<String, dynamic>> VoidCron({
+    required BuildContext context,
+    required String? pay_id,
+    required String? void_reason,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+
+    final http.Response response = await http.post(
+      Uri.parse('${Api_url}/api/nmipayment/void-payment/$pay_id'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $adminid",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        "voidDetails": {
+          "admin_id": adminid,
+          "void_reason": void_reason,
+        }
+      }),
+    );
+
+    var responseData = json.decode(response.body);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      Alert(
+        context: context,
+        type: AlertType.success,
+        title: "Success",
+        desc: responseData["message"] ?? "Payment successfully voided.",
+        style: AlertStyle(
+          backgroundColor: Colors.white,
+        ),
+        buttons: [
+          DialogButton(
+            child: Text(
+              "Ok",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            onPressed: () => Navigator.pop(context),
+            color: blueColor,
+          ),
+        ],
+      ).show();
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return responseData;
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to void payment');
+    }
+  }
+
 }

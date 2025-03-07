@@ -14,8 +14,12 @@ import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart'
 import '../../../repository/Communication/Templet_Repo.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/titleBar.dart';
 
 class Add_Email_templet extends StatefulWidget {
+  String? templetid;
+  Add_Email_templet({super.key, this.templetid});
+
   @override
   _Add_Email_templetState createState() => _Add_Email_templetState();
 }
@@ -275,6 +279,45 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                   Row(
                     children: [
                       Expanded(
+                        child: Container(
+                          // height: 50.0,
+                          height: (MediaQuery.of(context).size.width < 500)
+                              ? 50
+                              : 60,
+                          padding: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.width < 500
+                                  ? 9
+                                  : 5,
+                              left: 10),
+                          margin: const EdgeInsets.only(bottom: 6.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            color: blueColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0.0, 1.0),
+                                blurRadius: 6.0,
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            widget.templetid != null
+                                ? "Edit Template"
+                                : 'Add Template',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
                         flex: 3,
                         child: Container(
                           child: Column(
@@ -415,7 +458,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   isExpanded: true,
                                   hint: const Text(
                                     'Select Event',
-
                                   ),
                                   value: _selectedEvent,
                                   items: events.map((method) {
@@ -435,7 +477,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 46,
-
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 3),
                                     decoration: BoxDecoration(

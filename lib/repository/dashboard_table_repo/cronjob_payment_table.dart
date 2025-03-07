@@ -8,26 +8,28 @@ import 'package:three_zero_two_property/Model/dashboard_polices.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 class cronjob_payment_tableService {
-  Future<List<LeaseDatacronjob>> fetchCronjob_payment() async {
+  Future<LeaseResponse> fetchCronjob_payment(
+  {int limit = 5,int page= 1}
+      ) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
     try {
       final response = await http.get(
-          Uri.parse('$Api_url/api/payment/cronjob-payments/$adminId'),
+          Uri.parse('$Api_url/api/payment/cronjob-payments/$adminId?page=$page&limit=$limit'),
           headers: {
             "authorization": "CRM $token",
             "id": "CRM $adminId",
           });
-
+print('responce get ${response.body}');
       if (response.statusCode == 200) {
         // If the server returns a 200 OK response, parse the JSON
 
         final parsedJson = jsonDecode(response.body);
         print(parsedJson);
         final InsuranceResponse = LeaseResponse.fromJson(parsedJson);
-        return InsuranceResponse.data ?? [];
+        return InsuranceResponse;
       } else {
         // If the server did not return a 200 OK response, throw an exception
         throw Exception('Failed to load renters insurance');
@@ -35,7 +37,7 @@ class cronjob_payment_tableService {
     } catch (e) {
       // Handle any other exceptions
       print('Error fetching data: $e');
-      return [];
+      throw Exception('Failed to load renters insurance');
     }
   }
 }
