@@ -461,12 +461,18 @@
 //     );
 //   }
 // }
+import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+
+import '../../../widgets/appbar.dart';
+import '../../../widgets/custom_drawer.dart';
 
 class EmailTemplateScreen extends StatefulWidget {
   @override
@@ -478,7 +484,11 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
   List<String> events = [];
   String? selectedTemplateId;
   final HtmlEditorController _htmlEditorController = HtmlEditorController();
+  final TextEditingController name = TextEditingController();
+  final TextEditingController subject = TextEditingController();
+  String htmlName = ""; // Store HTML content
   String htmlBody = ""; // Store HTML content
+  String htmlsubject = ""; // Store HTML content
 
   @override
   void initState() {
@@ -507,10 +517,12 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
           events = [data["template"]["name"] as String]; // Extract name
           selectedTemplateId =
               data["template"]["template_id"]; // Select default
+          htmlName = data["template"]["name"]; // Get HTML content
           htmlBody = data["template"]["body"]; // Get HTML content
-          // _htmlEditorController
-          //     .setText(replaceSpanTags(htmlBody)); // Set editor content
-          _htmlEditorController.setText(htmlBody);
+          htmlsubject = data["template"]["subject"]; // Get HTML content
+          _htmlEditorController
+              .setText(replaceSpanTags(htmlBody)); // Set editor content
+          //_htmlEditorController.setText(htmlBody);
         });
       }
     } else {
@@ -534,8 +546,8 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
       "admin_id": adminId,
       "name": "Invitation",
       "subject": "Welcome to Smith test",
-      "body": updatedHtmlBody, // Send updated HTML
-      //"body": replaceFontTags(updatedHtmlBody), // Send updated HTML
+      // "body": updatedHtmlBody, // Send updated HTML
+      "body": replaceFontTags(updatedHtmlBody), // Send updated HTML
       "type": "E-mail",
       "mail_type": "Invitation",
       "is_delete": false,
@@ -577,48 +589,137 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
       'text-huge': '7',
     };
 
-    // Regular expression to match <span class="X">...</span>
+    // Regex to match <span> with class and/or style attributes
     return html.replaceAllMapped(
-      RegExp(r'<span\s+class="(.*?)">(.*?)<\/span>', caseSensitive: false),
-      (match) {
-        String className = match.group(1) ?? ''; // Get class name
-        String text = match.group(2) ?? ''; // Get inner text
-        String? fontSize =
-            classToFontSizeMap[className]; // Get corresponding font size
+      RegExp(r'<span([^>]*)>(.*?)<\/span>', caseSensitive: false),
+          (match) {
+        String attributes = match.group(1) ?? ''; // Extract attributes inside <span>
+        String text = match.group(2) ?? ''; // Extract inner text
 
-        // If class name is found in the map, replace with <font>, else keep original
-        return fontSize != null
-            ? '<font size="$fontSize">$text</font>'
-            : match.group(0)!;
+        // Extract class names
+        RegExpMatch? classMatch = RegExp(r'class="([^"]+)"').firstMatch(attributes);
+        String classNames = classMatch?.group(1) ?? '';
+
+        // Extract styles
+        RegExpMatch? styleMatch = RegExp(r'style="([^"]+)"').firstMatch(attributes);
+        String style = styleMatch?.group(1) ?? '';
+
+        // Extract color from style
+        RegExpMatch? colorMatch = RegExp(r'color:\s*([^;]+)').firstMatch(style);
+        String? color = colorMatch?.group(1);
+
+        // Extract the first matching class from the known map
+        String? fontSize = classNames
+            .split(' ')
+            .map((cls) => classToFontSizeMap[cls])
+            .firstWhere((size) => size != null, orElse: () => null);
+        print(hslToHex(color!));
+        // Build the <font> tag
+        if (fontSize != null) {
+          String fontTag = '<font size="$fontSize"';
+          if (color != null) fontTag += ' color="${hslToHex(color!)}"';
+          fontTag += '>$text</font>';
+          return fontTag;
+        }
+
+        return match.group(0)!; // Return original <span> if no match
       },
     );
   }
 
+  String hslToHex(String hsl) {
+    // Remove spaces and extract numbers
+    RegExp regExp = RegExp(r'hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)');
+    Match? match = regExp.firstMatch(hsl);
+
+    if (match == null) {
+      return hsl;
+    }
+
+    int h = int.parse(match.group(1)!);
+    double s = int.parse(match.group(2)!) / 100;
+    double l = int.parse(match.group(3)!) / 100;
+
+    double c = (1 - (2 * l - 1).abs()) * s;
+    double x = c * (1 - ((h / 60) % 2 - 1).abs());
+    double m = l - c / 2;
+
+    double r = 0, g = 0, b = 0;
+
+    if (h < 60) {
+      r = c;
+      g = x;
+    } else if (h < 120) {
+      r = x;
+      g = c;
+    } else if (h < 180) {
+      g = c;
+      b = x;
+    } else if (h < 240) {
+      g = x;
+      b = c;
+    } else if (h < 300) {
+      r = x;
+      b = c;
+    } else {
+      r = c;
+      b = x;
+    }
+
+    int red = ((r + m) * 255).round();
+    int green = ((g + m) * 255).round();
+    int blue = ((b + m) * 255).round();
+
+    return "#${red.toRadixString(16).padLeft(2, '0')}"
+        "${green.toRadixString(16).padLeft(2, '0')}"
+        "${blue.toRadixString(16).padLeft(2, '0')}";
+  }
+  @override
+  void dispose() {
+    _htmlEditorController.clearFocus(); // Clear focus to free memory
+    _htmlEditorController.disable(); // Disable editor to prevent lag
+    super.dispose();
+  }
   String replaceFontTags(String html) {
-    // Mapping font sizes to corresponding class names
     final Map<String, String> fontSizeMap = {
       '1': 'text-tiny',
       '2': 'text-small',
       '3': 'text-default',
+      '4': 'text-medium',  // Added missing size 4
       '5': 'text-big',
+      '6': 'text-larger',  // Added missing size 6
       '7': 'text-huge',
     };
 
-    // Regular expression to match <font size="X">...</font>
     return html.replaceAllMapped(
-      RegExp(r'<font\s+size="(\d+)">(.*?)<\/font>', caseSensitive: false),
-      (match) {
-        String size = match.group(1) ?? ''; // Get font size
-        String text = match.group(2) ?? ''; // Get inner text
-        String? className = fontSizeMap[size]; // Get corresponding class
+      RegExp(
+        r'<font\s+([^>]*)>(.*?)<\/font>',
+        caseSensitive: false,
+      ),
+          (match) {
+        String attributes = match.group(1) ?? ''; // Get all attributes inside <font>
+        String text = match.group(2) ?? ''; // Get the inner text
 
-        // If the size is found in the map, replace with <span>, else keep original
-        return className != null
-            ? '<span class="$className">$text</span>'
-            : match.group(0)!;
+        // Extract size attribute
+        RegExpMatch? sizeMatch = RegExp(r'size="(\d+)"').firstMatch(attributes);
+        String? size = sizeMatch?.group(1);
+
+        // Extract color attribute
+        RegExpMatch? colorMatch = RegExp(r'color="([^"]+)"').firstMatch(attributes);
+        String? color = colorMatch?.group(1);
+
+        // Get the corresponding class name for size
+        String? className = fontSizeMap[size];
+
+        // Build the <span> tag
+        String spanClass = className != null ? 'class="$className"' : '';
+        String spanStyle = color != null ? 'style="color: $color;"' : '';
+
+        return '<span $spanClass $spanStyle>$text</span>';
       },
     );
   }
+
 
   Widget separatorWidget = const VerticalDivider(
     width: 10, // Space between toolbar items
@@ -630,254 +731,523 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("HTML Email Editor")),
+      backgroundColor: Colors.white,
+      drawer: CustomDrawer(
+        currentpage: "Rent Roll",
+        dropdown: true,
+      ),
+      appBar: widget_302.App_Bar(context: context),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Dropdown for Templates
-              Row(
-                children: [
-                  Text("Select Template",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ],
-              ),
-              SizedBox(height: 8),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: selectedTemplateId,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedTemplateId = newValue;
-                        var selectedTemplate = templates.firstWhere(
-                          (template) => template["template_id"] == newValue,
-                          orElse: () => {},
-                        );
-                        htmlBody = selectedTemplate["body"] ?? "";
-                        _htmlEditorController.setText(htmlBody);
-                      });
-                    },
-                    items: templates.map((template) {
-                      return DropdownMenuItem<String>(
-                        value: template["template_id"],
-                        child: Text(template["name"]),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 20),
-
-              // Fix scroll issue by using SingleChildScrollView
-              Row(
-                children: [
-                  SizedBox(
-                    width: 2,
-                  ),
-                  Text(
-                    "Body",
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: HtmlEditor(
-                    controller: _htmlEditorController,
-                    htmlEditorOptions: HtmlEditorOptions(
-                      hint: "Edit your email content here...",
-                      //  shouldEnsureVisible: true,
-                    ),
-                    otherOptions: OtherOptions(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(4),
+          child: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text('Name',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: CustomTextField(
+                                hintText: 'Enter name',
+                                controller: name,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    htmlToolbarOptions: HtmlToolbarOptions(
-                      // toolbarType: ToolbarType.nativeExpandable,
-                      customToolbarButtons: [
-                        PopupMenuButton<String>(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text("Paragraph",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                    )),
-                                Icon(Icons
-                                    .arrow_drop_down), // Dropdown indicator
+                    SizedBox(
+                      width: 1,
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(
+                                "Event Type",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                //border: Border.all(color: Colors.black),
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    offset: Offset(4, 4),
+                                    blurRadius: 3,
+                                  ),
+                                ],
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  value: selectedTemplateId,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedTemplateId = newValue;
+                                      var selectedTemplate =
+                                          templates.firstWhere(
+                                        (template) =>
+                                            template["template_id"] == newValue,
+                                        orElse: () => {},
+                                      );
+                                      htmlBody = selectedTemplate["body"] ?? "";
+                                      htmlName = selectedTemplate["name"] ?? "";
+                                      htmlsubject =
+                                          selectedTemplate["subject"] ?? "";
+                                      _htmlEditorController
+                                          .setText(replaceSpanTags(htmlBody));
+                                      name.text = htmlName;
+                                      subject.text = htmlsubject;
+                                      print("name ${htmlName}");
+                                      print("subject ${htmlsubject}");
+                                    });
+                                  },
+                                  items: templates.map((template) {
+                                    return DropdownMenuItem<String>(
+                                      value: template["template_id"],
+                                      child: Text(template["name"]),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Text('Subject',
+                        style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor)),
+                  ],
+                ),
+                SizedBox(height: 5),
+                Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: CustomTextField(
+                    // keyboardType: TextInputType.emailAddress,
+                    hintText: 'Enter subject',
+                    controller: subject,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      "Body",
+                      style: TextStyle(
+                          color: blueColor, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 55,
+                          child: HtmlEditor(
+                            controller: _htmlEditorController,
+                            htmlEditorOptions: HtmlEditorOptions(
+                              hint: "Edit your email content here...",
+                              //  shouldEnsureVisible: true,
+                            ),
+                            otherOptions: OtherOptions(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black),
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(4),topRight: Radius.circular(4) ),
+                              ),
+                            ),
+                            htmlToolbarOptions: HtmlToolbarOptions(
+                              // toolbarType: ToolbarType.nativeExpandable,
+                              customToolbarButtons: [
+                                PopupMenuButton<String>(
+                                  icon: Icon(Icons.format_list_bulleted),
+                                  tooltip: "Unordered List",
+                                  offset: Offset(0, 40), // Adjusts dropdown position
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Rounded corners
+                                  onSelected: (String style) {
+                                    _htmlEditorController.execCommand("insertHTML", argument: '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: "disc",
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.circle, size: 16, color: Colors.black),
+                                          SizedBox(width: 10),
+                                          Text("Disc"),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "circle",
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.circle_outlined, size: 16, color: Colors.black),
+                                          SizedBox(width: 10),
+                                          Text("Circle"),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "square",
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.square, size: 16, color: Colors.black),
+                                          SizedBox(width: 10),
+                                          Text("Square"),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                // OL (Ordered List) Style Dropdown
+                                PopupMenuButton<String>(
+                                  constraints: BoxConstraints(
+                                    minWidth: 100, // Minimum width of the popup
+                                    maxWidth: 120, // Maximum width
+                                  ),
+                                  icon: Icon(Icons.format_list_numbered), // Ordered List Button
+                                  tooltip: "Ordered List",
+                                  offset: Offset(0, 40),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  onSelected: (String style) {
+                                    _htmlEditorController.execCommand(
+                                        "insertHTML",
+                                        argument: '<ol style="list-style-type: $style;"><li>List Item</li></ol>'
+                                    );
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      enabled: false, // Disable selection on this item
+                                      child: Container(
+
+                                        width: 100, // Adjust width as needed
+                                        child: GridView.count(
+                                          shrinkWrap: true,
+                                          crossAxisCount: 3, // 3 items in a row
+                                          mainAxisSpacing: 5,
+                                          crossAxisSpacing: 5,
+                                          childAspectRatio: .85,
+                                          // Adjust for better layout
+                                          children: [
+                                            _buildListItem("decimal", "1"),
+                                            _buildListItem("decimal-leading-zero", "01"),
+                                            _buildListItem("lower-roman", "i"),
+                                            _buildListItem("upper-roman", "I"),
+                                            _buildListItem("lower-alpha", "a"),
+                                            _buildListItem("upper-alpha", "A"),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                PopupMenuButton<String>(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text("Paragraph",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                            )),
+                                        Icon(Icons
+                                            .arrow_drop_down), // Dropdown indicator
+                                      ],
+                                    ),
+                                  ),
+                                  tooltip: "Paragraph",
+                                  onSelected: (String format) {
+                                    _htmlEditorController.execCommand(
+                                        "formatBlock",
+                                        argument: format);
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: "h2",
+                                      child: Text("Heading 1",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "h3",
+                                      child: Text("Heading 2",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "h4",
+                                      child: Text("Heading 3",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "p",
+                                      child: Text("Paragraph",
+                                          style: TextStyle(fontSize: 14)),
+                                    ),
+                                  ],
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.format_quote),
+                                  tooltip: "Insert Quote",
+                                  onPressed: () {
+                                    _htmlEditorController.execCommand(
+                                        "formatBlock",
+                                        argument: "blockquote");
+                                  },
+                                ),
+                                PopupMenuButton<String>(
+                                  icon: Icon(Icons.text_fields),
+                                  tooltip: "Font Size",
+                                  onSelected: (String text) {
+                                    _htmlEditorController.execCommand(
+                                        "fontSize",
+                                        argument: text);
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                        value: "1", child: Text("tiny")),
+                                    PopupMenuItem(
+                                        value: "2", child: Text("small")),
+                                    PopupMenuItem(
+                                        value: "3", child: Text("default")),
+                                    PopupMenuItem(
+                                        value: "5", child: Text("big")),
+                                    PopupMenuItem(
+                                        value: "7", child: Text("huge")),
+                                  ],
+                                ),
+                              ],
+                              defaultToolbarButtons: [
+                                OtherButtons(
+                                    fullscreen: false,
+                                    help: false,
+                                    codeview: false,
+                                    undo: true,
+                                    redo: true,
+                                    copy: false,
+                                    paste: false),
+                                FontButtons(
+                                  bold: true,
+                                  italic: true,
+                                  underline: false,
+                                  strikethrough: false,
+                                  subscript: false,
+                                  superscript: false,
+                                  clearAll: false,
+                                ),
+                                InsertButtons(
+                                  picture: false,
+                                  video: false,
+                                  audio: false,
+                                  table: true,
+                                  hr: false,
+                                ),
+                                ListButtons(
+                                  ul: true,
+                                  ol: true,
+                                  listStyles: false,
+                                ),
+                                ParagraphButtons(
+                                  textDirection: false,
+                                  lineHeight: false,
+                                  caseConverter: false,
+                                  decreaseIndent: false,
+                                  increaseIndent: false,
+                                ),
+                                ColorButtons(),
                               ],
                             ),
                           ),
-                          tooltip: "Paragraph",
-                          onSelected: (String format) {
-                            _htmlEditorController.execCommand("formatBlock",
-                                argument: format);
-                          },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: "h1",
-                              child: Text("Heading 1",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold)),
+                        ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        HtmlEditor(
+
+                          callbacks: Callbacks(
+                              onInit: (){
+
+                              },
+
+                            onChangeContent: (String? text) {
+
+                              print("Press KEy ${text}");
+                              if (text != null && text.endsWith("\$")) {
+                                print("Dollar sign detected! Showing suggestions...");
+                                // Show popup with variables here
+                              }
+                            },
+                            onKeyUp: (value){
+                              print("key up $value");
+                            },
+                              onKeyDown: (value){
+                        print("key down $value");
+                        }
+                          ),
+                          controller: _htmlEditorController,
+                          htmlEditorOptions: HtmlEditorOptions(
+                            adjustHeightForKeyboard: false,
+                            hint: "Edit your email content here...",
+                            //  shouldEnsureVisible: true,
+                          ),
+                          otherOptions: OtherOptions(
+                            height: 500,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4),bottomRight: Radius.circular(4) ),
                             ),
-                            PopupMenuItem(
-                              value: "h2",
-                              child: Text("Heading 2",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            PopupMenuItem(
-                              value: "h3",
-                              child: Text("Heading 3",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            PopupMenuItem(
-                              value: "p",
-                              child: Text("Paragraph",
-                                  style: TextStyle(fontSize: 14)),
-                            ),
-                          ],
+                          ),
+                          htmlToolbarOptions: HtmlToolbarOptions(
+                            // toolbarType: ToolbarType.nativeExpandable,
+                            // toolbarPosition: ToolbarPosition.belowEditor,
+                            customToolbarButtons: [],
+                            defaultToolbarButtons: [],
+                            toolbarType: ToolbarType.nativeGrid,
+                          ),
+                            plugins: [
+                              
+                              SummernoteAtMention(
+                                //returns the dropdown items on mobile
+                                  getSuggestionsMobile: (String value) {
+                                    List<String> mentions = ['test1', 'test2', 'test3'];
+                                    return mentions
+                                        .where((element) => element.contains(value))
+                                        .toList();
+                                  },
+                                  //returns the dropdown items on web
+                                  mentionsWeb: ['test1', 'test2', 'test3'],
+                                  onSelect: (String value) {
+                                    print(value);
+                                  }
+                              ),
+                            ]
                         ),
-                        IconButton(
-                          icon: Icon(Icons.format_quote),
-                          tooltip: "Insert Quote",
-                          onPressed: () {
-                            _htmlEditorController.execCommand("formatBlock",
-                                argument: "blockquote");
-                          },
-                        ),
-                        PopupMenuButton<String>(
-                          icon: Icon(Icons.text_fields),
-                          tooltip: "Font Size",
-                          onSelected: (String text) {
-                            _htmlEditorController.execCommand("fontSize",
-                                argument: text);
-                          },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(value: "1", child: Text("tiny")),
-                            PopupMenuItem(value: "2", child: Text("small")),
-                            PopupMenuItem(value: "3", child: Text("default")),
-                            PopupMenuItem(value: "5", child: Text("big")),
-                            PopupMenuItem(value: "7", child: Text("huge")),
-                          ],
-                        ),
-                      ],
-                      defaultToolbarButtons: [
-                        OtherButtons(
-                            fullscreen: false,
-                            help: false,
-                            codeview: false,
-                            undo: true,
-                            redo: true,
-                            copy: false,
-                            paste: false),
-                        FontButtons(
-                          bold: true,
-                          italic: true,
-                          underline: false,
-                          strikethrough: false,
-                          subscript: false,
-                          superscript: false,
-                          clearAll: false,
-                        ),
-                        InsertButtons(
-                          picture: false,
-                          video: false,
-                          audio: false,
-                          table: true,
-                          hr: false,
-                        ),
-                        ListButtons(
-                          ul: true,
-                          ol: true,
-                          listStyles: false,
-                        ),
-                        ParagraphButtons(
-                          textDirection: false,
-                          lineHeight: false,
-                          caseConverter: false,
-                          decreaseIndent: false,
-                          increaseIndent: false,
-                        ),
-                        ColorButtons(),
+
                       ],
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: saveTemplate,
-                    style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: saveTemplate,
+                      style: ElevatedButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: blueColor,
                       ),
-                      backgroundColor: blueColor,
-                    ),
-                    child: Text(
-                      "Save",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                      child: Text(
+                        "Save",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
-                      backgroundColor: Colors.white,
                     ),
-                    child: Text(
-                      "Cancel",
-                      style: TextStyle(fontSize: 16, color: blueColor),
+                    SizedBox(
+                      width: 10,
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: Colors.white,
+                      ),
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(fontSize: 16, color: blueColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+  Widget _buildListItem(String value, String text) {
+    return GestureDetector(
+      onTap: () {
+        // Execute the command when an item is clicked
+        _htmlEditorController.execCommand(
+            "insertHTML",
+            argument: '<ol style="list-style-type: $value;"><li>List Item</li></ol>'
+        );
+      },
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
 }
 
 //"{"template_id":"1736503150202","admin_id":"1730957524276","name":"invitation ","subject":"Welcome to Smith test","body":"<h2 style=\"text-align:center;\"><a href=\"www.google.com\"><span style=\"color:hsl(270,94%,81%);\">hello </span></a>${<span style=\"color:hsl(0,75%,60%);\">Name</span>},</h2><p><span style=\"color:hsl(210,75%,60%);\">Welcome </span>to the ${CompanyName}</p><figure class=\"table\"><table><tbody><tr><td><strong>Name</strong></td><td><strong>Age</strong></td></tr><tr><td>test</td><td>12</td></tr></tbody></table></figure><blockquote><ul><li><i>here</i> is your credential&nbsp;<br>Email: ${EmailAddress}</li></ul></blockquote><ul><li><i><strong>Password</strong>:</i> ${Password}</li></ul><p>you can l<strong>ogin</strong> to your account via ${Url}</p>","type":"E-mail","mail_type":"Invitation","is_delete":false,"is_active":false,"createdAt":"2025-01-10T09:59:10.205Z","updatedAt":"2025-02-28T05:13:17.484Z"}"
-

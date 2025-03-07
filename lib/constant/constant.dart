@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -74,7 +73,6 @@ String formatDate4(String dateTime) {
   }
 }
 
-
 String formatDate3(String dateStr) {
   DateTime dateTime = DateTime.parse(dateStr);
   return DateFormat('dd-MM-yyyy').format(dateTime);
@@ -89,7 +87,7 @@ String reverseFormatDate(String formattedDate) {
   // Check if the formattedDate is empty or invalid
   if (formattedDate.isEmpty) {
     print("Empty date received, returning an empty string");
-    return "";  // Return an empty string if the date is empty
+    return ""; // Return an empty string if the date is empty
   }
 
   try {
@@ -100,7 +98,7 @@ String reverseFormatDate(String formattedDate) {
     return DateFormat('yyyy-MM-dd').format(dateTime);
   } catch (e) {
     print("Error while formatting date: $e");
-    return "";  // Return an empty string if there is an error
+    return ""; // Return an empty string if there is an error
   }
 }
 
@@ -356,7 +354,6 @@ class CVVFormatter extends TextInputFormatter {
   }
 }
 
-
 String? ValidateExpirationDate(String expirationDate) {
   // Check if the date is in the correct MM/YYYY format
   //require formate first is 0-9 and second 0-2
@@ -402,13 +399,11 @@ String? ValidateExpirationDate(String expirationDate) {
 class VideoItem extends StatefulWidget {
   String url;
   final void Function()? onTap;
-  VideoItem({super.key ,required this.url, this.onTap});
+  VideoItem({super.key, required this.url, this.onTap});
 
   @override
   State<VideoItem> createState() => _VideoItemState();
 }
-
-
 
 class _VideoItemState extends State<VideoItem> {
   VideoPlayerController? _controller;
@@ -418,7 +413,7 @@ class _VideoItemState extends State<VideoItem> {
     super.initState();
     _controller = VideoPlayerController.network("${widget.url}")
       ..initialize().then((_) {
-        setState(() {});  //when your thumbnail will show.
+        setState(() {}); //when your thumbnail will show.
       });
   }
 
@@ -435,10 +430,10 @@ class _VideoItemState extends State<VideoItem> {
         child: Container(
           child: _controller!.value!.isInitialized
               ? Container(
-            width: 100.0,
-            height: 56.0,
-            child: VideoPlayer(_controller!),
-          )
+                  width: 100.0,
+                  height: 56.0,
+                  child: VideoPlayer(_controller!),
+                )
               : CircularProgressIndicator(),
         ),
       ),

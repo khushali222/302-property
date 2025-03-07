@@ -145,7 +145,7 @@ class PaymentCronjobRepository {
     String? adminid = prefs.getString('adminId');
 
     final http.Response response = await http.put(
-      Uri.parse('${Api_url}/api/payment/PaymentReSchedule/$paymentid'),
+      Uri.parse('${Api_url}/api/payment/payment_reschedule/$paymentid'),
       headers: <String, String>{
         "authorization": "CRM $token",
         "id": "CRM $adminid",
