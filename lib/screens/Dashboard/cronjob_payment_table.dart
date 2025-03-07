@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import '../../Model/Dashbord_table/Payment_refund_model.dart';
 import '../../Model/Dashbord_table/cronjob_payment_table.dart';
 
 import '../../constant/constant.dart';
@@ -700,10 +701,20 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     ).show();
   }
 
-  void _showAlertRefund(BuildContext context, String id) {
+  Future<void> _showAlertRefund(BuildContext context, String id) async {
     TextEditingController retrydate = TextEditingController();
-    TextEditingController reason = TextEditingController();
+    TextEditingController amount = TextEditingController();
     TextEditingController memo = TextEditingController();
+    List<PaymentRefund> refunds =
+        await PaymentCronjobRepository().fetchPaymentRefunds(id);
+    PaymentRefund? refund = refunds.isNotEmpty ? refunds.first : null;
+
+    if (refund != null) {
+      retrydate.text = refund.entry!.first.date!;
+      amount.text = refund.totalAmount!.toString() ?? "0.0";
+      print(" r ${refund.entry}");
+    }
+
     Alert(
       context: context,
       content: Column(
@@ -836,7 +847,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           SizedBox(
             height: 45,
             child: TextField(
-              controller: reason,
+              controller: amount,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter reason for void',
@@ -883,29 +894,96 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             "Confirm",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
-          // onPressed: (){},
           onPressed: () async {
             if (retrydate.text.isEmpty) {
-              // setState(() {
-              //  _errorText == true;
-              // });
-              Fluttertoast.showToast(msg: "Please select the retry date");
-            } else {
-              Navigator.pop(context);
-              var data = await PaymentCronjobRepository().PaymentReSchedule(
-                retryDate: retrydate.text,
-                paymentid: id,
+              Fluttertoast.showToast(msg: "Please select the refund date");
+              return;
+            }
+
+            if (amount.text.isEmpty || double.tryParse(amount.text) == null) {
+              Fluttertoast.showToast(msg: "Please enter a valid refund amount");
+              return;
+            }
+
+            Navigator.pop(context);
+
+            var response = await PaymentCronjobRepository().confirmRefund(
+              paymentId: id,
+              paymentType: refund?.paymentType ?? "",
+              transactionId: refund?.transactionId ?? "",
+              refundAmount: double.parse(amount.text),
+              refundDate: retrydate.text,
+              memo: memo.text,
+              tenantFirstName: refund?.tenantData?.tenantFirstName ?? "",
+              tenantLastName: refund?.tenantData?.tenantLastName ?? "",
+              tenantEmail: refund?.tenantData?.tenantEmail ?? "",
+              tenantId: refund?.tenantData?.tenantId ?? "",
+              leaseId: refund?.leaseData?.leaseId ?? "",
+              customerVaultId: refund?.customerVaultId.toString() ?? "",
+              billingId: refund?.billingId.toString() ?? "",
+              context: context,
+              entry: (refund?.entry ?? [])
+                  .map((item) => {
+                        "amount": item.amount,
+                        "account": item.account,
+                        "date": item.date,
+                        "memo": item.memo,
+                      })
+                  .toList(),
+            );
+
+            if (response != null) {
+              setState(() {
+                futurecronjobpayment = cronjob_payment_tableService()
+                    .fetchCronjob_payment(limit: itemsPerPage);
+              });
+              Alert(
                 context: context,
-              );
-              // Add your delete logic here
-              if (data != null)
-                setState(() {
-                  futurecronjobpayment = cronjob_payment_tableService()
-                      .fetchCronjob_payment(limit: itemsPerPage);
-                });
-              // Navigator.pop(context);
+                type: AlertType.success,
+                title: "Success",
+                desc: "Refund Done Successfully",
+                style: AlertStyle(
+                  backgroundColor: Colors.white,
+                ),
+                buttons: [
+                  DialogButton(
+                    child: Text(
+                      "Ok",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    color: blueColor,
+                  ),
+                ],
+              ).show();
+              //Fluttertoast.showToast(msg: "Refund Done Successfully");
+            } else {
+              Fluttertoast.showToast(msg: "Failed to process refund");
             }
           },
+          // onPressed: () async {
+          //   if (retrydate.text.isEmpty) {
+          //     // setState(() {
+          //     //  _errorText == true;
+          //     // });
+          //     Fluttertoast.showToast(msg: "Please select the retry date");
+          //   } else {
+          //     Navigator.pop(context);
+          //     var data = await PaymentCronjobRepository().PaymentReSchedule(
+          //       retryDate: retrydate.text,
+          //       paymentid: id,
+          //       context: context,
+          //     );
+          //     // Add your delete logic here
+          //     if (data != null)
+          //       setState(() {
+          //         futurecronjobpayment = cronjob_payment_tableService()
+          //             .fetchCronjob_payment(limit: itemsPerPage);
+          //       });
+          //     // Navigator.pop(context);
+          //   }
+          // },
+
           color: blueColor,
         ),
         DialogButton(
