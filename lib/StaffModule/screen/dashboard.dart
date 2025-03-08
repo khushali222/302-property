@@ -11,6 +11,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Dashboard/cronjob_payment_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Vendor/Vendor_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/Workorder_table.dart';
@@ -991,6 +992,11 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                               ),
                             ),
                             const SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 0, right: 8),
+                              child: Cronjob_payment_table(),
+                            ),
                           ],
                         ),
                       );

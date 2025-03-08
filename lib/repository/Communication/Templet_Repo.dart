@@ -108,33 +108,33 @@ class TempletRepository {
       throw Exception('Failed to edit templet ');
     }
   }
-  // Future<Map<String, dynamic>> DeleteStaffMember({
-  //   required String? id,
-  //   String? reason
-  // }) async {
-  //
-  //   // print('$apiUrl/$id');
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? token = prefs.getString('token');
-  //   String?  adminid = prefs.getString('adminId');
-  //   final http.Response response = await http.delete(
-  //       Uri.parse('$apiUrl/$id'),
-  //       headers: <String, String>{
-  //         "authorization" : "CRM $token",
-  //         "id":"CRM $adminid",
-  //         'Content-Type': 'application/json; charset=UTF-8',
-  //       },
-  //       body: jsonEncode({"reason":reason})
-  //   );
-  //   var responseData = json.decode(response.body);
-  //   print(response.body);
-  //   if (responseData["statusCode"] == 200) {
-  //     Fluttertoast.showToast(msg: responseData["message"]);
-  //     return json.decode(response.body);
-  //
-  //   } else {
-  //     Fluttertoast.showToast(msg: responseData["message"]);
-  //     throw Exception('Failed to add property type');
-  //   }
-  // }
+  Future<Map<String, dynamic>> DeleteTemplet({
+    required String? id,
+    String? reason
+  }) async {
+
+    // print('$apiUrl/$id');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  adminid = prefs.getString('adminId');
+    final http.Response response = await http.delete(
+        Uri.parse('$apiUrl/$id'),
+        headers: <String, String>{
+          "authorization" : "CRM $token",
+          "id":"CRM $adminid",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"reason":reason})
+    );
+    var responseData = json.decode(response.body);
+    print(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to delete templet');
+    }
+  }
 }

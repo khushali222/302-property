@@ -189,7 +189,7 @@ class _Profile_screenState extends State<Profile_screen> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text("Password updated successfully")),
         // );
-        await _savePassword(password.text);
+        await _savePassword(password.text.trim());
         Fluttertoast.showToast(msg: 'Password updated successfully');
       } else {
         // Handle other successful responses or display an error message

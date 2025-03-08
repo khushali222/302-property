@@ -263,7 +263,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Rent Roll",
+        currentpage: "Templates",
         dropdown: true,
       ),
       appBar: widget_302.App_Bar(context: context),
@@ -712,7 +712,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                               controller: _htmlEditorController,
                               htmlEditorOptions: HtmlEditorOptions(
                                 adjustHeightForKeyboard: false,
-                                hint: "Edit your email content here...",
+
                                 //  shouldEnsureVisible: true,
                               ),
                               otherOptions: OtherOptions(

@@ -291,7 +291,7 @@ class _TempletTableState extends State<TempletTable> {
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this RentalOwner!",
+      desc: "Once deleted, you will not be able to recover this template",
       content: Column(
         children: <Widget>[
           SizedBox(
@@ -322,8 +322,8 @@ class _TempletTableState extends State<TempletTable> {
             if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
             } else {
-              // await TempletRepository()
-              //     .DeleteRentalOwners(rentalownerId: id, reason: reason.text);
+              await TempletRepository()
+                  .DeleteTemplet(reason: reason.text, id: id);
               setState(() {
                 futureTemplet = TempletRepository().fetchTemplets();
               });
@@ -791,13 +791,18 @@ class _TempletTableState extends State<TempletTable> {
                                                         onTap: () async {
                                                           var check = await Navigator
                                                                   .of(context)
-                                                              .push(MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          Add_Email_templet(templetid: rentals.templateId,)));
+                                                              .push(
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          Add_Email_templet(
+                                                                            templetid:
+                                                                                rentals.templateId,
+                                                                          )));
                                                           if (check == true) {
                                                             setState(() {
-                                                              futureTemplet = TempletRepository().fetchTemplets();
+                                                              futureTemplet =
+                                                                  TempletRepository()
+                                                                      .fetchTemplets();
                                                             });
                                                           }
                                                         },
@@ -845,10 +850,10 @@ class _TempletTableState extends State<TempletTable> {
                                                     Expanded(
                                                       child: GestureDetector(
                                                         onTap: () {
-                                                          // _showDeleteAlert(
-                                                          //     context,
-                                                          //     rentals
-                                                          //         .rentalownerId!);
+                                                          _showDeleteAlert(
+                                                              context,
+                                                              rentals
+                                                                  .templateId!);
                                                         },
                                                         child: Container(
                                                           height: 40,
@@ -878,69 +883,6 @@ class _TempletTableState extends State<TempletTable> {
                                                               Text(
                                                                 "Delete",
                                                                 style: TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Expanded(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          // Navigator.push(
-                                                          //     context,
-                                                          //     MaterialPageRoute(
-                                                          //         builder:
-                                                          //             (context) =>
-                                                          //             ResponsiveRentalSummary(
-                                                          //               rentalOwnersid: rentals.rentalownerId!,
-                                                          //               rentalowners: rentals,
-                                                          //             )));
-                                                        },
-                                                        child: Container(
-                                                          height: 40,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      350]),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Image.asset(
-                                                                'assets/icons/view.png',
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                              // FaIcon(
-                                                              //   FontAwesomeIcons.trashCan,
-                                                              //   size: 15,
-                                                              //   color:blueColor,
-                                                              // ),
-                                                              SizedBox(
-                                                                width: 8,
-                                                              ),
-                                                              Text(
-                                                                "View Summery",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        11,
                                                                     color:
                                                                         blueColor,
                                                                     fontWeight:

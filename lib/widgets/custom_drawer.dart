@@ -13,7 +13,6 @@ class CustomDrawer extends StatefulWidget {
   final bool dropdown;
 
   CustomDrawer({required this.currentpage, required this.dropdown});
-
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
 }

@@ -16,6 +16,8 @@ import 'package:three_zero_two_property/widgets/test.dart';
 import '../../constant/constant.dart';
 import '../../provider/notification_provider.dart';
 import 'package:badges/badges.dart' as badges;
+
+import '../screen/change_password.dart';
 class widget_302  {
     static App_Bar({
       var suffixIcon,
@@ -232,6 +234,28 @@ class widget_302  {
                                 builder: (context) => TabBarExample()));
                           },
                         ),*/
+                        PopupMenuItem(
+                          child: Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.key,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Change Password",
+                                style: TextStyle(color: blueColor),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => Change_password()));
+                          },
+                        ),
                         PopupMenuItem(
                           child: Row(
                             children: [

@@ -8,18 +8,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-
-import '../../Model/Dashbord_table/Payment_refund_model.dart';
-import '../../Model/Dashbord_table/cronjob_payment_table.dart';
-
-import '../../constant/constant.dart';
-
-import '../../provider/dateProvider.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+import '../../../Model/Dashbord_table/Payment_refund_model.dart';
+import '../../../Model/Dashbord_table/cronjob_payment_table.dart';
+import '../../../constant/constant.dart';
+import '../../../provider/dateProvider.dart';
+import '../../../widgets/CustomTableShimmer.dart';
 import '../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
-import '../../repository/dashboard_table_repo/cronjob_payment_table.dart';
-import '../../widgets/CustomTableShimmer.dart';
-import '../../widgets/titleBar.dart';
+import '../../repository/Payment_cronjob/cronjob_payment_table.dart';
 
 class Cronjob_payment_table extends StatefulWidget {
   @override
@@ -1081,7 +1077,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           //Text("Renter's Insurance Policies Expiring Within 90 days",style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
           if (MediaQuery.of(context).size.width < 500)
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(5.0),
               child: FutureBuilder<LeaseResponse>(
                 future: futurecronjobpayment,
                 builder: (context, snapshot) {
@@ -1319,8 +1315,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                   style: TextStyle(
                                                     color:
                                                     Propertytype.response == "FAILURE" || Propertytype.response == "VOID"
-                                                            ? Colors.red
-                                                            : Colors.green,
+                                                        ? Colors.red
+                                                        : Colors.green,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 12,
                                                   ),
@@ -1689,13 +1685,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                                   CrossAxisAlignment
                                                                       .center,
                                                               children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .money_off,
-                                                                  size: 20,
-                                                                  weight: 30,
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .reply,
+                                                                  size: 15,
                                                                   color:
-                                                                  blueColor,
+                                                                      blueColor,
                                                                 ),
                                                               ],
                                                             ),
@@ -1734,10 +1729,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                                   CrossAxisAlignment
                                                                       .center,
                                                               children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .dollarSign,
-                                                                  size: 15,
+                                                                Icon(
+                                                                  Icons
+                                                                      .money_off,
+                                                                  size: 20,
+                                                                  weight: 30,
                                                                   color:
                                                                       blueColor,
                                                                 ),

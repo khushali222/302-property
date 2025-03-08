@@ -3708,6 +3708,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             SizedBox(
                               height: 15,
                             ),
+                            if (selectedpropertytypedata?.isMultiunit == true)
                             GestureDetector(
                               onTap: () {
                                 // if (selectedProperty != null) {
@@ -3844,6 +3845,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ],
                                 ),
                               SizedBox(height: 15),
+                              if (selectedpropertytypedata?.isMultiunit == true)
                               GestureDetector(
                                 onTap: () {
                                   addPropertyGroup();

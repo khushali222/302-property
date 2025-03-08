@@ -19,7 +19,7 @@ import '../../../constant/constant.dart';
 
 import '../../../widgets/titleBar.dart';
 import '../widgets/appbar.dart';
-import '../widgets/custom_drawer.dart';
+
 import '../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
 
@@ -207,15 +207,15 @@ class _Change_passwordState extends State<Change_password> {
 
   Future<void> _savePassword(String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("tenant_password", password); // Store the new password
+    await prefs.setString("vendor_password", password); // Store the new password
   }
 
   String oldPassword = "";
   Future<void> _loadOldPassword() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String? pass = prefs.getString("tenant_password");
-    print("tenant_password ${pass}");
+    String? pass = prefs.getString("vendor_password");
+    print("vendor_password ${pass}");
     setState(() {
       oldPassword = pass!; // Fetch the old password
     });
@@ -232,9 +232,6 @@ class _Change_passwordState extends State<Change_password> {
           },
         ),
         backgroundColor: Colors.white,
-        // drawer: CustomDrawer(
-        //   currentpage: 'Documents',
-        // ),
         body: Form(
           key: _formkey,
           child: Container(
@@ -514,7 +511,8 @@ class _Change_passwordState extends State<Change_password> {
                             color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Form(
+                          child:
+                          Form(
                             key: formKey,
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -952,7 +950,7 @@ class _Change_passwordState extends State<Change_password> {
                                       SharedPreferences prefs =
                                           await SharedPreferences.getInstance();
                                       String? pass =
-                                          prefs.getString("tenant_password");
+                                          prefs.getString("vendor_password");
                                       print(pass);
                                       print("pass 1 $pass");
                                       print("pass 2 $oldPassword");
@@ -1411,10 +1409,13 @@ class _Change_passwordState extends State<Change_password> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String? email = prefs.getString('email');
-    Map<String, dynamic> values = {'password': password.text.trim(),"currentPassword":currentpassword.text.trim()};
+    Map<String, dynamic> values = {
+      'password': password.text.trim(),
+      "currentPassword": currentpassword.text.trim()
+    };
 
     final http.Response response = await http.put(
-      Uri.parse('$Api_url/api/tenant/reset_password/$email'),
+      Uri.parse('$Api_url/api/vendor/reset_password/$email'),
       headers: <String, String>{
         "authorization": "CRM $token",
         "id": "CRM $id",

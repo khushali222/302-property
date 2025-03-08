@@ -436,7 +436,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
       desc: "Once deleted, you will not be able to recover this Insurance!",
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           SizedBox(
             height: 45,
             child: TextField(
@@ -444,8 +446,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
-                  contentPadding: EdgeInsets.only(top: 8,left: 15)
-              ),
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
             ),
           ),
         ],
@@ -468,11 +469,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-
-            if(reason.text.isEmpty){
+            if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            }
-            else {
+            } else {
               var data = await AdminTenantInsuranceRepository()
                   .deleteInsurancesProperties(id);
               // Add your delete logic here
@@ -484,20 +483,20 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                 });
               Navigator.pop(context);
             }
-
           },
           color: blueColor,
         )
       ],
     ).show();
   }
+
   void _showAddInsuranceAlert(BuildContext context, VoidCallback onConfirm) {
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Add New Insurance",
       desc:
-      "If you add a new renter's insurance, the older one will get expired. Do you want to proceed?",
+          "If you add a new renter's insurance, the older one will get expired. Do you want to proceed?",
       style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -1356,9 +1355,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     TableCell(
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 5),
-                                      child :Text(
-
-                                        '${(widget.tenants?.emergencyContact?.phoneNumber ?? '').isEmpty ? 'N/A' : formatPhoneNumber(widget.tenants?.emergencyContact!.phoneNumber??"")}',
+                                      child: Text(
+                                        '${(widget.tenants?.emergencyContact?.phoneNumber ?? '').isEmpty ? 'N/A' : formatPhoneNumber(widget.tenants?.emergencyContact!.phoneNumber ?? "")}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -1386,13 +1384,17 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     onTap: () async {
                                       // Check the length of `futurePropertyTypes`
                                       final tenantInsuranceData =
-                                      await futurePropertyTypes.catchError((_) => []);
+                                          await futurePropertyTypes
+                                              .catchError((_) => []);
                                       if (tenantInsuranceData.length >= 1) {
                                         // Show an alert dialog
-                                        _showAddInsuranceAlert(context,()async{
-                                          final result = await Navigator.of(context).push(
+                                        _showAddInsuranceAlert(context,
+                                            () async {
+                                          final result =
+                                              await Navigator.of(context).push(
                                             MaterialPageRoute(
-                                              builder: (context) => AdminAddTenantInsurance(
+                                              builder: (context) =>
+                                                  AdminAddTenantInsurance(
                                                 tenantid: widget.tenantId,
                                               ),
                                             ),
@@ -1401,15 +1403,18 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                             setState(() {
                                               futurePropertyTypes =
                                                   AdminTenantInsuranceRepository()
-                                                      .fetchTenantInsurance(widget.tenantId);
+                                                      .fetchTenantInsurance(
+                                                          widget.tenantId);
                                             });
                                           }
                                         });
                                       } else {
                                         // Navigate if less than or equal to one policy
-                                        final result = await Navigator.of(context).push(
+                                        final result =
+                                            await Navigator.of(context).push(
                                           MaterialPageRoute(
-                                            builder: (context) => AdminAddTenantInsurance(
+                                            builder: (context) =>
+                                                AdminAddTenantInsurance(
                                               tenantid: widget.tenantId,
                                             ),
                                           ),
@@ -1418,34 +1423,55 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                           setState(() {
                                             futurePropertyTypes =
                                                 AdminTenantInsuranceRepository()
-                                                    .fetchTenantInsurance(widget.tenantId);
+                                                    .fetchTenantInsurance(
+                                                        widget.tenantId);
                                           });
                                         }
                                       }
                                     },
                                     child: Container(
-                                      height: (MediaQuery.of(context).size.width < 500)
+                                      height: (MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                              500)
                                           ? 40
-                                          : MediaQuery.of(context).size.width * 0.055,
-                                      width: (MediaQuery.of(context).size.width < 500)
-                                          ? MediaQuery.of(context).size.width * 0.25
-                                          : MediaQuery.of(context).size.width * 0.3,
+                                          : MediaQuery.of(context).size.width *
+                                              0.055,
+                                      width: (MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                              500)
+                                          ? MediaQuery.of(context).size.width *
+                                              0.25
+                                          : MediaQuery.of(context).size.width *
+                                              0.3,
                                       decoration: BoxDecoration(
                                         color: blueColor,
                                         borderRadius: BorderRadius.circular(5),
                                       ),
                                       child: Center(
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text(
                                               "Add Policy",
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: (MediaQuery.of(context).size.width < 500)
-                                                    ? MediaQuery.of(context).size.width * 0.034
-                                                    : MediaQuery.of(context).size.width * 0.025,
+                                                fontSize:
+                                                    (MediaQuery.of(context)
+                                                                .size
+                                                                .width <
+                                                            500)
+                                                        ? MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.034
+                                                        : MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.025,
                                               ),
                                             ),
                                           ],
@@ -1468,7 +1494,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 10),
 
                               // const SizedBox(height: 10),
                               if (MediaQuery.of(context).size.width > 500)
@@ -1774,7 +1799,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                   ],
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(height: 10,),
+                                                                              SizedBox(
+                                                                                height: 10,
+                                                                              ),
                                                                               Text.rich(
                                                                                 TextSpan(
                                                                                   children: [
@@ -1789,7 +1816,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                   ],
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(height: 10,),
+                                                                              SizedBox(
+                                                                                height: 10,
+                                                                              ),
                                                                               Text.rich(
                                                                                 TextSpan(
                                                                                   children: [
@@ -1809,8 +1838,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                   SizedBox(height: 10,),
-                                                                   /* Container(
+                                                                    SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                    /* Container(
                                                                       width:
                                                                       40,
                                                                       child:
@@ -1825,7 +1857,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                               ),
                                                                               onPressed: () async {
                                                                                 // handleEdit(Propertytype);
-                                                                            
+
                                                                                 var check = await Navigator.push(
                                                                                     context,
                                                                                     MaterialPageRoute(
@@ -1859,107 +1891,94 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                     Row(
                                                                       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                       children: [
+                                                                        // Expanded(
+                                                                        //   child: GestureDetector(
+                                                                        //     onTap: () async {
+                                                                        //       var check = await Navigator.push(
+                                                                        //           context,
+                                                                        //           MaterialPageRoute(
+                                                                        //               builder: (context) => editAdminInsurance(
+                                                                        //                 data: Propertytype,
+                                                                        //               )));
+                                                                        //       if (check == true) {
+                                                                        //         setState(() {
+                                                                        //           futurePropertyTypes = AdminTenantInsuranceRepository().fetchTenantInsurance(widget.tenantId);
+                                                                        //         });
+                                                                        //       }
+                                                                        //     },
+                                                                        //     child: Container(
+                                                                        //       height: 40,
+                                                                        //       decoration: BoxDecoration(
+                                                                        //           color: Colors
+                                                                        //               .grey[
+                                                                        //           350]), // color:Colors.grey[100],
+                                                                        //       child: Row(
+                                                                        //         mainAxisAlignment:
+                                                                        //         MainAxisAlignment
+                                                                        //             .center,
+                                                                        //         crossAxisAlignment:
+                                                                        //         CrossAxisAlignment
+                                                                        //             .center,
+                                                                        //         children: [
+                                                                        //           FaIcon(
+                                                                        //             FontAwesomeIcons
+                                                                        //                 .edit,
+                                                                        //             size: 15,
+                                                                        //             color:
+                                                                        //             blueColor,
+                                                                        //           ),
+                                                                        //           SizedBox(
+                                                                        //             width: 10,
+                                                                        //           ),
+                                                                        //           Text(
+                                                                        //             "Edit",
+                                                                        //             style: TextStyle(
+                                                                        //                 color:
+                                                                        //                 blueColor,
+                                                                        //                 fontWeight:
+                                                                        //                 FontWeight
+                                                                        //                     .bold),
+                                                                        //           ),
+                                                                        //         ],
+                                                                        //       ),
+                                                                        //     ),
+                                                                        //   ),
+                                                                        // ),
+                                                                        // SizedBox(
+                                                                        //   width: 5,
+                                                                        // ),
                                                                         Expanded(
-                                                                          child: GestureDetector(
-                                                                            onTap: () async {
-                                                                              var check = await Navigator.push(
-                                                                                  context,
-                                                                                  MaterialPageRoute(
-                                                                                      builder: (context) => editAdminInsurance(
-                                                                                        data: Propertytype,
-                                                                                      )));
-                                                                              if (check == true) {
-                                                                                setState(() {
-                                                                                  futurePropertyTypes = AdminTenantInsuranceRepository().fetchTenantInsurance(widget.tenantId);
-                                                                                });
-                                                                              }
-                                                                            },
-                                                                            child: Container(
-                                                                              height: 40,
-                                                                              decoration: BoxDecoration(
-                                                                                  color: Colors
-                                                                                      .grey[
-                                                                                  350]), // color:Colors.grey[100],
-                                                                              child: Row(
-                                                                                mainAxisAlignment:
-                                                                                MainAxisAlignment
-                                                                                    .center,
-                                                                                crossAxisAlignment:
-                                                                                CrossAxisAlignment
-                                                                                    .center,
-                                                                                children: [
-                                                                                  FaIcon(
-                                                                                    FontAwesomeIcons
-                                                                                        .edit,
-                                                                                    size: 15,
-                                                                                    color:
-                                                                                    blueColor,
-                                                                                  ),
-                                                                                  SizedBox(
-                                                                                    width: 10,
-                                                                                  ),
-                                                                                  Text(
-                                                                                    "Edit",
-                                                                                    style: TextStyle(
-                                                                                        color:
-                                                                                        blueColor,
-                                                                                        fontWeight:
-                                                                                        FontWeight
-                                                                                            .bold),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        SizedBox(
-                                                                          width: 5,
-                                                                        ),
-                                                                        Expanded(
-                                                                          child: GestureDetector(
-                                                                            onTap: () {
+                                                                          child:
+                                                                              GestureDetector(
+                                                                            onTap:
+                                                                                () {
                                                                               _showAlert(context, Propertytype.tenantInsuranceId!);
                                                                             },
-                                                                            child: Container(
+                                                                            child:
+                                                                                Container(
                                                                               height: 40,
-                                                                              decoration:
-                                                                              BoxDecoration(
-                                                                                  color: Colors
-                                                                                      .grey[
-                                                                                  350]),
+                                                                              decoration: BoxDecoration(color: Colors.grey[350]),
                                                                               child: Row(
-                                                                                mainAxisAlignment:
-                                                                                MainAxisAlignment
-                                                                                    .center,
-                                                                                crossAxisAlignment:
-                                                                                CrossAxisAlignment
-                                                                                    .center,
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
                                                                                 children: [
                                                                                   FaIcon(
-                                                                                    FontAwesomeIcons
-                                                                                        .trashCan,
+                                                                                    FontAwesomeIcons.trashCan,
                                                                                     size: 15,
-                                                                                    color:
-                                                                                    blueColor,
+                                                                                    color: blueColor,
                                                                                   ),
                                                                                   SizedBox(
                                                                                     width: 10,
                                                                                   ),
                                                                                   Text(
                                                                                     "Delete",
-                                                                                    style: TextStyle(
-                                                                                        color:
-                                                                                        blueColor,
-                                                                                        fontWeight:
-                                                                                        FontWeight
-                                                                                            .bold),
+                                                                                    style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
                                                                                   )
                                                                                 ],
                                                                               ),
                                                                             ),
                                                                           ),
                                                                         ),
-
                                                                       ],
                                                                     ),
                                                                   ],
@@ -2523,7 +2542,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                 ],
                                                                               ),
                                                                             ),
-                                                                            SizedBox(height: 10,),
+                                                                            SizedBox(
+                                                                              height: 10,
+                                                                            ),
                                                                             Text.rich(
                                                                               TextSpan(
                                                                                 children: [
@@ -2538,7 +2559,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                 ],
                                                                               ),
                                                                             ),
-                                                                            SizedBox(height: 10,),
+                                                                            SizedBox(
+                                                                              height: 10,
+                                                                            ),
                                                                             Text.rich(
                                                                               TextSpan(
                                                                                 children: [
@@ -2556,7 +2579,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                           ],
                                                                         ),
                                                                       ),
-
                                                                     ],
                                                                   ),
                                                                 ],
@@ -3681,9 +3703,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                       const SizedBox(
                                         height: 4,
                                       ),
-
                                       Text(
-
                                         '${(tenantsummery.first.emergencyContact!.phoneNumber ?? '').isEmpty ? 'N/A' : formatPhoneNumber(tenantsummery.first.emergencyContact!.phoneNumber!)}',
                                         style: TextStyle(
                                             fontSize: 14,
