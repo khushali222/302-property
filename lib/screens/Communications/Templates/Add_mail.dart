@@ -268,7 +268,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
       ),
       appBar: widget_302.App_Bar(context: context),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 16,right: 16,top: 16),
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(2.0),
@@ -875,7 +875,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                         )
                       : Container(),
                   SizedBox(
-                    height: 15,
+                    height: 8,
                   ),
                   Row(
                     children: [

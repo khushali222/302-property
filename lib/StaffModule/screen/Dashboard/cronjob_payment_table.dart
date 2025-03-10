@@ -1031,7 +1031,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       buttons: [
         DialogButton(
           child: Text(
-            "Delete",
+            "Void",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
@@ -1059,7 +1059,26 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             "Cancel",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Alert(
+              type: AlertType.warning,
+              title: "Void Cancelled",
+              context: context,
+              buttons: [
+                DialogButton(
+                  child: Text(
+                    "Void",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context); // Close dialog
+                    Navigator.pop(context);
+                  },
+                  color: blueColor,
+                ),
+              ],
+            ).show();
+          },
           color: Colors.grey,
         ),
       ],
@@ -1314,9 +1333,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                   '${Propertytype.response}',
                                                   style: TextStyle(
                                                     color:
-                                                    Propertytype.response == "FAILURE" || Propertytype.response == "VOID"
-                                                        ? Colors.red
-                                                        : Colors.green,
+                                                        Propertytype.response ==
+                                                                "SUCCESS"
+                                                            ? Colors.green
+                                                            : Colors.red,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 12,
                                                   ),
@@ -1455,14 +1475,18 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                                           true
                                                                       ? '${Propertytype.paymenttype}'
                                                                       : 'N/A',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color:
-                                                                      Propertytype.response == "FAILURE" || Propertytype.response == "VOID"
-                                                                          ? Colors.red
-                                                                          : Colors.green), // Light and grey
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color: Propertytype.response ==
+                                                                            "SUCCESS"
+                                                                        ? Colors
+                                                                            .green
+                                                                        : Colors
+                                                                            .red,
+                                                                  ), // Light and grey
                                                                 ),
                                                               ],
                                                             ),
