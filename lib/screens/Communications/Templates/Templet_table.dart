@@ -384,7 +384,7 @@ class _TempletTableState extends State<TempletTable> {
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
         currentpage: "Templates",
-        dropdown: false,
+        dropdown: true,
       ),
       body: Column(
         children: [
