@@ -8,6 +8,7 @@ import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 
 
 import '../screens/Communications/E-mail Logs/email_log_table.dart';
+import '../screens/Communications/Send E-mail/Send_email_table.dart';
 import '../screens/Communications/Templates/Templet_table.dart';
 import '../screens/Leasing/Applicants/Applicants_table.dart';
 
@@ -83,6 +84,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Rent Roll": (context) => Lease_table(),
     "Templates": (context) => TempletTable(),
     "E-mail Logs": (context) => Email_log_tablee(),
+    "Send E-mail": (context) => Send_Email_table(),
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
     "Upcoming renewal":(context)=> Upcomingrenewal(),
