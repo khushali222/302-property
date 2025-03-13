@@ -14,7 +14,7 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-//String Api_url = "http://192.168.1.8:4000";
+//String Api_url = "http://192.168.1.31:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
 String Api_url = "https://staging.cloudrentalmanager.com";
@@ -437,6 +437,89 @@ class _VideoItemState extends State<VideoItem> {
               : CircularProgressIndicator(),
         ),
       ),
+    );
+  }
+}
+
+class CustomTableView extends StatelessWidget {
+  final List<String> titles;
+  final List<List<String>> data;
+  final bool isHeader;
+  final Map<int, TableColumnWidth> columnWidths;
+  final String description;
+  final bool showDescription; // Boolean to control visibility
+
+  CustomTableView({
+    required this.titles,
+    required this.data,
+    required this.isHeader,
+    required this.columnWidths,
+    required this.description,
+    this.showDescription = false, // Default to false
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Table(
+          columnWidths: columnWidths,
+          children: [
+            if (isHeader)
+              TableRow(
+                decoration: BoxDecoration(color: Color.fromRGBO(21, 43, 83, 1)),
+                children: titles
+                    .map((item) => Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 9, horizontal: 1),
+                          child: Text(
+                            item,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ...data.asMap().entries.map(
+              (entry) {
+                int index = entry.key;
+                List<String> row = entry.value;
+                return TableRow(
+                  decoration: BoxDecoration(
+                    color: index.isEven
+                        ? Colors.grey[300] // Light grey for even rows
+                        : Colors.white, // White for odd rows
+                  ),
+                  children: row
+                      .map(
+                        (cell) => Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 7, horizontal: 6),
+                          child: Text(
+                            cell,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                );
+              },
+            ),
+          ],
+        ),
+        if (showDescription) // Show description only if true
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, left: 8, bottom: 5),
+            child: Text(
+              description,
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            ),
+          ),
+      ],
     );
   }
 }

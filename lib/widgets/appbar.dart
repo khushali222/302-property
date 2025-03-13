@@ -47,7 +47,24 @@ class widget_302 {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       titleSpacing:00,
-
+      // bottom: PreferredSize(
+      //   preferredSize: Size.fromHeight(20), // Height of the bottom section
+      //
+      //   child: Container(
+      //     width: double.infinity,
+      //      // Background color for company name
+      //     padding: const EdgeInsets.only(bottom: 3),
+      //     alignment: Alignment.center, // Center the text
+      //     child: Text(
+      //       "Company Name",
+      //       style: TextStyle(
+      //         fontSize: 16,
+      //         fontWeight: FontWeight.bold,
+      //         color: Colors.black,
+      //       ),
+      //     ),
+      //   ),
+      // ),
       toolbarHeight: MediaQuery.of(context).size.width < 500 ? 60 : 80, // Adjust height for tablet
       title: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {

@@ -129,8 +129,8 @@ class _AddTenantState extends State<AddTenant> {
             key: _formkey,
             child: Container(
               color: Colors.white,
-              child: LayoutBuilder(builder:
-                  (BuildContext context, BoxConstraints constraints) {
+              child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
                 if (constraints.maxWidth > 600) {
                   return SingleChildScrollView(
                     child: Column(
@@ -161,8 +161,7 @@ class _AddTenantState extends State<AddTenant> {
                             child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       children: [
@@ -250,8 +249,7 @@ class _AddTenantState extends State<AddTenant> {
                                                       10),
                                                   PhoneNumberFormatter(),
                                                 ],
-                                                hintText:
-                                                    'Enter phone number',
+                                                hintText: 'Enter phone number',
                                                 controller: phoneNumber,
                                                 validator: (value) {
                                                   if (value == null ||
@@ -318,8 +316,8 @@ class _AddTenantState extends State<AddTenant> {
                                                       color: Colors.grey)),
                                               SizedBox(height: 10),
                                               CustomTextField(
-                                                keyboardType: TextInputType
-                                                    .emailAddress,
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
                                                 hintText: 'Enter Email',
                                                 controller: email,
                                                 validator: (value) {
@@ -347,8 +345,8 @@ class _AddTenantState extends State<AddTenant> {
                                                       color: Colors.grey)),
                                               SizedBox(height: 10),
                                               CustomTextField(
-                                                keyboardType: TextInputType
-                                                    .emailAddress,
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
                                                 hintText:
                                                     'Enter alternative email',
                                                 controller: alterEmail,
@@ -419,13 +417,12 @@ class _AddTenantState extends State<AddTenant> {
                                                           color: Colors.black,
                                                         ),
                                                       ),
-                                                      decoration:
-                                                          BoxDecoration(
+                                                      decoration: BoxDecoration(
                                                         color: Colors.white,
                                                         boxShadow: [
                                                           BoxShadow(
-                                                            color: Colors
-                                                                .black26,
+                                                            color:
+                                                                Colors.black26,
                                                             offset: Offset(
                                                                 1.2, 1.2),
                                                             blurRadius: 3.0,
@@ -438,8 +435,7 @@ class _AddTenantState extends State<AddTenant> {
                                                                 Colors.white),
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(
-                                                                    6.0),
+                                                                .circular(6.0),
                                                       ),
                                                     ),
                                                   ),
@@ -520,8 +516,7 @@ class _AddTenantState extends State<AddTenant> {
                                             Text('Date of Birth',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             Container(
@@ -534,8 +529,7 @@ class _AddTenantState extends State<AddTenant> {
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: Colors.black26,
-                                                      offset:
-                                                          Offset(1.2, 1.2),
+                                                      offset: Offset(1.2, 1.2),
                                                       blurRadius: 3.0,
                                                       spreadRadius: 1.0,
                                                     ),
@@ -556,8 +550,7 @@ class _AddTenantState extends State<AddTenant> {
                                                 decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       fontSize: 13,
-                                                      color:
-                                                          Color(0xFFb0b6c3)),
+                                                      color: Color(0xFFb0b6c3)),
                                                   border: InputBorder.none,
                                                   hintText: 'Select Date',
                                                   suffixIcon: IconButton(
@@ -586,13 +579,11 @@ class _AddTenantState extends State<AddTenant> {
                                             Text('TaxPayer ID',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             CustomTextField(
-                                              keyboardType:
-                                                  TextInputType.text,
+                                              keyboardType: TextInputType.text,
                                               hintText: 'Enter taxpayer ID',
                                               controller: taxPayerId,
                                               optional: true,
@@ -692,13 +683,11 @@ class _AddTenantState extends State<AddTenant> {
                                             Text('Contact Name',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             CustomTextField(
-                                              keyboardType:
-                                                  TextInputType.text,
+                                              keyboardType: TextInputType.text,
                                               hintText: 'Enter contact name',
                                               controller: contactName,
                                               optional: true,
@@ -715,13 +704,11 @@ class _AddTenantState extends State<AddTenant> {
                                             Text('Relationship to Tenant',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             CustomTextField(
-                                              keyboardType:
-                                                  TextInputType.text,
+                                              keyboardType: TextInputType.text,
                                               hintText:
                                                   'Enter relationship to tenant',
                                               controller: relationToTenant,
@@ -743,8 +730,7 @@ class _AddTenantState extends State<AddTenant> {
                                             Text('E-Mail',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             CustomTextField(
@@ -766,8 +752,7 @@ class _AddTenantState extends State<AddTenant> {
                                             Text('Phone Number',
                                                 style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             CustomTextField(
@@ -785,8 +770,7 @@ class _AddTenantState extends State<AddTenant> {
                                                 PhoneNumberFormatter(),
                                               ],
                                               hintText: 'Enter phone number',
-                                              controller:
-                                                  emergencyPhoneNumber,
+                                              controller: emergencyPhoneNumber,
                                               optional: true,
                                               phone: true,
                                             ),
@@ -857,8 +841,7 @@ class _AddTenantState extends State<AddTenant> {
                                           child: Container(
                                             height: 50,
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 16.0,
-                                                vertical: 0),
+                                                horizontal: 16.0, vertical: 0),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
@@ -907,11 +890,10 @@ class _AddTenantState extends State<AddTenant> {
                                             overRideFeeError!,
                                             style: TextStyle(
                                                 color: Colors.red,
-                                                fontSize:
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.023),
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.023),
                                           ),
                                         )
                                       : Container(),
@@ -939,8 +921,7 @@ class _AddTenantState extends State<AddTenant> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: blueColor,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
                                   ),
                                   onPressed: () async {
@@ -978,22 +959,20 @@ class _AddTenantState extends State<AddTenant> {
                                   height: 50,
                                   width: 120,
                                   decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0)),
+                                      borderRadius: BorderRadius.circular(8.0)),
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Color(0xFFffffff),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      8.0))),
+                                                  BorderRadius.circular(8.0))),
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
                                       child: Text(
                                         'Cancel',
-                                        style: TextStyle(
-                                            color: Color(0xFF748097)),
+                                        style:
+                                            TextStyle(color: Color(0xFF748097)),
                                       )))
                             ],
                           ),
@@ -1221,8 +1200,7 @@ class _AddTenantState extends State<AddTenant> {
                                               ),
                                             ],
                                             border: Border.all(
-                                                width: 0,
-                                                color: Colors.white),
+                                                width: 0, color: Colors.white),
                                             borderRadius:
                                                 BorderRadius.circular(6.0),
                                           ),
@@ -1292,8 +1270,7 @@ class _AddTenantState extends State<AddTenant> {
                                             BorderRadius.circular(6.0)),
                                     child: TextFormField(
                                       style: TextStyle(
-                                        color:
-                                            Color(0xFF8898aa), // Text color
+                                        color: Color(0xFF8898aa), // Text color
                                         fontSize: 16.0, // Text size
                                         fontWeight:
                                             FontWeight.w400, // Text weight
@@ -1499,8 +1476,7 @@ class _AddTenantState extends State<AddTenant> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: blueColor,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0),
+                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
                                   ),
                                   onPressed: () async {
@@ -1538,22 +1514,20 @@ class _AddTenantState extends State<AddTenant> {
                                   height: 50,
                                   width: 120,
                                   decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0)),
+                                      borderRadius: BorderRadius.circular(8.0)),
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Color(0xFFffffff),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      8.0))),
+                                                  BorderRadius.circular(8.0))),
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
                                       child: Text(
                                         'Cancel',
-                                        style: TextStyle(
-                                            color: Color(0xFF748097)),
+                                        style:
+                                            TextStyle(color: Color(0xFF748097)),
                                       )))
                             ],
                           ),
@@ -1666,7 +1640,8 @@ class _AddTenantState extends State<AddTenant> {
                                 if (value == null || value.isEmpty) {
                                   return 'please enter the phone number';
                                 }
-                                if (phoneNumber.text.isNotEmpty && value == phoneNumber.text) {
+                                if (phoneNumber.text.isNotEmpty &&
+                                    value == phoneNumber.text) {
                                   return "Work number and phone number cannot be the same";
                                 }
                                 return null;
@@ -1675,7 +1650,6 @@ class _AddTenantState extends State<AddTenant> {
                               phone: true,
                               worknum: false,
                               otherController: workNumber,
-
                             ),
                             SizedBox(
                               height: 10,
@@ -1698,7 +1672,7 @@ class _AddTenantState extends State<AddTenant> {
                               phone: true,
                               worknum: true,
                               phonenum: true,
-                           //   samephonenumber: phoneNumber.text.isNotEmpty ? phoneNumber.text == workNumber.text : false,
+                              //   samephonenumber: phoneNumber.text.isNotEmpty ? phoneNumber.text == workNumber.text : false,
                               otherController: phoneNumber,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
@@ -1757,8 +1731,7 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
                                   children: [
@@ -1777,8 +1750,7 @@ class _AddTenantState extends State<AddTenant> {
                                         },
                                         child: Tooltip(
                                             verticalOffset: 16.0,
-                                            exitDuration:
-                                                Duration(seconds: 2),
+                                            exitDuration: Duration(seconds: 2),
                                             textAlign: TextAlign.start,
                                             textStyle: TextStyle(
                                                 fontSize: 15,
@@ -1866,8 +1838,7 @@ class _AddTenantState extends State<AddTenant> {
                                       ],
                                       border: Border.all(
                                           width: 0, color: Colors.white),
-                                      borderRadius:
-                                          BorderRadius.circular(6.0),
+                                      borderRadius: BorderRadius.circular(6.0),
                                     ),
                                   ),
                                 ),
@@ -1930,8 +1901,8 @@ class _AddTenantState extends State<AddTenant> {
                                           1.0, // How much the shadow should spread
                                     ),
                                   ],
-                                  border: Border.all(
-                                      width: 0, color: Colors.white),
+                                  border:
+                                      Border.all(width: 0, color: Colors.white),
                                   borderRadius: BorderRadius.circular(6.0)),
                               child: TextFormField(
                                 style: TextStyle(
@@ -2002,8 +1973,8 @@ class _AddTenantState extends State<AddTenant> {
                                           1.0, // How much the shadow should spread
                                     ),
                                   ],
-                                  border: Border.all(
-                                      width: 0, color: Colors.white),
+                                  border:
+                                      Border.all(width: 0, color: Colors.white),
                                   borderRadius: BorderRadius.circular(6.0)),
                               child: TextFormField(
                                   keyboardType: TextInputType.text,
@@ -2012,8 +1983,7 @@ class _AddTenantState extends State<AddTenant> {
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintStyle: TextStyle(
-                                        fontSize: 13,
-                                        color: Color(0xFFb0b6c3)),
+                                        fontSize: 13, color: Color(0xFFb0b6c3)),
                                     hintText: 'Enter the comment',
                                   )),
                             ),
@@ -2119,7 +2089,7 @@ class _AddTenantState extends State<AddTenant> {
                               businessnum: true,
                               optional: true,
 
-                             // samephonenumber: workNumber.text.isNotEmpty ? workNumber.text == emergencyPhoneNumber.text : false,
+                              // samephonenumber: workNumber.text.isNotEmpty ? workNumber.text == emergencyPhoneNumber.text : false,
                               otherController: workNumber,
                               businessController: phoneNumber,
                               inputFormatters: [
@@ -2180,8 +2150,7 @@ class _AddTenantState extends State<AddTenant> {
                               ],
                             ),
                             enableOverrideFee
-                                ?
-                            Material(
+                                ? Material(
                                     elevation: 2,
                                     borderRadius: BorderRadius.circular(8.0),
                                     child: Container(
@@ -2210,7 +2179,8 @@ class _AddTenantState extends State<AddTenant> {
                                               fontSize: 13,
                                               color: Color(0xFFb0b6c3)),
                                           border: InputBorder.none,
-                                          hintText: "Enter the amount to override fee",
+                                          hintText:
+                                              "Enter the amount to override fee",
                                           suffix: Text(
                                             '%',
                                             style: TextStyle(
@@ -2269,7 +2239,8 @@ class _AddTenantState extends State<AddTenant> {
                                 formValid = true;
                               });
                               print("work number ${workNumber.text}");
-                              if (_formkey.currentState!.validate() && overRideFeeError =="" ) {
+                              if (_formkey.currentState!.validate() &&
+                                  overRideFeeError == "") {
                                 setState(() {
                                   formValid = false;
                                 });
@@ -2287,8 +2258,7 @@ class _AddTenantState extends State<AddTenant> {
                                   )
                                 : Text(
                                     'Add Tenant',
-                                    style:
-                                        TextStyle(color: Color(0xFFf7f8f9)),
+                                    style: TextStyle(color: Color(0xFFf7f8f9)),
                                   ),
                           ),
                         ),
@@ -2372,6 +2342,7 @@ class _AddTenantState extends State<AddTenant> {
       Fluttertoast.showToast(msg: "Tenant added successfully");
       Navigator.of(context).pop(true);
     } else {
+      print(tenant);
       print('Form is invalid');
     }
   }
@@ -2535,40 +2506,41 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? emrgencyController;
   final bool? samephonenumber;
 
-  CustomTextField({
-    Key? key,
-    this.onChanged,
-    this.controller,
-    required this.hintText,
-    this.obscureText = false,
-    this.keyboardType = TextInputType.emailAddress,
-    this.readOnnly = false,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.validator,
-    this.onSuffixIconPressed,
-    this.label,
-    this.onTap,
-    this.onChanged2,
-    this.amount_check,
-    this.max_amount,
-    this.error_mess,
-    this.optional = false,
-    this.email,
-    this.pass,
-    this.phone,
-    this.inputFormatters,
-    this.worknum,
-    this.phonenum,
-    this.businessnum,
-    this.otherController, // For work number comparison
-    this.businessController,
-    this.telephoneController,
-    this.alterController,
-    this.emrgencyController,
-    this.samephonenumber=false
-    // Initialize onTap
-  }) : super(key: key);
+  CustomTextField(
+      {Key? key,
+      this.onChanged,
+      this.controller,
+      required this.hintText,
+      this.obscureText = false,
+      this.keyboardType = TextInputType.emailAddress,
+      this.readOnnly = false,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.validator,
+      this.onSuffixIconPressed,
+      this.label,
+      this.onTap,
+      this.onChanged2,
+      this.amount_check,
+      this.max_amount,
+      this.error_mess,
+      this.optional = false,
+      this.email,
+      this.pass,
+      this.phone,
+      this.inputFormatters,
+      this.worknum,
+      this.phonenum,
+      this.businessnum,
+      this.otherController, // For work number comparison
+      this.businessController,
+      this.telephoneController,
+      this.alterController,
+      this.emrgencyController,
+      this.samephonenumber = false
+      // Initialize onTap
+      })
+      : super(key: key);
 
   @override
   CustomTextFieldState createState() => CustomTextFieldState();
@@ -2622,6 +2594,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       ],
     );
   }
+
   // void _validatePhoneNumber(String value) {
   //   String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
   //
@@ -2674,12 +2647,13 @@ class CustomTextFieldState extends State<CustomTextField> {
   // }
   void _validatePhoneNumber(String value) {
     String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
-
+  print("for num ${formattedPhoneNumber}");
     // Check if phone number is exactly 10 digits
     if (formattedPhoneNumber.length != 10) {
       setState(() {
         _errorMessage = "Phone number must be 10 digits";
       });
+      print("step 1 ${formattedPhoneNumber}");
     } else {
       // Validate uniqueness across all phone number controllers
       if (widget.telephoneController != null &&
@@ -2687,16 +2661,19 @@ class CustomTextFieldState extends State<CustomTextField> {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
+        print("step 2 ${formattedPhoneNumber}");
       } else if (widget.otherController != null &&
           widget.otherController?.text == value) {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
+        print("step 3 ${formattedPhoneNumber}");
       } else if (widget.businessController != null &&
           widget.businessController?.text == value) {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
+        print("step 4 ${formattedPhoneNumber}");
       } else {
         setState(() {
           _errorMessage = null; // Clear error message when the number is valid
@@ -2704,6 +2681,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       }
     }
   }
+
   void _validateEmail(String value) {
     // Validate email format using EmailValidator
     if (!EmailValidator.validate(value)) {
@@ -2717,7 +2695,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         setState(() {
           _errorMessage = 'Email cannot be the same';
         });
-      }else if (widget.emrgencyController != null &&
+      } else if (widget.emrgencyController != null &&
           widget.emrgencyController?.text == value) {
         setState(() {
           _errorMessage = 'Email cannot be the same';
@@ -2729,6 +2707,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final shouldUseKeyboardActions =
@@ -2739,11 +2718,10 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-            print("work same callling  ${widget.samephonenumber}");
+                  print("work same callling  ${widget.samephonenumber}");
                   if (widget.controller!.text.trim().isEmpty) {
                     return null;
-                  }
-                  else if (widget.phone != null) {
+                  } else if (widget.phone != null) {
                     // String formattedPhoneNumber =
                     //     widget.controller!.text.replaceAll(RegExp(r'\D'), '');
                     //
@@ -2769,8 +2747,12 @@ class CustomTextFieldState extends State<CustomTextField> {
                     //   });
                     // }
                     _validatePhoneNumber(widget.controller!.text.trim());
+                    print("erroe ${_errorMessage}");
+                    if(_errorMessage == null){
+                      return null;
+                    }
                     return '';
-                  }else if (widget.email != null) {
+                  } else if (widget.email != null) {
                     // if (!EmailValidator.validate(widget.controller!.text)) {
                     //   setState(() {
                     //     _errorMessage = "Email is not valid";
@@ -2778,16 +2760,20 @@ class CustomTextFieldState extends State<CustomTextField> {
                     //   return '';
                     // }
                     _validateEmail(widget.controller!.text.trim());
-
+                    print("erroe2 ${_errorMessage}");
                     // Return an empty string or handle accordingly
+                    if(_errorMessage == null){
+                      return null;
+                    }
                     return '';
-                  }
-                  else if (widget.amount_check != null &&
+
+                  } else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text.trim()) >
                           double.parse(widget.max_amount!))
                     setState(() {
                       _errorMessage = '${widget.error_mess}';
                     });
+                  print("value ${value}");
                   return null;
                 }
               : (value) {
@@ -2799,9 +2785,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         _errorMessage = 'Please ${widget.label}';
                     });
                     return '';
-                  }
-
-                  else if (widget.phone != null) {
+                  } else if (widget.phone != null) {
                     // Check if it's a phone number
                     String formattedPhoneNumber =
                         widget.controller!.text.replaceAll(RegExp(r'\D'), '');
@@ -2812,21 +2796,22 @@ class CustomTextFieldState extends State<CustomTextField> {
                       });
                       return '';
                     }
-                  if (widget.samephonenumber != null &&
+                    if (widget.samephonenumber != null &&
                         widget.samephonenumber!) {
                       setState(() {
-                        _errorMessage = 'Phone number and work number cannot be the same';
+                        _errorMessage =
+                            'Phone number and work number cannot be the same';
                       });
                       return '';
-                    }else {
+                    } else {
                       // Clear error message if phone number is valid
                       setState(() {
                         _errorMessage = null;
                       });
                     }
-                  }
-                  else if (widget.email != null) {
-                    if (!EmailValidator.validate(widget.controller!.text.trim())) {
+                  } else if (widget.email != null) {
+                    if (!EmailValidator.validate(
+                        widget.controller!.text.trim())) {
                       setState(() {
                         _errorMessage = "Email is not valid";
                       });
@@ -2836,8 +2821,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     //
                     //   // Return an empty string or handle accordingly
                     //   return '';
-                  }
-                  else if (widget.pass != null) {
+                  } else if (widget.pass != null) {
                     String? validationMessage =
                         ValidatePassword(widget.controller!.text.trim());
                     if (validationMessage != null) {
@@ -2846,10 +2830,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       });
                       return '';
                     }
-                  }
-
-
-                  else if (widget.amount_check != null &&
+                  } else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text.trim()) >
                           double.parse(widget.max_amount!))
                     setState(() {

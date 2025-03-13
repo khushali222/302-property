@@ -3718,7 +3718,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   Spacer(),
                                   GestureDetector(
                                     onTap: () async {
-                                      _showAccountType(context);
+                                      _showAccount(context);
                                     },
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(5.0),
@@ -3854,8 +3854,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               SizedBox(height: 20),
                                               Container(
                                                 decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: blueColor)),
+                                                  border: Border.all(
+                                                      color: Color.fromRGBO(
+                                                          152, 162, 179, .5)),),
                                                 // decoration: BoxDecoration(
                                                 //     border: Border.all(color: blueColor)),
                                                 child: Column(
@@ -3876,8 +3877,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                             : blueColor
                                                                 .withOpacity(
                                                                     0.09),
-                                                        border: Border.all(
-                                                            color: blueColor),
+                                                        border:Border.all(
+                                                      color: Color.fromRGBO(
+                                                          152, 162, 179, .5)),
                                                       ),
                                                       // decoration: BoxDecoration(
                                                       //   border: Border.all(color: blueColor),
@@ -3987,7 +3989,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                       width: MediaQuery.of(context)
                                                                               .size
                                                                               .width *
-                                                                          .08),
+                                                                          .03),
                                                                   Expanded(
                                                                     child: Text(
                                                                       '${account.accountType}',
@@ -4006,7 +4008,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                       width: MediaQuery.of(context)
                                                                               .size
                                                                               .width *
-                                                                          .08),
+                                                                          .03),
                                                                   Expanded(
                                                                     child: Text(
                                                                       '${account.fundType}',
@@ -5747,7 +5749,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                         setState(() {
                           _selectedAccount = value;
                           Navigator.pop(context);
-                          _showAccount(context, _selectedAccount);
+                          _showAccount(context);
                         });
                       },
                     ),
@@ -6009,7 +6011,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   );
   // }
 
-  void _showAccount(BuildContext context, String? selectedAccountType) {
+  void _showAccount(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -6148,7 +6150,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   account: accountname.text.trim(),
                                   accounttype: _selectedAccounttype,
                                   fundtype: _selectedFundtype,
-                                  chargetype: selectedAccountType,
+                                  chargetype: "",
                                   notes: note.text.trim(),
                                 );
                                 Navigator.pop(context, true);

@@ -13,6 +13,8 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../model/staffpermission.dart';
+import '../../../repository/staffpermission_provider.dart';
 import '../../Rental/Rentalowner/rentalowner_summery.dart';
 import '../../../repository/lease.dart';
 import 'SummeryPageLease.dart';
@@ -308,7 +310,8 @@ class _Lease_tableState extends State<Lease_table> {
     });
     checkInternet();
     futureLease = LeaseRepository().fetchLease("");
-
+    Provider.of<StaffPermissionProvider>(context, listen: false)
+        .fetchPermissions();
     fetchLeaseadded();
   }
 
@@ -570,6 +573,8 @@ class _Lease_tableState extends State<Lease_table> {
 
   @override
   Widget build(BuildContext context) {
+    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    StaffPermission? permissions = permissionProvider.permissions;
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -590,73 +595,77 @@ class _Lease_tableState extends State<Lease_table> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: titleBar(
-                            width: MediaQuery.of(context).size.width * .65,
+                            width: permissions!.leaseAdd!
+                                ? MediaQuery.of(context).size.width * .65
+                                : MediaQuery.of(context).size.width * .93,
                             title: 'RentRoll',
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () async {
-                            Provider.of<SelectedTenantsProvider>(context,
-                                    listen: false)
-                                .clearTenant();
-                            Provider.of<SelectedCosignersProvider>(context,
-                                    listen: false)
-                                .clearCosigner();
-                            Provider.of<SelectedApplicantProvider>(context,
-                                listen: false)
-                                .clearApplicant();
-                            final result = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => addLease3()));
-                            if (result == true) {
-                              setState(() {
-                                futureLease = LeaseRepository().fetchLease("");
-                                //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                              });
-                            }
-                            // if (leaseCount < leaseCountLimit) {
-                            //   final result = await Navigator.of(context).push(
-                            //       MaterialPageRoute(
-                            //           builder: (context) => addLease3()));
-                            //   if (result == true) {
-                            //     setState(() {
-                            //       futureLease = LeaseRepository().fetchLease("");
-                            //       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                            //     });
-                            //     fetchLeaseadded();
-                            //   }
-                            // } else {
-                            //   _showAlertforLimit(context);
-                            // }
-                          },
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width < 500)
-                                ? 50
-                                : MediaQuery.of(context).size.width * 0.063,
-                            width: (MediaQuery.of(context).size.width < 500)
-                                ? MediaQuery.of(context).size.width * 0.25
-                                : MediaQuery.of(context).size.width * 0.2,
-                            decoration: BoxDecoration(
-                              color: blueColor,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "+ Add",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 16
-                                          : 22,
+                        if (permissions!.leaseAdd!)
+                          GestureDetector(
+                            onTap: () async {
+                              Provider.of<SelectedTenantsProvider>(context,
+                                      listen: false)
+                                  .clearTenant();
+                              Provider.of<SelectedCosignersProvider>(context,
+                                      listen: false)
+                                  .clearCosigner();
+                              Provider.of<SelectedApplicantProvider>(context,
+                                      listen: false)
+                                  .clearApplicant();
+                              final result = await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => addLease3()));
+                              if (result == true) {
+                                setState(() {
+                                  futureLease =
+                                      LeaseRepository().fetchLease("");
+                                  //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                });
+                              }
+                              // if (leaseCount < leaseCountLimit) {
+                              //   final result = await Navigator.of(context).push(
+                              //       MaterialPageRoute(
+                              //           builder: (context) => addLease3()));
+                              //   if (result == true) {
+                              //     setState(() {
+                              //       futureLease = LeaseRepository().fetchLease("");
+                              //       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                              //     });
+                              //     fetchLeaseadded();
+                              //   }
+                              // } else {
+                              //   _showAlertforLimit(context);
+                              // }
+                            },
+                            child: Container(
+                              height: (MediaQuery.of(context).size.width < 500)
+                                  ? 50
+                                  : MediaQuery.of(context).size.width * 0.063,
+                              width: (MediaQuery.of(context).size.width < 500)
+                                  ? MediaQuery.of(context).size.width * 0.25
+                                  : MediaQuery.of(context).size.width * 0.2,
+                              decoration: BoxDecoration(
+                                color: blueColor,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "+ Add",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 16
+                                            : 22,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 6),
+                          SizedBox(width: permissions!.leaseAdd! ? 6 : 0),
                         if (MediaQuery.of(context).size.width > 500)
                           SizedBox(width: 22),
                       ],
@@ -1174,195 +1183,197 @@ class _Lease_tableState extends State<Lease_table> {
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  Provider.of<SelectedCosignersProvider>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .clearCosigner();
-                                                                  Provider.of<SelectedTenantsProvider>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .clearTenant();
-                                                                  // handleEdit(Propertytype);
-                                                                  var check = await Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => Edit_lease(
-                                                                                lease: lease,
-                                                                                leaseId: lease.leaseId!,
-                                                                              )));
-                                                                  if (check ==
-                                                                      true) {
-                                                                    setState(
-                                                                        () {
-                                                                      futureLease =
-                                                                          LeaseRepository()
-                                                                              .fetchLease("");
-                                                                      //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                                    });
-                                                                  }
-                                                                },
+                                                            if (permissions!
+                                                                .leaseEdit!)
+                                                              Expanded(
                                                                 child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]), // color:Colors.grey[100],
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .edit,
-                                                                        size:
-                                                                            15,
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Edit",
-                                                                        style: TextStyle(
+                                                                    GestureDetector(
+                                                                  onTap:
+                                                                      () async {
+                                                                    Provider.of<SelectedCosignersProvider>(
+                                                                            context,
+                                                                            listen:
+                                                                                false)
+                                                                        .clearCosigner();
+                                                                    Provider.of<SelectedTenantsProvider>(
+                                                                            context,
+                                                                            listen:
+                                                                                false)
+                                                                        .clearTenant();
+                                                                    // handleEdit(Propertytype);
+                                                                    var check = await Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => Edit_lease(
+                                                                                  lease: lease,
+                                                                                  leaseId: lease.leaseId!,
+                                                                                )));
+                                                                    if (check ==
+                                                                        true) {
+                                                                      setState(
+                                                                          () {
+                                                                        futureLease =
+                                                                            LeaseRepository().fetchLease("");
+                                                                        //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                                      });
+                                                                    }
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 40,
+                                                                    decoration:
+                                                                        BoxDecoration(
                                                                             color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      ),
-                                                                    ],
+                                                                                Colors.grey[350]), // color:Colors.grey[100],
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .center,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center,
+                                                                      children: [
+                                                                        FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .edit,
+                                                                          size:
+                                                                              15,
+                                                                          color:
+                                                                              blueColor,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              10,
+                                                                        ),
+                                                                        Text(
+                                                                          "Edit",
+                                                                          style: TextStyle(
+                                                                              color: blueColor,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  _attemptDeleteLease(
-                                                                      context,
-                                                                      lease);
-                                                                },
+                                                            if (permissions!
+                                                                .leaseEdit!)
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                            if (permissions!
+                                                                .leaseDelete!)
+                                                              Expanded(
                                                                 child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .trashCan,
-                                                                        size:
-                                                                            15,
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Delete",
-                                                                        style: TextStyle(
+                                                                    GestureDetector(
+                                                                  onTap: () {
+                                                                    _attemptDeleteLease(
+                                                                        context,
+                                                                        lease);
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 40,
+                                                                    decoration:
+                                                                        BoxDecoration(
                                                                             color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
+                                                                                Colors.grey[350]),
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .center,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center,
+                                                                      children: [
+                                                                        FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .trashCan,
+                                                                          size:
+                                                                              15,
+                                                                          color:
+                                                                              blueColor,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              10,
+                                                                        ),
+                                                                        Text(
+                                                                          "Delete",
+                                                                          style: TextStyle(
+                                                                              color: blueColor,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        )
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => SummeryPageLease(
-                                                                                leaseId: lease.leaseId!,
-                                                                                enddate: lease.endDate,
-                                                                              )));
-                                                                },
+                                                            if (permissions!
+                                                                .leaseDelete!)
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                            if (permissions!
+                                                                .leaseView!)
+                                                              Expanded(
                                                                 child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        width:
-                                                                            5,
-                                                                      ),
-                                                                      Image
-                                                                          .asset(
-                                                                        'assets/icons/view.png',
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      // FaIcon(
-                                                                      //   FontAwesomeIcons.trashCan,
-                                                                      //   size: 15,
-                                                                      //   color:blueColor,
-                                                                      // ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            8,
-                                                                      ),
-                                                                      Text(
-                                                                        "View Summery",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                11,
+                                                                    GestureDetector(
+                                                                  onTap: () {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => SummeryPageLease(
+                                                                                  leaseId: lease.leaseId!,
+                                                                                  enddate: lease.endDate,
+                                                                                )));
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 40,
+                                                                    decoration:
+                                                                        BoxDecoration(
                                                                             color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
+                                                                                Colors.grey[350]),
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .center,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              5,
+                                                                        ),
+                                                                        Image
+                                                                            .asset(
+                                                                          'assets/icons/view.png',
+                                                                          color:
+                                                                              blueColor,
+                                                                        ),
+                                                                        // FaIcon(
+                                                                        //   FontAwesomeIcons.trashCan,
+                                                                        //   size: 15,
+                                                                        //   color:blueColor,
+                                                                        // ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              8,
+                                                                        ),
+                                                                        Text(
+                                                                          "View Summery",
+                                                                          style: TextStyle(
+                                                                              fontSize: 11,
+                                                                              color: blueColor,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        )
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
                                                           ],
                                                         ),
                                                       ],

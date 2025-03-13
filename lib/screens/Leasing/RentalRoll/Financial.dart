@@ -27,6 +27,8 @@ import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../provider/Plan Purchase/plancheckProvider.dart';
 import '../../../provider/dateProvider.dart';
+import '../../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
+import '../../../repository/dashboard_table_repo/cronjob_payment_table.dart';
 import 'Edit_make_payment.dart';
 import 'make_payment.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
@@ -1723,7 +1725,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                       .contains(searchvalue!.toLowerCase()))
                               .toList();
                         }
-                        print("calling");
+                     //  print("calling");
                         // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
                         //   try {
                         //     DateTime fromDate = DateTime.parse(_fromDateController.text);
@@ -2255,6 +2257,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                       int index = entry.key;
                                       bool isExpanded = expandedIndex == index;
                                       Data data = entry.value;
+
                                       double? surcharge = data?.surcharge;
                                       double? totalAmount = data?.totalAmount;
 
@@ -2439,10 +2442,28 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                             color: blueColor), // Bold and black
                                                                       ),
                                                                       if (data.type !=
-                                                                          "Charge")
+                                                                          "Charge" && data.response !="VOID"&& data.state !="settling")
                                                                         TextSpan(
                                                                           text:
-                                                                              'Manual ${data.type} ${data.response} For ${data.paymenttype}',
+                                                                              '${data.paymenttype} ${data.type} ${data.response} ',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                                    color: grey), // Light and grey
+                                                                        ),
+                                                                       if (data.type !=
+                                                                          "Charge" && data.response !="VOID" && data.state =="settling")
+                                                                        TextSpan(
+                                                                          text:
+                                                                          '${data.paymenttype} ${data.type} ${data.response}  :Awaiting Settlement ',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      if (data.type !=
+                                                                          "Charge" && data.response =="VOID")
+                                                                        TextSpan(
+                                                                          text:
+                                                                          'Card Payment VOID ${data.responseText}',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey
@@ -2780,19 +2801,18 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           (data.paymenttype ==
                                                                   "Card" ||
                                                               data.paymenttype ==
-                                                                  "ACH"))
+                                                                  "ACH") && data.response =="SUCCESS" && data.state == "settled")
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
-                                                            // SizedBox(width: 5,),
+
                                                             Expanded(
                                                               child:
                                                                   GestureDetector(
                                                                 onTap: () {
                                                                   setState(() {
                                                                     _amountController
-                                                                        .text = (data.totalAmount! -
-                                                                            data.surcharge!)
+                                                                        .text = (data.totalAmount! )
                                                                         .toString();
                                                                     _dateController
                                                                         .text = formatDate(DateTime
@@ -2845,6 +2865,87 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                             fontWeight:
                                                                                 FontWeight.bold),
                                                                       )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                             SizedBox(width: 5,),
+                                                            Expanded(
+                                                              child:
+                                                              GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  final value = await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => EditMakePayment(
+                                                                            leaseId: widget.leaseId,
+                                                                            tenantId: data.tenantData["tenant_id"],
+                                                                            isEdit: true,
+                                                                            data: data,
+                                                                          )));
+                                                                  if (value ==
+                                                                      true) {
+                                                                    setState(
+                                                                            () {
+                                                                          _leaseLedgerFuture =
+                                                                              LeaseRepository()
+                                                                                  .fetchLeaseLedger(leaseId: widget.leaseId);
+                                                                        });
+                                                                  }
+                                                                  // var check = await Navigator.push(
+                                                                  //   context,
+                                                                  //   MaterialPageRoute(
+                                                                  //     builder: (context) => Edit_properties(
+                                                                  //       properties: rentals,
+                                                                  //       rentalId: rentals.rentalId!,
+                                                                  //     ),
+                                                                  //   ),
+                                                                  // );
+                                                                  // if (check == true) {
+                                                                  //   setState(() {
+                                                                  //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                                  //
+                                                                  //   });
+                                                                  //   // Update State
+                                                                  // }
+                                                                },
+                                                                child:
+                                                                Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .grey[
+                                                                      350]), // color:Colors.grey[100],
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .edit,
+                                                                        size:
+                                                                        15,
+                                                                        color:
+                                                                        blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                        10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Edit",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                            blueColor,
+                                                                            fontWeight:
+                                                                            FontWeight.bold),
+                                                                      ),
                                                                     ],
                                                                   ),
                                                                 ),
@@ -2990,10 +3091,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                         ),
                                                       if (data.type ==
                                                               "Payment" &&
-                                                          (data.paymenttype !=
-                                                                  "Card" &&
-                                                              data.paymenttype !=
-                                                                  "ACH"))
+                                                         data.response =="PENDING")
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
@@ -3129,6 +3227,240 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 ),
                                                               ),
                                                             ),
+                                                          ],
+                                                        ),
+                                                      if (data.type ==
+                                                          "Payment" &&
+                                                          data.response =="SUCCESS" && data.state == "settling")
+                                                        Row(
+                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Expanded(
+                                                              child:
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  _showAlertvoid(
+                                                                      context,
+                                                                      data.paymentId!);
+                                                                  //   _showAlert(context, rentals.rentalId!);
+                                                                },
+                                                                child:
+                                                                Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .grey[
+                                                                      350]),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .money_off,
+                                                                        size:
+                                                                        20,
+                                                                        color:
+                                                                        blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                        10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Void",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                            blueColor,
+                                                                            fontWeight:
+                                                                            FontWeight.bold),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+
+                                                            Expanded(
+                                                              child:
+                                                              GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  final value = await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => EditMakePayment(
+                                                                            leaseId: widget.leaseId,
+                                                                            tenantId: data.tenantData["tenant_id"],
+                                                                            isEdit: true,
+                                                                            data: data,
+                                                                          )));
+                                                                  if (value ==
+                                                                      true) {
+                                                                    setState(
+                                                                            () {
+                                                                          _leaseLedgerFuture =
+                                                                              LeaseRepository()
+                                                                                  .fetchLeaseLedger(leaseId: widget.leaseId);
+                                                                        });
+                                                                  }
+                                                                  // var check = await Navigator.push(
+                                                                  //   context,
+                                                                  //   MaterialPageRoute(
+                                                                  //     builder: (context) => Edit_properties(
+                                                                  //       properties: rentals,
+                                                                  //       rentalId: rentals.rentalId!,
+                                                                  //     ),
+                                                                  //   ),
+                                                                  // );
+                                                                  // if (check == true) {
+                                                                  //   setState(() {
+                                                                  //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                                  //
+                                                                  //   });
+                                                                  //   // Update State
+                                                                  // }
+                                                                },
+                                                                child:
+                                                                Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .grey[
+                                                                      350]), // color:Colors.grey[100],
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .edit,
+                                                                        size:
+                                                                        15,
+                                                                        color:
+                                                                        blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                        10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Edit",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                            blueColor,
+                                                                            fontWeight:
+                                                                            FontWeight.bold),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+
+
+                                                          ],
+                                                        ),
+                                                      if (data.type ==
+                                                          "Payment" && data.paymenttype != "Card" && data.paymenttype !="ACH")
+                                                        Row(
+                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+
+
+                                                            Expanded(
+                                                              child:
+                                                              GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  final value = await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => EditMakePayment(
+                                                                            leaseId: widget.leaseId,
+                                                                            tenantId: data.tenantData["tenant_id"],
+                                                                            isEdit: true,
+                                                                            data: data,
+                                                                          )));
+                                                                  if (value ==
+                                                                      true) {
+                                                                    setState(
+                                                                            () {
+                                                                          _leaseLedgerFuture =
+                                                                              LeaseRepository()
+                                                                                  .fetchLeaseLedger(leaseId: widget.leaseId);
+                                                                        });
+                                                                  }
+                                                                  // var check = await Navigator.push(
+                                                                  //   context,
+                                                                  //   MaterialPageRoute(
+                                                                  //     builder: (context) => Edit_properties(
+                                                                  //       properties: rentals,
+                                                                  //       rentalId: rentals.rentalId!,
+                                                                  //     ),
+                                                                  //   ),
+                                                                  // );
+                                                                  // if (check == true) {
+                                                                  //   setState(() {
+                                                                  //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                                  //
+                                                                  //   });
+                                                                  //   // Update State
+                                                                  // }
+                                                                },
+                                                                child:
+                                                                Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .grey[
+                                                                      350]), // color:Colors.grey[100],
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .edit,
+                                                                        size:
+                                                                        15,
+                                                                        color:
+                                                                        blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                        10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Edit",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                            blueColor,
+                                                                            fontWeight:
+                                                                            FontWeight.bold),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+
+
                                                           ],
                                                         ),
                                                     ],
@@ -3751,7 +4083,82 @@ class _FinancialTableState extends State<FinancialTable> {
 
     );
   }
+  void _showAlertvoid(BuildContext context, String id) {
+    print("calling");
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure you want to void this payment?",
+      desc: "A void can be issued on this payment until it is settled",
+      content: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for void',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+          // if (_errorText)
+          //   Text(
+          //     "Please fill in all fields correctly.",
+          //     style: TextStyle(color: Colors.redAccent),
+          //   ),
+        ],
+      ),
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Void",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            if (reason.text.isEmpty) {
+              // setState(() {
+              //  _errorText == true;
+              // });
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
 
+              var data = await PaymentCronjobRepository().VoidCron(
+                  pay_id: id, void_reason: reason.text, context: context);
+              // Add your delete logic here
+              if (data != null) {
+                setState(() {
+                  _leaseLedgerFuture =
+                      LeaseRepository()
+                          .fetchLeaseLedger(leaseId: widget.leaseId);
+
+                });
+              }
+              Navigator.of(context).pop();
+            }
+
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+      ],
+    ).show();
+  }
   Widget _buildInteractiveCell(String text, VoidCallback onTap) {
     return TableCell(
       child: GestureDetector(

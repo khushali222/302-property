@@ -381,7 +381,25 @@ class _Workorder_summeryState extends State<Workorder_summery>
             ),
     );
   }
+  List<String> titles = [' Account','Qty', '  Price','Amount'];
+  Map<int, TableColumnWidth> columnWidth = {
+    0: FlexColumnWidth(3.3),
+    1: FlexColumnWidth(1),
+    2: FlexColumnWidth(1.9),
+    3: FlexColumnWidth(1.81),
+  };
+  // int getTotalPrice() {
+  //   //return products.fold(0, (sum, item) => sum + item.totalAmount);
+  //   return 0;
+  // }
+  double getTotalPrice(List<PartsandchargeData>? partsList) {
+    if (partsList == null || partsList.isEmpty) return 0.0;
 
+    return partsList.fold(
+        0.0,
+            (sum, item) =>
+        sum + ((item.partsQuantity ?? 0) * (item.partsPrice ?? 0)));
+  }
   Summery_page(WorkOrderData_summery summery) {
     double grandTotal = 0;
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
@@ -1746,54 +1764,107 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           SizedBox(
                             height: 10,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Column(
-                                  children:
-                                      summery.partsandchargeData!.map((part) {
-                                    int partTotal = (part.partsPrice! *
-                                        part.partsQuantity!);
-                                    print(partTotal);
-                                    grandTotal += partTotal;
-                                    print(grandTotal);
-                                    return PartWidget(part: part, total: 0.0);
-                                  }).toList(),
-                                ),
-                                /*  Column(
-                                  children: summery.partsandchargeData!.map((part) {
-                                    int partTotal = (part.partsPrice! * part.partsQuantity!);
-                                    print(partTotal);
-                                    grandTotal += partTotal;
-                                    print(grandTotal);
-                                    return PartWidget(part: part, total:0.0);
-                                  }).toList(),
-                                ),*/
-                                // Divider(color: Colors.grey),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Total',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16),
-                                    ),
-                                    Text(
-                                      '\$${grandTotal.toStringAsFixed(2)}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                          SizedBox(
+                            height: 10,
                           ),
+                          CustomTableView(
+                            titles: titles,
+                            data: [],
+                            isHeader: true,
+                            columnWidths: columnWidth,
+                            description: "",
+                            showDescription: false,
+                          ),
+                          Column(
+                            children: summery.partsandchargeData!
+                                .map((item) => Container(
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  CustomTableView(
+                                    titles: [],
+                                    data: [
+                                      [
+                                        item.account!,
+                                        item.partsQuantity.toString(),
+                                        "\$${item.partsPrice!.toStringAsFixed(2)}",
+                                        "\$${item.amount!.toStringAsFixed(2)}",
+                                      ]
+                                    ],
+                                    isHeader: false,
+                                    columnWidths: columnWidth,
+                                    description: item.description!,
+                                    showDescription: true,
+                                  ),
+                                ],
+                              ),
+                            ))
+                                .toList(),
+                          ),
+                          CustomTableView(
+                            titles: [],
+                            data: [
+                              [
+                                "Total",
+                                "",
+                                "",
+                                "\$${getTotalPrice(summery.partsandchargeData).toStringAsFixed(2)}"
+                              ]
+                            ],
+                            isHeader: false,
+                            columnWidths: columnWidth,
+                            description: "",
+                            showDescription: false,
+                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.all(8.0),
+                          //   child: Column(
+                          //     children: [
+                          //       Column(
+                          //         children:
+                          //             summery.partsandchargeData!.map((part) {
+                          //           int partTotal = (part.partsPrice! *
+                          //               part.partsQuantity!);
+                          //           print(partTotal);
+                          //           grandTotal += partTotal;
+                          //           print(grandTotal);
+                          //           return PartWidget(part: part, total: 0.0);
+                          //         }).toList(),
+                          //       ),
+                          //       /*  Column(
+                          //         children: summery.partsandchargeData!.map((part) {
+                          //           int partTotal = (part.partsPrice! * part.partsQuantity!);
+                          //           print(partTotal);
+                          //           grandTotal += partTotal;
+                          //           print(grandTotal);
+                          //           return PartWidget(part: part, total:0.0);
+                          //         }).toList(),
+                          //       ),*/
+                          //       // Divider(color: Colors.grey),
+                          //       Row(
+                          //         mainAxisAlignment:
+                          //             MainAxisAlignment.spaceBetween,
+                          //         children: [
+                          //           Text(
+                          //             'Total',
+                          //             style: TextStyle(
+                          //                 fontWeight: FontWeight.bold,
+                          //                 fontSize: 16),
+                          //           ),
+                          //           Text(
+                          //             '\$${grandTotal.toStringAsFixed(2)}',
+                          //             style: TextStyle(
+                          //               fontWeight: FontWeight.bold,
+                          //               fontSize: 16,
+                          //               color: Colors.black87,
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -1812,7 +1883,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         Row(
                           children: [
                             SizedBox(
-                              width: 10,
+                              width: 2,
                             ),
                             Text("Updates",
                                 style: TextStyle(
@@ -1858,7 +1929,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 .map((entry) {
                               final update = entry;
                               return Padding(
-                                padding: const EdgeInsets.all(4.0),
+                                padding: const EdgeInsets.all(0.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,

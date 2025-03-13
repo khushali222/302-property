@@ -11,12 +11,12 @@ class PaymentService {
 
   Future<String> makePaymentforcard({
     required String adminId,
-    required String firstName,
-    required String lastName,
-    required String emailName,
+    // required String firstName,
+    // required String lastName,
+    // required String emailName,
     required String customerVaultId,
     required String billingId,
-    required String surcharge,
+   // required String surcharge,
     required String amount,
     required String tenantId,
     required String date,
@@ -68,80 +68,81 @@ class PaymentService {
         'charge_type': chargeType, // Set the dynamically calculated charge_type
       };
     }).toList();
-
-    print("surcharge ${surcharge}");
-    if (future_Date == false) {
-      final String baseUrl = '$Api_url/api/nmipayment/sale';
-      print(baseUrl);
-      Map<String, dynamic> paymentDetails = {
-        'admin_id': adminId,
-        'first_name': firstName,
-        'last_name': lastName,
-        'email_name': emailName,
-        'customer_vault_id': customerVaultId,
-        'billing_id': billingId,
-        'surcharge': surcharge,
-        'amount': amount,
-        'tenantId': tenantId,
-        'date': date,
-        'address1': address1,
-        'processor_id': processorId,
-        'tenantName':tenantname,
-        'notificationTime':notificationTime,
-        'lease_id':leaseid,
-        'entry':updatedEntries,
-        // 'entry':entries,
-      };
-      log(paymentDetails.toString());
-      final response = await http.post(
-        Uri.parse(baseUrl),
-        headers: {
-          "authorization": "CRM $token",
-          "id": "CRM $id",
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "paymentDetails": paymentDetails,
-
-        }),
-      );
-      print('card for real ${response.body}');
-      if (response.statusCode == 200) {
-        print(response.body);
-        var jsonData = jsonDecode(response.body);
-        if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
-          await Future.wait([
-            storePayment(
-              companyName: company_name,
-              adminId: adminId,
-              tenantId: tenantId,
-              leaseId: leaseid,
-              paymentType: "Card",
-              customerVaultId: customerVaultId,
-              billingId: billingId,
-              entries: updatedEntries,
-              //  entries: entries,
-              totalAmount: amount,
-              isLeaseAdded: false,
-              uploadedFile: [],
-              transactionId: jsonData["data"]["transactionid"],
-              // responseText: jsonData["data"]["responsetext"],
-              responseText: "SUCCESS",
-              surcharge: surcharge,
-              notificationTime: notificationTime,
-            )
-          ]);
-          return "Payment Success";
-        } else {
-          throw Exception(' ${jsonData["message"]}');
-        }
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to make payment');
-      }
-    } else {
+    print("callog");
+   // print("surcharge ${surcharge}");
+    // if (future_Date == false) {
+    //   final String baseUrl = '$Api_url/api/nmipayment/sale';
+    //   print(baseUrl);
+    //   Map<String, dynamic> paymentDetails = {
+    //     'admin_id': adminId,
+    //     'first_name': firstName,
+    //     'last_name': lastName,
+    //     'email_name': emailName,
+    //     'customer_vault_id': customerVaultId,
+    //     'billing_id': billingId,
+    //     'surcharge': surcharge,
+    //     'amount': amount,
+    //     'tenantId': tenantId,
+    //     'date': date,
+    //     'address1': address1,
+    //     'processor_id': processorId,
+    //     'tenantName':tenantname,
+    //     'notificationTime':notificationTime,
+    //     'lease_id':leaseid,
+    //     'entry':updatedEntries,
+    //     // 'entry':entries,
+    //   };
+    //   log(paymentDetails.toString());
+    //   final response = await http.post(
+    //     Uri.parse(baseUrl),
+    //     headers: {
+    //       "authorization": "CRM $token",
+    //       "id": "CRM $id",
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: jsonEncode({
+    //       "paymentDetails": paymentDetails,
+    //
+    //     }),
+    //   );
+    //   print('card for real ${response.body}');
+    //   if (response.statusCode == 200) {
+    //     print(response.body);
+    //     var jsonData = jsonDecode(response.body);
+    //     if (jsonData["statusCode"] == 100) {
+    //       print(jsonData["data"]["responsetext"]);
+    //       print(jsonData["data"]["transactionid"]);
+    //       await Future.wait([
+    //         storePayment(
+    //           companyName: company_name,
+    //           adminId: adminId,
+    //           tenantId: tenantId,
+    //           leaseId: leaseid,
+    //           paymentType: "Card",
+    //           customerVaultId: customerVaultId,
+    //           billingId: billingId,
+    //           entries: updatedEntries,
+    //           //  entries: entries,
+    //           totalAmount: amount,
+    //           isLeaseAdded: false,
+    //           uploadedFile: [],
+    //           transactionId: jsonData["data"]["transactionid"],
+    //           // responseText: jsonData["data"]["responsetext"],
+    //           responseText: "SUCCESS",
+    //           surcharge: surcharge,
+    //           notificationTime: notificationTime,
+    //         )
+    //       ]);
+    //       return "Payment Success";
+    //     } else {
+    //       throw Exception(' ${jsonData["message"]}');
+    //     }
+    //     return jsonDecode(response.body);
+    //   } else {
+    //     throw Exception('Failed to make payment');
+    //   }
+    // }
+    // else {
       try {
         await Future.wait([
           storePayment(
@@ -159,16 +160,16 @@ class PaymentService {
               uploadedFile: [],
               transactionId: "",
               responseText: "PENDING",
-              surcharge: surcharge,
+              surcharge: "surcharge",
               notificationTime: notificationTime
           )
         ]);
-        return "Payment Scheduled Successfully";
+        return "Payment Updated Successfully";
       } catch (e) {
         throw Exception(e);
       }
-    }
-    return "";
+    // }
+    // return "";
   }
 
   Future<Map<String, dynamic>> storePayment({
@@ -189,12 +190,27 @@ class PaymentService {
     String? notificationTime,
 
   }) async {
-    final String baseUrl = '$Api_url/api/payment/payment';
+    print("caaaalied");
+    final String baseUrl = '$Api_url/api/payment/payment/$tenantId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(entries);
-    final response = await http.post(
+    print(" Daaaaataaaa   ${{
+      'company_name': companyName,
+      'admin_id': id,
+     //   'tenant_id': tenantId,
+      'lease_id': leaseId,
+      'payment_type': paymentType,
+      'customer_vault_id': customerVaultId,
+      'billing_id': billingId,
+      'entry': entries,
+      'total_amount':
+      (double.parse(totalAmount)),
+
+    }}");
+    print(baseUrl);
+    final response = await http.put(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -204,23 +220,18 @@ class PaymentService {
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
         'admin_id': id,
-        'tenant_id': tenantId,
+        //'tenant_id': tenantId,
         'lease_id': leaseId,
-        'payment_type': paymentType,
+        //'payment_type': paymentType,
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
         'total_amount':
-        (double.parse(totalAmount) - double.parse(surcharge)),
-        'surcharge': surcharge,
-        'is_leaseAdded': isLeaseAdded,
-        'uploaded_file': uploadedFile,
-        'transaction_id': transactionId,
-        'response': responseText,
-        'notificationTime':notificationTime,
+        (double.parse(totalAmount) ),
+
       }),
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
       print(response.body);
       return jsonDecode(response.body);
@@ -232,9 +243,9 @@ class PaymentService {
 
   Future<String> makePaymentforach({
     required String adminId,
-    required String firstName,
-    required String lastName,
-    required String emailName,
+    // required String firstName,
+    // required String lastName,
+    // required String emailName,
     //  required String customerVaultId,
     //required String billingId,
     required String surcharge,
@@ -245,11 +256,11 @@ class PaymentService {
     required String processorId,
     required String leaseid,
     required String company_name,
-    required String account_type,
-    required String account_holder_type,
-    required String checkaccount,
-    required String checkaba,
-    required String checkname,
+    // required String account_type,
+    // required String account_holder_type,
+    // required String checkaccount,
+    // required String checkaba,
+    // required String checkname,
     required bool future_Date,
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
@@ -295,105 +306,30 @@ class PaymentService {
       };
     }).toList();
     print("surcharge ${surcharge}");
-    if (future_Date == false) {
-      final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
-      print(baseUrl);
-      Map<String, dynamic> paymentDetails = {
-        'admin_id': adminId,
-        'first_name': firstName,
-        'last_name': lastName,
-        'email_name': emailName,
-        'checkname': checkname,
-        'account_type': account_type,
-        'checkaccount': checkaccount,
-        'checkaba': checkaba,
-        'account_holder_type': account_holder_type,
-        'surcharge': surcharge,
-        'amount': amount,
-        'tenantId': tenantId,
-        'date': date,
-        'address1': address1,
-        'processor_id': processorId,
-        'tenantName':tenantname,
-        'notificationTime':notificationTime,
-        'lease_id':leaseid,
-        'entry': updatedEntries,
-        // 'entry': entries,
-      };
-      print(paymentDetails);
-      final response = await http.post(
-        Uri.parse(baseUrl),
-        headers: {
-          "authorization": "CRM $token",
-          "id": "CRM $id",
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "paymentDetails": paymentDetails,
-
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        print(response.body);
-        var jsonData = jsonDecode(response.body);
-        if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
-          await Future.wait([
-            storePaymentAch(
-                companyName: company_name,
-                adminId: adminId,
-                tenantId: tenantId,
-                leaseId: leaseid,
-                paymentType: "ACH",
-                entries: updatedEntries,
-                //  entries: entries,
-                totalAmount: amount,
-                isLeaseAdded: false,
-                uploadedFile: [],
-                transactionId: jsonData["data"]["transactionid"],
-                //    responseText: jsonData["data"]["responsetext"],
-                responseText: "SUCCESS",
-                surcharge: surcharge,
-                notificationTime: notificationTime
-            )
-
-          ]);
-          return "Payment Success";
-        } else {
-          throw Exception('Failed payment ${jsonData["message"]}');
-        }
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to make payment');
-      }
-    } else {
-      try {
-        await Future.wait([
-          storePaymentAch(
-              companyName: company_name,
-              adminId: adminId,
-              tenantId: tenantId,
-              leaseId: leaseid,
-              paymentType: "Card",
-              entries: updatedEntries,
-              // entries: entries,
-              totalAmount: amount,
-              isLeaseAdded: false,
-              uploadedFile: [],
-              transactionId: "",
-              responseText: "PENDING",
-              surcharge: surcharge,
-              notificationTime: notificationTime
-          )
-        ]);
-        return "Payment Scheduled Successfully";
-      } catch (e) {
-        throw Exception(e);
-      }
+    try {
+      await Future.wait([
+        storePaymentAch(
+            companyName: company_name,
+            adminId: adminId,
+            tenantId: tenantId,
+            leaseId: leaseid,
+            paymentType: "Card",
+            entries: updatedEntries,
+            // entries: entries,
+            totalAmount: amount,
+            isLeaseAdded: false,
+            uploadedFile: [],
+            transactionId: "",
+            responseText: "PENDING",
+            surcharge: surcharge,
+            notificationTime: notificationTime
+        )
+      ]);
+      return "Payment Updated Successfully";
+    } catch (e) {
+      throw Exception(e);
     }
-    return "";
+
   }
 
   Future<Map<String, dynamic>> storePaymentAch({
@@ -412,12 +348,12 @@ class PaymentService {
     String? notificationTime,
 
   }) async {
-    final String baseUrl = '$Api_url/api/payment/payment';
+    final String baseUrl = '$Api_url/api/payment/payment/$tenantId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.post(
+    final response = await http.put(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -427,19 +363,19 @@ class PaymentService {
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
         'admin_id': id,
-        'tenant_id': tenantId,
+        'payment_id': tenantId,
         'lease_id': leaseId,
-        'payment_type': paymentType,
+       // 'payment_type': paymentType,
 
         'entry': entries,
         // 'total_amount': totalAmount,
-        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)),
-        'surcharge': surcharge,
-        'is_leaseAdded': isLeaseAdded,
+        'total_amount': (double.parse(totalAmount) ),
+        //'surcharge': surcharge,
+       // 'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
-        'transaction_id': transactionId,
-        'response': responseText,
-        'notificationTime':notificationTime,
+       // 'transaction_id': transactionId,
+       // 'response': responseText,
+       // 'notificationTime':notificationTime,
       }),
     );
 
@@ -612,7 +548,7 @@ class PaymentService {
 
           )
         ]);
-        return "Payment Successfully";
+        return "Payment Updated Successfully";
       } catch (e) {
         throw Exception(e);
       }

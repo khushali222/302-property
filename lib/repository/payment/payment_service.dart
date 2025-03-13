@@ -7,8 +7,6 @@ import 'package:three_zero_two_property/model/lease.dart';
 import '../../constant/constant.dart';
 
 class PaymentService {
-
-
   Future<String> makePaymentforcard({
     required String adminId,
     required String firstName,
@@ -29,7 +27,6 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     String? tenantname,
     String? notificationTime,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -49,9 +46,7 @@ class PaymentService {
 
       if (entry['newfield'] == true) {
         // If newfield is true, check account values
-        if (entry['account'] == "Late Fee Income" ||
-            entry['account'] == "Pre-payments" ||
-            entry['account'] == "Security Deposit") {
+        if (entry['account'] == "Late Fee Income" || entry['account'] == "Pre-payments" || entry['account'] == "Security Deposit") {
           chargeType = entry['account']; // Assign account value as charge_type
         } else if (entry['account'] == "Rent Income") {
           chargeType = "Rent"; // Set charge_type as "Rent"
@@ -86,11 +81,11 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname,
-        'notificationTime':notificationTime,
-        'lease_id':leaseid,
-        'entry':updatedEntries,
-       // 'entry':entries,
+        'tenantName': tenantname,
+        'notificationTime': notificationTime,
+        'lease_id': leaseid,
+        'entry': updatedEntries,
+        // 'entry':entries,
       };
       log(paymentDetails.toString());
       final response = await http.post(
@@ -102,10 +97,9 @@ class PaymentService {
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
-
         }),
       );
-print('card for real ${response.body}');
+      print('card for real ${response.body}');
       if (response.statusCode == 200) {
         print(response.body);
         var jsonData = jsonDecode(response.body);
@@ -113,25 +107,25 @@ print('card for real ${response.body}');
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
           await Future.wait([
-          storePayment(
-              companyName: company_name,
-              adminId: adminId,
-              tenantId: tenantId,
-              leaseId: leaseid,
-              paymentType: "Card",
-              customerVaultId: customerVaultId,
-              billingId: billingId,
-              entries: updatedEntries,
-            //  entries: entries,
-              totalAmount: amount,
-              isLeaseAdded: false,
-              uploadedFile: [],
-              transactionId: jsonData["data"]["transactionid"],
-             // responseText: jsonData["data"]["responsetext"],
-              responseText: "SUCCESS",
-              surcharge: surcharge,
-          notificationTime: notificationTime,
-          )
+            storePayment(
+                companyName: company_name,
+                adminId: adminId,
+                tenantId: tenantId,
+                leaseId: leaseid,
+                paymentType: "Card",
+                customerVaultId: customerVaultId,
+                billingId: billingId,
+                entries: updatedEntries,
+                //  entries: entries,
+                totalAmount: amount,
+                isLeaseAdded: false,
+                uploadedFile: [],
+                transactionId: jsonData["data"]["transactionid"],
+                // responseText: jsonData["data"]["responsetext"],
+                responseText: "SUCCESS",
+                surcharge: surcharge,
+                notificationTime: notificationTime,
+                nmiResponse: jsonData)
           ]);
           return "Payment Success";
         } else {
@@ -144,7 +138,7 @@ print('card for real ${response.body}');
     } else {
       try {
         await Future.wait([
-        storePayment(
+          storePayment(
             companyName: company_name,
             adminId: adminId,
             tenantId: tenantId,
@@ -153,15 +147,15 @@ print('card for real ${response.body}');
             customerVaultId: customerVaultId,
             billingId: billingId,
             entries: updatedEntries,
-           // entries: entries,
+            // entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
             uploadedFile: [],
             transactionId: "",
             responseText: "PENDING",
             surcharge: surcharge,
-        notificationTime: notificationTime
-        )
+            notificationTime: notificationTime,
+          )
         ]);
         return "Payment Scheduled Successfully";
       } catch (e) {
@@ -171,24 +165,23 @@ print('card for real ${response.body}');
     return "";
   }
 
-  Future<Map<String, dynamic>> storePayment({
-    required String companyName,
-    required String adminId,
-    required String tenantId,
-    required String leaseId,
-    required String paymentType,
-    required String customerVaultId,
-    required String billingId,
-    required List<Map<String, dynamic>> entries,
-    required String totalAmount,
-    required bool isLeaseAdded,
-    required List<String>? uploadedFile,
-    required String transactionId,
-    required String responseText,
-    required String surcharge,
-    String? notificationTime,
-
-  }) async {
+  Future<Map<String, dynamic>> storePayment(
+      {required String companyName,
+      required String adminId,
+      required String tenantId,
+      required String leaseId,
+      required String paymentType,
+      required String customerVaultId,
+      required String billingId,
+      required List<Map<String, dynamic>> entries,
+      required String totalAmount,
+      required bool isLeaseAdded,
+      required List<String>? uploadedFile,
+      required String transactionId,
+      required String responseText,
+      required String surcharge,
+      String? notificationTime,
+      var nmiResponse}) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -210,14 +203,19 @@ print('card for real ${response.body}');
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount':
-            (double.parse(totalAmount) - double.parse(surcharge)),
+        'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
+       // 'transaction_id': nmiResponse["data"]["transactionid"],
+        "authcode": nmiResponse["data"]["authcode"],
+        "avsresponse": nmiResponse["data"]["avsresponse"],
+        "cvvresponse": nmiResponse["data"]["cvvresponse"],
+        "responseCode": nmiResponse["data"]["response_code"],
+        "state": "settling"
       }),
     );
 
@@ -225,8 +223,7 @@ print('card for real ${response.body}');
       print(response.body);
       return jsonDecode(response.body);
     } else {
-      throw Exception(
-          'Failed to payment ${jsonDecode(response.body)["message"]}');
+      throw Exception('Failed to payment ${jsonDecode(response.body)["message"]}');
     }
   }
 
@@ -255,7 +252,6 @@ print('card for real ${response.body}');
     required List<Map<String, dynamic>> entries,
     String? tenantname,
     String? notificationTime,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -275,9 +271,7 @@ print('card for real ${response.body}');
 
       if (entry['newfield'] == true) {
         // If newfield is true, check account values
-        if (entry['account'] == "Late Fee Income" ||
-            entry['account'] == "Pre-payments" ||
-            entry['account'] == "Security Deposit") {
+        if (entry['account'] == "Late Fee Income" || entry['account'] == "Pre-payments" || entry['account'] == "Security Deposit") {
           chargeType = entry['account']; // Assign account value as charge_type
         } else if (entry['account'] == "Rent Income") {
           chargeType = "Rent"; // Set charge_type as "Rent"
@@ -314,11 +308,11 @@ print('card for real ${response.body}');
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname,
-        'notificationTime':notificationTime,
-        'lease_id':leaseid,
+        'tenantName': tenantname,
+        'notificationTime': notificationTime,
+        'lease_id': leaseid,
         'entry': updatedEntries,
-       // 'entry': entries,
+        // 'entry': entries,
       };
       print(paymentDetails);
       final response = await http.post(
@@ -330,7 +324,6 @@ print('card for real ${response.body}');
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
-
         }),
       );
 
@@ -341,24 +334,22 @@ print('card for real ${response.body}');
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
           await Future.wait([
-          storePaymentAch(
-              companyName: company_name,
-              adminId: adminId,
-              tenantId: tenantId,
-              leaseId: leaseid,
-              paymentType: "ACH",
-              entries: updatedEntries,
-            //  entries: entries,
-              totalAmount: amount,
-              isLeaseAdded: false,
-              uploadedFile: [],
-              transactionId: jsonData["data"]["transactionid"],
-          //    responseText: jsonData["data"]["responsetext"],
-              responseText: "SUCCESS",
-              surcharge: surcharge,
-          notificationTime: notificationTime
-          )
-
+            storePaymentAch(
+                companyName: company_name,
+                adminId: adminId,
+                tenantId: tenantId,
+                leaseId: leaseid,
+                paymentType: "ACH",
+                entries: updatedEntries,
+                //  entries: entries,
+                totalAmount: amount,
+                isLeaseAdded: false,
+                uploadedFile: [],
+                transactionId: jsonData["data"]["transactionid"],
+                //    responseText: jsonData["data"]["responsetext"],
+                responseText: "SUCCESS",
+                surcharge: surcharge,
+                notificationTime: notificationTime)
           ]);
           return "Payment Success";
         } else {
@@ -371,23 +362,22 @@ print('card for real ${response.body}');
     } else {
       try {
         await Future.wait([
-        storePaymentAch(
-            companyName: company_name,
-            adminId: adminId,
-            tenantId: tenantId,
-            leaseId: leaseid,
-            paymentType: "Card",
-            entries: updatedEntries,
-           // entries: entries,
-            totalAmount: amount,
-            isLeaseAdded: false,
-            uploadedFile: [],
-            transactionId: "",
-            responseText: "PENDING",
-            surcharge: surcharge,
-        notificationTime: notificationTime
-        )
-    ]);
+          storePaymentAch(
+              companyName: company_name,
+              adminId: adminId,
+              tenantId: tenantId,
+              leaseId: leaseid,
+              paymentType: "Card",
+              entries: updatedEntries,
+              // entries: entries,
+              totalAmount: amount,
+              isLeaseAdded: false,
+              uploadedFile: [],
+              transactionId: "",
+              responseText: "PENDING",
+              surcharge: surcharge,
+              notificationTime: notificationTime)
+        ]);
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -410,7 +400,6 @@ print('card for real ${response.body}');
     required String responseText,
     required String surcharge,
     String? notificationTime,
-
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -432,14 +421,14 @@ print('card for real ${response.body}');
         'payment_type': paymentType,
 
         'entry': entries,
-       // 'total_amount': totalAmount,
-        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)),
+        // 'total_amount': totalAmount,
+        'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
       }),
     );
 
@@ -447,8 +436,7 @@ print('card for real ${response.body}');
       print(response.body);
       return jsonDecode(response.body);
     } else {
-      throw Exception(
-          'Failed to payment ${jsonDecode(response.body)["message"]}');
+      throw Exception('Failed to payment ${jsonDecode(response.body)["message"]}');
     }
   }
 
@@ -479,7 +467,6 @@ print('card for real ${response.body}');
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
     String? notificationTime,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -499,9 +486,7 @@ print('card for real ${response.body}');
 
       if (entry['newfield'] == true) {
         // If newfield is true, check account values
-        if (entry['account'] == "Late Fee Income" ||
-            entry['account'] == "Pre-payments" ||
-            entry['account'] == "Security Deposit") {
+        if (entry['account'] == "Late Fee Income" || entry['account'] == "Pre-payments" || entry['account'] == "Security Deposit") {
           chargeType = entry['account']; // Assign account value as charge_type
         } else if (entry['account'] == "Rent Income") {
           chargeType = "Rent"; // Set charge_type as "Rent"
@@ -539,7 +524,7 @@ print('card for real ${response.body}');
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'lease_id':leaseid,
+        'lease_id': leaseid,
         'entry': updatedEntries,
         //'entry': entries,
         // 'notificationTime':notificationTime,
@@ -555,7 +540,6 @@ print('card for real ${response.body}');
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
-
         }),
       );
       if (response.statusCode == 200) {
@@ -565,19 +549,19 @@ print('card for real ${response.body}');
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
           storePaymentAch(
-              companyName: company_name,
-              adminId: adminId,
-              tenantId: tenantId,
-              leaseId: leaseid,
-              paymentType: "ACH",
-              entries: updatedEntries,
-              //entries: entries,
-              totalAmount: amount,
-              isLeaseAdded: false,
-              uploadedFile: [],
-              transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
-              surcharge: surcharge,
+            companyName: company_name,
+            adminId: adminId,
+            tenantId: tenantId,
+            leaseId: leaseid,
+            paymentType: "ACH",
+            entries: updatedEntries,
+            //entries: entries,
+            totalAmount: amount,
+            isLeaseAdded: false,
+            uploadedFile: [],
+            transactionId: jsonData["data"]["transactionid"],
+            responseText: jsonData["data"]["responsetext"],
+            surcharge: surcharge,
             notificationTime: notificationTime,
           );
           return "Payment Success";
@@ -591,22 +575,21 @@ print('card for real ${response.body}');
     } else {
       try {
         await Future.wait([
-        storePaymentfornormal(
-            companyName: company_name,
-            adminId: adminId,
-            tenantId: tenantId,
-            leaseId: leaseid,
-            paymentType: payment_method,
-            entries: updatedEntries,
-            //entries: entries,
-            totalAmount: amount,
-            isLeaseAdded: false,
-            uploadedFile: "",
-            checknumber: Check_number,
-            responseText: "PENDING",
-            surcharge: surcharge,
-notificationTime: notificationTime
-        )
+          storePaymentfornormal(
+              companyName: company_name,
+              adminId: adminId,
+              tenantId: tenantId,
+              leaseId: leaseid,
+              paymentType: payment_method,
+              entries: updatedEntries,
+              //entries: entries,
+              totalAmount: amount,
+              isLeaseAdded: false,
+              uploadedFile: "",
+              checknumber: Check_number,
+              responseText: "PENDING",
+              surcharge: surcharge,
+              notificationTime: notificationTime)
         ]);
         return "Payment Successfully";
       } catch (e) {
@@ -630,7 +613,6 @@ notificationTime: notificationTime
     required String responseText,
     required String surcharge,
     String? notificationTime,
-
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -656,7 +638,7 @@ notificationTime: notificationTime
         'uploaded_file': uploadedFile,
         'check_number': checknumber,
         'response': "SUCCESS",
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
       }),
     );
 
@@ -664,12 +646,9 @@ notificationTime: notificationTime
       print(response.body);
       return jsonDecode(response.body);
     } else {
-      throw Exception(
-          'Failed to payment ${jsonDecode(response.body)["message"]}');
+      throw Exception('Failed to payment ${jsonDecode(response.body)["message"]}');
     }
   }
-
-
 
   // Future<String> makePaymentforCashier({
   //   required String adminId,
@@ -773,6 +752,4 @@ notificationTime: notificationTime
   //     throw Exception('Error: $e');
   //   }
   // }
-
-
 }

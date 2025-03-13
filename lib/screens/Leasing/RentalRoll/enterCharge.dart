@@ -341,15 +341,14 @@ class _enterChargeState extends State<enterCharge> {
         List<dynamic> jsonResponse = json.decode(response.body)['data'];
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
-        fetchedData["Liability Account"] = [
-          "Late Fee Income",
-          "Pre-payments",
-          "Security Deposit",
-          'Rent Income'
-        ];
+        // Adding static items to the "LIABILITY ACCOUNT" category
+        fetchedData["Rent"] = ["Rent Income"];
+        fetchedData["Late Fee Income"] = ["Late Fee Income"];
+        fetchedData["Pre-payments"] = ["Pre-payments"];
+        fetchedData["Security Deposit"] = ["Security Deposit"];
 
         for (var item in jsonResponse) {
-          String chargeType = item['charge_type'];
+          String chargeType = item['charge_type'] ?? "One Time Charge";
           String account = item['account'];
 
           if (!fetchedData.containsKey(chargeType)) {
@@ -372,6 +371,7 @@ class _enterChargeState extends State<enterCharge> {
         });
       }
     } catch (e) {
+      print(e);
       setState(() {
         hasError = true;
         isLoading = false;
@@ -578,129 +578,124 @@ class _enterChargeState extends State<enterCharge> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const Text('Received From *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(
-                            height: 8,
-                          ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          tenants.isEmpty
-                              ?  Container(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.black,
-                                    size: 50.0,
-                                  ),
-                                )
-                              : DropdownButtonHideUnderline(
-                                  child: FormField<String>(
-                                    validator: (value) {
-                                      if (selectedTenantId == null) {
-                                        return 'Please select a tenant';
-                                      }
-                                      return null; // No error if valid
-                                    },
-                                    builder: (FormFieldState<String> state) {
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Text('Select Tenant'),
-                                            value: selectedTenantId,
-                                            items: tenants.map((tenant) {
-                                              return DropdownMenuItem<String>(
-                                                value: tenant['tenant_id'],
-                                                child: Text(
-                                                    tenant['tenant_name']!),
-                                              );
-                                            }).toList(),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selectedTenantId = value;
-                                                state.didChange(
-                                                    value); // Notify form field state
-                                              });
-                                              state.reset();
-                                              print(
-                                                  'Selected tenant_id: $selectedTenantId');
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 50,
-                                              width: 200,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 2,
-                                            ),
-                                            iconStyleData: const IconStyleData(
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                              ),
-                                              iconSize: 24,
-                                              iconEnabledColor:
-                                                  Color(0xFFb0b6c3),
-                                              iconDisabledColor: Colors.grey,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(6),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                          ),
-                                          if (state.hasError)
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5),
-                                              child: Text(
-                                                state.errorText!,
-                                                style: const TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(
-                            height: 20,
-                          ),
+
+                        // if (MediaQuery.of(context).size.width < 500)
+                        //   const Text('Received From *',
+                        //       style: TextStyle(
+                        //           fontSize: 13,
+                        //           fontWeight: FontWeight.bold,
+                        //           color: Colors.grey)),
+                        // if (MediaQuery.of(context).size.width < 500)
+                        //   const SizedBox(
+                        //     height: 8,
+                        //   ),
+                        // if (MediaQuery.of(context).size.width < 500)
+                        //   tenants.isEmpty
+                        //       ?  Container(
+                        //           child: SpinKitFadingCircle(
+                        //             color: Colors.black,
+                        //             size: 50.0,
+                        //           ),
+                        //         )
+                        //       : DropdownButtonHideUnderline(
+                        //           child: FormField<String>(
+                        //             validator: (value) {
+                        //               if (selectedTenantId == null) {
+                        //                 return 'Please select a tenant';
+                        //               }
+                        //               return null; // No error if valid
+                        //             },
+                        //             builder: (FormFieldState<String> state) {
+                        //               return Column(
+                        //                 crossAxisAlignment:
+                        //                     CrossAxisAlignment.start,
+                        //                 children: [
+                        //                   DropdownButton2<String>(
+                        //                     isExpanded: true,
+                        //                     hint: const Text('Select Tenant'),
+                        //                     value: selectedTenantId,
+                        //                     items: tenants.map((tenant) {
+                        //                       return DropdownMenuItem<String>(
+                        //                         value: tenant['tenant_id'],
+                        //                         child: Text(
+                        //                             tenant['tenant_name']!),
+                        //                       );
+                        //                     }).toList(),
+                        //                     onChanged: (value) {
+                        //                       setState(() {
+                        //                         selectedTenantId = value;
+                        //                         state.didChange(
+                        //                             value); // Notify form field state
+                        //                       });
+                        //                       state.reset();
+                        //                       print(
+                        //                           'Selected tenant_id: $selectedTenantId');
+                        //                     },
+                        //                     buttonStyleData: ButtonStyleData(
+                        //                       height: 50,
+                        //                       width: 200,
+                        //                       padding: const EdgeInsets.only(
+                        //                           left: 14, right: 14),
+                        //                       decoration: BoxDecoration(
+                        //                         borderRadius:
+                        //                             BorderRadius.circular(6),
+                        //                         color: Colors.white,
+                        //                       ),
+                        //                       elevation: 2,
+                        //                     ),
+                        //                     iconStyleData: const IconStyleData(
+                        //                       icon: Icon(
+                        //                         Icons.arrow_drop_down,
+                        //                       ),
+                        //                       iconSize: 24,
+                        //                       iconEnabledColor:
+                        //                           Color(0xFFb0b6c3),
+                        //                       iconDisabledColor: Colors.grey,
+                        //                     ),
+                        //                     dropdownStyleData:
+                        //                         DropdownStyleData(
+                        //                       decoration: BoxDecoration(
+                        //                         borderRadius:
+                        //                             BorderRadius.circular(6),
+                        //                         color: Colors.white,
+                        //                       ),
+                        //                       scrollbarTheme:
+                        //                           ScrollbarThemeData(
+                        //                         radius:
+                        //                             const Radius.circular(6),
+                        //                         thickness:
+                        //                             MaterialStateProperty.all(
+                        //                                 6),
+                        //                         thumbVisibility:
+                        //                             MaterialStateProperty.all(
+                        //                                 true),
+                        //                       ),
+                        //                     ),
+                        //                     menuItemStyleData:
+                        //                         const MenuItemStyleData(
+                        //                       height: 40,
+                        //                       padding: EdgeInsets.only(
+                        //                           left: 14, right: 14),
+                        //                     ),
+                        //                   ),
+                        //                   if (state.hasError)
+                        //                     Padding(
+                        //                       padding:
+                        //                           const EdgeInsets.only(top: 5),
+                        //                       child: Text(
+                        //                         state.errorText!,
+                        //                         style: const TextStyle(
+                        //                           color: Colors.red,
+                        //                           fontSize: 12,
+                        //                         ),
+                        //                       ),
+                        //                     ),
+                        //                 ],
+                        //               );
+                        //             },
+                        //           ),
+                        //         ),
+
                         if (MediaQuery.of(context).size.width < 500)
                           const Text('Date',
                               style: TextStyle(
@@ -1385,9 +1380,7 @@ class _enterChargeState extends State<enterCharge> {
                                                  //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
                                                  //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
                                                   value: row['account'] != null
-                                                      ? (liabilityAccounts.contains(row['account'])
-                                                      ? "${row['account']}_Liability Account"
-                                                      : (row['charge_type'] == "Surcharge" && surchargetype != null
+                                                      ? ( (row['charge_type'] == "Surcharge" && surchargetype != null
                                                       ? "${row['account']}_$surchargetype"
                                                       : "${row['account']}_${row['charge_type']}"))
                                                       : null,
@@ -1745,7 +1738,7 @@ class _enterChargeState extends State<enterCharge> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(8.0))),
-                              onPressed: () async {
+                              onPressed: isLoading ? null : () async {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
                                   setState(() {
@@ -1763,7 +1756,7 @@ class _enterChargeState extends State<enterCharge> {
                                           prefs.getString('adminId').toString();
 
                                       List<Entry> entryList = rows.map((row) {
-                                        String formattedDate = reverseFormatDate(row['date'] ?? "");
+                                        String formattedDate = reverseFormatDate(row['date'] != ""?row['date'] : _startDate.text);
                                         return Entry(
                                           account: row['account'],
                                           amount: row['amount']?.toInt() ?? 0,
@@ -1829,7 +1822,7 @@ class _enterChargeState extends State<enterCharge> {
 
                                       List<Entry> entryList = rows.map((row) {
                                         print(" accocunt ${row["account"]}");
-                                        String formattedDate = reverseFormatDate(row['date'] ?? "");
+                                        String formattedDate = reverseFormatDate(row['date'] != ""?row['date'] : _startDate.text);
                                         return Entry(
                                           account: row['account'],
                                           amount: row['amount']?.toInt() ?? 0,
@@ -1855,7 +1848,7 @@ class _enterChargeState extends State<enterCharge> {
                                         adminId: adminId,
                                         isLeaseAdded: false,
                                         leaseId: widget.leaseId,
-                                        tenantId: selectedTenantId!,
+                                        tenantId:"",
                                         totalAmount: totalAmount,
                                         uploadedFile: _uploadedFileNames,
                                         entry: entryList,

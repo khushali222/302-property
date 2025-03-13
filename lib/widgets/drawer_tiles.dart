@@ -6,6 +6,7 @@ import 'package:three_zero_two_property/screens/Leasing/upcoming_renewal/upcomin
 import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 
+import '../screens/Communications/Templates/Templet_table.dart';
 import '../screens/Leasing/Applicants/Applicants_table.dart';
 
 import '../screens/Leasing/RentalRoll/lease_table.dart';
@@ -35,7 +36,7 @@ Widget buildListTile(
   bool active,
 ) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
       color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
@@ -78,6 +79,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Vendor": (context) => Vendor_table(),
     "Work Order": (context) => Workorder_table(),
     "Rent Roll": (context) => Lease_table(),
+    "Templates": (context) => TempletTable(),
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
     "Upcoming renewal":(context)=> Upcomingrenewal(),
@@ -107,7 +109,7 @@ Widget buildDropdownListTile(
   bool isExpanded = selectedSubtopic != null && subTopics.contains(selectedSubtopic);
 
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: EdgeInsets.symmetric(horizontal: 14),
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: ExpansionTile(
       initiallyExpanded: isExpanded,

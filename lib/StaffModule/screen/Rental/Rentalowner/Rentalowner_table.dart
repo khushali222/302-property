@@ -10,8 +10,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../model/staffpermission.dart';
+import '../../../repository/staffpermission_provider.dart';
 import 'Edit_RentalOwners.dart';
 import 'rentalowner_summery.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -225,7 +228,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     });
     checkInternet();
     futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
-
+    Provider.of<StaffPermissionProvider>(context, listen: false).fetchPermissions();
     fetchRentalOwneradded();
   }
   ConnectivityResult? _connectivityResult ;
@@ -442,6 +445,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
 
   @override
   Widget build(BuildContext context) {
+    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    StaffPermission? permissions = permissionProvider.permissions;
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -462,10 +467,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: titleBar(
-                      width: MediaQuery.of(context).size.width * .65,
+                      width:permissions!.rentalownerAdd! ? MediaQuery.of(context).size.width * .65 :MediaQuery.of(context).size.width * .93,
                       title: 'Rental Owner',
                     ),
                   ),
+                  if(permissions!.rentalownerAdd!)
                   GestureDetector(
                     onTap: () async {
                       // if (rentalownerCount < rentalOwnerCountLimit) {
@@ -521,7 +527,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     ),
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 6),
+                    SizedBox(width:permissions!.rentalownerAdd! ? 6 : 0),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 22),
                 ],
@@ -893,6 +899,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
+                                                      if(permissions!.rentalownerEdit!)
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () async {
@@ -948,9 +955,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if(permissions!.rentalownerEdit!)
                                                       SizedBox(
                                                         width: 5,
                                                       ),
+                                                      if(permissions!.rentalownerDelete!)
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {
@@ -998,9 +1007,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if(permissions!.rentalownerDelete!)
                                                       SizedBox(
                                                         width: 5,
                                                       ),
+                                                      if(permissions!.rentalownerView!)
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {

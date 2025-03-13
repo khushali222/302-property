@@ -96,6 +96,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     Workorder_table(),
   ];
   StaffPermission? permissions;
+  int totalWorkOrders = 0;
   Future<void> fetchDatacount() async {
     /*setState(() {
       loading = true;
@@ -125,6 +126,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
           countList[2] = jsonData['applicant_staffMember'];
           countList[3] = jsonData['vendor_staffMember'];
           countList[4] = jsonData['workorder_staffMember'];
+          totalWorkOrders = jsonData['workorder_staffMember'] ?? 0;
           loading = false;
         });
       } else {
@@ -757,6 +759,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                   child: Container(
                 
                                     child: DonutChart(
+                                      totalWorkOrders: totalWorkOrders,
                                       newWorkOrders: newworkorder,
                                       overdueWorkOrders: overdueworkorder,
                                     ),
@@ -981,6 +984,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                               child: Container(
                 
                                 child: DonutChart(
+                                  totalWorkOrders: totalWorkOrders,
                                   newWorkOrders: newworkorder,
                                   overdueWorkOrders: overdueworkorder,
                                 ),

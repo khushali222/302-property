@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import '../../../model/staffpermission.dart';
+import '../../../repository/staffpermission_provider.dart';
 import '../../../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../../../../Model/RentalOwnersData.dart';
@@ -119,6 +122,8 @@ class _RentalownersSummeryForMobileState
   }
   @override
   Widget build(BuildContext context) {
+    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    StaffPermission? permissions = permissionProvider.permissions;
     return Scaffold(
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
@@ -171,6 +176,7 @@ class _RentalownersSummeryForMobileState
                   ],
                 ),
                 const Spacer(),
+                if(permissions!.rentalownerEdit!)
                 Row(
                   children: [
                     SizedBox(width: MediaQuery.of(context).size.width * 0.065),

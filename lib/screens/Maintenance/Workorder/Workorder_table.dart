@@ -245,6 +245,7 @@ class _Workorder_tableState extends State<Workorder_table> {
     "On Hold",
     "Completed",
     "Over Due",
+    'Closed',
     "All"
   ];
   String? selectedValue;
@@ -571,16 +572,17 @@ class _Workorder_tableState extends State<Workorder_table> {
       ],
     );
   }
+
   DateTime parseDate(String dateString) {
     try {
       // List of common date formats to try
       List<String> formats = [
-        'yyyy-MM-dd',       // Example: 2024-11-25
-        'MM/dd/yyyy',       // Example: 11/25/2024
-        'dd/MM/yyyy',       // Example: 25/11/2024
+        'yyyy-MM-dd', // Example: 2024-11-25
+        'MM/dd/yyyy', // Example: 11/25/2024
+        'dd/MM/yyyy', // Example: 25/11/2024
         'yyyy-MM-dd HH:mm', // Example: 2024-11-25 14:30
-        'yyyy/MM/dd',       // Example: 2024/11/25
-        'MMMM dd, yyyy',    // Example: November 25, 2024
+        'yyyy/MM/dd', // Example: 2024/11/25
+        'MMMM dd, yyyy', // Example: November 25, 2024
       ];
 
       for (String format in formats) {
@@ -598,6 +600,7 @@ class _Workorder_tableState extends State<Workorder_table> {
       return DateTime.now(); // Fallback to current date if parsing fails
     }
   }
+
   final _scrollController = ScrollController();
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -766,7 +769,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                   ),
                                   Expanded(
                                     child: Text(
-                                      'Type',
+                                      'Status',
                                       style: TextStyle(
                                         fontSize: 14,
                                         // fontWeight: FontWeight.bold,
@@ -972,33 +975,34 @@ class _Workorder_tableState extends State<Workorder_table> {
                                           .contains(searchvalue!.toLowerCase()) ||
                                       (workorder.staffMember?.staffmemberName?.toLowerCase() ?? '').contains(searchvalue.toLowerCase()))
                                   .toList();
-                            }
-                            else {
-
-                              if(selectedValue =="Over Due"){
-
+                            } else {
+                              if (selectedValue == "Over Due") {
                                 data = snapshot.data!.where((element) {
                                   // Check if date is null
                                   if (element.workOrderData!.date == null) {
                                     return false; // Include this element without filtering by date
                                   }
 
-                                  DateTime dueDate = parseDate(element.workOrderData!.date.toString());
-                                  bool isOverDue = dueDate.isBefore(DateTime.now());
+                                  DateTime dueDate = parseDate(
+                                      element.workOrderData!.date.toString());
+                                  bool isOverDue =
+                                      dueDate.isBefore(DateTime.now());
                                   print(element.workOrderData!.status);
-                                  bool isNotCompleted = element.workOrderData!.status != "Completed" && element.workOrderData!.status != "Complete";
+                                  bool isNotCompleted =
+                                      element.workOrderData!.status !=
+                                              "Completed" &&
+                                          element.workOrderData!.status !=
+                                              "Complete";
 
                                   return isOverDue && isNotCompleted;
                                 }).toList();
-
-                              }
-                              else{
+                              } else {
                                 data = snapshot.data!
                                     .where((property) =>
-                                property.workOrderData!.status == selectedValue)
+                                        property.workOrderData!.status ==
+                                        selectedValue)
                                     .toList();
                               }
-
                             }
 
                             if (isChecked) {
@@ -1510,9 +1514,8 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                       dateProvider
                                                                           .formatCurrentDate(
                                                                               '${workOrder.workOrderData?.updatedAt}'),
-                                                                      'Due Date:', '${workOrder.workOrderData?.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workOrder.workOrderData?.date}') : 'N/A'}'
-
-                                                                  ),
+                                                                      'Due Date:',
+                                                                      '${workOrder.workOrderData?.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workOrder.workOrderData?.date}') : 'N/A'}'),
                                                                 ],
                                                               ),
                                                             ),

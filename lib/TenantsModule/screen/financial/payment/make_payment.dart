@@ -196,12 +196,27 @@ class _MakePaymentState extends State<MakePayment> {
         });
       }
       setState(() {
+
         tenants = fetchedTenants;
-        leaseid = tenants[0]['tenant_id'];
-        print('leaseid $leaseid');
-        selectedTenantRent =
-            double.tryParse(tenants[0]['rent'] ?? '0.0') ?? 0.0;
+        // leaseid = tenants[0]['tenant_id'];
+        // print('leaseid $leaseid');
+        // selectedTenantRent =
+        //     double.tryParse(tenants[0]['rent'] ?? '0.0') ?? 0.0;
         isLoading = false;
+        if (fetchedTenants.isNotEmpty) {
+          leaseid = fetchedTenants[0]['tenant_id'];
+          selectedTenantRent = double.tryParse(fetchedTenants[0]['rent'] ?? '0.0') ?? 0.0;
+
+          if (fetchedTenants.length == 1) {
+            selectedTenantId = leaseid;
+            fetchTotal_due_amountTenant(selectedTenantId!);
+            fetchPaymentSettings(id!, selectedTenantId!);
+            //fetchChargesForSelectedTenant(selectedTenantId!);
+            // if (id != null) {
+            //   //fetchPaymentSettings(id, leaseid ?? "");
+            // }
+          }
+        }
       });
     } else {
       setState(() {
@@ -748,7 +763,7 @@ class _MakePaymentState extends State<MakePayment> {
       Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
-
+     print("cards ${response.body}");
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       customervaultid = jsonResponse['customer_vault_id'];
@@ -768,13 +783,25 @@ class _MakePaymentState extends State<MakePayment> {
         //    print('Billing ID: ${cardDetail['billing_id']}');
       }
 
-      CustomerData? customerData =
-          await postBillingCustomerVault(customervaultid.toString(),cardDetailsList);
 
+      CustomerData? customerData =
+      await postBillingCustomerVault(customervaultid.toString(),cardDetailsList);
       if (customerData != null) {
+        print("Debit card is Accespted $debitCardAccepted");
+        print("Credit card is Accespted $creditCardAccepted");
         setState(() {
           cardDetails = customerData.billing;
         });
+        if(cardDetails.length == 1)
+        {
+          if(debitCardAccepted && creditCardAccepted)
+            {
+              selectedcardindex = 0;
+
+              fetchSurcharge();
+            }
+
+        }
       }
     } else if (response.statusCode == 404) {
       print('customer_vault_id not found');
@@ -844,7 +871,15 @@ class _MakePaymentState extends State<MakePayment> {
       customerData.billing.forEach((billing) {
         print('CC Bin: ${billing.ccBin}');
       });
+      Set<String> cardBillingIds = cardDetailsList
+          .map((card) => card['billing_id'].toString()) // Ensure conversion to string
+          .toSet();
 
+      // Filter customerData.billing to only include matching billing IDs
+      List<BillingData> filteredCards = customerData.billing
+          .where((billing) => cardBillingIds.contains(billing.billingId))
+          .toList();
+      customerData.billing = filteredCards;
       // List<String> binResults = await performBinChecks(customerData);
       //
       // for (int i = 0; i < customerData.billing.length; i++) {
@@ -855,7 +890,7 @@ class _MakePaymentState extends State<MakePayment> {
       // binResults.forEach((result) {
       //   print('BIN Check Result: $result');
       // });
-      for (int i = 0; i < customerData.billing.length; i++) {
+      for (int i = 0; i < cardDetailsList.length; i++) {
         customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
       }
 
@@ -990,6 +1025,7 @@ class _MakePaymentState extends State<MakePayment> {
     );
 
     print("Response Status Code: ${response.statusCode}");
+    print("Response body: ${response.body}");
 
     if (response.statusCode == 200) {
       try {
@@ -1424,7 +1460,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                               'abc check ${isCardAccepted}');
                                                           return TableRow(
                                                             decoration: BoxDecoration(
-                                                                color: Color
+                                                                color: isExpired? Colors.redAccent.shade100 :Color
                                                                     .fromRGBO(
                                                                         240,
                                                                         243,
@@ -1486,11 +1522,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                                     //         },
                                                                     //       ),
                                                                     isExpired
-                                                                        ? Text(
-                                                                            'Expired',
-                                                                            style:
-                                                                                TextStyle(color: Colors.red),
-                                                                          )
+                                                                        ?IconButton(icon:Icon(Icons.close),onPressed: (){},)
                                                                         : Checkbox(
                                                                             activeColor:
                                                                                 blueColor,
@@ -1611,7 +1643,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                             height: 5,
                                                           ),
                                                           Text(
-                                                            'DEBIT card types not accepted by rentl owner',
+                                                            '*DEBIT card is not accepted by Rental Owner',
                                                             style: TextStyle(
                                                                 color:
                                                                     Colors.red,
@@ -1678,6 +1710,8 @@ class _MakePaymentState extends State<MakePayment> {
                               ],
                             ),
                           ),
+
+                          //Text("Note* if Getting Card is Red Background then it is Expired",style: TextStyle(color: blueColor,fontSize: 14,fontWeight: FontWeight.bold),),
                           GestureDetector(
                             onTap: () async {
                               final newCard = await Navigator.push(
