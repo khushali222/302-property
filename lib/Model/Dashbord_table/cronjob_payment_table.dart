@@ -23,6 +23,8 @@ class LeaseDatacronjob {
   final String? leaseId;
   final String? rentalAddress;
   final String? rentalUnit;
+  final String? paymenttype;
+  final String? state;
   final Tenant? tenant;
   final double? totalAmount;
   final String? response;
@@ -35,6 +37,8 @@ class LeaseDatacronjob {
     this.leaseId,
     this.rentalAddress,
     this.rentalUnit,
+    this.paymenttype,
+    this.state,
     this.tenant,
     this.totalAmount,
     this.response,
@@ -49,6 +53,8 @@ class LeaseDatacronjob {
       leaseId: json['lease_id'],
       rentalAddress: json['rental_address'],
       rentalUnit: json['rental_unit'],
+      paymenttype: json['payment_type'],
+      state: json['state'],
       tenant: json['tenant'] != null ? Tenant.fromJson(json['tenant']) : null,
       totalAmount: (json['total_amount'] as num?)?.toDouble(),
       response: json['response'],

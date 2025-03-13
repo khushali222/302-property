@@ -6,8 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../Model/Dashbord_table/Payment_refund_model.dart';
-import '../../constant/constant.dart';
+import '../../../Model/Dashbord_table/Payment_refund_model.dart';
+import '../../../constant/constant.dart';
 
 class PaymentCronjobRepository {
   final String apiUrl = '${Api_url}/api/payment/payment_acknowledge';
@@ -26,12 +26,12 @@ class PaymentCronjobRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
-
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.put(
       Uri.parse('$apiUrl/$paymentid'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $adminid",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -85,12 +85,12 @@ class PaymentCronjobRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
-
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.put(
       Uri.parse('${Api_url}/api/payment/payment_retry/$paymentid'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $adminid",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -108,7 +108,7 @@ class PaymentCronjobRepository {
         type: AlertType.success,
         title: "Success",
         desc:
-        responseData["message"] ?? "Payment retry scheduled successfully!",
+            responseData["message"] ?? "Payment retry scheduled successfully!",
         style: AlertStyle(
           backgroundColor: Colors.white,
         ),
@@ -146,12 +146,12 @@ class PaymentCronjobRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
-
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.put(
       Uri.parse('${Api_url}/api/payment/payment_reschedule/$paymentid'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $adminid",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -200,12 +200,12 @@ class PaymentCronjobRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
-
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/nmipayment/void-payment/$pay_id'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $adminid",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode({
@@ -252,12 +252,12 @@ class PaymentCronjobRepository {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? adminId = prefs.getString('adminId');
-
+      String? id = prefs.getString("staff_id");
       final response = await http.get(
         Uri.parse('$Api_url/api/payment/payment/$paymentId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $adminId",
+          "id": "CRM $id",
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
@@ -312,6 +312,7 @@ class PaymentCronjobRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
     final Map<String, dynamic> commonData = {
       "admin_id": adminid,
       "transactionId": transactionId,
@@ -344,7 +345,7 @@ class PaymentCronjobRepository {
       Uri.parse(apiUrll),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $adminid",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode({"refundDetails": commonData}),

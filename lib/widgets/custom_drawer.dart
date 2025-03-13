@@ -13,7 +13,6 @@ class CustomDrawer extends StatefulWidget {
   final bool dropdown;
 
   CustomDrawer({required this.currentpage, required this.dropdown});
-
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
 }
@@ -227,13 +226,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Send E-mail",
                   "E-mail Logs",
                   "Templates",
-
                 ],
                 [
                   FaIcon(
                     FontAwesomeIcons.envelopeCircleCheck,
                     size: 20,
-                    color: widget.currentpage == "Communication"
+                    color: widget.currentpage == "Send E-mail"
                         ? Colors.white
                         : blueColor,
                   ), // Icon for Properties

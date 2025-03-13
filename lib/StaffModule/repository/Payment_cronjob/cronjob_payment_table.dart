@@ -14,15 +14,18 @@ class cronjob_payment_tableService {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     try {
       final response = await http.get(
           Uri.parse('$Api_url/api/payment/cronjob-payments/$adminId?page=$page&limit=$limit'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $adminId",
+            "id": "CRM $id",
           });
 print('responce get ${response.body}');
+print('staff ${id}');
+print('admin ${adminId}');
       if (response.statusCode == 200) {
         // If the server returns a 200 OK response, parse the JSON
 

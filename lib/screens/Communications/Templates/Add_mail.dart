@@ -14,10 +14,12 @@ import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart'
 import '../../../repository/Communication/Templet_Repo.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/titleBar.dart';
 
 class Add_Email_templet extends StatefulWidget {
   String? templetid;
   Add_Email_templet({super.key, this.templetid});
+
   @override
   _Add_Email_templetState createState() => _Add_Email_templetState();
 }
@@ -404,12 +406,12 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Rent Roll",
+        currentpage: "Templates",
         dropdown: true,
       ),
       appBar: widget_302.App_Bar(context: context),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 16,right: 16,top: 16),
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(2.0),
@@ -599,7 +601,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   isExpanded: true,
                                   hint: const Text(
                                     'Select Event',
-
                                   ),
                                   value: _selectedEvent,
                                   items: events.map((method) {
@@ -620,7 +621,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 46,
-
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 3),
                                     decoration: BoxDecoration(
@@ -845,168 +845,155 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                   SizedBox(
                     height: 4,
                   ),
-                  Focus(
-                    focusNode: _bodyFocusNode,
-                    child: HtmlEditor(
-                      plugins: [
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Column(
+                        children: [
+                          Focus(
+                            focusNode: _bodyFocusNode,
+                            child: HtmlEditor(
+                              controller: _htmlEditorController,
+                              htmlEditorOptions: HtmlEditorOptions(
+                                adjustHeightForKeyboard: false,
 
-                        SummernoteAtMention(
-                          // Returns the dropdown items on mobile
-                            getSuggestionsMobile: (String value) {
-                              List<Map<String, String>>? mentions = tipsObject[_selectedEvent];
-
-                              // Extracting keys (e.g., "${Name}") from maps and converting them to a list of strings
-                              List<String> suggestions = mentions?.map((map) => map.keys.first).toList() ?? [];
-
-                              return suggestions.where((element) => element.contains(value)).toList();
-                            },
-                            // Returns the dropdown items on web
-                            mentionsWeb: ['test1', 'test2', 'test3'],
-                            onSelect: (String value) {
-                              print(value);
-                            }
-                        ),
-                      ],
-                      controller: _htmlEditorController,
-                      htmlEditorOptions: HtmlEditorOptions(
-                        adjustHeightForKeyboard: false,
-
-                        shouldEnsureVisible: true,
-
-                        hint: "Edit your email content here...",
-                        //  shouldEnsureVisible: true,
-                      ),
-                      otherOptions: OtherOptions(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(4),
-                              topRight: Radius.circular(4)),
-                        ),
-                      ),
-                      htmlToolbarOptions: HtmlToolbarOptions(
-                        // toolbarType: ToolbarType.nativeExpandable,
-                        customToolbarButtons: [
-                          PopupMenuButton<String>(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text("Paragraph",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                      )),
-                                  Icon(Icons
-                                      .arrow_drop_down), // Dropdown indicator
+                                //  shouldEnsureVisible: true,
+                              ),
+                              otherOptions: OtherOptions(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(4),
+                                      topRight: Radius.circular(4)),
+                                ),
+                              ),
+                              htmlToolbarOptions: HtmlToolbarOptions(
+                                // toolbarType: ToolbarType.nativeExpandable,
+                                customToolbarButtons: [
+                                  PopupMenuButton<String>(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text("Paragraph",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                              )),
+                                          Icon(Icons
+                                              .arrow_drop_down), // Dropdown indicator
+                                        ],
+                                      ),
+                                    ),
+                                    tooltip: "Paragraph",
+                                    onSelected: (String format) {
+                                      _htmlEditorController.execCommand(
+                                          "formatBlock",
+                                          argument: format);
+                                    },
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        value: "h1",
+                                        child: Text("Heading 1",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      PopupMenuItem(
+                                        value: "h2",
+                                        child: Text("Heading 2",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      PopupMenuItem(
+                                        value: "h3",
+                                        child: Text("Heading 3",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      PopupMenuItem(
+                                        value: "p",
+                                        child: Text("Paragraph",
+                                            style: TextStyle(fontSize: 14)),
+                                      ),
+                                    ],
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.format_quote),
+                                    tooltip: "Insert Quote",
+                                    onPressed: () {
+                                      _htmlEditorController.execCommand(
+                                          "formatBlock",
+                                          argument: "blockquote");
+                                    },
+                                  ),
+                                  PopupMenuButton<String>(
+                                    icon: Icon(Icons.text_fields),
+                                    tooltip: "Font Size",
+                                    onSelected: (String text) {
+                                      _htmlEditorController.execCommand(
+                                          "fontSize",
+                                          argument: text);
+                                    },
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                          value: "1", child: Text("tiny")),
+                                      PopupMenuItem(
+                                          value: "2", child: Text("small")),
+                                      PopupMenuItem(
+                                          value: "3", child: Text("default")),
+                                      PopupMenuItem(
+                                          value: "5", child: Text("big")),
+                                      PopupMenuItem(
+                                          value: "7", child: Text("huge")),
+                                    ],
+                                  ),
+                                ],
+                                defaultToolbarButtons: [
+                                  OtherButtons(
+                                      fullscreen: false,
+                                      help: false,
+                                      codeview: false,
+                                      undo: true,
+                                      redo: true,
+                                      copy: false,
+                                      paste: false),
+                                  FontButtons(
+                                    bold: true,
+                                    italic: true,
+                                    underline: false,
+                                    strikethrough: false,
+                                    subscript: false,
+                                    superscript: false,
+                                    clearAll: false,
+                                  ),
+                                  InsertButtons(
+                                    picture: false,
+                                    video: false,
+                                    audio: false,
+                                    table: true,
+                                    hr: false,
+                                  ),
+                                  ListButtons(
+                                    ul: true,
+                                    ol: true,
+                                    listStyles: false,
+                                  ),
+                                  ParagraphButtons(
+                                    textDirection: false,
+                                    lineHeight: false,
+                                    caseConverter: false,
+                                    decreaseIndent: false,
+                                    increaseIndent: false,
+                                  ),
+                                  ColorButtons(),
                                 ],
                               ),
                             ),
-                            tooltip: "Paragraph",
-                            onSelected: (String format) {
-                              _htmlEditorController.execCommand(
-                                  "formatBlock",
-                                  argument: format);
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: "h1",
-                                child: Text("Heading 1",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              PopupMenuItem(
-                                value: "h2",
-                                child: Text("Heading 2",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              PopupMenuItem(
-                                value: "h3",
-                                child: Text("Heading 3",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              PopupMenuItem(
-                                value: "p",
-                                child: Text("Paragraph",
-                                    style: TextStyle(fontSize: 14)),
-                              ),
-                            ],
                           ),
-                          IconButton(
-                            icon: Icon(Icons.format_quote),
-                            tooltip: "Insert Quote",
-                            onPressed: () {
-                              _htmlEditorController.execCommand(
-                                  "formatBlock",
-                                  argument: "blockquote");
-                            },
-                          ),
-                          PopupMenuButton<String>(
-                            icon: Icon(Icons.text_fields),
-                            tooltip: "Font Size",
-                            onSelected: (String text) {
-                              _htmlEditorController.execCommand(
-                                  "fontSize",
-                                  argument: text);
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                  value: "1", child: Text("tiny")),
-                              PopupMenuItem(
-                                  value: "2", child: Text("small")),
-                              PopupMenuItem(
-                                  value: "3", child: Text("default")),
-                              PopupMenuItem(
-                                  value: "5", child: Text("big")),
-                              PopupMenuItem(
-                                  value: "7", child: Text("huge")),
-                            ],
-                          ),
-                        ],
-                        defaultToolbarButtons: [
-                          OtherButtons(
-                              fullscreen: false,
-                              help: false,
-                              codeview: false,
-                              undo: true,
-                              redo: true,
-                              copy: false,
-                              paste: false),
-                          FontButtons(
-                            bold: true,
-                            italic: true,
-                            underline: false,
-                            strikethrough: false,
-                            subscript: false,
-                            superscript: false,
-                            clearAll: false,
-                          ),
-                          InsertButtons(
-                            picture: false,
-                            video: false,
-                            audio: false,
-                            table: true,
-                            hr: false,
-                          ),
-                          ListButtons(
-                            ul: true,
-                            ol: true,
-                            listStyles: false,
-                          ),
-                          ParagraphButtons(
-                            textDirection: false,
-                            lineHeight: false,
-                            caseConverter: false,
-                            decreaseIndent: false,
-                            increaseIndent: false,
-                          ),
-                          ColorButtons(),
                         ],
                       ),
                     ),
@@ -1032,7 +1019,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                         )
                       : Container(),
                   SizedBox(
-                    height: 15,
+                    height: 8,
                   ),
                   Row(
                     children: [

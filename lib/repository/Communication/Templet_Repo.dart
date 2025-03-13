@@ -66,77 +66,75 @@ class TempletRepository {
       // throw Exception('Failed to load data');
     }
   }
-  // Future<Map<String, dynamic>> Edit_staff_member({
-  //   required String? adminId,
-  //   required String? staffmemberName,
-  //   required String? staffmemberDesignation,
-  //   required String staffmemberPhoneNumber,
-  //   required String? staffmemberEmail,
-  //   String? staffmemberPassword,
-  //   required String? Sid
-  // }) async {
-  //   final Map<String, dynamic> data = {
-  //     "admin_id": adminId,
-  //     "staffmember_name": staffmemberName,
-  //     "staffmember_designation": staffmemberDesignation,
-  //     "staffmember_phoneNumber": staffmemberPhoneNumber,
-  //     "staffmember_email": staffmemberEmail,
-  //     "staffmember_password": staffmemberPassword,
-  //     //  "staffmember_password": staffmemberPassword,
-  //
-  //   };
-  //   print(data);
-  //   String apiUrl = "${Api_url}/api/staffmember/staff_member/$Sid";
-  //   print(apiUrl);
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? token = prefs.getString('token');
-  //   String?  id = prefs.getString('adminId');
-  //   final http.Response response = await http.put(
-  //     Uri.parse(apiUrl),
-  //     headers: <String, String>{
-  //       "authorization" : "CRM $token",
-  //       "id":"CRM $id",
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(data),
-  //   );
-  //   print('edit responce ${response.body}');
-  //   var responseData = json.decode(response.body);
-  //   if (responseData["statusCode"] == 200) {
-  //     Fluttertoast.showToast(msg: responseData["message"]);
-  //     return json.decode(response.body);
-  //   } else {
-  //     Fluttertoast.showToast(msg: responseData["message"]);
-  //     throw Exception('Failed to add StaffMember ');
-  //   }
-  // }
-  // Future<Map<String, dynamic>> DeleteStaffMember({
-  //   required String? id,
-  //   String? reason
-  // }) async {
-  //
-  //   // print('$apiUrl/$id');
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? token = prefs.getString('token');
-  //   String?  adminid = prefs.getString('adminId');
-  //   final http.Response response = await http.delete(
-  //       Uri.parse('$apiUrl/$id'),
-  //       headers: <String, String>{
-  //         "authorization" : "CRM $token",
-  //         "id":"CRM $adminid",
-  //         'Content-Type': 'application/json; charset=UTF-8',
-  //       },
-  //       body: jsonEncode({"reason":reason})
-  //   );
-  //   var responseData = json.decode(response.body);
-  //   print(response.body);
-  //   if (responseData["statusCode"] == 200) {
-  //     Fluttertoast.showToast(msg: responseData["message"]);
-  //     return json.decode(response.body);
-  //
-  //   } else {
-  //     Fluttertoast.showToast(msg: responseData["message"]);
-  //     throw Exception('Failed to add property type');
-  //   }
-  // }
+  Future<Map<String, dynamic>> Edit_Templet({
+    required String? template_id,
+    required String? adminId,
+    required String? name,
+    required String? subject,
+    required String body,
+    required String? type,
+    required String? mail_type,
+  }) async {
+    final Map<String, dynamic> data = {
+      "admin_id": adminId,
+      "template_id": template_id,
+      "name": name,
+      "subject": subject,
+      "body": body,
+      "type": type,
+      "mail_type": mail_type,
+    };
+    print(data);
+    print(apiUrl);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final http.Response response = await http.put(
+      Uri.parse('$apiUrl/$template_id'),
+      headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+    print('edit responce ${response.body}');
+    var responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to edit templet ');
+    }
+  }
+  Future<Map<String, dynamic>> DeleteTemplet({
+    required String? id,
+    String? reason
+  }) async {
+
+    // print('$apiUrl/$id');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  adminid = prefs.getString('adminId');
+    final http.Response response = await http.delete(
+        Uri.parse('$apiUrl/$id'),
+        headers: <String, String>{
+          "authorization" : "CRM $token",
+          "id":"CRM $adminid",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"reason":reason})
+    );
+    var responseData = json.decode(response.body);
+    print(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to delete templet');
+    }
+  }
 }

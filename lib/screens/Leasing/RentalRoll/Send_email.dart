@@ -519,9 +519,15 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
           htmlName = data["template"]["name"]; // Get HTML content
           htmlBody = data["template"]["body"]; // Get HTML content
           htmlsubject = data["template"]["subject"]; // Get HTML content
-          _htmlEditorController
-              .setText(replaceSpanTags(htmlBody)); // Set editor content
+          // _htmlEditorController
+          //     .setText(replaceSpanTags(htmlBody)); // Set editor content
           //_htmlEditorController.setText(htmlBody);
+          Future.delayed(Duration(milliseconds: 500), () {
+            if (mounted) {
+              _htmlEditorController.setFocus();
+              _htmlEditorController.setText(replaceSpanTags(htmlBody));
+            }
+          });
         });
       }
     } else {
@@ -577,14 +583,15 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
       ));
     }
   }
+
   String replaceFontTags(String html) {
     final Map<String, String> fontSizeMap = {
       '1': 'text-tiny',
       '2': 'text-small',
       '3': 'text-default',
-      '4': 'text-medium',  // Added missing size 4
+      '4': 'text-medium', // Added missing size 4
       '5': 'text-big',
-      '6': 'text-larger',  // Added missing size 6
+      '6': 'text-larger', // Added missing size 6
       '7': 'text-huge',
     };
 
@@ -593,8 +600,9 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
         r'<font\s+([^>]*)>(.*?)<\/font>',
         caseSensitive: false,
       ),
-          (match) {
-        String attributes = match.group(1) ?? ''; // Get all attributes inside <font>
+      (match) {
+        String attributes =
+            match.group(1) ?? ''; // Get all attributes inside <font>
         String text = match.group(2) ?? ''; // Get the inner text
 
         // Extract size attribute
@@ -602,7 +610,8 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
         String? size = sizeMatch?.group(1);
 
         // Extract color attribute
-        RegExpMatch? colorMatch = RegExp(r'color="([^"]+)"').firstMatch(attributes);
+        RegExpMatch? colorMatch =
+            RegExp(r'color="([^"]+)"').firstMatch(attributes);
         String? color = colorMatch?.group(1);
 
         // Get the corresponding class name for size
@@ -616,6 +625,7 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
       },
     );
   }
+
   String replaceSpanTags(String html) {
     print("spn${html}");
     // Mapping class names to corresponding font sizes
@@ -630,16 +640,19 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
     // Regex to match <span> with class and/or style attributes
     return html.replaceAllMapped(
       RegExp(r'<span([^>]*)>(.*?)<\/span>', caseSensitive: false),
-          (match) {
-        String attributes = match.group(1) ?? ''; // Extract attributes inside <span>
+      (match) {
+        String attributes =
+            match.group(1) ?? ''; // Extract attributes inside <span>
         String text = match.group(2) ?? ''; // Extract inner text
 
         // Extract class names
-        RegExpMatch? classMatch = RegExp(r'class="([^"]+)"').firstMatch(attributes);
+        RegExpMatch? classMatch =
+            RegExp(r'class="([^"]+)"').firstMatch(attributes);
         String classNames = classMatch?.group(1) ?? '';
 
         // Extract styles
-        RegExpMatch? styleMatch = RegExp(r'style="([^"]+)"').firstMatch(attributes);
+        RegExpMatch? styleMatch =
+            RegExp(r'style="([^"]+)"').firstMatch(attributes);
         String style = styleMatch?.group(1) ?? '';
 
         // Extract color from style
@@ -678,7 +691,7 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
     double s = int.parse(match.group(2)!) / 100;
     double l = int.parse(match.group(3)!) / 100;
 
-    double c = (1 - (2 * l - 1).abs())*s;
+    double c = (1 - (2 * l - 1).abs()) * s;
     double x = c * (1 - ((h / 60) % 2 - 1).abs());
     double m = l - c / 2;
 
@@ -932,247 +945,261 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
                     child: Column(
                       children: [
                         HtmlEditor(
-                          controller: _htmlEditorController,
-                          htmlEditorOptions: HtmlEditorOptions(
-                            adjustHeightForKeyboard: false,
-                            hint: "Edit your email content here...",
-                            //  shouldEnsureVisible: true,
-                          ),
-                          otherOptions: OtherOptions(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  topRight: Radius.circular(4)),
+                            controller: _htmlEditorController,
+                            htmlEditorOptions: HtmlEditorOptions(
+                              adjustHeightForKeyboard: false,
+                              hint: "Edit your email content here...",
+                              //  shouldEnsureVisible: true,
                             ),
-                          ),
-                          htmlToolbarOptions: HtmlToolbarOptions(
-
-                            // toolbarType: ToolbarType.nativeExpandable,
-                            customToolbarButtons: [
-                              PopupMenuButton<String>(
-                                icon: Icon(Icons.format_list_bulleted),
-                                tooltip: "Unordered List",
-                                offset: Offset(0, 40), // Adjusts dropdown position
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Rounded corners
-                                onSelected: (String style) {
-                                  _htmlEditorController.execCommand("insertHTML", argument: '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
-                                },
-                                itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                    value: "disc",
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.circle, size: 16, color: Colors.black),
-                                        SizedBox(width: 10),
-                                        Text("Disc"),
-                                      ],
-                                    ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: "circle",
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.circle_outlined, size: 16, color: Colors.black),
-                                        SizedBox(width: 10),
-                                        Text("Circle"),
-                                      ],
-                                    ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: "square",
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.square, size: 16, color: Colors.black),
-                                        SizedBox(width: 10),
-                                        Text("Square"),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                            otherOptions: OtherOptions(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(4),
+                                    topRight: Radius.circular(4)),
                               ),
-
-                              // OL (Ordered List) Style Dropdown
-                              PopupMenuButton<String>(
-                                constraints: BoxConstraints(
-                                  minWidth: 100, // Minimum width of the popup
-                                  maxWidth: 120, // Maximum width
-                                ),
-                                icon: Icon(Icons.format_list_numbered), // Ordered List Button
-                                tooltip: "Ordered List",
-                                offset: Offset(0, 40),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                onSelected: (String style) {
-                                  _htmlEditorController.execCommand(
-                                      "insertHTML",
-                                      argument: '<ol style="list-style-type: $style;"><li>List Item</li></ol>'
-                                  );
-                                },
-                                itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                    enabled: false, // Disable selection on this item
-                                    child: Container(
-
-                                      width: 100, // Adjust width as needed
-                                      child: GridView.count(
-                                        shrinkWrap: true,
-                                        crossAxisCount: 3, // 3 items in a row
-                                        mainAxisSpacing: 5,
-                                        crossAxisSpacing: 5,
-                                        childAspectRatio: .85,
-                                        // Adjust for better layout
+                            ),
+                            htmlToolbarOptions: HtmlToolbarOptions(
+                              // toolbarType: ToolbarType.nativeExpandable,
+                              customToolbarButtons: [
+                                PopupMenuButton<String>(
+                                  icon: Icon(Icons.format_list_bulleted),
+                                  tooltip: "Unordered List",
+                                  offset: Offset(
+                                      0, 40), // Adjusts dropdown position
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          10)), // Rounded corners
+                                  onSelected: (String style) {
+                                    _htmlEditorController.execCommand(
+                                        "insertHTML",
+                                        argument:
+                                            '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: "disc",
+                                      child: Row(
                                         children: [
-                                          _buildListItem("decimal", "1"),
-                                          _buildListItem("decimal-leading-zero", "01"),
-                                          _buildListItem("lower-roman", "i"),
-                                          _buildListItem("upper-roman", "I"),
-                                          _buildListItem("lower-alpha", "a"),
-                                          _buildListItem("upper-alpha", "A"),
+                                          Icon(Icons.circle,
+                                              size: 16, color: Colors.black),
+                                          SizedBox(width: 10),
+                                          Text("Disc"),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              PopupMenuButton<String>(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text("Paragraph",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                          )),
-                                      Icon(Icons
-                                          .arrow_drop_down), // Dropdown indicator
-                                    ],
-                                  ),
+                                    PopupMenuItem(
+                                      value: "circle",
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.circle_outlined,
+                                              size: 16, color: Colors.black),
+                                          SizedBox(width: 10),
+                                          Text("Circle"),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "square",
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.square,
+                                              size: 16, color: Colors.black),
+                                          SizedBox(width: 10),
+                                          Text("Square"),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                tooltip: "Paragraph",
-                                onSelected: (String format) {
-                                  _htmlEditorController.execCommand(
-                                      "formatBlock",
-                                      argument: format);
-                                },
-                                itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                    value: "h2",
-                                    child: Text("Heading 1",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold)
+
+                                // OL (Ordered List) Style Dropdown
+                                PopupMenuButton<String>(
+                                  constraints: BoxConstraints(
+                                    minWidth: 100, // Minimum width of the popup
+                                    maxWidth: 120, // Maximum width
+                                  ),
+                                  icon: Icon(Icons
+                                      .format_list_numbered), // Ordered List Button
+                                  tooltip: "Ordered List",
+                                  offset: Offset(0, 40),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  onSelected: (String style) {
+                                    _htmlEditorController.execCommand(
+                                        "insertHTML",
+                                        argument:
+                                            '<ol style="list-style-type: $style;"><li>List Item</li></ol>');
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      enabled:
+                                          false, // Disable selection on this item
+                                      child: Container(
+                                        width: 100, // Adjust width as needed
+                                        child: GridView.count(
+                                          shrinkWrap: true,
+                                          crossAxisCount: 3, // 3 items in a row
+                                          mainAxisSpacing: 5,
+                                          crossAxisSpacing: 5,
+                                          childAspectRatio: .85,
+                                          // Adjust for better layout
+                                          children: [
+                                            _buildListItem("decimal", "1"),
+                                            _buildListItem(
+                                                "decimal-leading-zero", "01"),
+                                            _buildListItem("lower-roman", "i"),
+                                            _buildListItem("upper-roman", "I"),
+                                            _buildListItem("lower-alpha", "a"),
+                                            _buildListItem("upper-alpha", "A"),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                PopupMenuButton<String>(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text("Paragraph",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                            )),
+                                        Icon(Icons
+                                            .arrow_drop_down), // Dropdown indicator
+                                      ],
                                     ),
                                   ),
-                                  PopupMenuItem(
-                                    value: "h3",
-                                    child: Text("Heading 2",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  PopupMenuItem(
-                                    value: "h4",
-                                    child: Text("Heading 3",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  PopupMenuItem(
-                                    value: "p",
-                                    child: Text("Paragraph",
-                                        style: TextStyle(fontSize: 14)),
-                                  ),
-                                ],
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.format_quote),
-                                tooltip: "Insert Quote",
-                                onPressed: () {
-                                  _htmlEditorController.execCommand(
-                                      "formatBlock",
-                                      argument: "blockquote");
-                                },
-                              ),
-                              PopupMenuButton<String>(
-                                icon: Icon(Icons.text_fields),
-                                tooltip: "Font Size",
-                                onSelected: (String text) {
-                                  _htmlEditorController.execCommand("fontSize",
-                                      argument: text);
-                                },
-                                itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                      value: "1", child: Text("tiny")),
-                                  PopupMenuItem(
-                                      value: "2", child: Text("small")),
-                                  PopupMenuItem(
-                                      value: "3", child: Text("default")),
-                                  PopupMenuItem(value: "5", child: Text("big")),
-                                  PopupMenuItem(
-                                      value: "7", child: Text("huge")),
-                                ],
-                              ),
-                            ],
-                            defaultToolbarButtons: [
-                              OtherButtons(
-                                  fullscreen: false,
-                                  help: false,
-                                  codeview: false,
-                                  undo: true,
-                                  redo: true,
-                                  copy: false,
-                                  paste: false),
-                              FontButtons(
-                                bold: true,
-                                italic: true,
-                                underline: false,
-                                strikethrough: false,
-                                subscript: false,
-                                superscript: false,
-                                clearAll: false,
-                              ),
-                              InsertButtons(
-                                picture: false,
-                                video: false,
-                                audio: false,
-                                table: true,
-                                hr: false,
-                              ),
-                              ListButtons(
-                                ul: true,
-                                ol: true,
-                                listStyles: false,
-                              ),
-                              ParagraphButtons(
-                                textDirection: false,
-                                lineHeight: false,
-                                caseConverter: false,
-                                decreaseIndent: false,
-                                increaseIndent: false,
-                              ),
-                              ColorButtons(),
-                            ],
-                          ),
+                                  tooltip: "Paragraph",
+                                  onSelected: (String format) {
+                                    _htmlEditorController.execCommand(
+                                        "formatBlock",
+                                        argument: format);
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: "h2",
+                                      child: Text("Heading 1",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "h3",
+                                      child: Text("Heading 2",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "h4",
+                                      child: Text("Heading 3",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "p",
+                                      child: Text("Paragraph",
+                                          style: TextStyle(fontSize: 14)),
+                                    ),
+                                  ],
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.format_quote),
+                                  tooltip: "Insert Quote",
+                                  onPressed: () {
+                                    _htmlEditorController.execCommand(
+                                        "formatBlock",
+                                        argument: "blockquote");
+                                  },
+                                ),
+                                PopupMenuButton<String>(
+                                  icon: Icon(Icons.text_fields),
+                                  tooltip: "Font Size",
+                                  onSelected: (String text) {
+                                    _htmlEditorController.execCommand(
+                                        "fontSize",
+                                        argument: text);
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                        value: "1", child: Text("tiny")),
+                                    PopupMenuItem(
+                                        value: "2", child: Text("small")),
+                                    PopupMenuItem(
+                                        value: "3", child: Text("default")),
+                                    PopupMenuItem(
+                                        value: "5", child: Text("big")),
+                                    PopupMenuItem(
+                                        value: "7", child: Text("huge")),
+                                  ],
+                                ),
+                              ],
+                              defaultToolbarButtons: [
+                                OtherButtons(
+                                    fullscreen: false,
+                                    help: false,
+                                    codeview: false,
+                                    undo: true,
+                                    redo: true,
+                                    copy: false,
+                                    paste: false),
+                                FontButtons(
+                                  bold: true,
+                                  italic: true,
+                                  underline: false,
+                                  strikethrough: false,
+                                  subscript: false,
+                                  superscript: false,
+                                  clearAll: false,
+                                ),
+                                InsertButtons(
+                                  picture: false,
+                                  video: false,
+                                  audio: false,
+                                  table: true,
+                                  hr: false,
+                                ),
+                                ListButtons(
+                                  ul: true,
+                                  ol: true,
+                                  listStyles: false,
+                                ),
+                                ParagraphButtons(
+                                  textDirection: false,
+                                  lineHeight: false,
+                                  caseConverter: false,
+                                  decreaseIndent: false,
+                                  increaseIndent: false,
+                                ),
+                                ColorButtons(),
+                              ],
+                            ),
                             plugins: [
-
                               SummernoteAtMention(
-                                //returns the dropdown items on mobile
+                                  //returns the dropdown items on mobile
                                   getSuggestionsMobile: (String value) {
-                                    List<String> mentions = ['Name', 'Url', 'EmailAddress'];
+                                    List<String> mentions = [
+                                      'Name',
+                                      'Url',
+                                      'EmailAddress'
+                                    ];
                                     return mentions
-                                        .where((element) => element.contains(value))
+                                        .where((element) =>
+                                            element.contains(value))
                                         .toList();
                                   },
                                   //returns the dropdown items on web
                                   mentionsWeb: ['test1', 'test2', 'test3'],
                                   onSelect: (String value) {
                                     print(value);
-                                  }
-                              ),
-                            ]
-                        ),
+                                  }),
+                            ]),
                       ],
                     ),
                   ),
@@ -1226,14 +1253,14 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
       ),
     );
   }
+
   Widget _buildListItem(String value, String text) {
     return GestureDetector(
       onTap: () {
         // Execute the command when an item is clicked
-        _htmlEditorController.execCommand(
-            "insertHTML",
-            argument: '<ol style="list-style-type: $value;"><li>List Item</li></ol>'
-        );
+        _htmlEditorController.execCommand("insertHTML",
+            argument:
+                '<ol style="list-style-type: $value;"><li>List Item</li></ol>');
       },
       child: Container(
         alignment: Alignment.center,
