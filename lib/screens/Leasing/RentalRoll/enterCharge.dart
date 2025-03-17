@@ -228,7 +228,6 @@ class _enterChargeState extends State<enterCharge> {
     // if (widget.chargeid != null) {
     //   fetchchargeData();
     // }
-
   }
 
   Future<void> fetchchargeData() async {
@@ -246,7 +245,7 @@ class _enterChargeState extends State<enterCharge> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)["data"];
       print(data);
-      
+
       Chargedata fetchedCharge = Chargedata.fromJson(data);
 
       setState(() {
@@ -261,10 +260,13 @@ class _enterChargeState extends State<enterCharge> {
         // Utility fee Libality Charge
         // Utility fee as One time charge .....  Utility fee_One charge
         for (var i = 0; i < fetchedCharge.entry!.length; i++) {
-          String chargeType = categorizedData.entries.firstWhere(
-                (entryData) => entryData.value.contains(fetchedCharge.entry![i].account),
-            orElse: () => MapEntry("Unknown", []), // Default if not found
-          ).key;
+          String chargeType = categorizedData.entries
+              .firstWhere(
+                (entryData) =>
+                    entryData.value.contains(fetchedCharge.entry![i].account),
+                orElse: () => MapEntry("Unknown", []), // Default if not found
+              )
+              .key;
           print(fetchedCharge.entry![i].amount);
           rows.add({
             'account': fetchedCharge.entry![i].account,
@@ -273,7 +275,8 @@ class _enterChargeState extends State<enterCharge> {
             'memo': Memo.text,
             'date': _startDate.text,
             'charge_type': chargeType, // Set matched charge type
-            'sub_charge_type': fetchedCharge.entry![i].chargeType, // Set original charge type
+            'sub_charge_type':
+                fetchedCharge.entry![i].chargeType, // Set original charge type
           });
           total += fetchedCharge.entry![i].amount!;
           totalAmount = total;
@@ -341,15 +344,14 @@ class _enterChargeState extends State<enterCharge> {
         List<dynamic> jsonResponse = json.decode(response.body)['data'];
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
-        fetchedData["Liability Account"] = [
-          "Late Fee Income",
-          "Pre-payments",
-          "Security Deposit",
-          'Rent Income'
-        ];
+        // Adding static items to the "LIABILITY ACCOUNT" category
+        fetchedData["Rent"] = ["Rent Income"];
+        fetchedData["Late Fee Income"] = ["Late Fee Income"];
+        fetchedData["Pre-payments"] = ["Pre-payments"];
+        fetchedData["Security Deposit"] = ["Security Deposit"];
 
         for (var item in jsonResponse) {
-          String chargeType = item['charge_type'];
+          String chargeType = item['charge_type'] ?? "One Time Charge";
           String account = item['account'];
 
           if (!fetchedData.containsKey(chargeType)) {
@@ -372,6 +374,7 @@ class _enterChargeState extends State<enterCharge> {
         });
       }
     } catch (e) {
+      print(e);
       setState(() {
         hasError = true;
         isLoading = false;
@@ -578,129 +581,123 @@ class _enterChargeState extends State<enterCharge> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const Text('Received From *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(
-                            height: 8,
-                          ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          tenants.isEmpty
-                              ?  Container(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.black,
-                                    size: 50.0,
-                                  ),
-                                )
-                              : DropdownButtonHideUnderline(
-                                  child: FormField<String>(
-                                    validator: (value) {
-                                      if (selectedTenantId == null) {
-                                        return 'Please select a tenant';
-                                      }
-                                      return null; // No error if valid
-                                    },
-                                    builder: (FormFieldState<String> state) {
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Text('Select Tenant'),
-                                            value: selectedTenantId,
-                                            items: tenants.map((tenant) {
-                                              return DropdownMenuItem<String>(
-                                                value: tenant['tenant_id'],
-                                                child: Text(
-                                                    tenant['tenant_name']!),
-                                              );
-                                            }).toList(),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selectedTenantId = value;
-                                                state.didChange(
-                                                    value); // Notify form field state
-                                              });
-                                              state.reset();
-                                              print(
-                                                  'Selected tenant_id: $selectedTenantId');
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 50,
-                                              width: 200,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 2,
-                                            ),
-                                            iconStyleData: const IconStyleData(
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                              ),
-                                              iconSize: 24,
-                                              iconEnabledColor:
-                                                  Color(0xFFb0b6c3),
-                                              iconDisabledColor: Colors.grey,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(6),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                          ),
-                                          if (state.hasError)
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5),
-                                              child: Text(
-                                                state.errorText!,
-                                                style: const TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(
-                            height: 20,
-                          ),
+                        // if (MediaQuery.of(context).size.width < 500)
+                        //   const Text('Received From *',
+                        //       style: TextStyle(
+                        //           fontSize: 13,
+                        //           fontWeight: FontWeight.bold,
+                        //           color: Colors.grey)),
+                        // if (MediaQuery.of(context).size.width < 500)
+                        //   const SizedBox(
+                        //     height: 8,
+                        //   ),
+                        // if (MediaQuery.of(context).size.width < 500)
+                        //   tenants.isEmpty
+                        //       ?  Container(
+                        //           child: SpinKitFadingCircle(
+                        //             color: Colors.black,
+                        //             size: 50.0,
+                        //           ),
+                        //         )
+                        //       : DropdownButtonHideUnderline(
+                        //           child: FormField<String>(
+                        //             validator: (value) {
+                        //               if (selectedTenantId == null) {
+                        //                 return 'Please select a tenant';
+                        //               }
+                        //               return null; // No error if valid
+                        //             },
+                        //             builder: (FormFieldState<String> state) {
+                        //               return Column(
+                        //                 crossAxisAlignment:
+                        //                     CrossAxisAlignment.start,
+                        //                 children: [
+                        //                   DropdownButton2<String>(
+                        //                     isExpanded: true,
+                        //                     hint: const Text('Select Tenant'),
+                        //                     value: selectedTenantId,
+                        //                     items: tenants.map((tenant) {
+                        //                       return DropdownMenuItem<String>(
+                        //                         value: tenant['tenant_id'],
+                        //                         child: Text(
+                        //                             tenant['tenant_name']!),
+                        //                       );
+                        //                     }).toList(),
+                        //                     onChanged: (value) {
+                        //                       setState(() {
+                        //                         selectedTenantId = value;
+                        //                         state.didChange(
+                        //                             value); // Notify form field state
+                        //                       });
+                        //                       state.reset();
+                        //                       print(
+                        //                           'Selected tenant_id: $selectedTenantId');
+                        //                     },
+                        //                     buttonStyleData: ButtonStyleData(
+                        //                       height: 50,
+                        //                       width: 200,
+                        //                       padding: const EdgeInsets.only(
+                        //                           left: 14, right: 14),
+                        //                       decoration: BoxDecoration(
+                        //                         borderRadius:
+                        //                             BorderRadius.circular(6),
+                        //                         color: Colors.white,
+                        //                       ),
+                        //                       elevation: 2,
+                        //                     ),
+                        //                     iconStyleData: const IconStyleData(
+                        //                       icon: Icon(
+                        //                         Icons.arrow_drop_down,
+                        //                       ),
+                        //                       iconSize: 24,
+                        //                       iconEnabledColor:
+                        //                           Color(0xFFb0b6c3),
+                        //                       iconDisabledColor: Colors.grey,
+                        //                     ),
+                        //                     dropdownStyleData:
+                        //                         DropdownStyleData(
+                        //                       decoration: BoxDecoration(
+                        //                         borderRadius:
+                        //                             BorderRadius.circular(6),
+                        //                         color: Colors.white,
+                        //                       ),
+                        //                       scrollbarTheme:
+                        //                           ScrollbarThemeData(
+                        //                         radius:
+                        //                             const Radius.circular(6),
+                        //                         thickness:
+                        //                             MaterialStateProperty.all(
+                        //                                 6),
+                        //                         thumbVisibility:
+                        //                             MaterialStateProperty.all(
+                        //                                 true),
+                        //                       ),
+                        //                     ),
+                        //                     menuItemStyleData:
+                        //                         const MenuItemStyleData(
+                        //                       height: 40,
+                        //                       padding: EdgeInsets.only(
+                        //                           left: 14, right: 14),
+                        //                     ),
+                        //                   ),
+                        //                   if (state.hasError)
+                        //                     Padding(
+                        //                       padding:
+                        //                           const EdgeInsets.only(top: 5),
+                        //                       child: Text(
+                        //                         state.errorText!,
+                        //                         style: const TextStyle(
+                        //                           color: Colors.red,
+                        //                           fontSize: 12,
+                        //                         ),
+                        //                       ),
+                        //                     ),
+                        //                 ],
+                        //               );
+                        //             },
+                        //           ),
+                        //         ),
+
                         if (MediaQuery.of(context).size.width < 500)
                           const Text('Date',
                               style: TextStyle(
@@ -1230,7 +1227,6 @@ class _enterChargeState extends State<enterCharge> {
                                     //   ),
                                     // ),
 
-
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: DropdownButtonHideUnderline(
@@ -1247,9 +1243,8 @@ class _enterChargeState extends State<enterCharge> {
                                             String? selectedAccount =
                                                 row['account'];
 
-
                                             String? selectedCharge =
-                                            row['charge_type'];
+                                                row['charge_type'];
                                             // List of all dropdown items, including missing ones
                                             Map<String, List<String>>
                                                 categorizedDataCopy =
@@ -1271,7 +1266,6 @@ class _enterChargeState extends State<enterCharge> {
                                                   .add(selectedAccount);
                                             }
 
-
                                             List<String> liabilityAccounts = [
                                               "Late Fee Income",
                                               "Pre-payments",
@@ -1280,28 +1274,34 @@ class _enterChargeState extends State<enterCharge> {
                                             ];
                                             String? surchargetype;
                                             if (selectedCharge == "Surcharge") {
-                                              for (var entry in categorizedData.entries) {
-                                                if (entry.value.contains(selectedAccount)) {
-                                                  print("Account found: $selectedAccount in category: ${entry.key}");
+                                              for (var entry
+                                                  in categorizedData.entries) {
+                                                if (entry.value.contains(
+                                                    selectedAccount)) {
+                                                  print(
+                                                      "Account found: $selectedAccount in category: ${entry.key}");
                                                   surchargetype = entry.key;
                                                   break;
                                                 }
                                               }
                                             }
-                                            bool nosurcharge= false;
-                                            if (row["charge_type"] == "Surcharge") {
+                                            bool nosurcharge = false;
+                                            if (row["charge_type"] ==
+                                                "Surcharge") {
                                               print("Surcharge calling");
 
-                                              for (var entry in categorizedData.entries) {
-                                                if (entry.value.contains(row['account'])) {
-                                                  print("Account found: ${row['account']} in category: ${entry.key}");
+                                              for (var entry
+                                                  in categorizedData.entries) {
+                                                if (entry.value
+                                                    .contains(row['account'])) {
+                                                  print(
+                                                      "Account found: ${row['account']} in category: ${entry.key}");
                                                   surchargetype = entry.key;
                                                 }
                                               }
-                                              if(surchargetype == ""){
+                                              if (surchargetype == "") {
                                                 nosurcharge = true;
                                               }
-
                                             }
 
                                             // Prepare the dropdown items
@@ -1347,22 +1347,28 @@ class _enterChargeState extends State<enterCharge> {
                                                   }).toList(),
                                                 ];
                                               }).toList(),
-                                              if (row['account'] != null && !categorizedData.values.expand((v) => v).contains(row['account']))
-                                                        DropdownMenuItem<String>(
-                                                          value:"${row['account']}_${row['charge_type']}",
-                                                          child: Padding(
-                                                            padding: const EdgeInsets.only(left: 0.0),
-                                                            child: Text(
-                                                              row['account']!,
-                                                              style: const TextStyle(
-                                                                color: Colors.black,
-                                                                fontWeight: FontWeight.w400,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
+                                              if (row['account'] != null &&
+                                                  !categorizedData.values
+                                                      .expand((v) => v)
+                                                      .contains(row['account']))
+                                                DropdownMenuItem<String>(
+                                                  value:
+                                                      "${row['account']}_${row['charge_type']}",
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 0.0),
+                                                    child: Text(
+                                                      row['account']!,
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                             ];
-
 
                                             return Column(
                                               crossAxisAlignment:
@@ -1381,15 +1387,16 @@ class _enterChargeState extends State<enterCharge> {
                                                   //         ? "${row['account']}_Liability Account"
                                                   //         : "${row['account']}_${row['charge_type']}")
                                                   //     : null,
-                                                 // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
-                                                 //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
-                                                 //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
+                                                  // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
+                                                  //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
+                                                  //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
                                                   value: row['account'] != null
-                                                      ? (liabilityAccounts.contains(row['account'])
-                                                      ? "${row['account']}_Liability Account"
-                                                      : (row['charge_type'] == "Surcharge" && surchargetype != null
-                                                      ? "${row['account']}_$surchargetype"
-                                                      : "${row['account']}_${row['charge_type']}"))
+                                                      ? ((row['charge_type'] ==
+                                                                  "Surcharge" &&
+                                                              surchargetype !=
+                                                                  null
+                                                          ? "${row['account']}_$surchargetype"
+                                                          : "${row['account']}_${row['charge_type']}"))
                                                       : null,
                                                   items: dropdownItems,
                                                   onChanged: (value) {
@@ -1499,7 +1506,6 @@ class _enterChargeState extends State<enterCharge> {
                                         ),
                                       ),
                                     ),
-
 
                                     Container(
                                       margin: EdgeInsets.only(top: 5),
@@ -1617,7 +1623,6 @@ class _enterChargeState extends State<enterCharge> {
                             color: Colors.red, fontWeight: FontWeight.bold),
                       ),
                     ),
-
                   const SizedBox(
                     height: 20,
                   ),
@@ -1745,199 +1750,230 @@ class _enterChargeState extends State<enterCharge> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(8.0))),
-                              onPressed: () async {
-                                if (_formKey.currentState?.validate() ??
-                                    false) {
-                                  setState(() {
-                                    _isLoading = true;
-                                  });
-
-                                  print(rows
-                                      .where((e) => e["charge_type"] == null));
-
-                                  if (validationMessage == null) {
-                                    if (widget.chargeid != null) {
-                                      SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
-                                      String adminId =
-                                          prefs.getString('adminId').toString();
-
-                                      List<Entry> entryList = rows.map((row) {
-                                        String formattedDate = reverseFormatDate(row['date'] ?? "");
-                                        return Entry(
-                                          account: row['account'],
-                                          amount: row['amount']?.toInt() ?? 0,
-                                          dueAmount:
-                                              0, // Adjust according to your requirement
-                                          memo: row['memo'],
-                                          date: formattedDate,
-                                          chargeType: (row["account"] == "" ||
-                                              row["account"] == "Late Fee Income" ||
-                                              row["account"] == "Pre-payments")
-                                              ? row["account"]
-                                              : "One Time Charge",
-                                       //   chargeType: row['charge_type'],
-                                          isRepeatable:
-                                              false, // Adjust according to your requirement
-                                        );
-                                      }).toList();
-
-                                      print("amount ${Amount.text.trim()}");
-                                      int totalAmount =
-                                          int.tryParse(Amount.text.trim()) ?? 0;
-                                      Charge charge = Charge(
-                                        adminId: adminId,
-                                        isLeaseAdded: false,
-                                        leaseId: widget.leaseId,
-                                        tenantId: selectedTenantId!,
-                                        totalAmount: totalAmount,
-                                        uploadedFile: _uploadedFileNames,
-                                        entry: entryList,
-                                      );
-                                      print('file ${_uploadedFileNames}');
-
-                                      LeaseRepository apiService =
-                                          LeaseRepository();
-                                      int statusCode =
-                                          await apiService.EditCharge(
-                                              charge, widget.chargeid!);
-
-                                      if (statusCode == 200) {
+                              onPressed: isLoading
+                                  ? null
+                                  : () async {
+                                      if (_formKey.currentState?.validate() ??
+                                          false) {
                                         setState(() {
-                                          _isLoading = false;
+                                          _isLoading = true;
                                         });
-                                        Fluttertoast.showToast(
-                                          msg: "Charge Edited successfully",
-                                        );
-                                        Navigator.pop(context, true);
-                                      } else {
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        Fluttertoast.showToast(
-                                          msg: "Failed to post charge",
-                                        );
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                      }
-                                    } else {
-                                      SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
-                                      String adminId =
-                                          prefs.getString('adminId').toString();
 
-                                      List<Entry> entryList = rows.map((row) {
-                                        print(" accocunt ${row["account"]}");
-                                        String formattedDate = reverseFormatDate(row['date'] ?? "");
-                                        return Entry(
-                                          account: row['account'],
-                                          amount: row['amount']?.toInt() ?? 0,
-                                          dueAmount:
-                                              0, // Adjust according to your requirement
-                                          memo: row['memo'],
-                                          date:formattedDate,
-                                          chargeType: (row["account"] == "" ||
-                                              row["account"] == "Late Fee Income" ||
-                                              row["account"] == "Pre-payments")
-                                              ? row["account"]
-                                              : "One Time Charge",
-                                        //  chargeType: row['charge_type'],
-                                          isRepeatable:
-                                              false, // Adjust according to your requirement
-                                        );
-                                      }).toList();
+                                        print(rows.where(
+                                            (e) => e["charge_type"] == null));
 
-                                      int totalAmount =
-                                          int.tryParse(Amount.text.trim()) ?? 0;
+                                        if (validationMessage == null) {
+                                          if (widget.chargeid != null) {
+                                            SharedPreferences prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            String adminId = prefs
+                                                .getString('adminId')
+                                                .toString();
 
-                                      Charge charge = Charge(
-                                        adminId: adminId,
-                                        isLeaseAdded: false,
-                                        leaseId: widget.leaseId,
-                                        tenantId: selectedTenantId!,
-                                        totalAmount: totalAmount,
-                                        uploadedFile: _uploadedFileNames,
-                                        entry: entryList,
-                                      );
-                                      print('file ${_uploadedFileNames}');
+                                            List<Entry> entryList =
+                                                rows.map((row) {
+                                              String formattedDate =
+                                                  reverseFormatDate(
+                                                      row['date'] != ""
+                                                          ? row['date']
+                                                          : _startDate.text);
+                                              return Entry(
+                                                account: row['account'],
+                                                amount:
+                                                    row['amount']?.toInt() ?? 0,
+                                                dueAmount:
+                                                    0, // Adjust according to your requirement
+                                                memo: row['memo'],
+                                                date: formattedDate,
+                                                chargeType: (row["account"] ==
+                                                            "" ||
+                                                        row["account"] ==
+                                                            "Late Fee Income" ||
+                                                        row["account"] ==
+                                                            "Pre-payments")
+                                                    ? row["account"]
+                                                    : "One Time Charge",
+                                                //   chargeType: row['charge_type'],
+                                                isRepeatable:
+                                                    false, // Adjust according to your requirement
+                                              );
+                                            }).toList();
 
-                                      print('add charge ${charge.toJson()}');
-                                      print('add entry ${charge.entry.first.date}');
+                                            print(
+                                                "amount ${Amount.text.trim()}");
+                                            int totalAmount = int.tryParse(
+                                                    Amount.text.trim()) ??
+                                                0;
+                                            Charge charge = Charge(
+                                              adminId: adminId,
+                                              isLeaseAdded: false,
+                                              leaseId: widget.leaseId,
+                                              tenantId: selectedTenantId!,
+                                              totalAmount: totalAmount,
+                                              uploadedFile: _uploadedFileNames,
+                                              entry: entryList,
+                                            );
+                                            print('file ${_uploadedFileNames}');
 
-                                      LeaseRepository apiService =
-                                          LeaseRepository();
-                                      int statusCode =
-                                          await apiService.postCharge(charge);
+                                            LeaseRepository apiService =
+                                                LeaseRepository();
+                                            int statusCode =
+                                                await apiService.EditCharge(
+                                                    charge, widget.chargeid!);
 
-                                      if (statusCode == 200) {
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        Fluttertoast.showToast(
-                                          msg: "Charge posted successfully",
-                                        );
-                                        if(isChecked == true){
-                                          resetFields();
+                                            if (statusCode == 200) {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "Charge Edited successfully",
+                                              );
+                                              Navigator.pop(context, true);
+                                            } else {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              Fluttertoast.showToast(
+                                                msg: "Failed to post charge",
+                                              );
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                            }
+                                          } else {
+                                            SharedPreferences prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            String adminId = prefs
+                                                .getString('adminId')
+                                                .toString();
 
+                                            List<Entry> entryList =
+                                                rows.map((row) {
+                                              print(
+                                                  " accocunt ${row["account"]}");
+                                              String formattedDate =
+                                                  reverseFormatDate(
+                                                      row['date'] != ""
+                                                          ? row['date']
+                                                          : _startDate.text);
+                                              return Entry(
+                                                account: row['account'],
+                                                amount:
+                                                    row['amount']?.toInt() ?? 0,
+                                                dueAmount:
+                                                    0, // Adjust according to your requirement
+                                                memo: row['memo'],
+                                                date: formattedDate,
+                                                chargeType: (row["account"] ==
+                                                            "" ||
+                                                        row["account"] ==
+                                                            "Late Fee Income" ||
+                                                        row["account"] ==
+                                                            "Pre-payments")
+                                                    ? row["account"]
+                                                    : "One Time Charge",
+                                                //  chargeType: row['charge_type'],
+                                                isRepeatable:
+                                                    false, // Adjust according to your requirement
+                                              );
+                                            }).toList();
+
+                                            int totalAmount = int.tryParse(
+                                                    Amount.text.trim()) ??
+                                                0;
+
+                                            Charge charge = Charge(
+                                              adminId: adminId,
+                                              isLeaseAdded: false,
+                                              leaseId: widget.leaseId,
+                                              tenantId: "",
+                                              totalAmount: totalAmount,
+                                              uploadedFile: _uploadedFileNames,
+                                              entry: entryList,
+                                            );
+                                            print('file ${_uploadedFileNames}');
+
+                                            print(
+                                                'add charge ${charge.toJson()}');
+                                            print(
+                                                'add entry ${charge.entry.first.date}');
+
+                                            LeaseRepository apiService =
+                                                LeaseRepository();
+                                            int statusCode = await apiService
+                                                .postCharge(charge);
+
+                                            if (statusCode == 200) {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "Charge posted successfully",
+                                              );
+                                              if (isChecked == true) {
+                                                resetFields();
+                                              } else {
+                                                Navigator.pop(context, true);
+                                              }
+                                            } else {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              Fluttertoast.showToast(
+                                                msg: "Failed to post charge",
+                                              );
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                            }
+                                          }
                                         }
-                                        else{
-                                          Navigator.pop(context, true);
-                                        }
 
+                                        //charges
                                       } else {
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        Fluttertoast.showToast(
-                                          msg: "Failed to post charge",
-                                        );
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
+                                        print('invalid');
+                                        print(selectedTenantId);
+                                        print(rows);
+                                        print(totalAmount);
+                                        print(_startDate.text);
+                                        print(Amount.text);
+                                        print(Memo.text);
                                       }
-                                    }
-                                  }
-
-                                  //charges
-                                } else {
-                                  print('invalid');
-                                  print(selectedTenantId);
-                                  print(rows);
-                                  print(totalAmount);
-                                  print(_startDate.text);
-                                  print(Amount.text);
-                                  print(Memo.text);
-                                }
-                              },
-                              child: _isLoading ? Center(
-                                child: SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 30.0,
-                                ),
-                              ) : widget.chargeid != null
-                                  ? Text(
-                                      'Edit charge',
-                                      style: TextStyle(
-                                          color: Color(0xFFf7f8f9),
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 16
-                                              : 18),
+                                    },
+                              child: _isLoading
+                                  ? Center(
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 30.0,
+                                      ),
                                     )
-                                  : Text(
-                                      'Add charge',
-                                      style: TextStyle(
-                                          color: Color(0xFFf7f8f9),
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 16
-                                              : 18),
-                                    ))),
+                                  : widget.chargeid != null
+                                      ? Text(
+                                          'Edit charge',
+                                          style: TextStyle(
+                                              color: Color(0xFFf7f8f9),
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 16
+                                                  : 18),
+                                        )
+                                      : Text(
+                                          'Add charge',
+                                          style: TextStyle(
+                                              color: Color(0xFFf7f8f9),
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 16
+                                                  : 18),
+                                        ))),
                       const SizedBox(
                         width: 8,
                       ),
@@ -1953,9 +1989,7 @@ class _enterChargeState extends State<enterCharge> {
                                       borderRadius:
                                           BorderRadius.circular(8.0))),
                               onPressed: () {
-
-
-                                  Navigator.pop(context);
+                                Navigator.pop(context);
                                 // firstName.clear();
                                 // lastName.clear();
                                 // email.clear();
@@ -1975,45 +2009,46 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 20,
                   ),
-                  if(widget.chargeid == null)
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 5,
-                      ),
-                      SizedBox(
-                        width: 24.0, // Standard width for checkbox
-                        height: 24.0,
-                        child: Checkbox(
-                          value: isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              isChecked = value ?? false;
-                            });
-                          },
-                          activeColor: isChecked ? blueColor : Colors.black,
+                  if (widget.chargeid == null)
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 5,
                         ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        "Add Another Charge",
-                        style:
-                        TextStyle(color: blueColor, fontWeight: FontWeight.bold),
-                      ),
-
-                    ],
-                  ),
-                  SizedBox(height: 50,)
+                        SizedBox(
+                          width: 24.0, // Standard width for checkbox
+                          height: 24.0,
+                          child: Checkbox(
+                            value: isChecked,
+                            onChanged: (value) {
+                              setState(() {
+                                isChecked = value ?? false;
+                              });
+                            },
+                            activeColor: isChecked ? blueColor : Colors.black,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Add Another Charge",
+                          style: TextStyle(
+                              color: blueColor, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  SizedBox(
+                    height: 50,
+                  )
                 ],
               ),
             ),
           ),
         ));
   }
-  void resetFields() {
 
+  void resetFields() {
     // _startDate.clear();
 
     //amountController.clear();
@@ -2027,13 +2062,11 @@ class _enterChargeState extends State<enterCharge> {
     _uploadedFileNames.clear();
     _pdfFiles.clear();
 
-
     // rows.clear();
     // charges_balances = [0.0];
 
     // controllers.clear();
     // Optionally, you can also reset the isChecked variable if needed
     isChecked = false;
-
   }
 }

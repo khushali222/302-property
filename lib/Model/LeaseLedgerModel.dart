@@ -56,6 +56,8 @@ class Data {
   int? iV;
   String? check_number;
   String? reference;
+  String? state;
+  String? responseText;
   dynamic tenantData; // tenantData is dynamic to handle any JSON structure
   double? balance; // Adjusted to double
 
@@ -83,7 +85,9 @@ class Data {
     this.paymentId,
     this.billing_id,
     this.check_number,
-    this.reference
+    this.reference,
+    this.state,
+    this.responseText
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -114,6 +118,8 @@ class Data {
     tenantData = json['tenantData'];
     check_number = json["check_number"];
     reference = json["reference"];
+    state = json["state"]?? "";
+    responseText = json["responseText"]??"";
     balance = (json['balance'] as num?)?.toDouble()??0.0; // Parse as double
     customer_vault_id = json['customer_vault_id'].toString() ?? "";
     billing_id = json['billing_id'].toString() ??"";

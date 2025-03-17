@@ -277,7 +277,7 @@ class accountRepository{
       'account': account,
       'account_type': accounttype,
       'fund_type': fundtype,
-      'charge_type': chargetype,
+
       'notes': notes,
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();

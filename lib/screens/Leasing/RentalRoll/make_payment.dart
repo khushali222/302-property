@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -107,9 +108,10 @@ class _MakePaymentState extends State<MakePayment> {
   void initState() {
     super.initState();
     if (widget.isEdit != null) editpayment();
+    fetchDropdownData();
     fetchTenants();
     fetchCompany();
-    fetchDropdownData();
+
     fetchSurcharge();
     //totalAmount = chargeAmount + surchargeIncluded;
     // amountController.addListener(_updateTotalAmount);
@@ -176,54 +178,63 @@ class _MakePaymentState extends State<MakePayment> {
   List<BillingData> cardDetails = [];
 
   Future<void> fetchTenants() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String? id = prefs.getString("adminId");
-    final response = await http.get(
-      Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
-      headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-      },
-    );
+    try{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString("adminId");
+      final response = await http.get(
+        Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      print(data);
-      final List<Map<String, String>> fetchedTenants = [];
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print(data);
+        final List<Map<String, String>> fetchedTenants = [];
 
-      for (var tenant in data['data']['tenants']) {
-        fetchedTenants.add({
-          'tenant_id': tenant['tenant_id'],
-          'tenant_name': '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
-          'first_name': '${tenant['tenant_firstName']}',
-          'last_name': '${tenant['tenant_lastName']}',
-          'email': '${tenant['tenant_email']}',
-          'overridefee': '${tenant['override_fee']}',
-        });
-      }
-
-      setState(() {
-        tenants = fetchedTenants;
-        if (tenants.length == 1) {
-          selectedTenantId = tenants.first["tenant_id"];
-          fetchChargesForSelectedTenant(selectedTenantId!);
-          fetchcreditcard(selectedTenantId!);
-        } else if (tenants.length > 1) {
-          // If there are multiple tenants, select the first tenant and fetch their charges
-          selectedTenantId = tenants.first["tenant_id"];
-          tenantname = tenants.first["tenant_name"]!;
+        for (var tenant in data['data']['tenants']) {
+          fetchedTenants.add({
+            'tenant_id': tenant['tenant_id'],
+            'tenant_name': '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
+            'first_name': '${tenant['tenant_firstName']}',
+            'last_name': '${tenant['tenant_lastName']}',
+            'email': '${tenant['tenant_email']}',
+            'overridefee': '${tenant['override_fee']}',
+          });
         }
-        // if (selectedTenantId != null) {
-        //   fetchChargesForSelectedTenant(selectedTenantId!);
-        //   fetchcreditcard(selectedTenantId!);
-        // }
-        processor_id = data["processor_id"] ?? "";
-      });
-      print(' fetch teant ${fetchedTenants.length}');
-    } else {
-      throw Exception('Failed to load tenants');
+
+        setState(() {
+          tenants = fetchedTenants;
+          if (tenants.length == 1) {
+            selectedTenantId = tenants.first["tenant_id"];
+
+            fetchChargesForSelectedTenant(selectedTenantId!);
+            fetchcreditcard(selectedTenantId!);
+          } else if (tenants.length > 1) {
+            // If there are multiple tenants, select the first tenant and fetch their charges
+            selectedTenantId = tenants.first["tenant_id"];
+
+            fetchChargesForSelectedTenant(selectedTenantId!);
+            tenantname = tenants.first["tenant_name"]!;
+          }
+          // if (selectedTenantId != null) {
+          //   fetchChargesForSelectedTenant(selectedTenantId!);
+          //   fetchcreditcard(selectedTenantId!);
+          // }
+          processor_id = data["processor_id"] ?? "";
+        });
+        print(' fetch teant ${fetchedTenants.length}');
+      } else {
+        throw Exception('Failed to load tenants');
+      }
     }
+    catch(e){
+      print(e);
+    }
+
   }
 
   String? getOverrideFee(String tenantId) {
@@ -236,7 +247,7 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   Future<void> fetchDropdownData() async {
-    try {
+   // try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
@@ -250,24 +261,33 @@ class _MakePaymentState extends State<MakePayment> {
           "id": "CRM $id",
         },
       );
+      print(response.body);
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body)['data'];
-        print("accounts data $jsonResponse");
+        log("accounts data $jsonResponse");
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
-        fetchedData["Liability Account"] = ["Late Fee Income", "Pre-payments", "Security Deposit", 'Rent Income'];
-        for (var item in jsonResponse) {
-          String chargeType = item['charge_type'];
-          String account = item['account'];
+        fetchedData["Rent"] = ["Rent Income"];
+        fetchedData["Late Fee Income"] = ["Late Fee Income"];
+        fetchedData["Pre-payments"] = ["Pre-payments"];
+        fetchedData["Security Deposit"] = ["Security Deposit"];
 
+        for (var item in jsonResponse) {
+          String chargeType = item['charge_type'] ?? "One Time Charge";
+          String account = item['account'];
+          print(chargeType);
           if (!fetchedData.containsKey(chargeType)) {
             fetchedData[chargeType] = [];
           }
+
           fetchedData[chargeType]!.add(account);
+
+
         }
+
         setState(() {
           categorizedData = fetchedData;
-          print(categorizedData);
+          print("fetch charge data ${categorizedData}");
           isLoading = false;
         });
       } else {
@@ -276,12 +296,13 @@ class _MakePaymentState extends State<MakePayment> {
           isLoading = false;
         });
       }
-    } catch (e) {
-      setState(() {
-        hasError = true;
-        isLoading = false;
-      });
-    }
+    // } catch (e) {
+    //   print(e);
+    //   setState(() {
+    //     hasError = true;
+    //     isLoading = false;
+    //   });
+    // }
   }
 
   List<Map<String, dynamic>> rows = [];
@@ -494,7 +515,11 @@ class _MakePaymentState extends State<MakePayment> {
                       : categorizedData.entries
                           .firstWhere(
                             (entryData) => entryData.value.contains(entry.account),
-                            orElse: () => MapEntry("Unknown", []), // Default if not found
+                orElse: () {
+                  // If the chargeType is not found, add it dynamically
+                  categorizedData[entry.chargeType!] = [...(categorizedData[entry.chargeType!] ?? []), entry.account!];
+                  return MapEntry(entry.chargeType!, []);
+                },
                           )
                           .key;
               print(chargeType);
@@ -538,6 +563,7 @@ class _MakePaymentState extends State<MakePayment> {
         isLoading = false;
       });
     } catch (e) {
+      print(e);
       setState(() {
         hasError = true;
         isLoading = false;
@@ -2372,12 +2398,13 @@ class _MakePaymentState extends State<MakePayment> {
                                               Map<String, List<String>> categorizedDataCopy = Map.from(categorizedData);
 
                                               // Ensure the selected value is present in the list
-                                              if (selectedAccount != null && !categorizedData.values.expand((list) => list).contains(selectedAccount)) {
-                                                if (categorizedDataCopy['Other'] == null) {
-                                                  categorizedDataCopy['Other'] = [];
-                                                }
-                                                categorizedDataCopy['Other']!.add(selectedAccount);
-                                              }
+                                              // if (selectedAccount != null && !categorizedData.values.expand((list) => list).contains(selectedAccount)) {
+                                              //   if (categorizedDataCopy['Other'] == null) {
+                                              //     categorizedDataCopy['Other'] = [];
+                                              //   }
+                                              //   categorizedDataCopy['Other']!.add(selectedAccount);
+                                              // }
+                                              print("categoriezed Data ${categorizedDataCopy}");
                                               print(row);
                                               if (row['charge_type'] == "Rent") {}
                                               List<String> liabilityAccounts = ["Late Fee Income", "Pre-payments", "Security Deposit", 'Rent Income'];
@@ -2399,11 +2426,9 @@ class _MakePaymentState extends State<MakePayment> {
                                                     //                 'account'])
                                                     //         ? ""
                                                     //         : "${row['account']}_${row['charge_type']}",
-                                                    value: liabilityAccounts.contains(row['account'])
-                                                        ? "${row['account']}_Liability Account"
-                                                        : (row['account'] == null || row['account'].isEmpty || row['charge_type'] == null || row['charge_type'].isEmpty)
-                                                            ? null // Default value that is part of the items
-                                                            : "${row['account']}_${row['charge_type']}",
+                                                    value: (row['account'] == null || row['account'].isEmpty || row['charge_type'] == null || row['charge_type'].isEmpty)
+                                                        ? null // Default value that is part of the items
+                                                        : "${row['account']}_${row['charge_type']}",
                                                     items: [
                                                       ...categorizedDataCopy.entries.expand((entry) {
                                                         return [

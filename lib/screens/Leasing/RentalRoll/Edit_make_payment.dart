@@ -68,6 +68,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   double? surchargecount = 0.0;
   double? finaltotal;
   String tenantname = "";
+  String billingID = "";
+  String customerVaultID = "";
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -105,6 +107,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   @override
   void initState() {
     super.initState();
+
     fetchDropdownData();
 
     fetchTenants();
@@ -128,10 +131,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       tenantname = "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
       _startDate.text = formatDate(c_data.entry!.first.date!);
       amountController.text = c_data.totalAmount.toString();
+      customerVaultID = c_data.customer_vault_id!;
       _selectedPaymentMethod = c_data.paymenttype;
       if (_selectedPaymentMethod != "Cash") checknumber.text = c_data!.check_number ?? "";
       reference.text = c_data!.reference ?? "";
-
+      billingID = c_data.billing_id! ?? "";
       print('charge details ${charges!.length}');
       rows = c_data.entry?.map((entry) {
             String? chargeType = (entry.account == "Late Fee Income" || entry.account == "Pre-payments" || entry.account == "Security Deposit")
@@ -144,7 +148,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                           orElse: () => MapEntry("Unknown", []), // Default if not found
                         )
                         .key;
-            print(chargeType);
+            print(entry.chargeType);
             return {
               'entry_id': entry.entryId,
               'account': entry.account,
@@ -247,18 +251,25 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       );
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body)['data'];
+
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
-        fetchedData["Liability Account"] = ["Late Fee Income", "Pre-payments", "Security Deposit", 'Rent Income'];
-        for (var item in jsonResponse) {
-          String chargeType = item['charge_type'];
-          String account = item['account'];
+        fetchedData["Rent"] = ["Rent Income"];
+        fetchedData["Late Fee Income"] = ["Late Fee Income"];
+        fetchedData["Pre-payments"] = ["Pre-payments"];
+        fetchedData["Security Deposit"] = ["Security Deposit"];
 
+        for (var item in jsonResponse) {
+          String chargeType = item['charge_type'] ?? "One Time Charge";
+          String account = item['account'];
+          print(chargeType);
           if (!fetchedData.containsKey(chargeType)) {
             fetchedData[chargeType] = [];
           }
+
           fetchedData[chargeType]!.add(account);
         }
+
         setState(() {
           categorizedData = fetchedData;
           isLoading = false;
@@ -507,12 +518,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                   ? entry.account
                   : entry.account == "Rent Income"
                       ? "Rent"
-                      : categorizedData.entries
-                          .firstWhere(
-                            (entryData) => entryData.value.contains(entry.account),
-                            orElse: () => MapEntry("Unknown", []), // Default if not found
-                          )
-                          .key;
+                      : categorizedData.entries.firstWhere(
+                          (entryData) => entryData.value.contains(entry.account),
+                          orElse: () {
+                            // If the chargeType is not found, add it dynamically
+                            categorizedData[entry.chargeType!] = [...(categorizedData[entry.chargeType!] ?? []), entry.account!];
+                            return MapEntry(entry.chargeType!, []);
+                          },
+                        ).key;
               print(chargeType);
               return {
                 'entry_id': entry.entryId,
@@ -1451,207 +1464,207 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            if (showCardNumberField) ...[
-                              const SizedBox(height: 15),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.blueGrey[50],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: FormField<String>(validator: (value) {
-                                  if (selectedcardindex == null || _selectedPaymentMethod!.isEmpty) {
-                                    return 'Please select a card';
-                                  }
-                                  return null;
-                                }, builder: (FormFieldState<String> state) {
-                                  return Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            "Cards",
-                                            style: TextStyle(fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      cardDetails.isEmpty
-                                          ? Container(
-                                              child: Center(child: Text('No Cards Avaiable')),
-                                            )
-                                          : SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: DataTable(
-                                                dataRowHeight: 75,
-                                                horizontalMargin: 0.0,
-                                                columnSpacing: 40.0,
-                                                columns: [
-                                                  DataColumn(
-                                                    label: Text(
-                                                      'Select',
-                                                      style: TextStyle(color: blueColor),
-                                                    ),
-                                                  ),
-                                                  DataColumn(
-                                                    label: Text(
-                                                      'Card Number',
-                                                      style: TextStyle(color: blueColor),
-                                                    ),
-                                                  ),
-                                                  DataColumn(
-                                                    label: Text(
-                                                      'Card Type',
-                                                      style: TextStyle(color: blueColor),
-                                                    ),
-                                                  ),
-                                                ],
-                                                rows: cardDetails.asMap().entries.map((entry) {
-                                                  int index = entry.key;
-                                                  BillingData item = entry.value;
-                                                  String month = item.ccExp!.substring(0, 2);
-                                                  String year = item.ccExp!.substring(2, 4);
-                                                  //  print(month);
-                                                  String currentMonth = DateTime.now().month.toString().padLeft(2, '0');
-
-                                                  String currentYear = DateTime.now().year.toString().substring(2);
-
-                                                  String currentMonthYear = currentMonth + currentYear;
-                                                  /* print(
-                                                          'Current: $currentMonthYear');*/
-
-                                                  String expMonthYear = item.ccExp!;
-                                                  String expMonth = expMonthYear.substring(0, 2);
-                                                  String expYear = expMonthYear.substring(2, 4);
-                                                  bool isExpired =
-                                                      int.parse(expYear) < int.parse(currentYear) || (int.parse(expYear) == int.parse(currentYear) && int.parse(expMonth) < int.parse(currentMonth));
-
-                                                  /* print(
-                                                          'Expiration date passed: $isExpired');
-                                      */
-                                                  return DataRow(cells: [
-                                                    DataCell(
-                                                      isExpired == true
-                                                          ? const Text('Expired', style: TextStyle(color: Colors.red))
-                                                          : Checkbox(
-                                                              value: selectedcardindex == index ? true : false,
-                                                              onChanged: (bool? value) async {
-                                                                setState(() {
-                                                                  state.didChange(index.toString());
-                                                                  selectedcardindex = index;
-                                                                });
-                                                                state.reset();
-                                                                await fetchSurcharge();
-                                                              },
-                                                            ),
-                                                    ),
-                                                    DataCell(Text(
-                                                      item.ccNumber!,
-                                                      style: TextStyle(fontSize: 13, color: blueColor),
-                                                    )),
-                                                    DataCell(Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        const SizedBox(height: 4),
-                                                        _buildLogosBlock(item.ccType!),
-                                                        const SizedBox(height: 4),
-                                                        Text(
-                                                          '${item.binResult} CARD',
-                                                          style: const TextStyle(fontSize: 12, color: Color.fromRGBO(21, 43, 81, 1)),
-                                                        ),
-                                                      ],
-                                                    )),
-                                                  ]);
-                                                }).toList(),
-                                              ),
-                                            ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Row(
-                                          children: [
-                                            if (surCharge != null)
-                                              // ignore: unrelated_type_equality_checks
-                                              Text(
-                                                '${cardDetails[selectedcardindex!].binResult} card transactions will charge $surCharge%',
-                                                style: TextStyle(color: blueColor, fontSize: 14, fontWeight: FontWeight.w500),
-                                              ),
-                                            if (state.hasError)
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 5),
-                                                child: Text(
-                                                  state.errorText ?? '',
-                                                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) => AddCard(
-                                                            leaseId: widget.leaseId,
-                                                          )));
-                                            },
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(5.0),
-                                              child: Container(
-                                                height: MediaQuery.of(context).size.height * .04,
-                                                // width: MediaQuery.of(context).size.width * .36,
-                                                width: MediaQuery.of(context).size.width < 500 ? 80 : 90,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(5.0),
-                                                  color: blueColor,
-                                                  boxShadow: [
-                                                    const BoxShadow(
-                                                      color: Colors.grey,
-                                                      offset: Offset(0.0, 1.0), //(x,y)
-                                                      blurRadius: 6.0,
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: Center(
-                                                  child: isLoading
-                                                      ? const SpinKitFadingCircle(
-                                                          color: Colors.white,
-                                                          size: 25.0,
-                                                        )
-                                                      : Text(
-                                                          "Add Card",
-                                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 17),
-                                                        ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                    ],
-                                  );
-                                }),
-                              ),
-                              const SizedBox(height: 15),
-                            ],
+                            // if (showCardNumberField) ...[
+                            //   const SizedBox(height: 15),
+                            //   Container(
+                            //     decoration: BoxDecoration(
+                            //       color: Colors.blueGrey[50],
+                            //       borderRadius: BorderRadius.circular(8),
+                            //     ),
+                            //     child: FormField<String>(validator: (value) {
+                            //       if (selectedcardindex == null || _selectedPaymentMethod!.isEmpty) {
+                            //         return 'Please select a card';
+                            //       }
+                            //       return null;
+                            //     }, builder: (FormFieldState<String> state) {
+                            //       return Column(
+                            //         children: [
+                            //           const SizedBox(
+                            //             height: 10,
+                            //           ),
+                            //           const Row(
+                            //             children: [
+                            //               SizedBox(
+                            //                 width: 10,
+                            //               ),
+                            //               Text(
+                            //                 "Cards",
+                            //                 style: TextStyle(fontWeight: FontWeight.bold),
+                            //               ),
+                            //             ],
+                            //           ),
+                            //           const SizedBox(
+                            //             height: 5,
+                            //           ),
+                            //           cardDetails.isEmpty
+                            //               ? Container(
+                            //                   child: Center(child: Text('No Cards Avaiable')),
+                            //                 )
+                            //               : SingleChildScrollView(
+                            //                   scrollDirection: Axis.horizontal,
+                            //                   child: DataTable(
+                            //                     dataRowHeight: 75,
+                            //                     horizontalMargin: 0.0,
+                            //                     columnSpacing: 40.0,
+                            //                     columns: [
+                            //                       DataColumn(
+                            //                         label: Text(
+                            //                           'Select',
+                            //                           style: TextStyle(color: blueColor),
+                            //                         ),
+                            //                       ),
+                            //                       DataColumn(
+                            //                         label: Text(
+                            //                           'Card Number',
+                            //                           style: TextStyle(color: blueColor),
+                            //                         ),
+                            //                       ),
+                            //                       DataColumn(
+                            //                         label: Text(
+                            //                           'Card Type',
+                            //                           style: TextStyle(color: blueColor),
+                            //                         ),
+                            //                       ),
+                            //                     ],
+                            //                     rows: cardDetails.asMap().entries.map((entry) {
+                            //                       int index = entry.key;
+                            //                       BillingData item = entry.value;
+                            //                       String month = item.ccExp!.substring(0, 2);
+                            //                       String year = item.ccExp!.substring(2, 4);
+                            //                       //  print(month);
+                            //                       String currentMonth = DateTime.now().month.toString().padLeft(2, '0');
+                            //
+                            //                       String currentYear = DateTime.now().year.toString().substring(2);
+                            //
+                            //                       String currentMonthYear = currentMonth + currentYear;
+                            //                       /* print(
+                            //                               'Current: $currentMonthYear');*/
+                            //
+                            //                       String expMonthYear = item.ccExp!;
+                            //                       String expMonth = expMonthYear.substring(0, 2);
+                            //                       String expYear = expMonthYear.substring(2, 4);
+                            //                       bool isExpired =
+                            //                           int.parse(expYear) < int.parse(currentYear) || (int.parse(expYear) == int.parse(currentYear) && int.parse(expMonth) < int.parse(currentMonth));
+                            //
+                            //                       /* print(
+                            //                               'Expiration date passed: $isExpired');
+                            //           */
+                            //                       return DataRow(cells: [
+                            //                         DataCell(
+                            //                           isExpired == true
+                            //                               ? const Text('Expired', style: TextStyle(color: Colors.red))
+                            //                               : Checkbox(
+                            //                                   value: selectedcardindex == index ? true : false,
+                            //                                   onChanged: (bool? value) async {
+                            //                                     setState(() {
+                            //                                       state.didChange(index.toString());
+                            //                                       selectedcardindex = index;
+                            //                                     });
+                            //                                     state.reset();
+                            //                                     await fetchSurcharge();
+                            //                                   },
+                            //                                 ),
+                            //                         ),
+                            //                         DataCell(Text(
+                            //                           item.ccNumber!,
+                            //                           style: TextStyle(fontSize: 13, color: blueColor),
+                            //                         )),
+                            //                         DataCell(Column(
+                            //                           mainAxisAlignment: MainAxisAlignment.center,
+                            //                           children: [
+                            //                             const SizedBox(height: 4),
+                            //                             _buildLogosBlock(item.ccType!),
+                            //                             const SizedBox(height: 4),
+                            //                             Text(
+                            //                               '${item.binResult} CARD',
+                            //                               style: const TextStyle(fontSize: 12, color: Color.fromRGBO(21, 43, 81, 1)),
+                            //                             ),
+                            //                           ],
+                            //                         )),
+                            //                       ]);
+                            //                     }).toList(),
+                            //                   ),
+                            //                 ),
+                            //           const SizedBox(
+                            //             height: 10,
+                            //           ),
+                            //           Padding(
+                            //             padding: const EdgeInsets.all(16.0),
+                            //             child: Row(
+                            //               children: [
+                            //                 if (surCharge != null)
+                            //                   // ignore: unrelated_type_equality_checks
+                            //                   Text(
+                            //                     '${cardDetails[selectedcardindex!].binResult} card transactions will charge $surCharge%',
+                            //                     style: TextStyle(color: blueColor, fontSize: 14, fontWeight: FontWeight.w500),
+                            //                   ),
+                            //                 if (state.hasError)
+                            //                   Padding(
+                            //                     padding: const EdgeInsets.only(top: 5),
+                            //                     child: Text(
+                            //                       state.errorText ?? '',
+                            //                       style: const TextStyle(color: Colors.red, fontSize: 12),
+                            //                     ),
+                            //                   ),
+                            //               ],
+                            //             ),
+                            //           ),
+                            //           Row(
+                            //             children: [
+                            //               const SizedBox(
+                            //                 width: 10,
+                            //               ),
+                            //               GestureDetector(
+                            //                 onTap: () async {
+                            //                   Navigator.push(
+                            //                       context,
+                            //                       MaterialPageRoute(
+                            //                           builder: (context) => AddCard(
+                            //                                 leaseId: widget.leaseId,
+                            //                               )));
+                            //                 },
+                            //                 child: ClipRRect(
+                            //                   borderRadius: BorderRadius.circular(5.0),
+                            //                   child: Container(
+                            //                     height: MediaQuery.of(context).size.height * .04,
+                            //                     // width: MediaQuery.of(context).size.width * .36,
+                            //                     width: MediaQuery.of(context).size.width < 500 ? 80 : 90,
+                            //                     decoration: BoxDecoration(
+                            //                       borderRadius: BorderRadius.circular(5.0),
+                            //                       color: blueColor,
+                            //                       boxShadow: [
+                            //                         const BoxShadow(
+                            //                           color: Colors.grey,
+                            //                           offset: Offset(0.0, 1.0), //(x,y)
+                            //                           blurRadius: 6.0,
+                            //                         ),
+                            //                       ],
+                            //                     ),
+                            //                     child: Center(
+                            //                       child: isLoading
+                            //                           ? const SpinKitFadingCircle(
+                            //                               color: Colors.white,
+                            //                               size: 25.0,
+                            //                             )
+                            //                           : Text(
+                            //                               "Add Card",
+                            //                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 17),
+                            //                             ),
+                            //                     ),
+                            //                   ),
+                            //                 ),
+                            //               ),
+                            //             ],
+                            //           ),
+                            //           const SizedBox(
+                            //             height: 10,
+                            //           ),
+                            //         ],
+                            //       );
+                            //     }),
+                            //   ),
+                            //   const SizedBox(height: 15),
+                            // ],
                             if (showCheckNumberField) ...[
                               SizedBox(height: 10),
                               Padding(
@@ -1677,387 +1690,387 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               ),
                               SizedBox(height: 10),
                             ],
-                            if (showACHFields) ...[
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text("Bank Routing Number"),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: CustomTextField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter routing number';
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  hintText: 'Enter routing number',
-                                  controller: bankrountingnum,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text("Bank Account Number"),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: CustomTextField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter account number';
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  hintText: 'Enter routing number',
-                                  controller: accountnum,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              if (MediaQuery.of(context).size.width < 500)
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: DropdownButtonHideUnderline(
-                                    child: FormField<String>(
-                                      validator: (value) {
-                                        if (selectedAccount == null || selectedAccount!.isEmpty) {
-                                          return 'Please select an account';
-                                        }
-                                        return null;
-                                      },
-                                      builder: (FormFieldState<String> state) {
-                                        return Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            DropdownButton2<String>(
-                                              isExpanded: true,
-                                              hint: const Text('Select Account'),
-                                              value: selectedAccount,
-                                              items: _selecttype.map((method) {
-                                                return DropdownMenuItem<String>(
-                                                  value: method,
-                                                  child: Text(method),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  selectedAccount = newValue;
-                                                });
-                                                state.reset();
-                                                print('Selected account: $selectedAccount ${selectedAccount == "Card"}');
-                                              },
-                                              buttonStyleData: ButtonStyleData(
-                                                height: 45,
-                                                width: 200,
-                                                padding: const EdgeInsets.only(left: 14, right: 14),
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                elevation: 2,
-                                              ),
-                                              iconStyleData: const IconStyleData(
-                                                icon: Icon(
-                                                  Icons.arrow_drop_down,
-                                                ),
-                                                iconSize: 24,
-                                                iconEnabledColor: Color(0xFFb0b6c3),
-                                                iconDisabledColor: Colors.grey,
-                                              ),
-                                              dropdownStyleData: DropdownStyleData(
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                scrollbarTheme: ScrollbarThemeData(
-                                                  radius: const Radius.circular(6),
-                                                  thickness: MaterialStateProperty.all(6),
-                                                  thumbVisibility: MaterialStateProperty.all(true),
-                                                ),
-                                              ),
-                                              menuItemStyleData: const MenuItemStyleData(
-                                                height: 40,
-                                                padding: EdgeInsets.only(left: 14, right: 14),
-                                              ),
-                                            ),
-                                            if (state.hasError)
-                                              Padding(
-                                                padding: const EdgeInsets.only(left: 14, top: 5),
-                                                child: Text(
-                                                  state.errorText ?? '',
-                                                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                                                ),
-                                              ),
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              if (MediaQuery.of(context).size.width > 500)
-                                Row(
-                                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // First Column
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton2<String>(
-                                                isExpanded: true,
-                                                hint: Text('Select Account'),
-                                                value: selectedAccount,
-                                                items: _selecttype.map((method) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: method,
-                                                    child: Text(method),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (String? newValue) {
-                                                  // setState(() {
-                                                  //   _selectedPaymentMethod = newValue;
-                                                  //   //_selectedPaymentMethod = addRow();
-                                                  //   if(_selectedPaymentMethod == 'Card')
-                                                  //   addRow();
-                                                  //   if(_selectedPaymentMethod == 'Check')
-                                                  //    Text("hello");
-                                                  //
-                                                  // });
-                                                  setState(() {
-                                                    selectedAccount = newValue;
-                                                  });
-                                                  // print();
-                                                  print('Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
-                                                },
-                                                buttonStyleData: ButtonStyleData(
-                                                  height: 55,
-                                                  width: 250,
-                                                  padding: const EdgeInsets.only(left: 14, right: 14),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(6),
-                                                    color: Colors.white,
-                                                  ),
-                                                  elevation: 2,
-                                                ),
-                                                iconStyleData: const IconStyleData(
-                                                  icon: Icon(
-                                                    Icons.arrow_drop_down,
-                                                  ),
-                                                  iconSize: 24,
-                                                  iconEnabledColor: Color(0xFFb0b6c3),
-                                                  iconDisabledColor: Colors.grey,
-                                                ),
-                                                dropdownStyleData: DropdownStyleData(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(6),
-                                                    color: Colors.white,
-                                                  ),
-                                                  scrollbarTheme: ScrollbarThemeData(
-                                                    radius: const Radius.circular(6),
-                                                    thickness: MaterialStateProperty.all(6),
-                                                    thumbVisibility: MaterialStateProperty.all(true),
-                                                  ),
-                                                ),
-                                                menuItemStyleData: const MenuItemStyleData(
-                                                  height: 40,
-                                                  padding: EdgeInsets.only(left: 14, right: 14),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    // Second Column
-                                    Expanded(
-                                      child: Column(
-                                        //crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          DropdownButtonHideUnderline(
-                                            child: DropdownButton2<String>(
-                                              isExpanded: true,
-                                              hint: Text('Select Account Holder Type'),
-                                              value: _selectedHoldertype,
-                                              items: _selectholder.map((method) {
-                                                return DropdownMenuItem<String>(
-                                                  value: method,
-                                                  child: Text(method),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                // setState(() {
-                                                //   _selectedPaymentMethod = newValue;
-                                                //   //_selectedPaymentMethod = addRow();
-                                                //   if(_selectedPaymentMethod == 'Card')
-                                                //   addRow();
-                                                //   if(_selectedPaymentMethod == 'Check')
-                                                //    Text("hello");
-                                                //
-                                                // });
-                                                setState(() {
-                                                  _selectedHoldertype = newValue;
-                                                });
-                                                print('Selected payment method: $_selectedHoldertype');
-                                              },
-                                              buttonStyleData: ButtonStyleData(
-                                                height: 55,
-                                                // width: 300,
-                                                padding: const EdgeInsets.only(left: 14, right: 14),
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                elevation: 2,
-                                              ),
-                                              iconStyleData: const IconStyleData(
-                                                icon: Icon(
-                                                  Icons.arrow_drop_down,
-                                                ),
-                                                iconSize: 24,
-                                                iconEnabledColor: Color(0xFFb0b6c3),
-                                                iconDisabledColor: Colors.grey,
-                                              ),
-                                              dropdownStyleData: DropdownStyleData(
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                scrollbarTheme: ScrollbarThemeData(
-                                                  radius: const Radius.circular(6),
-                                                  thickness: MaterialStateProperty.all(6),
-                                                  thumbVisibility: MaterialStateProperty.all(true),
-                                                ),
-                                              ),
-                                              menuItemStyleData: const MenuItemStyleData(
-                                                height: 40,
-                                                padding: EdgeInsets.only(left: 14, right: 14),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 5),
-                                  ],
-                                ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text("Name of the ACH account"),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: CustomTextField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter account name';
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  hintText: 'Enter account name',
-                                  controller: achname,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              if (MediaQuery.of(context).size.width < 500)
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: FormField<String>(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please select an account holder type';
-                                      }
-                                      return null;
-                                    },
-                                    builder: (FormFieldState<String> state) {
-                                      return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          DropdownButtonHideUnderline(
-                                            child: DropdownButton2<String>(
-                                              isExpanded: true,
-                                              hint: const Text('Select Account Holder Type'),
-                                              value: _selectedHoldertype,
-                                              items: _selectholder.map((holderType) {
-                                                return DropdownMenuItem<String>(
-                                                  value: holderType,
-                                                  child: Text(holderType),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  _selectedHoldertype = newValue;
-                                                  state.didChange(newValue); // Notify FormField of change
-                                                });
-                                                state.reset();
-                                              },
-                                              buttonStyleData: ButtonStyleData(
-                                                height: 45,
-                                                padding: const EdgeInsets.only(left: 0, right: 14),
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                elevation: 3,
-                                              ),
-                                              iconStyleData: const IconStyleData(
-                                                icon: Icon(Icons.arrow_drop_down),
-                                                iconSize: 24,
-                                                iconEnabledColor: Color(0xFFb0b6c3),
-                                                iconDisabledColor: Colors.grey,
-                                              ),
-                                              dropdownStyleData: DropdownStyleData(
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                scrollbarTheme: ScrollbarThemeData(
-                                                  radius: const Radius.circular(6),
-                                                  thickness: MaterialStateProperty.all(6),
-                                                  thumbVisibility: MaterialStateProperty.all(true),
-                                                ),
-                                              ),
-                                              menuItemStyleData: const MenuItemStyleData(
-                                                height: 40,
-                                                padding: EdgeInsets.only(left: 14, right: 14),
-                                              ),
-                                            ),
-                                          ),
-                                          if (state.hasError)
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 5),
-                                              child: Text(
-                                                state.errorText ?? '',
-                                                style: const TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              SizedBox(height: 10),
-                            ],
+                            // if (showACHFields) ...[
+                            //   SizedBox(height: 10),
+                            //   Padding(
+                            //     padding: const EdgeInsets.all(4.0),
+                            //     child: Text("Bank Routing Number"),
+                            //   ),
+                            //   SizedBox(
+                            //     height: 5,
+                            //   ),
+                            //   Padding(
+                            //     padding: const EdgeInsets.all(4.0),
+                            //     child: CustomTextField(
+                            //       validator: (value) {
+                            //         if (value == null || value.isEmpty) {
+                            //           return 'Please enter routing number';
+                            //         }
+                            //         return null;
+                            //       },
+                            //       keyboardType: TextInputType.text,
+                            //       hintText: 'Enter routing number',
+                            //       controller: bankrountingnum,
+                            //     ),
+                            //   ),
+                            //   SizedBox(height: 10),
+                            //   Padding(
+                            //     padding: const EdgeInsets.all(4.0),
+                            //     child: Text("Bank Account Number"),
+                            //   ),
+                            //   SizedBox(
+                            //     height: 5,
+                            //   ),
+                            //   Padding(
+                            //     padding: const EdgeInsets.all(4.0),
+                            //     child: CustomTextField(
+                            //       validator: (value) {
+                            //         if (value == null || value.isEmpty) {
+                            //           return 'Please enter account number';
+                            //         }
+                            //         return null;
+                            //       },
+                            //       keyboardType: TextInputType.text,
+                            //       hintText: 'Enter routing number',
+                            //       controller: accountnum,
+                            //     ),
+                            //   ),
+                            //   SizedBox(height: 10),
+                            //   if (MediaQuery.of(context).size.width < 500)
+                            //     Padding(
+                            //       padding: const EdgeInsets.all(4.0),
+                            //       child: DropdownButtonHideUnderline(
+                            //         child: FormField<String>(
+                            //           validator: (value) {
+                            //             if (selectedAccount == null || selectedAccount!.isEmpty) {
+                            //               return 'Please select an account';
+                            //             }
+                            //             return null;
+                            //           },
+                            //           builder: (FormFieldState<String> state) {
+                            //             return Column(
+                            //               crossAxisAlignment: CrossAxisAlignment.start,
+                            //               children: [
+                            //                 DropdownButton2<String>(
+                            //                   isExpanded: true,
+                            //                   hint: const Text('Select Account'),
+                            //                   value: selectedAccount,
+                            //                   items: _selecttype.map((method) {
+                            //                     return DropdownMenuItem<String>(
+                            //                       value: method,
+                            //                       child: Text(method),
+                            //                     );
+                            //                   }).toList(),
+                            //                   onChanged: (String? newValue) {
+                            //                     setState(() {
+                            //                       selectedAccount = newValue;
+                            //                     });
+                            //                     state.reset();
+                            //                     print('Selected account: $selectedAccount ${selectedAccount == "Card"}');
+                            //                   },
+                            //                   buttonStyleData: ButtonStyleData(
+                            //                     height: 45,
+                            //                     width: 200,
+                            //                     padding: const EdgeInsets.only(left: 14, right: 14),
+                            //                     decoration: BoxDecoration(
+                            //                       borderRadius: BorderRadius.circular(6),
+                            //                       color: Colors.white,
+                            //                     ),
+                            //                     elevation: 2,
+                            //                   ),
+                            //                   iconStyleData: const IconStyleData(
+                            //                     icon: Icon(
+                            //                       Icons.arrow_drop_down,
+                            //                     ),
+                            //                     iconSize: 24,
+                            //                     iconEnabledColor: Color(0xFFb0b6c3),
+                            //                     iconDisabledColor: Colors.grey,
+                            //                   ),
+                            //                   dropdownStyleData: DropdownStyleData(
+                            //                     decoration: BoxDecoration(
+                            //                       borderRadius: BorderRadius.circular(6),
+                            //                       color: Colors.white,
+                            //                     ),
+                            //                     scrollbarTheme: ScrollbarThemeData(
+                            //                       radius: const Radius.circular(6),
+                            //                       thickness: MaterialStateProperty.all(6),
+                            //                       thumbVisibility: MaterialStateProperty.all(true),
+                            //                     ),
+                            //                   ),
+                            //                   menuItemStyleData: const MenuItemStyleData(
+                            //                     height: 40,
+                            //                     padding: EdgeInsets.only(left: 14, right: 14),
+                            //                   ),
+                            //                 ),
+                            //                 if (state.hasError)
+                            //                   Padding(
+                            //                     padding: const EdgeInsets.only(left: 14, top: 5),
+                            //                     child: Text(
+                            //                       state.errorText ?? '',
+                            //                       style: const TextStyle(color: Colors.red, fontSize: 12),
+                            //                     ),
+                            //                   ),
+                            //               ],
+                            //             );
+                            //           },
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   if (MediaQuery.of(context).size.width > 500)
+                            //     Row(
+                            //       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //       children: [
+                            //         // First Column
+                            //         Expanded(
+                            //           child: Column(
+                            //             crossAxisAlignment: CrossAxisAlignment.start,
+                            //             children: [
+                            //               Padding(
+                            //                 padding: const EdgeInsets.all(4.0),
+                            //                 child: DropdownButtonHideUnderline(
+                            //                   child: DropdownButton2<String>(
+                            //                     isExpanded: true,
+                            //                     hint: Text('Select Account'),
+                            //                     value: selectedAccount,
+                            //                     items: _selecttype.map((method) {
+                            //                       return DropdownMenuItem<String>(
+                            //                         value: method,
+                            //                         child: Text(method),
+                            //                       );
+                            //                     }).toList(),
+                            //                     onChanged: (String? newValue) {
+                            //                       // setState(() {
+                            //                       //   _selectedPaymentMethod = newValue;
+                            //                       //   //_selectedPaymentMethod = addRow();
+                            //                       //   if(_selectedPaymentMethod == 'Card')
+                            //                       //   addRow();
+                            //                       //   if(_selectedPaymentMethod == 'Check')
+                            //                       //    Text("hello");
+                            //                       //
+                            //                       // });
+                            //                       setState(() {
+                            //                         selectedAccount = newValue;
+                            //                       });
+                            //                       // print();
+                            //                       print('Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
+                            //                     },
+                            //                     buttonStyleData: ButtonStyleData(
+                            //                       height: 55,
+                            //                       width: 250,
+                            //                       padding: const EdgeInsets.only(left: 14, right: 14),
+                            //                       decoration: BoxDecoration(
+                            //                         borderRadius: BorderRadius.circular(6),
+                            //                         color: Colors.white,
+                            //                       ),
+                            //                       elevation: 2,
+                            //                     ),
+                            //                     iconStyleData: const IconStyleData(
+                            //                       icon: Icon(
+                            //                         Icons.arrow_drop_down,
+                            //                       ),
+                            //                       iconSize: 24,
+                            //                       iconEnabledColor: Color(0xFFb0b6c3),
+                            //                       iconDisabledColor: Colors.grey,
+                            //                     ),
+                            //                     dropdownStyleData: DropdownStyleData(
+                            //                       decoration: BoxDecoration(
+                            //                         borderRadius: BorderRadius.circular(6),
+                            //                         color: Colors.white,
+                            //                       ),
+                            //                       scrollbarTheme: ScrollbarThemeData(
+                            //                         radius: const Radius.circular(6),
+                            //                         thickness: MaterialStateProperty.all(6),
+                            //                         thumbVisibility: MaterialStateProperty.all(true),
+                            //                       ),
+                            //                     ),
+                            //                     menuItemStyleData: const MenuItemStyleData(
+                            //                       height: 40,
+                            //                       padding: EdgeInsets.only(left: 14, right: 14),
+                            //                     ),
+                            //                   ),
+                            //                 ),
+                            //               ),
+                            //             ],
+                            //           ),
+                            //         ),
+                            //         Spacer(),
+                            //         // Second Column
+                            //         Expanded(
+                            //           child: Column(
+                            //             //crossAxisAlignment: CrossAxisAlignment.start,
+                            //             children: [
+                            //               DropdownButtonHideUnderline(
+                            //                 child: DropdownButton2<String>(
+                            //                   isExpanded: true,
+                            //                   hint: Text('Select Account Holder Type'),
+                            //                   value: _selectedHoldertype,
+                            //                   items: _selectholder.map((method) {
+                            //                     return DropdownMenuItem<String>(
+                            //                       value: method,
+                            //                       child: Text(method),
+                            //                     );
+                            //                   }).toList(),
+                            //                   onChanged: (String? newValue) {
+                            //                     // setState(() {
+                            //                     //   _selectedPaymentMethod = newValue;
+                            //                     //   //_selectedPaymentMethod = addRow();
+                            //                     //   if(_selectedPaymentMethod == 'Card')
+                            //                     //   addRow();
+                            //                     //   if(_selectedPaymentMethod == 'Check')
+                            //                     //    Text("hello");
+                            //                     //
+                            //                     // });
+                            //                     setState(() {
+                            //                       _selectedHoldertype = newValue;
+                            //                     });
+                            //                     print('Selected payment method: $_selectedHoldertype');
+                            //                   },
+                            //                   buttonStyleData: ButtonStyleData(
+                            //                     height: 55,
+                            //                     // width: 300,
+                            //                     padding: const EdgeInsets.only(left: 14, right: 14),
+                            //                     decoration: BoxDecoration(
+                            //                       borderRadius: BorderRadius.circular(6),
+                            //                       color: Colors.white,
+                            //                     ),
+                            //                     elevation: 2,
+                            //                   ),
+                            //                   iconStyleData: const IconStyleData(
+                            //                     icon: Icon(
+                            //                       Icons.arrow_drop_down,
+                            //                     ),
+                            //                     iconSize: 24,
+                            //                     iconEnabledColor: Color(0xFFb0b6c3),
+                            //                     iconDisabledColor: Colors.grey,
+                            //                   ),
+                            //                   dropdownStyleData: DropdownStyleData(
+                            //                     decoration: BoxDecoration(
+                            //                       borderRadius: BorderRadius.circular(6),
+                            //                       color: Colors.white,
+                            //                     ),
+                            //                     scrollbarTheme: ScrollbarThemeData(
+                            //                       radius: const Radius.circular(6),
+                            //                       thickness: MaterialStateProperty.all(6),
+                            //                       thumbVisibility: MaterialStateProperty.all(true),
+                            //                     ),
+                            //                   ),
+                            //                   menuItemStyleData: const MenuItemStyleData(
+                            //                     height: 40,
+                            //                     padding: EdgeInsets.only(left: 14, right: 14),
+                            //                   ),
+                            //                 ),
+                            //               ),
+                            //             ],
+                            //           ),
+                            //         ),
+                            //         SizedBox(width: 5),
+                            //       ],
+                            //     ),
+                            //   SizedBox(height: 10),
+                            //   Padding(
+                            //     padding: const EdgeInsets.all(4.0),
+                            //     child: Text("Name of the ACH account"),
+                            //   ),
+                            //   SizedBox(
+                            //     height: 5,
+                            //   ),
+                            //   Padding(
+                            //     padding: const EdgeInsets.all(4.0),
+                            //     child: CustomTextField(
+                            //       validator: (value) {
+                            //         if (value == null || value.isEmpty) {
+                            //           return 'Please enter account name';
+                            //         }
+                            //         return null;
+                            //       },
+                            //       keyboardType: TextInputType.text,
+                            //       hintText: 'Enter account name',
+                            //       controller: achname,
+                            //     ),
+                            //   ),
+                            //   SizedBox(height: 10),
+                            //   if (MediaQuery.of(context).size.width < 500)
+                            //     Padding(
+                            //       padding: const EdgeInsets.all(4.0),
+                            //       child: FormField<String>(
+                            //         validator: (value) {
+                            //           if (value == null || value.isEmpty) {
+                            //             return 'Please select an account holder type';
+                            //           }
+                            //           return null;
+                            //         },
+                            //         builder: (FormFieldState<String> state) {
+                            //           return Column(
+                            //             crossAxisAlignment: CrossAxisAlignment.start,
+                            //             children: [
+                            //               DropdownButtonHideUnderline(
+                            //                 child: DropdownButton2<String>(
+                            //                   isExpanded: true,
+                            //                   hint: const Text('Select Account Holder Type'),
+                            //                   value: _selectedHoldertype,
+                            //                   items: _selectholder.map((holderType) {
+                            //                     return DropdownMenuItem<String>(
+                            //                       value: holderType,
+                            //                       child: Text(holderType),
+                            //                     );
+                            //                   }).toList(),
+                            //                   onChanged: (String? newValue) {
+                            //                     setState(() {
+                            //                       _selectedHoldertype = newValue;
+                            //                       state.didChange(newValue); // Notify FormField of change
+                            //                     });
+                            //                     state.reset();
+                            //                   },
+                            //                   buttonStyleData: ButtonStyleData(
+                            //                     height: 45,
+                            //                     padding: const EdgeInsets.only(left: 0, right: 14),
+                            //                     decoration: BoxDecoration(
+                            //                       borderRadius: BorderRadius.circular(6),
+                            //                       color: Colors.white,
+                            //                     ),
+                            //                     elevation: 3,
+                            //                   ),
+                            //                   iconStyleData: const IconStyleData(
+                            //                     icon: Icon(Icons.arrow_drop_down),
+                            //                     iconSize: 24,
+                            //                     iconEnabledColor: Color(0xFFb0b6c3),
+                            //                     iconDisabledColor: Colors.grey,
+                            //                   ),
+                            //                   dropdownStyleData: DropdownStyleData(
+                            //                     decoration: BoxDecoration(
+                            //                       borderRadius: BorderRadius.circular(6),
+                            //                       color: Colors.white,
+                            //                     ),
+                            //                     scrollbarTheme: ScrollbarThemeData(
+                            //                       radius: const Radius.circular(6),
+                            //                       thickness: MaterialStateProperty.all(6),
+                            //                       thumbVisibility: MaterialStateProperty.all(true),
+                            //                     ),
+                            //                   ),
+                            //                   menuItemStyleData: const MenuItemStyleData(
+                            //                     height: 40,
+                            //                     padding: EdgeInsets.only(left: 14, right: 14),
+                            //                   ),
+                            //                 ),
+                            //               ),
+                            //               if (state.hasError)
+                            //                 Padding(
+                            //                   padding: const EdgeInsets.only(top: 5),
+                            //                   child: Text(
+                            //                     state.errorText ?? '',
+                            //                     style: const TextStyle(
+                            //                       color: Colors.red,
+                            //                       fontSize: 12,
+                            //                     ),
+                            //                   ),
+                            //                 ),
+                            //             ],
+                            //           );
+                            //         },
+                            //       ),
+                            //     ),
+                            //   SizedBox(height: 10),
+                            // ],
                             if (showCashiersFields) ...[
                               SizedBox(height: 10),
                               Padding(
@@ -2258,9 +2271,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                     //                 'account'])
                                                     //         ? ""
                                                     //         : "${row['account']}_${row['charge_type']}",
-                                                    value: liabilityAccounts.contains(row['account'])
-                                                        ? "${row['account']}_Liability Account"
-                                                        : (row['account'] == null || row['account'].isEmpty || row['charge_type'] == null || row['charge_type'].isEmpty)
+                                                    value:  (row['account'] == null || row['account'].isEmpty || row['charge_type'] == null || row['charge_type'].isEmpty)
                                                             ? null // Default value that is part of the items
                                                             : "${row['account']}_${row['charge_type']}",
                                                     items: [
@@ -2317,9 +2328,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                         final selectedValue = parts.sublist(1).join('_');
                                                         bool isDuplicate = rows.any((row) => row['account'] == chargeType && rows.indexOf(row) != index);
                                                         print("Duplicate Entry $isDuplicate");
-                                                        if(isDuplicate) {
+                                                        if (isDuplicate) {
                                                           validationMessage = "**Each account must be unique";
-
+                                                        }
+                                                        else{
+                                                          validationMessage = null;
                                                         }
                                                         rows[index]['account'] = chargeType;
                                                         rows[index]['charge_type'] = selectedValue;
@@ -2409,44 +2422,44 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           onChanged: (value) => updateAmount(index, value),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 8,
-                                          right: 8,
-                                        ),
-                                        child: Text("Balance", style: TextStyle(fontWeight: FontWeight.bold)),
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 8,
-                                          right: 8,
-                                        ),
-                                        child: Material(
-                                          elevation: 3,
-                                          borderRadius: BorderRadius.circular(10),
-                                          child: Container(
-                                            height: 50,
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFb0b6c3),
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text("Balance :", style: TextStyle(fontWeight: FontWeight.bold)),
-                                                SizedBox(width: 12.0),
-                                                Text(charges_balances[index].toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.bold)),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 12.0),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 8,
+                                      //     right: 8,
+                                      //   ),
+                                      //   child: Text("Balance", style: TextStyle(fontWeight: FontWeight.bold)),
+                                      // ),
+                                      // SizedBox(
+                                      //   height: 8,
+                                      // ),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 8,
+                                      //     right: 8,
+                                      //   ),
+                                      //   child: Material(
+                                      //     elevation: 3,
+                                      //     borderRadius: BorderRadius.circular(10),
+                                      //     child: Container(
+                                      //       height: 50,
+                                      //       decoration: BoxDecoration(
+                                      //         color: Color(0xFFb0b6c3),
+                                      //         borderRadius: BorderRadius.circular(10),
+                                      //       ),
+                                      //       child: Row(
+                                      //         children: [
+                                      //           SizedBox(
+                                      //             width: 10,
+                                      //           ),
+                                      //           Text("Balance :", style: TextStyle(fontWeight: FontWeight.bold)),
+                                      //           SizedBox(width: 12.0),
+                                      //           Text(charges_balances[index].toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.bold)),
+                                      //         ],
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // SizedBox(height: 12.0),
                                     ],
                                   ),
                                 ),
@@ -2826,26 +2839,24 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     borderRadius: BorderRadius.circular(10.0)),
                                 child: Column(
                                   children: [
-                                    if (_selectedPaymentMethod == "Card" || _selectedPaymentMethod == "ACH")
-                                      buildAmountContainer('Amount', amountController.text.isNotEmpty ? double.parse(amountController.text) : 0.0),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    if (_selectedPaymentMethod == "Card")
-                                      buildAmountContainer('Surcharge included', amountController.text.isNotEmpty ? double.parse(amountController.text) * (surCharge ?? 0.0) / 100 : 0.0),
-                                    if (_selectedPaymentMethod == "ACH") buildAmountContainer('Surcharge included', surchargecount!),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
+                                    // if (_selectedPaymentMethod == "Card" || _selectedPaymentMethod == "ACH")
+                                    //   buildAmountContainer('Amount', amountController.text.isNotEmpty ? double.parse(amountController.text) : 0.0),
+                                    // SizedBox(
+                                    //   height: 5,
+                                    // ),
+                                    // if (_selectedPaymentMethod == "Card")
+                                    //   buildAmountContainer('Surcharge included', amountController.text.isNotEmpty ? double.parse(amountController.text) * (surCharge ?? 0.0) / 100 : 0.0),
+                                    // if (_selectedPaymentMethod == "ACH") buildAmountContainer('Surcharge included', surchargecount!),
+                                    // SizedBox(
+                                    //   height: 5,
+                                    // ),
                                     buildAmountContainer(
                                         'Total Amount',
                                         amountController.text.isNotEmpty && (_selectedPaymentMethod == "Card")
                                             ? (double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)
-                                            : amountController.text.isNotEmpty && (_selectedPaymentMethod == "ACH")
-                                                ? finaltotal!
-                                                : amountController.text.isNotEmpty
-                                                    ? double.parse(amountController.text)
-                                                    : 0.0),
+                                            : amountController.text.isNotEmpty
+                                                ? double.parse(amountController.text)
+                                                : 0.0),
                                   ],
                                 ),
                               ),
@@ -2895,10 +2906,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 setState(() {
                                   _isLoading = false;
                                 });
-                              }
-                            /*  else if (_selectedPaymentMethod == "Card") {
-                                print("adminId ${id}");
-                                print("adminId ${cardDetails[selectedcardindex!].company}");
+                              } else if (_selectedPaymentMethod == "Card") {
+                                //print("adminId ${id}");
+                                // print("adminId ${cardDetails[selectedcardindex!].company}");
                                 if (processor_id == "zzz") {
                                   showFailedPaymentAlert(context);
                                   setState(() {
@@ -2912,22 +2922,22 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   await PaymentService()
                                       .makePaymentforcard(
                                           adminId: id ?? "",
-                                          firstName: selectedTenant["first_name"]!,
-                                          lastName: selectedTenant["last_name"]!,
-                                          emailName: selectedTenant["email"]!,
-                                          customerVaultId: cardDetails[selectedcardindex!].customerVaultId!,
-                                          billingId: cardDetails[selectedcardindex!].billingId!,
-                                          surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                          // firstName: selectedTenant["first_name"]!,
+                                          // lastName: selectedTenant["last_name"]!,
+                                          // emailName: selectedTenant["email"]!,
+                                          customerVaultId: customerVaultID,
+                                          billingId: billingID,
+                                          //   surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
                                           amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
-                                          tenantId: selectedTenantId!,
+                                          tenantId: widget.data!.paymentId!,
                                           date: _startDate.text.trim(),
-                                          address1: cardDetails[selectedcardindex!].address_1!,
+                                          address1: "cardDetails[selectedcardindex!].address_1!",
                                           processorId: "",
                                           leaseid: widget.leaseId,
                                           company_name: companyName,
                                           entries: rows,
                                           tenantname: tenantname,
-                                          future_Date: futuredate!,
+                                          future_Date: false,
                                           uploadedFile: _uploadedFileNames)
                                       .then((value) {
                                     Fluttertoast.showToast(msg: "$value");
@@ -2962,8 +2972,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     ).show();
                                   });
                                 }
-                              }
-                              else if (_selectedPaymentMethod == "ACH") {
+                              } else if (_selectedPaymentMethod == "ACH") {
                                 List<Map<String, String>> filteredTenants = tenants.where((tenant) {
                                   return tenant['tenant_id'] == selectedTenantId;
                                 }).toList();
@@ -2971,25 +2980,25 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 await PaymentService()
                                     .makePaymentforach(
                                         adminId: id ?? "",
-                                        firstName: selectedTenant["first_name"]!,
-                                        lastName: selectedTenant["last_name"]!,
-                                        emailName: selectedTenant["email"]!,
+                                        // firstName: selectedTenant["first_name"]!,
+                                        // lastName: selectedTenant["last_name"]!,
+                                        // emailName: selectedTenant["email"]!,
                                         surcharge: "$surchargecount",
-                                        amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
-                                        tenantId: selectedTenantId!,
+                                        amount: "${(double.parse(amountController.text.trim()))}",
+                                        tenantId: widget.data!.paymentId!,
                                         date: _startDate.text.trim(),
                                         address1: "",
                                         processorId: "",
                                         leaseid: widget.leaseId,
                                         company_name: companyName,
                                         entries: rows,
-                                        future_Date: futuredate!,
-                                        account_type: selectedAccount!,
-                                        account_holder_type: _selectedHoldertype!,
-                                        checkaccount: accountnum.text.trim(),
-                                        checkaba: bankrountingnum.text.trim(),
+                                        future_Date: false,
+                                        // account_type: selectedAccount!,
+                                        // account_holder_type: _selectedHoldertype!,
+                                        // checkaccount: accountnum.text.trim(),
+                                        // checkaba: bankrountingnum.text.trim(),
                                         tenantname: tenantname,
-                                        checkname: achname.text.trim(),
+                                        // checkname: achname.text.trim(),
                                         uploadedFile: _uploadedFileNames)
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
@@ -3023,8 +3032,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     ],
                                   ).show();
                                 });
-                              }*/
-                              else if (_selectedPaymentMethod == "Check" || _selectedPaymentMethod == "Money Order" || _selectedPaymentMethod == "Cashier 's Check") {
+                              } else if (_selectedPaymentMethod == "Check" || _selectedPaymentMethod == "Money Order" || _selectedPaymentMethod == "Cashier 's Check") {
                                 List<Map<String, String>> filteredTenants = tenants.where((tenant) {
                                   return tenant['tenant_id'] == selectedTenantId;
                                 }).toList();
@@ -3063,8 +3071,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   });
                                   Fluttertoast.showToast(msg: "Payment failed $e");
                                 });
-                              }
-                              else if (_selectedPaymentMethod == "Cash" || _selectedPaymentMethod == "Manual") {
+                              } else if (_selectedPaymentMethod == "Cash" || _selectedPaymentMethod == "Manual") {
                                 List<Map<String, String>> filteredTenants = tenants.where((tenant) {
                                   return tenant['tenant_id'] == selectedTenantId;
                                 }).toList();
@@ -3109,7 +3116,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
                               //print(_selectedPaymentMethod);
                             }
-
                           },
                           child: _isLoading
                               ? Center(
@@ -3133,7 +3139,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                           onPressed: () {
                             Navigator.pop(context);
-
                           },
                           child: const Text(
                             'Cancel',

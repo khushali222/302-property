@@ -108,7 +108,7 @@ class PaymentCronjobRepository {
         type: AlertType.success,
         title: "Success",
         desc:
-            responseData["message"] ?? "Payment retry scheduled successfully!",
+        responseData["message"] ?? "Payment retry scheduled successfully!",
         style: AlertStyle(
           backgroundColor: Colors.white,
         ),

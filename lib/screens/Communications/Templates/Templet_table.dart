@@ -544,7 +544,7 @@ class _TempletTableState extends State<TempletTable> {
                                 int index = entry.key;
                                 bool isExpanded = expandedIndex == index;
                                 EmailTemplate rentals = entry.value;
-                                print(rentals.body);
+                              //  print(rentals.body);
                                 //return CustomExpansionTile(data: Propertytype, index: index);
                                 return Container(
                                   decoration: BoxDecoration(

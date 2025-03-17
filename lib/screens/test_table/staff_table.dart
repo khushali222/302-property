@@ -20,8 +20,7 @@ import '../../widgets/drawer_tiles.dart';
 import '../Property_Type/Add_property_type.dart';
 import '../Property_Type/Edit_property_type.dart';
 import '../Staff_Member/Edit_staff_member.dart';
-import 'package:http/http.dart'as http;
-
+import 'package:http/http.dart' as http;
 
 // void main() {
 //   runApp(
@@ -165,11 +164,12 @@ class _Staff_tableState extends State<Staff_table> {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? companyname = prefs.getString("companyName");
     final response =
-    await http.get(Uri.parse('${Api_url}/api/staffmember/limitation/$id'));
+        await http.get(Uri.parse('${Api_url}/api/staffmember/limitation/$id'));
     final jsonData = json.decode(response.body);
     print(jsonData);
-    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201 ) {
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
       print(rentalCount);
       print(staffCountLimit);
       setState(() {
@@ -182,17 +182,19 @@ class _Staff_tableState extends State<Staff_table> {
       throw Exception('Failed to load data');
     }
   }
+
   void _showAlertforLimit(BuildContext context) {
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Plan Limitation",
-      desc: "The limit for adding staffmember according to the plan has been reached.",
+      desc:
+          "The limit for adding staffmember according to the plan has been reached.",
       style: AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
-        //  overlayColor: Colors.black.withOpacity(.8)
-      ),
+          //  overlayColor: Colors.black.withOpacity(.8)
+          ),
       buttons: [
         DialogButton(
           child: Text(
@@ -221,6 +223,7 @@ class _Staff_tableState extends State<Staff_table> {
       ],
     ).show();
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -285,8 +288,7 @@ class _Staff_tableState extends State<Staff_table> {
             ),
           ),
         ),*/
-        body:
-        SingleChildScrollView(
+        body: SingleChildScrollView(
           child: Column(
             children: [
               SizedBox(height: 15),
@@ -302,7 +304,8 @@ class _Staff_tableState extends State<Staff_table> {
                                 builder: (context) => Add_staffmember()));
                         if (result == true) {
                           setState(() {
-                            futureStaffmembers = StaffMemberRepository().fetchStaffmembers();
+                            futureStaffmembers =
+                                StaffMemberRepository().fetchStaffmembers();
                           });
                         }
                       },
@@ -323,8 +326,7 @@ class _Staff_tableState extends State<Staff_table> {
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize:
-                                  MediaQuery.of(context).size.width *
-                                      0.034,
+                                      MediaQuery.of(context).size.width * 0.034,
                                 ),
                               ),
                             ],
@@ -358,7 +360,8 @@ class _Staff_tableState extends State<Staff_table> {
                         ),
                       ],
                     ),
-                    child: Text('Staff Member',
+                    child: Text(
+                      'Staff Member',
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -400,8 +403,7 @@ class _Staff_tableState extends State<Staff_table> {
                                     searchvalue = value;
                                   });
                                 },
-                                cursorColor:
-                                blueColor,
+                                cursorColor: blueColor,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Search here...",
@@ -455,16 +457,28 @@ class _Staff_tableState extends State<Staff_table> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                     return Container(
+                      return Container(
                         height: MediaQuery.of(context).size.height * .5,
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
                             ],
                           ),
                         ),
@@ -477,15 +491,14 @@ class _Staff_tableState extends State<Staff_table> {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
-                            .where((staff) =>
-                        staff.staffmemberName!
-                            .toLowerCase()
-                            .contains(searchvalue!.toLowerCase()))
+                            .where((staff) => staff.staffmemberName!
+                                .toLowerCase()
+                                .contains(searchvalue!.toLowerCase()))
                             .toList();
                       } else {
                         data = snapshot.data!
                             .where((staff) =>
-                        staff.staffmemberName == selectedValue)
+                                staff.staffmemberName == selectedValue)
                             .toList();
                       }
                       sortData(data);
@@ -501,10 +514,13 @@ class _Staff_tableState extends State<Staff_table> {
                             _buildHeader(),
                             SizedBox(height: 20),
                             Container(
-                              decoration:
-                              BoxDecoration(border: Border.all(color: blueColor)),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: blueColor)),
                               child: Column(
-                                children: currentPageData.asMap().entries.map((entry) {
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   Staffmembers staffmembers = entry.value;
@@ -558,135 +574,152 @@ class _Staff_tableState extends State<Staff_table> {
                                             padding: const EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Expanded(
                                                   child: Text(
                                                     '${staffmembers.staffmemberName}',
                                                     style: TextStyle(
                                                       color: blueColor,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .08),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
                                                 Expanded(
                                                   child: Text(
                                                     '${staffmembers.staffmemberDesignation}',
                                                     style: TextStyle(
                                                       color: blueColor,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .08),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
                                                 Expanded(
                                                   child: Text(
                                                     '${staffmembers.staffmemberPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .02),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .02),
                                               ],
                                             ),
                                           ),
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding:
-                                            EdgeInsets.symmetric(horizontal: 8.0),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.0),
                                             margin: EdgeInsets.only(bottom: 20),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
                                                   Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                        MainAxisAlignment.start,
                                                     children: [
                                                       FaIcon(
                                                         isExpanded
-                                                            ? FontAwesomeIcons.sortUp
-                                                            : FontAwesomeIcons.sortDown,
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
                                                         size: 50,
-                                                        color: Colors.transparent,
+                                                        color:
+                                                            Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                           children: <Widget>[
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                    'Mail-Id : ',
+                                                                        'Mail-Id : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight
+                                                                                .bold,
                                                                         color:
-                                                                        blueColor), // Bold and black
+                                                                            blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: '${staffmembers.staffmemberEmail}',
+                                                                    text:
+                                                                        '${staffmembers.staffmemberEmail}',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
+                                                                            FontWeight
+                                                                                .w700,
                                                                         color: Colors
                                                                             .grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
-                                                            SizedBox(height: MediaQuery.of(context).size.height * .01,),
+                                                            SizedBox(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  .01,
+                                                            ),
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                    'Updated At : ',
+                                                                        'Updated At : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight
+                                                                                .bold,
                                                                         color:
-                                                                        blueColor), // Bold and black
+                                                                            blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate('${staffmembers.updatedAt}'),
+                                                                    text: formatDate(
+                                                                        '${staffmembers.updatedAt}'),
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
+                                                                            FontWeight
+                                                                                .w700,
                                                                         color: Colors
                                                                             .grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
-
                                                           ],
                                                         ),
                                                       ),
@@ -694,34 +727,35 @@ class _Staff_tableState extends State<Staff_table> {
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                           children: <Widget>[
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                    'Created At: ',
+                                                                        'Created At: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight
+                                                                                .bold,
                                                                         color:
-                                                                        blueColor), // Bold and black
+                                                                            blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate('${staffmembers.createdAt}'),
+                                                                    text: formatDate(
+                                                                        '${staffmembers.createdAt}'),
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
+                                                                            FontWeight
+                                                                                .w700,
                                                                         color: Colors
                                                                             .grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
-                                                            
                                                           ],
                                                         ),
                                                       ),
@@ -731,21 +765,24 @@ class _Staff_tableState extends State<Staff_table> {
                                                           children: [
                                                             IconButton(
                                                               icon: FaIcon(
-                                                                FontAwesomeIcons.edit,
+                                                                FontAwesomeIcons
+                                                                    .edit,
                                                                 size: 20,
-                                                                color: Color.fromRGBO(
-                                                                    21, 43, 83, 1),
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
                                                               ),
                                                               onPressed: () {
                                                                 // handleEdit(Propertytype);
                                                                 Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                Edit_staff_member(
-                                                                              staff:
-                                                                              staffmembers,
+                                                                        builder: (context) =>
+                                                                            Edit_staff_member(
+                                                                              staff: staffmembers,
                                                                             )));
                                                               },
                                                             ),
@@ -754,8 +791,12 @@ class _Staff_tableState extends State<Staff_table> {
                                                                 FontAwesomeIcons
                                                                     .trashCan,
                                                                 size: 20,
-                                                                color: Color.fromRGBO(
-                                                                    21, 43, 83, 1),
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
                                                               ),
                                                               onPressed: () {
                                                                 //handleDelete(Propertytype);
@@ -793,14 +834,17 @@ class _Staff_tableState extends State<Staff_table> {
                                       elevation: 3,
                                       child: Container(
                                         height: 40,
-                                        padding: EdgeInsets.symmetric(horizontal: 12.0),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.0),
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey),
+                                          border:
+                                              Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
                                             value: itemsPerPage,
-                                            items: itemsPerPageOptions.map((int value) {
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
                                               return DropdownMenuItem<int>(
                                                 value: value,
                                                 child: Text(value.toString()),
@@ -810,7 +854,7 @@ class _Staff_tableState extends State<Staff_table> {
                                               setState(() {
                                                 itemsPerPage = newValue!;
                                                 currentPage =
-                                                0; // Reset to first page when items per page change
+                                                    0; // Reset to first page when items per page change
                                               });
                                             },
                                           ),
@@ -831,10 +875,10 @@ class _Staff_tableState extends State<Staff_table> {
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
                                     // IconButton(
                                     //   icon: Icon(Icons.arrow_back),
@@ -846,7 +890,8 @@ class _Staff_tableState extends State<Staff_table> {
                                     //   }
                                     //       : null,
                                     // ),
-                                    Text('Page ${currentPage + 1} of $totalPages'),
+                                    Text(
+                                        'Page ${currentPage + 1} of $totalPages'),
                                     // IconButton(
                                     //   icon: Icon(Icons.arrow_forward),
                                     //   onPressed: currentPage < totalPages - 1
@@ -866,10 +911,10 @@ class _Staff_tableState extends State<Staff_table> {
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
                                           : null,
                                     ),
                                   ],
@@ -883,13 +928,13 @@ class _Staff_tableState extends State<Staff_table> {
                   },
                 ),
               ),
-
             ],
           ),
         ),
       ),
     );
   }
+
   Widget _buildHeader() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -936,29 +981,27 @@ class _Staff_tableState extends State<Staff_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name",
-                        style: TextStyle(color: Colors.white))
-                        : Text("Name",
-                        style: TextStyle(color: Colors.white)),
+                        ? Text("Name", style: TextStyle(color: Colors.white))
+                        : Text("Name", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -991,21 +1034,21 @@ class _Staff_tableState extends State<Staff_table> {
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -1039,21 +1082,21 @@ class _Staff_tableState extends State<Staff_table> {
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),

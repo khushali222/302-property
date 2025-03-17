@@ -35,12 +35,14 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
   FocusNode? _subjectFocusNode;
   FocusNode? _bodyFocusNode;
   FocusNode? _nameFocusNode;
-
+  List<Map<String, dynamic>> templates = [];
   bool nameError = false;
   bool subjectError = false;
   bool bodyError = false;
   bool eventError = false;
-
+  String htmlName = ""; // Store HTML content
+  String htmlBody = ""; // Store HTML content
+  String htmlsubject = ""; // Store HTML content
   String namemessage = "";
   String submessage = "";
   String bodymessage = "";
@@ -69,8 +71,149 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
     super.initState();
     _subjectFocusNode = FocusNode();
     _nameFocusNode = FocusNode();
+    if(widget.templetid != null)
+    fetchTemplates();
   }
 
+  String replaceSpanTags(String html) {
+    print("spn${html}");
+    // Mapping class names to corresponding font sizes
+    final Map<String, String> classToFontSizeMap = {
+      'text-tiny': '1',
+      'text-small': '2',
+      'text-default': '3',
+      'text-big': '5',
+      'text-huge': '7',
+    };
+
+    // Regex to match <span> with class and/or style attributes
+    return html.replaceAllMapped(
+      RegExp(r'<span([^>]*)>(.*?)<\/span>', caseSensitive: false),
+          (match) {
+        String attributes = match.group(1) ?? ''; // Extract attributes inside <span>
+        String text = match.group(2) ?? ''; // Extract inner text
+
+        // Extract class names
+        RegExpMatch? classMatch = RegExp(r'class="([^"]+)"').firstMatch(attributes);
+        String classNames = classMatch?.group(1) ?? '';
+
+        // Extract styles
+        RegExpMatch? styleMatch = RegExp(r'style="([^"]+)"').firstMatch(attributes);
+        String style = styleMatch?.group(1) ?? '';
+
+        // Extract color from style
+        RegExpMatch? colorMatch = RegExp(r'color:\s*([^;]+)').firstMatch(style);
+        String? color = colorMatch?.group(1);
+
+        // Extract the first matching class from the known map
+        String? fontSize = classNames
+            .split(' ')
+            .map((cls) => classToFontSizeMap[cls])
+            .firstWhere((size) => size != null, orElse: () => null);
+        // print(hslToHex(color!));
+        // Build the <font> tag
+        if (fontSize != null) {
+          String fontTag = '<font size="$fontSize"';
+          if (color != null) fontTag += ' color="${hslToHex(color!)}"';
+          fontTag += '>$text</font>';
+          return fontTag;
+        }
+
+        return match.group(0)!; // Return original <span> if no match
+      },
+    );
+  }
+
+  String hslToHex(String hsl) {
+    // Remove spaces and extract numbers
+    RegExp regExp = RegExp(r'hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)');
+    Match? match = regExp.firstMatch(hsl);
+
+    if (match == null) {
+      return hsl;
+    }
+
+    int h = int.parse(match.group(1)!);
+    double s = int.parse(match.group(2)!) / 100;
+    double l = int.parse(match.group(3)!) / 100;
+
+    double c = (1 - (2 * l - 1).abs())*s;
+    double x = c * (1 - ((h / 60) % 2 - 1).abs());
+    double m = l - c / 2;
+
+    double r = 0, g = 0, b = 0;
+
+    if (h < 60) {
+      r = c;
+      g = x;
+    } else if (h < 120) {
+      r = x;
+      g = c;
+    } else if (h < 180) {
+      g = c;
+      b = x;
+    } else if (h < 240) {
+      g = x;
+      b = c;
+    } else if (h < 300) {
+      r = x;
+      b = c;
+    } else {
+      r = c;
+      b = x;
+    }
+
+    int red = ((r + m) * 255).round();
+    int green = ((g + m) * 255).round();
+    int blue = ((b + m) * 255).round();
+
+    return "#${red.toRadixString(16).padLeft(2, '0')}"
+        "${green.toRadixString(16).padLeft(2, '0')}"
+        "${blue.toRadixString(16).padLeft(2, '0')}";
+  }
+  Future<void> fetchTemplates() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("${Api_url}/api/templates/get/${widget.templetid}"),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $adminId",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data["statusCode"] == 200 && data.containsKey("template")) {
+        setState(() {
+
+          templates = [data["template"]]; // Store in list
+          //events = [data["template"]["name"] as String]; // Extract name
+          _selectedEvent = data["template"]["mail_type"]; // Select default
+          name.text = data["template"]["name"]; // Get HTML content
+
+          htmlBody = data["template"]["body"]; // Get HTML content
+          subject.text = data["template"]["subject"]; // Get HTML content
+          // _htmlEditorController
+          //     .setText(replaceDollarWithAt(replaceSpanTags(htmlBody))); // Set editor content
+
+          //_htmlEditorController.setText(htmlBody);
+        });
+
+        Future.delayed(Duration(milliseconds: 500), () {
+          if (mounted) {
+            _htmlEditorController.setFocus();
+            _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
+          }
+        });
+      }
+    } else {
+      print("Failed to load templates");
+    }
+  }
   // void saveTemplate() async {
   //   setState(() {
   //     isLoading = true;
@@ -133,130 +276,130 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
 
   Map<String, List<Map<String, String>>> tipsObject = {
     "Reset password": [
-      {r"${Name}": "Receiver Name"},
-      {r"${Url}": "Reset password link"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"Url": "Reset password link"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Invitation": [
-      {r"${Name}": "Receiver Name"},
-      {r"${EmailAddress}": "Email Address"},
-      {r"${Password}": "Password"},
-      {r"${Url}": "Login Link"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"EmailAddress": "Email Address"},
+      {"Password": "Password"},
+      {"Url": "Login Link"},
+      {"CompanyName": "Company Name"},
     ],
     "Property assign": [
-      {r"${Name}": "Receiver Name"},
-      {r"${RentalOwner}": "Rental Owner Name"},
-      {r"${RentalAddress}": "Rental Address"},
-      {r"${Unit}": "Unit Address"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"RentalOwner": "Rental Owner Name"},
+      {"RentalAddress": "Rental Address"},
+      {"Unit": "Unit Address"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Lease creation": [
-      {r"${Name}": "Receiver Name"},
-      {r"${RentalOwner}": "Rental Owner Name"},
-      {r"${RentalAddress}": "Rental Address"},
-      {r"${Unit}": "Unit Address"},
-      {r"${StartDate}": "Start Date"},
-      {r"${EndDate}": "End Date"},
-      {r"${Rent}": "Rent Amount"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"RentalOwner": "Rental Owner Name"},
+      {"RentalAddress": "Rental Address"},
+      {"Unit": "Unit Address"},
+      {"StartDate": "Start Date"},
+      {"EndDate": "End Date"},
+      {"Rent": "Rent Amount"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Work Orders": [
-      {r"${Name}": "Receiver Name"},
-      {r"${RentalOwner}": "Rental Owner Name"},
-      {r"${RentalAddress}": "Rental Address"},
-      {r"${Unit}": "Unit Address"},
-      {r"${Title}": "title"},
-      {r"${Category}": "Category"},
-      {r"${Priority}": "Priority"},
-      {r"${Work_Perform}": "Work to be performed"},
-      {r"${Status}": "Status"},
-      {r"${DueDate}": "Due Date"},
-      {r"${Entry_Allowed}": "Entry allowed"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"RentalOwner": "Rental Owner Name"},
+      {"RentalAddress": "Rental Address"},
+      {"Unit": "Unit Address"},
+      {"Title": "Title"},
+      {"Category": "Category"},
+      {"Priority": "Priority"},
+      {"Work_Perform": "Work to be performed"},
+      {"Status": "Status"},
+      {"DueDate": "Due Date"},
+      {"Entry_Allowed": "Entry allowed"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Payment receipt": [
-      {r"${Name}": "Receiver Name"},
-      {r"${RentalOwner}": "Rental Owner Name"},
-      {r"${RentalAddress}": "Rental Address"},
-      {r"${PaymentDate}": "Payment Date"},
-      {r"${CurrentDate}": "Current Date"},
-      {r"${AmountPaid}": "Amount Paid"},
-      {r"${AmountDue}": "Due Amount"},
-      {r"${TransactionId}": "Transaction Id"},
-      {r"${PaymentMethod}": "Payment Method"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"RentalOwner": "Rental Owner Name"},
+      {"RentalAddress": "Rental Address"},
+      {"PaymentDate": "Payment Date"},
+      {"CurrentDate": "Current Date"},
+      {"AmountPaid": "Amount Paid"},
+      {"AmountDue": "Due Amount"},
+      {"TransactionId": "Transaction Id"},
+      {"PaymentMethod": "Payment Method"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "LateFee reminder": [
-      {r"${Name}": "Receiver Name"},
-      {r"${Amount}": "Rent amount"},
-      {r"${LateFee}": "Late Fee percentage"},
-      {r"${Duration}": "late fee duration"},
-      {r"${RentalAddress}": "Rental Address"},
-      // { "${Unit}": "Unit Name" },
-      {r"${DueDate}": "Due date to pay Rent"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"Amount": "Rent amount"},
+      {"LateFee": "Late Fee percentage"},
+      {"Duration": "Late fee duration"},
+      {"RentalAddress": "Rental Address"},
+      {"DueDate": "Due date to pay Rent"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Lease end Reminder": [
-      {r"${Name}": "Receivers Name"},
-      {r"${EndDate}": "Lease End Date"},
-      {r"${RentalAddress}": "Rental Address"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receivers Name"},
+      {"EndDate": "Lease End Date"},
+      {"RentalAddress": "Rental Address"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Express Payment": [
-      {r"${Name}": "Receivers Name"},
-      {r"${RentalOwner}": "Rental Owner Name"},
-      {r"${RentalAddress}": "Rental Address"},
-      {r"${Url}": "Express Payment URL"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
-      {r"${Duration}": "link valid untill days"},
+      {"Name": "Receivers Name"},
+      {"RentalOwner": "Rental Owner Name"},
+      {"RentalAddress": "Rental Address"},
+      {"Url": "Express Payment URL"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
+      {"Duration": "Link valid until days"},
     ],
     "Payment refund": [
-      {r"${Name}": "Receiver Name"},
-      {r"${Amount}": "Refund Amount"},
-      {r"${TransactionId}": "Transaction Id"},
-      {r"${Date}": "Refund Date"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"Amount": "Refund Amount"},
+      {"TransactionId": "Transaction Id"},
+      {"Date": "Refund Date"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Applicant application": [
-      {r"${Name}": "Receiver Name"},
-      {r"${RentalAddress}": "Rental Address"},
-      {r"${Url}": "Application link"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"RentalAddress": "Rental Address"},
+      {"Url": "Application link"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Applicant status": [
-      {r"${Name}": "Receiver Name"},
-      {r"${RentalAddress}": "Rental Address"},
-      {r"${Status}": "Applicant Status"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"RentalAddress": "Rental Address"},
+      {"Status": "Applicant Status"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Payment failure": [
-      {r"${Name}": "Receiver Name"},
-      {r"${RentalAddress}": "Rental Address"},
-      {r"${PaymentDate}": "Payment Date"},
-      {r"${AmountPaid}": "Amount Paid"},
-      {r"${PaymentFailureReason}": "Payment Failure Reason"},
-      {r"${PaymentMethod}": "Payment Method"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"RentalAddress": "Rental Address"},
+      {"PaymentDate": "Payment Date"},
+      {"AmountPaid": "Amount Paid"},
+      {"PaymentFailureReason": "Payment Failure Reason"},
+      {"PaymentMethod": "Payment Method"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
     "Manual Tenant": [
-      {r"${Name}": "Receiver Name"},
-      {r"${EmailAddress}": "E-mail Address"},
-      {r"${CompanyName}": "Company Name"},
+      {"Name": "Receiver Name"},
+      {"EmailAddress": "E-mail Address"},
+      {"CompanyName": "Company Name"},
     ],
   };
+
 
   @override
   Widget build(BuildContext context) {
@@ -470,6 +613,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                     setState(() {
                                       _selectedEvent = newValue;
                                       eventError = false;
+                                    //  fetchTemplates();
                                     });
                                     print('Selected Event: $_selectedEvent');
 
@@ -684,7 +828,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                     tipsObject[_selectedEvent]!
                                         .map((e) => e.entries.first)
                                         .map((entry) =>
-                                            "${entry.key}: ${entry.value}")
+                                            "@${entry.key}: ${entry.value}")
                                         .join("\n")
                                 : 'You can personalize transaction templates using the following dynamic variables :',
                             softWrap: true,
@@ -881,6 +1025,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
+                          print(await _htmlEditorController.getText());
                           // Validate name
                           if (name.text.trim().isEmpty) {
                             setState(() {
@@ -916,6 +1061,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                           }
                           String updatedHtmlBody =
                               await _htmlEditorController.getText();
+
                           if (updatedHtmlBody.trim().isEmpty) {
                             setState(() {
                               bodyError = true;
@@ -947,7 +1093,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   adminId: adminId,
                                   name: name.text.trim(),
                                   subject: subject.text.trim(),
-                                  body: updatedHtmlBody,
+                                  body: replaceFontTags(updatedHtmlBody),
                                   type: "E-mail",
                                   mail_type: _selectedEvent,
                                 );
@@ -1012,5 +1158,56 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
         ),
       ),
     );
+  }
+  String replaceDollarWithAt(String input) {
+    return input.replaceAllMapped(
+      RegExp(r'\$\{(\w+)\}'), // Match ${VariableName}
+          (match) => '@${match.group(1)}', // Replace with @VariableName
+    );
+  }
+  String replaceAtWithDollar(String input) {
+    return input.replaceAllMapped(
+      RegExp(r'@(\w+)'), // Match @ followed by a word
+          (match) => '\${${match.group(1)}}', // Replace with ${Variable}
+    );
+  }
+  String replaceFontTags(String html) {
+    final Map<String, String> fontSizeMap = {
+      '1': 'text-tiny',
+      '2': 'text-small',
+      '3': 'text-default',
+      '4': 'text-medium',  // Added missing size 4
+      '5': 'text-big',
+      '6': 'text-larger',  // Added missing size 6
+      '7': 'text-huge',
+    };
+
+    return replaceAtWithDollar(html.replaceAllMapped(
+      RegExp(
+        r'<font\s+([^>]*)>(.*?)<\/font>',
+        caseSensitive: false,
+      ),
+          (match) {
+        String attributes = match.group(1) ?? ''; // Get all attributes inside <font>
+        String text = match.group(2) ?? ''; // Get the inner text
+
+        // Extract size attribute
+        RegExpMatch? sizeMatch = RegExp(r'size="(\d+)"').firstMatch(attributes);
+        String? size = sizeMatch?.group(1);
+
+        // Extract color attribute
+        RegExpMatch? colorMatch = RegExp(r'color="([^"]+)"').firstMatch(attributes);
+        String? color = colorMatch?.group(1);
+
+        // Get the corresponding class name for size
+        String? className = fontSizeMap[size];
+
+        // Build the <span> tag
+        String spanClass = className != null ? 'class="$className"' : '';
+        String spanStyle = color != null ? 'style="color: $color;"' : '';
+
+        return '<span $spanClass $spanStyle>$text</span>';
+      },
+    ));
   }
 }
