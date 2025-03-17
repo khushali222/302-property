@@ -20,6 +20,7 @@ import '../../../provider/dateProvider.dart';
 import '../../../repository/Communication/Email_log_repo.dart';
 import '../../../repository/Communication/Send_email_repo.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'Send_email.dart';
 
 class Send_Email_table extends StatefulWidget {
   @override
@@ -724,15 +725,16 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            // final result = await Navigator.of(context).push(
-                            //     MaterialPageRoute(
-                            //         builder: (context) => Add_property()));
-                            // if (result == true) {
-                            //   setState(() {
-                            //     futurePropertyTypes = PropertyTypeRepository()
-                            //         .fetchPropertyTypes();
-                            //   });
-                            // }
+                            final result = await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Send_Email_templet()));
+                            if (result == true) {
+                              setState(() {
+                                futureEmailss =
+                                    SendemailRepository().fetchSendEmailTable();
+                              });
+                            }
                           },
                           child: Container(
                             height: (MediaQuery.of(context).size.width < 500)
