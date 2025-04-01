@@ -218,8 +218,25 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("  Created At", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    Text(" Created At ", style: TextStyle(color: Colors.white)),
+
+                    ascending3
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),

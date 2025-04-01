@@ -15,6 +15,7 @@ class CardModel {
   String? adminId;
   String? billingId;
   String? customervaultid;
+  String? cardid;
 
   CardModel(
       {this.firstName,
@@ -32,6 +33,7 @@ class CardModel {
       this.email,
       this.adminId,
       this.billingId,
+        this.cardid,
       this.customervaultid});
 
   CardModel.fromJson(Map<String, dynamic> json) {
@@ -87,6 +89,7 @@ class CardModel {
     data['admin_id'] = this.adminId;
     data['billing_id'] = this.billingId;
     data['customer_vault_id'] = this.customervaultid;
+    data['card_id'] = this.cardid;
     return data;
   }
 }
@@ -96,9 +99,9 @@ class AddCreditCard {
   String? customerVaultId;
   String? responseCode;
   String? billingId;
-
+  String? cardID;
   AddCreditCard(
-      {this.tenantId, this.customerVaultId, this.responseCode, this.billingId});
+      {this.tenantId, this.customerVaultId, this.responseCode, this.billingId,this.cardID});
 
   AddCreditCard.fromJson(Map<String, dynamic> json) {
     tenantId = json['tenant_id'];
@@ -113,6 +116,7 @@ class AddCreditCard {
     data['customer_vault_id'] = this.customerVaultId;
     data['response_code'] = this.responseCode;
     data['billing_id'] = this.billingId;
+    data["card_id"] = this.cardID;
     return data;
   }
 }

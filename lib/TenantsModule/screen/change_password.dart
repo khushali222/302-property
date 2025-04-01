@@ -40,6 +40,7 @@ class _Change_passwordState extends State<Change_password> {
   bool isLoading = false;
   bool ispassword1 = true;
   bool ispassword2 = true;
+  bool ispassword3 = true;
   List<File> _pdfFiles = [];
 
   List<String> _uploadedFileNames = [];
@@ -232,9 +233,9 @@ class _Change_passwordState extends State<Change_password> {
           },
         ),
         backgroundColor: Colors.white,
-        // drawer: CustomDrawer(
-        //   currentpage: 'Documents',
-        // ),
+        drawer: CustomDrawer(
+          currentpage: 'Dashboard',
+        ),
         body: Form(
           key: _formkey,
           child: Container(
@@ -594,7 +595,7 @@ class _Change_passwordState extends State<Change_password> {
                                                           });
                                                         },
                                                         obscureText:
-                                                            visiable_password_confirm,
+                                                            visiable_passwordcurrent,
                                                         controller:
                                                             currentpassword,
                                                         cursorColor: blueColor,
@@ -630,12 +631,12 @@ class _Change_passwordState extends State<Change_password> {
                                                           suffixIcon: InkWell(
                                                             onTap: () {
                                                               setState(() {
-                                                                visiable_password_confirm =
-                                                                    !visiable_password_confirm;
+                                                                visiable_passwordcurrent =
+                                                                    !visiable_passwordcurrent;
                                                               });
                                                             },
                                                             child: Icon(
-                                                              visiable_password_confirm
+                                                              visiable_passwordcurrent
                                                                   ? Icons
                                                                       .remove_red_eye_outlined
                                                                   : Icons

@@ -1764,7 +1764,7 @@ class _enterChargeState extends State<enterCharge> {
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
                                           date: formattedDate,
-                                          chargeType: (row["account"] == "" ||
+                                          chargeType: (row["account"] == "" ||   row["account"] == "Rent Income" || row["account"] == "Security Deposit"||
                                               row["account"] == "Late Fee Income" ||
                                               row["account"] == "Pre-payments")
                                               ? row["account"]
@@ -1830,7 +1830,7 @@ class _enterChargeState extends State<enterCharge> {
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
                                           date:formattedDate,
-                                          chargeType: (row["account"] == "" ||
+                                          chargeType: (row["account"] == "" ||  row["account"] == "Rent Income" || row["account"] == "Security Deposit"||
                                               row["account"] == "Late Fee Income" ||
                                               row["account"] == "Pre-payments")
                                               ? row["account"]

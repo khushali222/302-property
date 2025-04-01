@@ -1071,7 +1071,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               buttons: [
                 DialogButton(
                   child: Text(
-                    "Void",
+                    "Ok",
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   onPressed: () {

@@ -8,11 +8,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/profile.dart';
 
 import '../../constant/constant.dart';
+import '../../provider/dateProvider.dart';
 import '../../repository/profile_repository.dart';
 import '../widgets/custom_drawer.dart';
 import '../widgets/drawer_tiles.dart';
@@ -122,6 +124,8 @@ class _Profile_screenState extends State<Profile_screen> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context,listen: false);
+
     return Scaffold(
       key: key,
       appBar: widget_302.App_Bar(
@@ -406,7 +410,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       padding:
                                                           EdgeInsets.all(8.0),
                                                       child: Text(
-                                                          formatDate4(profiledata[
+                                                          dateProvider.formatCurrentDate(profiledata[
                                                                       'leaseData']
                                                                   [
                                                                   'start_date']) ??
@@ -423,7 +427,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       padding:
                                                           EdgeInsets.all(8.0),
                                                       child: Text(
-                                                          formatDate4(profiledata[
+                                                          dateProvider.formatCurrentDate(profiledata[
                                                                       'leaseData']
                                                                   [
                                                                   'end_date']) ??
@@ -651,6 +655,8 @@ class _Profile_screenState extends State<Profile_screen> {
   int? expandedIndex; // Declare this at the top of your StatefulWidget
 
   Widget buildLeaseTable(List<dynamic> leaseData) {
+    final dateProvider = Provider.of<DateProvider>(context,listen: false);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
@@ -768,7 +774,7 @@ class _Profile_screenState extends State<Profile_screen> {
                             Expanded(
                               flex: 2,
                               child: Text(
-                                '${lease['start_date'] ?? "N/A"}',
+                                '${dateProvider.formatCurrentDate(lease['start_date']) ?? "N/A"}',
                                 style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
@@ -809,7 +815,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       children: [
                                         buildTableRow(
                                             "End Date",
-                                            formatDate4(lease['end_date']) ??
+                                            dateProvider.formatCurrentDate(lease['end_date']) ??
                                                 "N/A"),
                                         buildTableRow("Rent Cycle",
                                             lease['rent_cycle'] ?? "N/A"),
@@ -817,7 +823,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                             lease['amount'].toString()),
                                         buildTableRow(
                                             "Next Due Date",
-                                            formatDate4(lease['date']) ??
+                                            dateProvider.formatCurrentDate(lease['date']) ??
                                                 "N/A"),
                                       ],
                                     ),

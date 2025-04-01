@@ -890,6 +890,11 @@ class _Lease_TableState extends State<Lease_Table> {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   tenant_lease Propertytype = entry.value;
+                                  DateTime originalDate =
+                                  DateFormat("EEE MMM dd y HH:mm:ss").parse(Propertytype.updatedAt!);
+
+                                  /// Getting the Formatted Date String
+                                  String formattedDate = DateFormat('yyyy-MM-dd').format(originalDate);
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
@@ -1196,7 +1201,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:  '${ Propertytype.updatedAt?.isNotEmpty == true
-                                                                        ? dateProvider.formatCurrentDate('${Propertytype.updatedAt}')
+                                                                        ? dateProvider.formatCurrentDate('${formattedDate}')
                                                                         : 'N/A'}',
                                                                     style: TextStyle(
                                                                         fontWeight:

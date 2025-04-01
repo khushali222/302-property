@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/work_order/workorder_table.dart';
 import 'package:three_zero_two_property/TenantsModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
+import '../../provider/dateProvider.dart';
 import '../repository/permission_provider.dart';
 import '../widgets/pie_chart.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/properties.dart';
@@ -144,6 +145,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         throw Exception('Failed to load data');
       }
     } catch (e) {
+      print(e);
       setState(() {
         countList[2] = 0;
         countList[3] = "--/--/----";
@@ -320,6 +322,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   List<int> amountList = List.filled(2, 0);
   String convertDateFormat(String dateStr) {
     DateTime parsedDate = DateTime.parse(dateStr);
+    final dateProvider = Provider.of<DateProvider>(context,listen: false);
+    return dateProvider.formatCurrentDate(dateStr);
     String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
     return formattedDate;
   }
@@ -365,6 +369,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   var appBarHeight = AppBar().preferredSize.height;
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     final permissionProvider = Provider.of<PermissionProvider>(context);
     final permissions = permissionProvider.permissions;
     double width = MediaQuery.of(context).size.width;

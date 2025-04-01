@@ -183,7 +183,7 @@ import '../constant/constant.dart';
 
 class DateProvider with ChangeNotifier {
   DateTime _currentDate = DateTime.now();
-  String _dateFormat = 'MM-DD-YYYY';
+  String _dateFormat = 'yyyy-MM-dd';
   int dateformateselect = 0; // default date format
 
   DateTime get currentDate => _currentDate;
@@ -207,6 +207,7 @@ class DateProvider with ChangeNotifier {
     );
   }
   Future<void> loadDateFormat() async {
+    print("calling loadDate");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');

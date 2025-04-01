@@ -687,7 +687,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('City',
+                    const Text('City *',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -704,7 +704,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('State',
+                    const Text('State *',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -721,7 +721,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('Country',
+                    const Text('Country *',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -738,7 +738,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('Zip',
+                    const Text('Zip *',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,

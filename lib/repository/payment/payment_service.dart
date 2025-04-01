@@ -63,7 +63,7 @@ class PaymentService {
         'charge_type': chargeType, // Set the dynamically calculated charge_type
       };
     }).toList();
-
+    print("updateddd entries ${updatedEntries}");
     print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/sale';

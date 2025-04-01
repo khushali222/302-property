@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:http/http.dart' as http;
@@ -870,6 +871,124 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                               htmlToolbarOptions: HtmlToolbarOptions(
                                 // toolbarType: ToolbarType.nativeExpandable,
                                 customToolbarButtons: [
+                                  Row(
+                                    children: [
+                                      PopupMenuButton<String>(
+                                        padding: EdgeInsets.all(0),
+                                        icon: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.format_list_bulleted, color: Colors.black),
+                                           // SizedBox(width: 4),
+                                            Icon(Icons.arrow_drop_down, color: Colors.black), // Dropdown Arrow
+                                          ],
+                                        ),
+                                        tooltip: "Unordered List",
+                                        offset: Offset(
+                                            0, 40), // Adjusts dropdown position
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                10)), // Rounded corners
+                                        onSelected: (String style) {
+                                          _htmlEditorController.execCommand(
+                                              "insertHTML",
+                                              argument:
+                                              '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
+                                        },
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            value: "disc",
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.circle,
+                                                    size: 16, color: Colors.black),
+                                                SizedBox(width: 10),
+                                                Text("Disc"),
+                                              ],
+                                            ),
+                                          ),
+                                          PopupMenuItem(
+                                            value: "circle",
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.circle_outlined,
+                                                    size: 16, color: Colors.black),
+                                                SizedBox(width: 10),
+                                                Text("Circle"),
+                                              ],
+                                            ),
+                                          ),
+                                          PopupMenuItem(
+                                            value: "square",
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.square,
+                                                    size: 16, color: Colors.black),
+                                                SizedBox(width: 10),
+                                                Text("Square"),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(width: 5,),
+                                      PopupMenuButton<String>(
+                                        constraints: BoxConstraints(
+                                          minWidth: 100, // Minimum width of the popup
+                                          maxWidth: 200, // Maximum width
+                                        ),
+                                        padding: EdgeInsets.all(0),
+                                        icon: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.format_list_numbered, color: Colors.black),
+                                            // SizedBox(width: 4),
+                                            Icon(Icons.arrow_drop_down, color: Colors.black), // Dropdown Arrow
+                                          ],
+                                        ), // Ordered List Button
+                                        tooltip: "Ordered List",
+                                        offset: Offset(0, 40),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10)),
+                                        onSelected: (String style) {
+                                          _htmlEditorController.execCommand(
+                                              "insertHTML",
+                                              argument:
+                                              '<ol style="list-style-type: $style;"><li>List Item</li></ol>');
+                                        },
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            enabled:
+                                            false, // Disable selection on this item
+                                            child: Container(
+                                              width: 200, // Adjust width as needed
+                                              child: GridView.count(
+                                                shrinkWrap: true,
+                                                crossAxisCount: 3, // 3 items in a row
+                                                mainAxisSpacing: 5,
+                                                crossAxisSpacing: 5,
+                                                //childAspectRatio: .3,
+                                                // Adjust for better layout
+                                                children: [
+                                                  _buildListItem("decimal", "1"),
+                                                  _buildListItem(
+                                                      "decimal-leading-zero", "01"),
+                                                  _buildListItem("lower-roman", "i"),
+                                                  _buildListItem("upper-roman", "I"),
+                                                  _buildListItem("lower-alpha", "a"),
+                                                  _buildListItem("upper-alpha", "A"),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+
+                                  // OL (Ordered List) Style Dropdown
+
+
                                   PopupMenuButton<String>(
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
@@ -978,9 +1097,9 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                     hr: false,
                                   ),
                                   ListButtons(
-                                    ul: true,
-                                    ol: true,
-                                    listStyles: false,
+                                    ul: false,
+                                    ol: false,
+                                   listStyles: false,
                                   ),
                                   ParagraphButtons(
                                     textDirection: false,
@@ -1209,5 +1328,28 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
         return '<span $spanClass $spanStyle>$text</span>';
       },
     ));
+  }
+  Widget _buildListItem(String value, String text) {
+    return GestureDetector(
+      onTap: () {
+        // Execute the command when an item is clicked
+        _htmlEditorController.execCommand("insertHTML",
+            argument:
+            '<ol style="list-style-type: $value;"><li>List Item</li></ol>');
+      },
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child:  SvgPicture.asset(
+          "assets/images/${text == "1" ? "1" : text == "01" ? "01" : text == "i" ? "OL-i" : text == "I" ? "OL-II" : text == "a" ? "OL-aa" : "OL-AAA"}.svg",
+          height: 80,
+          width: 80,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 }

@@ -20,6 +20,7 @@ import '../../VendorModule/repository/vendor_permission.dart';
 import '../../VendorModule/screen/dashboard.dart';
 import '../../VendorModule/screen/mainScreen.dart';
 import '../../provider/Plan Purchase/plancheckProvider.dart';
+import '../../provider/dateProvider.dart';
 import '../Login/login_screen.dart';
 import '../Plans/PlansPurcharCard.dart'; // Import your login screen file
 
@@ -66,6 +67,10 @@ class _SplashScreenState extends State<SplashScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
     String role = prefs.getString("role") ??"";
+    if(role != ""){
+      final dateProvider = Provider.of<DateProvider>(context,listen: false);
+
+    }
     if(role == "Admin") {
       await Provider.of<checkPlanPurchaseProiver>(context, listen: false)
           .fetchPlanPurchaseDetail();

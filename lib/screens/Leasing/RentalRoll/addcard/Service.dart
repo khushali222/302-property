@@ -98,7 +98,7 @@ class AddCardService {
       'authorization': 'CRM $token',
       'id': 'CRM $id',
     };
-
+    print(addCard.toJson());
     final body = jsonEncode(addCard.toJson());
 
     try {

@@ -635,6 +635,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_nfc_kit:
+    dependency: "direct main"
+    description:
+      name: flutter_nfc_kit
+      sha256: "3cc4059626fa672031261512299458dd274de4ccb57a7f0ee0951ddd70a048e5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.6.0"
+  flutter_nmi:
+    dependency: "direct main"
+    description:
+      name: flutter_nmi
+      sha256: "01e0edf0f14a5053697e131fe1fa3a40ff691521edebba069fef659b07b4fa28"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.17"
   flutter_otp_text_field:
     dependency: "direct main"
     description:
@@ -749,6 +765,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.1"
+  hex:
+    dependency: "direct main"
+    description:
+      name: hex
+      sha256: "4e7cd54e4b59ba026432a6be2dd9d96e4c5205725194997193bf871703b82c4a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   html:
     dependency: "direct main"
     description:
@@ -949,6 +973,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      sha256: c8245ada5f1717ed44271ed1c26b8ce85ca3228fd2ffdb75468ab01979309d61
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
   lottie:
     dependency: "direct main"
     description:
@@ -997,6 +1029,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  ndef:
+    dependency: transitive
+    description:
+      name: ndef
+      sha256: "5083507cff4bb823b2a198a27ea2c70c4d6bc27a97b66097d966a250e1615d54"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.4"
   nested:
     dependency: transitive
     description:
@@ -1005,6 +1045,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  nfc_manager:
+    dependency: "direct main"
+    description:
+      name: nfc_manager
+      sha256: f5be75e90f8f2bff3ee49fbd7ef65bdd4a86ee679c2412e71ab2846a8cff8c59
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.0"
   nm:
     dependency: transitive
     description:
@@ -1655,6 +1703,14 @@ packages:
     description:
       name: typed_data
       sha256: f9049c039ebfeb4cf7a7104a675823cd72dba8297f264b6637062516699fa006
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
+  u_credit_card:
+    dependency: "direct main"
+    description:
+      name: u_credit_card
+      sha256: "97fb11becedd3159f1f7b19cbafb1a64661733aaedc254aef5023bfc5d140b21"
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"

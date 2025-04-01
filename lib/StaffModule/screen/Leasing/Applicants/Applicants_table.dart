@@ -1330,6 +1330,48 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
+                                                      if(permissions!.applicantView!)
+                                                        Expanded(
+                                                          child: GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          applicant_summery(
+                                                                            applicant_id:
+                                                                            applicant
+                                                                                .applicantId,
+                                                                          )));
+
+                                                            },
+                                                            child: Container(
+                                                              height:40,
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors.grey[350]
+                                                              ),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment.center,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.center,
+                                                                children: [
+                                                                  SizedBox(width: 5,),
+                                                                  Image.asset('assets/icons/view.png',color: blueColor,),
+                                                                  // FaIcon(
+                                                                  //   FontAwesomeIcons.trashCan,
+                                                                  //   size: 15,
+                                                                  //   color:blueColor,
+                                                                  // ),
+                                                                  SizedBox(width: 8,),
+                                                                  Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      if(permissions!.applicantEdit!)
+                                                        SizedBox(width: 5,),
                                                       if(permissions!.applicantEdit!)
                                                       Expanded(
                                                         child: GestureDetector(
@@ -1372,8 +1414,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      if(permissions!.applicantEdit!)
-                                                      SizedBox(width: 5,),
+                                                      if(permissions!.applicantDelete!)
+                                                        SizedBox(width: 5,),
                                                       if(permissions!.applicantDelete!)
                                                       Expanded(
                                                         child: GestureDetector(
@@ -1407,48 +1449,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      if(permissions!.applicantDelete!)
-                                                      SizedBox(width: 5,),
-                                                      if(permissions!.applicantView!)
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        applicant_summery(
-                                                                          applicant_id:
-                                                                          applicant
-                                                                              .applicantId,
-                                                                        )));
 
-                                                          },
-                                                          child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment.center,
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
-                                                              children: [
-                                                                SizedBox(width: 5,),
-                                                                Image.asset('assets/icons/view.png',color: blueColor,),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                SizedBox(width: 8,),
-                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
 
                                                     ],
                                                   ),

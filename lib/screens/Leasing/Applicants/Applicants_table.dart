@@ -1365,6 +1365,77 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           children: [
                                                             Expanded(
                                                               child:
+                                                              GestureDetector(
+                                                                onTap: () async{
+                                                                  bool? refreshNeeded = await  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => applicant_summery(
+                                                                            applicant_id: applicant.applicantId,
+                                                                          )));
+
+                                                                  if(refreshNeeded == true){
+                                                                    setState(() {
+                                                                      futureApplicantdata = ApplicantRepository().fetchApplicants();
+                                                                    });
+                                                                  }
+
+                                                                },
+                                                                child:
+                                                                Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .grey[
+                                                                      350]),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width:
+                                                                        5,
+                                                                      ),
+                                                                      Image
+                                                                          .asset(
+                                                                        'assets/icons/view.png',
+                                                                        color:
+                                                                        blueColor,
+                                                                      ),
+                                                                      // FaIcon(
+                                                                      //   FontAwesomeIcons.trashCan,
+                                                                      //   size: 15,
+                                                                      //   color:blueColor,
+                                                                      // ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                        8,
+                                                                      ),
+                                                                      Text(
+                                                                        "View Summery",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            11,
+                                                                            color:
+                                                                            blueColor,
+                                                                            fontWeight:
+                                                                            FontWeight.bold),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+
+                                                            Expanded(
+                                                              child:
                                                                   GestureDetector(
                                                                 onTap:
                                                                     () async {
@@ -1478,76 +1549,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () async{
-                                                                  bool? refreshNeeded = await  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => applicant_summery(
-                                                                                applicant_id: applicant.applicantId,
-                                                                              )));
 
-                                                                  if(refreshNeeded == true){
-                                                                    setState(() {
-                                                                      futureApplicantdata = ApplicantRepository().fetchApplicants();
-                                                                    });
-                                                                  }
-
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        width:
-                                                                            5,
-                                                                      ),
-                                                                      Image
-                                                                          .asset(
-                                                                        'assets/icons/view.png',
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      // FaIcon(
-                                                                      //   FontAwesomeIcons.trashCan,
-                                                                      //   size: 15,
-                                                                      //   color:blueColor,
-                                                                      // ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            8,
-                                                                      ),
-                                                                      Text(
-                                                                        "View Summery",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                11,
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
                                                           ],
                                                         ),
                                                       ],

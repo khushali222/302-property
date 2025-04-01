@@ -2481,7 +2481,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                         final parts = value!.split('_');
                                                         final chargeType = parts[0];
                                                         final selectedValue = parts.sublist(1).join('_');
-
+                                                        print("account chargetype ${selectedValue}   $value");
                                                         bool isDuplicate = rows.any((row) => row['account'] == chargeType && rows.indexOf(row) != index);
                                                         print("Duplicate Entry $isDuplicate");
                                                         if(isDuplicate) {

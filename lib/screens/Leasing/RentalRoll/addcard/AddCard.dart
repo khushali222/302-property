@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:email_validator/email_validator.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:nfc_manager/nfc_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.dart';
@@ -18,6 +20,7 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.da
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
+import '../../../../widgets/html_editor.dart';
 import 'CardModel.dart';
 import 'Service.dart';
 import '../../../../widgets/custom_drawer.dart';
@@ -95,6 +98,8 @@ class _AddCardState extends State<AddCard> {
     super.initState();
     fetchTenants();
   }
+  bool _tapToPayEnabled = false;
+  String? _cardId;
 
   Future<void> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -418,6 +423,34 @@ class _AddCardState extends State<AddCard> {
     return sum % 10 == 0;
   }
 
+  String _nfcData = "";
+  void _startNfcSession() async {
+    bool isAvailable = await NfcManager.instance.isAvailable();
+    if (!isAvailable) {
+      setState(() => _nfcData = 'NFC is not available');
+      return;
+    }
+
+    try {
+      NfcManager.instance.startSession(
+        onDiscovered: (NfcTag tag) async {
+          print("✅ NFC Tag Detected: ${tag.data}");
+          setState(() {
+            _nfcData = 'NFC Tag Detected!';
+          });
+          await NfcManager.instance.stopSession();
+        },
+        onError: (error) async {
+          print("❌ NFC Error: ${error.runtimeType} - ${error.type}");
+          setState(() {
+            _nfcData = "NFC Error: ${error.runtimeType} - $error";
+          });
+        },
+      );
+    } catch (e) {
+      print("❌ NFC Exception: $e");
+    }
+  }
   String generateRandomNumber(int length) {
     print(10);
     String randomNumber = "";
@@ -1154,6 +1187,7 @@ class _AddCardState extends State<AddCard> {
                                                         responseCode:
                                                             cardResponse
                                                                 .responseCode,
+                                                            cardID: _cardId
                                                       );
 
                                                       await addCardService
@@ -1190,6 +1224,7 @@ class _AddCardState extends State<AddCard> {
                                                         responseCode:
                                                             cardResponses
                                                                 ?.responseCode,
+                                                            cardID: _cardId
                                                       );
                                                       await addCardService
                                                           .postAddCreditCard(
@@ -1760,6 +1795,63 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                           // Icon(Icons.credit_card, size: 80, color: Colors.blueAccent),
+                                           // SizedBox(height: 20),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Enable Tap to Pay',
+                                                  style: TextStyle(fontSize: 16, color:blueColor , fontWeight: FontWeight.bold),
+                                                ),
+                                                Switch(
+                                                  activeColor: blueColor,
+                                                  value: _tapToPayEnabled,
+                                                  onChanged: (value) async {
+                                                    if (value) {
+                                                      final result = await Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(builder: (context) => NfcReaderScreen()),
+                                                      );
+
+                                                      if (result != null && result['success']) {
+                                                        setState(() {
+                                                          _tapToPayEnabled = true;
+                                                          _cardId = result['cardId']; // ✅ Store the scanned Card ID
+                                                          print("cardID $_cardId");
+                                                        });
+                                                      } else {
+                                                        setState(() => _tapToPayEnabled = false);
+                                                      }
+                                                    } else {
+                                                      setState(() => _tapToPayEnabled = false);
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+
+                                            // SizedBox(height: 20),
+                                            // ElevatedButton(
+                                            //   onPressed: _tapToPayEnabled ? () {
+                                            //     Navigator.push(
+                                            //       context,
+                                            //       MaterialPageRoute(builder: (context) => NfcReaderScreen()),
+                                            //     );
+                                            //   } : null,
+                                            //   child: Text('Tap to Pay (Get Card ID)'),
+                                            // ),
+                                            // if (_cardId != null)
+                                            //   Padding(
+                                            //     padding: EdgeInsets.only(top: 8),
+                                            //     child: Text('Card ID: $_cardId', style: TextStyle(color: Colors.blue, fontSize: 14)),
+                                            //   ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -1994,6 +2086,8 @@ class _AddCardState extends State<AddCard> {
                                                         responseCode:
                                                             cardResponse
                                                                 .responseCode,
+                                                            cardID: _cardId
+
                                                       );
 
                                                       await addCardService
@@ -2030,6 +2124,7 @@ class _AddCardState extends State<AddCard> {
                                                         responseCode:
                                                             cardResponses
                                                                 ?.responseCode,
+                                                            cardID: _cardId
                                                       );
                                                       await addCardService
                                                           .postAddCreditCard(
@@ -2172,7 +2267,10 @@ class _AddCardState extends State<AddCard> {
           ),
         ],
       ),
-      child: Card(
+      child:
+
+      Card(
+
         elevation: 4.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
@@ -2866,6 +2964,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         print(value);
                         widget.onChanged2;
                       },*/
+                      textInputAction: TextInputAction.done,
                       inputFormatters: widget.formatter ?? [],
                       onFieldSubmitted: widget.onChanged2,
                       onChanged: (value) {
@@ -3032,8 +3131,8 @@ class CustomTextFieldState extends State<CustomTextField> {
           ),
       ],
     );
-    return shouldUseKeyboardActions
-        ? SizedBox(
+    if (shouldUseKeyboardActions && Platform.isIOS) {
+      return SizedBox(
             height: widget.amount_check != null
                 ? widget.amount_check!
                     ? 75
@@ -3046,8 +3145,10 @@ class CustomTextFieldState extends State<CustomTextField> {
               config: _buildConfig(context),
               child: textfield,
             ),
-          )
-        : textfield;
+          );
+    } else {
+      return textfield;
+    }
   }
 }
 
