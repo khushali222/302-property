@@ -1262,10 +1262,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                     decoration:
                                         BoxDecoration(border: Border.all()),
                                     children: [
-                                      // TableCell(child: Text('yash')),
-                                      // TableCell(child: Text('yash')),
-                                      // TableCell(child: Text('yash')),
-                                      // TableCell(child: Text('yash')),
+
                                       _buildHeader('Name', 0,
                                           (rental) => rental.rentalOwnername!),
                                       _buildHeader(
@@ -1327,9 +1324,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 .rentalOwnerPrimaryEmail!,
                                             _pagedData[i].rentalownerId!),
 
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
+
 
                                         _buildActionsCell(_pagedData[i]),
                                       ],

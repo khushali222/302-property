@@ -1389,11 +1389,7 @@ class _ActivityTableState extends State<ActivityTable> {
                                               ),
                                             ),
                                             children: [
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
+
                                               _buildHeader(
                                                   'Main Type',
                                                   0,
@@ -1454,11 +1450,7 @@ class _ActivityTableState extends State<ActivityTable> {
                                                 ),
                                               ),
                                               children: [
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
+
                                                 // Text(
                                                 //     '${_pagedData[i].propertyType!}'),
                                                 // Text(

@@ -861,11 +861,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                               ),
                                             ),
                                             children: [
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
+
                                               _buildHeader(
                                                   'Main Type',
                                                   0,
@@ -926,11 +922,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                 ),
                                               ),
                                               children: [
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
+
                                                 // Text(
                                                 //     '${_pagedData[i].propertyType!}'),
                                                 // Text(

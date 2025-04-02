@@ -67,7 +67,7 @@ class ApplicantRepository {
     required String applicantId,
     required Map<String, dynamic> applicantData,
   }) async {
-    print('Update Yash :${jsonEncode(applicantData)}');
+
     print('id is that :${applicantId}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
 

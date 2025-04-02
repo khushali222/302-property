@@ -1260,10 +1260,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                   decoration:
                                   BoxDecoration(border: Border.all()),
                                   children: [
-                                    // TableCell(child: Text('yash')),
-                                    // TableCell(child: Text('yash')),
-                                    // TableCell(child: Text('yash')),
-                                    // TableCell(child: Text('yash')),
+
                                     _buildHeader('Status', 0,
                                             (rental) => rental.startDate!),
                                     _buildHeader(
@@ -2668,10 +2665,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       decoration:
                                       BoxDecoration(border: Border.all()),
                                       children: [
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
+
                                         _buildHeader('Name', 0,
                                                 (rental) => rental.applianceName!),
                                         _buildHeader(

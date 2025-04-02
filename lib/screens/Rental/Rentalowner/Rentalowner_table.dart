@@ -922,6 +922,66 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                     children: [
                                                       Expanded(
                                                         child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                        ResponsiveRentalSummary(
+                                                                          rentalOwnersid: rentals.rentalownerId!,
+                                                                          rentalowners: rentals,
+                                                                        )));
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                                color: Colors
+                                                                    .grey[
+                                                                350]),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Image.asset(
+                                                                  'assets/icons/view.png',color: blueColor,),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(
+                                                                  width: 8,
+                                                                ),
+                                                                Text(
+                                                                  "View Summery",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                      11,
+                                                                      color:
+                                                                      blueColor,
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Expanded(
+                                                        child: GestureDetector(
                                                           onTap: () async {
                                                             var check = await Navigator
                                                                 .push(
@@ -1025,66 +1085,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            ResponsiveRentalSummary(
-                                                                              rentalOwnersid: rentals.rentalownerId!,
-                                                                              rentalowners: rentals,
-                                                                            )));
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Image.asset(
-                                                                    'assets/icons/view.png',color: blueColor,),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                SizedBox(
-                                                                  width: 8,
-                                                                ),
-                                                                Text(
-                                                                  "View Summery",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
+
+
                                                     ],
                                                   ),
                                                 ],
@@ -1278,10 +1280,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                     decoration:
                                         BoxDecoration(border: Border.all()),
                                     children: [
-                                      // TableCell(child: Text('yash')),
-                                      // TableCell(child: Text('yash')),
-                                      // TableCell(child: Text('yash')),
-                                      // TableCell(child: Text('yash')),
+
                                       _buildHeader('Name', 0,
                                           (rental) => rental.rentalOwnername!),
                                       _buildHeader(
@@ -1343,9 +1342,6 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 .rentalOwnerPrimaryEmail!,
                                             _pagedData[i].rentalownerId!),
 
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
 
                                         _buildActionsCell(_pagedData[i]),
                                       ],

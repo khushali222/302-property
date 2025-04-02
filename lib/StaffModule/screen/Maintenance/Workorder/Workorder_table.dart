@@ -2018,11 +2018,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         ),
                                                   ),
                                                   children: [
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
+
                                                     _buildHeader(
                                                         'Work Orders',
                                                         0,
@@ -2106,11 +2102,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                       ),
                                                     ),
                                                     children: [
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
+
                                                       // Text(
                                                       //     '${_pagedData[i].propertyType!}'),
                                                       // Text(

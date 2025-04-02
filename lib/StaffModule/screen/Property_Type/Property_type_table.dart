@@ -1565,11 +1565,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                         ),
                                                   ),
                                                   children: [
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
+
                                                     _buildHeader(
                                                         'Main Type',
                                                         0,
@@ -1623,11 +1619,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                       ),
                                                     ),
                                                     children: [
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
+
                                                       // Text(
                                                       //     '${_pagedData[i].propertyType!}'),
                                                       // Text(

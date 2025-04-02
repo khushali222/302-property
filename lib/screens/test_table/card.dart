@@ -171,85 +171,14 @@ class _CardpaymentState extends State<Cardpayment> {
       jsonResponse.map((item) => item['name'] as String).toList();
 
       // Add static items
-      fetchedItems.addAll(['Yash', 'Jay']);
+
 
       return fetchedItems;
     } else {
       throw Exception('Failed to load data');
     }
   }*/
-  List<DropdownMenuItem<String>> buildGroupedItems(List<String> items) {
-    List<DropdownMenuItem<String>> result = [];
 
-    // Add the Local group
-    result.add(
-       DropdownMenuItem<String>(
-        enabled: false,
-        child: Text(
-          'LIABILITY ACCOUNT',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: blueColor,
-          ),
-        ),
-      ),
-    );
-    result.addAll(
-      items.where((item) => item == 'Yash' || item == 'Jay').map((item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
-    );
-
-    // Add the Dynamic group
-    result.add(
-       DropdownMenuItem<String>(
-        enabled: false,
-        child: Text(
-          'RECURRING CHARGES',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: blueColor,
-          ),
-        ),
-      ),
-    );
-    result.addAll(
-      items.where((item) => item != 'Yash' && item != 'Jay').map((item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
-    );
-    result.add(
-       DropdownMenuItem<String>(
-        enabled: false,
-        child: Text(
-          'ONE TIME CHARGES',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: blueColor,
-          ),
-        ),
-      ),
-    );
-    result.addAll(
-      items.where((item) => item != 'Yash' && item != 'Jay').map((item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
-    );
-
-    return result;
-  }
 
   String? _selectedPaymentMethod;
   String? _selectedAccount;

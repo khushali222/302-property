@@ -72,7 +72,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
     "Commercial",
   ];
   String? selectedStaff;
- // List<String> staffMembers = ['Mansi Patel', 'jadeja yash', 'Bob Smith'];
+
   bool isLoading = false;
   String? selectedValue;
   bool isChecked = false;

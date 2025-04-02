@@ -914,11 +914,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                                 ),
                                           ),
                                           children: [
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
+
                                             _buildHeader(
                                                 'Main Type',
                                                 0,

@@ -12,7 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
-import 'package:nfc_manager/nfc_manager.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.dart';
@@ -424,33 +424,7 @@ class _AddCardState extends State<AddCard> {
   }
 
   String _nfcData = "";
-  void _startNfcSession() async {
-    bool isAvailable = await NfcManager.instance.isAvailable();
-    if (!isAvailable) {
-      setState(() => _nfcData = 'NFC is not available');
-      return;
-    }
 
-    try {
-      NfcManager.instance.startSession(
-        onDiscovered: (NfcTag tag) async {
-          print("✅ NFC Tag Detected: ${tag.data}");
-          setState(() {
-            _nfcData = 'NFC Tag Detected!';
-          });
-          await NfcManager.instance.stopSession();
-        },
-        onError: (error) async {
-          print("❌ NFC Error: ${error.runtimeType} - ${error.type}");
-          setState(() {
-            _nfcData = "NFC Error: ${error.runtimeType} - $error";
-          });
-        },
-      );
-    } catch (e) {
-      print("❌ NFC Exception: $e");
-    }
-  }
   String generateRandomNumber(int length) {
     print(10);
     String randomNumber = "";
@@ -1795,63 +1769,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                           // Icon(Icons.credit_card, size: 80, color: Colors.blueAccent),
-                                           // SizedBox(height: 20),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Enable Tap to Pay',
-                                                  style: TextStyle(fontSize: 16, color:blueColor , fontWeight: FontWeight.bold),
-                                                ),
-                                                Switch(
-                                                  activeColor: blueColor,
-                                                  value: _tapToPayEnabled,
-                                                  onChanged: (value) async {
-                                                    if (value) {
-                                                      final result = await Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(builder: (context) => NfcReaderScreen()),
-                                                      );
 
-                                                      if (result != null && result['success']) {
-                                                        setState(() {
-                                                          _tapToPayEnabled = true;
-                                                          _cardId = result['cardId']; // ✅ Store the scanned Card ID
-                                                          print("cardID $_cardId");
-                                                        });
-                                                      } else {
-                                                        setState(() => _tapToPayEnabled = false);
-                                                      }
-                                                    } else {
-                                                      setState(() => _tapToPayEnabled = false);
-                                                    }
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-
-                                            // SizedBox(height: 20),
-                                            // ElevatedButton(
-                                            //   onPressed: _tapToPayEnabled ? () {
-                                            //     Navigator.push(
-                                            //       context,
-                                            //       MaterialPageRoute(builder: (context) => NfcReaderScreen()),
-                                            //     );
-                                            //   } : null,
-                                            //   child: Text('Tap to Pay (Get Card ID)'),
-                                            // ),
-                                            // if (_cardId != null)
-                                            //   Padding(
-                                            //     padding: EdgeInsets.only(top: 8),
-                                            //     child: Text('Card ID: $_cardId', style: TextStyle(color: Colors.blue, fontSize: 14)),
-                                            //   ),
-                                          ],
-                                        ),
                                       ],
                                     ),
                                   ),

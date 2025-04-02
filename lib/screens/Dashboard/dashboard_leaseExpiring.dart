@@ -1075,11 +1075,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                                                 ),
                                           ),
                                           children: [
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
+
                                             _buildHeader(
                                                 'Main Type',
                                                 0,

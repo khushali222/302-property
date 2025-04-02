@@ -1966,11 +1966,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           //                                       ),
           //                                 ),
           //                                 children: [
-          //                                   // TableCell(child: Text('yash')),
-          //                                   // TableCell(child: Text('yash')),
-          //                                   // TableCell(child: Text('yash')),
-          //                                   // TableCell(child: Text('yash')),
-          //                                   // TableCell(child: Text('yash')),
+
           //                                   _buildHeader(
           //                                       'Main Type',
           //                                       0,

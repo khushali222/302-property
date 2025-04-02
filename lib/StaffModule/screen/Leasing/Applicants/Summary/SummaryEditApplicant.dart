@@ -184,7 +184,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
     }
   }
 
-  String applicantName = 'Yash';
+
   @override
   void initState() {
     super.initState();

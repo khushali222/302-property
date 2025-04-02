@@ -2951,10 +2951,7 @@ class _Summery_pageState extends State<Summery_page>
                                     decoration:
                                         BoxDecoration(border: Border.all()),
                                     children: [
-                                      // TableCell(child: Text('yash')),
-                                      // TableCell(child: Text('yash')),
-                                      // TableCell(child: Text('yash')),
-                                      // TableCell(child: Text('yash')),
+
                                       _buildHeaderrent(
                                           'Contact Name',
                                           0,
@@ -11173,10 +11170,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                             ),
                                             children: [
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
+
                                               _buildHeadermulti(
                                                   'Unit',
                                                   0,
@@ -13537,11 +13531,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                           ),
                                           children: [
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
-                                            // TableCell(child: Text('yash')),
+
                                             _buildHeader(
                                                 'Work Orders',
                                                 0,
@@ -13600,11 +13590,7 @@ class _Summery_pageState extends State<Summery_page>
                                               ),
                                             ),
                                             children: [
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
+
                                               // Text(
                                               //     '${_pagedData[i].propertyType!}'),
                                               // Text(
@@ -14727,10 +14713,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                   decoration:
                                       BoxDecoration(border: Border.all()),
                                   children: [
-                                    // TableCell(child: Text('yash')),
-                                    // TableCell(child: Text('yash')),
-                                    // TableCell(child: Text('yash')),
-                                    // TableCell(child: Text('yash')),
+
                                     _buildHeader('Status', 0,
                                         (rental) => rental.startDate!),
                                     _buildHeader('Start-End', 1,
@@ -16369,10 +16352,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       decoration:
                                           BoxDecoration(border: Border.all()),
                                       children: [
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
+
                                         _buildHeader('Name', 0,
                                             (rental) => rental.applianceName!),
                                         _buildHeader(

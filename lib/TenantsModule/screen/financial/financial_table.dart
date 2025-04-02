@@ -1754,11 +1754,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                               ),
                                               children: [
 
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
+
                                                 // Text(
                                                 //     '${_pagedData[i].propertyType!}'),
                                                 // Text(

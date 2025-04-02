@@ -139,7 +139,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 //   void initState() {
 //     super.initState();
 //     // Simulating an API call by setting the initial value
-//     _textController = TextEditingController(text: 'yash');
+
 //   }
 
 //   @override

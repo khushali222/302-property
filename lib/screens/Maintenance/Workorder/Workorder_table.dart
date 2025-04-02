@@ -1575,6 +1575,69 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                           children: [
                                                             Expanded(
                                                               child:
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => Workorder_summery(
+                                                                            workorder_id: workOrder.workOrderData?.workOrderId,
+                                                                          )));
+                                                                },
+                                                                child:
+                                                                Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .grey[
+                                                                      350]),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width:
+                                                                        5,
+                                                                      ),
+                                                                      Image
+                                                                          .asset(
+                                                                        'assets/icons/view.png',
+                                                                        color:
+                                                                        blueColor,
+                                                                      ),
+                                                                      // FaIcon(
+                                                                      //   FontAwesomeIcons.trashCan,
+                                                                      //   size: 15,
+                                                                      //   color:blueColor,
+                                                                      // ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                        8,
+                                                                      ),
+                                                                      Text(
+                                                                        "View Summery",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            11,
+                                                                            color:
+                                                                            blueColor,
+                                                                            fontWeight:
+                                                                            FontWeight.bold),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Expanded(
+                                                              child:
                                                                   GestureDetector(
                                                                 onTap:
                                                                     () async {
@@ -1687,69 +1750,8 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => Workorder_summery(
-                                                                                workorder_id: workOrder.workOrderData?.workOrderId,
-                                                                              )));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        width:
-                                                                            5,
-                                                                      ),
-                                                                      Image
-                                                                          .asset(
-                                                                        'assets/icons/view.png',
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      // FaIcon(
-                                                                      //   FontAwesomeIcons.trashCan,
-                                                                      //   size: 15,
-                                                                      //   color:blueColor,
-                                                                      // ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            8,
-                                                                      ),
-                                                                      Text(
-                                                                        "View Summery",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                11,
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
+
+
                                                           ],
                                                         ),
                                                       ],
@@ -1958,11 +1960,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         ),
                                                   ),
                                                   children: [
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
+
                                                     _buildHeader(
                                                         'Work Orders',
                                                         0,
@@ -2046,11 +2044,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                       ),
                                                     ),
                                                     children: [
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
+
                                                       // Text(
                                                       //     '${_pagedData[i].propertyType!}'),
                                                       // Text(

@@ -50,7 +50,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
     "Commercial",
   ];
   String? selectedStaff;
-  List<String> staffMembers = ['Mansi Patel', 'jadeja yash', 'Bob Smith'];
+
   bool isLoading = false;
   String? selectedValue;
   bool isChecked = false;

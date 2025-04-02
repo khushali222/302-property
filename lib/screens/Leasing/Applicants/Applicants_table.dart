@@ -1723,11 +1723,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                         ),
                                                   ),
                                                   children: [
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
+
                                                     _buildHeader(
                                                         'Name',
                                                         0,
@@ -1782,11 +1778,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                       ),
                                                     ),
                                                     children: [
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
+
                                                       // Text(
                                                       //     '${_pagedData[i].propertyType!}'),
                                                       // Text(

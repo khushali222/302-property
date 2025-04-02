@@ -1742,11 +1742,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                         ),
                                                   ),
                                                   children: [
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
-                                                    // TableCell(child: Text('yash')),
+
                                                     _buildHeader(
                                                         'Insurance Company',
                                                         0,
@@ -1809,11 +1805,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                       ),
                                                     ),
                                                     children: [
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
-                                                      // TableCell(child: Text('yash')),
+
                                                       // Text(
                                                       //     '${_pagedData[i].propertyType!}'),
                                                       // Text(

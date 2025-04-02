@@ -324,7 +324,7 @@ class _addLease4State extends State<addLease4>
                   } else {
                     // Add new item
                     formDataOneTimeList.add(data);
-                    print("hello yash :${data}");
+
 
                     // Fluttertoast.showToast(
                     //     msg: 'Recurring Charge Added Sucessfully');
@@ -344,7 +344,7 @@ class _addLease4State extends State<addLease4>
           formDataOneTimeList[index] = result;
         } else {
           formDataOneTimeList.add(result);
-          print("hello yash :${result}");
+
         }
       });
     }
@@ -385,7 +385,7 @@ class _addLease4State extends State<addLease4>
   //                   // Add new item
 
   //                   formDataRecurringList.add(data);
-  //                   print("hello yash :${data}");
+
 
   //                   Fluttertoast.showToast(
   //                       msg: 'Recurring Charge Added Sucessfully');
@@ -407,7 +407,7 @@ class _addLease4State extends State<addLease4>
   //         Navigator.pop(context);
   //       } else {
   //         formDataRecurringList.add(result);
-  //         print("hello yash :${result}");
+
   //         Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
   //         Navigator.pop(context);
   //       }
@@ -446,7 +446,7 @@ class _addLease4State extends State<addLease4>
                   } else {
                     // Add new item
                     formDataRecurringList.add(data);
-                    print("hello yash :${data}");
+
                     Fluttertoast.showToast(
                         msg: 'Recurring Charge Added Sucessfully');
                     Navigator.pop(context);
@@ -467,7 +467,7 @@ class _addLease4State extends State<addLease4>
           Fluttertoast.showToast(msg: 'Recurring Charge Updated Sucessfully');
         } else {
           formDataRecurringList.add(result);
-          print("hello yash :${result}");
+
           Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
         }
       });

@@ -752,7 +752,7 @@ class _addLease3State extends State<addLease3>
                   } else {
                     // Add new item
                     formDataOneTimeList.add(data);
-                    print("hello yash :${data}");
+
                     Fluttertoast.showToast(
                         msg: 'Recurring Charge Added Sucessfully');
                     Navigator.pop(context);
@@ -773,7 +773,7 @@ class _addLease3State extends State<addLease3>
           Fluttertoast.showToast(msg: 'Recurring Charge Updated Suessfully');
         } else {
           formDataOneTimeList.add(result);
-          print("hello yash :${result}");
+
           Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
         }
       });
@@ -806,7 +806,7 @@ class _addLease3State extends State<addLease3>
                   } else {
                     // Add new item
                     formDataRecurringList.add(data);
-                    print("hello yash :${data}");
+
                     Fluttertoast.showToast(
                         msg: 'Recurring Charge Added Sucessfully');
                     Navigator.pop(context);
@@ -827,7 +827,7 @@ class _addLease3State extends State<addLease3>
           Fluttertoast.showToast(msg: 'Recurring Charge Updated Sucessfully');
         } else {
           formDataRecurringList.add(result);
-          print("hello yash :${result}");
+
           Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
         }
       });
@@ -1097,7 +1097,7 @@ class _addLease3State extends State<addLease3>
                                                   _showUnitDropdown = false;// Optionally reset _selectedUnit
                                                   state.didChange(value); // Notify the FormField that the value has changed
                                                   renderId = value.toString();
-                                                  print('Hello Yash:${renderId}');
+
                                                   _loadUnits(value!); // Fetch units for the selected property
                                                 });
                                                 state.reset();

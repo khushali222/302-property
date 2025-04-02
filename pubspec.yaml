@@ -101,12 +101,7 @@ dependencies:
   html:
   html_editor_enhanced:
   super_tooltip:
-  flutter_nmi: ^1.0.17
 
-  nfc_manager:
-  u_credit_card: ^1.4.0
-  flutter_nfc_kit:
-  hex:
 
 
   # pdf:

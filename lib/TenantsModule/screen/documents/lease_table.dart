@@ -1551,11 +1551,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                               ),
                                             ),
                                             children: [
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
+
                                               _buildHeader(
                                                   'Lease',
                                                   0,
@@ -1629,11 +1625,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                 ),
                                               ),
                                               children: [
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
+
                                                 // Text(
                                                 //     '${_pagedData[i].propertyType!}'),
                                                 // Text(

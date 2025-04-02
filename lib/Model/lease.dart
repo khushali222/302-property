@@ -114,12 +114,13 @@ class Entry {
       'memo': memo,
       'tenant_id': tenantId,
       'entry_id': entry_id,
+      'rent_cycle':rentCycle
     };
 
 
-    if (chargeType != "Recurring Charge") {
-      data['rent_cycle'] = rentCycle;
-    }
+    // if (chargeType != "Recurring Charge") {
+    //   data['rent_cycle'] = rentCycle;
+    // }
     return data;
     // return {
     //   'account': account,
