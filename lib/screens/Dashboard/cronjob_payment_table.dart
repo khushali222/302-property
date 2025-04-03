@@ -1314,11 +1314,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                      .08),
+                                                      .04),
                                               Expanded(
                                                 flex: 3,
                                                 child: Text(
-                                                  ' ${Propertytype.tenant?.tenantName}',
+                                                  '${Propertytype.tenant?.tenantName?? "External Source"}',
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,
@@ -1330,11 +1330,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                      .08),
+                                                      .03),
                                               Expanded(
                                                 flex: 2,
                                                 child: Text(
-                                                  '${Propertytype.response}',
+                                                  '  ${Propertytype.response}',
                                                   style: TextStyle(
                                                     color:
                                                         Propertytype.response ==

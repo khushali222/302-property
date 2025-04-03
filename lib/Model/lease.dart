@@ -93,7 +93,7 @@ class Entry {
     });
     return Entry(
       account: json['account'],
-      amount: json['amount'],
+      amount: json['amount'] ??"",
       chargeType: json['charge_type'],
       date: json['date'],
       isRepeatable: json['is_repeatable'] ?? false,

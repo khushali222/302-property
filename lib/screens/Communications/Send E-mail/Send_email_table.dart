@@ -20,6 +20,7 @@ import '../../../provider/dateProvider.dart';
 import '../../../repository/Communication/Email_log_repo.dart';
 import '../../../repository/Communication/Send_email_repo.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'send_mail.dart';
 
 class Send_Email_table extends StatefulWidget {
   @override
@@ -724,6 +725,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                         ),
                         GestureDetector(
                           onTap: () async {
+                            Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => send_email()));
                             // final result = await Navigator.of(context).push(
                             //     MaterialPageRoute(
                             //         builder: (context) => Add_property()));

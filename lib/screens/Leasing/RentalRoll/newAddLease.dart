@@ -7189,7 +7189,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                               item,
                               style: const TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.w400,
+                               // fontWeight: FontWeight.w400,
                                 color: Colors.black87,
                               ),
                               overflow: TextOverflow.ellipsis,

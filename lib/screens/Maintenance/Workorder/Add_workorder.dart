@@ -169,9 +169,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
-      );
+
     }
   }
 
@@ -247,9 +245,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
       setState(() {
         _isLoadingvendors = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
-      );
+
     }
   }
 
@@ -288,9 +284,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
       setState(() {
         _isLoadingstaff = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
-      );
+
     }
   }
 

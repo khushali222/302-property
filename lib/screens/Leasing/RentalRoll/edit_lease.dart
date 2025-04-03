@@ -1195,7 +1195,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   'Type',
                                                   style: TextStyle(
                                                     fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
+                                                 //   fontWeight: FontWeight.bold,
                                                     color: Colors.black,
                                                   ),
                                                   overflow:
@@ -1214,8 +1214,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                       item,
                                                       style: const TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                        // fontWeight:
+                                                        //     FontWeight.bold,
                                                         color: Colors.black,
                                                       ),
                                                       overflow:
@@ -1233,7 +1233,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   _selectedLeaseType!,
                                                   style: const TextStyle(
                                                     fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
+                                                  //  fontWeight: FontWeight.bold,
                                                     color: Colors.black,
                                                   ),
                                                   overflow:
@@ -1395,7 +1395,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'yyyy-mm-dd',
                                   controller: startDateController,
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
@@ -1482,7 +1482,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'yyyy-mm-dd',
                                   controller: endDateController,
                                 ),
                               if (MediaQuery.of(context).size.width > 500)
@@ -1683,7 +1683,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'yyyy-mm-dd',
                                               controller: endDateController,
                                             ),
                                             SizedBox(height: 5),
@@ -2829,7 +2829,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'yyyy-mm-dd',
                                               controller: rentNextDueDate,
                                             ),
                                           ],
@@ -3070,7 +3070,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'yyyy-mm-dd',
                                   controller: rentNextDueDate,
                                 ),
                               const SizedBox(
@@ -4809,11 +4809,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
   @override
   void initState() {
     super.initState();
-    if (widget.initialData != null) {
-      _selectedProperty = widget.initialData!['property'] ?? '';
-      _amountController.text = widget.initialData!['amount'] ?? '';
-      _memoController.text = widget.initialData!['memo'] ?? '';
-    }
+
     fetchData();
   }
 
@@ -4841,7 +4837,15 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
             .where((item) => item['charge_type'] == "One Time Charge")
             .map((item) => item['account'] as String)
             .toList();
+        print(items);
         _isLoading = false;
+        if (widget.initialData != null) {
+
+          _selectedProperty = widget.initialData!['account'] ?? '';
+          _amountController.text = widget.initialData!['amount'] ?? '';
+          _memoController.text = widget.initialData!['memo'] ?? '';
+          print(_selectedProperty);
+        }
         print(items.length);
       });
     } else {
@@ -5506,7 +5510,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   String? _selectedFundType;
   final TextEditingController _accountNameController = TextEditingController();
   String? _selectedProperty;
-
+  TextEditingController startDateController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _memoController = TextEditingController();
 
@@ -5530,17 +5534,18 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   void initState() {
     super.initState();
     if (widget.initialData != null) {
+      print(widget.initialData);
       _selectedProperty = widget.initialData!['account'] ?? '';
       _amountController.text = widget.initialData!['amount'] ?? '';
       _memoController.text = widget.initialData!['memo'] ?? '';
+
+      startDateController.text = widget.initialData!["charge_start"]??"";
       // selectedDay = widget.initialData!['date']??"";
-      String dateString = widget.initialData!['date'] ?? "";
-      if (dateString.isNotEmpty) {
-        DateTime date = DateTime.parse(dateString);
-        selectedDay = date.day.toString(); // Extracts only the day
-      } else {
-        selectedDay = ""; // Handle empty case
-      }
+      selectedDay = widget.initialData!['rent_cycle'] ?? "";
+
+
+        //selectedDay = ""; // Handle empty case
+
       print("entry id${widget.initialData}");
     }
 
@@ -5594,8 +5599,9 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         child: Material(
           child: Container(
             color: Colors.white,
-            height: _isInvalid ? 460 : 475,
+           //height: _isInvalid ? 460 : 475,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 2),
@@ -6073,7 +6079,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Choose Day of Month *',
+                  'Recurrence Type *',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -6081,37 +6087,141 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Container(
-                  //width: 200,
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade400),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      hint: Text('Day'),
-                      isExpanded: true,
-                      menuMaxHeight: 200,
-                      value: selectedDay,
-                      items: List.generate(28, (i) => i + 1)
-                          .map((day) => DropdownMenuItem<String>(
-                                value: day.toString(),
-                                child: Text('$day'),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedDay = value;
-                        });
-                      },
+                DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    hint: Text('select'),
+                    isExpanded: true,
+                    // menuMaxHeight: 200,
+                    value: selectedDay,
+                    items: [
+                      DropdownMenuItem<String>(
+                        value: 'Weekly',
+                        child: Text('Weekly'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Monthly',
+                        child: Text('Monthly'),
+                      ),
+                    ],
+
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDay = value;
+                      });
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      height: 45,
+                      // width: 160,
+                      padding: const EdgeInsets.only(left: 0, right: 14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.white,
+                      ),
+                      elevation: 2,
+                    ),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.white,
+                      ),
+                      scrollbarTheme: ScrollbarThemeData(
+                        radius: const Radius.circular(6),
+                        thickness: MaterialStateProperty.all(6),
+                        thumbVisibility: MaterialStateProperty.all(true),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
+                if(MediaQuery.of(context).size.width < 500)
+                  Text('Charge Start From *',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: blueColor)),
+                if(MediaQuery.of(context).size.width < 500)
+                  const SizedBox(
+                    height: 8,
+                  ),
+                if(MediaQuery.of(context).size.width < 500)
+                  CustomTextField(
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        helpText: "Charge Start",
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                        locale: const Locale('en', 'US'),
+                        builder: (BuildContext context,
+                            Widget? child) {
+                          return Theme(
+                            data: ThemeData.light().copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary:
+                                blueColor, // header background color
+                                onPrimary: Colors
+                                    .white, // header text color
+                                onSurface:
+                                blueColor, // body text color
+                              ),
+                              textButtonTheme:
+                              TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor:
+                                  blueColor, // button text color
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (pickedDate != null) {
+                        // String formattedStartDate =
+                        //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                        String formattedStartDate =
+                            "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                        DateTime endDate = DateTime(
+                            pickedDate.year + 1,
+                            pickedDate.month,
+                            pickedDate.day);
+                        // String formattedEndDate =
+                        //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+
+                        String formattedEndDate =
+                            "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                        print(formattedStartDate);
+                        setState(() {
+                          startDateController.text =
+                              formattedStartDate;
+
+                        });
+                      }
+                    },
+                    readOnnly: true,
+                    suffixIcon: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.date_range_rounded),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'select start date';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'YYYY-MM-DD',
+                    label: "select start date",
+                    controller: startDateController,
+                  ),
+                if(MediaQuery.of(context).size.width < 500)
+                  const SizedBox(
+                    height: 15,
+                  ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -6154,6 +6264,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             )))
                   ],
                 ),
+
               ],
             ),
           ),
@@ -6172,31 +6283,20 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       int selectedMonth = now.month;
 
       // Construct the date using the selected day, current year, and month
-      int selectedDayInt = int.parse(selectedDay!);
-      DateTime currentDate =
-          DateTime(selectedYear, selectedMonth, selectedDayInt);
+      // int selectedDayInt = int.parse(selectedDay!);
 
-      // Add one month
-      DateTime nextMonthDate = DateTime(
-        currentDate.year,
-        currentDate.month + 1,
-        currentDate.day,
-      );
 
       // Format date to always have two-digit months and days
-      String formattedDate = "${nextMonthDate.year}-"
-          "${nextMonthDate.month.toString().padLeft(2, '0')}-"
-          "${nextMonthDate.day.toString().padLeft(2, '0')}";
-      String? id =  widget.initialData!['entry_id'] != "" ?
-           widget.initialData!['entry_id']
-          : "";
+
+      String? id = widget.initialData != null ? widget.initialData!['entry_id'] : "";
       final formData = {
         'account': _selectedProperty ?? '',
         'amount': _amountController.text.trim(),
         'memo': _memoController.text.trim(),
+        'entry_id': id ?? "",
+        "rent_cycle":selectedDay ?? "",
         'charge_type': 'Recurring Charge',
-        'entry_id':id!,
-        'date': formattedDate,
+        'charge_start': startDateController.text,
       };
       widget.onSave(formData);
       setState(() {
