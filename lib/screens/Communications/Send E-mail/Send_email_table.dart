@@ -725,18 +725,18 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            Navigator.of(context).push(
+                            final result = await Navigator.of(context).push(
                                     MaterialPageRoute(
                                         builder: (context) => send_email()));
                             // final result = await Navigator.of(context).push(
                             //     MaterialPageRoute(
                             //         builder: (context) => Add_property()));
-                            // if (result == true) {
-                            //   setState(() {
-                            //     futurePropertyTypes = PropertyTypeRepository()
-                            //         .fetchPropertyTypes();
-                            //   });
-                            // }
+                            if (result == true) {
+                              setState(() {
+                                futureEmailss =
+                                    SendemailRepository().fetchSendEmailTable(limit: 10, page: 1);
+                              });
+                            }
                           },
                           child: Container(
                             height: (MediaQuery.of(context).size.width < 500)

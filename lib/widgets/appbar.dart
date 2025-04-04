@@ -18,6 +18,7 @@ import '../constant/constant.dart';
 import '../provider/notification_provider.dart';
 import '../screens/notifications/notifications.dart';
 import 'package:badges/badges.dart' as badges;
+
 class widget_302 {
   static App_Bar({
     var suffixIcon,
@@ -30,8 +31,8 @@ class widget_302 {
     List<Widget>? actions,
     var arrowNearText,
     required BuildContext context,
+    String? comname,
   }) {
-
     Provider.of<NotificationProvider>(context, listen: false)
         .fetchNotifications(context);
 
@@ -41,295 +42,611 @@ class widget_302 {
         ?.planDetail
         ?.planName ==
         'Free Plan';
-    return AppBar(
-      iconTheme: const IconThemeData(color: Colors.black),
-      elevation: 1,
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
-      titleSpacing:00,
-      // bottom: PreferredSize(
-      //   preferredSize: Size.fromHeight(20), // Height of the bottom section
-      //
-      //   child: Container(
-      //     width: double.infinity,
-      //      // Background color for company name
-      //     padding: const EdgeInsets.only(bottom: 3),
-      //     alignment: Alignment.center, // Center the text
-      //     child: Text(
-      //       "Company Name",
-      //       style: TextStyle(
-      //         fontSize: 16,
-      //         fontWeight: FontWeight.bold,
-      //         color: Colors.black,
-      //       ),
-      //     ),
-      //   ),
-      // ),
-      toolbarHeight: MediaQuery.of(context).size.width < 500 ? 60 : 80, // Adjust height for tablet
-      title: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          if (constraints.maxWidth < 350) {
-            return Image.asset(
-              'assets/images/applogo.png',
-              height: 40,
-              width: 40,
-            );
-          } else {
-            return Image.asset(
-              'assets/images/logo.png',
-              width: 350,
-              fit: BoxFit.fill,
-            );
-          }
-        },
-      ),
-      actions: [
-        InkWell(
-          onTap: () {
-            if (isPlanPageActive != true) {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => getPlanDetailScreen()));
-            }
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(
-              color:blueColor,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Consumer<checkPlanPurchaseProiver>(
-              builder: (context, provider, child) {
-                if (provider.isLoading) {
-                  return CircularProgressIndicator();
-                } else {
-                  String planName = provider
-                      .checkplanpurchaseModel?.data?.planDetail?.planName ??
-                      'No Plan';
-                  if (planName == 'Free Plan') {
-                    planName = 'Buy Now';
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Center(
-                      child: Text(planName,
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize:MediaQuery.of(context).size.width > 500 ?18 :14)),
-                    ),
-                  );
-                }
-              },
-            ),
-          ),
-        ),
-        const SizedBox(
-          width: 10,
-        ),
-        Consumer<NotificationProvider>(
-          builder: (context, notificationProvider, child) {
-            if (notificationProvider.isLoading) {
-              return Center(
-                child: FaIcon(
-                  FontAwesomeIcons.bell,
-                  size: 20,
-                  color: blueColor,
-                ),
-              );
-            } else if (notificationProvider.notifications.isNotEmpty) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const notifications(),
-                  ));
-                },
-                child: Center(
-                  child: badges.Badge(
-                    position: badges.BadgePosition.topEnd(top: -4, end: -3),
-                    badgeStyle: badges.BadgeStyle(
-                      badgeColor: Colors.red,
-                    ),
-                    child: FaIcon(
-                      FontAwesomeIcons.bell,
-                      size: 20,
-                      color: blueColor,
+    return PreferredSize(
+      preferredSize: Size.fromHeight(85),
+      child: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black),
+        elevation: 1,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        titleSpacing: 00,
+        bottom: PreferredSize(
+            preferredSize: Size.fromHeight(20), // Height of the bottom section
+
+            child: FutureBuilder<String>(
+              future: _getCompanyNameFromSharedPreferences(),
+              builder: (context, snapshot) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(bottom: 3),
+                  alignment: Alignment.center,
+                  child: Text(
+                    snapshot.hasData ? snapshot.data! : "Company Name",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                ),
+                );
+              },
+            )),
+        toolbarHeight: MediaQuery.of(context).size.width < 500
+            ? 60
+            : 80, // Adjust height for tablet
+        title: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            if (constraints.maxWidth < 350) {
+              return Image.asset(
+                'assets/images/applogo.png',
+                height: 40,
+                width: 40,
               );
             } else {
-              return Center(
-                child: FaIcon(
-                  FontAwesomeIcons.bell,
-                  size: 20,
-                  color: blueColor,
-                ),
+              return Image.asset(
+                'assets/images/logo.png',
+                width: 350,
+                fit: BoxFit.fill,
               );
             }
           },
         ),
-        const SizedBox(
-          width: 10,
-        ),
-        FutureBuilder<String>(
-          future: _getNameFromSharedPreferences(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color:blueColor,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: PopupMenuButton(
-                  color: Colors.white,
-                  surfaceTintColor: Colors.white,
-                  position: PopupMenuPosition.under,
+        actions: [
+          InkWell(
+            onTap: () {
+              if (isPlanPageActive != true) {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => getPlanDetailScreen()));
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: blueColor,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Consumer<checkPlanPurchaseProiver>(
+                builder: (context, provider, child) {
+                  if (provider.isLoading) {
+                    return CircularProgressIndicator();
+                  } else {
+                    String planName = provider.checkplanpurchaseModel?.data
+                        ?.planDetail?.planName ??
+                        'No Plan';
+                    if (planName == 'Free Plan') {
+                      planName = 'Buy Now';
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Center(
+                        child: Text(planName,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.of(context).size.width > 500
+                                    ? 18
+                                    : 14)),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Consumer<NotificationProvider>(
+            builder: (context, notificationProvider, child) {
+              if (notificationProvider.isLoading) {
+                return Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.bell,
+                    size: 20,
+                    color: blueColor,
+                  ),
+                );
+              } else if (notificationProvider.notifications.isNotEmpty) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const notifications(),
+                    ));
+                  },
                   child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        _getDisplayName(context, snapshot.data!.trim()),
-                        style:  TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width > 500 ?16 :14 ),
+                    child: badges.Badge(
+                      position: badges.BadgePosition.topEnd(top: -4, end: -3),
+                      badgeStyle: badges.BadgeStyle(
+                        badgeColor: Colors.red,
+                      ),
+                      child: FaIcon(
+                        FontAwesomeIcons.bell,
+                        size: 20,
+                        color: blueColor,
                       ),
                     ),
                   ),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(8.0),
-                      bottomRight: Radius.circular(8.0),
-                      topLeft: Radius.circular(8.0),
-                      topRight: Radius.circular(8.0),
-                    ),
+                );
+              } else {
+                return Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.bell,
+                    size: 20,
+                    color: blueColor,
                   ),
-                  itemBuilder: (ctx) => [
-                     PopupMenuItem(
-                      child: Text(
-                        "WELCOME",
-                        style: TextStyle(
-                          color: blueColor
+                );
+              }
+            },
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          FutureBuilder<String>(
+            future: _getNameFromSharedPreferences(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: blueColor,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: PopupMenuButton(
+                    color: Colors.white,
+                    surfaceTintColor: Colors.white,
+                    position: PopupMenuPosition.under,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          _getDisplayName(context, snapshot.data!.trim()),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: MediaQuery.of(context).size.width > 500
+                                  ? 16
+                                  : 14),
                         ),
                       ),
                     ),
-                    PopupMenuItem(
-                      child:  Row(
-                        children: [
-                          Icon(Icons.person,color: blueColor,),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text("My Profile", style: TextStyle(
-                              color: blueColor
-                          ),),
-                        ],
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(8.0),
+                        bottomRight: Radius.circular(8.0),
+                        topLeft: Radius.circular(8.0),
+                        topRight: Radius.circular(8.0),
                       ),
-                      onTap: () {
-                        if (isProfilePageActive != true) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const Profile_screen()));
-                        }
-                      },
                     ),
-                    PopupMenuItem(
-                      child:  Row(
-                        children: [
-                          Icon(Icons.note_alt_outlined,color: blueColor),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text("User Permission", style: TextStyle(
-                              color: blueColor
-                          ),),
-                        ],
+                    itemBuilder: (ctx) => [
+                      PopupMenuItem(
+                        child: Text(
+                          "WELCOME",
+                          style: TextStyle(color: blueColor),
+                        ),
                       ),
-                      onTap: () {
-                        if (isUserPermitePageActive != true) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                              const UserPermissionScreen()));
-                        }
-                      },
-                    ),
-                    PopupMenuItem(
-                      child:  Row(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.clipboardList,
-                            size: 20,
-                            color:blueColor,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text("Activity", style: TextStyle(
-                              color: blueColor
-                          ),),
-                        ],
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.person,
+                              color: blueColor,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "My Profile",
+                              style: TextStyle(color: blueColor),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          if (isProfilePageActive != true) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const Profile_screen()));
+                          }
+                        },
                       ),
-                      onTap: () {
-                    //    if (isSettingPageActive != true) {
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            Icon(Icons.note_alt_outlined, color: blueColor),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "User Permission",
+                              style: TextStyle(color: blueColor),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          if (isUserPermitePageActive != true) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                const UserPermissionScreen()));
+                          }
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.clipboardList,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "Activity",
+                              style: TextStyle(color: blueColor),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          //    if (isSettingPageActive != true) {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => ActivityTable()));
-                      //  }
-                      },
-                    ),
-                    if (!isFreePlan)
-                    PopupMenuItem(
-                      child:  Row(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.cog,
-                            size: 20,
-                            color:blueColor,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text("Settings", style: TextStyle(
-                              color: blueColor
-                          ),),
-                        ],
+                          //  }
+                        },
                       ),
-                      onTap: () {
-                        if (isSettingPageActive != true) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => TabBarExample()));
-                        }
-                      },
-                    ),
-                    PopupMenuItem(
-                      child:  Row(
-                        children: [
-                          Icon(Icons.directions_run_rounded,color: blueColor,),
-                          SizedBox(
-                            width: 10,
+                      if (!isFreePlan)
+                        PopupMenuItem(
+                          child: Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.cog,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Settings",
+                                style: TextStyle(color: blueColor),
+                              ),
+                            ],
                           ),
-                          Text("Logout", style: TextStyle(
-                              color: blueColor
-                          ),),
-                        ],
+                          onTap: () {
+                            if (isSettingPageActive != true) {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => TabBarExample()));
+                            }
+                          },
+                        ),
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.directions_run_rounded,
+                              color: blueColor,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "Logout",
+                              style: TextStyle(color: blueColor),
+                            ),
+                          ],
+                        ),
+                        onTap: () async {
+                          SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                          prefs.clear();
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Login_Screen()),
+                                  (route) => false);
+                        },
                       ),
-                      onTap: () async {
-                        SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                        prefs.clear();
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Login_Screen()),
-                                (route) => false);
-                      },
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              return Container();
-            }
-          },
-        ),
-        const SizedBox(
-          width: 20,
-        ),
-      ],
+                    ],
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+        ],
+      ),
     );
+
+    //   AppBar(
+    //   iconTheme: const IconThemeData(color: Colors.black),
+    //   elevation: 1,
+    //   backgroundColor: Colors.white,
+    //   surfaceTintColor: Colors.white,
+    //   titleSpacing:00,
+    //   // bottom: PreferredSize(
+    //   //   preferredSize: Size.fromHeight(20), // Height of the bottom section
+    //   //
+    //   //   child: Container(
+    //   //     width: double.infinity,
+    //   //      // Background color for company name
+    //   //     padding: const EdgeInsets.only(bottom: 3),
+    //   //     alignment: Alignment.center, // Center the text
+    //   //     child: Text(
+    //   //       "Company Name",
+    //   //       style: TextStyle(
+    //   //         fontSize: 16,
+    //   //         fontWeight: FontWeight.bold,
+    //   //         color: Colors.black,
+    //   //       ),
+    //   //     ),
+    //   //   ),
+    //   // ),
+    //   toolbarHeight: MediaQuery.of(context).size.width < 500 ? 60 : 80, // Adjust height for tablet
+    //   title: LayoutBuilder(
+    //     builder: (BuildContext context, BoxConstraints constraints) {
+    //       if (constraints.maxWidth < 350) {
+    //         return Image.asset(
+    //           'assets/images/applogo.png',
+    //           height: 40,
+    //           width: 40,
+    //         );
+    //       } else {
+    //         return Image.asset(
+    //           'assets/images/logo.png',
+    //           width: 350,
+    //           fit: BoxFit.fill,
+    //         );
+    //       }
+    //     },
+    //   ),
+    //   actions: [
+    //     InkWell(
+    //       onTap: () {
+    //         if (isPlanPageActive != true) {
+    //           Navigator.of(context).push(MaterialPageRoute(
+    //               builder: (context) => getPlanDetailScreen()));
+    //         }
+    //       },
+    //       child: Container(
+    //         margin: const EdgeInsets.symmetric(vertical: 12),
+    //         decoration: BoxDecoration(
+    //           color:blueColor,
+    //           borderRadius: BorderRadius.circular(5),
+    //         ),
+    //         child: Consumer<checkPlanPurchaseProiver>(
+    //           builder: (context, provider, child) {
+    //             if (provider.isLoading) {
+    //               return CircularProgressIndicator();
+    //             } else {
+    //               String planName = provider
+    //                   .checkplanpurchaseModel?.data?.planDetail?.planName ??
+    //                   'No Plan';
+    //               if (planName == 'Free Plan') {
+    //                 planName = 'Buy Now';
+    //               }
+    //               return Padding(
+    //                 padding: const EdgeInsets.symmetric(horizontal: 20),
+    //                 child: Center(
+    //                   child: Text(planName,
+    //                       style: TextStyle(fontWeight: FontWeight.bold, fontSize:MediaQuery.of(context).size.width > 500 ?18 :14)),
+    //                 ),
+    //               );
+    //             }
+    //           },
+    //         ),
+    //       ),
+    //     ),
+    //     const SizedBox(
+    //       width: 10,
+    //     ),
+    //     Consumer<NotificationProvider>(
+    //       builder: (context, notificationProvider, child) {
+    //         if (notificationProvider.isLoading) {
+    //           return Center(
+    //             child: FaIcon(
+    //               FontAwesomeIcons.bell,
+    //               size: 20,
+    //               color: blueColor,
+    //             ),
+    //           );
+    //         } else if (notificationProvider.notifications.isNotEmpty) {
+    //           return GestureDetector(
+    //             onTap: () {
+    //               Navigator.of(context).push(MaterialPageRoute(
+    //                 builder: (context) => const notifications(),
+    //               ));
+    //             },
+    //             child: Center(
+    //               child: badges.Badge(
+    //                 position: badges.BadgePosition.topEnd(top: -4, end: -3),
+    //                 badgeStyle: badges.BadgeStyle(
+    //                   badgeColor: Colors.red,
+    //                 ),
+    //                 child: FaIcon(
+    //                   FontAwesomeIcons.bell,
+    //                   size: 20,
+    //                   color: blueColor,
+    //                 ),
+    //               ),
+    //             ),
+    //           );
+    //         } else {
+    //           return Center(
+    //             child: FaIcon(
+    //               FontAwesomeIcons.bell,
+    //               size: 20,
+    //               color: blueColor,
+    //             ),
+    //           );
+    //         }
+    //       },
+    //     ),
+    //     const SizedBox(
+    //       width: 10,
+    //     ),
+    //     FutureBuilder<String>(
+    //       future: _getNameFromSharedPreferences(),
+    //       builder: (context, snapshot) {
+    //         if (snapshot.hasData) {
+    //           return Container(
+    //             margin: const EdgeInsets.symmetric(vertical: 12),
+    //             decoration: BoxDecoration(
+    //               color:blueColor,
+    //               borderRadius: BorderRadius.circular(6),
+    //             ),
+    //             child: PopupMenuButton(
+    //               color: Colors.white,
+    //               surfaceTintColor: Colors.white,
+    //               position: PopupMenuPosition.under,
+    //               child: Center(
+    //                 child: Padding(
+    //                   padding: const EdgeInsets.symmetric(horizontal: 10),
+    //                   child: Text(
+    //                     _getDisplayName(context, snapshot.data!.trim()),
+    //                     style:  TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width > 500 ?16 :14 ),
+    //                   ),
+    //                 ),
+    //               ),
+    //               shape: const RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.only(
+    //                   bottomLeft: Radius.circular(8.0),
+    //                   bottomRight: Radius.circular(8.0),
+    //                   topLeft: Radius.circular(8.0),
+    //                   topRight: Radius.circular(8.0),
+    //                 ),
+    //               ),
+    //               itemBuilder: (ctx) => [
+    //                  PopupMenuItem(
+    //                   child: Text(
+    //                     "WELCOME",
+    //                     style: TextStyle(
+    //                       color: blueColor
+    //                     ),
+    //                   ),
+    //                 ),
+    //                 PopupMenuItem(
+    //                   child:  Row(
+    //                     children: [
+    //                       Icon(Icons.person,color: blueColor,),
+    //                       SizedBox(
+    //                         width: 10,
+    //                       ),
+    //                       Text("My Profile", style: TextStyle(
+    //                           color: blueColor
+    //                       ),),
+    //                     ],
+    //                   ),
+    //                   onTap: () {
+    //                     if (isProfilePageActive != true) {
+    //                       Navigator.of(context).push(MaterialPageRoute(
+    //                           builder: (context) => const Profile_screen()));
+    //                     }
+    //                   },
+    //                 ),
+    //                 PopupMenuItem(
+    //                   child:  Row(
+    //                     children: [
+    //                       Icon(Icons.note_alt_outlined,color: blueColor),
+    //                       const SizedBox(
+    //                         width: 10,
+    //                       ),
+    //                       Text("User Permission", style: TextStyle(
+    //                           color: blueColor
+    //                       ),),
+    //                     ],
+    //                   ),
+    //                   onTap: () {
+    //                     if (isUserPermitePageActive != true) {
+    //                       Navigator.of(context).push(MaterialPageRoute(
+    //                           builder: (context) =>
+    //                           const UserPermissionScreen()));
+    //                     }
+    //                   },
+    //                 ),
+    //                 PopupMenuItem(
+    //                   child:  Row(
+    //                     children: [
+    //                       FaIcon(
+    //                         FontAwesomeIcons.clipboardList,
+    //                         size: 20,
+    //                         color:blueColor,
+    //                       ),
+    //                       SizedBox(
+    //                         width: 10,
+    //                       ),
+    //                       Text("Activity", style: TextStyle(
+    //                           color: blueColor
+    //                       ),),
+    //                     ],
+    //                   ),
+    //                   onTap: () {
+    //                 //    if (isSettingPageActive != true) {
+    //                       Navigator.of(context).push(MaterialPageRoute(
+    //                           builder: (context) => ActivityTable()));
+    //                   //  }
+    //                   },
+    //                 ),
+    //                 if (!isFreePlan)
+    //                 PopupMenuItem(
+    //                   child:  Row(
+    //                     children: [
+    //                       FaIcon(
+    //                         FontAwesomeIcons.cog,
+    //                         size: 20,
+    //                         color:blueColor,
+    //                       ),
+    //                       SizedBox(
+    //                         width: 10,
+    //                       ),
+    //                       Text("Settings", style: TextStyle(
+    //                           color: blueColor
+    //                       ),),
+    //                     ],
+    //                   ),
+    //                   onTap: () {
+    //                     if (isSettingPageActive != true) {
+    //                       Navigator.of(context).push(MaterialPageRoute(
+    //                           builder: (context) => TabBarExample()));
+    //                     }
+    //                   },
+    //                 ),
+    //                 PopupMenuItem(
+    //                   child:  Row(
+    //                     children: [
+    //                       Icon(Icons.directions_run_rounded,color: blueColor,),
+    //                       SizedBox(
+    //                         width: 10,
+    //                       ),
+    //                       Text("Logout", style: TextStyle(
+    //                           color: blueColor
+    //                       ),),
+    //                     ],
+    //                   ),
+    //                   onTap: () async {
+    //                     SharedPreferences prefs =
+    //                     await SharedPreferences.getInstance();
+    //                     prefs.clear();
+    //                     Navigator.pushAndRemoveUntil(
+    //                         context,
+    //                         MaterialPageRoute(
+    //                             builder: (context) => const Login_Screen()),
+    //                             (route) => false);
+    //                   },
+    //                 ),
+    //               ],
+    //             ),
+    //           );
+    //         } else {
+    //           return Container();
+    //         }
+    //       },
+    //     ),
+    //     const SizedBox(
+    //       width: 20,
+    //     ),
+    //   ],
+    // );
   }
 
   static Future<String> _getNameFromSharedPreferences() async {
@@ -347,6 +664,7 @@ class widget_302 {
     }
     return combinationName.isNotEmpty ? combinationName : "L";
   }
+
   static String _getDisplayName(BuildContext context, String fullName) {
     if (MediaQuery.of(context).size.width < 500) {
       List<String> nameParts = fullName.split(' ');
@@ -360,5 +678,13 @@ class widget_302 {
     } else {
       return fullName;
     }
+  }
+
+  static Future<String> _getCompanyNameFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? companyName = prefs.getString("companyName");
+    return companyName != null && companyName.isNotEmpty
+        ? companyName
+        : "Company Name";
   }
 }

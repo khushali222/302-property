@@ -36,6 +36,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../repository/lease_rental_insurance_repo.dart';
 import '../../../../widgets/custom_drawer.dart';
+import '../../../Communications/Send E-mail/send_mail.dart';
 import '../Send_email.dart';
 import 'Edit_Renters_insurance.dart';
 
@@ -585,7 +586,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                           //     .clearApplicant();
                           final result = await Navigator.of(context)
                               .push(MaterialPageRoute(
-                              builder: (context) => EmailTemplateScreen(
+                              builder: (context) => send_email(
                                 // leaseId: widget.leaseId,
                               )));
                           if (result == true) {

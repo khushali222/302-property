@@ -32,6 +32,7 @@ import '../../../model/LeaseLedgerModel.dart';
 import '../../../model/LeaseSummary.dart';
 import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
+import '../../Communications/Send E-mail/send_mail.dart';
 import '../../Rental/Properties/moveout/repository.dart';
 import 'Document_Rental/Document_rental_table.dart';
 import 'Financial.dart';
@@ -248,8 +249,52 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               //                 : 16)),
                             ],
                           ),
+                         /* GestureDetector(
+                            onTap: () async {
+                              // Provider.of<SelectedTenantsProvider>(context,
+                              //     listen: false)
+                              //     .clearTenant();
+                              // Provider.of<SelectedCosignersProvider>(context,
+                              //     listen: false)
+                              //     .clearCosigner();
+                              // Provider.of<SelectedApplicantProvider>(context,
+                              //     listen: false)
+                              //     .clearApplicant();
+                              final result = await Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                  builder: (context) => send_email(
+                                     lease: snapshot.data!.data!.tenantId!
+                                  )));
+
+                            },
+                            child: Container(
+                              height: (MediaQuery.of(context).size.width < 500)
+                                  ? 35
+                                  : MediaQuery.of(context).size.width * 0.063,
+                              width: (MediaQuery.of(context).size.width < 500)
+                                  ? MediaQuery.of(context).size.width * 0.35
+                                  : MediaQuery.of(context).size.width * 0.2,
+                              decoration: BoxDecoration(
+                                color: blueColor,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "+ Send Mail",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 14
+                                        : 22,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),*/
                           const SizedBox(
-                            height: 20,
+                            height: 10,
                           ),
                           Container(
                             padding: EdgeInsets.all(8),

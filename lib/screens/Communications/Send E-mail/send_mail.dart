@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -12,13 +13,14 @@ import 'package:super_tooltip/super_tooltip.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 
+import '../../../Model/template_model.dart';
 import '../../../repository/Communication/Templet_Repo.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/titleBar.dart';
 
 class send_email extends StatefulWidget {
-  String? lease;
+  List<String>? lease;
   send_email({super.key, this.lease});
 
   @override
@@ -48,12 +50,9 @@ class _send_emailState extends State<send_email> {
   String submessage = "";
   String bodymessage = "";
   String eventmessage = "";
-  List<Map<String, String>> tenants = [
-    {"tenant_id": "1", "tenant_name": "John Doe"},
-    {"tenant_id": "2", "tenant_name": "Alice Smith"},
-    {"tenant_id": "3", "tenant_name": "Robert Brown"},
-    {"tenant_id": "4", "tenant_name": "Emily Davis"},
-    {"tenant_id": "5", "tenant_name": "Michael Johnson"},
+
+  List<Map<String, dynamic>> tenants = [
+
   ];
 
   List<String> selectedTenantIds = [];
@@ -80,9 +79,108 @@ class _send_emailState extends State<send_email> {
     super.initState();
     _subjectFocusNode = FocusNode();
     _nameFocusNode = FocusNode();
+    fetchTenant();
+    print("tenants ${widget.lease}");
    currentEventList =  (widget.lease != null ? eventTypes["lease"] :eventTypes["tenant"]!)!;
   }
+  Future<void> fetchTenant() async {
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("${Api_url}/api/tenant/lease-tenant/$adminId"),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $adminId",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final tenant = data['data'] as List;
+     // log(tenant.toString());
+      if(widget.lease != null){
+        tenants = tenant
+            .cast<Map<String, dynamic>>() // Ensure it's a List<Map<String, dynamic>>
+            .where((t) {
+          final tenantId = t['tenant_id'];
+
+          return tenantId != null && widget.lease!.contains(tenantId);
+        })
+            .toList();
+        selectedTenantIds = widget.lease!;
+      }else{
+       // setState(() {
+          tenants = tenant.cast<Map<String, dynamic>>();
+
+     //   });
+      }
+
+
+      setState(() {
+
+      });
+    } else {
+      print("Failed to load templates");
+    }
+  }
+  Future<void> fetchTemplatestype() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("${Api_url}/api/templates/get/$adminId/$_selectedEvent"),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $adminId",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final templates = data['data'] as List;
+      if (data["statusCode"] == 200 ) {
+        setState(() {
+          templateList = templates.map((e) => Template.fromJson(e)).toList();
+          var selectedTemplete = templateList.first;
+          subject.text = selectedTemplete.subject;
+          htmlBody = selectedTemplete.body;
+          eventError = false;
+          Future.delayed(Duration(milliseconds: 500), () {
+            if (mounted) {
+              _htmlEditorController.setFocus();
+              _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
+            }
+          });
+          selectedTemplateId = selectedTemplete.name;
+          // templates = [data["template"]]; // Store in list
+          // //events = [data["template"]["name"] as String]; // Extract name
+          // _selectedEvent = data["template"]["mail_type"]; // Select default
+          // name.text = data["template"]["name"]; // Get HTML content
+          //
+          // htmlBody = data["template"]["body"]; // Get HTML content
+          // subject.text = data["template"]["subject"]; // Get HTML content
+          // // _htmlEditorController
+          // //     .setText(replaceDollarWithAt(replaceSpanTags(htmlBody))); // Set editor content
+          //
+          // //_htmlEditorController.setText(htmlBody);
+        });
+
+        // Future.delayed(Duration(milliseconds: 500), () {
+        //   if (mounted) {
+        //     _htmlEditorController.setFocus();
+        //     _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
+        //   }
+        // });
+      }
+    } else {
+      print("Failed to load templates");
+    }
+  }
   String replaceSpanTags(String html) {
     print("spn${html}");
     // Mapping class names to corresponding font sizes
@@ -151,7 +249,7 @@ class _send_emailState extends State<send_email> {
       {"title": "Express Payment", "detail": ""},
     ],
   };
-
+  List<Template> templateList = [];
   List<Map<String, String>> currentEventList = [];
   String hslToHex(String hsl) {
     // Remove spaces and extract numbers
@@ -486,155 +584,161 @@ class _send_emailState extends State<send_email> {
                       ),
                     ],
                   ),
+                  if(tenants.length > 0)
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text('Tenants *',
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: blueColor)),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                hint: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 5),
-                                  child: Text(
-                                    selectedTenantIds.isEmpty
-                                        ? "Select Tenant"
-                                        : selectedTenantIds
-                                        .map((id) => tenants.firstWhere(
-                                            (owner) => owner['tenant_id'] == id)['tenant_name'])
-                                        .join(', '),
-                                    style: TextStyle(fontSize: 14, color: Colors.black),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                items:
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text('Tenants *',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: blueColor)),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
 
-                              [
-                                DropdownMenuItem<String>(
-                                  value: "select_all",
+                              isExpanded: true,
+                              hint: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                child: Text(
+                                  selectedTenantIds.isEmpty
+                                      ? "Select Tenant"
+                                      : selectedTenantIds
+                                      .map((id) {
+                                    final tenant = tenants.firstWhere((owner) => owner['tenant_id'] == id);
+                                    return "${tenant['tenant_firstName']} ${tenant['tenant_lastName']}";
+                                  })
+                                      .join(', '),
+                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              items:
+
+                            [
+                              DropdownMenuItem<String>(
+                                value: "select_all",
+                                child: StatefulBuilder(
+                                  builder: (context, setState) {
+                                    bool isAllSelected =
+                                        selectedTenantIds.length == tenants.length;
+                                    return CheckboxListTile(
+                                      title: Text(
+                                        "Select All",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      value: isAllSelected,
+                                      controlAffinity: ListTileControlAffinity.leading,
+                                      onChanged: (bool? checked) {
+                                        setState(() {
+                                          if (checked == true) {
+                                            selectedTenantIds = tenants
+                                                .map((tenant) => tenant['tenant_id'].toString()!)
+                                                .toList();
+                                          } else {
+                                            selectedTenantIds.clear();
+                                          }
+                                        });
+                                        // Update the outer state
+                                        this.setState(() {});
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                              ...tenants.map((owner) {
+                                return DropdownMenuItem<String>(
+                                  value: owner['tenant_id'],
                                   child: StatefulBuilder(
                                     builder: (context, setState) {
-                                      bool isAllSelected =
-                                          selectedTenantIds.length == tenants.length;
+                                      bool isSelected =
+                                      selectedTenantIds.contains(owner['tenant_id']);
                                       return CheckboxListTile(
+                                        value: isSelected,
                                         title: Text(
-                                          "Select All",
-                                          style: TextStyle(
+                                          "${owner['tenant_firstName']!} ${owner['tenant_lastName']!}",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
                                             fontSize: 14,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w400,
                                             color: Colors.black87,
                                           ),
                                         ),
-                                        value: isAllSelected,
                                         controlAffinity: ListTileControlAffinity.leading,
                                         onChanged: (bool? checked) {
                                           setState(() {
                                             if (checked == true) {
-                                              selectedTenantIds = tenants
-                                                  .map((tenant) => tenant['tenant_id']!)
-                                                  .toList();
+                                              selectedTenantIds.add(owner['tenant_id']!);
                                             } else {
-                                              selectedTenantIds.clear();
+                                              selectedTenantIds.remove(owner['tenant_id']!);
                                             }
                                           });
                                           // Update the outer state
                                           this.setState(() {});
-                                          Navigator.pop(context);
+
                                         },
                                       );
                                     },
                                   ),
+                                );
+                              }).toList()],
+                              onChanged: (_) {},
+                              buttonStyleData: ButtonStyleData(
+                                height: 46,
+                                padding:
+                                EdgeInsets.symmetric(horizontal: 3),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
                                 ),
-                                ...tenants.map((owner) {
-                                  return DropdownMenuItem<String>(
-                                    value: owner['tenant_id'],
-                                    child: StatefulBuilder(
-                                      builder: (context, setState) {
-                                        bool isSelected =
-                                        selectedTenantIds.contains(owner['tenant_id']);
-                                        return CheckboxListTile(
-                                          value: isSelected,
-                                          title: Text(
-                                            owner['tenant_name']!,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                          controlAffinity: ListTileControlAffinity.leading,
-                                          onChanged: (bool? checked) {
-                                            setState(() {
-                                              if (checked == true) {
-                                                selectedTenantIds.add(owner['tenant_id']!);
-                                              } else {
-                                                selectedTenantIds.remove(owner['tenant_id']!);
-                                              }
-                                            });
-                                            // Update the outer state
-                                            this.setState(() {});
+                                elevation: 2,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconSize: 24,
+                                iconEnabledColor: Color(0xFFb0b6c3),
+                                iconDisabledColor: Colors.grey,
+                              ),
+                              // iconStyleData: const IconStyleData(
+                              //   icon: SizedBox.shrink(), // Hides the dropdown icon
+                              // ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 300,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
 
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  );
-                                }).toList()],
-                                onChanged: (_) {},
-                                buttonStyleData: ButtonStyleData(
-                                  height: 46,
-                                  padding:
-                                  EdgeInsets.symmetric(horizontal: 3),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: Colors.white,
-                                  ),
-                                  elevation: 2,
                                 ),
-                                iconStyleData: const IconStyleData(
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  iconSize: 24,
-                                  iconEnabledColor: Color(0xFFb0b6c3),
-                                  iconDisabledColor: Colors.grey,
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(6),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                  MaterialStateProperty.all(true),
                                 ),
-                                // iconStyleData: const IconStyleData(
-                                //   icon: SizedBox.shrink(), // Hides the dropdown icon
-                                // ),
-                                dropdownStyleData: DropdownStyleData(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: Colors.white,
-                                  ),
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    radius: const Radius.circular(6),
-                                    thickness: MaterialStateProperty.all(6),
-                                    thumbVisibility:
-                                    MaterialStateProperty.all(true),
-                                  ),
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  height: 50,
-                                  padding:
-                                  EdgeInsets.only(left: 14, right: 14),
-                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 50,
+                                padding:
+                                EdgeInsets.only(left: 14, right: 14),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
                   Column(
 
                     children: [
@@ -679,9 +783,161 @@ class _send_emailState extends State<send_email> {
                                         setState(() {
                                           _selectedEvent = newValue;
                                           eventError = false;
+                                          fetchTemplatestype();
                                           //  fetchTemplates();
                                         });
                                         print('Selected Event: $_selectedEvent');
+
+                                        // Notify FormField of value change
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 46,
+                                        padding:
+                                        EdgeInsets.symmetric(horizontal: 3),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 2,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(Icons.arrow_drop_down),
+                                        iconSize: 24,
+                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      // iconStyleData: const IconStyleData(
+                                      //   icon: SizedBox.shrink(), // Hides the dropdown icon
+                                      // ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(6),
+                                          thickness: MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        height: 50,
+                                        padding:
+                                        EdgeInsets.only(left: 14, right: 14),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 3),
+                                  eventError
+                                      ? Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Text(
+                                        eventmessage,
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                .035),
+                                      ),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                    ],
+                                  )
+                                      : nameError
+                                      ? Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Text(
+                                        eventmessage,
+                                        style: TextStyle(
+                                            color: Colors.transparent,
+                                            fontSize:
+                                            MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                .035),
+                                      ),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                    ],
+                                  )
+                                      : Container(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  if(_selectedEvent != null && templateList.length > 0)
+                  SizedBox(height: 10),
+                  if(_selectedEvent != null && templateList.length > 0)
+                  Column(
+
+                    children: [
+
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+
+                            child: Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Text(
+                                      "Templates",
+                                      style: TextStyle(
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.black),
+                                      isExpanded: true,
+                                      hint: const Text(
+                                        'Select Event',
+                                      ),
+                                      value: selectedTemplateId,
+                                      items: templateList.map((method) {
+                                        return DropdownMenuItem<String>(
+                                          value: method.name,
+                                          child: Text(method.name),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          selectedTemplateId = newValue;
+                                         var selectedTemplete = templateList.firstWhere((template)=>template.name == newValue);
+                                          subject.text = selectedTemplete.subject;
+                                          htmlBody = selectedTemplete.body;
+                                          eventError = false;
+                                          Future.delayed(Duration(milliseconds: 500), () {
+                                            if (mounted) {
+                                              _htmlEditorController.setFocus();
+                                              _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
+                                            }
+                                          });
+                                          //  fetchTemplates();
+                                        });
+                                        print('Selected Event: $selectedTemplateId');
 
                                         // Notify FormField of value change
                                       },
@@ -1213,16 +1469,7 @@ class _send_emailState extends State<send_email> {
                         onPressed: () async {
                           print(await _htmlEditorController.getText());
                           // Validate name
-                          if (name.text.trim().isEmpty) {
-                            setState(() {
-                              nameError = true;
-                              namemessage = "required";
-                            });
-                          } else {
-                            setState(() {
-                              nameError = false;
-                            });
-                          }
+
 
                           // Validate designation
                           if (subject.text.trim().isEmpty) {
@@ -1275,7 +1522,7 @@ class _send_emailState extends State<send_email> {
 
                             if (adminId != null) {
                               try {
-                                await TempletRepository().addTemplet(
+                                await sendMail(
                                   adminId: adminId,
                                   name: name.text.trim(),
                                   subject: subject.text.trim(),
@@ -1310,7 +1557,7 @@ class _send_emailState extends State<send_email> {
                           size: 25.0,
                         )
                             : Text(
-                          "Save",
+                          "Send",
                           style: TextStyle(
                               fontSize: 16, color: Colors.white),
                         ),
@@ -1344,6 +1591,49 @@ class _send_emailState extends State<send_email> {
         ),
       ),
     );
+  }
+  Future<void> sendMail({
+    required String? adminId,
+    required String? name,
+    required String? subject,
+    required String body,
+    required String? type,
+    required String? mail_type,
+    String? leaseid
+  }) async {
+    final Map<String, dynamic> data = {
+      "admin_id": adminId,
+      "lease_id": leaseid,
+      "subject": subject,
+      "tenants":selectedTenantIds,
+      "body": body,
+      "manual_send":true,
+      "mail_type": mail_type,
+    };
+  //  print(data);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+    final http.Response response = await http.post(
+      Uri.parse("$Api_url/api/email-logs"),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $adminid",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+
+
+    var responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+     // Navigator.pop(context,true);
+      return json.decode(response.body);
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to add Templet ');
+    }
   }
   String replaceDollarWithAt(String input) {
     return input.replaceAllMapped(
