@@ -14,6 +14,9 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.d
 
 
 
+import '../screen/Communications/E-mail Logs/email_log_table.dart';
+import '../screen/Communications/Send E-mail/Send_email_table.dart';
+import '../screen/Communications/Templates/Templet_table.dart';
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/upcoming_renewal/upcoming_renewal.dart';
@@ -74,8 +77,11 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     //"Vendor": (context) => Vendor_table(),
-    "Upcoming renewal":(context)=> Upcomingrenewal()
+    "Upcoming renewal":(context)=> Upcomingrenewal(),
     // "Work Order": (context) => Cardpayment(leaseId: '',),
+    "Templates": (context) => TempletTable(),
+    "E-mail Logs": (context) => Email_log_tablee(),
+    "Send E-mail": (context) => Send_Email_table(),
   };
   // if (isActive != true) {
    Navigator.push(
@@ -98,7 +104,7 @@ Widget buildDropdownListTile(
   bool isExpanded = selectedSubtopic != null && subTopics.contains(selectedSubtopic);
 
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: EdgeInsets.symmetric(horizontal: 14),
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: ExpansionTile(
       initiallyExpanded: isExpanded,

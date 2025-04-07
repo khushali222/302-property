@@ -10,13 +10,15 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
-import '../../../Model/Comunication_model/email_logtable.dart';
-import '../../../constant/constant.dart';
-import '../../../provider/dateProvider.dart';
+
+import '../../../../Model/Comunication_model/email_logtable.dart';
+import '../../../../constant/constant.dart';
+import '../../../../provider/dateProvider.dart';
 import '../../../repository/Communication/Email_log_repo.dart';
+import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Email_log_tablee extends StatefulWidget {
@@ -26,11 +28,11 @@ class Email_log_tablee extends StatefulWidget {
 
 class _Email_log_tableeState extends State<Email_log_tablee> {
   int totalrecords = 0;
-  Future<Email_log_table>? futureEmailss;
+  Future<List<Emails>>? futureEmailss;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
-  int currentPage = 1;
+  int currentPage = 0;
   int itemsPerPage = 10;
   List<int> itemsPerPageOptions = [
     10,
@@ -116,9 +118,9 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Recipient",
+                        ? Text("Tenant Name",
                             style: TextStyle(color: Colors.white))
-                        : Text("Recipient",
+                        : Text("Tenant Name",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
@@ -387,7 +389,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                             ? "✔✔ Read" // Both conditions true
                             : data.isAccepted == true
                                 ? "✔ Not Opened" // Only opened
-                                : "✖",
+                                : "✖ error",
                         data.isAccepted == true && data.isOpened == true
                             ? Colors.green
                             : Colors.red),
@@ -667,7 +669,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.all(15.0),
-                      child: FutureBuilder<Email_log_table>(
+                      child: FutureBuilder<List<Emails>>(
                         future: futureEmailss,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -677,7 +679,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                             return Center(
                                 child: Text('Error: ${snapshot.error}'));
                           } else if (!snapshot.hasData ||
-                              snapshot.data!.emails!.isEmpty) {
+                              snapshot.data!.isEmpty) {
                             return Container(
                               height: MediaQuery.of(context).size.height * .5,
                               child: Center(
@@ -705,24 +707,24 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                               ),
                             );
                           } else {
-                            var data = snapshot.data!.emails;
+                            var data = snapshot.data!;
                             if (selectedValue == null && searchvalue!.isEmpty) {
-                              data = snapshot.data!.emails;
+                              data = snapshot.data!;
                             } else if (selectedValue == "All") {
-                              data = snapshot.data!.emails;
+                              data = snapshot.data!;
                             } else if (searchvalue!.isNotEmpty) {
-                              data = snapshot.data!.emails!
+                              data = snapshot.data!
                                   .where((property) => property.subject!
                                       .toLowerCase()
                                       .contains(searchvalue!.toLowerCase()))
                                   .toList();
                             } else {
-                              data = snapshot.data!.emails
-                                  !.where((property) =>
+                              data = snapshot.data!
+                                  .where((property) =>
                                       property.subject == selectedValue)
                                   .toList();
                             }
-                            if (data!.isEmpty) {
+                            if (data.isEmpty) {
                               return Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -749,8 +751,11 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                             }
                             sortData(data);
                             final totalPages =
-                                snapshot.data!.totalPages;
-                            final currentPageData = data;
+                                (data.length / itemsPerPage).ceil();
+                            final currentPageData = data
+                                .skip(currentPage * itemsPerPage)
+                                .take(itemsPerPage)
+                                .toList();
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
@@ -862,10 +867,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                             });
                                                           },
                                                           child: Text(
-                                                            Propertytype.email
+                                                            Propertytype.tenantName
                                                                         ?.isNotEmpty ==
                                                                     true
-                                                                ? '${Propertytype.email}'
+                                                                ? '${Propertytype.tenantName}'
                                                                 : 'N/A',
                                                             style: TextStyle(
                                                               color: blueColor,
@@ -882,7 +887,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       context)
                                                                   .size
                                                                   .width *
-                                                              .05),
+                                                              .12),
                                                       Expanded(
                                                         child: Text(
                                                           Propertytype.rentalAddress
@@ -903,7 +908,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       context)
                                                                   .size
                                                                   .width *
-                                                              .08),
+                                                              .1),
                                                       Expanded(
                                                         child: Text(
                                                           // '${widget.data.createdAt}',
@@ -1116,7 +1121,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                           value.toString()),
                                                     );
                                                   }).toList(),
-                                                  onChanged: snapshot.data!.totalEmails! >
+                                                  onChanged: data.length >
                                                           itemsPerPageOptions
                                                               .first // Condition to check if dropdown should be enabled
                                                       ? (newValue) {
@@ -1124,8 +1129,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                             itemsPerPage =
                                                                 newValue!;
                                                             currentPage =
-                                                                1; // Reset to first page when items per page change
-                                                            futureEmailss = EmailLogRepository().fetchEmailLog(page: currentPage,limit: itemsPerPage);
+                                                                0; // Reset to first page when items per page change
                                                           });
                                                         }
                                                       : null,
@@ -1141,16 +1145,15 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                             icon: FaIcon(
                                               FontAwesomeIcons
                                                   .circleChevronLeft,
-                                              color: currentPage == 1
+                                              color: currentPage == 0
                                                   ? Colors.grey
                                                   : blueColor,
                                             ),
-                                            onPressed: currentPage == 1
+                                            onPressed: currentPage == 0
                                                 ? null
                                                 : () {
                                                     setState(() {
                                                       currentPage--;
-                                                      futureEmailss = EmailLogRepository().fetchEmailLog(page: currentPage,limit: itemsPerPage);
                                                     });
                                                   },
                                           ),
@@ -1165,7 +1168,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                           //       : null,
                                           // ),
                                           Text(
-                                              'Page ${currentPage} of $totalPages'),
+                                              'Page ${currentPage + 1} of $totalPages'),
                                           // IconButton(
                                           //   icon: Icon(Icons.arrow_forward),
                                           //   onPressed: currentPage < totalPages - 1
@@ -1181,16 +1184,15 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                               FontAwesomeIcons
                                                   .circleChevronRight,
                                               color:
-                                                  currentPage < totalPages!
+                                                  currentPage < totalPages - 1
                                                       ? blueColor
                                                       : Colors.grey,
                                             ),
                                             onPressed:
-                                                currentPage < totalPages
+                                                currentPage < totalPages - 1
                                                     ? () {
                                                         setState(() {
                                                           currentPage++;
-                                                          futureEmailss = EmailLogRepository().fetchEmailLog(page: currentPage,limit: itemsPerPage);
                                                         });
                                                       }
                                                     : null,

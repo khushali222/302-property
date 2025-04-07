@@ -569,66 +569,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Spacer(),
-                      GestureDetector(
-                        onTap: () async {
-                          // Provider.of<SelectedTenantsProvider>(context,
-                          //     listen: false)
-                          //     .clearTenant();
-                          // Provider.of<SelectedCosignersProvider>(context,
-                          //     listen: false)
-                          //     .clearCosigner();
-                          // Provider.of<SelectedApplicantProvider>(context,
-                          //     listen: false)
-                          //     .clearApplicant();
-                          final result = await Navigator.of(context)
-                              .push(MaterialPageRoute(
-                              builder: (context) => send_email(
-                                // leaseId: widget.leaseId,
-                              )));
-                          if (result == true) {
-                            setState(() {
-                              _futureRentersInsurance =
-                                  RentersInsuranceService()
-                                      .fetchRentersInsurance(widget.leaseId);
-                              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                            });
-                          }
-                        },
-                        child: Container(
-                          height: (MediaQuery.of(context).size.width < 500)
-                              ? 35
-                              : MediaQuery.of(context).size.width * 0.063,
-                          width: (MediaQuery.of(context).size.width < 500)
-                              ? MediaQuery.of(context).size.width * 0.35
-                              : MediaQuery.of(context).size.width * 0.2,
-                          decoration: BoxDecoration(
-                            color: blueColor,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Center(
-                            child: Text(
-                              "+ Send Mail",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 14
-                                    : 22,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 7,
-                      ),
-                    ],
-                  ),
+
                   const SizedBox(height: 8),
                   if (MediaQuery.of(context).size.width < 500)
                   const SizedBox(height: 10),

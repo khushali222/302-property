@@ -39,6 +39,7 @@ import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
 
 import 'Move_out_lease/Moveout_lease.dart';
+import 'Notes/Notes_table.dart';
 import 'make_payment.dart';
 
 class SummeryPageLease extends StatefulWidget {
@@ -429,6 +430,30 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 //     ),
                                 //   ),
                                 // ),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = 4;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _selectedIndex == 4
+                                              ? blueColor
+                                              : Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(5)),
+                                      child: Center(
+                                          child: Text("Notes",
+                                              style: TextStyle(
+                                                color: _selectedIndex != 4
+                                                    ? blueColor
+                                                    : Colors.white,
+                                              ))),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -516,6 +541,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 .toString(),
             tenantId: ' ${snapshot.data?.tenantId}',
           ),
+        );
+      case 4:
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: NotesTable(leaseid:widget.leaseId)
         );
       default:
         return Container(); // Fallback for safety

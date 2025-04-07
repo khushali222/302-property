@@ -10,23 +10,26 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:html/parser.dart' as htmlParser;
 
-import '../../../Model/Comunication_model/email_logtable.dart';
-import '../../../constant/constant.dart';
-import '../../../provider/dateProvider.dart';
-import '../../../repository/Communication/Email_log_repo.dart';
+import '../../../../Model/Comunication_model/Send_email_table.dart';
+import '../../../../constant/constant.dart';
+import '../../../../provider/dateProvider.dart';
+import '../../../repository/Communication/Send_email_repo.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'send_mail.dart';
 
-class Email_log_tablee extends StatefulWidget {
+class Send_Email_table extends StatefulWidget {
   @override
-  _Email_log_tableeState createState() => _Email_log_tableeState();
+  _Send_Email_tableState createState() => _Send_Email_tableState();
 }
 
-class _Email_log_tableeState extends State<Email_log_tablee> {
+class _Send_Email_tableState extends State<Send_Email_table> {
   int totalrecords = 0;
-  Future<Email_log_table>? futureEmailss;
+  //Future<List<Emailss>>? futureEmailss;
+  Future<Send_email_table>? futureEmailss;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -39,7 +42,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
     100,
   ]; // Options for items per page
 
-  void sortData(List<Emails> data) {
+  void sortData(List<Emailss> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
           ? a.subject!.compareTo(b.subject!)
@@ -116,61 +119,13 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Recipient",
+                        ? Text(" Subject",
                             style: TextStyle(color: Colors.white))
-                        : Text("Recipient",
+                        : Text(" Subject",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
-                    //     ? Padding(
-                    //   padding: const EdgeInsets.only(top: 7, left: 2),
-                    //   child: FaIcon(
-                    //     FontAwesomeIcons.sortUp,
-                    //     size: 20,
-                    //     color: Colors.white,
-                    //   ),
-                    // )
-                    //     : Padding(
-                    //   padding: const EdgeInsets.only(bottom: 7, left: 2),
-                    //   child: FaIcon(
-                    //     FontAwesomeIcons.sortDown,
-                    //     size: 20,
-                    //     color: Colors.white,
-                    //   ),
-                    // ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("       Rental \n     Address",
-                        style: TextStyle(color: Colors.white)),
-                    // SizedBox(width: 5),
-                    // ascending2
                     //     ? Padding(
                     //   padding: const EdgeInsets.only(top: 7, left: 2),
                     //   child: FaIcon(
@@ -216,7 +171,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 },
                 child: Row(
                   children: [
-                    Text("          Sent",
+                    Text("              Sent",
                         style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                   ],
@@ -232,6 +187,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+
   @override
   void initState() {
     super.initState();
@@ -239,7 +195,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
       setState(() {
         _connectivityResult = result;
         if (_connectivityResult != ConnectivityResult.none)
-          futureEmailss = EmailLogRepository().fetchEmailLog();
+          futureEmailss =
+              SendemailRepository().fetchSendEmailTable(limit: 10, page: 1);
       });
     });
     checkInternet();
@@ -253,169 +210,273 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
     });
 
     if (_connectivityResult != ConnectivityResult.none)
-      futureEmailss = EmailLogRepository().fetchEmailLog();
+      futureEmailss = SendemailRepository().fetchSendEmailTable();
   }
 
   bool _errorText = false;
-  // void _showAlert(BuildContext context, String id, Emails data) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return Dialog(
-  //         child: SingleChildScrollView(
-  //           child: Padding(
-  //             padding: const EdgeInsets.all(8.0),
-  //             child: Column(
-  //               children: [
-  //                 SizedBox(
-  //                   height: 10,
-  //                 ),
-  //                 Row(
-  //                   children: [
-  //                     Text(
-  //                       "Email Logs Details",
-  //                       style: TextStyle(
-  //                           fontSize: 17,
-  //                           fontWeight: FontWeight.bold,
-  //                           color: blueColor),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 SizedBox(
-  //                   height: 10,
-  //                 ),
-  //                 Padding(
-  //                   padding: const EdgeInsets.all(4.0),
-  //                   child: Table(
-  //
-  //                     columnWidths: const {
-  //                       0: FlexColumnWidth(2), // First column takes 2x space
-  //                       1: FlexColumnWidth(3), // Second column takes 1x space
-  //                     },
-  //                     border: TableBorder.all(
-  //                         color: blueColor), // Table border
-  //                     children: [
-  //                       _buildTableRow(
-  //                           "Open Status",
-  //                           data.isAccepted == true ? "✔ " : "✖ ",
-  //                           data.isAccepted == true ? Colors.green : Colors.red),
-  //                       _buildTableRow(
-  //                           "Subject", '${data.subject}', Colors.black),
-  //                       _buildTableRow(
-  //                           "Recipient Email", '${data.email}', Colors.black),
-  //                       _buildTableRow(
-  //                           "From Email", '${data.from}', Colors.black),
-  //                       _buildTableRow(
-  //                           "Created Time", '${data.createdAt}', Colors.black),
-  //                       _buildTableRow(
-  //                           "Open Time",
-  //                           '${data.isOpened == true ? data.openedAt : "Not Opened"}',
-  //                           Colors.black),
-  //                     ],
-  //                   ),
-  //                 ),
-  //                 SizedBox(
-  //                   height: 10,
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-  void _showAlert(BuildContext context, String id, Emails data) {
+  void _showAlert(BuildContext context, String id, Emailss data) {
+    String searchValue = ""; // Local state for search value
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header Section
-              Container(
-                height: 48,
-                decoration: BoxDecoration(
-                  color: blueColor, // Customize color
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                child: Center(
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 15,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header Section
+                  Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: blueColor,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(10)),
+                    ),
+                    child: Center(
+                      child: Row(
+                        children: [
+                          SizedBox(width: 15),
+                          Text(
+                            "Email Recipients Details",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(Icons.close, color: Colors.white),
+                          ),
+                          SizedBox(width: 8),
+                        ],
                       ),
-                      Text(
-                        "Email Logs Details",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Spacer(),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                          )),
-                      SizedBox(
-                        width: 8,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+
+                  SizedBox(height: 10),
+
+                  // Search Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 11),
+                    child: TextField(
+                      style: TextStyle(fontSize: 15),
+                      onChanged: (value) {
+                        setState(() {
+                          searchValue =
+                              value.toLowerCase(); // ✅ Update search value
+                        });
+                      },
+                      cursorColor: blueColor,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                        ),
+                        hintText: "Search recipients...",
+                        hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 10),
+
+                  // Emails List
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 11),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Material(
+                                elevation: 2,
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border:
+                                        Border.all(color: Color(0xFF8A95A8)),
+                                  ),
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      children: data.to!
+                                          .where((email) => email
+                                              .toLowerCase()
+                                              .contains(searchValue))
+                                          .map((email) {
+                                        List<String?> openedEmails = data.opens!
+                                            .map(
+                                                (openData) => openData.openedBy)
+                                            .toList();
+
+                                        // Debugging prints
+                                        print("Checking email: $email");
+                                        print("Accepted: ${data.accepted}");
+                                        print("Opened: $openedEmails");
+
+                                        bool isAccepted =
+                                            data.accepted!.contains(email);
+                                        bool isOpened =
+                                            openedEmails.contains(email);
+
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                email,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor,
+                                                ),
+                                              ),
+                                              Spacer(), // Push icon to the right
+
+                                              if (isAccepted && isOpened)
+                                                Icon(Icons.done_all,
+                                                    color: Colors.green)
+                                              else if (isAccepted)
+                                                Icon(Icons.check,
+                                                    color: Colors.green)
+                                              else
+                                                Icon(Icons.close,
+                                                    color: Colors.red)
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 20),
+
+                        // Total Recipients
+                        Row(
+                          children: [
+                            Text(
+                              "Total Recipients  : ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: blueColor,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "${data.to?.length ?? 0}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: blueColor,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+                ],
               ),
-              SizedBox(
-                height: 5,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildField(
-                        "Open Status",
-                        data.isAccepted == true && data.isOpened == true
-                            ? "✔✔ Read" // Both conditions true
-                            : data.isAccepted == true
-                                ? "✔ Not Opened" // Only opened
-                                : "✖",
-                        data.isAccepted == true && data.isOpened == true
-                            ? Colors.green
-                            : Colors.red),
-                    _buildField("Subject", '${data.subject}', Colors.black),
-                    _buildField(
-                        "Recipient Email", '${data.email}', Colors.black),
-                    _buildField("From Email", '${data.from}', Colors.black),
-                    _buildField(
-                        "Created Time",
-                        DateFormat("yyyy-MM-dd HH:mm:ss").format(
-                            DateTime.parse('${data.createdAt}').toLocal()),
-                        Colors.black),
-                    _buildField(
-                        "Open Time",
-                        '${data.isOpened == true ? DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse('${data.openedAt}')).toLocal()) : "Not Opened"}',
-                        Colors.black),
-                    SizedBox(height: 20),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
-// Field-like container function
+  void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc:
+          "Once deleted, you will not be able to recover this e-mail history!",
+      content: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for deletion',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+          // if (_errorText)
+          //   Text(
+          //     "Please fill in all fields correctly.",
+          //     style: TextStyle(color: Colors.redAccent),
+          //   ),
+        ],
+      ),
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            if (reason.text.isEmpty) {
+              // setState(() {
+              //  _errorText == true;
+              // });
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              var data = await SendemailRepository()
+                  .DeleteSendMail(email_id: id, reason: reason.text);
+              // Add your delete logic here
+              if (data != null)
+                setState(() {
+                  futureEmailss = SendemailRepository().fetchSendEmailTable();
+                });
+              Navigator.pop(context);
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+      ],
+    ).show();
+  }
+
   Widget _buildField(String label, String value, Color textColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -471,13 +532,13 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
     );
   }
 
-  List<Emails> _tableData = [];
+  List<Emailss> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  List<Emails> get _pagedData {
+  List<Emailss> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
@@ -491,7 +552,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(Emails d) getField, int columnIndex,
+  void _sort<T>(Comparable<T> Function(Emailss d) getField, int columnIndex,
       bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -506,7 +567,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
   }
 
   Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(Emails d)? getField) {
+      Comparable<T> Function(Emailss d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -625,6 +686,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
 
   ConnectivityResult? _connectivityResult;
   final _scrollController = ScrollController();
+  String extractText(String htmlString) {
+    var document = htmlParser.parse(htmlString);
+    return document.body?.text.trim().replaceAll(RegExp(r'\s+'), ' ') ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -634,7 +699,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "E-mail Logs",
+        currentpage: "Send E-mail",
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
@@ -646,38 +711,101 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   ),
                   //add propertytype
                   Padding(
-                    padding: const EdgeInsets.only(left: 4, right: 0),
+                    padding: const EdgeInsets.only(left: 0, right: 0),
                     child: Row(
                       //mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: titleBar(
-                            width: MediaQuery.of(context).size.width * .91,
-                            title: 'Email Logs',
+                            width: MediaQuery.of(context).size.width * .65,
+                            title: 'Emails',
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            final result = await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => send_email()));
+                            // final result = await Navigator.of(context).push(
+                            //     MaterialPageRoute(
+                            //         builder: (context) => Add_property()));
+                            if (result == true) {
+                              setState(() {
+                                futureEmailss =
+                                    SendemailRepository().fetchSendEmailTable(limit: 10, page: 1);
+                              });
+                            }
+                          },
+                          child: Container(
+                            height: (MediaQuery.of(context).size.width < 500)
+                                ? 50
+                                : MediaQuery.of(context).size.width * 0.062,
+
+                            // height:  MediaQuery.of(context).size.width * 0.07,
+                            // height:  40,
+                            width: (MediaQuery.of(context).size.width < 500)
+                                ? MediaQuery.of(context).size.width * 0.25
+                                : MediaQuery.of(context).size.width * 0.25,
+                            decoration: BoxDecoration(
+                              color: blueColor,
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey,
+                                  offset: Offset(0.0, 4.0),
+                                  blurRadius: 6.0,
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "+ Add",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 16
+                                              : 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 4),
+                          SizedBox(width: 6),
                         if (MediaQuery.of(context).size.width > 500)
                           SizedBox(width: 22),
                       ],
                     ),
                   ),
+
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.all(15.0),
-                      child: FutureBuilder<Email_log_table>(
+                      child: FutureBuilder<Send_email_table>(
                         future: futureEmailss,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return ColabShimmerLoadingWidget();
+                            return ColabShimmerLoadingWidget(); // Show loading indicator
                           } else if (snapshot.hasError) {
                             return Center(
-                                child: Text('Error: ${snapshot.error}'));
+                              child: Text(snapshot.error
+                                  .toString()), // Show error message from API
+                            );
                           } else if (!snapshot.hasData ||
+                              snapshot.data == null ||
+                              snapshot.data!.emails == null ||
                               snapshot.data!.emails!.isEmpty) {
+                            // If no emails or 204 response, show "No Data Available" in table
                             return Container(
                               height: MediaQuery.of(context).size.height * .5,
                               child: Center(
@@ -685,72 +813,31 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
+                                    // No email icon
+                                    SizedBox(height: 10),
                                     Text(
-                                      "No Data Available",
+                                      "No Emails Available",
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16,
+                                      ),
                                     )
                                   ],
                                 ),
                               ),
                             );
                           } else {
-                            var data = snapshot.data!.emails;
-                            if (selectedValue == null && searchvalue!.isEmpty) {
-                              data = snapshot.data!.emails;
-                            } else if (selectedValue == "All") {
-                              data = snapshot.data!.emails;
-                            } else if (searchvalue!.isNotEmpty) {
-                              data = snapshot.data!.emails!
-                                  .where((property) => property.subject!
-                                      .toLowerCase()
-                                      .contains(searchvalue!.toLowerCase()))
-                                  .toList();
-                            } else {
-                              data = snapshot.data!.emails
-                                  !.where((property) =>
-                                      property.subject == selectedValue)
-                                  .toList();
-                            }
-                            if (data!.isEmpty) {
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
-                              );
-                            }
-                            sortData(data);
+                            var data = snapshot.data!.emails!;
+                            print("data send mail ${data.length}");
+
                             final totalPages =
-                                snapshot.data!.totalPages;
+                                (snapshot.data!.totalEmails! / itemsPerPage)
+                                    .ceil();
                             final currentPageData = data;
+                            //     .skip(currentPage * itemsPerPage)
+                            //     .take(itemsPerPage)
+                            //     .toList();
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
@@ -771,7 +858,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                         int index = entry.key;
                                         bool isExpanded =
                                             expandedIndex == index;
-                                        Emails Propertytype = entry.value;
+                                        Emailss Propertytype = entry.value;
 
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
@@ -848,6 +935,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                         ),
                                                       ),
                                                       Expanded(
+                                                        flex: 3,
                                                         child: InkWell(
                                                           onTap: () {
                                                             setState(() {
@@ -862,10 +950,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                             });
                                                           },
                                                           child: Text(
-                                                            Propertytype.email
-                                                                        ?.isNotEmpty ==
-                                                                    true
-                                                                ? '${Propertytype.email}'
+                                                            Propertytype
+                                                                    .subject!
+                                                                    .isNotEmpty
+                                                                ? '${Propertytype.subject}'
                                                                 : 'N/A',
                                                             style: TextStyle(
                                                               color: blueColor,
@@ -882,35 +970,16 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       context)
                                                                   .size
                                                                   .width *
-                                                              .05),
+                                                              .099),
                                                       Expanded(
-                                                        child: Text(
-                                                          Propertytype.rentalAddress
-                                                                      ?.isNotEmpty ==
-                                                                  true
-                                                              ? '${Propertytype.rentalAddress}'
-                                                              : 'N/A',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .08),
-                                                      Expanded(
+                                                        flex: 3,
                                                         child: Text(
                                                           // '${widget.data.createdAt}',
                                                           // formatDate(
                                                           //     '${Propertytype.createdAt}'),
-                                                          Propertytype.isAccepted ==
-                                                                  true
+                                                          Propertytype
+                                                                  .createdAt!
+                                                                  .isNotEmpty
                                                               ? DateFormat(
                                                                       "yyyy-MM-dd HH:mm:ss")
                                                                   .format(DateTime
@@ -928,11 +997,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .01),
+                                                        width: 2,
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
@@ -946,6 +1012,9 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                   child: SingleChildScrollView(
                                                     child: Column(
                                                       children: [
+                                                        SizedBox(
+                                                          height: 7,
+                                                        ),
                                                         Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
@@ -957,7 +1026,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       .sortUp
                                                                   : FontAwesomeIcons
                                                                       .sortDown,
-                                                              size: 50,
+                                                              size: 23,
                                                               color: Colors
                                                                   .transparent,
                                                             ),
@@ -972,7 +1041,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                              'Subject   :  ',
+                                                                              'Reply to : ',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.bold,
                                                                               color: blueColor), // Bold and black
@@ -980,9 +1049,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                         TextSpan(
                                                                           // text: formatDate(
                                                                           //     '${Propertytype.updatedAt}'),
-                                                                          text: Propertytype.subject?.isNotEmpty == true
-                                                                              ? Propertytype.subject
+                                                                          text: Propertytype.from!.isNotEmpty
+                                                                              ? Propertytype.from
                                                                               : 'N/A',
+
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey
@@ -995,23 +1065,34 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                              'Opened  :  ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
+                                                                              'Body : ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color:
+                                                                                blueColor, // Bold and black
+                                                                          ),
                                                                         ),
                                                                         TextSpan(
-                                                                          // text: formatDate(
-                                                                          //     '${Propertytype.updatedAt}'),
-                                                                          text: Propertytype.isOpened == true
-                                                                              ? DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse('${Propertytype.openedAt}')).toLocal())
-                                                                              : 'Not Opened',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
+                                                                          text: Propertytype.body!.isNotEmpty
+                                                                              ? extractText(Propertytype.body!)
+                                                                              : 'N/A',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color:
+                                                                                grey, // Light and grey
+                                                                          ),
                                                                         ),
                                                                       ],
                                                                     ),
+                                                                    maxLines:
+                                                                        1, // Restrict to 2 lines
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis, // Show "..." if the text is too long
                                                                   ),
                                                                   SizedBox(
                                                                     height: 15,
@@ -1019,11 +1100,73 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                 ],
                                                               ),
                                                             ),
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 25,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
                                                           ],
                                                         ),
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
+                                                                  _showDeleteAlert(
+                                                                      context,
+                                                                      Propertytype
+                                                                          .emailId!);
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .trashCan,
+                                                                        size:
+                                                                            15,
+                                                                        color:
+                                                                            blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Delete",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
                                                             Expanded(
                                                               child:
                                                                   GestureDetector(
@@ -1049,9 +1192,11 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                         CrossAxisAlignment
                                                                             .center,
                                                                     children: [
-                                                                      Image
-                                                                          .asset(
-                                                                        'assets/icons/view.png',
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .users,
+                                                                        size:
+                                                                            18,
                                                                         color:
                                                                             blueColor,
                                                                       ),
@@ -1116,7 +1261,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                           value.toString()),
                                                     );
                                                   }).toList(),
-                                                  onChanged: snapshot.data!.totalEmails! >
+                                                  onChanged: snapshot.data!
+                                                              .totalEmails! >
                                                           itemsPerPageOptions
                                                               .first // Condition to check if dropdown should be enabled
                                                       ? (newValue) {
@@ -1125,7 +1271,12 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                 newValue!;
                                                             currentPage =
                                                                 1; // Reset to first page when items per page change
-                                                            futureEmailss = EmailLogRepository().fetchEmailLog(page: currentPage,limit: itemsPerPage);
+                                                            futureEmailss = SendemailRepository()
+                                                                .fetchSendEmailTable(
+                                                                    limit:
+                                                                        itemsPerPage,
+                                                                    page:
+                                                                        currentPage);
                                                           });
                                                         }
                                                       : null,
@@ -1150,7 +1301,13 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                 : () {
                                                     setState(() {
                                                       currentPage--;
-                                                      futureEmailss = EmailLogRepository().fetchEmailLog(page: currentPage,limit: itemsPerPage);
+                                                      futureEmailss =
+                                                          SendemailRepository()
+                                                              .fetchSendEmailTable(
+                                                                  limit:
+                                                                      itemsPerPage,
+                                                                  page:
+                                                                      currentPage);
                                                     });
                                                   },
                                           ),
@@ -1180,20 +1337,24 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                             icon: FaIcon(
                                               FontAwesomeIcons
                                                   .circleChevronRight,
-                                              color:
-                                                  currentPage < totalPages!
-                                                      ? blueColor
-                                                      : Colors.grey,
+                                              color: currentPage < totalPages
+                                                  ? blueColor
+                                                  : Colors.grey,
                                             ),
-                                            onPressed:
-                                                currentPage < totalPages
-                                                    ? () {
-                                                        setState(() {
-                                                          currentPage++;
-                                                          futureEmailss = EmailLogRepository().fetchEmailLog(page: currentPage,limit: itemsPerPage);
-                                                        });
-                                                      }
-                                                    : null,
+                                            onPressed: currentPage < totalPages
+                                                ? () {
+                                                    setState(() {
+                                                      currentPage++;
+                                                      futureEmailss =
+                                                          SendemailRepository()
+                                                              .fetchSendEmailTable(
+                                                                  limit:
+                                                                      itemsPerPage,
+                                                                  page:
+                                                                      currentPage);
+                                                    });
+                                                  }
+                                                : null,
                                           ),
                                         ],
                                       ),
@@ -1236,4 +1397,4 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
   }
 }
 
-void main() => runApp(MaterialApp(home: Email_log_tablee()));
+void main() => runApp(MaterialApp(home: Send_Email_table()));
