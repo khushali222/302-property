@@ -34,12 +34,14 @@ import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
 import '../../Communications/Send E-mail/send_mail.dart';
 import '../../Rental/Properties/moveout/repository.dart';
+import 'Commnunication/communication.dart';
 import 'Document_Rental/Document_rental_table.dart';
 import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
 
 import 'Move_out_lease/Moveout_lease.dart';
 import 'Notes/Notes_table.dart';
+import 'edit_lease.dart';
 import 'make_payment.dart';
 
 class SummeryPageLease extends StatefulWidget {
@@ -74,8 +76,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
         _connectivityResult = result;
       });
+
     });
     checkInternet();
+    _scrollController.addListener(_updateArrowVisibility);
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
@@ -103,6 +107,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       _connectivityResult = connectiondata;
     });
   }
+  @override
+  void dispose() {
+    _scrollController.removeListener(_updateArrowVisibility);
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   List<LeaseTenant> leaseTenants = [];
 
@@ -125,7 +135,18 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
   final TextEditingController endDateController = TextEditingController();
-
+  List<String> tabTitles = [
+    "Summary",
+    "Financial",
+    "Tenant",
+    "Communication",
+    "Renters\nInsurance",
+    "Documents",
+    "Notes"
+    //"Documents", // You can add more tabs here
+    // "New Tab", ...
+  ];
+  final ScrollController _scrollController = ScrollController();
   bool isLoading = false;
   bool isMovedOut = false;
   int _selectedIndex = 0;
@@ -135,6 +156,35 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
+  bool _showLeftArrow = false;
+  bool _showRightArrow = true;
+  void _updateArrowVisibility() {
+    if (!_scrollController.hasClients) return;
+
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final offset = _scrollController.offset;
+
+    setState(() {
+      _showLeftArrow = offset > 0;
+      _showRightArrow = offset < maxScroll;
+    });
+  }
+  void _scrollLeft() {
+    _scrollController.animateTo(
+      _scrollController.offset - 250,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+  }
+
+  void _scrollRight() {
+    _scrollController.animateTo(
+      _scrollController.offset + 250,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -212,43 +262,114 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           SizedBox(
                             height: 5,
                           ),
-                          Row(
-                            children: [
-                              if (MediaQuery.of(context).size.width < 500)
-                                SizedBox(
-                                  width: 18,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Row(
+                              children: [
+
+                                Text(
+                                  '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) ?? "No status available"} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
+                                  style: TextStyle(
+                                    color: _getStatusColor(determineStatus(
+                                        snapshot.data?.data?.startDate,
+                                        snapshot.data?.data?.endDate)),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 16,
+                                  ),
                                 ),
-                              if (MediaQuery.of(context).size.width > 500)
-                                SizedBox(
-                                  width: 25,
+                                 Spacer(),
+                                 GestureDetector(
+                              onTap: () async {
+                                // Provider.of<SelectedTenantsProvider>(context,
+                                //     listen: false)
+                                //     .clearTenant();
+                                // Provider.of<SelectedCosignersProvider>(context,
+                                //     listen: false)
+                                //     .clearCosigner();
+                                // Provider.of<SelectedApplicantProvider>(context,
+                                //     listen: false)
+                                //     .clearApplicant();
+                                final result = await Navigator.of(context)
+                                    .push(MaterialPageRoute(
+                                    builder: (context) => send_email(
+                                       lease: snapshot.data!.data!.tenantId!
+                                    )));
+
+                              },
+                              child: Container(
+                                height: (MediaQuery.of(context).size.width < 500)
+                                    ? 35
+                                    : MediaQuery.of(context).size.width * 0.063,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
-                              Text(
-                                '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) ?? "No status available"} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
-                                style: TextStyle(
-                                  color: _getStatusColor(determineStatus(
-                                      snapshot.data?.data?.startDate,
-                                      snapshot.data?.data?.endDate)),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
+                                child: Center(
+                                  child: Text(
+                                    "Send Mail",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
                                       MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 16,
+                                          ? 14
+                                          : 22,
+                                    ),
+                                  ),
                                 ),
                               ),
+                            ),
+                                SizedBox(width: 10,),
+                                GestureDetector(
+                                  onTap: () async {
+                                    // Provider.of<SelectedTenantsProvider>(context,
+                                    //     listen: false)
+                                    //     .clearTenant();
+                                    // Provider.of<SelectedCosignersProvider>(context,
+                                    //     listen: false)
+                                    //     .clearCosigner();
+                                    // Provider.of<SelectedApplicantProvider>(context,
+                                    //     listen: false)
+                                    //     .clearApplicant();
+                                    final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Edit_lease(
+                                              //lease: lease,
+                                              leaseId: snapshot.data!.data!.leaseId!,
+                                            )));;
 
-                              // Text(
-                              //     '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)} ${snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.length > 0 ? " - Renewed" : ""}',
-                              //     style: TextStyle(
-                              //         color: _getStatusColor(determineStatus(
-                              //             snapshot.data!.data?.startDate,
-                              //             snapshot.data!.data?.endDate)),
-                              //         fontWeight: FontWeight.bold,
-                              //         fontSize:
-                              //             MediaQuery.of(context).size.width <
-                              //                     500
-                              //                 ? 13
-                              //                 : 16)),
-                            ],
+                                  },
+                                  child: Container(
+                                    height: (MediaQuery.of(context).size.width < 500)
+                                        ? 35
+                                        : MediaQuery.of(context).size.width * 0.063,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                      color: blueColor,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Edit",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize:
+                                          MediaQuery.of(context).size.width < 500
+                                              ? 14
+                                              : 22,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                          /* GestureDetector(
                             onTap: () async {
@@ -298,165 +419,86 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             height: 10,
                           ),
                           Container(
-                            padding: EdgeInsets.all(8),
                             height: 60,
-                            margin: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 15),
+                            margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                            padding: EdgeInsets.symmetric(vertical: 5),
                             decoration: BoxDecoration(
-                                border: Border.all(color: blueColor),
-                                borderRadius: BorderRadius.circular(5)),
-                            // color: Colors.red,
+                              border: Border.all(color: blueColor),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                             child: Row(
                               children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = 0;
-                                      });
-                                    },
+                                // Left Arrow
+                                if (_showLeftArrow)
+                                  GestureDetector(
+                                    onTap: _scrollLeft,
                                     child: Container(
+                                      padding: EdgeInsets.all(6),
                                       decoration: BoxDecoration(
-                                          color: _selectedIndex == 0
-                                              ? blueColor
-                                              : Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Center(
-                                          child: Text(
-                                        "Summary",
-                                        style: TextStyle(
-                                          color: _selectedIndex != 0
-                                              ? blueColor
-                                              : Colors.white,
-                                        ),
-                                      )),
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                        border: Border.all(color: blueColor),
+                                      ),
+                                      child: Container(margin: EdgeInsets.only(left: 5),child: Icon(Icons.arrow_back_ios, size: 14, color: blueColor)),
+                                    ),
+                                  ),
+
+                                // Scrollable Tab Bar
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    controller: _scrollController,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: List.generate(tabTitles.length, (index) {
+                                        return Container(
+                                          margin: EdgeInsets.symmetric(horizontal: 4),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _selectedIndex = index;
+                                              });
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(horizontal: 12),
+                                              decoration: BoxDecoration(
+                                                color: _selectedIndex == index ? blueColor : Colors.white,
+                                                borderRadius: BorderRadius.circular(5),
+                                              ),
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                tabTitles[index],
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: _selectedIndex == index ? Colors.white : blueColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
                                     ),
                                   ),
                                 ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = 1;
-                                      });
-                                    },
+
+                                // Right Arrow
+                                // Right Arrow
+                                if (_showRightArrow)
+                                  GestureDetector(
+                                    onTap: _scrollRight,
                                     child: Container(
+                                      padding: EdgeInsets.all(6),
                                       decoration: BoxDecoration(
-                                          color: _selectedIndex == 1
-                                              ? blueColor
-                                              : Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Center(
-                                          child: Text("Finacial",
-                                              style: TextStyle(
-                                                color: _selectedIndex != 1
-                                                    ? blueColor
-                                                    : Colors.white,
-                                              ))),
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                        border: Border.all(color: blueColor),
+                                      ),
+                                      child: Icon(Icons.arrow_forward_ios, size: 14, color: blueColor),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = 2;
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: _selectedIndex == 2
-                                              ? blueColor
-                                              : Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Center(
-                                          child: Text("Tenant",
-                                              style: TextStyle(
-                                                color: _selectedIndex != 2
-                                                    ? blueColor
-                                                    : Colors.white,
-                                              ))),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = 3;
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: _selectedIndex == 3
-                                              ? blueColor
-                                              : Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Center(
-                                          child: Text("  Renters\nInsurance",
-                                              style: TextStyle(
-                                                color: _selectedIndex != 3
-                                                    ? blueColor
-                                                    : Colors.white,
-                                              ))),
-                                    ),
-                                  ),
-                                ),
-                                // Expanded(
-                                //   child: GestureDetector(
-                                //     onTap: () {
-                                //       setState(() {
-                                //         _selectedIndex = 3;
-                                //       });
-                                //     },
-                                //     child: Container(
-                                //       decoration: BoxDecoration(
-                                //           color: _selectedIndex == 3
-                                //               ? blueColor
-                                //               : Colors.white,
-                                //           borderRadius:
-                                //           BorderRadius.circular(5)),
-                                //       child: Center(
-                                //           child: Text("Document",
-                                //               style: TextStyle(
-                                //                 color: _selectedIndex != 3
-                                //                     ? blueColor
-                                //                     : Colors.white,
-                                //               ))),
-                                //     ),
-                                //   ),
-                                // ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = 4;
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: _selectedIndex == 4
-                                              ? blueColor
-                                              : Colors.white,
-                                          borderRadius:
-                                          BorderRadius.circular(5)),
-                                      child: Center(
-                                          child: Text("Notes",
-                                              style: TextStyle(
-                                                color: _selectedIndex != 4
-                                                    ? blueColor
-                                                    : Colors.white,
-                                              ))),
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           ),
+
                           _buildTabContent(snapshot.data!, context),
                           /*  Expanded(
                           child: TabBarView(
@@ -529,9 +571,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         );
       case 2:
         return Tenant(context);
-      // case 3:
-      //   return DocumentRentalTable(leaseId: widget.leaseId,);
-      case 3:
+      case 5:
+        return DocumentRentalTable(leaseId: widget.leaseId,);
+      case 6:
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: NotesTable(leaseid: widget.leaseId,),
+        );
+      case 4:
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Renters_Insurance_table(
@@ -542,10 +589,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
             tenantId: ' ${snapshot.data?.tenantId}',
           ),
         );
-      case 4:
+      case 3:
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: NotesTable(leaseid:widget.leaseId)
+          child: lease_communication(lease_id:widget.leaseId)
         );
       default:
         return Container(); // Fallback for safety

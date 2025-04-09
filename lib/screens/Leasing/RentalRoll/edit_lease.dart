@@ -39,9 +39,9 @@ import '../../../repository/tenants.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Edit_lease extends StatefulWidget {
-  Lease1 lease;
+  Lease1? lease;
   final String leaseId;
-  Edit_lease({super.key, required this.lease, required this.leaseId});
+  Edit_lease({super.key,  this.lease, required this.leaseId});
 
   @override
   State<Edit_lease> createState() => _Edit_leaseState();

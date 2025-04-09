@@ -101,6 +101,7 @@ dependencies:
   html:
   html_editor_enhanced:
   super_tooltip:
+  flutter_html:
 
 
 

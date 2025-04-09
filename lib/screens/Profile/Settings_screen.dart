@@ -30,6 +30,7 @@ import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
 import '../Leasing/RentalRoll/newAddLease.dart';
 import '../Rental/Tenants/add_tenants.dart';
+import 'manage_template.dart';
 
 class TabBarExample extends StatefulWidget {
   @override
@@ -62,6 +63,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool isloading = false;
   bool isdateformate = false;
   bool isworkorder = false;
+  bool ismanagetemplate = false;
   ConnectivityResult? _connectivityResult;
   List<Setting4> accounts = [];
   String? selectedAccount;
@@ -1372,6 +1374,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = false;
                                       isdateformate = false;
                                       isworkorder = false;
+                                      ismanagetemplate = false;
                                     });
                                   },
                                   child: Container(
@@ -1416,6 +1419,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = false;
                                       islatefee = true;
                                       isworkorder = false;
+                                      ismanagetemplate = false;
                                     });
                                   },
                                   child: Container(
@@ -1561,6 +1565,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = true;
                                       islatefee = false;
                                       isworkorder = false;
+                                      ismanagetemplate = false;
                                       DateTime now = DateTime.now();
                                       dateformateselect =
                                           dateProvider.dateformateselect;
@@ -1612,6 +1617,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = true;
                                       islatefee = false;
                                       isdateformate = false;
+                                      ismanagetemplate = false;
                                     });
                                   },
                                   child: Visibility(
@@ -1643,6 +1649,107 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height:
+                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 850
+                              : 900,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+
+                                    setState(() {
+                                      issurge = false;
+                                      isaccounts = false;
+                                      ismail = false;
+                                      isdateformate = false;
+                                      islatefee = false;
+                                      isworkorder = false;
+                                      ismanagetemplate = true;
+                                      //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ismanagetemplate
+                                          ? Colors.white
+                                          : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Manage Template",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ismanagetemplate
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              // Expanded(
+                              //   child: InkWell(
+                              //     onTap: () {
+                              //       setState(() {
+                              //         issurge = false;
+                              //         ismail = false;
+                              //         isaccounts = false;
+                              //         isworkorder = true;
+                              //         islatefee = false;
+                              //         isdateformate = false;
+                              //       });
+                              //     },
+                              //     child: Visibility(
+                              //       visible: true,
+                              //       child: Container(
+                              //         decoration: BoxDecoration(
+                              //           border: Border.all(color: blueColor),
+                              //           color: !isworkorder
+                              //               ? Colors.white
+                              //               : blueColor,
+                              //         ),
+                              //         child: Center(
+                              //           child: Text(
+                              //             "WorkOrder",
+                              //             style: TextStyle(
+                              //                 fontWeight: FontWeight.bold,
+                              //                 color: isworkorder
+                              //                     ? Colors.white
+                              //                     : blueColor,
+                              //                 fontSize: MediaQuery.of(context)
+                              //                     .size
+                              //                     .width <
+                              //                     500
+                              //                     ? 15
+                              //                     : 20),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+
+                              Spacer()
                             ],
                           ),
                         ),
@@ -5498,6 +5605,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                  ),
                             ],
                           ),
+                        if(ismanagetemplate)
+                          manage_templates()
                       ],
                     ),
                   ),
