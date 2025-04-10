@@ -116,7 +116,7 @@ class _MakePaymentState extends State<MakePayment> {
     //totalAmount = chargeAmount + surchargeIncluded;
     // amountController.addListener(_updateTotalAmount);
     DateTime today = DateTime.now();
-    _startDate.text = DateFormat('dd-MM-yyyy').format(today);
+    _startDate.text = DateFormat('yyyy-MM-dd').format(today);
     //selectedTenantId = widget.tenantId;
     fetchChargesAndBalance(widget.leaseId);
   }
@@ -985,7 +985,7 @@ class _MakePaymentState extends State<MakePayment> {
                             const SizedBox(
                               height: 8,
                             ),
-                            if (MediaQuery.of(context).size.width < 500) const Text('Received From **', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                            if (MediaQuery.of(context).size.width < 500) const Text('Received From *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
                             if (MediaQuery.of(context).size.width < 500)
                               const SizedBox(
                                 height: 8,
@@ -1107,7 +1107,7 @@ class _MakePaymentState extends State<MakePayment> {
                               const SizedBox(
                                 height: 20,
                               ),
-                            if (MediaQuery.of(context).size.width < 500) const Text('Date', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                            if (MediaQuery.of(context).size.width < 500) const Text('Date *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
                             if (MediaQuery.of(context).size.width < 500)
                               const SizedBox(
                                 height: 8,
@@ -1142,7 +1142,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   );
                                   if (pickedDate != null) {
                                     bool isfuture = pickedDate.isAfter(DateTime.now());
-                                    String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                     setState(() {
                                       futuredate = isfuture;
                                       _startDate.text = formattedDate;
@@ -1159,7 +1159,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 },
                                 label: "Select the date",
                                 keyboardType: TextInputType.text,
-                                hintText: 'dd-mm-yyyy',
+                                hintText: 'YYYY-MM-DD',
                                 controller: _startDate,
                               ),
                             if (MediaQuery.of(context).size.width < 500)
@@ -1258,7 +1258,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('Date', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                          Text('Date *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
                                           SizedBox(height: 5),
                                           CustomTextField(
                                             onTap: () async {
@@ -1319,7 +1319,7 @@ class _MakePaymentState extends State<MakePayment> {
                             const SizedBox(
                               height: 8,
                             ),
-                            const Text('Amount', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                            const Text('Amount *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
                             const SizedBox(
                               height: 8,
                             ),
@@ -1338,7 +1338,7 @@ class _MakePaymentState extends State<MakePayment> {
                             const SizedBox(
                               height: 12,
                             ),
-                            const Text('Payment Method', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                            const Text('Payment Method *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
                             const SizedBox(
                               height: 8,
                             ),
@@ -1819,7 +1819,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
-                                                width: 200,
+                                               // width: 200,
                                                 padding: const EdgeInsets.only(left: 14, right: 14),
                                                 decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(6),
@@ -2072,7 +2072,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
-                                                width: 200,
+                                              //  width: 200,
                                                 padding: const EdgeInsets.only(left: 14, right: 14),
                                                 decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(6),
@@ -2551,7 +2551,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           left: 8,
                                           right: 8,
                                         ),
-                                        child: Text("Amount", style: TextStyle(fontWeight: FontWeight.bold)),
+                                        child: Text("Amount *", style: TextStyle(fontWeight: FontWeight.bold)),
                                       ),
                                       SizedBox(
                                         height: 8,

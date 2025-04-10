@@ -4156,96 +4156,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   //color: Colors.blue,
                                                                   child: Column(
                                                                     children: [
-                                                                      Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        children: [
-                                                                          Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
-                                                                            children: [
-                                                                              FaIcon(
-                                                                                isExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
-                                                                                size: 50,
-                                                                                color: Colors.transparent,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          Column(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              Text.rich(
-                                                                                TextSpan(
-                                                                                  children: [
-                                                                                    TextSpan(
-                                                                                      text: 'Charge Type: ',
-                                                                                      style: TextStyle(
-                                                                                        fontWeight: FontWeight.bold,
-                                                                                        color: blueColor, // Bold and blue
-                                                                                      ),
-                                                                                    ),
-                                                                                    TextSpan(
-                                                                                      text: '${account.chargeType}',
-                                                                                      style: TextStyle(
-                                                                                        fontWeight: FontWeight.w700,
-                                                                                        color: grey, // Light and grey
-                                                                                      ),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                              SizedBox(height: 5),
-                                                                            ],
-                                                                          ),
-                                                                          Spacer(),
-                                                                          // Container(
-                                                                          //   width: 40,
-                                                                          //   child: Column(
-                                                                          //     children: [
-                                                                          //       IconButton(
-                                                                          //         icon: FaIcon(
-                                                                          //           FontAwesomeIcons.edit,
-                                                                          //           size: 20,
-                                                                          //           color: blueColor,
-                                                                          //         ),
-                                                                          //         onPressed: () async {
-                                                                          //           var check = await Navigator.push(
-                                                                          //             context,
-                                                                          //             MaterialPageRoute(
-                                                                          //               builder: (context) => Edit_staff_member(
-                                                                          //                 staff: staffmembers,
-                                                                          //               ),
-                                                                          //             ),
-                                                                          //           );
-                                                                          //           if (check == true) {
-                                                                          //             setState(() {});
-                                                                          //           }
-                                                                          //         },
-                                                                          //       ),
-                                                                          //       IconButton(
-                                                                          //         icon: FaIcon(
-                                                                          //           FontAwesomeIcons.trashCan,
-                                                                          //           size: 20,
-                                                                          //           color: blueColor,
-                                                                          //         ),
-                                                                          //         onPressed: () {
-                                                                          //           _showDeleteAlert(context, staffmembers.staffmemberId!);
-                                                                          //         },
-                                                                          //       ),
-                                                                          //     ],
-                                                                          //   ),
-                                                                          // ),
-                                                                          SizedBox(
-                                                                              width: 5),
-                                                                        ],
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            20,
-                                                                      ),
+
                                                                       Row(
                                                                         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                         children: [
@@ -5692,6 +5603,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   final List<String> accounttypeitems = [
     'Income',
     'Non Operating Income',
+    'Liability Account',
   ];
   final List<String> fundtypeitems = [
     'Reserve',
@@ -6262,7 +6174,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   chargetype: "",
                                   notes: note.text.trim(),
                                 );
-                                Navigator.pop(context, true);
+                                Navigator.pop(context);
                                 _refreshAccounts();
                               } catch (e) {
                                 setState(() {

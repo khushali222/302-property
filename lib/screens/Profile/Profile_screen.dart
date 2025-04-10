@@ -922,6 +922,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       // const SizedBox(height: 20),
                                       // Login text
@@ -1066,12 +1068,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                         ],
                                       ),
                                       passworderror
-                                          ? Center(
-                                              child: Text(
-                                              passwordmessage,
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            ))
+                                          ? Text(
+                                          passwordmessage,
+                                          style:
+                                              TextStyle(color: Colors.red),
+                                                                                      )
                                           : Container(),
                                       SizedBox(
                                         height:
@@ -1204,12 +1205,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                         ],
                                       ),
                                       confirmpassworderror
-                                          ? Center(
-                                              child: Text(
-                                              confirmpasswordmessage,
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            ))
+                                          ? Text(
+                                          confirmpasswordmessage,
+                                          style:
+                                              TextStyle(color: Colors.red),
+                                                                                      )
                                           : Container(),
 
                                       // Spacer(),
@@ -1341,7 +1341,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                               passwordmessage =
                                                   "Password is required";
                                             });
-                                          } else if (password.text.trim().length < 8) {
+                                          } else if (password.text.trim().length < 12) {
                                             setState(() {
                                               passworderror = true;
                                               passwordmessage =

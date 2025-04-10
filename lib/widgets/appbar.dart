@@ -100,6 +100,7 @@ class widget_302 {
               }
             },
             child: Container(
+              width: 150,
               margin: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: blueColor,
@@ -119,13 +120,16 @@ class widget_302 {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Center(
-                        child: Text(planName,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width > 500
-                                    ? 18
-                                    : 14)),
+                        child: Text(
+                          planName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width > 500 ? 18 : 14,
+                          ),
+                        )
                       ),
                     );
                   }

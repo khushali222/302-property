@@ -69,7 +69,7 @@ class checkPlanPurchaseData {
     adminId = json['admin_id'];
     planId = json['plan_id'];
     purchaseId = json['purchase_id'];
-    planAmount = json['plan_amount'];
+    planAmount = 0;
     purchaseDate = json['purchase_date'];
     expirationDate = json['expiration_date'];
     status = json['status'];
@@ -167,7 +167,7 @@ class PlanDetail {
     sId = json['_id'];
     planId = json['plan_id'];
     planName = json['plan_name'];
-    planPrice = json['plan_price'];
+    planPrice = 0;
     billingInterval = json['billing_interval'];
     if (json['features'] != null) {
       features = <Features>[];

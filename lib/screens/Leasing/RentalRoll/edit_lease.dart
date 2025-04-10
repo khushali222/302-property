@@ -5521,6 +5521,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   List<String> accountTypeItems = [
     'Income',
     'Non Operating Income ',
+    'Liability Account',
   ]; // Example items
   List<String> fundTypeItems = [
     'Reverse',

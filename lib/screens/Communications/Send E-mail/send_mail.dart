@@ -21,7 +21,8 @@ import '../../../widgets/titleBar.dart';
 
 class send_email extends StatefulWidget {
   List<String>? lease;
-  send_email({super.key, this.lease});
+  String? leaseID;
+  send_email({super.key, this.lease,this.leaseID});
 
   @override
   _send_emailState createState() => _send_emailState();
@@ -1529,6 +1530,7 @@ class _send_emailState extends State<send_email> {
                                   body: replaceFontTags(updatedHtmlBody),
                                   type: "E-mail",
                                   mail_type: _selectedEvent,
+                                  leaseid: widget.leaseID
                                 );
                                 setState(() {
                                   isLoading = false;

@@ -295,7 +295,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 final result = await Navigator.of(context)
                                     .push(MaterialPageRoute(
                                     builder: (context) => send_email(
-                                       lease: snapshot.data!.data!.tenantId!
+                                       lease: snapshot.data!.data!.tenantId!,
+                                      leaseID: snapshot.data!.data!.leaseId!,
                                     )));
 
                               },

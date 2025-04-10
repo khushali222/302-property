@@ -3211,7 +3211,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               Spacer(),
                               GestureDetector(
                                 onTap: () async {
-                                  _showAccountType(
+                                  _showAccount(
                                       context);
                                 },
                                 child: ClipRRect(
@@ -3310,7 +3310,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         SizedBox(height: 20),
                                         Container(
                                           decoration: BoxDecoration(
-                                              border: Border.all(color: blueColor
+                                              border: Border.all(color:  Color.fromRGBO(
+                                                  152, 162, 179, .5)
 
 
 )),
@@ -3328,7 +3329,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               return Container(
                                                 decoration: BoxDecoration(
                                                   color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                                  border: Border.all(color: blueColor
+                                                  border: Border.all(color:  Color.fromRGBO(
+                                                      152, 162, 179, .5)
 
 
 ),
@@ -3897,6 +3899,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   final List<String> accounttypeitems = [
     'Income',
   'Non Operating Income',
+    'Liability Account',
   ];
   final List<String> fundtypeitems = [
     'Reserve',
@@ -4063,7 +4066,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                         setState(() {
                           _selectedAccount = value;
                           Navigator.pop(context);
-                          _showAccount(context, _selectedAccount);
+                          _showAccount(context);
                         });
                       },
                     ),
@@ -4325,7 +4328,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   );
   // }
 
-  void _showAccount(BuildContext context, String? selectedAccountType) {
+  void _showAccount(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -4463,7 +4466,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   account: accountname.text.trim(),
                                   accounttype: _selectedAccounttype,
                                   fundtype: _selectedFundtype,
-                                  chargetype: selectedAccountType,
+                                  chargetype: "",
                                   notes: note.text.trim(),
                                 );
                                 Navigator.pop(context, true);

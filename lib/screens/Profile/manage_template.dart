@@ -212,7 +212,7 @@ class _manage_templatesState extends State<manage_templates> {
                                   child: Text("Template not found"),
                                 )
                               ],
-                              onChanged: (value){}, // disables dropdown interaction
+                              onChanged:  element.isEnabled! ? (value){} : null, // disables dropdown interaction
                               buttonStyleData: ButtonStyleData(
                                 height: 46,
                                 padding: const EdgeInsets.symmetric(horizontal: 3),

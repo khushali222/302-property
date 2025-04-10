@@ -238,58 +238,64 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   Future<void> fetchDropdownData() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String adminId = prefs.getString('adminId') ?? '';
-      String? token = prefs.getString('token');
-      print(token);
-      print('lease ${widget.leaseId}');
-      String? adminid = prefs.getString("adminId");
-      String? id = prefs.getString("staff_id");
-      final response = await http.get(
-        Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
-        headers: {
-          "authorization": "CRM $token",
-          "id": "CRM $id",
-        },
-      );
-      if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body)['data'];
-        Map<String, List<String>> fetchedData = {};
-        // Adding static items to the "LIABILITY ACCOUNT" category
-        fetchedData["Liability Account"] = [
-          "Late Fee Income",
-          "Pre-payments",
-          "Security Deposit",
-          'Rent Income'
-        ];
-        for (var item in jsonResponse) {
-          String chargeType = item['charge_type'];
-          String account = item['account'];
+    // try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminId = prefs.getString('adminId') ?? '';
+    String? token = prefs.getString('token');
 
-          if (!fetchedData.containsKey(chargeType)) {
-            fetchedData[chargeType] = [];
-          }
-          fetchedData[chargeType]!.add(account);
+    print(token);
+    print('lease ${widget.leaseId}');
+    String? id = prefs.getString("adminId");
+    final response = await http.get(
+      Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      List<dynamic> jsonResponse = json.decode(response.body)['data'];
+     // log("accounts data $jsonResponse");
+      Map<String, List<String>> fetchedData = {};
+      // Adding static items to the "LIABILITY ACCOUNT" category
+      fetchedData["Rent"] = ["Rent Income"];
+      fetchedData["Late Fee Income"] = ["Late Fee Income"];
+      fetchedData["Pre-payments"] = ["Pre-payments"];
+      fetchedData["Security Deposit"] = ["Security Deposit"];
+
+      for (var item in jsonResponse) {
+        String chargeType = item['charge_type'] ?? "One Time Charge";
+        String account = item['account'];
+        print(chargeType);
+        if (!fetchedData.containsKey(chargeType)) {
+          fetchedData[chargeType] = [];
         }
-        setState(() {
-          categorizedData = fetchedData;
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          hasError = true;
-          isLoading = false;
-        });
+
+        fetchedData[chargeType]!.add(account);
+
+
       }
-    } catch (e) {
+
+      setState(() {
+        categorizedData = fetchedData;
+        print("fetch charge data ${categorizedData}");
+        isLoading = false;
+      });
+    } else {
       setState(() {
         hasError = true;
         isLoading = false;
       });
     }
+    // } catch (e) {
+    //   print(e);
+    //   setState(() {
+    //     hasError = true;
+    //     isLoading = false;
+    //   });
+    // }
   }
-
   List<Map<String, dynamic>> rows = [];
 
   List<double> charges_balances = [0];
@@ -579,11 +585,9 @@ class _MakePaymentState extends State<MakePayment> {
       hasError = false;
     });
     try {
-      List<Entrycharge>? charges =
-      await ChargeRepositorys().fetchChargesTable(widget.leaseId);
+      List<Entrycharge>? charges = await ChargeRepositorys().fetchChargesTable(widget.leaseId);
       print('charge details ${charges!.length}');
-      List<Entrycharge> filteredCharges =
-          charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
+      List<Entrycharge> filteredCharges = charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
       print("charges length:- ${charges!.length}");
       print('leaseid ${widget.leaseId}');
 
@@ -591,22 +595,25 @@ class _MakePaymentState extends State<MakePayment> {
           '$tenantId');
 
       setState(() {
-
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
           // String chargeType = categorizedData.entries.firstWhere(
           //       (entryData) => entryData.value.contains(entry.account),
           //   orElse: () => MapEntry("Unknown", []), // Default if not found
           // ).key;
-          String? chargeType = (entry.account == "Late Fee Income" ||
-              entry.account == "Pre-payments" ||
-              entry.account == "Security Deposit")
+          String? chargeType = (entry.account == "Late Fee Income" || entry.account == "Pre-payments" || entry.account == "Security Deposit")
               ? entry.account
               : entry.account == "Rent Income"
               ? "Rent"
-              : categorizedData.entries.firstWhere(
+              : categorizedData.entries
+              .firstWhere(
                 (entryData) => entryData.value.contains(entry.account),
-            orElse: () => MapEntry("Unknown", []), // Default if not found
-          ).key;
+            orElse: () {
+              // If the chargeType is not found, add it dynamically
+              categorizedData[entry.chargeType!] = [...(categorizedData[entry.chargeType!] ?? []), entry.account!];
+              return MapEntry(entry.chargeType!, []);
+            },
+          )
+              .key;
           print(chargeType);
           return {
             'entry_id': entry.entryId,
@@ -623,7 +630,6 @@ class _MakePaymentState extends State<MakePayment> {
             [];
 
         for (var i = 0; i < filteredCharges!.length; i++) {
-
           if (i == 0) {
             double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();
             String formattedChargeAmount = chargeAmount.toStringAsFixed(2);
@@ -645,11 +651,11 @@ class _MakePaymentState extends State<MakePayment> {
           return TextEditingController(text: "".toString());
         }).toList();
         print(rows);
-        totalAmount = rows.fold(
-            0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
+        totalAmount = rows.fold(0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
       });
     } catch (e) {
+      print(e);
       setState(() {
         hasError = true;
         isLoading = false;
@@ -1216,7 +1222,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 height: 20,
                               ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Date',
+                              const Text('Date *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1285,7 +1291,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 },
                                 label: "Select the date",
                                 keyboardType: TextInputType.text,
-                                hintText: 'dd-mm-yyyy',
+                                hintText: 'YYYY-MM-DD',
                                 controller: _startDate,
                               ),
                             if (MediaQuery.of(context).size.width < 500)
@@ -1519,7 +1525,7 @@ class _MakePaymentState extends State<MakePayment> {
                             const SizedBox(
                               height: 8,
                             ),
-                            const Text('Amount',
+                            const Text('Amount *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -1543,7 +1549,7 @@ class _MakePaymentState extends State<MakePayment> {
                             const SizedBox(
                               height: 12,
                             ),
-                            const Text('Payment Method',
+                            const Text('Payment Method *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -2478,7 +2484,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
-                                                width: 200,
+                                              //  width: 200,
                                                 padding: const EdgeInsets.only(
                                                     left: 14, right: 14),
                                                 decoration: BoxDecoration(
@@ -2830,55 +2836,33 @@ class _MakePaymentState extends State<MakePayment> {
                                         child: DropdownButtonHideUnderline(
                                           child: FormField<String>(
                                             validator: (value) {
-                                              if (rows[index]['account'] ==
-                                                  null) {
+                                              if (rows[index]['account'] == null) {
                                                 return 'Please select an account';
                                               }
                                               return null;
                                             },
-                                            builder:
-                                                (FormFieldState<String> state) {
-                                              String? selectedAccount =
-                                              row['account'];
+                                            builder: (FormFieldState<String> state) {
+                                              String? selectedAccount = row['account'];
 
                                               // List of all dropdown items, including missing ones
-                                              Map<String, List<String>>
-                                              categorizedDataCopy =
-                                              Map.from(categorizedData);
+                                              Map<String, List<String>> categorizedDataCopy = Map.from(categorizedData);
 
                                               // Ensure the selected value is present in the list
-                                              if (selectedAccount != null &&
-                                                  !categorizedData.values
-                                                      .expand((list) => list)
-                                                      .contains(
-                                                      selectedAccount)) {
-                                                if (categorizedDataCopy[
-                                                'Other'] ==
-                                                    null) {
-                                                  categorizedDataCopy['Other'] =
-                                                  [];
-                                                }
-                                                categorizedDataCopy['Other']!
-                                                    .add(selectedAccount);
-                                              }
+                                              // if (selectedAccount != null && !categorizedData.values.expand((list) => list).contains(selectedAccount)) {
+                                              //   if (categorizedDataCopy['Other'] == null) {
+                                              //     categorizedDataCopy['Other'] = [];
+                                              //   }
+                                              //   categorizedDataCopy['Other']!.add(selectedAccount);
+                                              // }
+                                              print("categoriezed Data ${categorizedDataCopy}");
                                               print(row);
-                                              if (row['charge_type'] ==
-                                                  "Rent") {}
-                                              List<String> liabilityAccounts = [
-                                                "Late Fee Income",
-                                                "Pre-payments",
-                                                "Security Deposit",
-                                                'Rent Income'
-                                              ];
-                                              print(
-                                                  "${row['account']}_${row['charge_type']}");
-                                              print(categorizedDataCopy.values
-                                                  .expand((v) => v)
-                                                  .contains(row['account']));
+                                              if (row['charge_type'] == "Rent") {}
+                                              List<String> liabilityAccounts = ["Late Fee Income", "Pre-payments", "Security Deposit", 'Rent Income'];
+                                              print("${row['account']}_${row['charge_type']}");
+                                              print(categorizedDataCopy.values.expand((v) => v).contains(row['account']));
                                               print(categorizedDataCopy.values);
                                               return Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   DropdownButton2<String>(
                                                     isExpanded: true,
@@ -2892,24 +2876,11 @@ class _MakePaymentState extends State<MakePayment> {
                                                     //                 'account'])
                                                     //         ? ""
                                                     //         : "${row['account']}_${row['charge_type']}",
-                                                    value: liabilityAccounts
-                                                        .contains(
-                                                        row['account'])
-                                                        ? "${row['account']}_Liability Account"
-                                                        : (row['account'] ==
-                                                        null ||
-                                                        row['account']
-                                                            .isEmpty ||
-                                                        row['charge_type'] ==
-                                                            null ||
-                                                        row['charge_type']
-                                                            .isEmpty)
+                                                    value: (row['account'] == null || row['account'].isEmpty || row['charge_type'] == null || row['charge_type'].isEmpty)
                                                         ? null // Default value that is part of the items
                                                         : "${row['account']}_${row['charge_type']}",
                                                     items: [
-                                                      ...categorizedDataCopy
-                                                          .entries
-                                                          .expand((entry) {
+                                                      ...categorizedDataCopy.entries.expand((entry) {
                                                         return [
                                                           // DropdownMenuItem<
                                                           //     String>(
@@ -2930,27 +2901,16 @@ class _MakePaymentState extends State<MakePayment> {
                                                           //     ),
                                                           //   ),
                                                           // ),
-                                                          ...entry.value
-                                                              .map((item) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value:
-                                                              "${item}_${entry.key}",
+                                                          ...entry.value.map((item) {
+                                                            return DropdownMenuItem<String>(
+                                                              value: "${item}_${entry.key}",
                                                               child: Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left:
-                                                                    16.0),
+                                                                padding: const EdgeInsets.only(left: 16.0),
                                                                 child: Text(
                                                                   item,
-                                                                  style:
-                                                                  const TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
+                                                                  style: const TextStyle(
+                                                                    color: Colors.black,
+                                                                    fontWeight: FontWeight.w400,
                                                                   ),
                                                                 ),
                                                               ),
@@ -2961,95 +2921,66 @@ class _MakePaymentState extends State<MakePayment> {
                                                     ],
                                                     onChanged: (value) {
                                                       dynamic? chargeType;
-                                                      for (var entry
-                                                      in categorizedData
-                                                          .entries) {
-                                                        if (entry.value
-                                                            .contains(value)) {
-                                                          chargeType =
-                                                              entry.key;
+                                                      for (var entry in categorizedData.entries) {
+                                                        if (entry.value.contains(value)) {
+                                                          chargeType = entry.key;
                                                           break;
                                                         }
                                                       }
                                                       setState(() {
-                                                        final parts =
-                                                        value!.split('_');
-                                                        final chargeType =
-                                                        parts[0];
-                                                        final selectedValue =
-                                                        parts
-                                                            .sublist(1)
-                                                            .join('_');
-                                                        rows[index]['account'] =
-                                                            chargeType;
-                                                        rows[index][
-                                                        'charge_type'] =
-                                                            selectedValue;
-                                                        state.didChange(
-                                                            value); // Update the FormField state
+                                                        final parts = value!.split('_');
+                                                        final chargeType = parts[0];
+                                                        final selectedValue = parts.sublist(1).join('_');
+                                                        print("account chargetype ${selectedValue}   $value");
+                                                        bool isDuplicate = rows.any((row) => row['account'] == chargeType && rows.indexOf(row) != index);
+                                                        print("Duplicate Entry $isDuplicate");
+                                                        if(isDuplicate) {
+                                                          validationMessage = "**Each account must be unique";
+
+                                                        }
+                                                        rows[index]['account'] = chargeType;
+                                                        rows[index]['charge_type'] = selectedValue;
+
+                                                        state.didChange(value); // Update the FormField state
                                                       });
                                                       state.reset();
                                                     },
-                                                    buttonStyleData:
-                                                    ButtonStyleData(
+                                                    buttonStyleData: ButtonStyleData(
                                                       height: 45,
                                                       // width: 220,
-                                                      padding:
-                                                      const EdgeInsets.only(
-                                                          left: 0,
-                                                          right: 14),
+                                                      padding: const EdgeInsets.only(left: 0, right: 14),
                                                       decoration: BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                        borderRadius: BorderRadius.circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       elevation: 2,
                                                     ),
-                                                    iconStyleData:
-                                                    const IconStyleData(
-                                                      icon: Icon(Icons
-                                                          .arrow_drop_down),
+                                                    iconStyleData: const IconStyleData(
+                                                      icon: Icon(Icons.arrow_drop_down),
                                                       iconSize: 24,
-                                                      iconEnabledColor:
-                                                      Color(0xFFb0b6c3),
-                                                      iconDisabledColor:
-                                                      Colors.grey,
+                                                      iconEnabledColor: Color(0xFFb0b6c3),
+                                                      iconDisabledColor: Colors.grey,
                                                     ),
-                                                    dropdownStyleData:
-                                                    DropdownStyleData(
+                                                    dropdownStyleData: DropdownStyleData(
                                                       width: 250,
                                                       decoration: BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                        borderRadius: BorderRadius.circular(6),
                                                         color: Colors.white,
                                                       ),
-                                                      scrollbarTheme:
-                                                      ScrollbarThemeData(
-                                                        radius: const Radius
-                                                            .circular(6),
-                                                        thickness:
-                                                        MaterialStateProperty
-                                                            .all(6),
-                                                        thumbVisibility:
-                                                        MaterialStateProperty
-                                                            .all(true),
+                                                      scrollbarTheme: ScrollbarThemeData(
+                                                        radius: const Radius.circular(6),
+                                                        thickness: MaterialStateProperty.all(6),
+                                                        thumbVisibility: MaterialStateProperty.all(true),
                                                       ),
                                                     ),
                                                     hint: Padding(
                                                       padding: const EdgeInsets.only(left: 10),
-                                                      child: const Text(
-                                                          'Select an account'),
+                                                      child: const Text('Select an account'),
                                                     ),
                                                   ),
-                                                  if (state
-                                                      .hasError) // Display the validation error
+                                                  if (state.hasError) // Display the validation error
                                                     Padding(
-                                                      padding:
-                                                      const EdgeInsets.only(
-                                                          left: 16.0,
-                                                          top: 5.0),
+                                                      padding: const EdgeInsets.only(left: 16.0, top: 5.0),
                                                       child: Text(
                                                         state.errorText ?? '',
                                                         style: const TextStyle(
@@ -3070,7 +3001,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           left: 8,
                                           right: 8,
                                         ),
-                                        child: Text("Amount",
+                                        child: Text("Amount *",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold)),
                                       ),
