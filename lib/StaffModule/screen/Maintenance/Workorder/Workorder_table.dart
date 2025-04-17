@@ -12,6 +12,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
+import '../../../../widgets/CustomTableShimmer.dart';
 import '../../../model/staffpermission.dart';
 import '../../../repository/staffpermission_provider.dart';
 import '../../../repository/workorder.dart';
@@ -961,11 +962,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Center(
-                                child: SpinKitFadingCircle(
-                                  color: Colors.black,
-                                  size: 40.0,
-                                ));
+                            return ColabShimmerLoadingWidget();
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
                             return Container(
@@ -1628,6 +1625,71 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
+                                                            if(permissions!.workorderView!)
+                                                              Expanded(
+                                                                child:
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => Workorder_summery(
+                                                                              workorder_id: workOrder.workOrderData?.workOrderId,
+                                                                            )));
+                                                                  },
+                                                                  child:
+                                                                  Container(
+                                                                    height: 40,
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .grey[
+                                                                        350]),
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                          5,
+                                                                        ),
+                                                                        Image
+                                                                            .asset(
+                                                                          'assets/icons/view.png',
+                                                                          color:
+                                                                          blueColor,
+                                                                        ),
+                                                                        // FaIcon(
+                                                                        //   FontAwesomeIcons.trashCan,
+                                                                        //   size: 15,
+                                                                        //   color:blueColor,
+                                                                        // ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                          8,
+                                                                        ),
+                                                                        Text(
+                                                                          "View Summery",
+                                                                          style: TextStyle(
+                                                                              fontSize:
+                                                                              11,
+                                                                              color:
+                                                                              blueColor,
+                                                                              fontWeight:
+                                                                              FontWeight.bold),
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            if(permissions!.workorderView!)
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
                                                             if(permissions!.workorderEdit!)
                                                             Expanded(
                                                               child:
@@ -1745,71 +1807,8 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            if(permissions!.workorderDelete!)
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            if(permissions!.workorderView!)
-                                                            Expanded(
-                                                              child:
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => Workorder_summery(
-                                                                            workorder_id: workOrder.workOrderData?.workOrderId,
-                                                                          )));
-                                                                },
-                                                                child:
-                                                                Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                          .grey[
-                                                                      350]),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                    crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        width:
-                                                                        5,
-                                                                      ),
-                                                                      Image
-                                                                          .asset(
-                                                                        'assets/icons/view.png',
-                                                                        color:
-                                                                        blueColor,
-                                                                      ),
-                                                                      // FaIcon(
-                                                                      //   FontAwesomeIcons.trashCan,
-                                                                      //   size: 15,
-                                                                      //   color:blueColor,
-                                                                      // ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                        8,
-                                                                      ),
-                                                                      Text(
-                                                                        "View Summery",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                            11,
-                                                                            color:
-                                                                            blueColor,
-                                                                            fontWeight:
-                                                                            FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
+
+
                                                           ],
                                                         ),
                                                       ],

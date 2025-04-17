@@ -521,87 +521,53 @@ class _applicant_summeryState extends State<applicant_summery>
                           height: 10,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 2,right: 2,top: 5,bottom: 5),
+                          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
                           child: Container(
-                            padding: EdgeInsets.all(8),
                             height: 50,
-                           margin: EdgeInsets.all(5),
-                           decoration: BoxDecoration(
-                             border: Border.all(color: blueColor)
-                                 ,borderRadius: BorderRadius.circular(5)
-                           ),
-                           // color: Colors.red,
+                            //margin: const EdgeInsets.all(5),
+                           // padding: const EdgeInsets.all(4),
                             child: Row(
-                              children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = 0;
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: _selectedIndex == 0 ? blueColor : Colors.white,
-                                          borderRadius: BorderRadius.circular(5)
-                                      ),
-                                      child: Center(child: Text("Summary",style: TextStyle(color:  _selectedIndex != 0 ? blueColor : Colors.white,fontWeight: FontWeight.bold),)),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = 1;
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: _selectedIndex == 1 ? blueColor : Colors.white,
-                                        borderRadius: BorderRadius.circular(5)
-                                      ),
+                              children: List.generate(4, (index) {
+                                final tabTitles = ['Summary', 'Application', 'Approved', 'Rejected'];
+                                final isSelected = _selectedIndex == index;
 
-                                      child: Center(child: Text("Application",style: TextStyle(color:  _selectedIndex != 1 ? blueColor : Colors.white,fontWeight: FontWeight.bold))),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
+                                return Expanded(
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        _selectedIndex = 2;
+                                        _selectedIndex = index;
                                       });
                                     },
-                                    child: Container(
+                                    child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 250),
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
                                       decoration: BoxDecoration(
-                                          color: _selectedIndex == 2 ? blueColor : Colors.white,
-                                          borderRadius: BorderRadius.circular(5)
+                                        // gradient: isSelected
+                                        //     ? LinearGradient(
+                                        //   colors: [Color(0xFF6A1B9A), Color(0xFFAB47BC)],
+                                        // )
+                                        //     : null,
+                                        color: isSelected ? blueColor : Colors.grey.shade200,
+                                        borderRadius:isSelected ?  BorderRadius.circular(5) :BorderRadius.circular(0) ,
                                       ),
-                                      child: Center(child: Text("Approved",style: TextStyle(color:  _selectedIndex != 2 ? blueColor : Colors.white,fontWeight: FontWeight.bold))),
+                                      child: Center(
+                                        child: Text(
+                                          tabTitles[index],
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: isSelected ? Colors.white : Colors.grey.shade800,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = 3;
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: _selectedIndex == 3 ? blueColor : Colors.white,
-                                          borderRadius: BorderRadius.circular(5)
-                                      ),
-                                      child: Center(child: Text("Rejected",style: TextStyle(color:  _selectedIndex != 3 ? blueColor : Colors.white,fontWeight: FontWeight.bold))),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                );
+                              }),
                             ),
                           ),
                         ),
+
 
                         _buildTabContent(snapshot.data!),
 

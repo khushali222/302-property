@@ -226,7 +226,11 @@ class LeaseData {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     iV = json['__v'];
-    rentalAdress = json['rental_adress'];
+    if (json['rental_adress'] is List) {
+      rentalAdress = (json['rental_adress'] as List).join(', ');
+    } else {
+      rentalAdress = json['rental_adress'];
+    }
     rentalUnit = json['rental_unit'];
   }
 

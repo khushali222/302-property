@@ -103,7 +103,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       selectedrenatalownerid = selectedRentalOwnerIds.join(',');
       List<RentalOwnerReport> data = await RentalOwnerReportService()
           .fetchRentalOwnerReport(
-              id!, reverseFormatDate(fromDate), reverseFormatDate(toDate),
+              id!, fromDate, toDate,
               rentalownerid: selectedrenatalownerid, chargetype: chargedata);
 
       setState(() {

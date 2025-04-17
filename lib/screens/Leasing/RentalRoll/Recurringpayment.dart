@@ -46,9 +46,10 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       });
     });
     checkInternet();
+    getAllTenantCardData();
     // TODO: implement initState
     fetchAccounts();
-    getAllTenantCardData();
+
 
     super.initState();
   }
@@ -149,41 +150,60 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   }
 
   void fetchExistingCards(String tenantid, String leaseid, int index) async {
+    setState(() {
+      isLoading = true;
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
-    final response = await http
-        .post(Uri.parse('${Api_url}/api/recurring-cards/get-cards'), headers: {
-      'authorization': 'CRM $token',
-      'id': 'CRM $id',
-    }, body: {
-      "lease_id": leaseid,
-      "tenant_id": tenantid
-    });
+    final response = await http.post(
+      Uri.parse('${Api_url}/api/recurring-cards/get-cards'),
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+      },
+      body: {
+        "lease_id": leaseid,
+        "tenant_id": tenantid,
+      },
+    );
+
     print(response.body);
     Map<String, dynamic> Response = json.decode(response.body);
+
     if (Response["statusCode"] == 200) {
-      Map<String, dynamic> jsonResponse = json.decode(response.body)['data'];
+      Map<String, dynamic> jsonResponse = Response['data'];
+
       setState(() {
-        print(jsonResponse["recurrings"][0]['billing_id']);
-        List<Setting4> account = accounts
-            .where((acc) =>
-                acc.account == jsonResponse["recurrings"][0]['account'])
-            .toList();
-        Setting4? fetchaccount = account.length > 0 ? account[0] : null;
+        final recurring = jsonResponse["recurrings"][0];
+
+        // ✅ Match billing ID with cardDetails[index].billingId
+        String? fetchedBillingId = recurring['billing_id'];
+        String? fetchedCardType = recurring['card_type'];
+
+        bool cardExists = cardDetails.any((card) => card.billingId == fetchedBillingId);
+        String selectedCard = cardExists && fetchedBillingId != null && fetchedCardType != null
+            ? "${fetchedBillingId}_${fetchedCardType}"
+            : "";
+
+        // ✅ Match account
+        List<Setting4> accountMatches = accounts.where((acc) => acc.account == recurring['account']).toList();
+        Setting4? fetchaccount = accountMatches.isNotEmpty ? accountMatches.first : null;
+
         tenantDropdowns[index] = [
           {
-            "selectedCard":
-                "${jsonResponse["recurrings"][0]['billing_id']}_${jsonResponse["recurrings"][0]['card_type']}",
-            "selectedDay": "${jsonResponse["recurrings"][0]['date']}",
-            "selectedAccount":
-                "${fetchaccount!.account}_${fetchaccount!.createdAt}",
+            "selectedCard": selectedCard,
+            "selectedDay": recurring['date'] ?? "",
+            "selectedAccount": fetchaccount != null
+                ? "${fetchaccount.account}_${fetchaccount.createdAt}"
+                : "",
             "amount": TextEditingController(
-                text: jsonResponse["recurrings"][0]['amount'].toString()),
+                text: recurring['amount']?.toString() ?? ""),
             "scrollController": ScrollController(),
           }
         ];
+
         isScrollLeft.add(false);
       });
 
@@ -191,9 +211,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       checkFieldsFilled();
     } else {
       print('Failed to fetch settings: ${response.body}');
-      //return [];
     }
   }
+
 
   Map<int, String?> selectedCard = {};
   Map<int, int?> selectedDay = {};
@@ -716,7 +736,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                             value: tenantDropdowns[
                                                                         index]![
                                                                     rowIndex]
-                                                                ["selectedDay"],
+                                                                ["selectedDay"].toString(),
                                                             items: List
                                                                     .generate(
                                                                         28,

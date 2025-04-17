@@ -595,7 +595,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
       String? chargedata = chargeType == "All" ? null : chargeType;
 
-      DailyTransactionReportData data = await DailyTrasactionReport().fetchDailyTransactions(id!, reverseFormatDate(fromDate), reverseFormatDate(toDate), chargetype: chargedata);
+      DailyTransactionReportData data = await DailyTrasactionReport().fetchDailyTransactions(id!, fromDate, toDate, chargetype: chargedata);
 
       setState(() {
         DelinquentTenantsModel = data;
@@ -871,7 +871,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 },
                 child: Row(
                   children: [
-                    Text("       Subtotal", style: TextStyle(color: Colors.white)),
+                    Text("   Subtotal", style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -901,7 +901,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 },
                 child: Row(
                   children: [
-                    Text("        Record", style: TextStyle(color: Colors.white)),
+                    Text("     Record", style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -1855,7 +1855,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                         ),
                                                       ),
                                                       Expanded(
-                                                        flex: 4,
+                                                        flex: 3,
                                                         child: GestureDetector(
                                                           onTap: () {
                                                             setState(() {
@@ -1882,7 +1882,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                       Expanded(
                                                         flex: 2,
                                                         child: Text(
-                                                          '\$${item.subtotal}',
+                                                          '\$${item.subtotal!.toStringAsFixed(2)}',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight: FontWeight.bold,

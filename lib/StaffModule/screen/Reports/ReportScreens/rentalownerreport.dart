@@ -99,9 +99,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       String? token = prefs.getString('token');
 
       String? chargedata = chargeType == "All" ? null : chargeType;
-
+      print(fromDate);
+      print(toDate);
       List<RentalOwnerReport> data = await RentalOwnerReportService()
-          .fetchRentalOwnerReport(id!,reverseFormatDate(fromDate),reverseFormatDate(toDate),rentalownerid: selectedrenatalownerid,chargetype: chargedata);
+          .fetchRentalOwnerReport(id!,fromDate,toDate,rentalownerid: selectedrenatalownerid,chargetype: chargedata);
 
       setState(() {
         DelinquentTenantsModel = data;
@@ -1178,7 +1179,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       setState(() {
         _selectedDate = picked;
 
-        fromDate.text = DateFormat('yyyy-MM-dd')
+        fromDate.text = DateFormat('dd-MM-yyyy')
             .parse(picked.toString())
             .toString()
             .split(" ")[0];
@@ -1215,7 +1216,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       setState(() {
         _selectedDate = picked;
 
-        toDate.text = DateFormat('yyyy-MM-dd')
+        toDate.text = DateFormat('dd-MM-yyyy')
             .parse(picked.toString())
             .toString()
             .split(" ")[0];

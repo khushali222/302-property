@@ -134,8 +134,8 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
       List<AccountTotalsReport> data =
           await AccountTotalsReportsServices().fetchAccountTotalsReports(
         id!,
-        reverseFormatDate(fromDate),
-        reverseFormatDate(toDate),
+        fromDate,
+        toDate,
         rentalownerid: selectedrenatalownerid,
       );
 

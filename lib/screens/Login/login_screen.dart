@@ -1377,7 +1377,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       List<String> firstname = stafffirstname.split(" ");
       print(firstname);
       prefs.setString('first_name', firstname.first);
-      prefs.setString('last_name', firstname[1]);
+      prefs.setString('last_name',firstname.length>1? firstname.last :"");
       prefs.setString('staffemail', jsonData['staffmember_email']);
       prefs.setString('staffmember_password', password.text);
       //prefs.setString('user_id', jsonData['user_id']);

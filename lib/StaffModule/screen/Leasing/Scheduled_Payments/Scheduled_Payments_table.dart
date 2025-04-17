@@ -5,14 +5,15 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-import '../../../Model/Scheduled_Payment_model.dart';
-import '../../../constant/constant.dart';
-import '../../../provider/dateProvider.dart';
-import '../../../repository/Scheduled_Payment_repo.dart';
-import '../../../widgets/CustomTableShimmer.dart';
+import '../../../../Model/Scheduled_Payment_model.dart';
+import '../../../../constant/constant.dart';
+import '../../../../provider/dateProvider.dart';
+import '../../../../repository/Scheduled_Payment_repo.dart';
+import '../../../../widgets/CustomTableShimmer.dart';
+import '../../../../widgets/titleBar.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
-import '../../../widgets/titleBar.dart';
+
 import '../RentalRoll/SummeryPageLease.dart';
 
 class Scheduled_Payments_table extends StatefulWidget {

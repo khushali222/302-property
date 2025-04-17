@@ -92,7 +92,7 @@ class _AddCardState extends State<AddCard> {
   String? selectedTenantId;
   int? customervaultid;
   List<BillingData> cardDetails = [];
-
+  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -149,6 +149,7 @@ class _AddCardState extends State<AddCard> {
       setState(() {
         tenants = fetchedTenants;
         setTenantFormData(fetchedTenants.first);
+        showmessage = false;
       });
 
     } else {
@@ -248,7 +249,7 @@ class _AddCardState extends State<AddCard> {
     } else if (response.statusCode == 404) {
       print('customer_vault_id not found');
       setState(() {
-        messageCardAvailable = 'No card found for this tenant  ';
+        messageCardAvailable = 'No card found for this tenant';
       });
     } else {
       throw Exception('Failed to load credit card data');
@@ -349,7 +350,7 @@ class _AddCardState extends State<AddCard> {
           await apiService.deleteOneCardDelete(customervaultid);
 
       if (deleteResponse == 200) {
-        await apiService.deleteOneCardfromdatabase(customervaultid);
+        await apiService.deleteOneCardfromdatabase(customervaultid,selectedTenantId);
         setState(() {
           cardDetails
               .remove(billingData); // Remove the deleted card from the list
@@ -363,7 +364,7 @@ class _AddCardState extends State<AddCard> {
 
       if (deleteResponse == 200) {
         await apiService
-            .deletefromdatabaseCard(billingData.billingId.toString());
+            .deletefromdatabaseCard(billingData.billingId.toString(),selectedTenantId);
         setState(() {
           cardDetails
               .remove(billingData); // Remove the deleted card from the list
@@ -371,7 +372,9 @@ class _AddCardState extends State<AddCard> {
       } else {
         // Handle the error case
       }
+
     }
+    fetchcreditcard(selectedTenantId!);
   }
 
   Future<List<String>> performBinChecks(CustomerData customerData) async {
@@ -1053,6 +1056,7 @@ class _AddCardState extends State<AddCard> {
                                                                     .circular(
                                                                         8.0))),
                                                 onPressed: () async {
+                                                  print("messageCardAvailable $messageCardAvailable");
                                                   if (_formKey.currentState
                                                           ?.validate() ??
                                                       false) {
@@ -1127,7 +1131,7 @@ class _AddCardState extends State<AddCard> {
                                                     AddCardService
                                                         addCardService =
                                                         AddCardService();
-
+                                                    print("messageCardAvailable $messageCardAvailable");
                                                     if (messageCardAvailable ==
                                                         "No card found for this tenant") {
                                                       print(
@@ -1164,13 +1168,13 @@ class _AddCardState extends State<AddCard> {
                                                             cardID: _cardId
                                                       );
 
-                                                      await addCardService
-                                                          .postAddCreditCard(
-                                                              addcard);
-                                                      Navigator.pop(context);
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                              'Add Card Successfully');
+                                                      // await addCardService
+                                                      //     .postAddCreditCard(
+                                                      //         addcard);
+                                                      // Navigator.pop(context);
+                                                      // Fluttertoast.showToast(
+                                                      //     msg:
+                                                      //         'Add Card Successfully');
                                                     } else {
                                                       CardResponse?
                                                           cardResponses =
@@ -1200,10 +1204,10 @@ class _AddCardState extends State<AddCard> {
                                                                 ?.responseCode,
                                                             cardID: _cardId
                                                       );
-                                                      await addCardService
-                                                          .postAddCreditCard(
-                                                              addcards);
-                                                      Navigator.pop(context);
+                                                      // await addCardService
+                                                      //     .postAddCreditCard(
+                                                      //         addcards);
+                                                      // Navigator.pop(context);
                                                       Fluttertoast.showToast(
                                                           msg:
                                                               'Add Card Successfully');
@@ -1873,11 +1877,19 @@ class _AddCardState extends State<AddCard> {
                                           child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
                                                   backgroundColor: blueColor,
+                                                  disabledBackgroundColor: blueColor,
                                                   shape: RoundedRectangleBorder(
+
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               8.0))),
-                                              onPressed: () async {
+                                              onPressed:
+                                              _isLoading
+                                                  ? null
+                                                  :
+                                                  () async {
+
+
                                                 if (_formKey.currentState
                                                         ?.validate() ??
                                                     false) {
@@ -1889,168 +1901,185 @@ class _AddCardState extends State<AddCard> {
                                                     Fluttertoast.showToast(
                                                         msg:
                                                             "Add Card faileds");
-                                                  } else {
-                                                    SharedPreferences prefs =
-                                                        await SharedPreferences
-                                                            .getInstance();
-                                                    String? id = prefs
-                                                        .getString("adminId");
-                                                    String? token = prefs
-                                                        .getString('token');
+                                                  } else
+                                                  {
+                                                    setState(() {
+                                                      _isLoading = true;
+                                                    });
+                                                    try {
 
-                                                    String randomNumber =
-                                                        generateRandomNumber(
-                                                            10);
+                                                      SharedPreferences prefs =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                      String? id = prefs
+                                                          .getString("adminId");
+                                                      String? token = prefs
+                                                          .getString('token');
 
-                                                    String? comapanyName =
-                                                        await fetchCompanyName(
-                                                            id!);
+                                                      String randomNumber =
+                                                      generateRandomNumber(
+                                                          10);
 
-                                                    CardModel
-                                                        cardwithOutVaultId =
-                                                        CardModel(
-                                                      firstName:
-                                                          firstName.text.trim(),
-                                                      lastName:
-                                                          lastName.text.trim(),
-                                                      ccnumber: cardNumber.text
-                                                          .trim()
-                                                          .replaceAll(' ', ''),
-                                                      ccexp: expirationDate.text
-                                                          .trim(),
-                                                      address1:
-                                                          address.text.trim(),
-                                                      address2: '',
-                                                      city: city.text.trim(),
-                                                      state: state.text.trim(),
-                                                      zip: zip.text.trim(),
-                                                      country:
-                                                          country.text.trim(),
-                                                      phone: phoneNumber.text
-                                                          .trim(),
-                                                      email: email.text.trim(),
-                                                      company: comapanyName,
-                                                      billingId: randomNumber,
-                                                      adminId: id,
-                                                    );
+                                                      String? comapanyName =
+                                                      await fetchCompanyName(
+                                                          id!);
 
-                                                    CardModel cardwithVaultId = CardModel(
-                                                        phone: phoneNumber.text,
-                                                        adminId: id,
-                                                        company: comapanyName,
-                                                        firstName: firstName
-                                                            .text
-                                                            .trim(),
-                                                        lastName: lastName.text
-                                                            .trim(),
-                                                        ccnumber: cardNumber
-                                                            .text
+                                                      CardModel
+                                                      cardwithOutVaultId =
+                                                      CardModel(
+                                                        firstName:
+                                                        firstName.text.trim(),
+                                                        lastName:
+                                                        lastName.text.trim(),
+                                                        ccnumber: cardNumber.text
                                                             .trim()
-                                                            .replaceAll(
-                                                                ' ', ''),
-                                                        ccexp: expirationDate
-                                                            .text
+                                                            .replaceAll(' ', ''),
+                                                        ccexp: expirationDate.text
                                                             .trim(),
                                                         address1:
-                                                            address.text.trim(),
+                                                        address.text.trim(),
                                                         address2: '',
-                                                        zip: zip.text.trim(),
-                                                        state:
-                                                            state.text.trim(),
                                                         city: city.text.trim(),
-                                                        billingId: randomNumber,
-                                                        email:
-                                                            email.text.trim(),
+                                                        state: state.text.trim(),
+                                                        zip: zip.text.trim(),
                                                         country:
-                                                            country.text.trim(),
-                                                        customervaultid:
-                                                            customervaultid
-                                                                .toString());
-
-                                                    AddCardService
-                                                        addCardService =
-                                                        AddCardService();
-
-                                                    if (messageCardAvailable ==
-                                                        "No card found for this tenant") {
-                                                      print(
-                                                          'create api and billing post api both');
-                                                      // await addCardService
-                                                      //     .postCardDetails(cardwithOutVaultId);
-                                                      CardResponse?
-                                                          cardResponse =
-                                                          await addCardService
-                                                              .postCardDetails(
-                                                                  cardwithOutVaultId);
-
-                                                      if (cardResponse !=
-                                                          null) {
-                                                        print(
-                                                            'Customer Vault ID: ${cardResponse.customerVaultId}');
-                                                        print(
-                                                            'Response Code: ${cardResponse.responseCode}');
-                                                      } else {
-                                                        print(
-                                                            'Failed to get card response');
-                                                      }
-                                                      AddCreditCard addcard =
-                                                          AddCreditCard(
-                                                        tenantId:
-                                                            selectedTenantId,
+                                                        country.text.trim(),
+                                                        phone: phoneNumber.text
+                                                            .trim(),
+                                                        email: email.text.trim(),
+                                                        company: comapanyName,
                                                         billingId: randomNumber,
-                                                        customerVaultId:
+                                                        adminId: id,
+                                                      );
+
+                                                      CardModel cardwithVaultId = CardModel(
+                                                          phone: phoneNumber.text,
+                                                          adminId: id,
+                                                          company: comapanyName,
+                                                          firstName: firstName
+                                                              .text
+                                                              .trim(),
+                                                          lastName: lastName.text
+                                                              .trim(),
+                                                          ccnumber: cardNumber
+                                                              .text
+                                                              .trim()
+                                                              .replaceAll(
+                                                              ' ', ''),
+                                                          ccexp: expirationDate
+                                                              .text
+                                                              .trim(),
+                                                          address1:
+                                                          address.text.trim(),
+                                                          address2: '',
+                                                          zip: zip.text.trim(),
+                                                          state:
+                                                          state.text.trim(),
+                                                          city: city.text.trim(),
+                                                          billingId: randomNumber,
+                                                          email:
+                                                          email.text.trim(),
+                                                          country:
+                                                          country.text.trim(),
+                                                          customervaultid:
+                                                          customervaultid
+                                                              .toString());
+
+                                                      AddCardService
+                                                      addCardService =
+                                                      AddCardService();
+                                                      print("messageCardAvailable $messageCardAvailable");
+                                                      if (messageCardAvailable ==
+                                                          "No card found for this tenant") {
+                                                        print(
+                                                            'create api and billing post api both');
+                                                        // await addCardService
+                                                        //     .postCardDetails(cardwithOutVaultId);
+                                                        CardResponse?
+                                                        cardResponse =
+                                                        await addCardService
+                                                            .postCardDetails(
+                                                            cardwithOutVaultId);
+
+                                                        if (cardResponse !=
+                                                            null) {
+                                                          print(
+                                                              'Customer Vault ID: ${cardResponse.customerVaultId}');
+                                                          print(
+                                                              'Response Code: ${cardResponse.responseCode}');
+                                                        } else {
+                                                          print(
+                                                              'Failed to get card response');
+                                                        }
+                                                        AddCreditCard addcard =
+                                                        AddCreditCard(
+                                                            tenantId:
+                                                            selectedTenantId,
+                                                            billingId: randomNumber,
+                                                            customerVaultId:
                                                             cardResponse!
                                                                 .customerVaultId,
-                                                        responseCode:
+                                                            responseCode:
                                                             cardResponse
                                                                 .responseCode,
-                                                            cardID: _cardId
+                                                            cardID: _cardId,
+                                                            ccNumber: cardNumber.text
 
-                                                      );
+                                                        );
 
-                                                      await addCardService
-                                                          .postAddCreditCard(
-                                                              addcard);
-                                                      Navigator.pop(context);
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                              'Add Card Successfully');
-                                                    } else {
-                                                      CardResponse?
-                                                          cardResponses =
-                                                          await addCardService
-                                                              .postCardWithVaultId(
-                                                                  cardwithVaultId);
-                                                      if (cardResponses !=
-                                                          null) {
-                                                        print(
-                                                            'Customer Vault ID: ${cardResponses.customerVaultId}');
-                                                        print(
-                                                            'Response Code: ${cardResponses.responseCode}');
+                                                        await addCardService
+                                                            .postAddCreditCard(
+                                                            addcard);
+                                                        Navigator.pop(context);
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                            'Add Card Successfully');
                                                       } else {
-                                                        print(
-                                                            'Failed to get card response');
-                                                      }
-                                                      AddCreditCard addcards =
-                                                          AddCreditCard(
-                                                        tenantId:
+                                                        CardResponse?
+                                                        cardResponses =
+                                                        await addCardService
+                                                            .postCardWithVaultId(
+                                                            cardwithVaultId);
+                                                        if (cardResponses !=
+                                                            null) {
+                                                          print(
+                                                              'Customer Vault ID: ${cardResponses.customerVaultId}');
+                                                          print(
+                                                              'Response Code: ${cardResponses.responseCode}');
+                                                        } else {
+                                                          print(
+                                                              'Failed to get card response');
+                                                        }
+                                                        AddCreditCard addcards =
+                                                        AddCreditCard(
+                                                            tenantId:
                                                             selectedTenantId,
-                                                        billingId: randomNumber,
-                                                        customerVaultId:
+                                                            billingId: randomNumber,
+                                                            customerVaultId:
                                                             cardResponses
                                                                 ?.customerVaultId,
-                                                        responseCode:
+                                                            responseCode:
                                                             cardResponses
                                                                 ?.responseCode,
-                                                            cardID: _cardId
-                                                      );
-                                                      await addCardService
-                                                          .postAddCreditCard(
-                                                              addcards);
-                                                      Navigator.pop(context);
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                              'Add Card Successfully');
+                                                            cardID: _cardId,
+                                                            ccNumber: cardNumber.text
+                                                        );
+                                                        await addCardService
+                                                            .postAddCreditCard(
+                                                            addcards);
+                                                        Navigator.pop(context);
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                            'Add Card Successfully');
+                                                      }
+                                                    }
+                                                    catch(e){
+                                                      Fluttertoast.showToast(msg: "Something went wrong");
+                                                    }
+                                                    finally {
+                                                      setState(() {
+                                                        _isLoading = false;
+                                                      });
                                                     }
                                                   }
 
@@ -2064,7 +2093,16 @@ class _AddCardState extends State<AddCard> {
                                                           'Form is invalid. Please check the details.');
                                                 }
                                               },
-                                              child: const Text(
+                                              child: _isLoading
+                                                  ? SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2.5,
+                                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                ),
+                                              )
+                                                  :  const Text(
                                                 'Add Card',
                                                 style: TextStyle(
                                                     color: Color(0xFFf7f8f9)),

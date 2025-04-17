@@ -2605,8 +2605,9 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                           }
                           // Fetch the report data with the selected date range
                           if (daterange != "Custom") {
-                            DateTime from = DateTime.parse(convertDateFormat(fromDate.text));
-                            DateTime to = DateTime.parse(convertDateFormat(toDate.text));
+
+                            DateTime from = DateTime.parse(fromDate.text);
+                            DateTime to = DateTime.parse(toDate.text);
                             _futurePaymentException = fetchPaymentExceptionReportsData(fromDate: from, toDate: to);
                           }
 

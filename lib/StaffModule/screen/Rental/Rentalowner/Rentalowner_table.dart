@@ -899,6 +899,68 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
+                                                      if(permissions!.rentalownerView!)
+                                                        Expanded(
+                                                          child: GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                          ResponsiveRentalSummary(
+                                                                            rentalOwnersid: rentals.rentalownerId!,
+                                                                            rentalowners: rentals,
+                                                                          )));
+                                                            },
+                                                            child: Container(
+                                                              height: 40,
+                                                              decoration:
+                                                              BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey[
+                                                                  350]),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                  Image.asset(
+                                                                    'assets/icons/view.png',color: blueColor,),
+                                                                  // FaIcon(
+                                                                  //   FontAwesomeIcons.trashCan,
+                                                                  //   size: 15,
+                                                                  //   color:blueColor,
+                                                                  // ),
+                                                                  SizedBox(
+                                                                    width: 8,
+                                                                  ),
+                                                                  Text(
+                                                                    "View Summery",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                        11,
+                                                                        color:
+                                                                        blueColor,
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      if(permissions!.rentalownerView!)
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
                                                       if(permissions!.rentalownerEdit!)
                                                       Expanded(
                                                         child: GestureDetector(
@@ -1007,68 +1069,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      if(permissions!.rentalownerDelete!)
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      if(permissions!.rentalownerView!)
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            ResponsiveRentalSummary(
-                                                                              rentalOwnersid: rentals.rentalownerId!,
-                                                                              rentalowners: rentals,
-                                                                            )));
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Image.asset(
-                                                                    'assets/icons/view.png',color: blueColor,),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                SizedBox(
-                                                                  width: 8,
-                                                                ),
-                                                                Text(
-                                                                  "View Summery",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
+
+
                                                     ],
                                                   ),
                                                 ],

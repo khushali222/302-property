@@ -120,7 +120,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
   String formatDate(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
-      final formatter = DateFormat('dd-MM-yyyy');
+      final formatter = DateFormat('yyyy-MM-dd');
       return formatter.format(date);
     } catch (e) {
       return dateStr; // If the date is not valid, return the original string
@@ -991,7 +991,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                   fontWeight: FontWeight.w600)),
                                           SizedBox(height: 5),
                                           CustomDateField(
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: _fromDateController),
                                         ],
                                       ),
@@ -1013,7 +1013,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                   fontWeight: FontWeight.w600)),
                                           SizedBox(height: 5),
                                           CustomDateField(
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: _toDateController),
                                         ],
                                       ),

@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Document_Rental/pdf_view.dart';
@@ -581,6 +583,61 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                       ),
                                                     ),
                                                   ),
+                                                  SizedBox(width: 5),
+                                                  Expanded(
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        // print("calling");
+                                                        // print( "${image_url}${item["document_name"]}");
+                                                        // const PDF().fromUrl(
+                                                        //  "${image_url}${item["document_name"]}",
+                                                        //   placeholder: (double progress) => Center(child: Text('$progress %')),
+                                                        //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
+                                                        // );
+                                                       _showDeleteAlert(context,item["document_id"] );
+                                                        // showPdfDialog(context, pdfUrl);
+                                                      },
+                                                      child: Container(
+                                                        height: 40,
+                                                        decoration:
+                                                        BoxDecoration(
+                                                            color: Colors
+                                                                .grey[350]),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+
+                                                            FaIcon(
+                                                              FontAwesomeIcons.trashCan,
+                                                              size: 15,
+                                                              color:blueColor,
+                                                            ),
+                                                            SizedBox(
+                                                              width: 8,
+                                                            ),
+                                                            Text(
+                                                              "Delete",
+                                                              style: TextStyle(
+                                                                  fontSize: 11,
+                                                                  color:
+                                                                  blueColor,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                             ],
@@ -681,6 +738,44 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     );
   }
 
+  reloadScreen(){
+    setState(() {
+      _futureRentersInsurance = fetchRentersInsuranceData();
+    });
+  }
+  void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Do You want to delete this document?",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            await deleteNote(noteid: id);
+            reloadScreen();
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+      ],
+    ).show();
+  }
   Future<List<Map<String, dynamic>>> fetchDocumentRental(String leaseid) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -715,6 +810,41 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       // Handle any other exceptions
       print('Error fetching data: $e');
       return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteNote({
+    required String noteid,
+  }) async {
+    try {
+      final Uri uri = Uri.parse('$Api_url/api/lease-document/delete-document/$noteid');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+      final http.Response response = await http.delete(
+        uri,
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({}),
+      );
+
+      var responseData = json.decode(response.body);
+      print(response.body);
+      // print(renters_insurance_id);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        Navigator.of(context).pop();
+        return json.decode(response.body);
+      } else {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        throw Exception('Failed to delete Insurance');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete Insurance: $e');
     }
   }
 }

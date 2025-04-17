@@ -11,6 +11,8 @@ class RentalOwnerReportService {
 
   Future<List<RentalOwnerReport>> fetchRentalOwnerReport(String adminId, String selectedStartDate, String selectedEndDate,{String? rentalownerid , String? chargetype}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(selectedStartDate);
+    print(selectedEndDate);
    // String? id = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');

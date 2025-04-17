@@ -1520,6 +1520,71 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
+                                                            if (permissions.propertyView!)
+                                                              Expanded(
+                                                                child:
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => Summery_page(
+                                                                              properties: rentals,
+                                                                            )));
+                                                                  },
+                                                                  child:
+                                                                  Container(
+                                                                    height: 40,
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .grey[
+                                                                        350]),
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                          5,
+                                                                        ),
+                                                                        Image
+                                                                            .asset(
+                                                                          'assets/icons/view.png',
+                                                                          color:
+                                                                          blueColor,
+                                                                        ),
+                                                                        // FaIcon(
+                                                                        //   FontAwesomeIcons.trashCan,
+                                                                        //   size: 15,
+                                                                        //   color:blueColor,
+                                                                        // ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                          8,
+                                                                        ),
+                                                                        Text(
+                                                                          "View Summery",
+                                                                          style: TextStyle(
+                                                                              fontSize:
+                                                                              11,
+                                                                              color:
+                                                                              blueColor,
+                                                                              fontWeight:
+                                                                              FontWeight.bold),
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            if (permissions.propertyView!)
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
                                                             if (permissions.propertyEdit!)
                                                             Expanded(
                                                               child:
@@ -1648,71 +1713,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            if (permissions.propertyDelete!)
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            if (permissions.propertyView!)
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => Summery_page(
-                                                                                properties: rentals,
-                                                                              )));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        width:
-                                                                            5,
-                                                                      ),
-                                                                      Image
-                                                                          .asset(
-                                                                        'assets/icons/view.png',
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      // FaIcon(
-                                                                      //   FontAwesomeIcons.trashCan,
-                                                                      //   size: 15,
-                                                                      //   color:blueColor,
-                                                                      // ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            8,
-                                                                      ),
-                                                                      Text(
-                                                                        "View Summery",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                11,
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
+
+
                                                           ],
                                                         ),
                                                       ],

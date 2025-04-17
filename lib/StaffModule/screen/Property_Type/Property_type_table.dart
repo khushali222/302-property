@@ -120,9 +120,9 @@ class _PropertyTableState extends State<PropertyTable> {
                   children: [
                     width < 400
                         ? Text("Main Type ",
-                            style: TextStyle(color: Colors.white))
+                            style: TextStyle(color: Colors.white,fontSize: 15))
                         : Text("Main Type",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle(color: Colors.white,fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -170,7 +170,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Subtypes", style: TextStyle(color: Colors.white)),
+                    Text("Subtypes", style: TextStyle(color: Colors.white,fontSize: 15)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -218,25 +218,25 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Created At", style: TextStyle(color: Colors.white)),
+                    Text("  Created At", style: TextStyle(color: Colors.white,fontSize: 15)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    // ascending3
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
