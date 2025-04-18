@@ -294,48 +294,39 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       return Column(
                         children: <Widget>[
                           const SizedBox(
-                            height: 20,
+                            height: 10,
                           ),
                           Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 10),
-                            height: 60,
-                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            height: 50,
+                            padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
-                              border: Border.all(color: blueColor),
-                              // color: Colors.blue,
-                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(5),
                             ),
                             child: TabBar(
                               controller: _tabController,
-                              dividerColor: Colors.transparent,
-                              indicatorWeight: 5,
-                              //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-                              indicatorColor: blueColor,
-                              labelColor: blueColor,
+                              labelPadding: const EdgeInsets.symmetric(horizontal: 0),
+                              indicator: BoxDecoration(
+                                color: blueColor,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              labelColor: Colors.white,
                               unselectedLabelColor: blueColor,
-                              tabs: [
-                                const Tab(text: 'Summary'),
-                                const Tab(
-                                  text: 'Task',
-                                ),
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              tabs: const [
+                                Tab(text: 'Summary'),
+                                Tab(text: 'Task'),
                               ],
                             ),
                           ),
+                          const SizedBox(height: 0),
                           Expanded(
                             child: TabBarView(
                               controller: _tabController,
                               children: [
                                 Summery_page(snapshot.data!),
                                 Task(snapshot.data!),
-                                // Summery_page(snapshot.data!),
-                                // Summery_page(snapshot.data!),
-                                /*  SummaryPage(),
-                                FinancialTable(
-                                    leaseId: widget.leaseId,
-                                    status:
-                                    '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}'),
-                                Tenant(context),*/
                               ],
                             ),
                           ),

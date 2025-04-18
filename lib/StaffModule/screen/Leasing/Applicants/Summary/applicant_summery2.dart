@@ -193,365 +193,336 @@ class _applicant_summeryState extends State<applicant_summery>
                 }
         
                 print('Move in is: ${applicantSummary.isMovedin ?? 'Unknown'}');
-                return Column(
-                  children: <Widget>[
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                'Applicant : ${snapshot.data!.applicantFirstName} ${snapshot.data!.applicantLastName}',
-                                style:  TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold)),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            SizedBox(
-                              width:
-                              MediaQuery.of(context).size.width > 500 ? 200 : 240,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 1),
-                                child: Text(
-                                  '${snapshot.data!.leaseData!.rentalAdress}',
-                                  textAlign: TextAlign.justify,
-                                  maxLines: 5, // Set maximum number of lines
-                                  overflow: TextOverflow
-                                      .ellipsis, // Handle overflow with ellipsis
-                                  style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width < 500
-                                        ? 13
-                                        : 18,
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Text('${snapshot.data!.leaseData!.rentalAdress}',
-                            //     style: const TextStyle(
-                            //         color: Colors.grey,
-                            //         fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        const Spacer(),
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Material(
-                                elevation: 3,
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(5),
-                                ),
-                                child: Container(
-                                  height: 40,
-                                  width: 80,
-                                  decoration:  BoxDecoration(
-                                    color: blueColor,
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(5),
-                                    ),
-                                  ),
-                                  child: const Center(
-                                      child: Text(
-                                    "Back",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white),
-                                  )),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        DropdownButtonHideUnderline(
-                          child: Material(
-                            elevation: 3,
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: const Row(
-                                children: [
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xFF8A95A8),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              items: items
-                                  .map((String item) => DropdownMenuItem<String>(
-                                        value: item,
-                                        child: Text(
-                                          item,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ))
-                                  .toList(),
-                              value: _selectedValue,
-                              onChanged: snapshot.data!.isMovedin!
-                                  ? null
-                                  : (value) async {
-                                      setState(() {
-                                        _selectedValue = value;
-                                      });
-                                      if (value != null) {
-                                        final rentalId =
-                                            snapshot.data!.leaseData!.rentalId;
-                                        final unitId =
-                                            snapshot.data!.leaseData!.unitId;
-                
-                                        // Call the API to update the applicant status
-                                        bool success =
-                                            await updateApplicantStatus(
-                                                widget.applicant_id!,
-                                                value,
-                                                rentalId!,
-                                                unitId!);
-                
-                                        if (success) {
-                                          print('Status update successful');
-                                          Navigator.pop(context);
-                                        } else {
-                                          print('Status update failed');
-                                        }
-                                      }
-                                    },
-                              buttonStyleData: ButtonStyleData(
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 40
-                                    : 50,
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? MediaQuery.of(context).size.width * .35
-                                    : MediaQuery.of(context).size.width * .4,
-                                padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: snapshot.data!.isMovedin!
-                                        ? Colors.grey
-                                        : Color(0xFF8A95A8),
-                                  ),
-                                  color: snapshot.data!.isMovedin!
-                                      ? Colors.grey.shade300
-                                      : Colors.white,
-                                ),
-                                elevation: 0,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: 200,
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                offset: const Offset(-20, 0),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility:
-                                      MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        _selectedValue == 'Rejected'
-                            ? Container()
-                            : ElevatedButton(
-                                style: ButtonStyle(
-                                  elevation: MaterialStateProperty.all(3),
-                                  backgroundColor:
-                                      MaterialStateProperty.resolveWith<Color>(
-                                    (Set<MaterialState> states) {
-                                      if (states
-                                          .contains(MaterialState.disabled)) {
-                                        return Colors.grey; // Disabled color
-                                      }
-                                      return blueColor
-                
-                
-                ; // Enabled color
-                                    },
-                                  ),
-                                  shape: MaterialStateProperty.all(
-                                    const RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                  ),
-                                  minimumSize: MaterialStateProperty.all(
-                                      const Size(80, 40)),
-                                ),
-                                onPressed: snapshot.data!.isMovedin!
-                                    ? null
-                                    : () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => addLease3(
-                                              applicantId: widget.applicant_id,
-                                              rentalId: snapshot
-                                                  .data!.leaseData!.rentalId,
-                                              unitId: snapshot
-                                                  .data!.leaseData!.unitId,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                child: const Center(
-                                  child: Text(
-                                    "MOVE IN",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ],
-                    ),
-                    /* Row(
-                      children: [
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                            '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}',
-                            style: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12)),
-                      ],
-                    ),*/
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      height: 50,
-                      margin: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: blueColor)
-                          ,borderRadius: BorderRadius.circular(5)
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      const SizedBox(
+                        height: 20,
                       ),
-                      // color: Colors.red,
-                      child: Row(
+                      Row(
                         children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedIndex = 0;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: _selectedIndex == 0 ? blueColor : Colors.white,
-                                    borderRadius: BorderRadius.circular(5)
-                                ),
-                                child: Center(child: Text("Summary",style: TextStyle(color:  _selectedIndex != 0 ? blueColor : Colors.white,),)),
-                              ),
-                            ),
+                          const SizedBox(
+                            width: 10,
                           ),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedIndex = 1;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: _selectedIndex == 1 ? blueColor : Colors.white,
-                                    borderRadius: BorderRadius.circular(5)
-                                ),
-                
-                                child: Center(child: Text("Application",style: TextStyle(color:  _selectedIndex != 1 ? blueColor : Colors.white,))),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  'Applicant : ${snapshot.data!.applicantFirstName} ${snapshot.data!.applicantLastName}',
+                                  style:  TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold)),
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
+                              SizedBox(
+                                width:
+                                MediaQuery.of(context).size.width > 500 ? 200 : 240,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 1),
+                                  child: Text(
+                                    '${snapshot.data!.leaseData!.rentalAdress}',
+                                    textAlign: TextAlign.justify,
+                                    maxLines: 5, // Set maximum number of lines
+                                    overflow: TextOverflow
+                                        .ellipsis, // Handle overflow with ellipsis
+                                    style: TextStyle(
+                                      fontSize: MediaQuery.of(context).size.width < 500
+                                          ? 13
+                                          : 18,
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Text('${snapshot.data!.leaseData!.rentalAdress}',
+                              //     style: const TextStyle(
+                              //         color: Colors.grey,
+                              //         fontWeight: FontWeight.bold)),
+                            ],
                           ),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedIndex = 2;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: _selectedIndex == 2 ? blueColor : Colors.white,
-                                    borderRadius: BorderRadius.circular(5)
+                          const Spacer(),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(5),
+                                  ),
+                                  child: Container(
+                                    height: 40,
+                                    width: 80,
+                                    decoration:  BoxDecoration(
+                                      color: blueColor,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(5),
+                                      ),
+                                    ),
+                                    child: const Center(
+                                        child: Text(
+                                      "Back",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white),
+                                    )),
+                                  ),
                                 ),
-                                child: Center(child: Text("Approved",style: TextStyle(color:  _selectedIndex != 2 ? blueColor : Colors.white,))),
                               ),
-                            ),
+                            ],
                           ),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedIndex = 3;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: _selectedIndex == 3 ? blueColor : Colors.white,
-                                    borderRadius: BorderRadius.circular(5)
-                                ),
-                                child: Center(child: Text("Rejected",style: TextStyle(color:  _selectedIndex != 3 ? blueColor : Colors.white,))),
-                              ),
-                            ),
+                          const SizedBox(
+                            width: 10,
                           ),
                         ],
                       ),
-                    ),
-                
-                    _buildTabContent(snapshot.data!),
-                  ],
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          DropdownButtonHideUnderline(
+                            child: Material(
+                              elevation: 3,
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                hint: const Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                items: items
+                                    .map((String item) => DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ))
+                                    .toList(),
+                                value: _selectedValue,
+                                onChanged: snapshot.data!.isMovedin!
+                                    ? null
+                                    : (value) async {
+                                        setState(() {
+                                          _selectedValue = value;
+                                        });
+                                        if (value != null) {
+                                          final rentalId =
+                                              snapshot.data!.leaseData!.rentalId;
+                                          final unitId =
+                                              snapshot.data!.leaseData!.unitId;
+
+                                          // Call the API to update the applicant status
+                                          bool success =
+                                              await updateApplicantStatus(
+                                                  widget.applicant_id!,
+                                                  value,
+                                                  rentalId!,
+                                                  unitId!);
+
+                                          if (success) {
+                                            print('Status update successful');
+                                            Navigator.pop(context);
+                                          } else {
+                                            print('Status update failed');
+                                          }
+                                        }
+                                      },
+                                buttonStyleData: ButtonStyleData(
+                                  height: MediaQuery.of(context).size.width < 500
+                                      ? 40
+                                      : 50,
+                                  width: MediaQuery.of(context).size.width < 500
+                                      ? MediaQuery.of(context).size.width * .35
+                                      : MediaQuery.of(context).size.width * .4,
+                                  padding:
+                                      const EdgeInsets.only(left: 14, right: 14),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(2),
+                                    border: Border.all(
+                                      color: snapshot.data!.isMovedin!
+                                          ? Colors.grey
+                                          : Color(0xFF8A95A8),
+                                    ),
+                                    color: snapshot.data!.isMovedin!
+                                        ? Colors.grey.shade300
+                                        : Colors.white,
+                                  ),
+                                  elevation: 0,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 200,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  offset: const Offset(-20, 0),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: MaterialStateProperty.all(6),
+                                    thumbVisibility:
+                                        MaterialStateProperty.all(true),
+                                  ),
+                                ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  height: 40,
+                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          _selectedValue == 'Rejected'
+                              ? Container()
+                              : ElevatedButton(
+                                  style: ButtonStyle(
+                                    elevation: MaterialStateProperty.all(3),
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith<Color>(
+                                      (Set<MaterialState> states) {
+                                        if (states
+                                            .contains(MaterialState.disabled)) {
+                                          return Colors.grey; // Disabled color
+                                        }
+                                        return blueColor
+
+
+                  ; // Enabled color
+                                      },
+                                    ),
+                                    shape: MaterialStateProperty.all(
+                                      const RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(5)),
+                                      ),
+                                    ),
+                                    minimumSize: MaterialStateProperty.all(
+                                        const Size(80, 40)),
+                                  ),
+                                  onPressed: snapshot.data!.isMovedin!
+                                      ? null
+                                      : () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => addLease3(
+                                                applicantId: widget.applicant_id,
+                                                rentalId: snapshot
+                                                    .data!.leaseData!.rentalId,
+                                                unitId: snapshot
+                                                    .data!.leaseData!.unitId,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                  child: const Center(
+                                    child: Text(
+                                      "MOVE IN",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                        ],
+                      ),
+                      /* Row(
+                        children: [
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                              '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}',
+                              style: TextStyle(
+                                  color: Color(0xFF8A95A8),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12)),
+                        ],
+                      ),*/
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
+                        child: Container(
+                          height: 50,
+                          //margin: const EdgeInsets.all(5),
+                          // padding: const EdgeInsets.all(4),
+                          child: Row(
+                            children: List.generate(4, (index) {
+                              final tabTitles = ['Summary', 'Application', 'Approved', 'Rejected'];
+                              final isSelected = _selectedIndex == index;
+
+                              return Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedIndex = index;
+                                    });
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 250),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      // gradient: isSelected
+                                      //     ? LinearGradient(
+                                      //   colors: [Color(0xFF6A1B9A), Color(0xFFAB47BC)],
+                                      // )
+                                      //     : null,
+                                      color: isSelected ? blueColor : Colors.grey.shade200,
+                                      borderRadius:isSelected ?  BorderRadius.circular(5) :BorderRadius.circular(0) ,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        tabTitles[index],
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: isSelected ? Colors.white : Colors.grey.shade800,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ),
+
+                      _buildTabContent(snapshot.data!),
+                    ],
+                  ),
                 );
               }
             }),

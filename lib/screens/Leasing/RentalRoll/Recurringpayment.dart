@@ -734,9 +734,12 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                             isExpanded: true,
                                                             // menuMaxHeight: 200,
                                                             value: tenantDropdowns[
+                                                            index]![
+                                                            rowIndex]
+                                                            ["selectedDay"] != null? tenantDropdowns[
                                                                         index]![
                                                                     rowIndex]
-                                                                ["selectedDay"].toString(),
+                                                                ["selectedDay"].toString():null,
                                                             items: List
                                                                     .generate(
                                                                         28,

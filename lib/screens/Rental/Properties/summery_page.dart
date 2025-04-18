@@ -1720,113 +1720,72 @@ class _Summery_pageState extends State<Summery_page>
                   ),*/
 
                   Container(
-                    padding: EdgeInsets.all(8),
-                    height: 60,
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    height: 50,
+                   // margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     decoration: BoxDecoration(
-                        border: Border.all(color: blueColor),
-                        borderRadius: BorderRadius.circular(5)),
-                    // color: Colors.red,
+                      color: Colors.transparent,
+                      border: Border.all(color: Colors.transparent),
+                     // borderRadius: BorderRadius.circular(50),
+                    ),
                     child: Row(
-                      children: [
-                        Expanded(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(4, (index) {
+                        // Define tab text dynamically
+                        String label;
+                        switch (index) {
+                          case 0:
+                            label = "Summary";
+                            break;
+                          case 1:
+                            label = "Unit($unitCount)";
+                            break;
+                          case 2:
+                            label = "Tenant($tenentCount)";
+                            break;
+                          case 3:
+                            label = "Workorder\n($count)";
+                            break;
+                          default:
+                            label = "";
+                        }
+
+                        bool isSelected = _selectedIndex == index;
+
+                        return Expanded(
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                _selectedIndex = 0;
+                                _selectedIndex = index;
                               });
                             },
                             child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                              margin: EdgeInsets.symmetric(horizontal: 0),
                               decoration: BoxDecoration(
-                                  color: _selectedIndex == 0
-                                      ? blueColor
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(5)),
+
+                                color: isSelected ? blueColor : Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(3),
+
+                              ),
                               child: Center(
-                                  child: Text(
-                                "Summary",
-                                style: TextStyle(
-                                  color: _selectedIndex != 0
-                                      ? blueColor
-                                      : Colors.white,
+                                child: Text(
+                                  label,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: isSelected ? Colors.white : blueColor,
+                                    fontSize: 13,
+                                  ),
                                 ),
-                              )),
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _selectedIndex = 1;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: _selectedIndex == 1
-                                      ? blueColor
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Center(
-                                  child: Text("Unit(${unitCount})",
-                                      style: TextStyle(
-                                        color: _selectedIndex != 1
-                                            ? blueColor
-                                            : Colors.white,
-                                      ))),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _selectedIndex = 2;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: _selectedIndex == 2
-                                      ? blueColor
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Center(
-                                  child: Text("Tenant($tenentCount)",
-                                      style: TextStyle(
-                                        color: _selectedIndex != 2
-                                            ? blueColor
-                                            : Colors.white,
-                                      ))),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _selectedIndex = 3;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: _selectedIndex == 3
-                                      ? blueColor
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Center(
-                                  child: Text("Workorder\n($count)",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: _selectedIndex != 3
-                                            ? blueColor
-                                            : Colors.white,
-                                      ))),
-                            ),
-                          ),
-                        ),
-                      ],
+                        );
+                      }),
                     ),
                   ),
+
                   _buildTabContent(context),
                   /* Expanded(
                     child: TabBarView(
