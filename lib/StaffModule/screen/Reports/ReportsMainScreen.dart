@@ -17,6 +17,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
+import 'ReportScreens/RentRollReport.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:three_zero_two_property/constant/constant.dart';
 // import 'package:three_zero_two_property/screens/Reports/ReportScreens/CompletedWorkOrders.dart';
@@ -636,6 +637,11 @@ List<ReportCardModel> reportCards = [
     title: "Convenience Fee Override",
     description: "Report shows all leases with convenience fee override",
     destination: ConvenienceFeeReports(),
+  ),
+  ReportCardModel(
+    title: "Rent Roll Report",
+    description: "Report shows all leases with convenience fee override",
+    destination: RentersInsurances(),
   ),
 
 ];

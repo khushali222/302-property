@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Dashboard/cronjob_payment_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
@@ -225,7 +228,75 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       lastname = prefs.getString('last_name') ?? '';
     });
   }
+  Future<bool> _showExitPopup(BuildContext context) async {
+    bool exitConfirmed = false;
 
+    await Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Exit App",
+      desc: "Do you want to exit the app?",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+        titleStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        descStyle: TextStyle(
+          fontSize: 16,
+          color: Colors.black54,
+        ),
+        animationType: AnimationType.grow,
+        isOverlayTapDismiss: false,
+        overlayColor: Colors.black.withOpacity(0.5),
+        alertBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+          side: BorderSide(color: Colors.blue, width: 2),
+        ),
+        alertPadding: EdgeInsets.all(16.0),
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "No",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+          radius: BorderRadius.circular(8.0),
+        ),
+        DialogButton(
+          child: Text(
+            "Yes",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onPressed: () {
+            exitConfirmed = true;
+            if (Platform.isAndroid) {
+              SystemNavigator.pop();
+            } else if (Platform.isIOS) {
+              exit(0);
+            }
+          },
+          color: Colors.green,
+          radius: BorderRadius.circular(8.0),
+        ),
+      ],
+    ).show();
+
+    return exitConfirmed;
+  }
   var appBarHeight = AppBar().preferredSize.height;
   @override
   Widget build(BuildContext context) {
@@ -233,867 +304,872 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     permissions = permissionProvider.permissions;
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      drawer: CustomDrawer(currentpage: 'Dashboard',dropdown: false,),
-      appBar: widget_302.App_Bar(context: context),
-      body: _connectivityResult !=ConnectivityResult.none ?
-      Center(
-          child: loading
-              ? const SpinKitFadingCircle(
-            color: Colors.black,
-            size: 50.0,
-          )
-              : SingleChildScrollView(
-                child: Column(
+    return WillPopScope(
+      onWillPop: () async {
+        return await _showExitPopup(context);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        drawer: CustomDrawer(currentpage: 'Dashboard',dropdown: false,),
+        appBar: widget_302.App_Bar(context: context),
+        body: _connectivityResult !=ConnectivityResult.none ?
+        Center(
+            child: loading
+                ? const SpinKitFadingCircle(
+              color: Colors.black,
+              size: 50.0,
+            )
+                : SingleChildScrollView(
+                  child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                  // Material(
+                  //   elevation: 3,
+                  //   child: Divider(
+                  //     height: 1,
+                  //     color: Colors.transparent,
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //     height: MediaQuery.of(context).size.height * 0.01),
+                  //welcome
+                  LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      return Row(
+                        children: [
+                          SizedBox(width: width * 0.05),
+                          Container(
+                            color: Color.fromRGBO(2, 121, 210, 1),
+                            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.012,),
+                            width: 3,
+                            child: Column(
+                              children: [
+
+                                Container(
+                                  height: MediaQuery.of(context).size.height * 0.012 +
+                                      MediaQuery.of(context).size.width * 0.04 +
+                                      3 +
+                                      16,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                // Material(
-                //   elevation: 3,
-                //   child: Divider(
-                //     height: 1,
-                //     color: Colors.transparent,
-                //   ),
-                // ),
-                // SizedBox(
-                //     height: MediaQuery.of(context).size.height * 0.01),
-                //welcome
-                LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    return Row(
-                      children: [
-                        SizedBox(width: width * 0.05),
-                        Container(
-                          color: Color.fromRGBO(2, 121, 210, 1),
-                          margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.012,),
-                          width: 3,
-                          child: Column(
-                            children: [
-                
-                              Container(
-                                height: MediaQuery.of(context).size.height * 0.012 +
-                                    MediaQuery.of(context).size.width * 0.04 +
-                                    3 +
-                                    16,
+                              SizedBox(height: MediaQuery.of(context).size.height * 0.012),
+                              Row(
+                                children: [
+                                  SizedBox(width: width * 0.05),
+                                  Text(
+                                    "Hello $firstname $lastname, Welcome back",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: MediaQuery.of(context).size.width > 500?MediaQuery.of(context).size.width * 0.03 : MediaQuery.of(context).size.width * 0.04,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              //   SizedBox(height: 3),
+                              // My Dashboard
+                              Row(
+                                children: [
+                                  SizedBox(width: width * 0.05),
+                                  Text(
+                                    "My Dashboard",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context).size.width > 500?MediaQuery.of(context).size.width * 0.03 : MediaQuery.of(context).size.width * 0.04,
+
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: MediaQuery.of(context).size.height * 0.012),
-                            Row(
-                              children: [
-                                SizedBox(width: width * 0.05),
-                                Text(
-                                  "Hello $firstname $lastname, Welcome back",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: MediaQuery.of(context).size.width > 500?MediaQuery.of(context).size.width * 0.03 : MediaQuery.of(context).size.width * 0.04,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            //   SizedBox(height: 3),
-                            // My Dashboard
-                            Row(
-                              children: [
-                                SizedBox(width: width * 0.05),
-                                Text(
-                                  "My Dashboard",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context).size.width > 500?MediaQuery.of(context).size.width * 0.03 : MediaQuery.of(context).size.width * 0.04,
-                
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                //my dashboard
-                
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth > 600) {
-                      // Tablet layout - horizontal
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 35, right: 80, top: 20),
-                        child: Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: MediaQuery.of(context).size.width * 0.02,
-                          runSpacing: MediaQuery.of(context).size.width * 0.02,
-                          children: List.generate(
-                            2,
-                                (index) => InkWell(
-                                  onTap: (){
-                                    if(index  == 0 && permissions!.propertyView!)
-                                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PropertiesTable()));
-                                    else if(index ==1 && permissions!.workorderView!)
-                                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));
-                                  },
-                                  child: SizedBox(
-                                                              width: 180, // Ensure SizedBox has defined width
-                                                              height: 180, // Ensure SizedBox has defined height
-                                                              child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: dashboardData.colorc[index],
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 10),
-                                            Material(
-                                              elevation: 5,
-                                              borderRadius: BorderRadius.circular(20),
-                                              child: Container(
-                                                height: 50,
-                                                width: 50,
-                                                padding: const EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                  color: dashboardData.colors[index],
-                                                  borderRadius: BorderRadius.circular(20),
-                                                ),
-                                                child: SvgPicture.asset(
-                                                  "${dashboardData.icons[index]}",
-                                                  fit: BoxFit.cover,
-                                                  height: 27,
-                                                  width: 27,
+                        ],
+                      );
+                    },
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                  //my dashboard
+
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth > 600) {
+                        // Tablet layout - horizontal
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 35, right: 80, top: 20),
+                          child: Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing: MediaQuery.of(context).size.width * 0.02,
+                            runSpacing: MediaQuery.of(context).size.width * 0.02,
+                            children: List.generate(
+                              2,
+                                  (index) => InkWell(
+                                    onTap: (){
+                                      if(index  == 0 && permissions!.propertyView!)
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PropertiesTable()));
+                                      else if(index ==1 && permissions!.workorderView!)
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));
+                                    },
+                                    child: SizedBox(
+                                                                width: 180, // Ensure SizedBox has defined width
+                                                                height: 180, // Ensure SizedBox has defined height
+                                                                child: Material(
+                                    elevation: 3,
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: dashboardData.colorc[index],
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 10),
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 10),
+                                              Material(
+                                                elevation: 5,
+                                                borderRadius: BorderRadius.circular(20),
+                                                child: Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                  padding: const EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                    color: dashboardData.colors[index],
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                  child: SvgPicture.asset(
+                                                    "${dashboardData.icons[index]}",
+                                                    fit: BoxFit.cover,
+                                                    height: 27,
+                                                    width: 27,
+                                                  ),
                                                 ),
                                               ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 15),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 10),
+                                            child: Text(
+                                              countList[index].toString(),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 15),
-                                        Padding(
-                                          padding: const EdgeInsets.only(left: 10),
-                                          child: Text(
-                                            countList[index].toString(),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 10),
+                                            child: Text(
+                                              dashboardData.titles[index],
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 22,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                                                ),
+                                                              ),
+                                  ),
+                            ),
+                          ),
+                        );
+
+                      } else {
+                        // Phone layout - vertical
+                        return Column(
+                          children: [
+                            SizedBox(
+                                height: MediaQuery.of(context).size.width *
+                                    0.05),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 25, right: 25),
+                              child: GridView.builder(
+                                itemCount: 5,
+                                gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                  2, // Number of items per row
+                                  crossAxisSpacing:
+                                  MediaQuery.of(context).size.width *
+                                      0.02,
+                                  mainAxisSpacing:
+                                  MediaQuery.of(context).size.width *
+                                      0.02,
+                                  childAspectRatio:
+                                  .99, // Adjust as needed for your design
+                                ),
+                                itemBuilder: (context, index) {
+                                  return
+                                    GestureDetector(
+                                      onTap: (){
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => pages[index]),
+                                        );
+                                      },
+                                      child: Material(
+                                        elevation: 3,
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: dashboardData.colorc[index],
+                                            borderRadius:
+                                            BorderRadius.circular(8),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 5),
+                                            child: Column(
+                                              children: [
+                                                const SizedBox(height: 15),
+                                                Row(
+                                                  children: [
+                                                    const SizedBox(width: 10),
+                                                    Material(
+                                                      elevation: 5,
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          15),
+                                                      child: Container(
+                                                          height: 50,
+                                                          width: 50,
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(10),
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: dashboardData
+                                                                .colors[index],
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                          ),
+                                                          child: SvgPicture.asset(
+                                                            "${dashboardData.icons[index]}",
+                                                            //fit: BoxFit.cover,
+                                                            height: 30,
+                                                            width: 30,
+                                                          )),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 16),
+                                                Row(
+                                                  children: [
+                                                    const SizedBox(width: 10),
+                                                    Text(
+                                                      countList[index].toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontSize: 20,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Row(
+                                                  children: [
+                                                    const SizedBox(width: 10),
+                                                    Text(
+                                                      dashboardData.titles[index],
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 5,),
+                                                    Icon(Icons.arrow_forward_rounded,color: Colors.white,),
+
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(height: 10),
-                                        Padding(
-                                          padding: const EdgeInsets.only(left: 10),
-                                          child: Text(
-                                            dashboardData.titles[index],
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 22,
+                                      ),
+                                    );
+                                },
+                                shrinkWrap:
+                                true, // If you want the GridView to take only the space it needs
+                                physics:
+                                const NeverScrollableScrollPhysics(), // If you don't want it to scroll
+                              ),
+                            )
+                          ],
+                        );
+                      }
+                    },
+                  ),
+
+
+
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth > 600) {
+                        // Tablet layout - horizontal
+                        return  Padding(
+                          padding: const EdgeInsets.only( left: 15),
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 150,
+                                          margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
+                                          decoration:  BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(7)),
+                                              border: Border.all(color: blueColor )
+                                          ),
+                                          child: Material(
+                                            //   elevation: 3,
+                                            borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                            child: Column(
+                                              children: [
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                    decoration: const BoxDecoration(
+                                                      color: Color.fromRGBO(50, 75, 119, 1),
+                                                      borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
+                                                    ),
+                                                    child: const Center(
+                                                      child: Text(
+                                                        "New Work Order",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 20,
+                                                            fontWeight: FontWeight.bold),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                    decoration: const BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              const Text(
+                                                                "Total: ",
+                                                                style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Color.fromRGBO(90, 134, 213, 1),),
+                                                              ),
+                                                              Text(
+                                                                "${newworkorder}",
+                                                                style: const TextStyle(
+                                                                    fontSize: 18,
+                                                                    color: Color.fromRGBO(90, 134, 213, 1),
+                                                                    fontWeight: FontWeight.bold),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          InkWell(
+                                                            onTap: (){
+                                                             if( permissions!.workorderView!)
+                                                                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));
+                                                            },
+                                                            child: Container(
+                                                              margin: EdgeInsets.symmetric(vertical: 12),
+                                                              width: 100,
+                                                              height: 30,
+                                                              decoration: BoxDecoration(
+                                                                color: blueColor,
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                              child: const Center(
+                                                                child: Text(
+                                                                  "View All",
+                                                                  style: TextStyle(color: Colors.white),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Container(
+                                          height: 150,
+                                          margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
+                                          decoration:  BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(7)),
+                                              border: Border.all(color: Color.fromRGBO(91, 134, 213, 1) )
+                                          ),
+                                          child: Material(
+                                            //  elevation: 3,
+                                            borderRadius: const BorderRadius.all(Radius.circular(7)),
+                                            child: Column(
+                                              children: [
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                    decoration: const BoxDecoration(
+                                                      color: Color.fromRGBO(91, 134, 213, 1),
+                                                      borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
+                                                    ),
+                                                    child: const Center(
+                                                      child: Text(
+                                                        "Overdue Work Order",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 20,
+                                                            fontWeight: FontWeight.bold),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                    decoration: const BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              const Text(
+                                                                "Total: ",
+                                                                style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Color.fromRGBO(90, 134, 213, 1),),
+                                                              ),
+                                                              Text(
+                                                                "${overdueworkorder}",
+                                                                style: const TextStyle(
+                                                                    fontSize: 16,
+                                                                    color: Color.fromRGBO(90, 134, 213, 1),
+                                                                    fontWeight: FontWeight.bold),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          InkWell(
+                                                            onTap: (){
+                                                              if( permissions!.workorderView!)
+                                                                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));
+                                                            },
+                                                            child: Container(
+                                                              margin: EdgeInsets.symmetric(vertical: 12),
+                                                              width: 100,
+                                                              height: 30,
+                                                              decoration: BoxDecoration(
+                                                                color: Color.fromRGBO(91, 134, 213, 1),
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                              child: const Center(
+                                                                child: Text(
+                                                                  "View All",
+                                                                  style: TextStyle(color: Colors.white),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                                              ),
-                                                            ),
-                                ),
-                          ),
-                        ),
-                      );
-                
-                    } else {
-                      // Phone layout - vertical
-                      return Column(
-                        children: [
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width *
-                                  0.05),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 25, right: 25),
-                            child: GridView.builder(
-                              itemCount: 5,
-                              gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount:
-                                2, // Number of items per row
-                                crossAxisSpacing:
-                                MediaQuery.of(context).size.width *
-                                    0.02,
-                                mainAxisSpacing:
-                                MediaQuery.of(context).size.width *
-                                    0.02,
-                                childAspectRatio:
-                                .99, // Adjust as needed for your design
-                              ),
-                              itemBuilder: (context, index) {
-                                return
-                                  GestureDetector(
-                                    onTap: (){
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => pages[index]),
-                                      );
-                                    },
-                                    child: Material(
-                                      elevation: 3,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: dashboardData.colorc[index],
-                                          borderRadius:
-                                          BorderRadius.circular(8),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(left: 5),
-                                          child: Column(
-                                            children: [
-                                              const SizedBox(height: 15),
-                                              Row(
-                                                children: [
-                                                  const SizedBox(width: 10),
-                                                  Material(
-                                                    elevation: 5,
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        15),
-                                                    child: Container(
-                                                        height: 50,
-                                                        width: 50,
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .all(10),
-                                                        decoration:
-                                                        BoxDecoration(
-                                                          color: dashboardData
-                                                              .colors[index],
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(15),
-                                                        ),
-                                                        child: SvgPicture.asset(
-                                                          "${dashboardData.icons[index]}",
-                                                          //fit: BoxFit.cover,
-                                                          height: 30,
-                                                          width: 30,
-                                                        )),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 16),
-                                              Row(
-                                                children: [
-                                                  const SizedBox(width: 10),
-                                                  Text(
-                                                    countList[index].toString(),
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 20,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 10),
-                                              Row(
-                                                children: [
-                                                  const SizedBox(width: 10),
-                                                  Text(
-                                                    dashboardData.titles[index],
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 18,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 5,),
-                                                  Icon(Icons.arrow_forward_rounded,color: Colors.white,),
+                                  Container(
+                                    height: 350,
+                                    margin: EdgeInsets.symmetric(horizontal:
+                                    width * 0.05,
+                                    ),
 
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                              },
-                              shrinkWrap:
-                              true, // If you want the GridView to take only the space it needs
-                              physics:
-                              const NeverScrollableScrollPhysics(), // If you don't want it to scroll
-                            ),
-                          )
-                        ],
-                      );
-                    }
-                  },
-                ),
-                
-                
-                
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth > 600) {
-                      // Tablet layout - horizontal
-                      return  Padding(
-                        padding: const EdgeInsets.only( left: 15),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: 150,
-                                        margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
-                                        decoration:  BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(7)),
-                                            border: Border.all(color: blueColor )
-                                        ),
-                                        child: Material(
-                                          //   elevation: 3,
-                                          borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                          child: Column(
-                                            children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: Container(
-                                                  decoration: const BoxDecoration(
-                                                    color: Color.fromRGBO(50, 75, 119, 1),
-                                                    borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                                                  ),
-                                                  child: const Center(
-                                                    child: Text(
-                                                      "New Work Order",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 20,
-                                                          fontWeight: FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 7,
-                                                child: Container(
-                                                  decoration: const BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            const Text(
-                                                              "Total: ",
-                                                              style: TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Color.fromRGBO(90, 134, 213, 1),),
-                                                            ),
-                                                            Text(
-                                                              "${newworkorder}",
-                                                              style: const TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Color.fromRGBO(90, 134, 213, 1),
-                                                                  fontWeight: FontWeight.bold),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        InkWell(
-                                                          onTap: (){
-                                                           if( permissions!.workorderView!)
-                                                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));
-                                                          },
-                                                          child: Container(
-                                                            margin: EdgeInsets.symmetric(vertical: 12),
-                                                            width: 100,
-                                                            height: 30,
-                                                            decoration: BoxDecoration(
-                                                              color: blueColor,
-                                                              borderRadius: BorderRadius.circular(5),
-                                                            ),
-                                                            child: const Center(
-                                                              child: Text(
-                                                                "View All",
-                                                                style: TextStyle(color: Colors.white),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Container(
-                                        height: 150,
-                                        margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
-                                        decoration:  BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(7)),
-                                            border: Border.all(color: Color.fromRGBO(91, 134, 213, 1) )
-                                        ),
-                                        child: Material(
-                                          //  elevation: 3,
-                                          borderRadius: const BorderRadius.all(Radius.circular(7)),
-                                          child: Column(
-                                            children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: Container(
-                                                  decoration: const BoxDecoration(
-                                                    color: Color.fromRGBO(91, 134, 213, 1),
-                                                    borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                                                  ),
-                                                  child: const Center(
-                                                    child: Text(
-                                                      "Overdue Work Order",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 20,
-                                                          fontWeight: FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 7,
-                                                child: Container(
-                                                  decoration: const BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            const Text(
-                                                              "Total: ",
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Color.fromRGBO(90, 134, 213, 1),),
-                                                            ),
-                                                            Text(
-                                                              "${overdueworkorder}",
-                                                              style: const TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Color.fromRGBO(90, 134, 213, 1),
-                                                                  fontWeight: FontWeight.bold),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        InkWell(
-                                                          onTap: (){
-                                                            if( permissions!.workorderView!)
-                                                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));
-                                                          },
-                                                          child: Container(
-                                                            margin: EdgeInsets.symmetric(vertical: 12),
-                                                            width: 100,
-                                                            height: 30,
-                                                            decoration: BoxDecoration(
-                                                              color: Color.fromRGBO(91, 134, 213, 1),
-                                                              borderRadius: BorderRadius.circular(5),
-                                                            ),
-                                                            child: const Center(
-                                                              child: Text(
-                                                                "View All",
-                                                                style: TextStyle(color: Colors.white),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 350,
-                                  margin: EdgeInsets.symmetric(horizontal:
-                                  width * 0.05,
-                                  ),
-                
-                                  child: Container(
-                
-                                    child: DonutChart(
-                                      totalWorkOrders: totalWorkOrders,
-                                      newWorkOrders: newworkorder,
-                                      overdueWorkOrders: overdueworkorder,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                
-                          ],
-                        ),
-                      );
-                    } else {
-                      // Phone layout - vertical
-                      return Container(
-                    //    color: Colors.orange,
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    height: 150,
-                                    margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
-                                    decoration:  BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                                        border: Border.all(color: blueColor )
-                                    ),
-                                    child: Material(
-                                      //   elevation: 3,
-                                      borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Color.fromRGBO(50, 75, 119, 1),
-                                                borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                                              ),
-                                              child: const Center(
-                                                child: Text(
-                                                  "New Work Order",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.bold),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 7,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        const Text(
-                                                          "Total: ",
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Color.fromRGBO(90, 134, 213, 1),),
-                                                        ),
-                                                        Text(
-                                                          "${newworkorder}",
-                                                          style: const TextStyle(
-                                                              fontSize: 16,
-                                                              color: Color.fromRGBO(90, 134, 213, 1),
-                                                              fontWeight: FontWeight.bold),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        if( permissions!.workorderView!)
-                                                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table(filter: "New",)));
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.symmetric(vertical: 12),
-                                                        width: 100,
-                                                        height: 30,
-                                                        decoration: BoxDecoration(
-                                                          color: blueColor,
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            "View All",
-                                                            style: TextStyle(color: Colors.white),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                    child: Container(
+
+                                      child: DonutChart(
+                                        totalWorkOrders: totalWorkOrders,
+                                        newWorkOrders: newworkorder,
+                                        overdueWorkOrders: overdueworkorder,
                                       ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    height: 150,
-                                    margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
-                                    decoration:  BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                                        border: Border.all(color: Color.fromRGBO(91, 134, 213, 1) )
-                                    ),
-                                    child: Material(
-                                      //  elevation: 3,
-                                      borderRadius: const BorderRadius.all(Radius.circular(7)),
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Color.fromRGBO(91, 134, 213, 1),
-                                                borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                                              ),
-                                              child: const Center(
-                                                child: Text(
-                                                  "Overdue Work Order",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.bold),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 7,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        const Text(
-                                                          "Total: ",
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Color.fromRGBO(90, 134, 213, 1),),
-                                                        ),
-                                                        Text(
-                                                          "${overdueworkorder}",
-                                                          style: const TextStyle(
-                                                              fontSize: 16,
-                                                              color: Color.fromRGBO(90, 134, 213, 1),
-                                                              fontWeight: FontWeight.bold),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        if( permissions!.workorderView!)
-                                                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table(filter: "Over Due",)));
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.symmetric(vertical: 12),
-                                                        width: 100,
-                                                        height: 30,
-                                                        decoration: BoxDecoration(
-                                                          color: Color.fromRGBO(91, 134, 213, 1),
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            "View All",
-                                                            style: TextStyle(color: Colors.white),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Container(
-                              height: 220,
-                              margin: EdgeInsets.symmetric(horizontal:
-                              width * 0.05,
+                                ],
                               ),
-                
-                              child: Container(
-                
-                                child: DonutChart(
-                                  totalWorkOrders: totalWorkOrders,
-                                  newWorkOrders: newworkorder,
-                                  overdueWorkOrders: overdueworkorder,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 0, right: 8),
-                              child: Cronjob_payment_table(),
-                            ),
-                          ],
-                        ),
-                      );
-                
-                    }
-                  },
-                ),
-                
-                // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                // PieCharts(),
-                // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                // Barchart()
-                const SizedBox(
-                  height: 20,
-                ),
-                
-                         /*     const SizedBox(
-                                height: 60,
-                              ),*/
-                            /*  LayoutBuilder(
-                  builder:
-                      (BuildContext context, BoxConstraints constraints) {
-                    // Check if the device width is less than 600 (considered as phone screen)
-                    if (constraints.maxWidth < 500) {
-                      // Phone layout
-                      return Column(
-                        children: [
-                          Padding(
-                            padding:
-                            const EdgeInsets.only(left: 10, right: 10),
-                            child: PieCharts(dataMap: {
-                              "Properties": countList[0].toDouble(),
-                
-                              "Work Orders": countList[1].toDouble(),
-                            }),
-                          ), // Vertical layout for phone
-                          SizedBox(
-                              height: MediaQuery.of(context).size.height *
-                                  0.015),
-                          Padding(
-                            padding:
-                            const EdgeInsets.only(left: 0, right: 8),
-                            child: Barchart(),
-                          ),
-                        ],
-                      );
-                    } else {
-                      // Tablet layout
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          top: 35,
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            PieCharts(dataMap: {
-                              "Properties": countList[0].toDouble(),
-                
-                              "Work Orders": countList[2].toDouble(),
-                            }),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Barchart(),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),*/
+                              const SizedBox(height: 10),
+
                             ],
                           ),
-              )): SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
-            ),
-            Text(
-              'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
+                        );
+                      } else {
+                        // Phone layout - vertical
+                        return Container(
+                      //    color: Colors.orange,
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      height: 150,
+                                      margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
+                                      decoration:  BoxDecoration(
+                                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                                          border: Border.all(color: blueColor )
+                                      ),
+                                      child: Material(
+                                        //   elevation: 3,
+                                        borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Color.fromRGBO(50, 75, 119, 1),
+                                                  borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
+                                                ),
+                                                child: const Center(
+                                                  child: Text(
+                                                    "New Work Order",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 7,
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          const Text(
+                                                            "Total: ",
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Color.fromRGBO(90, 134, 213, 1),),
+                                                          ),
+                                                          Text(
+                                                            "${newworkorder}",
+                                                            style: const TextStyle(
+                                                                fontSize: 16,
+                                                                color: Color.fromRGBO(90, 134, 213, 1),
+                                                                fontWeight: FontWeight.bold),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      InkWell(
+                                                        onTap: (){
+                                                          if( permissions!.workorderView!)
+                                                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table(filter: "New",)));
+                                                        },
+                                                        child: Container(
+                                                          margin: EdgeInsets.symmetric(vertical: 12),
+                                                          width: 100,
+                                                          height: 30,
+                                                          decoration: BoxDecoration(
+                                                            color: blueColor,
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                          child: const Center(
+                                                            child: Text(
+                                                              "View All",
+                                                              style: TextStyle(color: Colors.white),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 150,
+                                      margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
+                                      decoration:  BoxDecoration(
+                                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                                          border: Border.all(color: Color.fromRGBO(91, 134, 213, 1) )
+                                      ),
+                                      child: Material(
+                                        //  elevation: 3,
+                                        borderRadius: const BorderRadius.all(Radius.circular(7)),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Color.fromRGBO(91, 134, 213, 1),
+                                                  borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
+                                                ),
+                                                child: const Center(
+                                                  child: Text(
+                                                    "Overdue Work Order",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 7,
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          const Text(
+                                                            "Total: ",
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Color.fromRGBO(90, 134, 213, 1),),
+                                                          ),
+                                                          Text(
+                                                            "${overdueworkorder}",
+                                                            style: const TextStyle(
+                                                                fontSize: 16,
+                                                                color: Color.fromRGBO(90, 134, 213, 1),
+                                                                fontWeight: FontWeight.bold),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      InkWell(
+                                                        onTap: (){
+                                                          if( permissions!.workorderView!)
+                                                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table(filter: "Over Due",)));
+                                                        },
+                                                        child: Container(
+                                                          margin: EdgeInsets.symmetric(vertical: 12),
+                                                          width: 100,
+                                                          height: 30,
+                                                          decoration: BoxDecoration(
+                                                            color: Color.fromRGBO(91, 134, 213, 1),
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                          child: const Center(
+                                                            child: Text(
+                                                              "View All",
+                                                              style: TextStyle(color: Colors.white),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Container(
+                                height: 220,
+                                margin: EdgeInsets.symmetric(horizontal:
+                                width * 0.05,
+                                ),
+
+                                child: Container(
+
+                                  child: DonutChart(
+                                    totalWorkOrders: totalWorkOrders,
+                                    newWorkOrders: newworkorder,
+                                    overdueWorkOrders: overdueworkorder,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 0, right: 8),
+                                child: Cronjob_payment_table(),
+                              ),
+                            ],
+                          ),
+                        );
+
+                      }
+                    },
+                  ),
+
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                  // PieCharts(),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                  // Barchart()
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                           /*     const SizedBox(
+                                  height: 60,
+                                ),*/
+                              /*  LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      // Check if the device width is less than 600 (considered as phone screen)
+                      if (constraints.maxWidth < 500) {
+                        // Phone layout
+                        return Column(
+                          children: [
+                            Padding(
+                              padding:
+                              const EdgeInsets.only(left: 10, right: 10),
+                              child: PieCharts(dataMap: {
+                                "Properties": countList[0].toDouble(),
+
+                                "Work Orders": countList[1].toDouble(),
+                              }),
+                            ), // Vertical layout for phone
+                            SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    0.015),
+                            Padding(
+                              padding:
+                              const EdgeInsets.only(left: 0, right: 8),
+                              child: Barchart(),
+                            ),
+                          ],
+                        );
+                      } else {
+                        // Tablet layout
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            top: 35,
+                          ),
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              PieCharts(dataMap: {
+                                "Properties": countList[0].toDouble(),
+
+                                "Work Orders": countList[2].toDouble(),
+                              }),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Barchart(),
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  ),*/
+                              ],
+                            ),
+                )): SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Lottie.asset(
+                'assets/no_internet.json',
+                width: 200,
+                height: 200,
+                fit: BoxFit.fill,
+              ),
+              Text(
+                'No Internet',
+                style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Check your internet connection',
+                style: TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
         ),
       ),
     );

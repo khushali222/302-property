@@ -2918,7 +2918,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 children: [
                                                   const SizedBox(width: 2),
                                                   Container(
-                                                    width: 150,
+                                                    width: 130,
                                                     child: Text(
                                                       '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
                                                       style: TextStyle(
@@ -3183,13 +3183,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   Row(
                                                     children: [
                                                       const SizedBox(width: 2),
-                                                      Text(
-                                                        '${dateProvider.formatCurrentDate(snapshot.data![index].tenantFirstName)} ${dateProvider.formatCurrentDate(snapshot.data![index].tenantLastName)}',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: blueColor,
+                                                      Container(
+                                                        width: 150,
+                                                        child: Text(
+                                                          '${dateProvider.formatCurrentDate(snapshot.data![index].tenantFirstName)} ${dateProvider.formatCurrentDate(snapshot.data![index].tenantLastName)}',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: blueColor,
+                                                          ),
                                                         ),
                                                       ),
                                                     ],

@@ -451,7 +451,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "RentalOwner",
+        currentpage: "Rental Owner",
         dropdown: true,
       ),
       body: _connectivityResult !=ConnectivityResult.none ?

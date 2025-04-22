@@ -105,7 +105,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   color: blueColor,
                 ),
                 "Rental",
-                ["Properties", "RentalOwner", "Tenants"],
+                ["Properties", "Rental Owner", "Tenants"],
                 [
                   FaIcon(
                     FontAwesomeIcons.buildingUser,
@@ -117,7 +117,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   FaIcon(
                     FontAwesomeIcons.houseChimneyUser,
                     size: 20,
-                    color: widget.currentpage == "RentalOwner"
+                    color: widget.currentpage == "Rental Owner"
                         ? Colors.white
                         : blueColor,
                   ), // Icon for RentalOwner

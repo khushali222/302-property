@@ -87,7 +87,7 @@ class Emails {
     to = json['to'].cast<String>();
     accepted = json['accepted'].cast<String>();
     if (json['rejected'] != null) {
-      rejected = <Null>[];
+      rejected = [];
       json['rejected'].forEach((v) {
         rejected!.add(v);
       });
@@ -97,7 +97,7 @@ class Emails {
     sendByAdmin = json['send_by_admin'];
     isDelete = json['is_delete'];
     if (json['opens'] != null) {
-      opens = <Null>[];
+      opens = [];
       json['opens'].forEach((v) {
         opens!.add(v);
       });

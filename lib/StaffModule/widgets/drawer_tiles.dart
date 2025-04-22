@@ -71,7 +71,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
   int index = 0;
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
-    "RentalOwner": (context) => Rentalowner_table(),
+    "Rental Owner": (context) => Rentalowner_table(),
     "Tenants": (context) => Tenants_table(),
     "Vendor": (context) => Vendor_table(),
     "Work Order": (context) => Workorder_table(),

@@ -448,7 +448,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "RentalOwner",
+        currentpage: "Rental Owner",
         dropdown: true,
       ),
       body: ListView(
@@ -3261,8 +3261,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       rentalOwnerPhoneNumber: phonenum.text.trim(),
                       rentalOwnerHomeNumber: homenum.text.trim(),
                       rentalOwnerBusinessNumber: officenum.text.trim(),
-                      startDate:reverseFormatDate(startdateController.text.trim()),
-                      endDate: reverseFormatDate(enddateController.text.trim()),
+                      startDate:startdateController.text.trim(),
+                      endDate: enddateController.text.trim(),
                       texpayerId: taxid.text.trim(),
                       textIdentityType: taxtype.text.trim(),
                       city: city2.text.trim(),
@@ -3296,9 +3296,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     Navigator.pop(context, true);
                     await updatePaymentSettings();
                   } catch (e) {
-                    setState(() {
-                      isLoading = false;
-                    });
+
                     // Handle error
                   }
                 },

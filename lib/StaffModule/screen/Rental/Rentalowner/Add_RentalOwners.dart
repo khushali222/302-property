@@ -265,7 +265,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "RentalOwner",
+        currentpage: "Rental Owner",
         dropdown: true,
       ),
       body: ListView(

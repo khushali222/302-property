@@ -136,7 +136,20 @@ class _RentalownersSummeryForMobileState
     });
 
   }
+  bool isLoading = false;
+  Future<void> fetchRentalOwner() async {
+    setState(() => isLoading = true);
+    List<RentalOwnerData> data = await RentalOwnerService().fetchRentalOwners("");
+    RentalOwnerData? matchedOwner = data.firstWhere(
+          (owner) => owner.rentalownerId == widget.rentalOwnersid,
+     // orElse: () => null, // fallback if not found
+    );
 
+    setState(() {
+      widget.rentalowners = matchedOwner;
+      isLoading = false;
+    });
+  }
   //for card payment
 
   bool creditcard = false;
@@ -177,7 +190,7 @@ class _RentalownersSummeryForMobileState
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "RentalOwner",
+        currentpage: "Rental Owner",
         dropdown: true,
       ),
       body:
@@ -230,11 +243,16 @@ class _RentalownersSummeryForMobileState
                     SizedBox(width: MediaQuery.of(context).size.width * 0.065),
                     GestureDetector(
                       onTap: () async {
-                        Navigator.push(
+                        var check = await    Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Edit_rentalowners(
                                     rentalOwner: widget.rentalowners!)));
+
+                        if(check ==true){
+                          await fetchRentalOwner();
+                          await fetchPaymentSettings();
+                        }
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
@@ -681,54 +699,7 @@ class _RentalownersSummeryForMobileState
                                 ),
                               )),
                             ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Country : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.country ?? '').isEmpty ? 'N/A' : widget.rentalowners?.country}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Zip Code: ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.postalCode ?? '').isEmpty ? 'N/A' : widget.rentalowners?.postalCode}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
+
                           ],
                         ),
                         SizedBox(
@@ -1103,7 +1074,7 @@ class _RentalownersSummeryForTabletState
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "RentalOwner",
+        currentpage: "Rental Owner",
         dropdown: true,
       ),
       body: Center(

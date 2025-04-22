@@ -125,7 +125,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             // Filter the options based on permissions
             [
               if (permissions!.propertyView == true) "Properties",
-              if (permissions!.rentalownerView == true) "RentalOwner",
+              if (permissions!.rentalownerView == true) "Rental Owner",
               if (permissions!.tenantView == true) "Tenants",
 
             ],
@@ -134,7 +134,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               if (permissions.propertyView == true)
                 FaIcon(FontAwesomeIcons.buildingUser, size: 20, color: widget.currentpage == "Properties" ? Colors.white : blueColor), // Icon for Properties
               if (permissions.rentalownerView == true)
-                FaIcon(FontAwesomeIcons.users, size: 20, color: widget.currentpage == "RentalOwner" ? Colors.white : blueColor), // Icon for RentalOwner
+                FaIcon(FontAwesomeIcons.users, size: 20, color: widget.currentpage == "Rental Owner" ? Colors.white : blueColor), // Icon for RentalOwner
 
               if (permissions.tenantView == true)
                 FaIcon(FontAwesomeIcons.houseChimneyUser, size: 20, color: widget.currentpage == "Tenants" ? Colors.white : blueColor), // Icon for Tenants
