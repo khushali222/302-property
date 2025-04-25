@@ -1320,7 +1320,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             .getRangeByIndex(rowIndex, 1)
             .setText(property.rentalData!.rentalAddress ?? 'N/A');
         sheet.getRangeByIndex(rowIndex, 2).setText(
-            '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}');
+            '${property.tenantData?.tenantFirstName ?? 'N/A'} ${property.tenantData?.tenantLastName ?? 'N/A'}');
         sheet
             .getRangeByIndex(rowIndex, 3)
             .setText(property.updatedAt.toString());

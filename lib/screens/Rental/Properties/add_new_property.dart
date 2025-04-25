@@ -151,7 +151,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
   List<Owner> owners = [];
   List<Owner> filteredOwners = [];
   List<bool> selected = [];
-
+  reload_Screen(){
+    setState(() {
+      futureProperties = PropertyTypeRepository().fetchPropertyTypes();
+      futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
+    });
+  }
   Future<void> fetchOwners() async {
     setState(() {
       isLoading = true;
@@ -1123,6 +1128,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                       setState(() {
                                                                                         isLoading = false;
                                                                                       });
+                                                                                      reload_Screen();
                                                                                       Navigator.pop(context, true);
                                                                                     }).catchError((e) {
                                                                                       setState(() {
@@ -2568,7 +2574,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       width: 15,
                                                                     ),
                                                                     Text(
-                                                                      "Staff member name..*",
+                                                                      "Staff member name *",
                                                                       style: TextStyle(
                                                                           color: Color(
                                                                               0xFF8A95A8),
@@ -2624,7 +2630,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 controller: name,
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
-                                                                                  hintText: "Enter a staff member name here..*",
+                                                                                  hintText: "Enter a staff member name here *",
                                                                                   hintStyle: TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),
@@ -2675,7 +2681,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       width: 15,
                                                                     ),
                                                                     Text(
-                                                                      "Designation...*",
+                                                                      "Designation *",
                                                                       style: TextStyle(
                                                                         // color: Colors.grey,
                                                                           color: Color(0xFF8A95A8),
@@ -2728,7 +2734,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 controller: designation,
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
-                                                                                  hintText: "Enter Designation here..*",
+                                                                                  hintText: "Enter Designation here *",
                                                                                   hintStyle: TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),
@@ -2779,7 +2785,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       width: 15,
                                                                     ),
                                                                     Text(
-                                                                      "Phone Number...",
+                                                                      "Phone Number *",
                                                                       style: TextStyle(
                                                                         // color: Colors.grey,
                                                                           color: Color(0xFF8A95A8),
@@ -2838,7 +2844,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 keyboardType: TextInputType.number,
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
-                                                                                  hintText: "Enter Phone Number here..*",
+                                                                                  hintText: "Enter Phone Number here *",
                                                                                   hintStyle: TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),
@@ -2889,7 +2895,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       width: 15,
                                                                     ),
                                                                     Text(
-                                                                      "Email...*",
+                                                                      "Email *",
                                                                       style: TextStyle(
                                                                         // color: Colors.grey,
                                                                           color: Color(0xFF8A95A8),
@@ -2942,7 +2948,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 controller: email,
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
-                                                                                  hintText: "Enter Email here..*",
+                                                                                  hintText: "Enter Email here *",
                                                                                   hintStyle: TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),
@@ -2993,7 +2999,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       width: 15,
                                                                     ),
                                                                     Text(
-                                                                      "Password...*",
+                                                                      "Password *",
                                                                       style: TextStyle(
                                                                         // color: Colors.grey,
                                                                           color: Color(0xFF8A95A8),
@@ -3046,7 +3052,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 controller: password,
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
-                                                                                  hintText: "Enter Password here..*",
+                                                                                  hintText: "Enter Password here",
                                                                                   hintStyle: TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),

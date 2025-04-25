@@ -1631,7 +1631,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "WorkOrder",
+                                          "Work Order",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: isworkorder
@@ -4956,7 +4956,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               Row(
                                 children: [
                                   Text(
-                                    "Manage WorkOrder",
+                                    "Manage Work Order",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: blueColor,

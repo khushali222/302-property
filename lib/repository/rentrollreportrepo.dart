@@ -7,14 +7,26 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import '../Model/rentrollreportmodel.dart';
 
 class RentRollReportService {
-  Future<rentrollreportmodel> fetchRentRollreport() async {
+  Future<rentrollreportmodel> fetchRentRollreport({String? rentalOwnerId}) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+
+    Uri uri;
+
+    if (rentalOwnerId != null && rentalOwnerId != "all") {
+      // If rentalOwnerId is provided, add it as a query parameter
+      uri = Uri.parse('$Api_url/api/rental_owner/rent-roll-report/$adminId')
+          .replace(queryParameters: {"rentalowner_id[]": rentalOwnerId});
+    } else {
+      // Normal API call without the rentalOwnerId parameter
+      uri = Uri.parse('$Api_url/api/rental_owner/rent-roll-report/$adminId');
+    }
+
     try {
       final response = await http.get(
-          Uri.parse('$Api_url/api/rental_owner/rent-roll-report/$adminId'),
+          uri,
          // Uri.parse("http://192.168.1.10:4000/api/"),
           headers: {
             "authorization": "CRM $token",

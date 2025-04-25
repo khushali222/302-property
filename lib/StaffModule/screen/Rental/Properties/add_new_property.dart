@@ -213,6 +213,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
     fetchOwners();
   }
 
+  reload_Screen(){
+    setState(() {
+      futureProperties = PropertyTypeRepository().fetchPropertyTypes();
+      futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
+    });
+  }
   @override
   void dispose() {
     searchController.dispose();
@@ -985,8 +991,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                                 color: Colors.black,
                                                                                               ),
                                                                                               overflow: TextOverflow.ellipsis,
-                                                                                            ),
-                                                                                          ))
+                                                                               ),
+                                                                                                       ))
                                                                                       .toList(),
                                                                                   value: selectedValue,
                                                                                   onChanged: (value) {
@@ -1133,7 +1139,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     });
                                                                                     SharedPreferences prefs = await SharedPreferences.getInstance();
                                                                                     String? id = prefs.getString("adminId");
-                                                                                    PropertyTypeRepository()
+                                                                                  await  PropertyTypeRepository()
                                                                                         .addPropertyType(
                                                                                       adminId: id!,
                                                                                       propertyType: selectedValue,
@@ -1144,7 +1150,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                       setState(() {
                                                                                         isLoading = false;
                                                                                       });
+                                                                                      reload_Screen();
                                                                                       Navigator.pop(context, true);
+
                                                                                     }).catchError((e) {
                                                                                       setState(() {
                                                                                         isLoading = false;
