@@ -1353,7 +1353,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'YYYY-MM-DD',
                                   controller: startDateController,
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
@@ -1428,7 +1428,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'YYYY-MM-DD',
                                   controller: endDateController,
                                 ),
                               if (MediaQuery.of(context).size.width > 500)
@@ -1629,7 +1629,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: endDateController,
                                             ),
                                             SizedBox(height: 5),
@@ -2768,7 +2768,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: rentNextDueDate,
                                             ),
                                           ],
@@ -3011,7 +3011,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'YYYY-MM-DD',
                                   controller: rentNextDueDate,
                                 ),
                               const SizedBox(
@@ -3720,7 +3720,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 data['charge_type'] ?? '',
                                             date: data['charge_type'] == 'Recurring Charge'
                                                 ? (data['date'] ?? '')  // Ensuring data['date'] is not null
-                                                : reverseFormatDate(rentNextDueDate.text.trim()),
+                                                : rentNextDueDate.text.trim(),
                                             isRepeatable: data['is_repeatable']
                                                     ?.toLowerCase() ==
                                                 'true',
@@ -3737,8 +3737,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     rentAmount.text.trim()) ??
                                                 0.0,
                                             chargeType: 'Rent',
-                                            date: reverseFormatDate(
-                                                rentNextDueDate.text.trim()),
+                                            date:
+                                                rentNextDueDate.text.trim(),
                                             isRepeatable:
                                                 false, // Set to false if it's not repeatable, adjust as needed
                                             memo: 'Last Month\'s Rent',
@@ -3755,8 +3755,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                       .text.trim()) ??
                                               0.0,
                                           chargeType: 'Security Deposit',
-                                          date: reverseFormatDate(
-                                              rentNextDueDate.text.trim()),
+                                          date:
+                                              rentNextDueDate.text.trim(),
                                           isRepeatable:
                                               false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Security Deposit',
@@ -3893,14 +3893,14 @@ class _Edit_leaseState extends State<Edit_lease>
                                             leaseId: widget.leaseId,
                                             adminId: adminId ?? "",
                                             companyName: companyName,
-                                            endDate: reverseFormatDate(
-                                                endDateController.text.trim()),
+                                            endDate:
+                                                endDateController.text.trim(),
                                             entry: chargeEntries,
                                             leaseAmount: rentAmount.text.trim(),
                                             leaseType: _selectedLeaseType ?? "",
                                             rentalId: renderId,
-                                            startDate: reverseFormatDate(
-                                                startDateController.text.trim()),
+                                            startDate:
+                                                startDateController.text.trim(),
                                             tenantId: tenantDataList
                                                 .map((tenant) =>
                                                     tenant.tenantId ?? '')
@@ -6327,7 +6327,7 @@ class _AddTenantState extends State<AddTenant> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
       });
     }
   }
@@ -6950,7 +6950,7 @@ class _AddTenantState extends State<AddTenant> {
                                             color: Color(0xFFb0b6c3)),
                                         border: InputBorder.none,
                                         // labelText: 'Select Date',
-                                        hintText: 'dd-mm-yyyy',
+                                        hintText: 'YYYY-MM-DD',
                                         suffixIcon: IconButton(
                                           icon:
                                               const Icon(Icons.calendar_today),

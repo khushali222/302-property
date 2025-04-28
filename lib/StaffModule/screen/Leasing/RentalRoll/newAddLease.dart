@@ -186,9 +186,9 @@ class _addLease3State extends State<addLease3>
       try {
         // Parse the start date from the TextField (instead of using current date)
         DateTime currentDate =
-        DateFormat('dd-MM-yyyy').parse(startDateController.text);
+        DateFormat('yyyy-MM-dd').parse(startDateController.text);
         DateTime nextDueDate =
-        DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
+        DateFormat('yyyy-MM-dd').parse(rentNextDueDate.text);
 
         double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
 
@@ -671,7 +671,7 @@ class _addLease3State extends State<addLease3>
     if (_startDate != null && _selectedRent != null) {
       DateTime nextDueDate = calculateNextDueDate(_startDate!, _selectedRent!);
       String formattedNextDueDate =
-          "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
+          "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
 
       setState(() {
         rentNextDueDate.text = formattedNextDueDate;
@@ -1351,7 +1351,7 @@ class _addLease3State extends State<addLease3>
                                       // String formattedStartDate =
                                       //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                       String formattedStartDate =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                       DateTime endDate = DateTime(
                                           pickedDate.year + 1,
                                           pickedDate.month,
@@ -1360,7 +1360,7 @@ class _addLease3State extends State<addLease3>
                                       //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
 
                                       String formattedEndDate =
-                                          "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                          "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
                                       print(formattedStartDate);
                                       setState(() {
                                         startDateController.text =
@@ -1393,7 +1393,7 @@ class _addLease3State extends State<addLease3>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'YYYY-MM-DD',
                                   controller: startDateController,
                                 ),
                               if(MediaQuery.of(context).size.width < 500)
@@ -1450,7 +1450,7 @@ class _addLease3State extends State<addLease3>
                                       // String formattedDate =
                                       //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                       String formattedDate =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                       setState(() {
                                         endDateController.text = formattedDate;
                                         rentCycleItemsDynamic(pickedDate
@@ -1476,7 +1476,7 @@ class _addLease3State extends State<addLease3>
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'YYYY-MM-DD',
                                   controller: endDateController,
                                 ),
                               if(MediaQuery.of(context).size.width > 500)
@@ -1535,10 +1535,10 @@ class _addLease3State extends State<addLease3>
                                                 if (pickedDate != null) {
                                                   // String formattedStartDate =
                                                   //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                  String formattedStartDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                                   DateTime endDate = DateTime(pickedDate.year,
                                                       pickedDate.month + 1, pickedDate.day);
-                                                  String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                                  String formattedEndDate = "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
 
                                                   // String formattedEndDate =
                                                   //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
@@ -1568,7 +1568,7 @@ class _addLease3State extends State<addLease3>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: startDateController,
                                             ),
                                           ],
@@ -1643,7 +1643,7 @@ class _addLease3State extends State<addLease3>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: endDateController,
                                             ),
                                             SizedBox(height: 5),
@@ -2499,7 +2499,7 @@ class _addLease3State extends State<addLease3>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: rentNextDueDate,
                                             ),
                                           ],
@@ -2651,7 +2651,7 @@ class _addLease3State extends State<addLease3>
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'YYYY-MM-DD',
                                   controller: rentNextDueDate,
                                 ),
                               const SizedBox(
@@ -3538,7 +3538,7 @@ class _addLease3State extends State<addLease3>
                                             data['charge_type'] ?? '',
                                             date: data['charge_type'] == 'Recurring Charge'
                                                 ? (data['date'] ?? '')  // Ensuring data['date'] is not null
-                                                : reverseFormatDate(rentNextDueDate.text.trim()),
+                                                : rentNextDueDate.text.trim(),
                                             isRepeatable: data['is_repeatable']
                                                 ?.toLowerCase() ==
                                                 'true',
@@ -3556,8 +3556,8 @@ class _addLease3State extends State<addLease3>
                                               rentAmount.text.trim()) ??
                                               0.0,
                                           chargeType: 'Rent',
-                                          date: reverseFormatDate(
-                                              rentNextDueDate.text.trim()),
+                                          date:
+                                              rentNextDueDate.text.trim(),
                                           isRepeatable:
                                           false, // Set to false if it's not repeatable, adjust as needed
                                           memo: rentMemo.text.trim(),
@@ -3571,8 +3571,8 @@ class _addLease3State extends State<addLease3>
                                                   .text) ??
                                               0.0,
                                           chargeType: 'Security Deposit',
-                                          date: reverseFormatDate(
-                                              rentNextDueDate.text.trim()),
+                                          date:
+                                              rentNextDueDate.text.trim(),
                                           isRepeatable:
                                           false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Last Month\'s Rent',
@@ -3739,13 +3739,13 @@ class _addLease3State extends State<addLease3>
                                             proRatedRent: isProRent ? proRatedRentController.text.trim() : null,
                                             companyName: companyName,
                                             endDate:
-                                            reverseFormatDate(leaseEndDate),
+                                            leaseEndDate,
                                             entry: chargeEntries,
                                             leaseAmount: rentAmount.text.trim(),
                                             leaseType: _selectedLeaseType ?? "",
                                             rentalId: renderId,
-                                            startDate: reverseFormatDate(
-                                                leaseStartDate),
+                                            startDate:
+                                                leaseStartDate,
                                             tenantId: tenantDataList
                                                 .map((tenant) =>
                                             tenant.tenantId ?? '')
@@ -3819,8 +3819,8 @@ class _addLease3State extends State<addLease3>
                                               data['amount'] ?? '0.0') ??
                                               0.0,
                                           chargeType: data['charge_type'] ?? '',
-                                          date: reverseFormatDate(
-                                              rentNextDueDate.text),
+                                          date:
+                                              rentNextDueDate.text,
                                           isRepeatable: data['is_repeatable']
                                               ?.toLowerCase() ==
                                               'true',
@@ -5960,7 +5960,7 @@ List<bool> select = [];
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
       });
     }
   }

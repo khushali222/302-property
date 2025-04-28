@@ -84,7 +84,7 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
   Widget buildMoveout(TenantData tenant, {List<TenantData>? tenants}) {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     widget.moveOutDate = formatDate(tenant.endDate!);
-    startdateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    startdateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
     // Convert to stateful list to track selection changes
     Map<String, TextEditingController> startDateControllers = {};
     Map<String, TextEditingController> moveoutDateControllers = {};
@@ -104,7 +104,7 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
 
       // Set default values for each tenant
       startDateControllers[t.tenantId!.first]!.text =
-          DateFormat('dd-MM-yyyy').format(DateTime.now());
+          DateFormat('yyyy-MM-dd').format(DateTime.now());
       moveoutDateControllers[t.tenantId!.first]!.text = formatDate(t.endDate!);
 
       // Set default selection
@@ -215,7 +215,7 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                                           : 17,
                                 ))),
                             buildTableCell(
-                                Text('${tenant.startDate} ${tenant.endDate}')),
+                                Text('${tenant.startDate} to ${tenant.endDate}')),
                           ],
                         ),
                       ],
@@ -398,8 +398,8 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                             'tenant_id': tenant.tenantId!.first,
                             'lease_id': tenant.leaseId,
                             'moveout_notice_given_date':
-                                reverseFormatDate(moveoutNoticeGivenDate!),
-                            'moveout_date': reverseFormatDate(moveoutdate!),
+                                moveoutNoticeGivenDate!,
+                            'moveout_date': moveoutdate!,
                           });
                         }
                       }
@@ -523,7 +523,7 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                       // setState(() {
                       controller.text = widget.moveOutDate!;
                       controller.text =
-                          DateFormat('dd-MM-yyyy').format(pickedDate);
+                          DateFormat('yyyy-MM-dd').format(pickedDate);
                       //});
                     }
                   },

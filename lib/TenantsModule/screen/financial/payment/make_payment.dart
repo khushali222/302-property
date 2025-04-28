@@ -144,7 +144,7 @@ class _MakePaymentState extends State<MakePayment> {
     //   await fetchPaymentSettings(widget.tenantId, widget.leaseId);
     // });
     DateTime today = DateTime.now();
-    _startDate.text = DateFormat('dd-MM-yyyy').format(today);
+    _startDate.text = DateFormat('yyyy-MM-dd').format(today);
     print("id tenant ${widget.tenantId}");
     print("id tenant ${widget.leaseId}");
     //  fetchSurcharge();
@@ -1305,7 +1305,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 bool isfuture =
                                 pickedDate.isAfter(DateTime.now());
                                 String formattedDate =
-                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                 setState(() {
                                   futuredate = isfuture;
                                   _startDate.text = formattedDate;
@@ -2329,7 +2329,7 @@ print('start date ${_startDate.text}');
                                     surcharge: "${surchargeamount}",
                                     amount: "${totalamount}",
                                     tenantId: widget.tenantId,
-                                    date: reverseFormatDate(_startDate.text.trim()),
+                                    date: _startDate.text.trim(),
                                     address1: cardDetails[selectedcardindex!]
                                         .address_1!,
                                     processorId: "",

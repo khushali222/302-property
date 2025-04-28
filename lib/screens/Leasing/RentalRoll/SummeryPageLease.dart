@@ -3593,7 +3593,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
       // Set default values for each tenant
       startDateControllers[t.tenantId!]!.text =
-          DateFormat('dd-MM-yyyy').format(DateTime.now());
+          DateFormat('yyyy-MM-dd').format(DateTime.now());
       moveoutDateControllers[t.tenantId!]!.text = formatDate(t.endDate!);
 
       // Set default selection
@@ -3603,7 +3603,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     moveOutDate = formatDate(widget.enddate!); // Store the original format
 
     //startdateController.text = moveOutDate;
-    startdateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    startdateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
     return StatefulBuilder(builder: (context, setState) {
       return SingleChildScrollView(
         child: Column(
@@ -3884,8 +3884,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           'tenant_id': tenant.tenantId!,
                           'lease_id': tenant.leaseId,
                           'moveout_notice_given_date':
-                              reverseFormatDate(moveoutNoticeGivenDate!),
-                          'moveout_date': reverseFormatDate(moveoutdate!),
+                              moveoutNoticeGivenDate!,
+                          'moveout_date': moveoutdate!,
                         });
                       }
                     }

@@ -67,8 +67,8 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
     );
   }
   Widget buildMoveout(LeaseTenant tenant, {List<LeaseTenant>? tenants}) {
-    // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.enddate!));
+    // moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    // moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(widget.enddate!));
 
     // Convert to stateful list to track selection changes
     Map<String, TextEditingController> startDateControllers = {};
@@ -88,7 +88,7 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
 
       // Set default values for each tenant
       startDateControllers[t.tenantId!]!.text =
-          DateFormat('dd-MM-yyyy').format(DateTime.now());
+          DateFormat('yyyy-MM-dd').format(DateTime.now());
       moveoutDateControllers[t.tenantId!]!.text = formatDate(t.endDate!);
 
       // Set default selection
@@ -98,7 +98,7 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
     widget.moveOutDate = formatDate(widget.enddate!); // Store the original format
     print(formatDate(widget.enddate!));
     //startdateController.text = moveOutDate;
-    startdateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    startdateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
     return StatefulBuilder(builder: (context, setState) {
       return SingleChildScrollView(
         child: Column(
@@ -198,7 +198,7 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
                                     : 17,
                               ))),
                           buildTableCell(
-                              Text('${tenant.startDate} ${tenant.endDate}')),
+                              Text('${tenant.startDate} to ${tenant.endDate}')),
                         ],
                       ),
                     ],
@@ -379,8 +379,8 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
                           'tenant_id': tenant.tenantId!,
                           'lease_id': tenant.leaseId,
                           'moveout_notice_given_date':
-                          reverseFormatDate(moveoutNoticeGivenDate!),
-                          'moveout_date': reverseFormatDate(moveoutdate!),
+                          moveoutNoticeGivenDate!,
+                          'moveout_date': moveoutdate!,
                         });
                       }
                     }
@@ -510,7 +510,7 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
                       // setState(() {
                       controller.text = widget.moveOutDate!;
                       controller.text =
-                          DateFormat('dd-MM-yyyy').format(pickedDate);
+                          DateFormat('yyyy-MM-dd').format(pickedDate);
                       //  });
                     }
                   },
