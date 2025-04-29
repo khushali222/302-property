@@ -82,6 +82,7 @@ class _send_emailState extends State<send_email> {
     _nameFocusNode = FocusNode();
     fetchTenant();
     print("tenants ${widget.lease}");
+    print("tenants ${widget.leaseID}");
    currentEventList =  (widget.lease != null ? eventTypes["lease"] :eventTypes["tenant"]!)!;
   }
   Future<void> fetchTenant() async {

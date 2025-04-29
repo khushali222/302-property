@@ -1005,7 +1005,7 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
     );
   }
-
+  final List<String> downloadOptions = ['PDF', 'Excel', 'CSV'];
   String formatDate3(String date) {
     // Format your date here
     return date;
@@ -1539,132 +1539,133 @@ class _FinancialTableState extends State<FinancialTable> {
           child: Column(
             children: [
               const SizedBox(
-                height: 10,
+                height: 0,
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if (!isFreePlan && widget.status == 'Active')
+                    Spacer(), // 👈 Always push everything else to the right
+                    if (!isFreePlan && (widget.status == 'Active' || widget.status == 'Future'))
                       Container(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 36 : 45,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(width: 1),
-                              borderRadius: BorderRadius.circular(10.0)),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
-                                  elevation: 0,
-                                  backgroundColor: Colors.white),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AddCard(
-                                              leaseId: widget.leaseId,
-                                            )));
-                              },
-                              child: Text(
-                                'Add Cards',
-                                style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 12
-                                            : 18,
-                                    color: blueColor),
-                              ))),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Container(
-                        height:
-                            MediaQuery.of(context).size.width < 500 ? 36 : 45,
+                        height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
                         decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(width: 1),
-                            borderRadius: BorderRadius.circular(10.0)),
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                         child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                elevation: 0,
-                                backgroundColor: Colors.white),
-                            onPressed: () async {
-
-                              final value = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MakePayment(
-                                            leaseId: widget.leaseId,
-                                            tenantId: widget.tenantId,
-                                          )));
-                              if (value == true) {
-                                setState(() {
-                                  _leaseLedgerFuture = LeaseRepository()
-                                      .fetchLeaseLedger(
-                                      leaseId: widget.leaseId);
-                                });
-                              }
-                            },
-                            child: Text(
-                              'Make Payment',
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 12
-                                          : 18,
-                                  color: blueColor),
-                            ))),
-                    SizedBox(
-                      width: 5,
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddCard(
+                                  leaseId: widget.leaseId,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            ' Add Cards ',
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    SizedBox(width: 5),
+                    Container(
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          elevation: 0,
+                          backgroundColor: Colors.transparent,
+                        ),
+                        onPressed: () async {
+                          final value = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MakePayment(
+                                leaseId: widget.leaseId,
+                                tenantId: widget.tenantId,
+                              ),
+                            ),
+                          );
+                          if (value == true) {
+                            setState(() {
+                              _leaseLedgerFuture = LeaseRepository()
+                                  .fetchLeaseLedger(leaseId: widget.leaseId);
+                            });
+                          }
+                        },
+                        child: Text(
+                          'Make Payment',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
+                    SizedBox(width: 5),
                     if (widget.status == 'Active')
                       Container(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 34 : 45,
-                          decoration: BoxDecoration(
+                        height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,
+                          ),
+                          onPressed: () async {
+                            final value = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => enterCharge(
+                                  leaseId: widget.leaseId,
+                                ),
+                              ),
+                            );
+                            if (value == true) {
+                              setState(() {
+                                _leaseLedgerFuture = LeaseRepository()
+                                    .fetchLeaseLedger(leaseId: widget.leaseId);
+                              });
+                            }
+                          },
+                          child: Text(
+                            'Enter Charge',
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 18,
                               color: Colors.white,
-                              border: Border.all(width: 1),
-                              borderRadius: BorderRadius.circular(10.0)),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
-                                  elevation: 0,
-                                  backgroundColor: Colors.white),
-                              onPressed: () async {
-                                final value = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => enterCharge(
-                                              leaseId: widget.leaseId,
-                                            )));
-                                if (value == true) {
-                                  setState(() {
-                                    _leaseLedgerFuture = LeaseRepository()
-                                        .fetchLeaseLedger(
-                                            leaseId: widget.leaseId);
-                                  });
-                                }
-                              },
-                              child: Text(
-                                'Enter Charge',
-                                style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 12
-                                            : 18,
-                                    color: blueColor),
-                              ))),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
+
               const SizedBox(
                 height: 6,
               ),
@@ -1725,23 +1726,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                       .contains(searchvalue!.toLowerCase()))
                               .toList();
                         }
-                     //  print("calling");
-                        // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
-                        //   try {
-                        //     DateTime fromDate = DateTime.parse(_fromDateController.text);
-                        //     DateTime toDate = DateTime.parse(_toDateController.text);
-                        //     print("From Date: $fromDate");
-                        //     print("To Date: $toDate");
-                        //     data = data.where((lease) {
-                        //       DateTime leaseDate = DateTime.parse(lease.entry!.first.date!);
-                        //       print("Lease Date: $leaseDate");
-                        //       return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate.add(Duration(days: 1)));
-                        //     }).toList();
-                        //   } catch (e) {
-                        //
-                        //     print("Date parsing error: $e");
-                        //   }
-                        // }
+
 
                         if (_fromDateController.text.isNotEmpty &&
                             _toDateController.text.isNotEmpty) {
@@ -1802,7 +1787,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                     children: [
                                       Expanded(
                                         child: Material(
-                                          elevation: 3,
+                                          elevation: 0,
                                           borderRadius:
                                               BorderRadius.circular(8),
                                           child: Container(
@@ -1838,81 +1823,123 @@ class _FinancialTableState extends State<FinancialTable> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 10),
+                                      // Container(
+                                      //   height: 45,
+                                      //   width: 110,
+                                      //   decoration: BoxDecoration(
+                                      //       borderRadius:
+                                      //           BorderRadius.circular(8.0)),
+                                      //   child: ElevatedButton(
+                                      //     style: ElevatedButton.styleFrom(
+                                      //       backgroundColor: blueColor,
+                                      //     ),
+                                      //     onPressed: () {},
+                                      //     child: PopupMenuButton<String>(
+                                      //       onSelected: (value) async {
+                                      //         // Add your export logic here based on the selected value
+                                      //         if (value == 'PDF') {
+                                      //           print('pdf');
+                                      //           generateWorkOrderPdf(data);
+                                      //           // Export as PDF
+                                      //         } else if (value == 'XLSX') {
+                                      //           print('XLSX');
+                                      //           generateWorkOrderExcel(data);
+                                      //           // Export as XLSX
+                                      //         } else if (value == 'CSV') {
+                                      //           print('CSV');
+                                      //           generateWorkOrderCsv(data);
+                                      //           // Export as CSV
+                                      //         }
+                                      //       },
+                                      //       itemBuilder:
+                                      //           (BuildContext context) =>
+                                      //               <PopupMenuEntry<String>>[
+                                      //         const PopupMenuItem<String>(
+                                      //           value: 'PDF',
+                                      //           child: Text('PDF'),
+                                      //         ),
+                                      //         const PopupMenuItem<String>(
+                                      //           value: 'XLSX',
+                                      //           child: Text('XLSX'),
+                                      //         ),
+                                      //         const PopupMenuItem<String>(
+                                      //           value: 'CSV',
+                                      //           child: Text('CSV'),
+                                      //         ),
+                                      //       ],
+                                      //       child: Row(
+                                      //         mainAxisSize: MainAxisSize.min,
+                                      //         children: [
+                                      //           Text(
+                                      //
+                                      //             'Export',
+                                      //
+                                      //             style: TextStyle(
+                                      //                 fontWeight: FontWeight.bold,
+                                      //                 fontSize: 15,
+                                      //               ),
+                                      //
+                                      //           ),
+                                      //           SizedBox(
+                                      //
+                                      //             width: 2,
+                                      //
+                                      //           ),
+                                      //           Icon(
+                                      //
+                                      //             Icons.arrow_drop_down,
+                                      //
+                                      //             size: 25,
+                                      //
+                                      //           ),
+                                      //         ],
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       Container(
                                         height: 45,
-                                        width: 110,
+                                        width: 75,
                                         decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0)),
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: blueColor,
-                                          ),
-                                          onPressed: () {},
-                                          child: PopupMenuButton<String>(
-                                            onSelected: (value) async {
-                                              // Add your export logic here based on the selected value
-                                              if (value == 'PDF') {
-                                                print('pdf');
-                                                generateWorkOrderPdf(data);
-                                                // Export as PDF
-                                              } else if (value == 'XLSX') {
-                                                print('XLSX');
-                                                generateWorkOrderExcel(data);
-                                                // Export as XLSX
-                                              } else if (value == 'CSV') {
-                                                print('CSV');
-                                                generateWorkOrderCsv(data);
-                                                // Export as CSV
-                                              }
-                                            },
-                                            itemBuilder:
-                                                (BuildContext context) =>
-                                                    <PopupMenuEntry<String>>[
-                                              const PopupMenuItem<String>(
-                                                value: 'PDF',
-                                                child: Text('PDF'),
-                                              ),
-                                              const PopupMenuItem<String>(
-                                                value: 'XLSX',
-                                                child: Text('XLSX'),
-                                              ),
-                                              const PopupMenuItem<String>(
-                                                value: 'CSV',
-                                                child: Text('CSV'),
-                                              ),
-                                            ],
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  
-                                                  'Export',
-                                                  
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 15,
-                                                    ),
-                                                
-                                                ),
-                                                SizedBox(
-                                                  
-                                                  width: 2,
-                                                
-                                                ),
-                                                Icon(
-                                                  
-                                                  Icons.arrow_drop_down,
-                                                  
-                                                  size: 25,
-                                                
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                          border: Border.all(color:
+                                          const Color(0xFF8A95A8)),
+                                          borderRadius: BorderRadius.circular(5),
+                                          color: Colors.white,
                                         ),
-                                      ),
+                                        child: PopupMenuButton<String>(
+                                          offset: Offset(5, 50),
+                                         // onSelected: handleDownload,
+                                          icon: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              FaIcon(FontAwesomeIcons.download), // Your download icon
+                                              SizedBox(width: 5), // Adds spacing between the icons
+                                              Icon(Icons.arrow_drop_down), // The dropdown arrow icon
+                                            ],
+                                          ),
+                                          tooltip: "Download",
+                                          itemBuilder: (BuildContext context) {
+                                            return downloadOptions.map((String option) {
+                                              return PopupMenuItem<String>(
+                                                value: option,
+                                                onTap: () async {
+                                                  if(option == "PDF")
+                                                    generateWorkOrderPdf(data);
+                                                   // generaterentersInsurancePdf(snapshot.data!);
+                                                  if(option == "Excel")
+                                                    generateWorkOrderExcel(data);
+                                                    //generateRentersInsuranceExcel(snapshot.data!);
+                                                  if(option == "CSV")
+                                                    generateWorkOrderCsv(data);
+                                                   // generateRentersInsuranceCSV(snapshot.data!);
+                                                },
+                                                child: Text("Download as $option"),
+                                              );
+                                            }).toList();
+                                          },
+                                        ),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -2029,19 +2056,19 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           // SizedBox(height: 4),
 
                                                           Material(
-                                                            elevation: 2,
+                                                            elevation: 0,
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
                                                                         8.0),
                                                             child: Container(
-                                                              height: 55,
+                                                              height: 50,
                                                               padding: EdgeInsets
                                                                   .symmetric(
                                                                       horizontal:
-                                                                          16.0,
+                                                                          10.0,
                                                                       vertical:
-                                                                          2.5),
+                                                                          0),
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color: Colors
@@ -2050,20 +2077,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     BorderRadius
                                                                         .circular(
                                                                             8.0),
-                                                                boxShadow: [
-                                                                  BoxShadow(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.2),
-                                                                    offset:
-                                                                        Offset(
-                                                                            4,
-                                                                            4),
-                                                                    blurRadius:
-                                                                        3,
-                                                                  ),
-                                                                ],
+                                                                    border: Border.all(
+                                                                        color:
+                                                                        const Color(0xFF8A95A8)),
+
                                                               ),
                                                               child:
                                                                   TextFormField(
@@ -2137,19 +2154,19 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           // SizedBox(height: 4),
 
                                                           Material(
-                                                            elevation: 2,
+                                                            elevation: 0,
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
                                                                         8.0),
                                                             child: Container(
-                                                              height: 55,
+                                                              height: 50,
                                                               padding: EdgeInsets
                                                                   .symmetric(
                                                                       horizontal:
-                                                                          16.0,
+                                                                          10.0,
                                                                       vertical:
-                                                                          2.5),
+                                                                          0),
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color: Colors
@@ -2158,20 +2175,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     BorderRadius
                                                                         .circular(
                                                                             8.0),
-                                                                boxShadow: [
-                                                                  BoxShadow(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.2),
-                                                                    offset:
-                                                                        Offset(
-                                                                            4,
-                                                                            4),
-                                                                    blurRadius:
-                                                                        3,
-                                                                  ),
-                                                                ],
+                                                                    border: Border.all(
+                                                                        color:
+                                                                        const Color(0xFF8A95A8)),
                                                               ),
                                                               child:
                                                                   TextFormField(
