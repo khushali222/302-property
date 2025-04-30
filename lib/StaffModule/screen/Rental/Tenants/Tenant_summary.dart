@@ -14,9 +14,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../../../../provider/dateProvider.dart';
+import '../../../../screens/Rental/Tenants/Commnunication/communication.dart';
 import '../../../repository/AdminTenantInsuranceService/adminTenantinsuranceService.dart';
 import '../../../repository/tenants.dart';
 
+import '../../Communications/Send E-mail/send_mail.dart';
 import 'AdminTenantInsurance/addAdminTenantInsurance.dart';
 import 'AdminTenantInsurance/editAdminTenantInsurance.dart';
 import '../../../widgets/appbar.dart';
@@ -28,6 +30,7 @@ import '../../../model/rentalOwner.dart';
 import '../../../repository/Rental_ownersData.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'edit_tenants.dart';
 
 class ResponsiveTenantSummary extends StatefulWidget {
   Tenant? tenants;
@@ -842,7 +845,35 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
       ),
     );
   }
-
+  int _selectedIndex = 0;
+  Widget _buildTabButton(String title, int index) {
+    final isSelected = _selectedIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            //    _tabController.index = index;
+            _selectedIndex = index;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? blueColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            title,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.black87,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
   final List<String> itemsTenantLease = ['Residential', "Commercial", "All"];
   String? selectedValueTenantLease;
   String searchvalueTenantLease = "";
@@ -899,11 +930,111 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text(
-                            'Tenant',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF8A95A8)),
+                          Container(
+                            width: MediaQuery.of(context).size.width - 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Tenant',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF8A95A8)),
+                                ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async {
+                                        // Provider.of<SelectedTenantsProvider>(context,
+                                        //     listen: false)
+                                        //     .clearTenant();
+                                        // Provider.of<SelectedCosignersProvider>(context,
+                                        //     listen: false)
+                                        //     .clearCosigner();
+                                        // Provider.of<SelectedApplicantProvider>(context,
+                                        //     listen: false)
+                                        //     .clearApplicant();
+                                        final result = await Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                            builder: (context) => send_email(
+                                              lease: [widget.tenants!.tenantId!],
+
+                                            )));
+
+                                      },
+                                      child: Container(
+                                        height: (MediaQuery.of(context).size.width < 500)
+                                            ? 35
+                                            : MediaQuery.of(context).size.width * 0.063,
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                          color: blueColor,
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Send Mail",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize:
+                                              MediaQuery.of(context).size.width < 500
+                                                  ? 14
+                                                  : 22,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 10,),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        // Provider.of<SelectedTenantsProvider>(context,
+                                        //     listen: false)
+                                        //     .clearTenant();
+                                        // Provider.of<SelectedCosignersProvider>(context,
+                                        //     listen: false)
+                                        //     .clearCosigner();
+                                        // Provider.of<SelectedApplicantProvider>(context,
+                                        //     listen: false)
+                                        //     .clearApplicant();
+                                        final result = await Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                            builder: (context) => EditTenants(
+                                              tenantId:"" , tenants: widget.tenants!,
+                                            )));
+
+                                      },
+                                      child: Container(
+                                        height: (MediaQuery.of(context).size.width < 500)
+                                            ? 35
+                                            : MediaQuery.of(context).size.width * 0.063,
+                                        width: 80,
+                                        decoration: BoxDecoration(
+                                          color: blueColor,
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Edit",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize:
+                                              MediaQuery.of(context).size.width < 500
+                                                  ? 14
+                                                  : 22,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -943,6 +1074,24 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                       ),
                     ),
                   ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE0E0E0),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Row(
+                      children: [
+                        _buildTabButton("Details", 0),
+                        _buildTabButton("Communication", 1),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  if(_selectedIndex ==0)
                   Padding(
                     padding: const EdgeInsets.only(left: 20, right: 20),
                     child: Material(
@@ -2534,9 +2683,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  if(_selectedIndex == 1)
+                    Tenant_communication(lease_id: widget.tenantId,)
                 ],
               ),
             )

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/AccountTotals.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/CompletedWorkOrders.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/ConvenienceFee.dart';
@@ -447,43 +448,46 @@ class NarrowScreenLayout extends StatelessWidget {
     int crossAxisCount = screenWidth > 600 ? 3 : 2;
 
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(height: 10,),
-          titleBar(
-            title: 'Reports',
-            width: MediaQuery.of(context).size.width * .98,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: 170,
-                  crossAxisCount: crossAxisCount,
-                  childAspectRatio: 1.0, // Adjust the aspect ratio as needed
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                ),
-                itemCount: reportCards.length,
-                itemBuilder: (context, index) {
-                  return ReportCard(
-                    title: reportCards[index].title,
-                    description: reportCards[index].description,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => reportCards[index].destination,
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 10,),
+            titleBar(
+              title: 'Reports',
+              width: MediaQuery.of(context).size.width * .98,
             ),
-          ),
-        ],
+            // Expanded(
+            //   child: Padding(
+            //     padding: const EdgeInsets.only(left: 10, right: 10),
+            //     child: GridView.builder(
+            //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            //         mainAxisExtent: 170,
+            //         crossAxisCount: crossAxisCount,
+            //         childAspectRatio: 1.0, // Adjust the aspect ratio as needed
+            //         crossAxisSpacing: 8,
+            //         mainAxisSpacing: 8,
+            //       ),
+            //       itemCount: reportCards.length,
+            //       itemBuilder: (context, index) {
+            //         return ReportCard(
+            //           title: reportCards[index].title,
+            //           description: reportCards[index].description,
+            //           onTap: () {
+            //             Navigator.push(
+            //               context,
+            //               MaterialPageRoute(
+            //                 builder: (context) => reportCards[index].destination,
+            //               ),
+            //             );
+            //           },
+            //         );
+            //       },
+            //     ),
+            //   ),
+            // ),
+            ReportScreen()
+          ],
+        ),
       ),
     );
   }
@@ -645,3 +649,120 @@ List<ReportCardModel> reportCards = [
   ),
 
 ];
+class ReportScreen extends StatelessWidget {
+  const ReportScreen({super.key});
+
+  Widget sectionTitle(String title, String svgPath,String subtitle) {
+    return
+      Column(
+        children: [
+          ListTile(
+
+            visualDensity: const VisualDensity(vertical: -4), // Reduce vertical spacing
+            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+            leading:  Container(
+              margin: EdgeInsets.only(left: 10,top: 5),
+              child: SvgPicture.asset(
+                svgPath,
+                width: 25,
+                height: 25,
+                // colorFilter: const ColorFilter.mode(Colors.indigo, BlendMode.srcIn),
+              ),
+            ),
+            title:Text(
+              title,
+              style:  TextStyle(fontSize: 14,color: blueColor, fontWeight: FontWeight.bold),
+            ) ,
+            subtitle:   Text(subtitle, style:  TextStyle(color: Colors.grey.shade500,fontWeight: FontWeight.w200, fontSize: 11)),
+          ),
+          Divider()
+        ],
+      );
+
+
+  }
+
+  Widget reportItem(String title, String subtitle, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w500,fontSize: 14)),
+            const SizedBox(height: 2),
+            Text(subtitle, style: const TextStyle(color: Colors.grey, fontSize: 10)),
+            const Divider(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget reportSection(String svgIconPath, String title, List<Map<String, dynamic>> items,String subtitle,BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        //  color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          sectionTitle(title, svgIconPath,subtitle),
+          const SizedBox(height: 5),
+          ...items.map((item) => reportItem(item['title']!, item['subtitle']!,() {
+            // Handle navigation based on title or a new field like `route`
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => item["navigate"],
+              ),
+            );
+          },)).toList(),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 10,),
+          reportSection('assets/images/entypo_bar-graph.svg', 'Financial Reports', [
+            {'title': 'Rent Collection Report', 'subtitle': 'Rent collection due by property',"navigate":RentersInsurance()},
+            {'title': 'Daily Transaction Report', 'subtitle': 'Listing of all transaction summarized by day',"navigate":DailyTransactions()},
+            {'title': 'Rental Owner Report', 'subtitle': 'Listing of all transaction summarized by day owner',"navigate":RentalOwnerReports()},
+            {'title': 'Account Totals Report', 'subtitle': 'Summarized by account and rental owner',"navigate":AccountTotalsReports()},
+            {'title': 'Payment Exception Report', 'subtitle': 'Transaction list not assigned to a tenant',"navigate":PaymentExceptionReports()},
+            {'title': 'Recurring Payments Configuration', 'subtitle': 'Configured recurring payment by lease',"navigate":Recurring_Payments_Configuration_Report()},
+            {'title': 'Convenience Fee Override', 'subtitle': 'Leases with convenience fee override',"navigate":ConvenienceFeeReports()},
+          ],"Track payments, transactions, and owner accounts.",context),
+          SizedBox(height: 10,),
+          reportSection('assets/images/mingcute_clipboard-fill.svg', 'Maintenance & Work Orders', [
+            {'title': 'Open Work Orders', 'subtitle': 'Work order not yet in complete state',"navigate":OpenWorkOrders()},
+            {'title': 'Completed Work Orders', 'subtitle': 'All completed work orders',"navigate":CompletedWorkOrders()},
+          ],"Fix it fast, document it all",context),
+          SizedBox(height: 10,),
+          reportSection('assets/images/solar_shield-up-bold.svg', 'Insurance', [
+            {'title': 'Renter’s Insurance', 'subtitle': 'Listing of all renter’s insurance policies',"navigate":RentersInsurance()},
+            {'title': 'Expiring Insurance', 'subtitle': 'Policies expiring within the selected period',"navigate":ExpiringInsurance()},
+          ],"Coverage at a glance",context),
+          SizedBox(height: 10,),
+          reportSection('assets/images/fontisto_person.svg', 'Lease & Tenant Management', [
+            {'title': 'Expiring Leases', 'subtitle': 'All leases that will end during a timeframe',"navigate":ExpiringLeases()},
+            {'title': 'Delinquent Tenants', 'subtitle': 'Tenants with outstanding ledger balances',"navigate":DelinquentTenants()},
+            {'title': 'Rent Roll Report', 'subtitle': 'Rent balance due by property and tenants',"navigate":RentersInsurances()},
+          ],"Active leases and tenant solutions.",context),
+          SizedBox(height: 10,),
+        ],
+      ),
+
+    );
+  }
+}

@@ -1051,7 +1051,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            "Email",
+                                            "Edit",
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
