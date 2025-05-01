@@ -64,6 +64,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool isdateformate = false;
   bool isworkorder = false;
   bool ismanagetemplate = false;
+  bool ischargesetting = false;
   ConnectivityResult? _connectivityResult;
   List<Setting4> accounts = [];
   String? selectedAccount;
@@ -88,7 +89,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     accountname = TextEditingController();
     note = TextEditingController();
     // _loadColorPreference();
-
+    loadChargeSetting();
     _loadVendor();
     _loadStaff();
     fetchWorkData();
@@ -378,6 +379,52 @@ class _TabBarExampleState extends State<TabBarExample> {
       print('Failed to load surcharge data: $e');
     }
   }
+  Map<String,dynamic>? chargesetting;
+
+  void loadChargeSetting() async {
+    Map<String, dynamic>? chargeData = await fetchChargeSetting();
+    if (chargeData != null) {
+      print("Charge Settings: $chargeData");
+      bool unbundle = chargeData["unbundle_charges"] ?? false;
+      print("Unbundle charges: $unbundle");
+      setState(() {
+        chargesetting = chargeData;
+      });
+    }
+  }
+
+  //mail Services
+  Future<Map<String, dynamic>?> fetchChargeSetting() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+
+      if (id == null || token == null) {
+        throw Exception("Missing adminId or token in SharedPreferences");
+      }
+
+      final response = await http.get(
+        Uri.parse('$Api_url/api/charge-setting/$id'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (responseData["statusCode"] == 200) {
+        Map<String, dynamic> data = responseData["data"];
+        return data; // returning as a Map<String, dynamic>
+      } else {
+        throw Exception('Failed to load charge data');
+      }
+    } catch (e) {
+      print('Failed to load charge data: $e');
+      return null;
+    }
+  }
 
   Future<void> updateMail() async {
     print("calling");
@@ -408,7 +455,28 @@ class _TabBarExampleState extends State<TabBarExample> {
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
-
+  Future<bool> AddChargeSettingData( id,Map<String, dynamic> data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    print("$Api_url/api/mail_permission");
+    print(data);
+    final response = await http.post(
+      Uri.parse('$Api_url/api/charge-setting'),
+      headers: {
+        "authorization" : "CRM $token",
+        'Content-Type': 'application/json',
+        "id":"CRM $id",
+      },
+      body: jsonEncode(data),
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   Future<void> Addmail() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1375,6 +1443,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = false;
                                       isworkorder = false;
                                       ismanagetemplate = false;
+                                      ischargesetting = false;
                                     });
                                   },
                                   child: Container(
@@ -1420,6 +1489,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = true;
                                       isworkorder = false;
                                       ismanagetemplate = false;
+                                      ischargesetting = false;
                                     });
                                   },
                                   child: Container(
@@ -1466,11 +1536,54 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   onTap: () {
                                     setState(() {
                                       issurge = false;
+                                      ismail = false;
+                                      ischargesetting = true;
+                                      islatefee = false;
+                                      isaccounts = false;
+                                      isdateformate = false;
+                                      isworkorder = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ischargesetting
+                                          ? Colors.white
+                                          : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Charges",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ischargesetting
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
                                       isaccounts = false;
                                       ismail = true;
                                       islatefee = false;
                                       isdateformate = false;
                                       isworkorder = false;
+                                      ischargesetting = false;
                                     });
                                   },
                                   child: Container(
@@ -1497,9 +1610,22 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 10,
-                              ),
+
+
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 850
+                              : 900,
+                          child: Row(
+                            children: [
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
@@ -1510,6 +1636,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = false;
                                       isdateformate = false;
                                       isworkorder = false;
+                                      ischargesetting = false;
                                     });
                                   },
                                   child: Container(
@@ -1528,9 +1655,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 ? Colors.white
                                                 : blueColor,
                                             fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
+                                                .size
+                                                .width <
+                                                500
                                                 ? 15
                                                 : 20),
                                       ),
@@ -1538,21 +1665,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
+                              SizedBox(
+                                width: 10,
+                              ),
                               Expanded(
+
                                 child: InkWell(
                                   onTap: () {
                                     final dateProvider =
@@ -1566,6 +1683,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = false;
                                       isworkorder = false;
                                       ismanagetemplate = false;
+                                      ischargesetting = false;
                                       DateTime now = DateTime.now();
                                       dateformateselect =
                                           dateProvider.dateformateselect;
@@ -1604,9 +1722,22 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 10,
-                              ),
+
+
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height:
+                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 850
+                              : 900,
+                          child: Row(
+                            children: [
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
@@ -1638,9 +1769,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   ? Colors.white
                                                   : blueColor,
                                               fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
+                                                  .size
+                                                  .width <
+                                                  500
                                                   ? 15
                                                   : 20),
                                         ),
@@ -1649,20 +1780,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height:
-                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
+                              SizedBox(
+                                width: 10,
+                              ),
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
@@ -1704,9 +1824,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 10,
-                              ),
+
                               // Expanded(
                               //   child: InkWell(
                               //     onTap: () {
@@ -1749,7 +1867,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               //   ),
                               // ),
 
-                              Spacer()
+                             // Spacer()
                             ],
                           ),
                         ),
@@ -5517,7 +5635,199 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ],
                           ),
                         if(ismanagetemplate)
-                          manage_templates()
+                          manage_templates(),
+                        if(ischargesetting)
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Manage Charges",
+                                    style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                      MediaQuery.of(context).size.width <
+                                          500
+                                          ? 18
+                                          : 25,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "Configure how charges should be recorded — either as a single bundled charge or as separate individual charges.",
+                                        style: TextStyle(
+                                          color: greyColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize:
+                                          MediaQuery.of(context).size.width <
+                                              500
+                                              ? 14
+                                              : 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                child: Row(
+                                  children: [
+                                    Switch(
+                                      value: chargesetting == null ? true:chargesetting!["unbundle_charges"],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          if(chargesetting != null)
+                                          chargesetting!["unbundle_charges"] = !chargesetting!["unbundle_charges"];
+                                          else
+                                            chargesetting ={"unbundle_charges":value};
+                                        });
+
+                                        print(chargesetting);
+                                      },
+                                      activeColor: blueColor, // Color when switch is on
+                                      inactiveThumbColor: Colors.grey, // Color when switch is off
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      'Unbundle Charges',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                                      String? token = prefs.getString('token');
+                                      String?  id = prefs.getString('adminId');
+                                      await AddChargeSettingData(id,{
+                                        "admin_id":id,
+                                        "unbundle_charges":chargesetting!["unbundle_charges"]
+                                      }).then((value){
+                                        setState(() {
+
+                                        });
+                                      });
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      child: Container(
+                                        height:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 35
+                                            : 50,
+                                        width:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 100
+                                            : 150,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(5.0),
+                                          color: blueColor,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey,
+                                              offset: Offset(0.0, 1.0), //(x,y)
+                                              blurRadius: 6.0,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Save",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width <
+                                                    500
+                                                    ? 16
+                                                    : 20),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  GestureDetector(
+                                    onTap: () async {
+                                         setState(() {
+                                          chargesetting = null;
+                                          print(" $chargesetting");
+                                         });
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      child: Container(
+                                        height:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 35
+                                            : 50,
+                                        width:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 100
+                                            : 150,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(5.0),
+                                          color: Colors.white,
+                                          border: Border.all(color:blueColor),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey,
+                                              offset: Offset(0.0, 1.0), //(x,y)
+                                              blurRadius: 6.0,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Reset",
+                                            style: TextStyle(
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width <
+                                                    500
+                                                    ? 16
+                                                    : 20),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                            ],
+                          )
                       ],
                     ),
                   ),

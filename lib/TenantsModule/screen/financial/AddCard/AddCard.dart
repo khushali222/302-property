@@ -1058,6 +1058,7 @@ class _AddCardState extends State<AddCard> {
                                           customerVaultId:
                                           cardResponse?.customerVaultId,
                                           responseCode: cardResponse?.responseCode,
+                                            ccNumber: cardNumber.text
                                         );
 
                                         await addCardService.postAddCreditCard(addcard).then((value) {
@@ -1088,6 +1089,8 @@ class _AddCardState extends State<AddCard> {
                                           billingId: randomNumber,
                                           customerVaultId: cardResponses.customerVaultId,
                                           responseCode: cardResponses.responseCode,
+
+                                            ccNumber: cardNumber.text
                                         );
 
                                         await addCardService.postAddCreditCard(addcards).then((value) {

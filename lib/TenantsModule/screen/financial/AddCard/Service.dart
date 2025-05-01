@@ -104,7 +104,7 @@ class AddCardService {
     };
 
     final body = jsonEncode(addCard.toJson());
-
+    print(body);
     try {
       final response = await http.post(
         Uri.parse('$Api_url/api/creditcard/addCreditCard'),
