@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -328,7 +331,98 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+           // SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.all(0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Upload Move-out Documents',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize:
+                        MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                        color: blueColor),
+                  ),
+                  const SizedBox(height: 5),
+
+                  GestureDetector(
+                    onTap: pickFiles,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+
+                          Text(
+                            "Choose Files",
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+                  const SizedBox(height: 10),
+
+                  // Scrollable area for file list
+                  SingleChildScrollView(
+                    child: Column(
+                      children: selectedFiles.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        FileData fileData = entry.value;
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      fileData.file.path.split('/').last,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.close, color: Colors.grey),
+                                    onPressed: () => removeFile(index),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 6),
+                              TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Enter description',
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                ),
+                                onChanged: (value) => updateDescription(index, value),
+                              ),
+                              const SizedBox(height: 10),
+                              Divider(thickness: 1),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                  // Optionally, add a submit button here
+                  // ElevatedButton(onPressed: submit, child: Text("Submit")),
+                ],
+              ),
+            ),
+
+
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -368,6 +462,7 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
                     await SharedPreferences.getInstance();
                     String? id = prefs.getString("adminId");
                     List<Map<String, dynamic>> multipletenant = [];
+                    List<String> descriptions = selectedFiles.map((file) => file.description).toList();
                     for (tenant in selectedTenants) {
                       if (tenant.isSelected!) {
                         String moveoutNoticeGivenDate =
@@ -384,16 +479,19 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
                         });
                       }
                     }
+                    List<File> selectfiles = selectedFiles.map((file) => file.file).toList();
                     print(multipletenant);
 
                     await LeaseMoveoutRepository()
-                        .addMoveoutTenant(
+                        .addMoveoutTenantfromlease(
                         adminId: id!,
                         tenantId: tenantId,
                         leaseId: tenant.leaseId,
                         moveoutDate: widget.moveOutDate,
                         moveoutNoticeGivenDate: startdateController.text,
-                        multitenantdata: multipletenant)
+                        fileDescriptions:descriptions,
+                        selectedFiles:selectfiles ,
+                        multitenantdata: multipletenant,)
                         .then((value) {
                       setState(() {
                         futureLeasetenant =
@@ -451,6 +549,51 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
         child: child,
       ),
     );
+  }
+  final List<FileData> selectedFiles = [];
+
+  Future<void> pickFiles() async {
+    if (selectedFiles.length >= 10) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Maximum 10 files allowed')));
+      return;
+    }
+
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      withData: true,
+      type: FileType.any,
+    );
+
+    if (result != null) {
+      for (var file in result.files) {
+        if (selectedFiles.length >= 10) break;
+
+        if (file.size > 5 * 1024 * 1024) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${file.name} exceeds 5MB limit')),
+          );
+          continue;
+        }
+
+        final fileObj = File(file.path!);
+
+        setState(() {
+          selectedFiles.add(FileData(file: fileObj));
+        });
+      }
+    }
+  }
+
+  void removeFile(int index) {
+    setState(() {
+      selectedFiles.removeAt(index);
+    });
+  }
+
+  void updateDescription(int index, String description) {
+    setState(() {
+      selectedFiles[index].description = description;
+    });
   }
 
   reload_screen() {
@@ -523,4 +666,10 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
       ),
     );
   }
+}
+class FileData {
+  final File file;
+  String description;
+
+  FileData({required this.file, this.description = ''});
 }

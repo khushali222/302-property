@@ -593,7 +593,7 @@ class _Lease_tableState extends State<Lease_table> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: titleBar(
                             width: MediaQuery.of(context).size.width * .65,
-                            title: 'RentRoll',
+                            title: 'Rent Roll',
                           ),
                         ),
                         GestureDetector(
@@ -825,6 +825,9 @@ class _Lease_tableState extends State<Lease_table> {
                                         int index = entry.key;
                                         bool isExpanded = expandedIndex == index;
                                         Lease1 lease = entry.value;
+                                        final balance = lease.totalBalance ?? 0.0;
+                                        final isNegative = balance < 0;
+                                        final formattedBalance = "${isNegative ? '-' : ''}\$${balance.abs().toStringAsFixed(2)}";
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           decoration: BoxDecoration(
@@ -964,7 +967,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   ),
                                                                   _buildTableRow('Remaining Days:', _getDisplayValue(lease.remainingDays), 'Rent Start :',
                                                                       '${dateProvider.formatCurrentDate(lease.rentDueDate!)}'),
-                                                                  _buildTableRow('Current Balance:', _getDisplayValue("\$${lease.totalBalance?.toStringAsFixed(2) ?? "0.0"}"), '', '')
+                                                                  _buildTableRow('Current Balance:', _getDisplayValue("${formattedBalance}"), '', '')
                                                                 ],
                                                               ),
                                                             ),
