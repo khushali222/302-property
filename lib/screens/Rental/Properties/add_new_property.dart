@@ -58,6 +58,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
   bool showproperty = false;
   String selectedMonth = 'Residential';
 
+
   TextEditingController city = TextEditingController();
   TextEditingController state = TextEditingController();
   TextEditingController country = TextEditingController();

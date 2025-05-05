@@ -498,19 +498,19 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                         //   placeholder: (double progress) => Center(child: Text('$progress %')),
                                                         //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
                                                         // );
-                                                        String pdfUrl =
-                                                            "${image_url}${item["document_name"]}";
-                                                        print(
-                                                            "Opening PDF: $pdfUrl");
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                PDFViewerScreen(
-                                                                    pdfUrl:
-                                                                    pdfUrl),
-                                                          ),
-                                                        );
+                                                        // String pdfUrl =
+                                                        //     "${image_url}${item["document_name"]}";
+                                                        // print(
+                                                        //     "Opening PDF: $pdfUrl");
+                                                        // Navigator.push(
+                                                        //   context,
+                                                        //   MaterialPageRoute(
+                                                        //     builder: (context) =>
+                                                        //         PDFViewerScreen(
+                                                        //             pdfUrl:
+                                                        //             pdfUrl),
+                                                        //   ),
+                                                        // );
                                                         // showPdfDialog(context, pdfUrl);
                                                       },
                                                       child: Container(

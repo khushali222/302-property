@@ -46,6 +46,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
   TextEditingController taxtype = TextEditingController();
   TextEditingController taxid = TextEditingController();
 
+
+
   bool nameerror = false;
   bool lastnameerror = false;
   bool comnameerror = false;
