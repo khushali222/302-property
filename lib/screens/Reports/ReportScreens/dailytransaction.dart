@@ -919,7 +919,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   bool isAddLoading = false;
 //  bool customdate = false;
   Future<void> generateDelinquentTenantsPdf(
-      List<DailyTransactionReport> delinquentTenantsData) async {
+      List<DailyTransactionReport> delinquentTenantsData) async
+  {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -1087,7 +1088,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   }
 
   List<List<dynamic>> _generateTableData(
-      List<DailyTransactionReport> rentalOwnerReports) {
+      List<DailyTransactionReport> rentalOwnerReports)
+  {
     final List<List<dynamic>> tableData = [];
     double total = 0.0;
 
@@ -1258,7 +1260,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   }
 
   Future<void> generateRentalOwnerReportExcel(
-      List<DailyTransactionReport> rentalOwnerReports) async {
+      List<DailyTransactionReport> rentalOwnerReports) async
+  {
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
@@ -1398,7 +1401,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   }
 
   Future<void> generateRentalOwnerReportCsv(
-      List<DailyTransactionReport> rentalOwnerReports) async {
+      List<DailyTransactionReport> rentalOwnerReports) async
+  {
     // Define headers for CSV
     final List<String> headers = [
       'Property',
