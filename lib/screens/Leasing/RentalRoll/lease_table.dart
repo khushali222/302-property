@@ -496,7 +496,7 @@ class _Lease_tableState extends State<Lease_table> {
       setState(() {
         leaseCount = jsonData['leaseCount'];
         print(leaseCount);
-        leaseCountLimit = jsonData['leaseCountLimit'];
+        //leaseCountLimit = jsonData['leaseCountLimit'];
         print(leaseCountLimit);
       });
     } else {
@@ -702,6 +702,8 @@ class _Lease_tableState extends State<Lease_table> {
                               onChanged: (value) {
                                 setState(() {
                                   searchValue = value;
+                                  if(currentPage != 0)
+                                    currentPage = 0;
                                 });
                               },
                               cursorColor: Colors.blue,

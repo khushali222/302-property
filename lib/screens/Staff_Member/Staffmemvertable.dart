@@ -628,6 +628,8 @@ class _StaffTableState extends State<StaffTable> {
                               onChanged: (value) {
                                 setState(() {
                                   searchValue = value;
+                                  if(currentPage != 0)
+                                    currentPage = 0;
                                 });
                               },
                               cursorColor: Colors.blue,

@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
@@ -22,7 +27,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:pdf/pdf.dart';
-
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 class Rent_collection extends StatefulWidget {
   const Rent_collection({super.key});
 
@@ -205,7 +210,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                       ),
                     ),
                     pw.Text(
-                      'Date: ${fromDate.text} to ${toDate.text}',
+                      '${selectedMonth} - ${selectedYear}',
                       style: pw.TextStyle(
                         fontSize: 14,
                         fontWeight: pw.FontWeight.bold,
@@ -216,36 +221,33 @@ class _Rent_collectionState extends State<Rent_collection> {
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
-                    pw.Text(
-                      profileData?.companyName?.isNotEmpty == true
-                          ? profileData!.companyName!
-                          : 'N/A',
-                      style: pw.TextStyle(
-                          fontSize: 10, fontWeight: pw.FontWeight.bold),
-                    ),
-                    pw.Text(
-                      profileData?.companyAddress?.isNotEmpty == true
-                          ? profileData!.companyAddress!
-                          : 'N/A',
-                      style: pw.TextStyle(
-                          fontSize: 10, fontWeight: pw.FontWeight.bold),
-                    ),
-                    pw.Text(
-                      '${profileData?.companyCity ?? 'N/A'}, '
-                      '${profileData?.companyState ?? 'N/A'}, '
-                      '${profileData?.companyCountry ?? 'N/A'}',
-                      style: pw.TextStyle(
-                          fontSize: 10, fontWeight: pw.FontWeight.bold),
-                    ),
-                    pw.Text(
-                      profileData?.companyPostalCode?.isNotEmpty == true
-                          ? profileData!.companyPostalCode!
-                          : 'N/A',
-                      style: pw.TextStyle(
-                          fontSize: 10, fontWeight: pw.FontWeight.bold),
-                    ),
+                    if (profileData?.companyName?.isNotEmpty == true)
+                      pw.Text(
+                        profileData!.companyName!,
+                        style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                      ),
+                    if (profileData?.companyAddress?.isNotEmpty == true)
+                      pw.Text(
+                        profileData!.companyAddress!,
+                        style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                      ),
+                    if (profileData?.companyCity?.isNotEmpty == true ||
+                        profileData?.companyState?.isNotEmpty == true ||
+                        profileData?.companyCountry?.isNotEmpty == true)
+                      pw.Text(
+                        '${profileData?.companyCity ?? ''}${profileData?.companyCity?.isNotEmpty == true ? ', ' : ''}'
+                            '${profileData?.companyState ?? ''}${profileData?.companyState?.isNotEmpty == true ? ', ' : ''}'
+                            '${profileData?.companyCountry ?? ''}',
+                        style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                      ),
+                    if (profileData?.companyPostalCode?.isNotEmpty == true)
+                      pw.Text(
+                        profileData!.companyPostalCode!,
+                        style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                      ),
                   ],
                 ),
+
               ],
             ),
             pw.SizedBox(height: 20)
@@ -254,11 +256,56 @@ class _Rent_collectionState extends State<Rent_collection> {
             return [
               pw.Table.fromTextArray(
                 headers: [
-                  'Rental Owner',
-                  'Total Charged',
-                  'Total Pending',
-                  'Collected %'
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        'Rental Owner',
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.end,
+                    children: [
+                      pw.Text(
+                        'Total Charged',
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.end,
+                    children: [
+                      pw.Text(
+                        'Total Pending',
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.end,
+                    children: [
+                      pw.Text(
+                        'Collected %',
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
+
                 data: _generateSummaryTableData(delinquentTenantsData),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
@@ -267,6 +314,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 cellStyle: pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 border: null,
+
               ),
             ];
           },
@@ -324,7 +372,18 @@ class _Rent_collectionState extends State<Rent_collection> {
                     pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
                 cellStyle: pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
+                headerAlignment: pw.Alignment.centerLeft,
                 border: null,
+                columnWidths: {
+                  0: pw.FlexColumnWidth(2.0), // Street (Wider)
+                  1: pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
+                  2: pw.FlexColumnWidth(1.5), // Entity (Normal)
+                  3: pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
+                  4: pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
+                  5: pw.FlexColumnWidth(1.0), // Balance (Normal)
+                  6: pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
+                  7: pw.FlexColumnWidth(1.5), // Notes (Normal)
+                },
               ),
             ];
           },
@@ -377,6 +436,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                   'Auto-Pay',
                   'Notes',
                 ],
+                headerAlignment: pw.Alignment.centerLeft,
                 data: _generateDelinquentLeasesTableData(delinquentTenantsData),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
@@ -385,6 +445,16 @@ class _Rent_collectionState extends State<Rent_collection> {
                 cellStyle: pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 border: null,
+                columnWidths: {
+                  0: pw.FlexColumnWidth(2.0), // Street (Wider)
+                  1: pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
+                  2: pw.FlexColumnWidth(1.5), // Entity (Normal)
+                  3: pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
+                  4: pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
+                  5: pw.FlexColumnWidth(1.0), // Balance (Normal)
+                  6: pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
+                  7: pw.FlexColumnWidth(1.5), // Notes (Normal)
+                },
               ),
             ];
           },
@@ -397,27 +467,68 @@ class _Rent_collectionState extends State<Rent_collection> {
     );
   }
 
-  List<List<String>> _generateSummaryTableData(
+  List<List<dynamic>> _generateSummaryTableData(
       List<Rentcollection_model> rentalOwnerReports) {
-    final List<List<String>> tableData = [];
+    final List<List<dynamic>> tableData = [];
+
     for (var owner in rentalOwnerReports) {
       for (var property in owner.summary!) {
         tableData.add([
-          property.rentalOwnerCompany ?? 'N/A',
-          property.totalCharged?.toString() ?? 'N/A',
-          property.totalPending?.toString() ?? 'N/A',
-          property.collectedPercentage?.toString() ?? 'N/A',
+          pw.Align(
+            alignment: pw.Alignment.centerLeft,
+            child: pw.Text(property.rentalOwnerCompany ?? 'N/A'),
+          ),
+          pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text("\$${property.totalCharged?.toStringAsFixed(2)}" ?? 'N/A'),
+          ),
+          pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text("\$${property.totalPending?.toStringAsFixed(2)}" ?? 'N/A'),
+          ),
+          pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text(property.collectedPercentage?.toString() ?? 'N/A'),
+          ),
         ]);
       }
+
+      // Add Overall row with bold text
       tableData.add([
-        'Overall',
-        owner.totalSummary?.totalCharged?.toString() ?? 'N/A',
-        owner.totalSummary?.totalPending?.toString() ?? 'N/A',
-        owner.totalSummary?.averageCollectedPercentage?.toString() ?? 'N/A',
+        pw.Align(
+          alignment: pw.Alignment.centerLeft,
+          child: pw.Text(
+            'Overall',
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+          ),
+        ),
+        pw.Align(
+          alignment: pw.Alignment.centerRight,
+          child: pw.Text(
+           "\$${ owner.totalSummary?.totalCharged?.toStringAsFixed(2)}" ?? 'N/A',
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+          ),
+        ),
+        pw.Align(
+          alignment: pw.Alignment.centerRight,
+          child: pw.Text(
+           "\$${ owner.totalSummary?.totalPending?.toStringAsFixed(2)}" ?? 'N/A',
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+          ),
+        ),
+        pw.Align(
+          alignment: pw.Alignment.centerRight,
+          child: pw.Text(
+            owner.totalSummary?.averageCollectedPercentage?.toString() ?? 'N/A',
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+          ),
+        ),
       ]);
     }
+
     return tableData;
   }
+
 
   List<List<String>> _generateDetailsTableData(
       List<Rentcollection_model> rentalOwnerReports) {
@@ -461,22 +572,25 @@ class _Rent_collectionState extends State<Rent_collection> {
               '${detail.rentalData?.rentalPostcode ?? 'N/A'}',
           detail.rentalOwnerData?.rentalOwnerCompanyName ?? 'N/A',
           detail.leaseData?.startDate ?? 'N/A',
-          detail.leaseData?.leaseAmount?.toString() ?? 'N/A',
-          detail.leaseData?.balance?.toString() ?? 'N/A',
+          "\$${detail.leaseData?.leaseAmount?.toString()}" ?? 'N/A',
+          "\$${detail.leaseData?.balance?.toString()}" ?? 'N/A',
           autoPay,
           notes,
         ]);
       }
+
+
     }
+
     return tableData;
   }
 
-  List<List<String>> _generateDelinquentLeasesTableData(
+  List<List<dynamic>> _generateDelinquentLeasesTableData(
       List<Rentcollection_model> rentalOwnerReports) {
-    final List<List<String>> tableData = [];
+    final List<List<dynamic>> tableData = [];
 
     for (var owner in rentalOwnerReports) {
-      final List<List<String>> ownerTableData = [];
+      final List<List<dynamic>> ownerTableData = [];
 
       for (var detail in owner.deadBeats!) {
         final balance = detail.leaseData?.balance ?? 0;
@@ -525,21 +639,366 @@ class _Rent_collectionState extends State<Rent_collection> {
 
       if (ownerTableData.isNotEmpty) {
         ownerTableData.add([
-          'Overall',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '${owner.deadBeatsSummary?.totalBalance ?? 'N/A'}',
+          pw.Text(
+            'Overall',
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+          ),
+          pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          pw.Text(
+            '\$${owner.deadBeatsSummary?.totalBalance?.toStringAsFixed(2) ?? 'N/A'}',
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+          ),
+          pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
         ]);
       }
+
 
       tableData.addAll(ownerTableData); // Add owner's data to full table
     }
 
     return tableData;
+  }
+
+
+
+  List<List<dynamic>> _generateSummaryTableDataExcel(
+      List<Rentcollection_model> rentalOwnerReports) {
+    final List<List<dynamic>> tableData = [];
+
+    for (var owner in rentalOwnerReports) {
+      for (var property in owner.summary!) {
+        tableData.add([
+          property.rentalOwnerCompany ?? 'N/A',
+          "\$${property.totalCharged?.toStringAsFixed(2)}" ?? 'N/A',
+          "\$${property.totalPending?.toStringAsFixed(2)}" ?? 'N/A',
+          property.collectedPercentage?.toString() ?? 'N/A',
+        ]);
+      }
+
+      // Add Overall row
+      tableData.add([
+        'Overall',
+        "\$${owner.totalSummary?.totalCharged?.toStringAsFixed(2)}" ?? 'N/A',
+        "\$${owner.totalSummary?.totalPending?.toStringAsFixed(2)}" ?? 'N/A',
+        owner.totalSummary?.averageCollectedPercentage?.toString() ?? 'N/A',
+      ]);
+    }
+
+    return tableData;
+  }
+  List<List<dynamic>> _generateDetailsTableDataExcel(
+      List<Rentcollection_model> rentalOwnerReports) {
+    final List<List<dynamic>> tableData = [];
+
+    for (var owner in rentalOwnerReports) {
+      for (var detail in owner.leases!) {
+        // Handle Auto-Pay mapping
+        String autoPay;
+        if (detail.recurringCards != null && detail.recurringCards!.isNotEmpty) {
+          autoPay = detail.recurringCards!.map((card) {
+            final tenantName = card.tenantName ?? 'N/A';
+            final date = card.date ?? 'N/A';
+            return '$tenantName - $date';
+          }).join('\n');
+        } else {
+          autoPay = 'N/A';
+        }
+
+        // Handle Notes mapping
+        String notes;
+        if (detail.notes != null && detail.notes!.isNotEmpty) {
+          notes = detail.notes!
+              .map((note) {
+            final date = note.date ?? 'N/A';
+            final content = note.content ?? '';
+            return '$date: $content';
+          })
+              .where((content) => content.isNotEmpty)
+              .join('\n');
+        } else {
+          notes = 'N/A';
+        }
+
+        // Add the row
+        tableData.add([
+          detail.rentalData?.rentalAdress ?? 'N/A',
+          '${detail.rentalData?.rentalCity ?? 'N/A'}, '
+              '${detail.rentalData?.rentalState ?? 'N/A'}, '
+              '${detail.rentalData?.rentalPostcode ?? 'N/A'}',
+          detail.rentalOwnerData?.rentalOwnerCompanyName ?? 'N/A',
+          detail.leaseData?.startDate ?? 'N/A',
+          "\$${detail.leaseData?.leaseAmount?.toString()}" ?? 'N/A',
+          "\$${detail.leaseData?.balance?.toString()}" ?? 'N/A',
+          autoPay,
+          notes,
+        ]);
+      }
+    }
+
+    return tableData;
+  }
+  List<List<dynamic>> _generateDelinquentLeasesTableDataExcel(
+      List<Rentcollection_model> rentalOwnerReports) {
+    final List<List<dynamic>> tableData = [];
+
+    for (var owner in rentalOwnerReports) {
+      final List<List<dynamic>> ownerTableData = [];
+
+      for (var detail in owner.deadBeats!) {
+        final balance = detail.leaseData?.balance ?? 0;
+
+        if (balance > 0) {
+          String autoPay;
+          if (detail.recurringCards != null && detail.recurringCards!.isNotEmpty) {
+            autoPay = detail.recurringCards!.map((card) {
+              final tenantName = card.tenantName ?? 'N/A';
+              final date = card.date ?? 'N/A';
+              return '$date : $tenantName';
+            }).join('\n');
+          } else {
+            autoPay = 'N/A';
+          }
+
+          String notes;
+          if (detail.notes != null && detail.notes!.isNotEmpty) {
+            notes = detail.notes!
+                .map((note) {
+              final date = note.date ?? 'N/A';
+              final content = note.content ?? '';
+              return '$date: $content';
+            })
+                .where((content) => content.isNotEmpty)
+                .join('\n');
+          } else {
+            notes = 'N/A';
+          }
+
+          ownerTableData.add([
+            detail.rentalData?.rentalAdress ?? 'N/A',
+            '${detail.rentalData?.rentalCity ?? 'N/A'}, '
+                '${detail.rentalData?.rentalState ?? 'N/A'}, '
+                '${detail.rentalData?.rentalPostcode ?? 'N/A'}',
+            detail.rentalOwnerData?.rentalOwnerCompanyName ?? 'N/A',
+            detail.leaseData?.startDate ?? 'N/A',
+            '\$${detail.leaseData?.leaseAmount?.toStringAsFixed(2) ?? '0.00'}',
+            '\$${balance.toStringAsFixed(2)}',
+            autoPay,
+            notes,
+          ]);
+        }
+      }
+
+      if (ownerTableData.isNotEmpty) {
+        ownerTableData.add([
+          'Overall',
+          '',
+          '',
+          '',
+          '', '',
+          '',
+          '\$${owner.deadBeatsSummary?.totalBalance?.toStringAsFixed(2) ?? 'N/A'}',
+          '',
+          '',
+        ]);
+      }
+
+      tableData.addAll(ownerTableData);
+    }
+
+    return tableData;
+  }
+
+  Future<void> generateDelinquentTenantsExcel(List<Rentcollection_model> delinquentTenantsData) async {
+    setState(() {
+      istenantDataLoading = true;
+    });
+
+    // Create a new Excel document
+    final syncXlsx.Workbook workbook = syncXlsx.Workbook();
+    final syncXlsx.Worksheet mainSheet = workbook.worksheets[0];
+    mainSheet.name = 'Delinquent Tenants Report';
+
+    int rowIndex = 1;
+
+    // Add SUMMARY TABLE
+    mainSheet.getRangeByName('A$rowIndex').setText('Summary');
+    mainSheet.getRangeByName('A$rowIndex').cellStyle.bold = true;
+    mainSheet.getRangeByName('A$rowIndex').cellStyle.fontSize = 18;
+    rowIndex += 2;
+
+    mainSheet.getRangeByName('A$rowIndex').setText('Rental Owner');
+    mainSheet.getRangeByName('B$rowIndex').setText('Total Charged');
+    mainSheet.getRangeByName('C$rowIndex').setText('Total Pending');
+    mainSheet.getRangeByName('D$rowIndex').setText('Collected %');
+
+    final syncXlsx.Range summaryHeaderRange = mainSheet.getRangeByName('A$rowIndex:D$rowIndex');
+    summaryHeaderRange.cellStyle.bold = true;
+    summaryHeaderRange.cellStyle.fontColor = '#FFFFFF';
+    summaryHeaderRange.cellStyle.backColor = '#5A86D5';
+    rowIndex++;
+
+    final summaryTableData = _generateSummaryTableDataExcel(delinquentTenantsData);
+    for (int i = 0; i < summaryTableData.length; i++) {
+      for (int j = 0; j < summaryTableData[i].length; j++) {
+        mainSheet.getRangeByIndex(rowIndex, 1 + j).setText(summaryTableData[i][j]);
+      }
+      rowIndex++;
+    }
+
+    rowIndex += 2;
+
+    // Add DETAILS TABLE
+    mainSheet.getRangeByName('A$rowIndex').setText('Details');
+    mainSheet.getRangeByName('A$rowIndex').cellStyle.bold = true;
+    mainSheet.getRangeByName('A$rowIndex').cellStyle.fontSize = 18;
+    rowIndex += 2;
+
+    mainSheet.getRangeByName('A$rowIndex').setText('Street');
+    mainSheet.getRangeByName('B$rowIndex').setText('City, State, Zip');
+    mainSheet.getRangeByName('C$rowIndex').setText('Entity');
+    mainSheet.getRangeByName('D$rowIndex').setText('Move-in Date');
+    mainSheet.getRangeByName('E$rowIndex').setText('Monthly Rent');
+    mainSheet.getRangeByName('F$rowIndex').setText('Balance');
+    mainSheet.getRangeByName('G$rowIndex').setText('Auto-Pay');
+    mainSheet.getRangeByName('H$rowIndex').setText('Notes');
+
+    final syncXlsx.Range detailsHeaderRange = mainSheet.getRangeByName('A$rowIndex:H$rowIndex');
+    detailsHeaderRange.cellStyle.bold = true;
+    detailsHeaderRange.cellStyle.fontColor = '#FFFFFF';
+    detailsHeaderRange.cellStyle.backColor = '#5A86D5';
+    rowIndex++;
+
+    final detailsTableData = _generateDetailsTableDataExcel(delinquentTenantsData);
+    for (int i = 0; i < detailsTableData.length; i++) {
+      for (int j = 0; j < detailsTableData[i].length; j++) {
+        mainSheet.getRangeByIndex(rowIndex, 1 + j).setText(detailsTableData[i][j]);
+      }
+      rowIndex++;
+    }
+
+    rowIndex += 2;
+
+    // Add DELINQUENT LEASES TABLE
+    mainSheet.getRangeByName('A$rowIndex').setText('Delinquent Leases');
+    mainSheet.getRangeByName('A$rowIndex').cellStyle.bold = true;
+    mainSheet.getRangeByName('A$rowIndex').cellStyle.fontSize = 18;
+    rowIndex += 2;
+
+    mainSheet.getRangeByName('A$rowIndex').setText('Street');
+    mainSheet.getRangeByName('B$rowIndex').setText('City, State, Zip');
+    mainSheet.getRangeByName('C$rowIndex').setText('Entity');
+    mainSheet.getRangeByName('D$rowIndex').setText('Move-in Date');
+    mainSheet.getRangeByName('E$rowIndex').setText('Monthly Rent');
+    mainSheet.getRangeByName('F$rowIndex').setText('Balance');
+    mainSheet.getRangeByName('G$rowIndex').setText('Auto-Pay');
+    mainSheet.getRangeByName('H$rowIndex').setText('Notes');
+
+    final syncXlsx.Range delinquentHeaderRange = mainSheet.getRangeByName('A$rowIndex:H$rowIndex');
+    delinquentHeaderRange.cellStyle.bold = true;
+    delinquentHeaderRange.cellStyle.fontColor = '#FFFFFF';
+    delinquentHeaderRange.cellStyle.backColor = '#5A86D5';
+    rowIndex++;
+
+    final delinquentLeasesTableData = _generateDelinquentLeasesTableDataExcel(delinquentTenantsData);
+    for (int i = 0; i < delinquentLeasesTableData.length; i++) {
+      for (int j = 0; j < delinquentLeasesTableData[i].length; j++) {
+        mainSheet.getRangeByIndex(rowIndex, 1 + j).setText(delinquentLeasesTableData[i][j]);
+      }
+      rowIndex++;
+    }
+
+    setState(() {
+      istenantDataLoading = false;
+    });
+
+    // Save and launch the Excel file
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
+
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'Rent_collection_report_$formattedDate.xlsx';
+
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Pictures');
+
+    final path = '${directory.path}/$fileName';
+
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+    Share.shareXFiles([XFile(path)]);
+    Fluttertoast.showToast(
+      msg: 'Excel file saved to $path',
+    );
+  }
+  Future<void> generateDelinquentTenantsCSV(List<Rentcollection_model> delinquentTenantsData) async {
+    setState(() {
+      istenantDataLoading = true;
+    });
+
+    // Prepare the CSV content
+    final StringBuffer csvBuffer = StringBuffer();
+
+    // Add SUMMARY SECTION
+    csvBuffer.writeln('Summary');
+    csvBuffer.writeln('Rental Owner,Total Charged,Total Pending,Collected %');
+    final summaryTableData = _generateSummaryTableDataExcel(delinquentTenantsData);
+    for (var row in summaryTableData) {
+      csvBuffer.writeln(row.join(','));
+    }
+    csvBuffer.writeln();
+
+    // Add DETAILS SECTION
+    csvBuffer.writeln('Details');
+    csvBuffer.writeln('Street,City, State, Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
+    final detailsTableData = _generateDetailsTableDataExcel(delinquentTenantsData);
+    for (var row in detailsTableData) {
+      csvBuffer.writeln(row.join(','));
+    }
+    csvBuffer.writeln();
+
+    // Add DELINQUENT LEASES SECTION
+    csvBuffer.writeln('Delinquent Leases');
+    csvBuffer.writeln('Street,City, State, Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
+    final delinquentLeasesTableData = _generateDelinquentLeasesTableDataExcel(delinquentTenantsData);
+    for (var row in delinquentLeasesTableData) {
+      csvBuffer.writeln(row.join(','));
+    }
+
+    // Save the CSV file
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'Rent_collection_report_$formattedDate.csv';
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Pictures');
+
+    final path = '${directory.path}/$fileName';
+
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+
+    final File file = File(path);
+    await file.writeAsString(csvBuffer.toString(), flush: true);
+
+    Share.shareXFiles([XFile(path)]);
+    Fluttertoast.showToast(
+      msg: 'CSV file saved to $path',
+    );
+
+    setState(() {
+      istenantDataLoading = false;
+    });
   }
 
   // Future<void> generateRentalOwnerReportExcel(
@@ -1106,7 +1565,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 },
                 child: Row(
                   children: [
-                    Text("     Entity", style: TextStyle(color: Colors.white)),
+                    Text("        Entity", style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -1190,8 +1649,316 @@ class _Rent_collectionState extends State<Rent_collection> {
                       builder: (context, snapshot) {
                         if (isLoading) {
                           return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: ColabShimmerLoadingWidget(),
+                            padding: const EdgeInsets.all(0.0),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10,),
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+
+                                            DropdownButtonHideUnderline(
+                                              child: Material(
+                                                elevation: 0,
+                                                borderRadius:
+                                                BorderRadius.circular(8),
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  hint: const Text(
+                                                    'Select Month',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Color(0xFF8A95A8),
+                                                    ),
+                                                    overflow:
+                                                    TextOverflow.ellipsis,
+                                                  ),
+                                                  items:
+                                                  months.map((String month) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: month,
+                                                      child: Text(
+                                                        month,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          // fontWeight:
+                                                          //     FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                        overflow:
+                                                        TextOverflow.ellipsis,
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  value: selectedMonth.isNotEmpty
+                                                      ? selectedMonth
+                                                      : null,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      selectedMonth = value!;
+                                                    });
+                                                  },
+                                                  buttonStyleData:
+                                                  ButtonStyleData(
+                                                    height: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 45
+                                                        : 50,
+                                                    width: double.infinity,
+                                                    padding:
+                                                    const EdgeInsets.only(
+                                                        left: 14, right: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          8),
+                                                      border: Border.all(
+                                                        color: const Color(
+                                                            0xFF8A95A8),
+                                                      ),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 0,
+                                                  ),
+                                                  dropdownStyleData:
+                                                  DropdownStyleData(
+                                                    maxHeight: 250,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          14),
+                                                    ),
+                                                    offset: const Offset(0, 0),
+                                                    scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                      radius:
+                                                      const Radius.circular(
+                                                          20),
+                                                      thickness:
+                                                      MaterialStateProperty
+                                                          .all(6),
+                                                      thumbVisibility:
+                                                      MaterialStateProperty
+                                                          .all(true),
+                                                    ),
+                                                  ),
+                                                  menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                    height: 40,
+                                                    padding: EdgeInsets.only(
+                                                        left: 14, right: 14),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+
+                                            DropdownButtonHideUnderline(
+                                              child: Material(
+                                                elevation: 0,
+                                                borderRadius:
+                                                BorderRadius.circular(8),
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  hint: const Text(
+                                                    'Select Year',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Color(0xFF8A95A8),
+                                                    ),
+                                                    overflow:
+                                                    TextOverflow.ellipsis,
+                                                  ),
+                                                  items: years.map((String year) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: year,
+                                                      child: Text(
+                                                        year,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          // fontWeight:
+                                                          //     FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                        overflow:
+                                                        TextOverflow.ellipsis,
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  value: selectedYear.isNotEmpty
+                                                      ? selectedYear
+                                                      : null,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      selectedYear = value!;
+                                                    });
+                                                  },
+                                                  buttonStyleData:
+                                                  ButtonStyleData(
+                                                    height: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 45
+                                                        : 50,
+                                                    width: double.infinity,
+                                                    padding:
+                                                    const EdgeInsets.only(
+                                                        left: 14, right: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          8),
+                                                      border: Border.all(
+                                                        color: const Color(
+                                                            0xFF8A95A8),
+                                                      ),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 0,
+                                                  ),
+                                                  dropdownStyleData:
+                                                  DropdownStyleData(
+                                                    maxHeight: 250,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          14),
+                                                    ),
+                                                    offset: const Offset(0, 0),
+                                                    scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                      radius:
+                                                      const Radius.circular(
+                                                          20),
+                                                      thickness:
+                                                      MaterialStateProperty
+                                                          .all(6),
+                                                      thumbVisibility:
+                                                      MaterialStateProperty
+                                                          .all(true),
+                                                    ),
+                                                  ),
+                                                  menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                    height: 40,
+                                                    padding: EdgeInsets.only(
+                                                        left: 14, right: 14),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Container(
+                                        height: 45,
+                                        width: 45,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Color.fromRGBO(206, 212, 218, 1)),
+                                          borderRadius:
+                                          BorderRadius.circular(0),
+                                          color: Colors.white,
+                                        ),
+                                        child: IconButton(
+                                          icon: FaIcon(
+                                              FontAwesomeIcons.circlePlay,
+                                              size: 20),
+                                          onPressed: () {
+                                            setState(() {
+                                              isLoading = true;
+                                              int monthNumber = months
+                                                  .indexOf(selectedMonth) +
+                                                  1;
+                                              _futureRentcollection =
+                                                  fetchDelinquentTenantsData(
+                                                    monthNumber.toString(),
+                                                    selectedYear,
+                                                  );
+                                              // isLoading = false;
+                                            });
+                                            print("Run Report");
+                                          },
+                                          tooltip: "Run Report",
+                                        ),
+                                      ),
+
+
+                                      // Download Button
+                                      Container(
+                                        height: 45,
+                                        width:65,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Color.fromRGBO(206, 212, 218, 1)),
+                                          borderRadius:
+                                          BorderRadius.circular(0),
+                                          color: Colors.white,
+                                        ),
+                                        child: PopupMenuButton<String>(
+                                          offset: Offset(0, 45),
+                                          onSelected: handleDownload,
+                                          icon: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            children: [
+                                              FaIcon(FontAwesomeIcons.download,
+                                                  size: 20),
+                                              SizedBox(width: 0),
+                                              Icon(Icons.arrow_drop_down),
+                                            ],
+                                          ),
+                                          tooltip: "Download",
+                                          itemBuilder: (BuildContext context) {
+                                            return downloadOptions
+                                                .map((String option) {
+                                              return PopupMenuItem<String>(
+                                                value: option,
+                                                onTap: () async {
+                                                  if (option == "PDF")
+                                                    generateDelinquentTenantsPdf(
+                                                        [snapshot.data!]);
+                                                  // if(option == "Excel")
+                                                  //   generateRentersInsuranceExcel(snapshot.data!);
+                                                  // if(option == "CSV")
+                                                  //   generateRentersInsuranceCSV(snapshot.data!);
+                                                },
+                                                child:
+                                                Text("Download as $option"),
+                                              );
+                                            }).toList();
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 10,),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: ColabShimmerLoadingWidget(),
+                                ),
+                              ],
+                            ),
                           );
                         } else if (!snapshot.hasData ||
                             snapshot.data!.summary!.isEmpty) {
@@ -1234,6 +2001,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
+                              SizedBox(height: 10,),
                               // Dropdown Row
                               Padding(
                                 padding:
@@ -1245,18 +2013,10 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            'Month',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: blueColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
+
                                           DropdownButtonHideUnderline(
                                             child: Material(
-                                              elevation: 3,
+                                              elevation: 0,
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               child: DropdownButton2<String>(
@@ -1354,24 +2114,16 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(width: 16),
+                                    const SizedBox(width: 10),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            'Year',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: blueColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
+
                                           DropdownButtonHideUnderline(
                                             child: Material(
-                                              elevation: 3,
+                                              elevation: 0,
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               child: DropdownButton2<String>(
@@ -1468,101 +2220,91 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-
-                              SizedBox(height: 12),
-                              // Button Row
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  children: [
-                                    // Run Report Button
-                                    Expanded(
-                                      child: Container(
-                                        // height: 45,
-                                        // width: 45,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: grey),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          color: Colors.white,
-                                        ),
-                                        child: IconButton(
-                                          icon: FaIcon(
-                                              FontAwesomeIcons.circlePlay,
-                                              size: 20),
-                                          onPressed: () {
-                                            setState(() {
-                                              int monthNumber = months
-                                                      .indexOf(selectedMonth) +
-                                                  1;
-                                              _futureRentcollection =
-                                                  fetchDelinquentTenantsData(
-                                                monthNumber.toString(),
-                                                selectedYear,
-                                              );
-                                            });
-                                            print("Run Report");
-                                          },
-                                          tooltip: "Run Report",
-                                        ),
+                                    const SizedBox(width: 10),
+                                    Container(
+                                      height: 45,
+                                      width: 45,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Color.fromRGBO(206, 212, 218, 1)),
+                                        borderRadius:
+                                        BorderRadius.circular(0),
+                                        color: Colors.white,
+                                      ),
+                                      child: IconButton(
+                                        icon: FaIcon(
+                                            FontAwesomeIcons.circlePlay,
+                                            size: 20),
+                                        onPressed: () {
+                                          setState(() {
+                                            isLoading = true;
+                                            int monthNumber = months
+                                                .indexOf(selectedMonth) +
+                                                1;
+                                            _futureRentcollection =
+                                                fetchDelinquentTenantsData(
+                                                  monthNumber.toString(),
+                                                  selectedYear,
+                                                );
+                                           // isLoading = false;
+                                          });
+                                          print("Run Report");
+                                        },
+                                        tooltip: "Run Report",
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
+
 
                                     // Download Button
-                                    Expanded(
-                                      child: Container(
-                                        // height: 45,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: grey),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          color: Colors.white,
+                                    Container(
+                                       height: 45,
+                                      width:65,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Color.fromRGBO(206, 212, 218, 1)),
+                                        borderRadius:
+                                        BorderRadius.circular(0),
+                                        color: Colors.white,
+                                      ),
+                                      child: PopupMenuButton<String>(
+                                        offset: Offset(0, 45),
+                                        onSelected: handleDownload,
+                                        icon: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          children: [
+                                            FaIcon(FontAwesomeIcons.download,
+                                                size: 20),
+                                            SizedBox(width: 0),
+                                            Icon(Icons.arrow_drop_down),
+                                          ],
                                         ),
-                                        child: PopupMenuButton<String>(
-                                          offset: Offset(0, 45),
-                                          onSelected: handleDownload,
-                                          icon: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              FaIcon(FontAwesomeIcons.download,
-                                                  size: 18),
-                                              SizedBox(width: 5),
-                                              Icon(Icons.arrow_drop_down),
-                                            ],
-                                          ),
-                                          tooltip: "Download",
-                                          itemBuilder: (BuildContext context) {
-                                            return downloadOptions
-                                                .map((String option) {
-                                              return PopupMenuItem<String>(
-                                                value: option,
-                                                onTap: () async {
-                                                  if (option == "PDF")
-                                                    generateDelinquentTenantsPdf(
-                                                        [snapshot.data!]);
-                                                  // if(option == "Excel")
-                                                  //   generateRentersInsuranceExcel(snapshot.data!);
-                                                  // if(option == "CSV")
-                                                  //   generateRentersInsuranceCSV(snapshot.data!);
-                                                },
-                                                child:
-                                                    Text("Download as $option"),
-                                              );
-                                            }).toList();
-                                          },
-                                        ),
+                                        tooltip: "Download",
+                                        itemBuilder: (BuildContext context) {
+                                          return downloadOptions
+                                              .map((String option) {
+                                            return PopupMenuItem<String>(
+                                              value: option,
+                                              onTap: () async {
+                                                if (option == "PDF")
+                                                  generateDelinquentTenantsPdf(
+                                                      [snapshot.data!]);
+                                                if(option == "Excel")
+                                                  generateDelinquentTenantsExcel([snapshot.data!]);
+                                                if(option == "CSV")
+                                                  generateDelinquentTenantsCSV([snapshot.data!]);
+                                              },
+                                              child:
+                                              Text("Download as $option"),
+                                            );
+                                          }).toList();
+                                        },
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 16),
+
+
+                              SizedBox(height: 10),
                               // Tab Row
                               Padding(
                                 padding:
@@ -1583,7 +2325,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                             // const SizedBox(height: 10),
                               // Conditional Screens
                               if (_selectedIndex == 0)
                                 SummeryScreen(data, totaldata!),
@@ -1635,7 +2377,8 @@ class _Rent_collectionState extends State<Rent_collection> {
           });
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          height: 50,
+          padding: const EdgeInsets.symmetric(vertical: 0),
           decoration: BoxDecoration(
             color: isSelected ? blueColor : Colors.transparent,
             borderRadius: BorderRadius.circular(5),
@@ -1801,16 +2544,19 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   ),
                                   SizedBox(width: 8),
                                   Expanded(
-                                    child: Text(
-                                      ' \$${item.totalPending ?? '-'}',
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        ' \$${item.totalPending!.toStringAsFixed(2) ?? '-'}',
+                                        style: TextStyle(
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  SizedBox(width: 25),
                                 ],
                               ),
                             ),
@@ -1953,16 +2699,19 @@ class _Rent_collectionState extends State<Rent_collection> {
                                 ),
                                 SizedBox(width: 8),
                                 Expanded(
-                                  child: Text(
-                                    '\$${data.totalSummary?.totalPending ?? '-'}',
-                                    style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      '\$${data.totalSummary?.totalPending!.toStringAsFixed(2) ?? '-'}',
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                SizedBox(width: 25),
                               ],
                             ),
                           ),

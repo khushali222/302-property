@@ -583,6 +583,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                         onChanged: (value) {
                           setState(() {
                             searchValue = value;
+                            if(currentPage != 0)
+                              currentPage = 0;
                           });
                         },
                         cursorColor: Colors.blue,

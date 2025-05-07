@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -523,35 +527,50 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                     ),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 24,
-                      ),
-                      Container(
-                          height: 40,
-                          width: 100,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0)),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: blueColor,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0))),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                'Back',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold),
-                              ))),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                         '${rentersData.insurancePolicyDocument}'
+                              ,
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: blueColor),
+                        ),
+                        Row(
+                          children: [
+
+                            Container(
+                                height: 40,
+                               // width: 100,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0)),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: blueColor,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0))),
+                                    onPressed: () {
+                                      downloadFile("${image_url}${rentersData.insurancePolicyDocument}");
+                                    },
+                                    child: Text(
+                                      'Download Insurance Document',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold),
+                                    ))),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               );
@@ -560,5 +579,30 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
         ),
       ),
     );
+  }
+  Future<void> downloadFile(String fileUrl) async {
+    try {
+      Dio dio = Dio();
+
+      // Extract the file name from the URL
+      String fileName = path.basename(fileUrl);
+
+      // Get the download directory
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String savePath = path.join(appDocDir.path, fileName);
+
+      // Download the file
+      Response response = await dio.download(
+        fileUrl,
+        savePath,
+        onReceiveProgress: (received, total) {
+
+        },
+      );
+      Fluttertoast.showToast(msg: "Document downloaded successfully");
+      print('File downloaded to: $savePath');
+    } catch (e) {
+      print('Download failed: $e');
+    }
   }
 }

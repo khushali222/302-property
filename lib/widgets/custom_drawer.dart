@@ -176,9 +176,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           color: blueColor,
                         ),
                   FaIcon(
-                    FontAwesomeIcons.wallet,
+                    FontAwesomeIcons.clock,
                     size: 20,
-                    color: widget.currentpage == "Upcoming renewal"
+                    color: widget.currentpage == "Scheduled Payment"
                         ? Colors.white
                         : blueColor,
                   ), // Icon for RentalOwner

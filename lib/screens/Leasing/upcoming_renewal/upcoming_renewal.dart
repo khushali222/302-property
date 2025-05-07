@@ -670,6 +670,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                     onChanged: (value) {
                                       setState(() {
                                         searchvalue = value;
+                                        if(currentPage != 0)
+                                          currentPage = 0;
                                       });
                                     },
                                     cursorColor: blueColor,

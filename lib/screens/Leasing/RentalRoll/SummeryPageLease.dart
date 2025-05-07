@@ -140,7 +140,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     "Financial",
     "Tenant",
     "Communication",
-    "Renters Insurance",
+    "Renter's Insurance",
     "Documents",
     "Notes"
     //"Documents", // You can add more tabs here

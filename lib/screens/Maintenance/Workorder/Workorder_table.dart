@@ -731,6 +731,8 @@ class _Workorder_tableState extends State<Workorder_table> {
                                     onChanged: (value) {
                                       setState(() {
                                         searchvalue = value;
+                                        if(currentPage != 0)
+                                          currentPage = 0;
                                       });
                                     },
                                     cursorColor: blueColor,

@@ -343,6 +343,8 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                     onChanged: (value) {
                                       setState(() {
                                         searchvalue = value;
+                                        if(currentPage != 0)
+                                          currentPage = 0;
                                       });
                                     },
                                     cursorColor: blueColor,

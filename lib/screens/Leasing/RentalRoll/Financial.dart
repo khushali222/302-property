@@ -2360,6 +2360,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   .width *
                                                               .08,
                                                     ),
+                                                    if(data.balance!>=0)
                                                     Expanded(
                                                       child: Text(
                                                         ' \$${data.balance!.abs().toStringAsFixed(2)}',
@@ -2371,6 +2372,18 @@ class _FinancialTableState extends State<FinancialTable> {
                                                         ),
                                                       ),
                                                     ),
+                                                    if(data.balance!<0)
+                                                      Expanded(
+                                                        child: Text(
+                                                          ' -\$${data.balance!.abs().toStringAsFixed(2)}',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
                                                     SizedBox(
                                                       width:
                                                           MediaQuery.of(context)

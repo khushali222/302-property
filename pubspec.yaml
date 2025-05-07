@@ -103,6 +103,7 @@ dependencies:
   super_tooltip:
   flutter_html:
   excel: ^2.0.1
+  dio:
 
 
 
