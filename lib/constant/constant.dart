@@ -10,14 +10,15 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
-String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
+String image_url =
+    "https://staging.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-//String Api_url = "http://192.168.1.7:4000";
+String Api_url = "http://192.168.1.17:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
-String Api_url = "https://staging.cloudrentalmanager.com";
+//String Api_url = "https://staging.cloudrentalmanager.com";
 
 //String image_upload_url = "https://saas.cloudrentalmanager.com";
 String image_upload_url = "https://staging.cloudrentalmanager.com";
@@ -400,7 +401,7 @@ String? ValidateExpirationDate(String expirationDate) {
 class VideoItem extends StatefulWidget {
   String url;
   final void Function()? onTap;
-   VideoItem({super.key, required this.url, this.onTap});
+  VideoItem({super.key, required this.url, this.onTap});
 
   @override
   State<VideoItem> createState() => _VideoItemState();

@@ -1152,7 +1152,6 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           },
         ),
       );
-
       await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
   }
 
