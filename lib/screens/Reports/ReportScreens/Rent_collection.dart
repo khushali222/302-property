@@ -779,8 +779,8 @@ class _Rent_collectionState extends State<Rent_collection> {
 
           ownerTableData.add([
             detail.rentalData?.rentalAdress ?? 'N/A',
-            '${detail.rentalData?.rentalCity ?? 'N/A'}, '
-                '${detail.rentalData?.rentalState ?? 'N/A'}, '
+            '${detail.rentalData?.rentalCity ?? 'N/A'} '
+                '${detail.rentalData?.rentalState ?? 'N/A'}'
                 '${detail.rentalData?.rentalPostcode ?? 'N/A'}',
             detail.rentalOwnerData?.rentalOwnerCompanyName ?? 'N/A',
             detail.leaseData?.startDate ?? 'N/A',
@@ -798,7 +798,7 @@ class _Rent_collectionState extends State<Rent_collection> {
           '',
           '',
           '',
-          '', '',
+
           '',
           '\$${owner.deadBeatsSummary?.totalBalance?.toStringAsFixed(2) ?? 'N/A'}',
           '',
@@ -959,7 +959,7 @@ class _Rent_collectionState extends State<Rent_collection> {
 
     // Add DETAILS SECTION
     csvBuffer.writeln('Details');
-    csvBuffer.writeln('Street,City, State, Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
+    csvBuffer.writeln('Street,City State Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
     final detailsTableData = _generateDetailsTableDataExcel(delinquentTenantsData);
     for (var row in detailsTableData) {
       csvBuffer.writeln(row.join(','));
@@ -968,7 +968,7 @@ class _Rent_collectionState extends State<Rent_collection> {
 
     // Add DELINQUENT LEASES SECTION
     csvBuffer.writeln('Delinquent Leases');
-    csvBuffer.writeln('Street,City, State, Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
+    csvBuffer.writeln('Street,City State Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
     final delinquentLeasesTableData = _generateDelinquentLeasesTableDataExcel(delinquentTenantsData);
     for (var row in delinquentLeasesTableData) {
       csvBuffer.writeln(row.join(','));

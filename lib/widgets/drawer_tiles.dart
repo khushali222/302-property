@@ -14,6 +14,7 @@ import '../screens/Leasing/Applicants/Applicants_table.dart';
 
 import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
+import '../screens/Leasing/scheduled_charges/ScheduledCharge.dart';
 import '../screens/Maintenance/Vendor/Vendor_table.dart';
 import '../screens/Maintenance/Workorder/Add_workorder.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
@@ -88,7 +89,8 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
     "Upcoming renewal":(context)=> Upcomingrenewal(),
-    "Scheduled Payment":(context)=> Scheduled_Payments_table()
+    "Scheduled Payment":(context)=> Scheduled_Payments_table(),
+    "Scheduled Charges":(context)=> ScheduledChargeTable(),
   // "Work Order": (context) => Cardpayment(leaseId: '',),
 
   };

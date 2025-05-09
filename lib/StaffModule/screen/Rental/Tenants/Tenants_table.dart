@@ -802,6 +802,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                     onChanged: (value) {
                                       setState(() {
                                         searchvalue = value;
+                                        if (currentPage != 0) currentPage = 0;
                                       });
                                     },
                                     cursorColor: blueColor,

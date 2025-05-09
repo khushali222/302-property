@@ -480,7 +480,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
   void _updateNextDueDate() {
     if (_startDate != null && _selectedRent != null) {
       DateTime nextDueDate = calculateNextDueDate(_startDate!, _selectedRent!);
-      String formattedNextDueDate = "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
+      String formattedNextDueDate =
+          "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
 
       setState(() {
         rentNextDueDate.text = formattedNextDueDate;
@@ -494,7 +495,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
   //     DateTime currentDate = DateTime.now();
   //
   //     // Parse the next due date
-  //     DateTime nextDueDate = DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
+  //     DateTime nextDueDate = DateFormat('yyyy-MM-dd').parse(rentNextDueDate.text);
   //
   //     // Calculate the number of days left until the next due date
   //     int daysLeft = nextDueDate.difference(currentDate).inDays + 1; // Include today in the count
@@ -523,8 +524,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty) {
       try {
         // Parse the start date from the TextField (instead of using current date)
-        DateTime currentDate = DateFormat('dd-MM-yyyy').parse(startDateController.text);
-        DateTime nextDueDate = DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
+        DateTime currentDate = DateFormat('yyyy-MM-dd').parse(startDateController.text);
+        DateTime nextDueDate = DateFormat('yyyy-MM-dd').parse(rentNextDueDate.text);
 
         double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
 
@@ -1296,25 +1297,34 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     if (pickedDate != null) {
                                       // String formattedStartDate =
                                       //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                      String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                      DateTime endDate = DateTime(pickedDate.year + 1, pickedDate.month, pickedDate.day);
+                                      String formattedStartDate =
+                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      DateTime endDate = DateTime(
+                                          pickedDate.year + 1,
+                                          pickedDate.month,
+                                          pickedDate.day);
                                       // String formattedEndDate =
                                       //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
 
-                                      String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                      String formattedEndDate =
+                                          "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
                                       print(formattedStartDate);
                                       setState(() {
-                                        startDateController.text = formattedStartDate;
+                                        startDateController.text =
+                                            formattedStartDate;
                                         _startDate = pickedDate;
-                                        endDateController.text = formattedEndDate;
-                                        rentCycleItemsDynamic(endDate.difference(_startDate!).inDays);
+                                        endDateController.text =
+                                            formattedEndDate;
+                                        rentCycleItemsDynamic(endDate
+                                            .difference(_startDate!)
+                                            .inDays);
                                         _selectedRent = null;
                                         rentAmount.text = ''; // Reset amount entered status
                                         rentNextDueDate.text = '';
                                         startDateController.text.isNotEmpty;
                                         isProRent = false;
-                                        _updateProRatedRent(_selectedRent ?? 'Monthly');
-                                        errormessagefordateissue = null;
+                                        _updateProRatedRent(
+                                            _selectedRent ?? 'Monthly');
                                       });
                                     }
                                   },
@@ -1330,7 +1340,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'YYYY-MM-DD',
                                   controller: startDateController,
                                 ),
                               if (MediaQuery.of(context).size.width < 500 && errormessagefordateissue != null)
@@ -1375,13 +1385,17 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     if (pickedDate != null) {
                                       // String formattedDate =
                                       //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                      String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                      String formattedDate =
+                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                       setState(() {
                                         endDateController.text = formattedDate;
-                                        rentCycleItemsDynamic(pickedDate.difference(_startDate!).inDays);
+                                        rentCycleItemsDynamic(pickedDate
+                                            .difference(_startDate!)
+                                            .inDays);
                                         endDateController.text.isNotEmpty;
                                         isProRent = false;
-                                        _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                        _updateProRatedRent(
+                                            _selectedRent ?? 'Monthly');
                                       });
                                     }
                                   },
@@ -1398,7 +1412,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'YYYY-MM-DD',
                                   controller: endDateController,
                                 ),
                               if (MediaQuery.of(context).size.width > 500)
@@ -1476,7 +1490,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: startDateController,
                                             ),
                                           ],
@@ -1539,7 +1553,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: endDateController,
                                             ),
                                             SizedBox(height: 5),
@@ -2824,7 +2838,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText: 'YYYY-MM-DD',
                                               controller: rentNextDueDate,
                                             ),
                                           ],
@@ -2951,7 +2965,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: 'YYYY-MM-DD',
                                   controller: rentNextDueDate,
                                 ),
                               const SizedBox(
@@ -3694,7 +3708,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                             chargeType: data['charge_type'] ?? '',
                                             date: data['charge_type'] == 'Recurring Charge'
                                                 ? (data['charge_start'] ?? '') // Ensuring data['date'] is not null
-                                                : reverseFormatDate(rentNextDueDate.text.trim()),
+                                                : data['charge_start'] != null ? (data['charge_start'] ?? '') : rentNextDueDate.text.trim(),
                                             isRepeatable: data['is_repeatable']?.toLowerCase() == 'true',
                                             memo: data['memo'] ?? '',
                                             rentCycle: data['rent_cycle'], // Assuming this field might be present
@@ -3706,7 +3720,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                           account: "Rent Income",
                                           amount: double.tryParse(rentAmount.text.trim()) ?? 0.0,
                                           chargeType: 'Rent',
-                                          date: reverseFormatDate(rentNextDueDate.text.trim()),
+                                          date: rentNextDueDate.text.trim(),
                                           isRepeatable: false, // Set to false if it's not repeatable, adjust as needed
                                           memo: rentMemo.text.trim(),
                                           rentCycle: _selectedRent, // Set default value or adjust as needed
@@ -3715,7 +3729,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                           account: "Security Deposit",
                                           amount: double.tryParse(securityDepositeAmount.text.trim()) ?? 0.0,
                                           chargeType: 'Security Deposit',
-                                          date: reverseFormatDate(rentNextDueDate.text.trim()),
+                                          date: rentNextDueDate.text.trim(),
                                           isRepeatable: false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Last Month\'s Rent',
                                          // rentCycle: _selectedRent, // Set default value or adjust as needed
@@ -3816,12 +3830,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                             isProRent: isProRent,
                                             proRatedRent: isProRent ? proRatedRentController.text.trim() : null,
                                             companyName: companyName,
-                                            endDate: reverseFormatDate(leaseEndDate),
+                                            endDate: leaseEndDate,
                                             entry: chargeEntries,
                                             leaseAmount: rentAmount.text.trim(),
                                             leaseType: _selectedLeaseType ?? "",
                                             rentalId: renderId,
-                                            startDate: reverseFormatDate(leaseStartDate),
+                                            startDate: leaseStartDate,
                                             tenantId: tenantDataList.map((tenant) => tenant.tenantId ?? '').toList(),
                                             tenantResidentStatus: _selectedResidentsEmail,
                                             unitId: _selectedUnit,
@@ -3875,7 +3889,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                           account: data['account'] ?? '',
                                           amount: double.tryParse(data['amount'] ?? '0.0') ?? 0.0,
                                           chargeType: data['charge_type'] ?? '',
-                                          date: reverseFormatDate(rentNextDueDate.text),
+                                          date: rentNextDueDate.text,
                                           isRepeatable: data['is_repeatable']?.toLowerCase() == 'true',
                                           memo: data['memo'] ?? '',
                                           rentCycle: data['rent_cycle'], // Assuming this field might be present
@@ -4365,7 +4379,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       );
     }
   }
-
+  TextEditingController startDateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -4375,7 +4389,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
             child: Material(
               child: Container(
                   color: Colors.white,
-                  height: _isInvalid ? 385 : 395,
+                  height: _isInvalid ? 455 : 495,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     const SizedBox(height: 2),
                     Text(
@@ -4755,6 +4769,93 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                     const SizedBox(
                       height: 20,
                     ),
+                    if(MediaQuery.of(context).size.width < 500)
+                      Text('Charge Date',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: blueColor)),
+                    if(MediaQuery.of(context).size.width < 500)
+                      const SizedBox(
+                        height: 8,
+                      ),
+                    if(MediaQuery.of(context).size.width < 500)
+                      CustomTextField(
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            helpText: "Charge Date",
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                            locale: const Locale('en', 'US'),
+                            builder: (BuildContext context,
+                                Widget? child) {
+                              return Theme(
+                                data: ThemeData.light().copyWith(
+                                  colorScheme: ColorScheme.light(
+                                    primary:
+                                    blueColor, // header background color
+                                    onPrimary: Colors
+                                        .white, // header text color
+                                    onSurface:
+                                    blueColor, // body text color
+                                  ),
+                                  textButtonTheme:
+                                  TextButtonThemeData(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor:
+                                      blueColor, // button text color
+                                    ),
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (pickedDate != null) {
+                            // String formattedStartDate =
+                            //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                            String formattedStartDate =
+                                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                            DateTime endDate = DateTime(
+                                pickedDate.year + 1,
+                                pickedDate.month,
+                                pickedDate.day);
+                            // String formattedEndDate =
+                            //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+
+                            String formattedEndDate =
+                                "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                            print(formattedStartDate);
+                            setState(() {
+                              startDateController.text =
+                                  formattedStartDate;
+
+                            });
+                          }
+                        },
+                        readOnnly: true,
+                        suffixIcon: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.date_range_rounded),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'select start date';
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.text,
+                        hintText: 'YYYY-MM-DD',
+                        label: "select start date",
+                        controller: startDateController,
+                      ),
+                    if(MediaQuery.of(context).size.width < 500)
+                      const SizedBox(
+                        height: 15,
+                      ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -5698,7 +5799,7 @@ class _AddTenantState extends State<AddTenant> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
       });
     }
   }

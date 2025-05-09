@@ -737,6 +737,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                     onChanged: (value) {
                                       setState(() {
                                         searchvalue = value;
+                                        if (currentPage != 0) currentPage = 0;
                                       });
                                     },
                                     cursorColor: blueColor,

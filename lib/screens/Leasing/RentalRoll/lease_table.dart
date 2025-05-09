@@ -569,6 +569,8 @@ class _Lease_tableState extends State<Lease_table> {
     }
   }
 
+  String selectedStatus = "Active";
+  final List<String> statusOptions = ["Active", "Expired", "All"];
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -688,7 +690,7 @@ class _Lease_tableState extends State<Lease_table> {
                         if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500) SizedBox(width: 19),
                         Material(
-                          elevation: 3,
+                          elevation: 0,
                           borderRadius: BorderRadius.circular(8),
                           child: Container(
                             height: (MediaQuery.of(context).size.width < 500) ? 45 : 50,
@@ -702,8 +704,7 @@ class _Lease_tableState extends State<Lease_table> {
                               onChanged: (value) {
                                 setState(() {
                                   searchValue = value;
-                                  if(currentPage != 0)
-                                    currentPage = 0;
+                                  if (currentPage != 0) currentPage = 0;
                                 });
                               },
                               cursorColor: Colors.blue,
@@ -716,6 +717,97 @@ class _Lease_tableState extends State<Lease_table> {
                             ),
                           ),
                         ),
+                        SizedBox(width: 10,),
+                        Expanded(
+                          child: DropdownButtonHideUnderline(
+                            child: Material(
+                              elevation: 0,
+                              borderRadius:
+                              BorderRadius.circular(8),
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                hint: const Text(
+                                  '',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF8A95A8),
+                                  ),
+                                  overflow:
+                                  TextOverflow.ellipsis,
+                                ),
+                               
+                                value: selectedStatus,
+                                items: statusOptions.map((String status) {
+                                  return DropdownMenuItem<String>(
+                                    value: status,
+                                    child: Text(status),
+                                  );
+                                }).toList(),
+                                buttonStyleData:
+                                ButtonStyleData(
+                                  height: MediaQuery.of(context)
+                                      .size
+                                      .width <
+                                      500
+                                      ? 45
+                                      : 50,
+                                  width: double.infinity,
+                                  padding:
+                                  const EdgeInsets.only(
+                                      left: 14, right: 14),
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        8),
+                                    border: Border.all(
+                                      color: const Color(
+                                          0xFF8A95A8),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  elevation: 0,
+                                ),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    selectedStatus = newValue!;
+                                    if (currentPage != 0) currentPage = 0;
+                                  });
+                                  // widget.onStatusChanged(selectedStatus);
+                                },
+                                dropdownStyleData:
+                                DropdownStyleData(
+                                  maxHeight: 250,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        14),
+                                  ),
+                                  offset: const Offset(0, 0),
+                                  scrollbarTheme:
+                                  ScrollbarThemeData(
+                                    radius:
+                                    const Radius.circular(
+                                        20),
+                                    thickness:
+                                    MaterialStateProperty
+                                        .all(6),
+                                    thumbVisibility:
+                                    MaterialStateProperty
+                                        .all(true),
+                                  ),
+                                ),
+                                menuItemStyleData:
+                                const MenuItemStyleData(
+                                  height: 40,
+                                  padding: EdgeInsets.only(
+                                      left: 14, right: 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                     
+
                         // Spacer(),
                         // Column(
                         //   mainAxisAlignment: MainAxisAlignment.end,
@@ -787,27 +879,44 @@ class _Lease_tableState extends State<Lease_table> {
                             );
                           } else {
                             var data = snapshot.data!;
-                            if (searchValue == null || searchValue!.isEmpty) {
-                              data = snapshot.data!;
-                            } else if (searchValue == "All") {
-                              data = snapshot.data!;
-                            } else if (searchValue!.isNotEmpty) {
-                              data = snapshot.data!
-                                  .where((lease) =>
-                                      lease.rentalAddress!.toLowerCase().contains(searchValue!.toLowerCase()) ||
-                                      lease.tenantNames.toString().toLowerCase().contains(searchValue!.toLowerCase()) ||
-                                      lease.rentCycle.toString().toLowerCase().contains(searchValue!.toLowerCase()) ||
-                                      lease.startDate.toString().toLowerCase().contains(searchValue!.toLowerCase()) ||
-                                      lease.endDate.toString().toLowerCase().contains(searchValue!.toLowerCase()) ||
-                                      lease.amount!.toStringAsFixed(2).toLowerCase().contains(searchValue!.toLowerCase()) ||
-                                      lease.remainingDays.toString().toLowerCase().contains(searchValue!.toLowerCase()) ||
-                                      lease.rentDueDate.toString().toLowerCase().contains(searchValue!.toLowerCase()) ||
-                                      lease.totalBalance!.toStringAsFixed(2).toLowerCase().contains(searchValue!.toLowerCase()))
-                                  .toList();
-                            } else {
-                              data = snapshot.data!.where((lease) => lease.tenantNames == searchValue).toList();
+
+// Apply the search filter first
+                            if (searchValue != null && searchValue.isNotEmpty && searchValue != "All") {
+                              data = data.where((lease) =>
+                              lease.rentalAddress!.toLowerCase().contains(searchValue.toLowerCase()) ||
+                                  lease.tenantNames.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
+                                  lease.rentCycle.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
+                                  lease.startDate.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
+                                  lease.endDate.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
+                                  lease.amount!.toStringAsFixed(2).toLowerCase().contains(searchValue.toLowerCase()) ||
+                                  lease.remainingDays.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
+                                  lease.rentDueDate.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
+                                  lease.totalBalance!.toStringAsFixed(2).toLowerCase().contains(searchValue.toLowerCase())
+                              ).toList();
                             }
+
+// Apply the status filter next
+                            if (selectedStatus == "Active") {
+                              data = data.where((lease) {
+                                DateTime now = DateTime.now();
+                                DateTime start = DateTime.parse(lease.startDate!);
+                                DateTime end = DateTime.parse(lease.endDate!);
+                                return double.parse(lease.remainingDays!) > 0;
+                              }).toList();
+                            } else if (selectedStatus == "Expired") {
+                              data = data.where((lease) {
+                                DateTime now = DateTime.now();
+                                DateTime end = DateTime.parse(lease.endDate!);
+                                return double.parse(lease.remainingDays!) == 0;
+                              }).toList();
+                            } else if (selectedStatus == "All") {
+                              // No additional filtering needed
+                              data = data;
+                            }
+
+                            //  }
                             data = data.reversed.toList();
+
                             sortData(data);
                             final totalPages = (data.length / itemsPerPage).ceil();
                             final currentPageData = data.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
@@ -1041,9 +1150,9 @@ class _Lease_tableState extends State<Lease_table> {
                                                                       context,
                                                                       MaterialPageRoute(
                                                                           builder: (context) => SummeryPageLease(
-                                                                            leaseId: lease.leaseId!,
-                                                                            enddate: lease.endDate,
-                                                                          )));
+                                                                                leaseId: lease.leaseId!,
+                                                                                enddate: lease.endDate,
+                                                                              )));
                                                                 },
                                                                 child: Container(
                                                                   height: 40,
@@ -1079,7 +1188,6 @@ class _Lease_tableState extends State<Lease_table> {
                                                             SizedBox(
                                                               width: 5,
                                                             ),
-
                                                             Expanded(
                                                               child: GestureDetector(
                                                                 onTap: () async {
@@ -1156,7 +1264,6 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 ),
                                                               ),
                                                             ),
-
                                                           ],
                                                         ),
                                                       ],

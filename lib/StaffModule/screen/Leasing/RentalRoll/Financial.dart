@@ -1850,6 +1850,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                               onChanged: (value) {
                                                 setState(() {
                                                   searchvalue = value;
+                                                  if (currentPage != 0) currentPage = 0;
                                                 });
                                               },
                                               decoration: const InputDecoration(

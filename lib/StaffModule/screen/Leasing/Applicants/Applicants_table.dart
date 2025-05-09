@@ -802,6 +802,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                         onChanged: (value) {
                           setState(() {
                             searchvalue = value;
+                            if (currentPage != 0) currentPage = 0;
                           });
                         },
                         cursorColor: Colors.blue,

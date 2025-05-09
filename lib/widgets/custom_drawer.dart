@@ -143,7 +143,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Rent Roll",
                   "Applicants",
                   "Upcoming renewal",
-                  "Scheduled Payment"
+                  "Scheduled Payment",
+                  "Scheduled Charges",
+
                 ],
                 [
                   FaIcon(
@@ -182,6 +184,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ? Colors.white
                         : blueColor,
                   ), // Icon for RentalOwner
+                  FaIcon(
+                    FontAwesomeIcons.clock,
+                    size: 20,
+                    color: widget.currentpage == "Scheduled Charges"
+                        ? Colors.white
+                        : blueColor,
+                  ),
                   //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,

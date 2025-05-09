@@ -855,7 +855,13 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                           padding: const EdgeInsets.symmetric(horizontal: 5.0),
                           child: Column(
                             children: [
-                              const SizedBox(height: 20),
+
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8, right: 8),
+                                child: Cronjob_payment_table(),
+                              ),
+                              const SizedBox(height: 10),
                               Row(
                                 children: [
                                   Expanded(
@@ -1066,12 +1072,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 0, right: 8),
-                                child: Cronjob_payment_table(),
-                              ),
+
                             ],
                           ),
                         );
