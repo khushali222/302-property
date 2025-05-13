@@ -589,7 +589,7 @@ class _Tenants_tableState extends State<Tenants_table> {
       setState(() {
         rentalCount = jsonData['rentalCount'];
         print(rentalCount);
-        propertyCountLimit = jsonData['propertyCountLimit'];
+        //propertyCountLimit = jsonData['propertyCountLimit'];
         print(propertyCountLimit);
       });
     } else {

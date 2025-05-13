@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -25,7 +26,8 @@ import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart'
 
 import 'package:http/http.dart' as http;
 class ScheduledChargeTable extends StatefulWidget {
-  const ScheduledChargeTable({super.key});
+  String? leaseID;
+   ScheduledChargeTable({super.key,this.leaseID});
 
   @override
   State<ScheduledChargeTable> createState() => _ScheduledChargeTableState();
@@ -156,7 +158,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 },
                 child: Row(
                   children: [
-                    Text("     Property", style: TextStyle(color: Colors.white)),
+                    Text("   Account", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -202,6 +204,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
 
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
+  String? selectedChargeType;
   String searchvalue = "";
   ConnectivityResult? _connectivityResult;
   @override
@@ -215,7 +218,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     });
     checkInternet();
     fetchDropdownData();
-    futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges();
+    futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges(leaseid: widget.leaseID);
   }
 
   void checkInternet() async {
@@ -226,7 +229,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     });
   }
 
-  void _showAlert(BuildContext context, String id, Scheduled_Payment payment) {
+  void _showAlert(BuildContext context, String id, ScheduledCharges payment) {
     TextEditingController reason = TextEditingController();
     Alert(
       context: context,
@@ -234,11 +237,18 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       title: "Are you sure?",
       content: Column(
         children: <Widget>[
+          if(widget.leaseID == null)
           Text(
-            "You want to delete this scheduled payment for ${payment.tenant!.tenantName} at ${payment.rentalAddress} in the amount of \$${payment.totalAmount} on ${payment.date}?",
+            "You want to delete this scheduled charge for ${payment.rentalAddress} in the amount of \$${payment.amount} on ${payment.actionDate}?",
             textAlign: TextAlign.justify,
             style: TextStyle(fontSize: 16),
           ),
+          if(widget.leaseID != null)
+            Text(
+              "You want to delete this scheduled charge for the amount of \$${payment.amount} on ${payment.actionDate}?",
+              textAlign: TextAlign.justify,
+              style: TextStyle(fontSize: 16),
+            ),
           SizedBox(height: 10),
           SizedBox(
             height: 45,
@@ -263,10 +273,10 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data =  await Scheduled_Payment_repo().DeleteScheduled_Payment(pro_id:id,reason:reason.text);
+            var data =  await ScheduledChargesRepository().deleteNote( noteid: id);
             if(data != null)
               setState(() {
-                futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges();
+                futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges(leaseid: widget.leaseID);
               });
             Navigator.pop(context);
           },
@@ -415,11 +425,21 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                           : null,
                       onChanged: (value) {
                         setState(() {
-                          // Add the selected account if it's not already in the list
-                          if (value != null && !accountOptions.any((account) => account["account"] == value)) {
-                            accountOptions.add({"account": value, "value": "Unknown Type"});
+                          // Find the selected account in the accountOptions list
+                          var selectedOption = accountOptions.firstWhere(
+                                (account) => account["account"] == value,
+                           // orElse: () => null,
+                          );
+
+                          if (selectedOption != null) {
+                            // Extract the charge type from the selected account
+                            String chargeType = selectedOption["charge_type"] ?? "One Time Charge";
+
+                            print("Selected Account: $value");
+                            print("Charge Type: $chargeType");
+                            selectedChargeType = chargeType;
+                            selectedAccount = value;
                           }
-                          selectedAccount = value;
                         });
                       },
                       buttonStyleData: ButtonStyleData(
@@ -518,10 +538,20 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
             child: Text('Cancel'),
             onPressed: () => Navigator.pop(context),
           ),
-          // ElevatedButton(
-          //   child: Text('Save'),
-          //   onPressed: _saveDetails,
-          // ),
+          ElevatedButton(
+            child: Text('Save'),
+            onPressed: ()async{
+             var response= await ScheduledChargesRepository().submitCharge(amount: amountController.text,account: selectedAccount,chargeType: selectedChargeType,action_date: dateController.text,description: memoController.text,charge_id: charge_id);
+              if(response != null)
+                {
+                  Fluttertoast.showToast(msg: "Charge updated successfully");
+                  setState(() {
+                    futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges(leaseid: widget.leaseID);
+                  });
+                  Navigator.of(context).pop();
+                }
+            },
+          ),
         ],
       ),
     );
@@ -543,6 +573,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
 
   DateTime? selectedDate;
   String? selectedAccount;
+  String? charge_id;
   TextEditingController amountController = TextEditingController();
   TextEditingController memoController = TextEditingController();
   TextEditingController dateController = TextEditingController();
@@ -846,7 +877,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                 Expanded(
                                                   flex: 4,
                                                   child: Text(
-                                                    '${Propertytype.rentalAddress}',
+                                                    '${Propertytype.account}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight: FontWeight.bold,
@@ -893,10 +924,16 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                     child: Text.rich(
                                                       TextSpan(
                                                         children: [
+                                                          if(widget.leaseID == null)
                                                           TextSpan(
                                                             text: 'Memo : ',
                                                             style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                           ),
+                                                          if(widget.leaseID != null)
+                                                            TextSpan(
+                                                              text: 'Description : ',
+                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                            ),
                                                           TextSpan(
                                                             // text: formatDate(
                                                             //     '${Propertytype.updatedAt}'),
@@ -910,31 +947,53 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                   SizedBox(
                                                     height: 10,
                                                   ),
+                                                  if(widget.leaseID == null)
                                                   Padding(
                                                     padding: const EdgeInsets.only(left: 18.0),
                                                     child: Text.rich(
                                                       TextSpan(
                                                         children: [
                                                           TextSpan(
-                                                            text: 'Account : ',
+                                                            text: 'Property : ',
                                                             style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                           ),
                                                           TextSpan(
                                                             // text: formatDate(
                                                             //     '${Propertytype.updatedAt}'),
-                                                            text: Propertytype.account ??"-",
+                                                            text: Propertytype.rentalAddress ??"-",
                                                             style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
                                                           ),
                                                         ],
                                                       ),
                                                     ),
                                                   ),
+                                                  if(widget.leaseID != null)
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(left: 18.0),
+                                                      child: Text.rich(
+                                                        TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text: 'Charge Type : ',
+                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                            ),
+                                                            TextSpan(
+                                                              // text: formatDate(
+                                                              //     '${Propertytype.updatedAt}'),
+                                                              text: Propertytype.chargeType ??"-",
+                                                              style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
                                                   SizedBox(
                                                     height: 10,
                                                   ),
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
+                                                      if(widget.leaseID == null)
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () async {
@@ -949,6 +1008,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                   "value":selectedAccount,
                                                                 });
                                                               }
+                                                              charge_id = Propertytype.taskId;
                                                             });
 
 
@@ -986,13 +1046,14 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if(widget.leaseID == null)
                                                       SizedBox(
                                                         width: 5,
                                                       ),
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () async {
-                                                           // _showAlert(context, Propertytype.sId!, Propertytype);
+                                                            _showAlert(context, Propertytype.taskId!, Propertytype);
                                                           },
                                                           child: Container(
                                                             height: 40,

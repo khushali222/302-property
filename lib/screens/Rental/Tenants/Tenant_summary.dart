@@ -32,6 +32,7 @@ import '../../../widgets/custom_drawer.dart';
 import '../../Communications/Send E-mail/send_mail.dart';
 import '../../Leasing/RentalRoll/Commnunication/communication.dart';
 import 'Commnunication/communication.dart';
+import 'Payments/Tenant_payments.dart';
 import 'edit_tenants.dart';
 
 class ResponsiveTenantSummary extends StatefulWidget {
@@ -1116,8 +1117,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     ),
                     child: Row(
                       children: [
-                        _buildTabButton("Details", 0),
-                        _buildTabButton("Communication", 1),
+                        _buildTabButton("Details", 0,2),
+                        _buildTabButton("Communication", 1,3),
+                        _buildTabButton("Payments", 2,2),
                       ],
                     ),
                   ),
@@ -2732,7 +2734,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                   ),
 
                   if(_selectedIndex == 1)
-                    Tenant_communication(lease_id: widget.tenantId,)
+                    Tenant_communication(lease_id: widget.tenantId,),
+                  if(_selectedIndex == 2)
+                    FinancialTable(leaseId: widget.tenantId,)
                 ],
               ),
             )
@@ -2762,9 +2766,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     );
   }
   int _selectedIndex = 0;
-  Widget _buildTabButton(String title, int index) {
+  Widget _buildTabButton(String title, int index,int flex) {
     final isSelected = _selectedIndex == index;
     return Expanded(
+      flex: flex,
       child: GestureDetector(
         onTap: () {
           setState(() {

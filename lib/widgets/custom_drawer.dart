@@ -183,14 +183,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     color: widget.currentpage == "Scheduled Payment"
                         ? Colors.white
                         : blueColor,
-                  ), // Icon for RentalOwner
-                  FaIcon(
-                    FontAwesomeIcons.clock,
-                    size: 20,
+                  ),
+                  Icon(Icons.calendar_month, size: 25,
                     color: widget.currentpage == "Scheduled Charges"
                         ? Colors.white
-                        : blueColor,
-                  ),
+                        : blueColor,)// Icon for RentalOwner
+                  // FaIcon(
+                  //   FontAwesomeIcons.clock,
+                  //   size: 20,
+                  //   color: widget.currentpage == "Scheduled Charges"
+                  //       ? Colors.white
+                  //       : blueColor,
+                  // ),
                   //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,

@@ -104,6 +104,8 @@ dependencies:
   flutter_html:
   excel: ^2.0.1
   dio:
+  geolocator: ^13.0.0
+  geocoding:
 
 
 

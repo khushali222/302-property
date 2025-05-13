@@ -45,7 +45,7 @@ Widget buildListTile(
       color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
     ),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    padding: EdgeInsets.symmetric(horizontal: 5),
     child: ListTile(
       onTap: () {
         if (title == "Dashboard" && active != true) {
@@ -117,7 +117,7 @@ Widget buildDropdownListTile(
 
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 14),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    padding: EdgeInsets.symmetric(horizontal: 5),
     child: ExpansionTile(
       initiallyExpanded: isExpanded,
       leading: leadingIcon,
@@ -131,7 +131,7 @@ Widget buildDropdownListTile(
         bool active = selectedSubtopic == subTopic;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 5),
           child: Container(
             decoration: BoxDecoration(
               color: active ? blueColor : Colors.transparent,
