@@ -28,6 +28,7 @@ class Rentals {
   RentalOwnerData? rentalOwnerData;
   PropertyTypeData? propertyTypeData;
   StaffMemberData? staffMemberData;
+  List<TenantPropertiesData>? tenantsData;
 
   Rentals({
      this.id,
@@ -50,7 +51,8 @@ class Rentals {
      this.rentalOwnerData,
      this.propertyTypeData,
      this.staffMemberData,
-    this.processor_id
+    this.processor_id,
+    this.tenantsData,
   });
 
   // Define the fromJson method within the Rental class
@@ -79,7 +81,8 @@ class Rentals {
       isDelete: json['is_delete']?? "",
        rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data']?? {}),
        propertyTypeData: PropertyTypeData.fromJson(json['property_type_data']?? {}),
-       staffMemberData: StaffMemberData.fromJson(json['staffmember_data']?? {})
+       staffMemberData: StaffMemberData.fromJson(json['staffmember_data']?? {}),
+      tenantsData: (json['tenants_data'] as List<dynamic>?)?.map((e) => TenantPropertiesData.fromJson(e)).toList(),
     );
   }
 }
@@ -230,3 +233,96 @@ class StaffMemberData {
 //     throw Exception('Failed to load data');
 //   }
 // }
+class TenantPropertiesData {
+  String? id;
+  String? tenantId;
+  String? adminId;
+  String? tenantFirstName;
+  String? tenantLastName;
+  String? tenantPhoneNumber;
+  String? tenantAlternativeNumber;
+  String? tenantEmail;
+  String? tenantAlternativeEmail;
+  String? tenantPassword;
+  String? tenantBirthDate;
+  String? taxPayerId;
+  String? comments;
+  bool? enableOverrideFee;
+  EmergencyPropertyContact? emergencyContact;
+  String? createdAt;
+  String? updatedAt;
+  bool? isDelete;
+
+  TenantPropertiesData({
+    this.id,
+    this.tenantId,
+    this.adminId,
+    this.tenantFirstName,
+    this.tenantLastName,
+    this.tenantPhoneNumber,
+    this.tenantAlternativeNumber,
+    this.tenantEmail,
+    this.tenantAlternativeEmail,
+    this.tenantPassword,
+    this.tenantBirthDate,
+    this.taxPayerId,
+    this.comments,
+    this.enableOverrideFee,
+    this.emergencyContact,
+    this.createdAt,
+    this.updatedAt,
+    this.isDelete,
+  });
+
+  factory TenantPropertiesData.fromJson(Map<String, dynamic> json) {
+    return TenantPropertiesData(
+      id: json['_id'] ?? "",
+      tenantId: json['tenant_id'] ?? "",
+      adminId: json['admin_id'] ?? "",
+      tenantFirstName: json['tenant_firstName'] ?? "",
+      tenantLastName: json['tenant_lastName'] ?? "",
+      tenantPhoneNumber: json['tenant_phoneNumber'] ?? "",
+      tenantAlternativeNumber: json['tenant_alternativeNumber'] ?? "",
+      tenantEmail: json['tenant_email'] ?? "",
+      tenantAlternativeEmail: json['tenant_alternativeEmail'] ?? "",
+      tenantPassword: json['tenant_password'] ?? "",
+      tenantBirthDate: json['tenant_birthDate'] ?? "",
+      taxPayerId: json['taxPayer_id'] ?? "",
+      comments: json['comments'] ?? "",
+      enableOverrideFee: json['enable_override_fee'] ?? false,
+      emergencyContact: EmergencyPropertyContact.fromJson(json['emergency_contact'] ?? {}),
+      createdAt: json['createdAt'] ?? "",
+      updatedAt: json['updatedAt'] ?? "",
+      isDelete: json['is_delete'] ?? false,
+    );
+  }
+}
+
+class EmergencyPropertyContact {
+  String? name;
+  String? relation;
+  String? email;
+  String? phoneNumber;
+
+  EmergencyPropertyContact({
+    this.name,
+    this.relation,
+    this.email,
+    this.phoneNumber,
+  });
+
+  factory EmergencyPropertyContact.fromJson(Map<String, dynamic> json) {
+    return EmergencyPropertyContact(
+      name: json['name'] ?? "",
+      relation: json['relation'] ?? "",
+      email: json['email'] ?? "",
+      phoneNumber: json['phoneNumber'] ?? "",
+    );
+  }
+}
+class LatLng {
+  final double latitude;
+  final double longitude;
+
+  LatLng(this.latitude, this.longitude);
+}

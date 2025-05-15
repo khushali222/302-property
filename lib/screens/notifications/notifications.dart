@@ -30,7 +30,7 @@ class _notificationsState extends State<notifications> {
 
 
   Future<List<Map<String,dynamic>>>? fetchNotifications() async {
-    print("calling");
+   // print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -42,7 +42,7 @@ class _notificationsState extends State<notifications> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
+   // print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
       List<Map<String, dynamic>> notifications = List<Map<String, dynamic>>.from(jsonData["data"]);
       return notifications;

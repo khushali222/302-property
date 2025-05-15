@@ -679,9 +679,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return ColabShimmerLoadingWidget();
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    }  else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Container(
                         height: MediaQuery.of(context).size.height * .5,
                         child: Center(

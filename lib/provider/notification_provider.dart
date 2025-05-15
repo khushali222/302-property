@@ -31,7 +31,7 @@ class NotificationProvider with ChangeNotifier {
           "id": "CRM $id",
         },
       );
-      print(response.body);
+
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
         _notifications = List<Map<String, dynamic>>.from(jsonData["data"]);

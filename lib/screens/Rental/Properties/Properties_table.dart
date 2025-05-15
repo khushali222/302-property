@@ -1138,46 +1138,29 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   1: FlexColumnWidth(),
                                                                 },
                                                                 children: [
-                                                                  _buildTableRow(
-                                                                      'RentalOwners Name:',
-                                                                      _getDisplayValue(rentals
-                                                                          .rentalOwnerData
-                                                                          ?.rentalOwnerName),
-                                                                      'Phone Number:',
-                                                                      _getDisplayValue(
-                                                                          formatPhoneNumber(
-                                                                              '${rentals.rentalOwnerData?.rentalOwnerPhoneNumber}')
-                                                                          //    rentals.rentalOwnerData?.rentalOwnerPhoneNumber
-                                                                          )),
+
                                                                   _buildTableRow(
                                                                       'Rental Company Name:',
                                                                       _getDisplayValue(rentals
                                                                           .rentalOwnerData
                                                                           ?.rentalOwnerCompanyName),
-                                                                      'Primary Email',
-                                                                      _getDisplayValue(rentals
-                                                                          .rentalOwnerData
-                                                                          ?.rentalOwnerPrimaryEmail)),
-                                                                  _buildTableRow(
                                                                       'Locality:',
                                                                       _getDisplayValue(
                                                                           rentals
-                                                                              .rentalCity),
-                                                                      'Created At:',
-                                                                      dateProvider
-                                                                          .formatCurrentDate(
-                                                                              '${rentals.createdAt}')),
-                                                                  _buildTableRow(
-                                                                    'Updated At:',
-                                                                    dateProvider
-                                                                        .formatCurrentDate(
-                                                                            '${rentals.updatedAt}'),
-                                                                    '',
-                                                                    '',
-                                                                  ),
+                                                                              .rentalCity)),
+
+                                                                  // _buildTableRow(
+                                                                  //     'Tenants:',
+                                                                  //     _getDisplayValue(
+                                                                  //         rentals.tenantsData!.map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim()).join(", ")),
+                                                                  //     '',
+                                                                  //     ''),
+
                                                                 ],
                                                               ),
                                                             ),
+
+
                                                             // FaIcon(
                                                             //   isExpanded
                                                             //       ? FontAwesomeIcons
@@ -1188,6 +1171,37 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             //   color:
                                                             //   Colors.transparent,
                                                             // ),
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                  .sortUp
+                                                                  : FontAwesomeIcons
+                                                                  .sortDown,
+                                                              size: 20,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                                child: Column(
+                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  children: [
+                                                                  Text("Tenants", style:
+                                                                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),),
+                                                                    Text(
+                                                                      rentals.tenantsData!.map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim()).join(", "),
+                                                                      style: TextStyle(color: grey),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
                                                           ],
                                                         ),
                                                         SizedBox(

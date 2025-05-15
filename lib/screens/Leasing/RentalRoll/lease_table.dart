@@ -201,7 +201,7 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    Text("   Lease Start",
+                    Text("   Rent Cycle",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: MediaQuery.of(context).size.width < 350 ? 12.0 : 14.0,
@@ -665,9 +665,9 @@ class _Lease_tableState extends State<Lease_table> {
                   //         color: blueColor,
                   //         boxShadow: [
                   //           BoxShadow(
-                  //             color: Colors.grey,
                   //             offset: Offset(0.0, 1.0),
                   //             blurRadius: 6.0,
+                  //             color: Colors.grey,
                   //           ),
                   //         ],
                   //       ),
@@ -898,22 +898,16 @@ class _Lease_tableState extends State<Lease_table> {
 // Apply the status filter next
                             if (selectedStatus == "Active") {
                               data = data.where((lease) {
-                                DateTime now = DateTime.now();
-                                DateTime start = DateTime.parse(lease.startDate!);
-                                DateTime end = DateTime.parse(lease.endDate!);
-                                return double.parse(lease.remainingDays!) > 0;
+                                return lease.remainingDays == "---" || double.parse(lease.remainingDays!) > 0;
                               }).toList();
                             } else if (selectedStatus == "Expired") {
                               data = data.where((lease) {
-                                DateTime now = DateTime.now();
-                                DateTime end = DateTime.parse(lease.endDate!);
-                                return double.parse(lease.remainingDays!) == 0;
+                                return lease.remainingDays != "---" && double.parse(lease.remainingDays!) == 0;
                               }).toList();
                             } else if (selectedStatus == "All") {
                               // No additional filtering needed
                               data = data;
                             }
-
                             //  }
                             data = data.reversed.toList();
 
@@ -1022,7 +1016,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                       Expanded(
                                                         flex: 2, // Smaller size for the second field
                                                         child: Text(
-                                                          dateProvider.formatCurrentDate('${lease.startDate}'),
+                                                          lease.rentCycle!,
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight: FontWeight.bold,
@@ -1071,14 +1065,14 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 },
                                                                 children: [
                                                                   _buildTableRow(
-                                                                    'Rent Cycle:',
-                                                                    _getDisplayValue(lease.rentCycle),
+                                                                    'Current Balance:',
+                                                                    _getDisplayValue("${formattedBalance}"),
                                                                     'Rent :',
                                                                     _getDisplayValue("\$${lease.amount!.toStringAsFixed(2).toString()}"),
                                                                   ),
-                                                                  _buildTableRow('Remaining Days:', _getDisplayValue(lease.remainingDays), 'Rent Start :',
-                                                                      '${dateProvider.formatCurrentDate(lease.rentDueDate!)}'),
-                                                                  _buildTableRow('Current Balance:', _getDisplayValue("${formattedBalance}"), '', '')
+                                                                  _buildTableRow('Remaining Days:', _getDisplayValue(lease.remainingDays), '',
+                                                                      ''),
+//_buildTableRow('Current Balance:', _getDisplayValue("${formattedBalance}"), '', '')
                                                                 ],
                                                               ),
                                                             ),

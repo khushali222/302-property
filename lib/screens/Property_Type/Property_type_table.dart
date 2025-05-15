@@ -120,9 +120,9 @@ class _PropertyTableState extends State<PropertyTable> {
                   children: [
                     width < 400
                         ? Text("Main Type ",
-                            style: TextStyle(color: Colors.white))
+                            style: TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width < 350 ? 12.0 : 14.0,))
                         : Text("Main Type",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width < 350 ? 12.0 : 14.0,)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -170,7 +170,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("  Sub Type", style: TextStyle(color: Colors.white)),
+                    Text("  Sub Type", style: TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width < 350 ? 12.0 : 14.0,)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -218,7 +218,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text(" Created At ", style: TextStyle(color: Colors.white)),
+                    Text("Created On ", style: TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width < 350 ? 12.0 : 14.0,)),
 
                     ascending3
                         ? Padding(
@@ -1243,7 +1243,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                              'Updated At : ',
+                                                                              'Updated On : ',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.bold,
                                                                               color: blueColor), // Bold and black

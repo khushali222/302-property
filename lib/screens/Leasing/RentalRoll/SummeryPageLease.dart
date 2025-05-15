@@ -907,8 +907,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 height: 10,
               ),
               if (determineStatus(snapshot.data?.data?.startDate,
-                      snapshot.data?.data?.endDate) !=
-                  'Expired')
+                      snapshot.data?.data?.endDate) ==
+                  'Active')
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 0.0, right: 0.0, bottom: 10.0),

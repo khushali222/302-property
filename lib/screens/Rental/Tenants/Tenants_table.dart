@@ -223,7 +223,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("      Created At",
+                    Text("      Created On",
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.white, fontSize: 14)),
                     SizedBox(width: 5),
@@ -1142,7 +1142,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 .sortUp
                                                             : FontAwesomeIcons
                                                                 .sortDown,
-                                                        size: 50,
+                                                        size: 40,
                                                         color:
                                                             Colors.transparent,
                                                       ),
@@ -1157,7 +1157,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Email: ',
+                                                                        'Email : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1186,7 +1186,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Rental Adress: ',
+                                                                        'Property : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
+import '../model/properties.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -150,3 +152,5 @@ class _NearbyPropertiesScreenState extends State<NearbyPropertiesScreen> {
     );
   }
 }
+
+

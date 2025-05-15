@@ -1463,8 +1463,13 @@ class _FinancialTableState extends State<FinancialTable> {
       BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: _fromDateController.text.isEmpty
+          ? DateTime.now()
+          : DateTime.parse(_fromDateController.text),
+      firstDate: _fromDateController.text.isEmpty
+          ? DateTime.now()
+          : DateTime.parse(_fromDateController.text),
+
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(

@@ -9,6 +9,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,6 +27,7 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../model/ApplicantModel.dart';
+import '../../../provider/dateProvider.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Applicants_table extends StatefulWidget {
@@ -634,13 +636,12 @@ class _Applicants_tableState extends State<Applicants_table> {
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print("error ${applicantCount}");
-      print("error ${applicantCountLimit}");
+
       setState(() {
         applicantCount = jsonData['applicantCount'];
 
         print(applicantCount);
-        applicantCountLimit = jsonData['applicantCountLimit'];
+     //   applicantCountLimit = jsonData['applicantCountLimit'];
         print(applicantCountLimit);
       });
     } else {
@@ -692,6 +693,7 @@ class _Applicants_tableState extends State<Applicants_table> {
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -1121,6 +1123,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                         bool isExpanded =
                                             expandedIndex == index;
                                         Datum applicant = entry.value;
+                                       // print(applicant.propertyaddress);
                                         return Container(
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(
@@ -1296,7 +1299,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                       .sortUp
                                                                   : FontAwesomeIcons
                                                                       .sortDown,
-                                                              size: 50,
+                                                              size: 40,
                                                               color: Colors
                                                                   .transparent,
                                                             ),
@@ -1341,9 +1344,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                               color: blueColor),
                                                                         ),
                                                                         TextSpan(
-                                                                          text: applicant.applicantEmail != null
-                                                                              ? applicant.rentalData?.rentalAdress.toString()
-                                                                              : 'N/A',
+                                                                          text: applicant.propertyaddress != null && applicant.propertyaddress!.isNotEmpty
+                                                                              ? applicant.propertyaddress!.map((addres)=>addres.address).join(",")
+                                                                              : applicant.rentalData != null ? applicant.rentalData!.rentalAdress:"N/A",
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey),
@@ -1352,7 +1355,27 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                     ),
                                                                   ),
                                                                   SizedBox(
-                                                                    height: 5,
+                                                                    height: 8,
+                                                                  ),
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                          'Created On : ',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text: dateProvider.formatCurrentDate( applicant.rentalData!.createdAt.toString())
+                                                                              ?? 'N/A',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey),
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ],
                                                               ),

@@ -218,7 +218,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("  Created At", style: TextStyle(color: Colors.white,fontSize: 15)),
+                    Text("  Created On", style: TextStyle(color: Colors.white,fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending3
                     //     ? Padding(
@@ -1213,7 +1213,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                              'Updated At : ',
+                                                                              'Updated On : ',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.bold,
                                                                               color: blueColor), // Bold and black
@@ -1578,9 +1578,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                                         (property) => property
                                                             .propertysubType!),
                                                     _buildHeader(
-                                                        'Created At', 2, null),
+                                                        'Created On', 2, null),
                                                     _buildHeader(
-                                                        'Updated At', 3, null),
+                                                        'Updated On', 3, null),
                                                     _buildHeader(
                                                         'Actions', 4, null),
                                                   ],
