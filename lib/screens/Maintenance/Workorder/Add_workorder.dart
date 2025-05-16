@@ -182,7 +182,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     String? token = prefs.getString('token');
     try {
       final response = await http
-          .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
+          .get(Uri.parse('$Api_url/api/unit/rental_unit_dropdown/$rentalId'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
@@ -714,6 +714,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -914,9 +915,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                               ),
                             ],
                           )
-                              : Center(
-                            child: Text("No images selected."),
-                          ),
+                              : Container(),
                           SizedBox(
                             height: 10,
                           ),
@@ -1230,7 +1229,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Category',
+                          Text('Category *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -1779,7 +1778,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Vendors Note *',
+                          Text('Vendors Note ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
