@@ -105,7 +105,7 @@ void main() {
   ]);
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: false,
       tools: [
         ...DevicePreview.defaultTools,
       ],

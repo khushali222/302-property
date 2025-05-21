@@ -920,7 +920,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                     child: Text(
                                                       // '${widget.data.createdAt}',
                                                       formatDate(
-                                                          '${Propertytype.remainingDays}'),
+                                                          '${Propertytype.remainingDays!.toStringAsFixed(0)}'),
 
                                                       style: TextStyle(
                                                         color: blueColor,

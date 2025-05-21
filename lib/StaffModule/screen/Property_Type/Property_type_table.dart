@@ -1158,7 +1158,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                         child: Text(
                                                           // '${widget.data.createdAt}',
                                                           formatDate(
-                                                              '${Propertytype.createdAt}'),
+                                                              '${Propertytype.createdAt ?? "---"}'),
 
                                                           style: TextStyle(
                                                             color: blueColor,
@@ -1220,7 +1220,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              formatDate('${Propertytype.updatedAt}'),
+                                                                              formatDate('${Propertytype.updatedAt??"---"}'),
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey

@@ -3221,13 +3221,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   Row(
                                                     children: [
                                                       const SizedBox(width: 2),
-                                                      Text(
-                                                        '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: blueColor,
+                                                      Container(
+                                                        width: 150,
+                                                        child: Text(
+                                                          '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                            color: blueColor,
+                                                          ),
                                                         ),
                                                       ),
                                                     ],
