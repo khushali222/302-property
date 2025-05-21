@@ -873,16 +873,11 @@ class _Lease_tableState extends State<Lease_table> {
 // Apply the status filter next
                             if (selectedStatus == "Active") {
                               data = data.where((lease) {
-                                DateTime now = DateTime.now();
-                                DateTime start = DateTime.parse(lease.startDate!);
-                                DateTime end = DateTime.parse(lease.endDate!);
-                                return double.parse(lease.remainingDays!) > 0;
+                                return lease.remainingDays == "---" || double.parse(lease.remainingDays!) > 0;
                               }).toList();
                             } else if (selectedStatus == "Expired") {
                               data = data.where((lease) {
-                                DateTime now = DateTime.now();
-                                DateTime end = DateTime.parse(lease.endDate!);
-                                return double.parse(lease.remainingDays!) == 0;
+                                return lease.remainingDays != "---" && double.parse(lease.remainingDays!) == 0;
                               }).toList();
                             } else if (selectedStatus == "All") {
                               // No additional filtering needed

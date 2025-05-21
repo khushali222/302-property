@@ -21,7 +21,7 @@ import 'package:three_zero_two_property/Model/tenants.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
 import '../../../../model/summery_workorder.dart';
 import '../../../../widgets/VideoPlayerWidget.dart';
@@ -29,7 +29,7 @@ import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/titleBar.dart';
 import '../../../widgets/custom_drawer.dart';
-
+import '../../../widgets/appbar.dart';
 class Workorder_summery extends StatefulWidget {
   String? workorder_id;
   Workorder_summery({super.key, this.workorder_id});
@@ -481,6 +481,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 8,
                                   ),
                                   Container(
+
                                       child: Text(
                                     '${summery.workPerformed}',
                                     style: TextStyle(color: blueColor),
@@ -1515,6 +1516,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 height: 8,
                               ),
                               Container(
+                                width: 150,
                                   child: Text(
                                     '${summery.workPerformed!.isNotEmpty ? summery.workPerformed : "N/A"}',
                                 style: TextStyle(color: blueColor),
@@ -1610,6 +1612,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SizedBox(
                                   height: 4,
                                 ),
+                                if(summery.workorderUpdates!.isNotEmpty )
                                 Text(
                                     '${summery.workorderUpdates!.last.date!.isEmpty == true ?
                                     "N/A" : summery.workorderUpdates?.last.date?.toString()
@@ -1617,6 +1620,13 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),
+                                if(summery.workorderUpdates!.isEmpty )
+                                  Text( '${summery.date!.isEmpty == true ?
+                                  "N/A" : summery.date?.toString()
+                                  }',
+                                      style: TextStyle(
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold)),
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -2347,7 +2357,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ),
                                 child: Center(
                                   child: Text(
-                                    'Contactses',
+                                    'Contacts',
                                     style: TextStyle(
                                         color: blueColor,
                                         fontSize: 16,
@@ -2853,6 +2863,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         height: 8,
                                       ),
                                       Container(
+
                                           child: Text(
                                             '${summery.workPerformed!.isNotEmpty ? summery.workPerformed : "N/A"}',
                                             style: TextStyle(color: blueColor),
@@ -3355,7 +3366,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 8,
                                   ),
                                   Container(
-                                      width: 250,
+                                      width: 280,
                                       child: Text(
                                         '${summery.workPerformed!.isNotEmpty ? summery.workPerformed : "N/A"}',
                                         style: TextStyle(color: blueColor),
@@ -3423,12 +3434,20 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     SizedBox(
                                       height: 4,
                                     ),
+                                    if(summery.workorderUpdates!.isNotEmpty )
                                     Text( '${summery.workorderUpdates!.last.date!.isEmpty == true ?
                                     "N/A" : summery.workorderUpdates?.last.date?.toString()
                                     }',
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
+                                    if(summery.workorderUpdates!.isEmpty )
+                                      Text( '${summery.date!.isEmpty == true ?
+                                      "N/A" : summery.date?.toString()
+                                      }',
+                                          style: TextStyle(
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold)),
                                     SizedBox(
                                       height: 10,
                                     ),
