@@ -78,7 +78,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
   late bool isExpanded;
   bool sorting1 = false;
   bool sorting2 = false;
-  bool sorting3 = false;
+  bool sorting3 = true;
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
@@ -90,17 +90,17 @@ class _PropertiesTableState extends State<PropertiesTable> {
     } else if (sorting2) {
       data.sort((a, b) => ascending2
           ? a.propertyTypeData!.propertyType!
-              .compareTo(b.propertyTypeData!.propertyType!)
+          .compareTo(b.propertyTypeData!.propertyType!)
           : b.propertyTypeData!.propertyType!
-              .compareTo(a.propertyTypeData!.propertyType!));
+          .compareTo(a.propertyTypeData!.propertyType!));
     } else if (sorting3) {
-      data.sort((a, b) => ascending3
-          ? a.propertyTypeData!.propertySubType!
-              .compareTo(b.propertyTypeData!.propertySubType!)
-          : b.propertyTypeData!.propertySubType!
-              .compareTo(a.propertyTypeData!.propertySubType!));
+      data.sort((a, b) {
+        if (a!.is_available! == b!.is_available!) return 0;
+        return a!.is_available! ? -1 : 1; // true comes before false
+      });
     }
   }
+
 
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
@@ -249,26 +249,26 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 },
                 child: Row(
                   children: [
-                    Text(" SubType",
+                    Text("Accepting\nApplication",
                         style: TextStyle(color: Colors.white, fontSize: 14)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    // ascending3
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -1072,7 +1072,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               .01),
                                                       Expanded(
                                                         child: Text(
-                                                          '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertyType}',
+                                                          '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertyType} - \n ${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertySubType}  ',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -1087,16 +1087,54 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       //                 .size
                                                       //                 .width *
                                                       //             .08),
+                                                      rentals!.is_available!?
                                                       Expanded(
-                                                        child: Text(
-                                                          '${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertySubType}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            SizedBox(width: 20,),
+                                                            GestureDetector(
+                                                              onTap: (){
+                                                                _publishRentAmount(rentals.rentalId!,"0",isAvailable: true);
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                padding:EdgeInsets.all(5),
+                                                                decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(8),
+                                                                  color: Colors.greenAccent.shade100
+                                                                ),
+                                                                child: Center(child: Icon(Icons.check_circle,color: Colors.green,)),
+                                                              ),
+                                                            ),
+                                                            Spacer()
+                                                          ],
+                                                        )
+
+                                                      ):
+                                                      Expanded(
+                                                          child: Row(
+                                                            children: [
+                                                              SizedBox(width: 20,),
+                                                              GestureDetector(
+                                                                onTap: (){
+                                                                  _showPublishRentDialog(rentals.rentalId!);
+                                                                },
+                                                                child: Container(
+                                                                  height: 35,
+                                                                  width: 35,
+                                                                  padding:EdgeInsets.all(5),
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors.redAccent.withOpacity(0.3),
+                                                                    borderRadius: BorderRadius.circular(8),
+                                                                  ),
+                                                                  child: Center(child: Icon(Icons.lock_rounded,color: Colors.red,)),
+                                                                ),
+                                                              ),
+                                                              Spacer()
+                                                            ],
+                                                          )
+
                                                       ),
                                                       // SizedBox(
                                                       //     width:
@@ -1194,8 +1232,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   children: [
                                                                   Text("Tenants", style:
                                                                   TextStyle(fontWeight: FontWeight.bold, color: blueColor),),
+                                                                    rentals.tenantsData!.length >0?
                                                                     Text(
-                                                                      rentals.tenantsData!.map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim()).join(", "),
+                                                                       rentals.tenantsData!.map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim()).join(", "),
+                                                                      style: TextStyle(color: grey),
+                                                                    ):Text(
+                                                                      "-----",
                                                                       style: TextStyle(color: grey),
                                                                     ),
                                                                   ],
@@ -1779,7 +1821,72 @@ class _PropertiesTableState extends State<PropertiesTable> {
             ),
     );
   }
+  void _showPublishRentDialog(String rentalId) {
+    TextEditingController rentController = TextEditingController();
 
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Enter Published Rent Amount'),
+          content: TextField(
+            controller: rentController,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              labelText: 'Rent Amount',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String rentAmount = rentController.text.trim();
+                if (rentAmount.isEmpty) {
+                  Fluttertoast.showToast(msg: "Please enter a rent amount");
+                  return;
+                }
+                Navigator.of(context).pop();
+                await _publishRentAmount(rentalId, rentAmount);
+              },
+              child: Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  Future<void> _publishRentAmount(String rentalId, String rentAmount,{bool isAvailable =false}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    try {
+      final response = await http.put(
+        Uri.parse('${Api_url}/api/rentals/rental/$rentalId/availability'),
+        headers: {"authorization" : "CRM $token","id":"CRM $id",  "Content-Type": "application/json",},
+
+        body: jsonEncode({
+          "is_available": !isAvailable ? true:false,
+          "published_rent_amount": double.parse(rentAmount),
+        }),
+      );
+      print(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Fluttertoast.showToast(msg: "Rent amount published successfully");
+        // Optionally refresh data here
+        setState(() {
+          futureRentalOwners = PropertiesRepository().fetchProperties();
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Failed to publish rent amount");
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Error: $e");
+    }
+  }
   // Widget _buildHeader<T>(String text, int columnIndex,
   //     Comparable<T> Function(Rentals d)? getField) {
   //   return Container(

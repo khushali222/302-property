@@ -267,6 +267,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
     super.initState();
     futureworkorder = WorkOrderRepository().fetchWorkOrders();
     selectedValue = widget.filter;
+    futureworkorder.then((workOrders) {
+      printRentalData(workOrders);
+    });
   }
 
   void handleEdit(WorkOrder property) async {
@@ -891,8 +894,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         property.workSubject!
                             .toLowerCase()
                             .contains(searchvalue!.toLowerCase()) ||
-                            property.rentalAddress!
-                                .toLowerCase()
+                            property.rentalData!.rentalAddress
+                                !.toLowerCase()
                                 .contains(searchvalue!.toLowerCase()))
                             .toList();
 
@@ -1072,7 +1075,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
-                                                    '${workorder.rentalAddress}',
+                                                    '${workorder.rentalData!.rentalAddress}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1143,10 +1146,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                             1: FlexColumnWidth(),
                                                           },
                                                           children: [
-                                                            buildTableRow(
-                                                                'Category:', getDisplayValue(workorder.workCategory),
-                                                                'Assign:', getDisplayValue(workorder.staffMemberName)
-                                                            ),
+
                                                             buildTableRow(
                                                                 'Created At:','${workorder.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.createdAt}') : 'N/A'}',
                                                                 'Updated At:','${workorder.updatedAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.updatedAt}') : 'N/A'}'
@@ -1414,7 +1414,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       property.workSubject!
                           .toLowerCase()
                           .contains(searchvalue.toLowerCase()) ||
-                          property.rentalAddress!
+                          property.rentalData!.rentalAddress!
                               .toLowerCase()
                               .contains(searchvalue.toLowerCase()))
                           .toList();
@@ -1459,32 +1459,6 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                     ),
                                     children: [
 
-                                      _buildHeader(
-                                          'Work Order',
-                                          0,
-                                              (tenant) =>
-                                          tenant.workSubject!),
-                                      _buildHeader(
-                                          'Property',
-                                          1,
-                                              (tenant) =>
-                                          tenant.rentalAddress!), _buildHeader(
-                                          'Category',
-                                          2,
-                                              (tenant) =>
-                                          tenant.workCategory!), _buildHeader(
-                                          'Asssigned',
-                                          3,
-                                              (tenant) =>
-                                          tenant.staffMemberName!), _buildHeader(
-                                          'Status',
-                                          4,
-                                              (tenant) =>
-                                          tenant.status!),
-                                      _buildHeader(
-                                          'Create At', 5, null),
-                                      _buildHeader(
-                                          'Updated At', 6, null),
 
                                       // _buildHeader('Actions', 4, null),
                                     ],
@@ -1526,40 +1500,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                       ),
                                       children: [
 
-                                        _buildDataCell(_pagedData[i]
-                                            .workSubject!,_pagedData[i]
-                                            .workOrderId!),
 
-                                        _buildDataCell(
-                                          _pagedData[i]
-                                              .rentalAddress!,_pagedData[i]
-                                            .workOrderId!
-                                        ),
-                                        _buildDataCell(
-                                          _pagedData[i]
-                                              .workCategory!,_pagedData[i]
-                                            .workOrderId!
-                                        ),
-                                        _buildDataCell(
-                                          _pagedData[i]
-                                              .staffMemberName!,_pagedData[i]
-                                            .workOrderId!
-                                        ),
-                                        _buildDataCell(
-                                          _pagedData[i]
-                                              .status!,_pagedData[i]
-                                            .workOrderId!
-                                        ),
-                                        _buildDataCell(
-                                          _pagedData[i]
-                                              .createdAt!,_pagedData[i]
-                                            .workOrderId!
-                                        ),
-                                        _buildDataCell(
-                                          _pagedData[i]
-                                              .updatedAt!,_pagedData[i]
-                                            .workOrderId!
-                                        ),
 
                                       ],
                                     ),
@@ -1583,6 +1524,35 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
       ),
     );
   }
+  void printRentalData(List<WorkOrder> workOrders) {
+    print('\n=== Rental Data from WorkOrders ===');
+    for (var workOrder in workOrders) {
+      print('\nWork Order ID: ${workOrder.workOrderId}');
+      print('Subject: ${workOrder.workSubject}');
+
+      if (workOrder.rentalData != null) {
+        print('Rental Details:');
+        print('  Address: ${workOrder.rentalData?.rentalAddress}');
+        print('  City: ${workOrder.rentalData?.rentalCity}');
+        print('  State: ${workOrder.rentalData?.rentalState}');
+        print('  Country: ${workOrder.rentalData?.rentalCountry}');
+        print('  Postcode: ${workOrder.rentalData?.rentalPostcode}');
+        print('  Is Rent On: ${workOrder.rentalData?.isRentOn}');
+        print('  Rental ID: ${workOrder.rentalData?.rentalId}');
+        print('  Property ID: ${workOrder.rentalData?.propertyId}');
+        print('  Owner ID: ${workOrder.rentalData?.rentalownerId}');
+        print('  Processor ID: ${workOrder.rentalData?.processorId}');
+        print('  Staff Member ID: ${workOrder.rentalData?.staffmemberId}');
+        print('  Created At: ${workOrder.rentalData?.createdAt}');
+        print('  Updated At: ${workOrder.rentalData?.updatedAt}');
+      } else {
+        print('No rental data available');
+      }
+      print('----------------------------------------');
+    }
+  }
+
 }
+
 
 void main() => runApp(MaterialApp(home: WorkOrderTable()));

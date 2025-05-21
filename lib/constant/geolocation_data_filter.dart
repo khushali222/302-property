@@ -2,7 +2,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../Model/properties.dart';
-
+import '../VendorModule/model/workorder_model.dart';
 
 Future<Position> getCurrentLocation() async {
   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -24,6 +24,18 @@ Future<Position> getCurrentLocation() async {
   );
 }
 Future<LatLng?> getCoordinatesFromAddress(Rentals rental) async {
+  String address = '${rental.rentalAddress}, ${rental.rentalCity}, ${rental.rentalState}, ${rental.rentalCountry} ${rental.rentalPostcode}';
+  try {
+    List<Location> locations = await locationFromAddress(address);
+    if (locations.isNotEmpty) {
+      return LatLng(locations.first.latitude, locations.first.longitude);
+    }
+  } catch (e) {
+    print('Failed to geocode address: $address. Error: $e');
+  }
+  return null;
+}
+Future<LatLng?> getCoordinatesFromAddressforvendor(RentalData rental) async {
   String address = '${rental.rentalAddress}, ${rental.rentalCity}, ${rental.rentalState}, ${rental.rentalCountry} ${rental.rentalPostcode}';
   try {
     List<Location> locations = await locationFromAddress(address);
