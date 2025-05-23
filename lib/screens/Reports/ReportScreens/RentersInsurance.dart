@@ -962,7 +962,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     }
 
     String csv = const ListToCsvConverter().convert(rows);
-    final List<int> bytes = utf8.encode(csvBuffer.toString());
+     final List<int> bytes = utf8.encode(csvBuffer.toString());
     // Define file name with current date and time
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
@@ -1136,7 +1136,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                         ),
                                       ),
                                       const SizedBox(width: 16),
-                                      ElevatedButton(
+                                        ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: blueColor,
                                         ),

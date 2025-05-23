@@ -27,7 +27,13 @@ class ScheduledCharges {
         account = json['account'],
         chargeType = json['charge_type'],
         description = json['description'],
-        amount = (json['amount'] is int) ? (json['amount'] as int).toDouble() : (json['amount'] ?? 0.0),
+        amount = (json['amount'] is int)
+            ? (json['amount'] as int).toDouble()
+            : (json['amount'] is String)
+            ? double.tryParse(json['amount']) ?? 0.0
+            : (json['amount'] is double)
+            ? json['amount']
+            : 0.0,
         leaseId = json['lease_id'],
         rentalId = json['rental_id'],
         rentalAddress = json['rental_address'];

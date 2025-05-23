@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -7,14 +8,21 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import '../../../Model/Scheduled_Payment_model.dart';
 import '../../../Model/schduled_charge.dart';
 import '../../../constant/constant.dart';
 import '../../../provider/dateProvider.dart';
+import '../../../repository/GetAdminAddressPdf.dart';
 import '../../../repository/ScheduledChargesRepository.dart';
 import '../../../repository/Scheduled_Payment_repo.dart';
 import '../../../widgets/CustomTableShimmer.dart';
@@ -23,11 +31,14 @@ import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/titleBar.dart';
 import '../RentalRoll/SummeryPageLease.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
-
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:http/http.dart' as http;
+
+import '../../../Model/profile.dart';
+
 class ScheduledChargeTable extends StatefulWidget {
   String? leaseID;
-   ScheduledChargeTable({super.key,this.leaseID});
+  ScheduledChargeTable({super.key,this.leaseID});
 
   @override
   State<ScheduledChargeTable> createState() => _ScheduledChargeTableState();
@@ -238,11 +249,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       content: Column(
         children: <Widget>[
           if(widget.leaseID == null)
-          Text(
-            "You want to delete this scheduled charge for ${payment.rentalAddress} in the amount of \$${payment.amount} on ${payment.actionDate}?",
-            textAlign: TextAlign.justify,
-            style: TextStyle(fontSize: 16),
-          ),
+            Text(
+              "You want to delete this scheduled charge for ${payment.rentalAddress} in the amount of \$${payment.amount} on ${payment.actionDate}?",
+              textAlign: TextAlign.justify,
+              style: TextStyle(fontSize: 16),
+            ),
           if(widget.leaseID != null)
             Text(
               "You want to delete this scheduled charge for the amount of \$${payment.amount} on ${payment.actionDate}?",
@@ -294,7 +305,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     ).show();
 
   }
-   List<Map<String,dynamic>> accountOptions = [
+  List<Map<String,dynamic>> accountOptions = [
 
   ];
   Future<void> fetchDropdownData() async {
@@ -303,7 +314,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     String adminId = prefs.getString('adminId') ?? '';
     String? token = prefs.getString('token');
     print(token);
- //   print('lease ${widget.leaseId}');
+    //   print('lease ${widget.leaseId}');
     String? id = prefs.getString("adminId");
     final response = await http.get(
       Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
@@ -315,7 +326,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body)['data'];
-    //  log("accounts data $jsonResponse");
+      //  log("accounts data $jsonResponse");
       Map<String, List<String>> fetchedData = {};
       // Adding static items to the "LIABILITY ACCOUNT" category
 
@@ -323,12 +334,12 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       for (var item in jsonResponse) {
         String chargeType = item['charge_type'] ?? "One Time Charge";
         String account = item['account'];
-      setState(() {
-        accountOptions.add({
-          "account": account,
-          "value": chargeType,
+        setState(() {
+          accountOptions.add({
+            "account": account,
+            "value": chargeType,
+          });
         });
-      });
 
 
 
@@ -351,8 +362,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
   }
   EditCharge(){
 
-  print(accountOptions);
-   return showDialog(
+    print(accountOptions);
+    return showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Edit Scheduled Charge',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
@@ -428,7 +439,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                           // Find the selected account in the accountOptions list
                           var selectedOption = accountOptions.firstWhere(
                                 (account) => account["account"] == value,
-                           // orElse: () => null,
+                            // orElse: () => null,
                           );
 
                           if (selectedOption != null) {
@@ -491,7 +502,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 children: [
                   Text("Amount",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
                   CustomTextField(
-                   // onTap: _pickDate,
+                    // onTap: _pickDate,
                     readOnnly: false,
 
                     validator: (value) {
@@ -515,7 +526,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 children: [
                   Text("Memo",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
                   CustomTextField(
-                  //  onTap: _pickDate,
+                    //  onTap: _pickDate,
                     readOnnly: false,
 
                     validator: (value) {
@@ -541,15 +552,15 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
           ElevatedButton(
             child: Text('Save'),
             onPressed: ()async{
-             var response= await ScheduledChargesRepository().submitCharge(amount: amountController.text,account: selectedAccount,chargeType: selectedChargeType,action_date: dateController.text,description: memoController.text,charge_id: charge_id);
+              var response= await ScheduledChargesRepository().submitCharge(amount: amountController.text,account: selectedAccount,chargeType: selectedChargeType,action_date: dateController.text,description: memoController.text,charge_id: charge_id);
               if(response != null)
-                {
-                  Fluttertoast.showToast(msg: "Charge updated successfully");
-                  setState(() {
-                    futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges(leaseid: widget.leaseID);
-                  });
-                  Navigator.of(context).pop();
-                }
+              {
+                Fluttertoast.showToast(msg: "Charge updated successfully");
+                setState(() {
+                  futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges(leaseid: widget.leaseID);
+                });
+                Navigator.of(context).pop();
+              }
             },
           ),
         ],
@@ -578,7 +589,281 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
   TextEditingController memoController = TextEditingController();
   TextEditingController dateController = TextEditingController();
 
+  final headerStyle = pw.TextStyle(
+    fontWeight: pw.FontWeight.bold,
+    fontSize: 9,
+    color: PdfColors.white,
+  );
 
+  final headerDecoration = pw.BoxDecoration(
+    color: PdfColor.fromHex("#5A86D5"), // a nice blue shade
+    borderRadius: const pw.BorderRadius.all(pw.Radius.circular(2)),
+  );
+
+  Future<void> _exportPDF(List<ScheduledCharges> data) async {
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      print("Error fetching profile data: $e");
+      return;
+    }
+    final pdf = pw.Document();
+    final image = pw.MemoryImage(
+      (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
+    );
+    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    pdf.addPage(
+      pw.MultiPage(
+        margin: const pw.EdgeInsets.all(30),
+        build: (pw.Context context) {
+          return [
+            pw.Header(
+              level: 0,
+              padding: pw.EdgeInsets.only(bottom: 10),
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Image(image, width: 50, height: 50),
+                  pw.SizedBox(width: 50),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Text(
+                        'Scheduled Charges',
+                        style: pw.TextStyle(
+                          fontSize: 18,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.SizedBox(height: 10),
+                      pw.Text('As of $currentDate'),
+                    ],
+                  ),
+                  pw.SizedBox(width: 50),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      if (profileData?.companyName != null && profileData!.companyName!.isNotEmpty)
+                        pw.Text(
+                          profileData!.companyName!,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      if (profileData?.companyAddress != null && profileData!.companyAddress!.isNotEmpty)
+                        pw.Text(
+                          profileData!.companyAddress!,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      if ((profileData?.companyCity != null && profileData!.companyCity!.isNotEmpty) ||
+                          (profileData?.companyState != null && profileData!.companyState!.isNotEmpty) ||
+                          (profileData?.companyCountry != null && profileData!.companyCountry!.isNotEmpty))
+                        pw.Text(
+                          [
+                            if (profileData?.companyCity != null && profileData!.companyCity!.isNotEmpty)
+                              profileData!.companyCity!,
+                            if (profileData?.companyState != null && profileData!.companyState!.isNotEmpty)
+                              profileData!.companyState!,
+                            if (profileData?.companyCountry != null && profileData!.companyCountry!.isNotEmpty)
+                              profileData!.companyCountry!,
+                          ].join(', '),
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      if (profileData?.companyPostalCode != null && profileData!.companyPostalCode!.isNotEmpty)
+                        pw.Text(
+                          profileData!.companyPostalCode!,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            pw.SizedBox(height: 20),
+            pw.Container(
+              child: pw.Table(
+                border: null, // No border
+                columnWidths: {
+                  0: const pw.FlexColumnWidth(2), // Date
+                  1: const pw.FlexColumnWidth(3), // Address
+                  2: const pw.FlexColumnWidth(3), // Memo
+                  3: const pw.FlexColumnWidth(3), // Account
+                  4: const pw.FlexColumnWidth(2), // Amount
+                },
+                children: [
+                  // Header row
+                  pw.TableRow(
+                    decoration: headerDecoration,
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Text('Date', style: headerStyle),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Text('Address', style: headerStyle),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Text('Memo', style: headerStyle),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Text('Account', style: headerStyle),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Align(
+                          alignment: pw.Alignment.centerRight,
+                          child: pw.Text('Amount', style: headerStyle),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Data rows
+                  ...data.map((charge) => pw.TableRow(
+                    decoration: const pw.BoxDecoration(),
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Text(charge.actionDate ?? ''),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Text(charge.rentalAddress ?? ''),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Text(charge.description ?? ''),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Text(charge.account ?? ''),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Align(
+                          alignment: pw.Alignment.centerRight,
+                          child: pw.Text(charge.amount != null
+                              ? '\$${charge.amount}'
+                              : ''),
+                        ),
+                      ),
+                    ],
+                  )),
+                ],
+              ),
+            ),
+          ];
+        },
+      ),
+    );
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
+  }
+  Future<void> _exportCSV(List<ScheduledCharges> data) async {
+    final StringBuffer csvBuffer = StringBuffer();
+
+    // Add header
+    csvBuffer.writeln('Date,Address,Memo,Account,Amount');
+
+    // Add data rows
+    for (final charge in data) {
+      csvBuffer.writeln([
+        charge.actionDate ?? '',
+        charge.rentalAddress ?? '',
+        charge.description ?? '',
+        charge.account ?? '',
+        "\$${charge.amount != null ? charge.amount.toString():""}"
+      ].map((e) => '"${e.replaceAll('"', '""')}"').join(','));
+    }
+
+    final List<int> bytes = utf8.encode(csvBuffer.toString());
+
+    // Define file name with current date and time
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'ScheduledCharges_$formattedDate.csv';
+
+    // Define file path
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Pictures');
+
+    final path = '${directory.path}/$fileName';
+
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+
+    // Write CSV file to the path
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+
+    // Share the file
+    await Share.shareXFiles([XFile(path)]);
+  }
+  Future<void> _exportExcel(List<ScheduledCharges> data) async {
+    final workbook = syncXlsx.Workbook();
+    final sheet = workbook.worksheets[0];
+
+    // Add header row
+    final headers = ['Date', 'Address', 'Memo', 'Account', 'Amount'];
+    for (int i = 0; i < headers.length; i++) {
+      sheet.getRangeByIndex(1, i + 1).setText(headers[i]);
+    }
+
+    // Add data rows
+    for (int row = 0; row < data.length; row++) {
+      final charge = data[row];
+      sheet.getRangeByIndex(row + 2, 1).setText(charge.actionDate ?? '');
+      sheet.getRangeByIndex(row + 2, 2).setText(charge.rentalAddress ?? '');
+      sheet.getRangeByIndex(row + 2, 3).setText(charge.description ?? '');
+      sheet.getRangeByIndex(row + 2, 4).setText(charge.account ?? '');
+      sheet.getRangeByIndex(row + 2, 5).setText(charge.amount != null ? charge.amount.toString() : '');
+    }
+
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
+
+    // Define file name with current date and time
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'ScheduledCharges_$formattedDate.xlsx';
+
+    // Define file path
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Pictures');
+
+    final path = '${directory.path}/$fileName';
+
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+
+    // Write Excel file to the path
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+
+    // Share the file
+    await Share.shareXFiles([XFile(path)]);
+  }
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -615,11 +900,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
             SizedBox(height: 10),
             //search
             Padding(
-              padding: const EdgeInsets.only(left: 11, right: 11),
+              padding: const EdgeInsets.only(left: 15, right: 20),
               child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (MediaQuery.of(context).size.width < 500) SizedBox(width: 1),
-                  if (MediaQuery.of(context).size.width > 500) SizedBox(width: 24),
+
                   Material(
                     elevation: 2,
                     borderRadius: BorderRadius.circular(8),
@@ -667,6 +952,57 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                       ),
                     ),
                   ),
+                  Container(
+
+                    height: 45,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: blueColor,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: ()  {
+
+                      },
+                      child:PopupMenuButton(
+                        onSelected: (value) async{
+                          print(value);
+                          if(value == 'Export PDF'){
+                            print(value);
+                            final data = await futurescheduledpayment;
+                            _exportPDF(data);
+                          }
+                          if(value == 'Export Excel'){
+                            final data = await futurescheduledpayment;
+                            _exportExcel(data);
+                          }
+                          if(value == 'Export CSV'){
+                            final data = await futurescheduledpayment;
+                            _exportCSV(data);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'Export PDF',
+                            child: Text('Export PDF'),
+                          ),
+                          PopupMenuItem(
+                            value: 'Export Excel',
+                            child: Text('Export Excel'),
+                          ),
+                          PopupMenuItem(
+                            value: 'Export CSV',
+                            child: Text('Export CSV'),
+                          ),
+                        ],
+                        child: Row(
+                          children: [
+                            Text('Export'),
+                            Icon(Icons.arrow_drop_down),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -704,7 +1040,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                         ),
                       );
                     } else {
-                       var data = snapshot.data!;
+                      var data = snapshot.data!;
                       // if (selectedValue == null && searchvalue.isEmpty) {
                       //   data = snapshot.data!;
                       // } else if (selectedValue == "All") {
@@ -781,6 +1117,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                       //sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
+                      print("data ${currentPageData.length}");
+                      print("data ${data.length}");
                       return SingleChildScrollView(
                         child: Column(
                           children: [
@@ -923,10 +1261,10 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                       TextSpan(
                                                         children: [
                                                           if(widget.leaseID == null)
-                                                          TextSpan(
-                                                            text: 'Memo : ',
-                                                            style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                          ),
+                                                            TextSpan(
+                                                              text: 'Memo : ',
+                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                            ),
                                                           if(widget.leaseID != null)
                                                             TextSpan(
                                                               text: 'Description : ',
@@ -946,25 +1284,25 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                     height: 10,
                                                   ),
                                                   if(widget.leaseID == null)
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 18.0),
-                                                    child: Text.rich(
-                                                      TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text: 'Property : ',
-                                                            style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                          ),
-                                                          TextSpan(
-                                                            // text: formatDate(
-                                                            //     '${Propertytype.updatedAt}'),
-                                                            text: Propertytype.rentalAddress ??"-",
-                                                            style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                          ),
-                                                        ],
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(left: 18.0),
+                                                      child: Text.rich(
+                                                        TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text: 'Property : ',
+                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                            ),
+                                                            TextSpan(
+                                                              // text: formatDate(
+                                                              //     '${Propertytype.updatedAt}'),
+                                                              text: Propertytype.rentalAddress ??"-",
+                                                              style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
                                                   if(widget.leaseID != null)
                                                     Padding(
                                                       padding: const EdgeInsets.only(left: 18.0),
@@ -992,62 +1330,62 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                       if(widget.leaseID == null)
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            setState(() {
-                                                              dateController.text = Propertytype.actionDate!;
-                                                              amountController.text = Propertytype.amount!.toString();
-                                                              memoController.text = Propertytype.description ??"";
-                                                              selectedAccount = Propertytype.account!;
-                                                              if(!accountOptions.any((account) => account["account"] == selectedAccount)){
-                                                                accountOptions.add({
-                                                                  "account":selectedAccount,
-                                                                  "value":selectedAccount,
-                                                                });
-                                                              }
-                                                              charge_id = Propertytype.taskId;
-                                                            });
+                                                        Expanded(
+                                                          child: GestureDetector(
+                                                            onTap: () async {
+                                                              setState(() {
+                                                                dateController.text = Propertytype.actionDate!;
+                                                                amountController.text = Propertytype.amount!.toString();
+                                                                memoController.text = Propertytype.description ??"";
+                                                                selectedAccount = Propertytype.account!;
+                                                                if(!accountOptions.any((account) => account["account"] == selectedAccount)){
+                                                                  accountOptions.add({
+                                                                    "account":selectedAccount,
+                                                                    "value":selectedAccount,
+                                                                  });
+                                                                }
+                                                                charge_id = Propertytype.taskId;
+                                                              });
 
 
-                                                            EditCharge();
-                                                            // Navigator.push(
-                                                            //     context,
-                                                            //     MaterialPageRoute(
-                                                            //         builder: (context) => SummeryPageLease(
-                                                            //           leaseId: Propertytype.leaseId!,
-                                                            //           enddate: Propertytype.date,
-                                                            //           isredirectpayment: true,
-                                                            //         )));
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(color: Colors.grey[350]), // color:Colors.grey[100],
-                                                            child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons.edit,
-                                                                  size: 15,
-                                                                  color: blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Edit",
-                                                                  style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
-                                                                ),
-                                                              ],
+                                                              EditCharge();
+                                                              // Navigator.push(
+                                                              //     context,
+                                                              //     MaterialPageRoute(
+                                                              //         builder: (context) => SummeryPageLease(
+                                                              //           leaseId: Propertytype.leaseId!,
+                                                              //           enddate: Propertytype.date,
+                                                              //           isredirectpayment: true,
+                                                              //         )));
+                                                            },
+                                                            child: Container(
+                                                              height: 40,
+                                                              decoration: BoxDecoration(color: Colors.grey[350]), // color:Colors.grey[100],
+                                                              child: Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons.edit,
+                                                                    size: 15,
+                                                                    color: blueColor,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    "Edit",
+                                                                    style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
                                                       if(widget.leaseID == null)
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () async {
@@ -1082,9 +1420,10 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                 ],
                                               ),
                                             ),
+
                                           ),
                                         //SizedBox(height: 13,),
-                                      ],
+                                    ]
                                     ),
                                   );
                                 }).toList(),
@@ -1189,195 +1528,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   },
                 ),
               ),
-            /* if (MediaQuery.of(context).size.width > 500)
-              FutureBuilder<List<propertytype>>(
-                future: futurePropertyTypes,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return ShimmerTabletTable();
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height * .5,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    _tableData = snapshot.data!;
-                    if (selectedValue == null && searchvalue.isEmpty) {
-                      _tableData = snapshot.data!;
-                    } else if (selectedValue == "All") {
-                      _tableData = snapshot.data!;
-                    } else if (searchvalue.isNotEmpty) {
-                      _tableData = snapshot.data!
-                          .where((property) =>
-                      property.propertyType!
-                          .toLowerCase()
-                          .contains(searchvalue.toLowerCase()) ||
-                          property.propertysubType!
-                              .toLowerCase()
-                              .contains(searchvalue.toLowerCase()))
-                          .toList();
-                    } else {
-                      _tableData = snapshot.data!
-                          .where((property) =>
-                      property.propertyType == selectedValue)
-                          .toList();
-                    }
-                    totalrecords = _tableData.length;
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Container(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24.0, vertical: 5),
-                              child: Column(
-                                children: [
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .91,
-                                      child: Table(
-                                        defaultColumnWidth:
-                                        IntrinsicColumnWidth(),
-                                        children: [
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                // color: blueColor
-                                              ),
-                                            ),
-                                            children: [
 
-                                              _buildHeader(
-                                                  'Main Type',
-                                                  0,
-                                                      (property) =>
-                                                  property.propertyType!),
-                                              _buildHeader(
-                                                  'Subtype',
-                                                  1,
-                                                      (property) => property
-                                                      .propertysubType!),
-                                              _buildHeader(
-                                                  'Created At', 2, null),
-                                              _buildHeader(
-                                                  'Updated At', 3, null),
-                                              _buildHeader('Actions', 4, null),
-                                            ],
-                                          ),
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border.symmetric(
-                                                  horizontal: BorderSide.none),
-                                            ),
-                                            children: List.generate(
-                                                5,
-                                                    (index) => TableCell(
-                                                    child:
-                                                    Container(height: 20))),
-                                          ),
-                                          for (var i = 0;
-                                          i < _pagedData.length;
-                                          i++)
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  left: BorderSide(
-                                                      color: blueColor
+            // Export PDF Button
 
-
-),
-                                                  right: BorderSide(
-                                                      color: blueColor
-
-
-),
-                                                  top: BorderSide(
-                                                      color: blueColor
-
-
-),
-                                                  bottom: i ==
-                                                      _pagedData.length - 1
-                                                      ? BorderSide(
-                                                      color: blueColor
-
-
-)
-                                                      : BorderSide.none,
-                                                ),
-                                              ),
-                                              children: [
-
-                                                // Text(
-                                                //     '${_pagedData[i].propertyType!}'),
-                                                // Text(
-                                                //     '${_pagedData[i].propertysubType!}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].createdAt!)}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].updatedAt!)}'),
-                                                _buildDataCell(_pagedData[i]
-                                                    .propertyType!),
-
-                                                _buildDataCell(_pagedData[i]
-                                                    .propertysubType!),
-
-                                                _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].createdAt!),
-                                                ),
-
-                                                _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].updatedAt!),
-                                                ),
-                                                _buildActionsCell(
-                                                    _pagedData[i]),
-                                              ],
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 25),
-                                  _buildPaginationControls(),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 25),
-                        ],
-                      ),
-                    );
-                  }
-                },
-              ),*/
           ],
         ),
       )

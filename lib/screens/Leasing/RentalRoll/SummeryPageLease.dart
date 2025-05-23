@@ -34,6 +34,7 @@ import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
 import '../../Communications/Send E-mail/send_mail.dart';
 import '../../Rental/Properties/moveout/repository.dart';
+import '../Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../scheduled_charges/ScheduledCharge.dart';
 import 'Commnunication/communication.dart';
 import 'Document_Rental/Document_rental_table.dart';
@@ -1300,68 +1301,107 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 SizedBox(height: 10,),
                                                 Row(
                                                   children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      children: [
 
-                                                          // if (_tabController !=
-                                                          //     null) {
-                                                          //   _tabController!
-                                                          //       .animateTo(1);
-                                                          // }
-                                                          Navigator.of(context).push(
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                      ScheduledChargeTable(leaseID: widget.leaseId,)));
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                          padding: EdgeInsets.symmetric(horizontal: 6),
-                                                          height: MediaQuery.of(context)
-                                                              .size
-                                                              .width <
-                                                              500
-                                                              ? 55
-                                                              : 45,
-                                                          decoration: BoxDecoration(
-                                                              color: Colors.white,
-                                                              border: Border.all(
-                                                                  width: 1,
-                                                                  color: Colors.grey),
-                                                              borderRadius:
-                                                              BorderRadius.circular(
-                                                                  5.0)),
-                                                          child: Row(
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            setState(() {
 
-                                                            children: [
-                                                              if (leaseTenants
-                                                                  .any((tenant) =>
-                                                              tenant
-                                                                  .recurring ==
-                                                                  false))
-                                                                SizedBox(
-                                                                  width: 12,
+                                                              // if (_tabController !=
+                                                              //     null) {
+                                                              //   _tabController!
+                                                              //       .animateTo(1);
+                                                              // }
+                                                              Navigator.of(context).push(
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                          ScheduledChargeTable(leaseID: widget.leaseId,)));
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                              padding: EdgeInsets.symmetric(horizontal: 6),
+                                                              height: MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                                  500
+                                                                  ? 55
+                                                                  : 45,
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors.white,
+                                                                  border: Border.all(
+                                                                      width: 1,
+                                                                      color: Colors.grey),
+                                                                  borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      5.0)),
+                                                              child: Row(
+
+                                                                children: [
+                                                                  if (leaseTenants
+                                                                      .any((tenant) =>
+                                                                  tenant
+                                                                      .recurring ==
+                                                                      false))
+                                                                    SizedBox(
+                                                                      width: 12,
+                                                                    ),
+                                                                  Text(
+                                                                    'Scheduled Charges',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                        MediaQuery.of(context).size.width <
+                                                                            500
+                                                                            ? 13
+                                                                            : 18,
+                                                                        color:
+                                                                        blueColor,
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                                  ),
+
+                                                                ],
+                                                              )),
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            // Navigator.of(context).push(
+                                                            //     MaterialPageRoute(
+                                                            //         builder: (context) =>
+                                                            //             Scheduled_Payments_table(leaseId: widget.leaseId)
+                                                            //     )
+                                                            // );
+                                                          },
+                                                          child: Container(
+                                                            padding: EdgeInsets.symmetric(horizontal: 6),
+                                                            height: MediaQuery.of(context).size.width < 500 ? 55 : 45,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.white,
+                                                                border: Border.all(
+                                                                    width: 1,
+                                                                    color: Colors.grey
                                                                 ),
-                                                              Text(
-                                                                'Scheduled Charges',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                    MediaQuery.of(context).size.width <
-                                                                        500
-                                                                        ? 13
-                                                                        : 18,
-                                                                    color:
-                                                                    blueColor,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                              ),
+                                                                borderRadius: BorderRadius.circular(5.0)
+                                                            ),
+                                                            child: Row(
+                                                              children: [
+                                                                Text(
+                                                                  'Scheduled Payments',
+                                                                  style: TextStyle(
+                                                                      fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 16,
+                                                                      color: blueColor
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
 
-                                                            ],
-                                                          )),
-                                                    ),
-                                                    Spacer()
+                                                      ],
+                                                    )
                                                   ],
                                                 )
                                               ],

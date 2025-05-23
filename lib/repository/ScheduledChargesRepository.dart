@@ -34,11 +34,13 @@ class ScheduledChargesRepository {
 
         // Parse the data array into a list of ScheduledCharges
         final List<dynamic> data = responseBody['data'];
+        print(data);
         return data.map((json) => ScheduledCharges.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load scheduled charges');
       }
     } catch (e) {
+      print(e);
       throw Exception('Error: $e');
     }
   }

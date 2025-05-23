@@ -7,6 +7,7 @@ class Scheduled_Payment {
   double? totalAmount;
   String? paymentType;
   String? date;
+  String? account;
 
   Scheduled_Payment(
       {this.sId,
@@ -16,6 +17,7 @@ class Scheduled_Payment {
         this.tenant,
         this.totalAmount,
         this.paymentType,
+        this.account,
         this.date});
 
   Scheduled_Payment.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class Scheduled_Payment {
         ? (json['total_amount'] as int).toDouble()
         : json['total_amount'];
     paymentType = json['payment_type'];
+    account = json["account"];
     date = json['date'];
   }
 
@@ -43,6 +46,7 @@ class Scheduled_Payment {
     data['total_amount'] = this.totalAmount;
     data['payment_type'] = this.paymentType;
     data['date'] = this.date;
+    data["account"] = this.account;
     return data;
   }
 }
