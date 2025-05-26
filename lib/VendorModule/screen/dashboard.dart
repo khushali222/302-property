@@ -719,45 +719,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(
-                                              width:
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                                  .03),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .center,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .center,
-                                              children: [
-                                                if (workOrder
-                                                !.isBillable ==
-                                                    true)
-                                                  Icon(
-                                                    Icons.check,
-                                                    color: blueColor,
-                                                  ),
-                                                if (workOrder
-                                                ! .isBillable ==
-                                                    false)
-                                                  Icon(
-                                                    Icons.close,
-                                                    color: blueColor,
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(
-                                              width:
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                                  .02),
+
                                         ],
                                       ),
                                     ),

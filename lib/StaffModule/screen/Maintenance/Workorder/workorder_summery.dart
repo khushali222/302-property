@@ -3375,9 +3375,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               ),
                               Spacer(),
 
-                              SizedBox(
-                                width: 10,
-                              ),
+
                             ],
                           ),
                           SizedBox(

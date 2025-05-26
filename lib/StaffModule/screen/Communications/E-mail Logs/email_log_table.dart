@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -20,7 +24,7 @@ import '../../../../provider/dateProvider.dart';
 import '../../../repository/Communication/Email_log_repo.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
-
+import 'package:http/http.dart' as http;
 class Email_log_tablee extends StatefulWidget {
   @override
   _Email_log_tableeState createState() => _Email_log_tableeState();
@@ -327,7 +331,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
   //     },
   //   );
   // }
-  void _showAlert(BuildContext context, String id, Emails data) {
+  void _showAlert(BuildContext context, String id, Emails data) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -335,87 +339,206 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header Section
-              Container(
-                height: 48,
-                decoration: BoxDecoration(
-                  color: blueColor, // Customize color
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header Section
+                Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: blueColor,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        SizedBox(width: 15),
+                        Text(
+                          "Email Logs Details",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Spacer(),
+                        GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                            )
+                        ),
+                        SizedBox(width: 8),
+                      ],
+                    ),
+                  ),
                 ),
-                child: Center(
-                  child: Row(
+                SizedBox(height: 5),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        width: 15,
-                      ),
+                      _buildField(
+                          "Open Status",
+                          data.isAccepted == true && data.isOpened == true
+                              ? "✔✔ Read"
+                              : data.isAccepted == true
+                              ? "✔ Not Opened"
+                              : "✖",
+                          data.isAccepted == true && data.isOpened == true
+                              ? Colors.green
+                              : Colors.red),
+                      _buildField("Subject", '${data.subject}', Colors.black),
+                      _buildField("Recipient Email", '${data.email}', Colors.black),
+                      _buildField("From Email", '${data.from}', Colors.black),
+                      _buildField(
+                          "Created Time",
+                          DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                              DateTime.parse('${data.createdAt}').toLocal()),
+                          Colors.black),
+                      _buildField(
+                          "Open Time",
+                          '${data.isOpened == true ? DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse('${data.openedAt}')).toLocal()) : "Not Opened"}',
+                          Colors.black),
+
+                      // Email Body Section
                       Text(
-                        "Email Logs Details",
+                        "Email Body",
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: blueColor
                         ),
                       ),
-                      Spacer(),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
+                      SizedBox(height: 5),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey.shade400),
+                        ),
+                        child: Html(
+                          data: data.body ?? 'No body content',
+                          style: {
+                            "body": Style(
+                              fontSize: FontSize(14),
+                              color: grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           },
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                          )),
-                      SizedBox(
-                        width: 8,
+                        ),
                       ),
+
+                      SizedBox(height: 20),
+
+                      // Resend Button
+                      Center(
+                        child: ElevatedButton.icon(
+                          icon: Icon(Icons.send),
+                          label: Text("Resend Email"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: () async {
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            String token = prefs.getString('token') ?? '';
+                            String adminId = prefs.getString('adminId') ?? '';
+                            try {
+                              // Show loading indicator
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
+                                    child: Container(
+                                      padding: EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          CircularProgressIndicator(),
+                                          SizedBox(height: 16),
+                                          Text(
+                                            'Resending Email...',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+
+                              // Call resend API endpoint
+                              final response = await http.post(
+                                Uri.parse('$Api_url/api/email-logs/resend-email'),
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                  'authorization': 'CRM $token',
+                                  'id': 'CRM $adminId',
+                                },
+                                body: jsonEncode({
+                                  'email_id': data.emailId, // Assuming data.id contains the email log ID
+                                }),
+                              );
+
+                              Navigator.pop(context); // Remove loading indicator
+                              Navigator.pop(context); // Remove loading indicator
+
+                              if (response.statusCode == 200) {
+                                Fluttertoast.showToast(
+                                  msg: 'Email resent successfully',
+                                  // backgroundColor: Colors.green,
+
+                                  toastLength: Toast.LENGTH_SHORT,
+                                );
+                              } else {
+                                throw Exception('Failed to resend email');
+                              }
+                            } catch (e) {
+                              Navigator.pop(context); // Remove loading indicator
+                              Fluttertoast.showToast(
+                                msg: 'Failed to resend email',
+                                // backgroundColor: Colors.red,
+
+                                toastLength: Toast.LENGTH_SHORT,
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 10),
                     ],
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildField(
-                        "Open Status",
-                        data.isAccepted == true && data.isOpened == true
-                            ? "✔✔ Read" // Both conditions true
-                            : data.isAccepted == true
-                                ? "✔ Not Opened" // Only opened
-                                : "✖ error",
-                        data.isAccepted == true && data.isOpened == true
-                            ? Colors.green
-                            : Colors.red),
-                    _buildField("Subject", '${data.subject}', Colors.black),
-                    _buildField(
-                        "Recipient Email", '${data.email}', Colors.black),
-                    _buildField("From Email", '${data.from}', Colors.black),
-                    _buildField(
-                        "Created Time",
-                        DateFormat("yyyy-MM-dd HH:mm:ss").format(
-                            DateTime.parse('${data.createdAt}').toLocal()),
-                        Colors.black),
-                    _buildField(
-                        "Open Time",
-                        '${data.isOpened == true ? DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse('${data.openedAt}')).toLocal()) : "Not Opened"}',
-                        Colors.black),
-                    SizedBox(height: 20),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
     );
   }
+
 
 // Field-like container function
   Widget _buildField(String label, String value, Color textColor) {
