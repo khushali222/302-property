@@ -4319,17 +4319,17 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
 
   final TextEditingController _notesController = TextEditingController();
   bool _isInvalid = true;
-  List<String> items = []; // Example items
+  List<String> items = [];
 
   List<String> accountTypeItems = [
     'Income',
     'Non Operating Income ',
     'Liability Account'
-  ]; // Example items
+  ];
   List<String> fundTypeItems = [
     'Reverse',
     'Operating',
-  ]; // Example items
+  ];
 
   bool _isLoading = true;
   List<String> accounts = [];
@@ -4364,534 +4364,543 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        // items = (data['data'] as List)
-        //     .where((item) => item['charge_type'] == "One Time Charge")
-        //     .map((item) => item['account'] as String)
-        //     .toList();
         items = (data['data'] as List).map((item) => item['account'] as String).toList();
         _isLoading = false;
         print(items.length);
       });
     } else {
-      // Handle error
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to fetch data')),
       );
     }
   }
+
   TextEditingController startDateController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Form(
-        key: _formKey,
-        child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Material(
-              child: Container(
-                  color: Colors.white,
-                  height: _isInvalid ? 455 : 495,
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const SizedBox(height: 2),
-                    Text(
-                      'Add One Time Charge Content',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: blueColor,
-                      ),
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Material(
+          child: Container(
+            color: Colors.white,
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
+              maxWidth: MediaQuery.of(context).size.width * 0.9,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 2),
+                  Text(
+                    'Add One Time Charge Content',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
                     ),
-                    const SizedBox(height: 15),
-                    Text(
-                      'Account *',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: blueColor,
-                      ),
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    'Account *',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
                     ),
-                    const SizedBox(height: 8),
-                    _isLoading
-                        ? const Center(
-                            child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 50.0,
-                          ))
-                        : DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: const Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'Select',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xFFb0b6c3),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
+                  ),
+                  const SizedBox(height: 8),
+                  _isLoading
+                      ? const Center(
+                      child: SpinKitFadingCircle(
+                        color: Colors.black,
+                        size: 50.0,
+                      ))
+                      : DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: const Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Select',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFFb0b6c3),
                               ),
-                              items: [
-                                ...items.map((String item) => DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Text(
-                                        item,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black87,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      items: [
+                        ...items.map((String item) => DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(
+                            item,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )),
+                        DropdownMenuItem<String>(
+                          value: 'button_item',
+                          child: GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    backgroundColor: Colors.white,
+                                    surfaceTintColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10.0)
+                                    ),
+                                    child: Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth: 500,
+                                        maxHeight: MediaQuery.of(context).size.height * 0.8,
                                       ),
-                                    )),
-                                //updated
-                                DropdownMenuItem<String>(
-                                  value: 'button_item',
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return StatefulBuilder(builder: (context, setState) {
-                                            return Dialog(
-                                              backgroundColor: Colors.white,
-                                              surfaceTintColor: Colors.white,
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                                              child: SingleChildScrollView(
-                                                child: Container(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(16.0),
-                                                    child: Form(
-                                                      key: _subFormKey,
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(
-                                                            'Add account',
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: blueColor,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 20,
-                                                          ),
-                                                          Text(
-                                                            'Account Name *',
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: blueColor,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(height: 5),
-                                                          CustomTextField(
-                                                            validator: (value) {
-                                                              if (value == null || value.isEmpty) {
-                                                                return 'Please enter Account Name';
-                                                              }
-                                                              return null;
-                                                            },
-                                                            keyboardType: TextInputType.text,
-                                                            hintText: 'Enter Account Name',
-                                                            controller: _accountNameController,
-                                                          ),
-                                                          const SizedBox(height: 10),
-                                                          Text(
-                                                            'Account Type',
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: blueColor,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(height: 5),
-                                                          CustomDropdown(
-                                                            validator: (value) {
-                                                              if (value == null || value.isEmpty) {
-                                                                return 'Please select a Account Type';
-                                                              }
-                                                              return null;
-                                                            },
-                                                            labelText: 'Select Account Type',
-                                                            items: accountTypeItems,
-                                                            selectedValue: _selectedAccountType,
-                                                            onChanged: (String? value) {
-                                                              setState(() {
-                                                                _selectedAccountType = value;
-                                                              });
-                                                            },
-                                                          ),
-                                                          const SizedBox(height: 10),
-                                                          Text(
-                                                            'Fund Type',
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: blueColor,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(height: 5),
-                                                          CustomDropdown(
-                                                            validator: (value) {
-                                                              if (value == null || value.isEmpty) {
-                                                                return 'Please select a Fund Type';
-                                                              }
-                                                              return null;
-                                                            },
-                                                            labelText: 'Select Fund Type',
-                                                            items: fundTypeItems,
-                                                            selectedValue: _selectedFundType,
-                                                            onChanged: (String? value) {
-                                                              setState(() {
-                                                                _selectedFundType = value;
-                                                              });
-                                                            },
-                                                          ),
-                                                          const SizedBox(height: 10),
-                                                          Text(
-                                                            'Notes',
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: blueColor,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(height: 5),
-                                                          CustomTextField(
-                                                            validator: (value) {
-                                                              if (value == null || value.isEmpty) {
-                                                                return 'Please enter Notes';
-                                                              }
-                                                              return null;
-                                                            },
-                                                            keyboardType: TextInputType.text,
-                                                            hintText: 'Enter Notes',
-                                                            controller: _notesController,
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 20,
-                                                          ),
-                                                          RichText(
-                                                            text: TextSpan(
-                                                              children: <TextSpan>[
-                                                                TextSpan(
-                                                                  text: 'We stores this information ',
-                                                                  style: TextStyle(
-                                                                    fontSize: 12,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: Colors.grey,
-                                                                  ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: ' Privately ',
-                                                                  style: TextStyle(
-                                                                    fontSize: 12,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: blueColor,
-                                                                  ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: ' and ',
-                                                                  style: TextStyle(
-                                                                    fontSize: 12,
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: Colors.grey,
-                                                                  ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: ' Securely ',
-                                                                  style: TextStyle(
-                                                                    fontSize: 12,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: blueColor,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 20,
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.end,
-                                                            children: [
-                                                              Container(
-                                                                  height: 50,
-                                                                  width: 90,
-                                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                                                                  child: ElevatedButton(
-                                                                      style:
-                                                                          ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                      onPressed: () {
-                                                                        _submitSubForm();
-                                                                      },
-                                                                      child: const Text(
-                                                                        'Add',
-                                                                        style: TextStyle(color: Color(0xFFf7f8f9)),
-                                                                      ))),
-                                                              const SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              Container(
-                                                                  height: 50,
-                                                                  width: 94,
-                                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                                                                  child: ElevatedButton(
-                                                                      style: ElevatedButton.styleFrom(
-                                                                          backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                      onPressed: () {
-                                                                        setState(() {
-                                                                          Navigator.pop(context);
-                                                                          _selectedProperty = null;
-                                                                        });
-                                                                        Navigator.pop(context);
-                                                                      },
-                                                                      child: const Text(
-                                                                        'Cancel',
-                                                                        style: TextStyle(color: Color(0xFF748097)),
-                                                                      )))
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
+                                      child: SingleChildScrollView(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Form(
+                                            key: _subFormKey,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Add account',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          });
-                                        },
-                                      );
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          '+ Add New Account',
-                                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
+                                                const SizedBox(height: 20),
+                                                Text(
+                                                  'Account Name *',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                CustomTextField(
+                                                  validator: (value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return 'Please enter Account Name';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  keyboardType: TextInputType.text,
+                                                  hintText: 'Enter Account Name',
+                                                  controller: _accountNameController,
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  'Account Type',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                CustomDropdown(
+                                                  validator: (value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return 'Please select a Account Type';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  labelText: 'Select Account Type',
+                                                  items: accountTypeItems,
+                                                  selectedValue: _selectedAccountType,
+                                                  onChanged: (String? value) {
+                                                    setState(() {
+                                                      _selectedAccountType = value;
+                                                    });
+                                                  },
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  'Fund Type',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                CustomDropdown(
+                                                  validator: (value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return 'Please select a Fund Type';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  labelText: 'Select Fund Type',
+                                                  items: fundTypeItems,
+                                                  selectedValue: _selectedFundType,
+                                                  onChanged: (String? value) {
+                                                    setState(() {
+                                                      _selectedFundType = value;
+                                                    });
+                                                  },
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  'Notes',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                CustomTextField(
+                                                  validator: (value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return 'Please enter Notes';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  keyboardType: TextInputType.text,
+                                                  hintText: 'Enter Notes',
+                                                  controller: _notesController,
+                                                ),
+                                                const SizedBox(height: 20),
+                                                RichText(
+                                                  text: TextSpan(
+                                                    children: <TextSpan>[
+                                                      TextSpan(
+                                                        text: 'We stores this information ',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: ' Privately ',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: ' and ',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.normal,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: ' Securely ',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 20),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    Container(
+                                                        height: 50,
+                                                        width: 90,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(8.0)
+                                                        ),
+                                                        child: ElevatedButton(
+                                                            style: ElevatedButton.styleFrom(
+                                                                backgroundColor: blueColor,
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(8.0)
+                                                                )
+                                                            ),
+                                                            onPressed: () {
+                                                              _submitSubForm();
+                                                            },
+                                                            child: const Text(
+                                                              'Add',
+                                                              style: TextStyle(color: Color(0xFFf7f8f9)),
+                                                            )
+                                                        )
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    Container(
+                                                        height: 50,
+                                                        width: 94,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(8.0)
+                                                        ),
+                                                        child: ElevatedButton(
+                                                            style: ElevatedButton.styleFrom(
+                                                                backgroundColor: const Color(0xFFffffff),
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(8.0)
+                                                                )
+                                                            ),
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                Navigator.pop(context);
+                                                                _selectedProperty = null;
+                                                              });
+                                                              Navigator.pop(context);
+                                                            },
+                                                            child: const Text(
+                                                              'Cancel',
+                                                              style: TextStyle(color: Color(0xFF748097)),
+                                                            )
+                                                        )
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                      ],
+                                      ),
                                     ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  '+ Add New Account',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500
                                   ),
                                 ),
                               ],
-                              value: _selectedProperty,
-                              onChanged: (value) {
-                                setState(() {
-                                  //  _selectedProperty = value;
-                                  _selectedProperty = value;
-                                });
-                                // widget.onChanged(value);
-                                // state.didChange(value);
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: 45,
-                                padding: const EdgeInsets.only(left: 0, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                elevation: 2,
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                ),
-                                iconSize: 24,
-                                iconEnabledColor: Color(0xFFb0b6c3),
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(6),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility: MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
                             ),
                           ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Amount *',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: blueColor,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    CustomTextField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter amount';
-                        }
-                        return null;
+                        ),
+                      ],
+                      value: _selectedProperty,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedProperty = value;
+                        });
                       },
-                      keyboardType: TextInputType.number,
-                      hintText: 'Enter Amount',
-                      controller: _amountController,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Memo',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: blueColor,
+                      buttonStyleData: ButtonStyleData(
+                        height: 45,
+                        padding: const EdgeInsets.only(left: 0, right: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.white,
+                        ),
+                        elevation: 2,
                       ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(Icons.arrow_drop_down),
+                        iconSize: 24,
+                        iconEnabledColor: Color(0xFFb0b6c3),
+                        iconDisabledColor: Colors.grey,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.white,
+                        ),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(6),
+                          thickness: MaterialStateProperty.all(6),
+                          thumbVisibility: MaterialStateProperty.all(true),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Amount *',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter amount';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.number,
+                    hintText: 'Enter Amount',
+                    controller: _amountController,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Memo',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter memo';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'Enter Memo',
+                    controller: _memoController,
+                    optional: true,
+                  ),
+                  const SizedBox(height: 20),
+                  if(MediaQuery.of(context).size.width < 500) ...[
+                    Text(
+                        'Charge Date',
+                        style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor
+                        )
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          helpText: "Charge Date",
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                          locale: const Locale('en', 'US'),
+                          builder: (BuildContext context, Widget? child) {
+                            return Theme(
+                              data: ThemeData.light().copyWith(
+                                colorScheme: ColorScheme.light(
+                                  primary: blueColor,
+                                  onPrimary: Colors.white,
+                                  onSurface: blueColor,
+                                ),
+                                textButtonTheme: TextButtonThemeData(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    backgroundColor: blueColor,
+                                  ),
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (pickedDate != null) {
+                          String formattedStartDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                          setState(() {
+                            startDateController.text = formattedStartDate;
+                          });
+                        }
+                      },
+                      readOnnly: true,
+                      suffixIcon: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.date_range_rounded),
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter memo';
+                          return 'select start date';
                         }
                         return null;
                       },
                       keyboardType: TextInputType.text,
-                      hintText: 'Enter Memo',
-                      controller: _memoController,
-                      optional: true,
+                      hintText: 'YYYY-MM-DD',
+                      label: "select start date",
+                      controller: startDateController,
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    if(MediaQuery.of(context).size.width < 500)
-                      Text('Charge Date',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: blueColor)),
-                    if(MediaQuery.of(context).size.width < 500)
-                      const SizedBox(
-                        height: 8,
+                    const SizedBox(height: 15),
+                  ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                          height: 50,
+                          width: 90,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0)
+                          ),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: blueColor,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0)
+                                  )
+                              ),
+                              onPressed: () {
+                                _submitForm();
+                              },
+                              child: const Text(
+                                'Add',
+                                style: TextStyle(color: Color(0xFFf7f8f9)),
+                              )
+                          )
                       ),
-                    if(MediaQuery.of(context).size.width < 500)
-                      CustomTextField(
-                        onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            helpText: "Charge Date",
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2101),
-                            locale: const Locale('en', 'US'),
-                            builder: (BuildContext context,
-                                Widget? child) {
-                              return Theme(
-                                data: ThemeData.light().copyWith(
-                                  colorScheme: ColorScheme.light(
-                                    primary:
-                                    blueColor, // header background color
-                                    onPrimary: Colors
-                                        .white, // header text color
-                                    onSurface:
-                                    blueColor, // body text color
-                                  ),
-                                  textButtonTheme:
-                                  TextButtonThemeData(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor:
-                                      blueColor, // button text color
-                                    ),
-                                  ),
-                                ),
-                                child: child!,
-                              );
-                            },
-                          );
-                          if (pickedDate != null) {
-                            // String formattedStartDate =
-                            //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                            String formattedStartDate =
-                                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                            DateTime endDate = DateTime(
-                                pickedDate.year + 1,
-                                pickedDate.month,
-                                pickedDate.day);
-                            // String formattedEndDate =
-                            //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
-
-                            String formattedEndDate =
-                                "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-                            print(formattedStartDate);
-                            setState(() {
-                              startDateController.text =
-                                  formattedStartDate;
-
-                            });
-                          }
-                        },
-                        readOnnly: true,
-                        suffixIcon: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.date_range_rounded),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'select start date';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.text,
-                        hintText: 'YYYY-MM-DD',
-                        label: "select start date",
-                        controller: startDateController,
-                      ),
-                    if(MediaQuery.of(context).size.width < 500)
-                      const SizedBox(
-                        height: 15,
-                      ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                            height: 50,
-                            width: 90,
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                onPressed: () {
-                                  _submitForm();
-                                },
-                                child: const Text(
-                                  'Add',
-                                  style: TextStyle(color: Color(0xFFf7f8f9)),
-                                ))),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                            height: 50,
-                            width: 94,
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  'Cancel',
-                                  style: TextStyle(color: Color(0xFF748097)),
-                                )))
-                      ],
-                    ),
-                  ])),
-            )));
+                      const SizedBox(width: 10),
+                      Container(
+                          height: 50,
+                          width: 94,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0)
+                          ),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFffffff),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0)
+                                  )
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(color: Color(0xFF748097)),
+                              )
+                          )
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _submitForm() {
@@ -4927,7 +4936,6 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         'account_type': _selectedAccountType ?? '',
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text.trim(),
-        // 'charge_type': 'One Time Charge',
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
@@ -4939,7 +4947,6 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       );
 
       if (response.statusCode == 200) {
-        // widget.onSave(formData);
         final newAccountName = _accountNameController.text.trim();
 
         setState(() {
@@ -4955,7 +4962,6 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         print(response.body);
         Fluttertoast.showToast(msg: 'Account Added Successfully');
       } else {
-        // Handle error response
         print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to add account')),
