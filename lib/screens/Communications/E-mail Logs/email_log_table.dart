@@ -1229,9 +1229,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                           Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
+                                                                  border: Border.all(color: blueColor, width: 1.5),
+                                                            borderRadius:
+                                                            BorderRadius.circular(
+                                                                8),),
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment

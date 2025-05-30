@@ -263,7 +263,7 @@ class _Applicants_tableState extends State<Applicants_table> {
   }
 
   final List<String> items = ['Approved', "Rejected", 'Undecided', "All"];
-  String? selectedValue = "Undecided";
+  String? selectedValue = "All";
   String searchvalue = "";
   ConnectivityResult? _connectivityResult;
   @override
@@ -1035,16 +1035,16 @@ class _Applicants_tableState extends State<Applicants_table> {
                                     .contains(searchvalue.toLowerCase())))
                             .toList();
                       } else {
-                        // data = snapshot.data!
-                        //     .where((applicant) =>
-                        // applicant.applicantStatus.isNotEmpty &&
-                        //     applicant.applicantStatus.last.status == selectedValue)
-                        //     .toList();
                         data = snapshot.data!
                             .where((applicant) =>
-                        applicant.applicantStatus == null ||
-                            applicant.applicantStatus.isEmpty)
+                        applicant.applicantStatus.isNotEmpty &&
+                            applicant.applicantStatus.last.status == selectedValue)
                             .toList();
+                        // data = snapshot.data!
+                        //     .where((applicant) =>
+                        // applicant.applicantStatus == null ||
+                        //     applicant.applicantStatus.isEmpty)
+                        //     .toList();
                       }
                       if (data.isEmpty) {
                         return Center(
@@ -1216,9 +1216,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
-                                                    formatPhoneNumber(
-                                                        '${applicant.applicantPhoneNumber}'),
-                                                    // '${applicant.applicantPhoneNumber}',
+                                                    applicant.applicantPhoneNumber == null || applicant.applicantPhoneNumber.isEmpty
+                                                        ? '------'
+                                                        : formatPhoneNumber('${applicant.applicantPhoneNumber}'),
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1329,8 +1329,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text: applicant.propertyaddress != null && applicant.propertyaddress!.isNotEmpty
-                                                                        ? applicant.propertyaddress!.map((addres) => addres.address).join(",")
-                                                                        : applicant.rentalData != null
+                                                                        ? applicant.propertyaddress!.map((addres) => addres.address ?? "N/A").join(",")
+                                                                        : applicant.rentalData != null && applicant.rentalData!.rentalAdress != null
                                                                         ? applicant.rentalData!.rentalAdress
                                                                         : "N/A",
                                                                     style: TextStyle(
@@ -1354,8 +1354,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                         color: blueColor),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: dateProvider.formatCurrentDate(applicant.rentalData!.createdAt.toString()) ??
-                                                                        'N/A',
+                                                                    text: applicant.createdAt != null
+                                                                        ? dateProvider.formatCurrentDate(applicant.createdAt.toString())
+                                                                        : 'N/A',
                                                                     style: TextStyle(
                                                                         fontWeight: FontWeight.w700,
                                                                         color: grey),
@@ -1400,9 +1401,11 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
+                                                              border: Border.all(color: blueColor, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                            ),
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
@@ -1474,9 +1477,11 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]), // color:Colors.grey[100],
+                                                              border: Border.all(color: Colors.green, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                            ), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
@@ -1491,7 +1496,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                   size:
                                                                   15,
                                                                   color:
-                                                                  blueColor,
+                                                                  Colors.green,
                                                                 ),
                                                                 SizedBox(
                                                                   width:
@@ -1501,7 +1506,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                   "Edit",
                                                                   style: TextStyle(
                                                                       color:
-                                                                      blueColor,
+                                                                      Colors.green,
                                                                       fontWeight:
                                                                       FontWeight.bold),
                                                                 ),
@@ -1527,9 +1532,11 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
+                                                              border: Border.all(color: Colors.red, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                            ),
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
@@ -1544,7 +1551,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                   size:
                                                                   15,
                                                                   color:
-                                                                  blueColor,
+                                                                  Colors.red,
                                                                 ),
                                                                 SizedBox(
                                                                   width:
@@ -1554,7 +1561,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                   "Delete",
                                                                   style: TextStyle(
                                                                       color:
-                                                                      blueColor,
+                                                                      Colors.red,
                                                                       fontWeight:
                                                                       FontWeight.bold),
                                                                 )

@@ -187,10 +187,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
           final coords = await getCoordinatesFromAddress(rental);
           if (coords != null) {
             double distanceInMeters = Geolocator.distanceBetween(
-              // userLocation.latitude,
-              // userLocation.longitude,
-              39.6613845,
-              -75.6339627,
+              userLocation.latitude,
+              userLocation.longitude,
+              // 39.6613845,
+              // -75.6339627,
               coords.latitude,
               coords.longitude,
             );
@@ -1300,6 +1300,16 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                       ),
                     );
                   } else {
+                    List<int> visibleIndices = [];
+                    for (int i = 0; i < 5; i++) {
+                      if ((i == 0 && permissions!.propertyView!) ||
+                          (i == 1 && permissions!.tenantView!) ||
+                          (i == 2 && permissions!.applicantView!) ||
+                          (i == 3 && permissions!.vendorView!) ||
+                          (i == 4 && permissions!.workorderView!)) {
+                        visibleIndices.add(i);
+                      }
+                    }
                     // Phone layout - vertical
                     return Column(
                       children: [
@@ -1312,11 +1322,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                           padding: const EdgeInsets.only(
                               left: 25, right: 25),
                           child: GridView.builder(
-                            itemCount: 5,
+                            itemCount: visibleIndices.length,
                             gridDelegate:
                             SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount:
-                              2, // Number of items per row
+                              crossAxisCount: 2,
                               crossAxisSpacing:
                               MediaQuery.of(context)
                                   .size
@@ -1327,10 +1336,13 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                   .size
                                   .width *
                                   0.02,
-                              childAspectRatio:
-                              .99, // Adjust as needed for your design
+                              childAspectRatio: .99,
                             ),
-                            itemBuilder: (context, index) {
+                            itemBuilder: (context, i) {
+                              int index= visibleIndices[i];
+                              // Skip if no permission
+
+
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -1390,7 +1402,6 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                     SvgPicture
                                                         .asset(
                                                       "${dashboardData.icons[index]}",
-                                                      //fit: BoxFit.cover,
                                                       height: 30,
                                                       width: 30,
                                                     )),
@@ -1456,10 +1467,9 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                 ),
                               );
                             },
-                            shrinkWrap:
-                            true, // If you want the GridView to take only the space it needs
+                            shrinkWrap: true,
                             physics:
-                            const NeverScrollableScrollPhysics(), // If you don't want it to scroll
+                            const NeverScrollableScrollPhysics(),
                           ),
                         )
                       ],
@@ -1468,7 +1478,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                 },
               ),
 
-              LayoutBuilder(
+              LayoutBuilder (
                 builder: (context, constraints) {
                   if (constraints.maxWidth > 600) {
                     // Tablet layout - horizontal

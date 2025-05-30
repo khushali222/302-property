@@ -259,6 +259,7 @@ class RentalData {
   final int? v;
 
   factory RentalData.fromJson(Map<String, dynamic> json) {
+
     return RentalData(
       id: json["_id"],
       rentalId: json["rental_id"],

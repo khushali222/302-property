@@ -71,18 +71,19 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   void sortData(List<RentalOwnerData> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.rentalOwnername!.compareTo(b.rentalOwnername!)
-          : b.rentalOwnername!.compareTo(a.rentalOwnername!));
+          ? a.rentalOwnername!.toLowerCase().compareTo(b.rentalOwnername!.toLowerCase())
+          : b.rentalOwnername!.toLowerCase().compareTo(a.rentalOwnername!.toLowerCase()));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.rentalOwnerPhoneNumber!.compareTo(b.rentalOwnerPhoneNumber!)
-          : b.rentalOwnerPhoneNumber!.compareTo(a.rentalOwnerPhoneNumber!));
+          ? a.rentalOwnerPhoneNumber!.toLowerCase().compareTo(b.rentalOwnerPhoneNumber!.toLowerCase())
+          : b.rentalOwnerPhoneNumber!.toLowerCase().compareTo(a.rentalOwnerPhoneNumber!.toLowerCase()));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
-          ? a.rentalOwnerPrimaryEmail!.compareTo(b.rentalOwnerPrimaryEmail!)
-          : b.rentalOwnerPrimaryEmail!.compareTo(a.rentalOwnerPrimaryEmail!));
+          ? a.rentalOwnerPrimaryEmail!.toLowerCase().compareTo(b.rentalOwnerPrimaryEmail!.toLowerCase())
+          : b.rentalOwnerPrimaryEmail!.toLowerCase().compareTo(a.rentalOwnerPrimaryEmail!.toLowerCase()));
     }
   }
+
 
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
@@ -132,29 +133,29 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   children: [
                     width < 400
                         ? Text("Name",
-                            style: TextStyle(color: Colors.white, fontSize: 18))
+                        style: TextStyle(color: Colors.white, fontSize: 18))
                         : Text("Name",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18)),
+                        style:
+                        TextStyle(color: Colors.white, fontSize: 18)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -190,21 +191,21 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -291,8 +292,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
         context,
         MaterialPageRoute(
             builder: (context) => Edit_rentalowners(
-                  rentalOwner: rentalOwner,
-                )));
+              rentalOwner: rentalOwner,
+            )));
     if (check == true) {
       setState(() {});
     }
@@ -382,9 +383,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
         context,
         MaterialPageRoute(
             builder: (context) => ResponsiveRentalSummary(
-                  rentalowners: rental,
-                  rentalOwnersid: '',
-                )));
+              rentalowners: rental,
+              rentalOwnersid: '',
+            )));
     /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -429,12 +430,12 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       type: AlertType.warning,
       title: "Plan Limitation",
       desc:
-          "The limit for adding rentalowners according to the plan has been reached.",
+      "The limit for adding rentalowners according to the plan has been reached.",
       style: AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
-          //  overlayColor: Colors.black.withOpacity(.8)
-          ),
+        //  overlayColor: Colors.black.withOpacity(.8)
+      ),
       buttons: [
         DialogButton(
           child: Text(
@@ -566,7 +567,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
                       height:
-                          (MediaQuery.of(context).size.width < 500) ? 45 : 50,
+                      (MediaQuery.of(context).size.width < 500) ? 45 : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,
@@ -597,7 +598,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                   ? 14
                                   : 18),
                           contentPadding:
-                              (EdgeInsets.only(left: 8, bottom: 13, top: 5)),
+                          (EdgeInsets.only(left: 8, bottom: 13, top: 5)),
                         ),
                       ),
                     ),
@@ -685,8 +686,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       } else if (searchValue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((rentals) => rentals.rentalOwnername!
-                                .toLowerCase()
-                                .contains(searchValue!.toLowerCase()) ||
+                            .toLowerCase()
+                            .contains(searchValue!.toLowerCase()) ||
                             rentals.rentalOwnerPhoneNumber!
                                 .toLowerCase()
                                 .contains(searchValue!.toLowerCase()) ||
@@ -698,7 +699,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       } else {
                         data = snapshot.data!
                             .where((rentals) =>
-                                rentals.rentalOwnername == searchValue)
+                        rentals.rentalOwnername == searchValue)
                             .toList();
                       }
                       sortData(data);
@@ -720,7 +721,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                       Color.fromRGBO(152, 162, 179, .5)
 
 
-)),
+                                  )),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -752,9 +753,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                             padding: const EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 InkWell(
                                                   onTap: () {
@@ -785,18 +786,18 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                         left: 5, right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
-                                                            bottom: 10)
+                                                        bottom: 10)
                                                         : EdgeInsets.only(
-                                                            top: 10),
+                                                        top: 10),
                                                     child: FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                              .sortUp
+                                                          .sortUp
                                                           : FontAwesomeIcons
-                                                              .sortDown,
+                                                          .sortDown,
                                                       size: 20,
                                                       color: blueColor
-,
+                                                      ,
                                                     ),
                                                   ),
                                                 ),
@@ -819,7 +820,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
-                                                            FontWeight.bold,
+                                                        FontWeight.bold,
                                                         fontSize: 15,
                                                       ),
                                                     ),
@@ -827,20 +828,20 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .08),
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
-                                                  formatPhoneNumber('${rentals.rentalOwnerPhoneNumber}'),
+                                                    formatPhoneNumber('${rentals.rentalOwnerPhoneNumber}'),
                                                     // rentals.rentalOwnerPhoneNumber!.isEmpty ? 'N/A' :
                                                     // '${rentals.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       fontSize: 15,
                                                     ),
                                                   ),
@@ -859,56 +860,56 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 children: [
                                                   Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.start,
+                                                    MainAxisAlignment.start,
                                                     children: [
                                                       FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                                .sortUp
+                                                            .sortUp
                                                             : FontAwesomeIcons
-                                                                .sortDown,
+                                                            .sortDown,
                                                         size: 40,
                                                         color:
-                                                            Colors.transparent,
+                                                        Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                           children: <Widget>[
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Primery E-mail: ',
+                                                                    'Primery E-mail: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
+                                                                        FontWeight
+                                                                            .bold,
                                                                         color:
-                                                                            blueColor), // Bold and black
+                                                                        blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
                                                                     text:
                                                                     rentals.rentalOwnerPrimaryEmail!.isEmpty ? 'N/A' :
-                                                                        '${rentals.rentalOwnerPrimaryEmail}',
+                                                                    '${rentals.rentalOwnerPrimaryEmail}',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
+                                                                        FontWeight
+                                                                            .w700,
                                                                         color:
-                                                                            grey), // Light and grey
+                                                                        grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
                                                             SizedBox(
                                                               height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
+                                                                  context)
+                                                                  .size
+                                                                  .height *
                                                                   .01,
                                                             ),
                                                           ],
@@ -939,9 +940,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                             height: 40,
                                                             decoration:
                                                             BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
+                                                              border: Border.all(color: blueColor, width: 1.5),
+                                                              borderRadius: BorderRadius.circular(8),
+                                                            ),
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
@@ -987,12 +988,12 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           onTap: () async {
                                                             var check = await Navigator
                                                                 .push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            Edit_rentalowners(
-                                                                              rentalOwner: rentals,
-                                                                            )));
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        Edit_rentalowners(
+                                                                          rentalOwner: rentals,
+                                                                        )));
                                                             if (check == true) {
                                                               setState(() {
                                                                 futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
@@ -1002,23 +1003,23 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           child: Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
+                                                              border: Border.all(color: Colors.green, width: 1.5),
+                                                              borderRadius: BorderRadius.circular(8),
+                                                            ),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                              MainAxisAlignment
+                                                                  .center,
                                                               crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                              CrossAxisAlignment
+                                                                  .center,
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
                                                                       .edit,
                                                                   size: 15,
                                                                   color:
-                                                                      blueColor,
+                                                                  Colors.green,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10,
@@ -1026,11 +1027,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                 Text(
                                                                   "Edit",
                                                                   style: TextStyle(
-                                                                      color:
-                                                                          blueColor,
+                                                                      color: Colors.green,
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
+                                                                      FontWeight
+                                                                          .bold),
                                                                 ),
                                                               ],
                                                             ),
@@ -1051,24 +1051,24 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           child: Container(
                                                             height: 40,
                                                             decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
+                                                            BoxDecoration(
+                                                              border: Border.all(color: Colors.red, width: 1.5),
+                                                              borderRadius: BorderRadius.circular(8),
+                                                            ),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                              MainAxisAlignment
+                                                                  .center,
                                                               crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                              CrossAxisAlignment
+                                                                  .center,
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
                                                                       .trashCan,
                                                                   size: 15,
                                                                   color:
-                                                                      blueColor,
+                                                                  Colors.red,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10,
@@ -1077,10 +1077,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                   "Delete",
                                                                   style: TextStyle(
                                                                       color:
-                                                                          blueColor,
+                                                                      Colors.red,
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
+                                                                      FontWeight
+                                                                          .bold),
                                                                 )
                                                               ],
                                                             ),
@@ -1118,7 +1118,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
-                                              Border.all(color: Colors.grey),
+                                          Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
@@ -1131,15 +1131,15 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                               );
                                             }).toList(),
                                             onChanged: data.length >
-                                                    itemsPerPageOptions
-                                                        .first // Condition to check if dropdown should be enabled
+                                                itemsPerPageOptions
+                                                    .first // Condition to check if dropdown should be enabled
                                                 ? (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue!;
-                                                      currentPage =
-                                                          0; // Reset to first page when items per page change
-                                                    });
-                                                  }
+                                              setState(() {
+                                                itemsPerPage = newValue!;
+                                                currentPage =
+                                                0; // Reset to first page when items per page change
+                                              });
+                                            }
                                                 : null,
                                           ),
                                         ),
@@ -1159,10 +1159,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      },
                                     ),
                                     // IconButton(
                                     //   icon: Icon(Icons.arrow_back),
@@ -1195,10 +1195,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
                                           : null,
                                     ),
                                   ],
@@ -1257,12 +1257,12 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     } else if (searchValue.isNotEmpty) {
                       filteredData = snapshot.data!
                           .where((staff) =>
-                              staff.rentalOwnername!
-                                  .toLowerCase()
-                                  .contains(searchValue.toLowerCase()) ||
-                              staff.rentalOwnername!
-                                  .toLowerCase()
-                                  .contains(searchValue.toLowerCase()))
+                      staff.rentalOwnername!
+                          .toLowerCase()
+                          .contains(searchValue.toLowerCase()) ||
+                          staff.rentalOwnername!
+                              .toLowerCase()
+                              .contains(searchValue.toLowerCase()))
                           .toList();
                     }
                     _tableData = filteredData!;
@@ -1280,21 +1280,21 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                 children: [
                                   TableRow(
                                     decoration:
-                                        BoxDecoration(border: Border.all()),
+                                    BoxDecoration(border: Border.all()),
                                     children: [
 
                                       _buildHeader('Name', 0,
-                                          (rental) => rental.rentalOwnername!),
+                                              (rental) => rental.rentalOwnername!),
                                       _buildHeader(
                                           'Phone',
                                           1,
-                                          (rental) =>
-                                              rental.rentalOwnerPhoneNumber!),
+                                              (rental) =>
+                                          rental.rentalOwnerPhoneNumber!),
                                       _buildHeader(
                                           'Email',
                                           2,
-                                          (rental) =>
-                                              rental.rentalOwnerPrimaryEmail!),
+                                              (rental) =>
+                                          rental.rentalOwnerPrimaryEmail!),
                                       _buildHeader('Actions', 3, null),
                                     ],
                                   ),
@@ -1305,7 +1305,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                     ),
                                     children: List.generate(
                                         4,
-                                        (index) => TableCell(
+                                            (index) => TableCell(
                                             child: Container(height: 20))),
                                   ),
                                   for (var i = 0; i < _pagedData.length; i++)
@@ -1323,10 +1323,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   21, 43, 81, 1)),
                                           bottom: i == _pagedData.length - 1
                                               ? BorderSide(
-                                                  color: blueColor
+                                              color: blueColor
 
 
-)
+                                          )
                                               : BorderSide.none,
                                         ),
                                       ),
@@ -1398,8 +1398,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       child: InkWell(
         onTap: getField != null
             ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
+          _sort(getField, columnIndex, !_sortAscending);
+        }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -1429,8 +1429,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => ResponsiveRentalSummary(
-                            rentalOwnersid: inkText,
-                          )));
+                        rentalOwnersid: inkText,
+                      )));
             },
             child: Text(text, style: const TextStyle(fontSize: 18))),
       ),
@@ -1525,15 +1525,15 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-                _currentPage == 0 ? Colors.grey : blueColor,
+            _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
               : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
+            setState(() {
+              _currentPage--;
+            });
+          },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -1548,15 +1548,15 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 : blueColor
 
 
-, // Change color based on availability
+            , // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
+            setState(() {
+              _currentPage++;
+            });
+          },
         ),
       ],
     );

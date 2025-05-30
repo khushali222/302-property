@@ -1129,9 +1129,10 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                     Container(
                                                                   height: 40,
                                                                   decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]),
+                                                                    border: Border.all(color: Colors.red, width: 1.5),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        8),),
                                                                   child: Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
@@ -1146,7 +1147,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                         size:
                                                                             15,
                                                                         color:
-                                                                            blueColor,
+                                                                            Colors.red,
                                                                       ),
                                                                       SizedBox(
                                                                         width:
@@ -1156,7 +1157,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                         "Delete",
                                                                         style: TextStyle(
                                                                             color:
-                                                                                blueColor,
+                                                                                Colors.red,
                                                                             fontWeight:
                                                                                 FontWeight.bold),
                                                                       )
@@ -1182,9 +1183,11 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                     Container(
                                                                   height: 40,
                                                                   decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]),
+                                                                    border: Border.all(color: blueColor, width: 1.5),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        8),
+                                                                  ),
                                                                   child: Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment

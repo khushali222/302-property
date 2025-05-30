@@ -898,11 +898,43 @@ class _Lease_tableState extends State<Lease_table> {
 // Apply the status filter next
                             if (selectedStatus == "Active") {
                               data = data.where((lease) {
-                                return lease.remainingDays == "---" || double.parse(lease.remainingDays!) > 0;
+                                DateTime now = DateTime.now();
+                                DateTime? startDate;
+                                try {
+                                  startDate = DateTime.parse(lease.startDate!);
+                                } catch (e) {
+                                  return false;
+                                }
+
+                                // For "at will" or null end date, only check start date
+                                if (lease.endDate == null || lease.endDate!.toLowerCase() == "at will") {
+                                  return startDate.isBefore(now) || startDate.isAtSameMomentAs(now);
+                                }
+
+                                // For regular end dates, check both start and end dates
+                                DateTime? endDate;
+                                try {
+                                  endDate = DateTime.parse(lease.endDate!);
+                                } catch (e) {
+                                  return false;
+                                }
+                                return (startDate.isBefore(now) || startDate.isAtSameMomentAs(now)) &&
+                                    (endDate.isAfter(now) || endDate.isAtSameMomentAs(now));
                               }).toList();
                             } else if (selectedStatus == "Expired") {
                               data = data.where((lease) {
-                                return lease.remainingDays != "---" && double.parse(lease.remainingDays!) == 0;
+                                // At will leases can't expire
+                                if (lease.endDate == null || lease.endDate!.toLowerCase() == "at will") {
+                                  return false;
+                                }
+                                DateTime now = DateTime.now();
+                                DateTime? endDate;
+                                try {
+                                  endDate = DateTime.parse(lease.endDate!);
+                                } catch (e) {
+                                  return false;
+                                }
+                                return endDate.isBefore(now);
                               }).toList();
                             } else if (selectedStatus == "All") {
                               // No additional filtering needed
@@ -1150,7 +1182,12 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 },
                                                                 child: Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration(color: Colors.grey[350]),
+                                                                  decoration: BoxDecoration( border: Border.all(color: blueColor, width: 1.5),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        8),
+
+                                                                  ),
                                                                   child: Row(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -1204,7 +1241,12 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 },
                                                                 child: Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration(color: Colors.grey[350]), // color:Colors.grey[100],
+                                                                  decoration: BoxDecoration( border: Border.all(color: Colors.green, width: 1.5),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        8),
+
+                                                                  ), // color:Colors.grey[100],
                                                                   child: Row(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -1212,14 +1254,14 @@ class _Lease_tableState extends State<Lease_table> {
                                                                       FaIcon(
                                                                         FontAwesomeIcons.edit,
                                                                         size: 15,
-                                                                        color: blueColor,
+                                                                        color: Colors.green,
                                                                       ),
                                                                       SizedBox(
                                                                         width: 10,
                                                                       ),
                                                                       Text(
                                                                         "Edit",
-                                                                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                                                        style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
                                                                       ),
                                                                     ],
                                                                   ),
@@ -1236,7 +1278,10 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 },
                                                                 child: Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration(color: Colors.grey[350]),
+                                                                  decoration: BoxDecoration( border: Border.all(color: Colors.red, width: 1.5),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        8),),
                                                                   child: Row(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -1244,14 +1289,14 @@ class _Lease_tableState extends State<Lease_table> {
                                                                       FaIcon(
                                                                         FontAwesomeIcons.trashCan,
                                                                         size: 15,
-                                                                        color: blueColor,
+                                                                        color: Colors.red,
                                                                       ),
                                                                       SizedBox(
                                                                         width: 10,
                                                                       ),
                                                                       Text(
                                                                         "Delete",
-                                                                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                                                        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                                                                       )
                                                                     ],
                                                                   ),
