@@ -2007,7 +2007,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 padding:
                                                     const EdgeInsets.all(8.0),
                                                 child: Text(
-                                                  'First Name',
+                                                  'Name',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,

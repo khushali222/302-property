@@ -1938,7 +1938,7 @@ class _addLease3State extends State<addLease3>
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
                                                 child: Text(
-                                                  'First Name',
+                                                  'Name',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,

@@ -2379,7 +2379,7 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
                                                 child: Text(
-                                                  'First Name',
+                                                  'Name',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
@@ -4462,8 +4462,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                       return Dialog(
                                         backgroundColor: Colors.white,
                                         surfaceTintColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10.0)),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                                         child: Container(
                                           constraints: BoxConstraints(
                                             maxWidth: 500,
@@ -5481,50 +5480,74 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    hint: Text('select'),
-                    isExpanded: true,
-                   // menuMaxHeight: 200,
-                    value: selectedDay,
-                    items: [
-                      DropdownMenuItem<String>(
-                        value: 'Weekly',
-                        child: Text('Weekly'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'Monthly',
-                        child: Text('Monthly'),
-                      ),
-                    ],
-
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDay = value;
-                      });
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      height: 45,
-                      // width: 160,
-                      padding: const EdgeInsets.only(left: 0, right: 14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: Colors.white,
-                      ),
-                      elevation: 2,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: Colors.white,
-                      ),
-                      scrollbarTheme: ScrollbarThemeData(
-                        radius: const Radius.circular(6),
-                        thickness: MaterialStateProperty.all(6),
-                        thumbVisibility: MaterialStateProperty.all(true),
-                      ),
-                    ),
-                  ),
+                FormField<String>(
+                  validator: (value) {
+                    if (selectedDay == null || selectedDay!.isEmpty) {
+                      return 'Please select a recurrence type';
+                    }
+                    return null;
+                  },
+                  builder: (FormFieldState<String> state) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            hint: Text('select'),
+                            isExpanded: true,
+                            value: selectedDay,
+                            items: [
+                              DropdownMenuItem<String>(
+                                value: 'Weekly',
+                                child: Text('Weekly'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Monthly',
+                                child: Text('Monthly'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                selectedDay = value;
+                                state.didChange(value);
+                              });
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              height: 45,
+                              padding: const EdgeInsets.only(left: 0, right: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              elevation: 2,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              scrollbarTheme: ScrollbarThemeData(
+                                radius: const Radius.circular(6),
+                                thickness: MaterialStateProperty.all(6),
+                                thumbVisibility: MaterialStateProperty.all(true),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (state.hasError)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6, left: 4),
+                            child: Text(
+                              state.errorText!,
+                              style: TextStyle(
+                                color: Colors.red[700],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(
                   height: 20,

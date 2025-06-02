@@ -627,7 +627,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                           padding: const EdgeInsets.only(top: 8),
                           child: titleBar(
                             width: MediaQuery.of(context).size.width * .65,
-                            title: 'Works Orders',
+                            title: 'Work Orders',
                           ),
                         ),
                         GestureDetector(
