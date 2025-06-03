@@ -1742,7 +1742,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                         children: [
                           Row(
                             children: [
-                              Text('Parts And Labour :',
+                              Text('Parts and Labor :',
                                   style:
                                   TextStyle(fontWeight: FontWeight.bold)),
                             ],
@@ -1773,12 +1773,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                           ),
                           ElevatedButton(
                             onPressed: addRow,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor
+                            ),
                             child: Text('Add Row'),
                           ),
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Vendors Note ',
+                          Text('Vendor Notes ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,

@@ -1403,9 +1403,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
+                                                              border: Border.all(color: blueColor, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                            ),
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
@@ -1486,9 +1488,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]), // color:Colors.grey[100],
+                                                              border: Border.all(color: Colors.green, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
@@ -1503,7 +1506,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   size:
                                                                   15,
                                                                   color:
-                                                                  blueColor,
+                                                                  Colors.green,
                                                                 ),
                                                                 SizedBox(
                                                                   width:
@@ -1513,7 +1516,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   "Edit",
                                                                   style: TextStyle(
                                                                       color:
-                                                                      blueColor,
+                                                                      Colors.green,
                                                                       fontWeight:
                                                                       FontWeight.bold),
                                                                 ),
@@ -1540,9 +1543,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
+                                                              border: Border.all(color: Colors.red, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                            ),
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
@@ -1557,7 +1562,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   size:
                                                                   15,
                                                                   color:
-                                                                  blueColor,
+                                                                  Colors.red,
                                                                 ),
                                                                 SizedBox(
                                                                   width:
@@ -1567,7 +1572,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   "Delete",
                                                                   style: TextStyle(
                                                                       color:
-                                                                      blueColor,
+                                                                      Colors.red,
                                                                       fontWeight:
                                                                       FontWeight.bold),
                                                                 )
@@ -2188,6 +2193,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 child: const FaIcon(
                   FontAwesomeIcons.edit,
                   size: 30,
+                  color: Colors.green,
                 ),
               ),
               const SizedBox(
@@ -2200,6 +2206,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 child: const FaIcon(
                   FontAwesomeIcons.trashCan,
                   size: 30,
+                  color: Colors.red,
                 ),
               ),
             ],

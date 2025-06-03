@@ -136,17 +136,31 @@ class _Add_new_propertyState extends State<Add_new_property> {
   Future<List<propertytype>>? futureProperties;
   String? selectedProperty;
   Future<List<RentalOwners>>? futureRentalOwner;
-
   Map<String, List<propertytype>> groupPropertiesByType(
       List<propertytype> properties) {
     Map<String, List<propertytype>> groupedProperties = {};
+
+    // First group by property type
     for (var property in properties) {
       if (!groupedProperties.containsKey(property.propertyType)) {
         groupedProperties[property.propertyType!] = [];
       }
       groupedProperties[property.propertyType!]!.add(property);
     }
-    return groupedProperties;
+
+    // Sort the values (property lists) for each property type and subtype
+    groupedProperties.forEach((key, value) {
+      value.sort((a, b) =>
+          (a.propertysubType ?? '').toLowerCase().compareTo((b.propertysubType ?? '').toLowerCase()));
+    });
+
+
+    Map<String, List<propertytype>> sortedGroupedProperties = {};
+    for (var key in groupedProperties.keys) {
+      sortedGroupedProperties[key] = groupedProperties[key]!;
+    }
+
+    return sortedGroupedProperties;
   }
 
   List<Owner> owners = [];

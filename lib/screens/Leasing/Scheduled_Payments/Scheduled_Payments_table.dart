@@ -1113,9 +1113,11 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                           Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]), // color:Colors.grey[100],
+                                                              border: Border.all(color: blueColor, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                            ), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
@@ -1165,9 +1167,11 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                           Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]), // color:Colors.grey[100],
+                                                              border: Border.all(color: Colors.red, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                            ), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
@@ -1182,7 +1186,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                                   size:
                                                                   15,
                                                                   color:
-                                                                  blueColor,
+                                                                  Colors.red,
                                                                 ),
                                                                 SizedBox(
                                                                   width:
@@ -1192,7 +1196,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                                   "Delete",
                                                                   style: TextStyle(
                                                                       color:
-                                                                      blueColor,
+                                                                      Colors.red,
                                                                       fontWeight:
                                                                       FontWeight.bold),
                                                                 ),

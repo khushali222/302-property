@@ -1308,9 +1308,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                           child: Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
+                                                                 border: Border.all(color: Colors.green, width: 1.5),
+                                                            borderRadius:
+                                                            BorderRadius.circular(
+                                                                8),), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -1324,7 +1325,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                       .edit,
                                                                   size: 15,
                                                                   color:
-                                                                      blueColor,
+                                                                      Colors.green,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10,
@@ -1333,7 +1334,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                   "Edit",
                                                                   style: TextStyle(
                                                                       color:
-                                                                          blueColor,
+                                                                          Colors.green,
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold),
@@ -1358,9 +1359,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                             height: 40,
                                                             decoration:
                                                                 BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
+                                                                  border: Border.all(color: Colors.red, width: 1.5),
+                                                                  borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      8),),
                                                             child: Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -1374,7 +1376,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                       .trashCan,
                                                                   size: 15,
                                                                   color:
-                                                                      blueColor,
+                                                                      Colors.red,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10,
@@ -1383,7 +1385,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                   "Delete",
                                                                   style: TextStyle(
                                                                       color:
-                                                                          blueColor,
+                                                                          Colors.red,
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold),

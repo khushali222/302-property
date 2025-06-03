@@ -1360,7 +1360,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                             },
                                                             child: Container(
                                                               height: 40,
-                                                              decoration: BoxDecoration(color: Colors.grey[350]), // color:Colors.grey[100],
+                                                              decoration: BoxDecoration(border: Border.all(color: Colors.green, width: 1.5),
+                                                                borderRadius:
+                                                                BorderRadius.circular(
+                                                                    8),
+                                                              ), // color:Colors.grey[100],
                                                               child: Row(
                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -1368,14 +1372,14 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                   FaIcon(
                                                                     FontAwesomeIcons.edit,
                                                                     size: 15,
-                                                                    color: blueColor,
+                                                                    color: Colors.green,
                                                                   ),
                                                                   SizedBox(
                                                                     width: 10,
                                                                   ),
                                                                   Text(
                                                                     "Edit",
-                                                                    style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                                                    style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
                                                                   ),
                                                                 ],
                                                               ),
@@ -1393,7 +1397,10 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                           },
                                                           child: Container(
                                                             height: 40,
-                                                            decoration: BoxDecoration(color: Colors.grey[350]), // color:Colors.grey[100],
+                                                            decoration: BoxDecoration(border: Border.all(color: Colors.red, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -1401,14 +1408,14 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                 FaIcon(
                                                                   FontAwesomeIcons.trashCan,
                                                                   size: 15,
-                                                                  color: blueColor,
+                                                                  color: Colors.red,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10,
                                                                 ),
                                                                 Text(
                                                                   "Delete",
-                                                                  style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                                                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                                                                 ),
                                                               ],
                                                             ),

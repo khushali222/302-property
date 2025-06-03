@@ -10,7 +10,9 @@ class StaffPermissionProvider with ChangeNotifier {
 
   StaffPermission? get permissions => _permissions;
   bool get isLoading => _isLoading;
-
+  StaffPermissionProvider() {
+    fetchPermissions();
+  }
   Future<void> fetchPermissions() async {
     try {
       StaffPermission fetchedPermissions = await StaffPermissionService.fetchPermissions();
