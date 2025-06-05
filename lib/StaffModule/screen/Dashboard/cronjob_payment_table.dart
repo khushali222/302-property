@@ -36,22 +36,6 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     25,
   ]; // Options for items per page
 
-  // void sortData(List<LeaseDatacronjob> data) {
-  //   if (sorting1) {
-  //     data.sort((a, b) => ascending1
-  //         ? a.propertyType!.compareTo(b.propertyType!)
-  //         : b.propertyType!.compareTo(a.propertyType!));
-  //   } else if (sorting2) {
-  //     data.sort((a, b) => ascending2
-  //         ? a.propertysubType!.compareTo(b.propertysubType!)
-  //         : b.propertysubType!.compareTo(a.propertysubType!));
-  //   } else if (sorting3) {
-  //     data.sort((a, b) => ascending3
-  //         ? a.createdAt!.compareTo(b.createdAt!)
-  //         : b.createdAt!.compareTo(a.createdAt!));
-  //   }
-  // }
-
   int? expandedIndex;
   Set<int> expandedIndices = {};
   late bool isExpanded;
@@ -144,17 +128,17 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         children: [
                           width < 400
                               ? Text("  Rental\n Address",
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(50, 75, 119, 1),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ))
+                              style: TextStyle(
+                                color: Color.fromRGBO(50, 75, 119, 1),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ))
                               : Text("  Rental\n Address",
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(50, 75, 119, 1),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  )),
+                              style: TextStyle(
+                                color: Color.fromRGBO(50, 75, 119, 1),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              )),
                           // Text("Property", style: TextStyle(color: Colors.white)),
                           SizedBox(width: 3),
                           // ascending1
@@ -296,6 +280,196 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     );
   }
 
+  Widget paymentCard(
+      String name,
+      String address,
+      String amount,
+      bool isExpanded,
+      VoidCallback onExpandTap,
+      LeaseDatacronjob data,
+      ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: onExpandTap,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  child: Icon(
+                    isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: blueColor,
+                  ),
+                ),
+              ),
+              SizedBox(width: 5),
+              Text(name, style: cardTextStyle),
+              const Spacer(),
+              Text('\$$amount', style: cardTextStyle)
+            ],
+          ),
+          if (isExpanded)
+            Column(
+              children: [
+                Divider(
+                  thickness: 2,
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Rental Address',
+                      style: subTextStyle.copyWith(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Action',
+                      style: subTextStyle.copyWith(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(address, style: subTextStyle),
+                    if (data.response == "FAILURE")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _showAlertAcknowledgement(context, data.id!,failureacknowledged!);
+                              // TODO: Add your onTap logic here
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              height: 30,
+                              width: 30,
+                              child: Icon(Icons.check, color: blueColor),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: () {
+                              _showAlertRetry(context, data.id!);
+                              // TODO: Add your onTap logic here
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              height: 30,
+                              width: 30,
+                              child: Icon(Icons.recycling_outlined,
+                                  color: blueColor),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: () {
+                              _showAlertSchedule(context, data.id!);
+                              // TODO: Add your onTap logic here
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              height: 30,
+                              width: 30,
+                              child: Icon(Icons.calendar_month_outlined,
+                                  color: blueColor),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (data.response == "SUCCESS" && data.state == "settled")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _showAlertRefund(context, data.id!);
+                              // TODO: Add your onTap logic here
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              height: 30,
+                              width: 30,
+                              child: FaIcon(
+                                FontAwesomeIcons.reply,
+                                size: 15,
+                                color: blueColor,
+                              ),
+                            ),),
+                          SizedBox(width: 10),
+                        ],
+                      ),
+                    if (data.response == "SUCCESS" && data.state == "settling")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _showAlertvoid(context, data.id!);
+                              // TODO: Add your onTap logic here
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              height: 30,
+                              width: 30,
+                              child: Icon(
+                                Icons.money_off,
+                                size: 20,
+                                weight: 30,
+                                color: blueColor,
+                              ),
+                            ), ),
+                          SizedBox(width: 10),
+                        ],
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
@@ -330,33 +504,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  // LeaseResponse get _pagedData {
-  //   int startIndex = _currentPage * _rowsPerPage;
-  //   int endIndex = startIndex + _rowsPerPage;
-  //   return _tableData.sublist(startIndex,
-  //       endIndex > _tableData.length ? _tableData.length : endIndex);
-  // }
-
   void _changeRowsPerPage(int selectedRowsPerPage) {
     setState(() {
       _rowsPerPage = selectedRowsPerPage;
       _currentPage = 0; // Reset to the first page when changing rows per page
     });
   }
-  //
-  // void _sort<T>(Comparable<T> Function(LeaseDatacronjob d) getField,
-  //     int columnIndex, bool ascending) {
-  //   setState(() {
-  //     _sortColumnIndex = columnIndex;
-  //     _sortAscending = ascending;
-  //     _tableData.sort((a, b) {
-  //       final aValue = getField(a);
-  //       final bValue = getField(b);
-  //       final result = aValue.compareTo(bValue as T);
-  //       return _sortAscending ? result : -result;
-  //     });
-  //   });
-  // }
 
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(LeaseDatacronjob d)? getField) {
@@ -394,96 +547,14 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     );
   }
 
-  // Widget _buildPaginationControls() {
-  //   int numorpages = 1;
-  //   numorpages = (totalrecords / _rowsPerPage).ceil();
-  //
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.end,
-  //     children: [
-  //       // Text('Rows per page: '),
-  //       // SizedBox(width: 10),
-  //       Material(
-  //         elevation: 2,
-  //         color: Colors.white,
-  //         child: Container(
-  //           height: 55,
-  //           padding: EdgeInsets.symmetric(horizontal: 12.0),
-  //           decoration: BoxDecoration(
-  //             border: Border.all(color: Colors.grey),
-  //             borderRadius: BorderRadius.circular(4.0),
-  //           ),
-  //           child: DropdownButtonHideUnderline(
-  //             child: DropdownButton<int>(
-  //               value: _rowsPerPage,
-  //               items: [10, 25, 50, 100].map((int value) {
-  //                 return DropdownMenuItem<int>(
-  //                   value: value,
-  //                   child: Text(value.toString()),
-  //                 );
-  //               }).toList(),
-  //               onChanged: (newValue) {
-  //                 if (newValue != null) {
-  //                   _changeRowsPerPage(newValue);
-  //                 }
-  //               },
-  //               icon: Icon(
-  //                 Icons.arrow_drop_down,
-  //                 size: 40,
-  //               ),
-  //               style: TextStyle(color: Colors.black, fontSize: 17),
-  //               dropdownColor: Colors.white,
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //       SizedBox(width: 10),
-  //       IconButton(
-  //         icon: FaIcon(
-  //           FontAwesomeIcons.circleChevronLeft,
-  //           size: 30,
-  //           color: _currentPage == 0 ? Colors.grey : blueColor,
-  //         ),
-  //         onPressed: _currentPage == 0
-  //             ? null
-  //             : () {
-  //                 setState(() {
-  //                   _currentPage--;
-  //                 });
-  //               },
-  //       ),
-  //       Text(
-  //         'Page ${_currentPage + 1} of $numorpages',
-  //         style: TextStyle(fontSize: 18),
-  //       ),
-  //       IconButton(
-  //         icon: FaIcon(
-  //           size: 30,
-  //           FontAwesomeIcons.circleChevronRight,
-  //           color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
-  //               ? Colors.grey
-  //               : blueColor, // Change color based on availability
-  //         ),
-  //         onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
-  //             ? null
-  //             : () {
-  //                 setState(() {
-  //                   _currentPage++;
-  //                 });
-  //               },
-  //       ),
-  //     ],
-  //   );
-  // }
-
   ConnectivityResult? _connectivityResult;
   final _scrollController = ScrollController();
   bool failureacknowledged = true;
   void _showAlertAcknowledgement(
-    BuildContext context,
-    String id,
-    bool failureacknowledged,
-  ) {
+      BuildContext context,
+      String id,
+      bool failureacknowledged,
+      ) {
     TextEditingController reason = TextEditingController();
     Alert(
       context: context,
@@ -579,7 +650,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       type: AlertType.warning,
       title: "Payment ReSchedule",
       desc:
-          "Please select a payment date to retry. The date must be tomorrow or later :",
+      "Please select a payment date to retry. The date must be tomorrow or later :",
       content: Column(
         children: <Widget>[
           SizedBox(
@@ -595,7 +666,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   context: context,
                   initialDate: tomorrow,
                   firstDate:
-                      tomorrow, // Restrict selection to tomorrow and future dates
+                  tomorrow, // Restrict selection to tomorrow and future dates
                   lastDate: DateTime(2101),
                   locale: const Locale('en', 'US'),
                   builder: (BuildContext context, Widget? child) {
@@ -621,7 +692,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 if (pickedDate != null) {
                   setState(() {
                     retrydate.text =
-                        pickedDate.toLocal().toString().split(' ')[0];
+                    pickedDate.toLocal().toString().split(' ')[0];
                     // This ensures the date appears as selected in yyyy-MM-dd format
                   });
                 }
@@ -697,12 +768,16 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     ).show();
   }
 
+  final cardTextStyle =
+  TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: blueColor);
+  final subTextStyle = TextStyle(
+      color: Colors.grey[700], fontWeight: FontWeight.bold, fontSize: 14);
   Future<void> _showAlertRefund(BuildContext context, String id) async {
     TextEditingController retrydate = TextEditingController();
     TextEditingController amount = TextEditingController();
     TextEditingController memo = TextEditingController();
     List<PaymentRefund> refunds =
-        await PaymentCronjobRepository().fetchPaymentRefunds(id);
+    await PaymentCronjobRepository().fetchPaymentRefunds(id);
     PaymentRefund? refund = refunds.isNotEmpty ? refunds.first : null;
 
     if (refund != null) {
@@ -801,7 +876,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 if (pickedDate != null) {
                   setState(() {
                     retrydate.text =
-                        pickedDate.toLocal().toString().split(' ')[0];
+                    pickedDate.toLocal().toString().split(' ')[0];
                     // This ensures the date appears as selected in yyyy-MM-dd format
                   });
                 }
@@ -920,11 +995,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               context: context,
               entry: (refund?.entry ?? [])
                   .map((item) => {
-                        "amount": item.amount,
-                        "account": item.account,
-                        "date": item.date,
-                        "memo": item.memo,
-                      })
+                "amount": item.amount,
+                "account": item.account,
+                "date": item.date,
+                "memo": item.memo,
+              })
                   .toList(),
             );
 
@@ -1182,7 +1257,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     // }
                     //sortData(data);
                     final totalPages =
-                        (snapshot.data!.metadata!.total! / itemsPerPage).ceil();
+                    (snapshot.data!.metadata!.total! / itemsPerPage).ceil();
 
                     // final currentPageData = data
                     //     .skip(currentPage * itemsPerPage)
@@ -1191,588 +1266,44 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     final currentPageData = data;
                     return SingleChildScrollView(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 10),
-                          _buildHeaders(data),
+                          Text("Payment Last 7 Days",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor)),
+                          // _buildHeaders(data),
                           SizedBox(height: 1),
                           Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5))),
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(
+                            //         color: Color.fromRGBO(152, 162, 179, .5))),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
                               children:
-                                  currentPageData.asMap().entries.map((entry) {
+                              currentPageData.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 bool isExpanded = expandedIndex == index;
                                 LeaseDatacronjob Propertytype = entry.value;
 
-                                //return CustomExpansionTile(data: Propertytype, index: index);
                                 return Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    // color: index % 2 != 0
-                                    //     ? Colors.white
-                                    //     : blueColor.withOpacity(0.09),
-                                    border: Border.all(
-                                        color:
-                                            Color.fromRGBO(152, 162, 179, .5)),
-                                  ),
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(color: blueColor),
-                                  // ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              InkWell(
-                                                onTap: () {
-                                                  // setState(() {
-                                                  //    isExpanded = !isExpanded;
-                                                  // //  expandedIndex = !expandedIndex;
-                                                  //
-                                                  // });
-                                                  // setState(() {
-                                                  //   if (isExpanded) {
-                                                  //     expandedIndex = null;
-                                                  //     isExpanded = !isExpanded;
-                                                  //   } else {
-                                                  //     expandedIndex = index;
-                                                  //   }
-                                                  // });
-                                                  setState(() {
-                                                    if (expandedIndex ==
-                                                        index) {
-                                                      expandedIndex = null;
-                                                    } else {
-                                                      expandedIndex = index;
-                                                    }
-                                                  });
-                                                },
-                                                child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 5, right: 5),
-                                                  padding: !isExpanded
-                                                      ? EdgeInsets.only(
-                                                          bottom: 10)
-                                                      : EdgeInsets.only(
-                                                          top: 10),
-                                                  child: FaIcon(
-                                                    isExpanded
-                                                        ? FontAwesomeIcons
-                                                            .sortUp
-                                                        : FontAwesomeIcons
-                                                            .sortDown,
-                                                    size: 15,
-                                                    color: blueColor,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .02),
-                                              Expanded(
-                                                flex: 3,
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    '${Propertytype.rentalAddress}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .08),
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(
-                                                  ' ${Propertytype.tenant?.tenantName}',
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .08),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  '${Propertytype.response}',
-                                                  style: TextStyle(
-                                                    color:
-                                                        Propertytype.response ==
-                                                                "SUCCESS"
-                                                            ? Colors.green
-                                                            : Colors.red,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .06),
-                                              // SizedBox(
-                                              //     width: MediaQuery.of(context)
-                                              //         .size
-                                              //         .width *
-                                              //         .01),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      if (isExpanded)
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 2.0),
-                                          margin: EdgeInsets.only(bottom: 2),
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
-                                                      size: 45,
-                                                      color: Colors.transparent,
-                                                    ),
-                                                    Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          'Date : ',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color:
-                                                                              blueColor), // Bold and black
-                                                                    ),
-                                                                    TextSpan(
-                                                                      // text: formatDate(
-                                                                      //     '${Propertytype.updatedAt}'),
-                                                                      text: Propertytype.date?.isNotEmpty ==
-                                                                              true
-                                                                          ? dateProvider
-                                                                              .formatCurrentDate('${Propertytype.date}')
-                                                                          : 'N/A',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w700,
-                                                                          color:
-                                                                              grey), // Light and grey
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Spacer(),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          'Amount : ',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color:
-                                                                              blueColor), // Bold and black
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '\$${Propertytype.totalAmount}',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w700,
-                                                                          color:
-                                                                              grey), // Light and grey
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      .04),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 4,
-                                                          ),
-                                                          Text.rich(
-                                                            TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Type : ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor), // Bold and black
-                                                                ),
-                                                                TextSpan(
-                                                                  // text: formatDate(
-                                                                  //     '${Propertytype.updatedAt}'),
-                                                                  text: Propertytype
-                                                                              .paymenttype
-                                                                              ?.isNotEmpty ==
-                                                                          true
-                                                                      ? '${Propertytype.paymenttype}'
-                                                                      : 'N/A',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                    color: Propertytype.response ==
-                                                                            "SUCCESS"
-                                                                        ? Colors
-                                                                            .green
-                                                                        : Colors
-                                                                            .red,
-                                                                  ), // Light and grey
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 4,
-                                                          ),
-                                                          Text.rich(
-                                                            TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Description : ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor), // Bold and black
-                                                                ),
-                                                                TextSpan(
-                                                                  // text: formatDate(
-                                                                  //     '${Propertytype.updatedAt}'),
-                                                                  text: Propertytype
-                                                                              .responseText
-                                                                              ?.isNotEmpty ==
-                                                                          true
-                                                                      ? ' ${Propertytype.responseText}'
-                                                                      : 'N/A',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color:
-                                                                          grey), // Light and grey
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .03),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 15),
-                                                if (Propertytype.response ==
-                                                    "FAILURE")
-                                                  Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            _showAlertAcknowledgement(
-                                                                context,
-                                                                Propertytype
-                                                                    .id!,
-                                                                failureacknowledged);
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .check,
-                                                                  size: 15,
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            _showAlertRetry(
-                                                                context,
-                                                                Propertytype
-                                                                    .id!);
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .rotateRight,
-                                                                  size: 15,
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                                // SizedBox(
-                                                                //   width: 10,
-                                                                // ),
-                                                                // Text(
-                                                                //   "Delete",
-                                                                //   style: TextStyle(
-                                                                //       color:
-                                                                //       blueColor,
-                                                                //       fontWeight:
-                                                                //       FontWeight
-                                                                //           .bold),
-                                                                // ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            _showAlertSchedule(
-                                                                context,
-                                                                Propertytype
-                                                                    .id!);
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .solidCalendarAlt,
-                                                                  size: 15,
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                                // SizedBox(
-                                                                //   width: 10,
-                                                                // ),
-                                                                // Text(
-                                                                //   "Delete",
-                                                                //   style: TextStyle(
-                                                                //       color:
-                                                                //       blueColor,
-                                                                //       fontWeight:
-                                                                //       FontWeight
-                                                                //           .bold),
-                                                                // ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                if (Propertytype.response ==
-                                                        "SUCCESS" &&
-                                                    Propertytype.state ==
-                                                        "settled")
-                                                  Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            _showAlertRefund(
-                                                                context,
-                                                                Propertytype
-                                                                    .id!);
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .reply,
-                                                                  size: 15,
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                if (Propertytype.response ==
-                                                        "SUCCESS" &&
-                                                    Propertytype.state ==
-                                                        "settling")
-                                                  Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            print("call");
-                                                            _showAlertvoid(
-                                                                context,
-                                                                Propertytype
-                                                                    .id!);
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .money_off,
-                                                                  size: 20,
-                                                                  weight: 30,
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                    ],
+                                  child: paymentCard(
+                                    Propertytype.tenant!.tenantName!,
+                                    Propertytype.rentalAddress!,
+                                    Propertytype.totalAmount!
+                                        .toStringAsFixed(2)!,
+                                    isExpanded,
+                                        () {
+                                      setState(() {
+                                        expandedIndex =
+                                        isExpanded ? null : index;
+                                      });
+                                    },
+                                    Propertytype,
                                   ),
                                 );
                               }).toList(),
@@ -1807,23 +1338,23 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                             );
                                           }).toList(),
                                           onChanged: snapshot
-                                                      .data!.metadata!.total! >
-                                                  itemsPerPageOptions
-                                                      .first // Condition to check if dropdown should be enabled
+                                              .data!.metadata!.total! >
+                                              itemsPerPageOptions
+                                                  .first // Condition to check if dropdown should be enabled
                                               ? (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage =
-                                                        1; // Reset to first page when items per page change
-                                                    futurecronjobpayment =
-                                                        cronjob_payment_tableService()
-                                                            .fetchCronjob_payment(
-                                                                limit:
-                                                                    itemsPerPage,
-                                                                page:
-                                                                    currentPage);
-                                                  });
-                                                }
+                                            setState(() {
+                                              itemsPerPage = newValue!;
+                                              currentPage =
+                                              1; // Reset to first page when items per page change
+                                              futurecronjobpayment =
+                                                  cronjob_payment_tableService()
+                                                      .fetchCronjob_payment(
+                                                      limit:
+                                                      itemsPerPage,
+                                                      page:
+                                                      currentPage);
+                                            });
+                                          }
                                               : null,
                                         ),
                                       ),
@@ -1843,15 +1374,15 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                     onPressed: currentPage == 1
                                         ? null
                                         : () {
-                                            setState(() {
-                                              currentPage--;
-                                              futurecronjobpayment =
-                                                  cronjob_payment_tableService()
-                                                      .fetchCronjob_payment(
-                                                          limit: itemsPerPage,
-                                                          page: currentPage);
-                                            });
-                                          },
+                                      setState(() {
+                                        currentPage--;
+                                        futurecronjobpayment =
+                                            cronjob_payment_tableService()
+                                                .fetchCronjob_payment(
+                                                limit: itemsPerPage,
+                                                page: currentPage);
+                                      });
+                                    },
                                   ),
                                   Text('Page ${currentPage} of $totalPages'),
                                   IconButton(
@@ -1863,15 +1394,15 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                     ),
                                     onPressed: currentPage < totalPages
                                         ? () {
-                                            setState(() {
-                                              currentPage++;
-                                              futurecronjobpayment =
-                                                  cronjob_payment_tableService()
-                                                      .fetchCronjob_payment(
-                                                          limit: itemsPerPage,
-                                                          page: currentPage);
-                                            });
-                                          }
+                                      setState(() {
+                                        currentPage++;
+                                        futurecronjobpayment =
+                                            cronjob_payment_tableService()
+                                                .fetchCronjob_payment(
+                                                limit: itemsPerPage,
+                                                page: currentPage);
+                                      });
+                                    }
                                         : null,
                                   ),
                                 ],

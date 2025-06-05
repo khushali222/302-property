@@ -169,7 +169,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   Account", style: TextStyle(color: Colors.white)),
+                    Text("     Account", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -201,7 +201,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Amount", style: TextStyle(color: Colors.white)),
+                    Text("     Amount", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -1223,7 +1223,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                 ),
                                                 SizedBox(width: MediaQuery.of(context).size.width * .03),
                                                 Expanded(
-                                                  flex: 3,
+                                                  flex: 2,
                                                   child: Padding(
                                                     padding: const EdgeInsets.only(left: 10.0),
                                                     child: Text(
@@ -1237,7 +1237,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(width: MediaQuery.of(context).size.width * .02),
+                                                SizedBox(width: MediaQuery.of(context).size.width * .01),
                                               ],
                                             ),
                                           ),

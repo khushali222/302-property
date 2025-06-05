@@ -681,7 +681,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                           padding: const EdgeInsets.only(top: 8),
                           child: titleBar(
                             width:permissions!.workorderAdd! ? MediaQuery.of(context).size.width * .65 :MediaQuery.of(context).size.width * .93,
-                            title: 'Works Orders',
+                            title: 'Work Orders',
                           ),
                         ),
                         if(permissions!.workorderAdd!)

@@ -21,6 +21,7 @@ import 'package:three_zero_two_property/provider/properties_workorders.dart';
 
 import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/repository/properties_summery.dart';
+import 'package:three_zero_two_property/screens/Dashboard/dashboard_sample.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/SummaryEditApplicant.dart';
 
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
@@ -109,7 +110,7 @@ void main() {
     ]);
     runApp(
       DevicePreview(
-        enabled: false,
+        enabled: true,
         tools: [
           ...DevicePreview.defaultTools,
         ],
@@ -166,6 +167,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: blueColor),
         useMaterial3: false,
       ),
+     // home: DashboardMobileSimple(),
       home: SplashScreen(),
       builder: (context, child) {
         return ScrollConfiguration(
