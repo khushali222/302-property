@@ -140,17 +140,17 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                         children: [
                           width < 400
                               ? Text("  Rental\n Address",
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(50, 75, 119, 1),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ))
+                              style: TextStyle(
+                                color: Color.fromRGBO(50, 75, 119, 1),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ))
                               : Text("  Rental\n Address",
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(50, 75, 119, 1),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  )),
+                              style: TextStyle(
+                                color: Color.fromRGBO(50, 75, 119, 1),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              )),
                           // Text("Property", style: TextStyle(color: Colors.white)),
                           SizedBox(width: 3),
                           // ascending1
@@ -524,8 +524,8 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
       child: InkWell(
         onTap: getField != null
             ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
+          _sort(getField, columnIndex, !_sortAscending);
+        }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -607,10 +607,10 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
           onPressed: _currentPage == 0
               ? null
               : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
+            setState(() {
+              _currentPage--;
+            });
+          },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -627,17 +627,134 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
+            setState(() {
+              _currentPage++;
+            });
+          },
         ),
       ],
     );
   }
 
+  TextStyle subTextStyle = TextStyle(
+    fontSize: 14,
+  );
+  TextStyle cardTextStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
   ConnectivityResult? _connectivityResult;
   final _scrollController = ScrollController();
+
+  // Add this card widget for displaying each lease in a card with expandable details
+  Widget leaseExpiringCard(
+      LeaseDataExpiring data,
+      bool isExpanded,
+      VoidCallback onExpandTap,
+      DateProvider dateProvider,
+      ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: onExpandTap,
+                child: Icon(
+                  isExpanded ? Icons.expand_less : Icons.expand_more,
+                  color: blueColor,
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  data.rentalAddress ?? 'N/A',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+
+            ],
+          ),
+          if (isExpanded) ...[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Divider(
+                  thickness: 2,
+                ),
+                const SizedBox(height: 4),
+                // First row: Date & Response
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+
+                        children: [
+                          Text(
+                            'Tenant: ',
+                            style: subTextStyle.copyWith(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            data.tenantName ?? "-",
+                            style: subTextStyle,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Expiration Date: ',
+                            style: subTextStyle.copyWith(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            data.endDate != null ? data.endDate! : "-",
+                            style: subTextStyle,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                // Second row: Type & Description
+              ],
+            ),
+            // Add more details here if needed
+          ],
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -645,12 +762,14 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
     //final themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //SizedBox(height: 20),
           //Text("Renter's Insurance Policies Expiring Within 90 days",style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
           if (MediaQuery.of(context).size.width < 500)
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(0.0),
               child: FutureBuilder<List<LeaseDataExpiring>>(
                 future: futureleaseExpiring,
                 builder: (context, snapshot) {
@@ -658,39 +777,20 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                     return ColabShimmerLoadingWidget();
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
-                  }else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return
-                      Container(
-
-                        child: Center(
-                          child: Column(
-                            children: [
-                              _buildHeaders([]),
-                              // Container(
-                              //   padding: EdgeInsets.all(10),
-                              //   decoration: BoxDecoration(
-                              //     color: Colors.grey.shade300, // Background color
-                              //     borderRadius: BorderRadius.only(
-                              //       bottomLeft: Radius.circular(13),
-                              //       bottomRight: Radius.circular(13),
-                              //     ),
-                              //   ),
-                              //   child: Center(
-                              //     child: Text(
-                              //       "No policies are expiring within 90 days.",
-                              //       textAlign: TextAlign.center,
-                              //       style: TextStyle(
-                              //         fontWeight: FontWeight.bold,
-                              //         color: blueColor,
-                              //         fontSize: 14,
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Container(
+                      child: Center(
+                        child: Text(
+                          'Leases Expiring in the next 60 days',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
+                            fontSize: 16,
                           ),
+                          textAlign: TextAlign.center,
                         ),
-                      );
+                      ),
+                    );
                   } else {
                     var data = snapshot.data!;
                     if (selectedValue == null && searchvalue!.isEmpty) {
@@ -700,41 +800,15 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                     } else if (searchvalue!.isNotEmpty) {
                       data = snapshot.data!
                           .where((property) => property.rentalAddress!
-                              .toLowerCase()
-                              .contains(searchvalue!.toLowerCase()))
+                          .toLowerCase()
+                          .contains(searchvalue!.toLowerCase()))
                           .toList();
                     } else {
                       data = snapshot.data!
                           .where((property) =>
-                              property.rentalAddress == selectedValue)
+                      property.rentalAddress == selectedValue)
                           .toList();
                     }
-                    // if (data.isEmpty) {
-                    //   return Center(
-                    //     child: Column(
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       crossAxisAlignment: CrossAxisAlignment.center,
-                    //       children: [
-                    //         Image.asset(
-                    //           "assets/images/no_data.jpg",
-                    //           height: 200,
-                    //           width: 200,
-                    //         ),
-                    //         SizedBox(
-                    //           height: 10,
-                    //         ),
-                    //         Text(
-                    //           "No Data Available",
-                    //           style: TextStyle(
-                    //               fontWeight: FontWeight.bold,
-                    //               color: blueColor,
-                    //               fontSize: 16),
-                    //         )
-                    //       ],
-                    //     ),
-                    //   );
-                    // }
-                    //sortData(data);
                     final totalPages = (data.length / itemsPerPage).ceil();
                     final currentPageData = data.reversed
                         .skip(currentPage * itemsPerPage)
@@ -742,169 +816,44 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                         .toList();
                     return SingleChildScrollView(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 10),
-                          _buildHeaders(data),
-                          SizedBox(height: 1),
-                          Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5))),
-                            // decoration: BoxDecoration(
-                            //     border: Border.all(color: blueColor)),
-                            child: Column(
-                              children:
-                                  currentPageData.asMap().entries.map((entry) {
-                                int index = entry.key;
-                                bool isExpanded = expandedIndex == index;
-                                LeaseDataExpiring Propertytype = entry.value;
-                                //return CustomExpansionTile(data: Propertytype, index: index);
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    // color: index % 2 != 0
-                                    //     ? Colors.white
-                                    //     : blueColor.withOpacity(0.09),
-                                    border: Border.all(
-                                        color:
-                                            Color.fromRGBO(152, 162, 179, .5)),
-                                  ),
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(color: blueColor),
-                                  // ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              InkWell(
-                                                onTap: () {
-                                                  // setState(() {
-                                                  //    isExpanded = !isExpanded;
-                                                  // //  expandedIndex = !expandedIndex;
-                                                  //
-                                                  // });
-                                                  // setState(() {
-                                                  //   if (isExpanded) {
-                                                  //     expandedIndex = null;
-                                                  //     isExpanded = !isExpanded;
-                                                  //   } else {
-                                                  //     expandedIndex = index;
-                                                  //   }
-                                                  // });
-                                                  setState(() {
-                                                    if (expandedIndex ==
-                                                        index) {
-                                                      expandedIndex = null;
-                                                    } else {
-                                                      expandedIndex = index;
-                                                    }
-                                                  });
-                                                },
-                                                child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 5, right: 5),
-                                                  padding: !isExpanded
-                                                      ? EdgeInsets.only(
-                                                          bottom: 10)
-                                                      : EdgeInsets.only(
-                                                          top: 10),
-                                                  child: FaIcon(
-                                                    isExpanded
-                                                        ? FontAwesomeIcons
-                                                            .sortUp
-                                                        : FontAwesomeIcons
-                                                            .sortDown,
-                                                    size: 5,
-                                                    color: Colors.transparent,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    ' ${Propertytype.rentalAddress}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .08),
-                                              Expanded(
-                                                child: Text(
-                                                  '${Propertytype.tenantName}',
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .08),
-                                              Expanded(
-                                                child: Text(
-                                                  // '${widget.data.createdAt}',
-                                                  // formatDate(
-                                                  //     '${Propertytype.createdAt}'),
-                                                  Propertytype.endDate
-                                                              ?.isNotEmpty ==
-                                                          true
-                                                      ? dateProvider
-                                                          .formatCurrentDate(
-                                                              '${Propertytype.endDate}')
-                                                      : 'N/A',
-
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .02),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
+                          // Title instead of headers
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 0.0),
+                            child: Text(
+                              'Leases Expiring in the next 60 days',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: blueColor,
+                                fontSize: 16,
+                                letterSpacing: 0.5,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
+                          // Card-based expandable list
+                          Column(
+                            children:
+                            currentPageData.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              bool isExpanded = expandedIndex == index;
+                              LeaseDataExpiring item = entry.value;
+                              return leaseExpiringCard(
+                                item,
+                                isExpanded,
+                                    () {
+                                  setState(() {
+                                    expandedIndex = isExpanded ? null : index;
+                                  });
+                                },
+                                dateProvider,
+                              );
+                            }).toList(),
+                          ),
+                          if (data.length > 5)
                           SizedBox(height: 20),
                           if (data.length > 5)
                             Row(
@@ -912,7 +861,6 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                               children: [
                                 Row(
                                   children: [
-                                    // Text('Rows per page:'),
                                     SizedBox(width: 10),
                                     Material(
                                       elevation: 3,
@@ -922,7 +870,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
-                                              Border.all(color: Colors.grey),
+                                          Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
@@ -935,15 +883,13 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                                               );
                                             }).toList(),
                                             onChanged: data.length >
-                                                    itemsPerPageOptions
-                                                        .first // Condition to check if dropdown should be enabled
+                                                itemsPerPageOptions.first
                                                 ? (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue!;
-                                                      currentPage =
-                                                          0; // Reset to first page when items per page change
-                                                    });
-                                                  }
+                                              setState(() {
+                                                itemsPerPage = newValue!;
+                                                currentPage = 0;
+                                              });
+                                            }
                                                 : null,
                                           ),
                                         ),
@@ -963,10 +909,10 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      },
                                     ),
                                     Text(
                                         'Page ${currentPage + 1} of $totalPages'),
@@ -979,10 +925,10 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
                                           : null,
                                     ),
                                   ],
@@ -1040,13 +986,13 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                   } else if (searchvalue.isNotEmpty) {
                     _tableData = snapshot.data!
                         .where((property) => property.rentalAddress!
-                            .toLowerCase()
-                            .contains(searchvalue.toLowerCase()))
+                        .toLowerCase()
+                        .contains(searchvalue.toLowerCase()))
                         .toList();
                   } else {
                     _tableData = snapshot.data!
                         .where((property) =>
-                            property.rentalAddress == selectedValue)
+                    property.rentalAddress == selectedValue)
                         .toList();
                   }
                   totalrecords = _tableData.length;
@@ -1063,34 +1009,33 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                                   scrollDirection: Axis.horizontal,
                                   child: Container(
                                     width:
-                                        MediaQuery.of(context).size.width * .91,
+                                    MediaQuery.of(context).size.width * .91,
                                     child: Table(
                                       defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
+                                      IntrinsicColumnWidth(),
                                       children: [
                                         TableRow(
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                                // color: blueColor
-                                                ),
+                                              // color: blueColor
+                                            ),
                                           ),
                                           children: [
-
                                             _buildHeader(
                                                 'Main Type',
                                                 0,
-                                                (property) =>
-                                                    property.tenantName!),
+                                                    (property) =>
+                                                property.tenantName!),
                                             _buildHeader(
                                                 'Subtype',
                                                 1,
-                                                (property) =>
-                                                    property.rentalAddress!),
+                                                    (property) =>
+                                                property.rentalAddress!),
                                             _buildHeader(
                                                 'Created At',
                                                 2,
-                                                (property) =>
-                                                    property.endDate!),
+                                                    (property) =>
+                                                property.endDate!),
                                           ],
                                         ),
                                         TableRow(
@@ -1100,13 +1045,13 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                                           ),
                                           children: List.generate(
                                               3,
-                                              (index) => TableCell(
+                                                  (index) => TableCell(
                                                   child:
-                                                      Container(height: 20))),
+                                                  Container(height: 20))),
                                         ),
                                         for (var i = 0;
-                                            i < _pagedData.length;
-                                            i++)
+                                        i < _pagedData.length;
+                                        i++)
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
@@ -1117,10 +1062,10 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                                                 top: BorderSide(
                                                     color: blueColor),
                                                 bottom:
-                                                    i == _pagedData.length - 1
-                                                        ? BorderSide(
-                                                            color: blueColor)
-                                                        : BorderSide.none,
+                                                i == _pagedData.length - 1
+                                                    ? BorderSide(
+                                                    color: blueColor)
+                                                    : BorderSide.none,
                                               ),
                                             ),
                                             children: [

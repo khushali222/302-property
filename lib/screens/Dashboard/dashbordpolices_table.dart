@@ -76,7 +76,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           ),
           child: Center(
             child: Text(
-              "Renter's Insurance Policies Expiring Within 90 Days",
+              "Renter's Insurance Policies Expiring Within 60 Days",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -139,17 +139,17 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                         children: [
                           width < 400
                               ? Text("Tenant\n Name ",
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(50, 75, 119, 1),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ))
+                              style: TextStyle(
+                                color: Color.fromRGBO(50, 75, 119, 1),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ))
                               : Text("Tenant\n Name",
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(50, 75, 119, 1),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  )),
+                              style: TextStyle(
+                                color: Color.fromRGBO(50, 75, 119, 1),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              )),
                           // Text("Property", style: TextStyle(color: Colors.white)),
                           SizedBox(width: 3),
                           // ascending1
@@ -245,27 +245,27 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                             ascending1 = false;
                           }
 
-                        // Sorting logic here
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        Text("   Expiration\n      Date",
-                            style: TextStyle(
-                              color: Color.fromRGBO(50, 75, 119, 1),
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            )),
-                        SizedBox(width: 5),
-                      ],
+                          // Sorting logic here
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Text("   Expiration\n      Date",
+                              style: TextStyle(
+                                color: Color.fromRGBO(50, 75, 119, 1),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          SizedBox(width: 5),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-        if(policyList.isEmpty)
+        if (policyList.isEmpty)
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -290,8 +290,6 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
       ],
     );
   }
-
-
 
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
@@ -362,8 +360,8 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
       child: InkWell(
         onTap: getField != null
             ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
+          _sort(getField, columnIndex, !_sortAscending);
+        }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -445,10 +443,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           onPressed: _currentPage == 0
               ? null
               : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
+            setState(() {
+              _currentPage--;
+            });
+          },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -465,10 +463,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
+            setState(() {
+              _currentPage++;
+            });
+          },
         ),
       ],
     );
@@ -488,7 +486,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           //Text("Renter's Insurance Policies Expiring Within 90 days",style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
           if (MediaQuery.of(context).size.width < 500)
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(0.0),
               child: FutureBuilder<List<ExpiringRentersInsuranceData>>(
                 future: futurepolices,
                 builder: (context, snapshot) {
@@ -496,37 +494,30 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                     return ColabShimmerLoadingWidget();
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
-                  }else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return
-                      Container(
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Container(
+                      child: Column(
+                        children: [
+                          Text(
+                            "Renter's Insurance Policies Expiring Within 90 Days",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: blueColor,
+                              fontSize: 16,
+                            ),
 
-                      child: Center(
-                        child: Column(
-                          children: [
-                            _buildHeaders([]),
-                            // Container(
-                            //   padding: EdgeInsets.all(10),
-                            //   decoration: BoxDecoration(
-                            //     color: Colors.grey.shade300, // Background color
-                            //     borderRadius: BorderRadius.only(
-                            //       bottomLeft: Radius.circular(13),
-                            //       bottomRight: Radius.circular(13),
-                            //     ),
-                            //   ),
-                            //   child: Center(
-                            //     child: Text(
-                            //       "No policies are expiring within 90 days.",
-                            //       textAlign: TextAlign.center,
-                            //       style: TextStyle(
-                            //         fontWeight: FontWeight.bold,
-                            //         color: blueColor,
-                            //         fontSize: 14,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(height: 5,),
+                          Text(
+                            "No data Available",
+                            style: TextStyle(
+                             // fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                              fontSize: 15,
+                            ),
+
+                          ),
+                        ],
                       ),
                     );
                   } else {
@@ -538,41 +529,15 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                     } else if (searchvalue!.isNotEmpty) {
                       data = snapshot.data!
                           .where((property) => property.insuranceCompany!
-                              .toLowerCase()
-                              .contains(searchvalue!.toLowerCase()))
+                          .toLowerCase()
+                          .contains(searchvalue!.toLowerCase()))
                           .toList();
                     } else {
                       data = snapshot.data!
                           .where((property) =>
-                              property.insuranceCompany == selectedValue)
+                      property.insuranceCompany == selectedValue)
                           .toList();
                     }
-                    // if (data.isEmpty) {
-                    //   return Center(
-                    //     child: Column(
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       crossAxisAlignment: CrossAxisAlignment.center,
-                    //       children: [
-                    //         Image.asset(
-                    //           "assets/images/no_data.jpg",
-                    //           height: 200,
-                    //           width: 200,
-                    //         ),
-                    //         SizedBox(
-                    //           height: 10,
-                    //         ),
-                    //         Text(
-                    //           "No Data Available",
-                    //           style: TextStyle(
-                    //               fontWeight: FontWeight.bold,
-                    //               color: blueColor,
-                    //               fontSize: 16),
-                    //         )
-                    //       ],
-                    //     ),
-                    //   );
-                    // }
-                    //sortData(data);
                     final totalPages = (data.length / itemsPerPage).ceil();
                     final currentPageData = data.reversed
                         .skip(currentPage * itemsPerPage)
@@ -580,170 +545,47 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                         .toList();
                     return SingleChildScrollView(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 10),
-                          _buildHeaders(data),
-                          SizedBox(height: 1),
-                          Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5))),
-                            // decoration: BoxDecoration(
-                            //     border: Border.all(color: blueColor)),
-                            child: Column(
-                              children:
-                                  currentPageData.asMap().entries.map((entry) {
-                                int index = entry.key;
-                                bool isExpanded = expandedIndex == index;
-                                ExpiringRentersInsuranceData Propertytype =
-                                    entry.value;
-                                //return CustomExpansionTile(data: Propertytype, index: index);
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    // color: index % 2 != 0
-                                    //     ? Colors.white
-                                    //     : blueColor.withOpacity(0.09),
-                                    border: Border.all(
-                                        color:
-                                            Color.fromRGBO(152, 162, 179, .5)),
-                                  ),
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(color: blueColor),
-                                  // ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              InkWell(
-                                                onTap: () {
-                                                  // setState(() {
-                                                  //    isExpanded = !isExpanded;
-                                                  // //  expandedIndex = !expandedIndex;
-                                                  //
-                                                  // });
-                                                  // setState(() {
-                                                  //   if (isExpanded) {
-                                                  //     expandedIndex = null;
-                                                  //     isExpanded = !isExpanded;
-                                                  //   } else {
-                                                  //     expandedIndex = index;
-                                                  //   }
-                                                  // });
-                                                  setState(() {
-                                                    if (expandedIndex ==
-                                                        index) {
-                                                      expandedIndex = null;
-                                                    } else {
-                                                      expandedIndex = index;
-                                                    }
-                                                  });
-                                                },
-                                                child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 5, right: 5),
-                                                  padding: !isExpanded
-                                                      ? EdgeInsets.only(
-                                                          bottom: 10)
-                                                      : EdgeInsets.only(
-                                                          top: 10),
-                                                  child: FaIcon(
-                                                    isExpanded
-                                                        ? FontAwesomeIcons
-                                                            .sortUp
-                                                        : FontAwesomeIcons
-                                                            .sortDown,
-                                                    size: 5,
-                                                    color: Colors.transparent,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    ' ${Propertytype.tenantName}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .08),
-                                              Expanded(
-                                                child: Text(
-                                                  '${Propertytype.rentalAddress}',
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .08),
-                                              Expanded(
-                                                child: Text(
-                                                  // '${widget.data.createdAt}',
-                                                  // formatDate(
-                                                  //     '${Propertytype.createdAt}'),
-                                                  Propertytype.expirationDate
-                                                              ?.isNotEmpty ==
-                                                          true
-                                                      ? dateProvider
-                                                          .formatCurrentDate(
-                                                              '${Propertytype.expirationDate}')
-                                                      : 'N/A',
-
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .02),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 0.0),
+                            child: Text(
+                              "Renter's Insurance Policies Expiring Within 60 Days",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: blueColor,
+                                fontSize: 16,
+                                letterSpacing: 0.5,
+                              ),
+                             // textAlign: TextAlign.center,
                             ),
                           ),
+                          if(currentPageData.isEmpty)
+                            Container(
+                              child: Text("No Data Available"),
+                            ),
+                          // Card-based expandable list
+                          Column(
+                            children:
+                            currentPageData.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              bool isExpanded = expandedIndex == index;
+                              ExpiringRentersInsuranceData item = entry.value;
+                              return insurancePolicyCard(
+                                item,
+                                isExpanded,
+                                    () {
+                                  setState(() {
+                                    expandedIndex = isExpanded ? null : index;
+                                  });
+                                },
+                                dateProvider,
+                              );
+                            }).toList(),
+                          ),
+                          if (data.length > 5)
                           SizedBox(height: 20),
                           if (data.length > 5)
                             Row(
@@ -751,7 +593,6 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                               children: [
                                 Row(
                                   children: [
-                                    // Text('Rows per page:'),
                                     SizedBox(width: 10),
                                     Material(
                                       elevation: 3,
@@ -761,7 +602,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
-                                              Border.all(color: Colors.grey),
+                                          Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
@@ -774,15 +615,13 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                               );
                                             }).toList(),
                                             onChanged: data.length >
-                                                    itemsPerPageOptions
-                                                        .first // Condition to check if dropdown should be enabled
+                                                itemsPerPageOptions.first
                                                 ? (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue!;
-                                                      currentPage =
-                                                          0; // Reset to first page when items per page change
-                                                    });
-                                                  }
+                                              setState(() {
+                                                itemsPerPage = newValue!;
+                                                currentPage = 0;
+                                              });
+                                            }
                                                 : null,
                                           ),
                                         ),
@@ -802,10 +641,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      },
                                     ),
                                     Text(
                                         'Page ${currentPage + 1} of $totalPages'),
@@ -818,10 +657,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
                                           : null,
                                     ),
                                   ],
@@ -879,13 +718,13 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                   } else if (searchvalue.isNotEmpty) {
                     _tableData = snapshot.data!
                         .where((property) => property.insuranceCompany!
-                            .toLowerCase()
-                            .contains(searchvalue.toLowerCase()))
+                        .toLowerCase()
+                        .contains(searchvalue.toLowerCase()))
                         .toList();
                   } else {
                     _tableData = snapshot.data!
                         .where((property) =>
-                            property.insuranceCompany == selectedValue)
+                    property.insuranceCompany == selectedValue)
                         .toList();
                   }
                   totalrecords = _tableData.length;
@@ -902,34 +741,33 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                   scrollDirection: Axis.horizontal,
                                   child: Container(
                                     width:
-                                        MediaQuery.of(context).size.width * .91,
+                                    MediaQuery.of(context).size.width * .91,
                                     child: Table(
                                       defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
+                                      IntrinsicColumnWidth(),
                                       children: [
                                         TableRow(
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                                // color: blueColor
-                                                ),
+                                              // color: blueColor
+                                            ),
                                           ),
                                           children: [
-
                                             _buildHeader(
                                                 'Main Type',
                                                 0,
-                                                (property) =>
-                                                    property.tenantName!),
+                                                    (property) =>
+                                                property.tenantName!),
                                             _buildHeader(
                                                 'Subtype',
                                                 1,
-                                                (property) =>
-                                                    property.rentalAddress!),
+                                                    (property) =>
+                                                property.rentalAddress!),
                                             _buildHeader(
                                                 'Created At',
                                                 2,
-                                                (property) =>
-                                                    property.expirationDate!),
+                                                    (property) =>
+                                                property.expirationDate!),
                                           ],
                                         ),
                                         TableRow(
@@ -939,13 +777,13 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                           ),
                                           children: List.generate(
                                               3,
-                                              (index) => TableCell(
+                                                  (index) => TableCell(
                                                   child:
-                                                      Container(height: 20))),
+                                                  Container(height: 20))),
                                         ),
                                         for (var i = 0;
-                                            i < _pagedData.length;
-                                            i++)
+                                        i < _pagedData.length;
+                                        i++)
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
@@ -956,10 +794,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                                 top: BorderSide(
                                                     color: blueColor),
                                                 bottom:
-                                                    i == _pagedData.length - 1
-                                                        ? BorderSide(
-                                                            color: blueColor)
-                                                        : BorderSide.none,
+                                                i == _pagedData.length - 1
+                                                    ? BorderSide(
+                                                    color: blueColor)
+                                                    : BorderSide.none,
                                               ),
                                             ),
                                             children: [
@@ -990,6 +828,103 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                 }
               },
             ),
+        ],
+      ),
+    );
+  }
+
+  // Add this card widget for displaying each insurance policy in a card with expandable details
+  Widget insurancePolicyCard(
+      ExpiringRentersInsuranceData data,
+      bool isExpanded,
+      VoidCallback onExpandTap,
+      DateProvider dateProvider,
+      ) {
+    TextStyle subTextStyle = TextStyle(
+      fontSize: 14,
+    );
+    TextStyle cardTextStyle = TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+    );
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: onExpandTap,
+                child: Icon(
+                  isExpanded ? Icons.expand_less : Icons.expand_more,
+                  color: blueColor,
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  data.tenantName ?? 'N/A',
+                  style: cardTextStyle,
+                ),
+              ),
+              Text(
+                data.rentalAddress ?? 'N/A',
+                style: TextStyle(fontSize: 14, color: blueColor),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.calendar_today, size: 16, color: blueColor),
+              SizedBox(width: 4),
+              Text(
+                data.expirationDate?.isNotEmpty == true
+                    ? dateProvider.formatCurrentDate(data.expirationDate!)
+                    : 'N/A',
+                style: subTextStyle,
+              ),
+            ],
+          ),
+          if (isExpanded) ...[
+            SizedBox(height: 8),
+            Divider(thickness: 2),
+            SizedBox(height: 4),
+            Row(
+              children: [
+                Text('Insurance Company: ',
+                    style: subTextStyle.copyWith(
+                        color: blueColor, fontWeight: FontWeight.bold)),
+                Expanded(
+                    child: Text(data.insuranceCompany ?? '-',
+                        style: subTextStyle, overflow: TextOverflow.ellipsis)),
+              ],
+            ),
+            SizedBox(height: 4),
+            Row(
+              children: [
+                Text('Policy ID: ',
+                    style: subTextStyle.copyWith(
+                        color: blueColor, fontWeight: FontWeight.bold)),
+                Expanded(
+                    child: Text(data.policyId ?? '-',
+                        style: subTextStyle, overflow: TextOverflow.ellipsis)),
+              ],
+            ),
+          ],
         ],
       ),
     );

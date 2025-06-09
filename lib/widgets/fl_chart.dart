@@ -28,7 +28,7 @@ void main() {
 
 class FlChartApp extends StatefulWidget {
   List<Map<String, dynamic>>? data ;
-   FlChartApp({super.key,this.data});
+  FlChartApp({super.key,this.data});
 
   @override
   State<FlChartApp> createState() => _FlChartAppState();
@@ -65,7 +65,7 @@ class _FlChartAppState extends State<FlChartApp> {
       "id": "CRM $id",
       "Content-Type": "application/json"
     });
-  //  print('${Api_url}/api/payment/admin_balance/$id');
+    //  print('${Api_url}/api/payment/admin_balance/$id');
     print(response.body);
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -82,9 +82,9 @@ class _FlChartAppState extends State<FlChartApp> {
             spots.add(FlSpot(i.toDouble(), data[i]["occupiedPercentage"].toDouble()));
             monthMap[i] = data[i]["month"];
             if(maxoccupancy < double.parse(data[i]["occupiedPercentage"].toString()))
-              {
-                 maxoccupancy = double.parse(data[i]["occupiedPercentage"].toString());
-              }
+            {
+              maxoccupancy = double.parse(data[i]["occupiedPercentage"].toString());
+            }
 
             if(i == data.length - 1){
               leases = data[i]["leases"].toString();
@@ -122,128 +122,157 @@ class _FlChartAppState extends State<FlChartApp> {
   @override
   Widget build(BuildContext context) {
     return
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            height: 220,
-            margin: EdgeInsets.only(top: 20),
-            child: Card(
-
-              child: loading ? Center(
-                child: SpinKitSpinningLines(
-                  color: blueColor,
-                  size: 55.0,
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 0),
+        height: 260, // Increased height to accommodate the title
+        margin: EdgeInsets.only(top: 20),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: loading
+              ? Center(
+            child: SpinKitSpinningLines(
+              color: blueColor,
+              size: 55.0,
+            ),
+          )
+              : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Add the title here
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 8, right: 8, top: 16, bottom: 4),
+                child: Text(
+                  'Property Summary',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                  ),
                 ),
-              ) :Column(
-                children: [
-                  SizedBox(
-                    height: 180,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: LineChart(
-                        LineChartData(
-                          minY: 0,
-                          maxY: maxoccupancy > 100 ?  maxoccupancy: 100.0,
-                          titlesData: FlTitlesData(
-                            show: true,
-
-                            bottomTitles: AxisTitles(
-
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: (value, meta) {
-                                  if (value.toInt() % 1 == 0) {
-                                    final monthIndex = value.toInt();
-                                    return Text(monthMap[monthIndex]!,style: TextStyle(fontSize: 10),);
-                                  } else {
-                                    return Text('');
-                                  }
-                                },
-                              ),
-                            ),
-                            leftTitles: AxisTitles(
-
-                              sideTitles: SideTitles(
-
-                                showTitles: true,
-                                interval: 20,
-                                getTitlesWidget: (value, meta) {
-                                  return Text('${value.toInt()}',style: TextStyle(fontSize: 10),);
-                                },
-                              ),
-                            ),
-                            topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                          ),
-                          lineBarsData: [
-                            LineChartBarData(
-                              spots: spots,
-                              color: Colors.blue,
-                              isCurved: true,
-                              preventCurveOverShooting: true,
-                              belowBarData: BarAreaData(
-                                show: true,
-                                color: Colors.blue.withOpacity(0.3),
-                              ),
-                              dotData: FlDotData(
-                                show: true,
-                                getDotPainter: (spot, percent, barData, index) {
-                                  return FlDotCirclePainter(
-                                    radius: 4,
-                                    color: Colors.blue,
-                                    strokeWidth: 2,
-                                    strokeColor: Colors.white,
-                                  );
-                                },
-                              ),
-
-                            ),
-                          ],
-                          lineTouchData: LineTouchData(
-                            enabled: true,
-
-                            touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
-                              if (!event.isInterestedForInteractions || touchResponse == null || touchResponse.lineBarSpots == null) {
-                                setState(() {
-
-                                });
-                                return;
+              ),
+              SizedBox(height: 10,),
+              SizedBox(
+                height: 160,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: LineChart(
+                    LineChartData(
+                      minY: 0,
+                      maxY: maxoccupancy > 100 ? maxoccupancy : 100.0,
+                      titlesData: FlTitlesData(
+                        show: true,
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (value, meta) {
+                              if (value.toInt() % 1 == 0) {
+                                final monthIndex = value.toInt();
+                                return Text(
+                                  monthMap[monthIndex] ?? '',
+                                  style: TextStyle(fontSize: 10),
+                                );
+                              } else {
+                                return Text('');
                               }
-
-
-                              final touchedSpot = touchResponse.lineBarSpots!.first;
-                              final month = monthMap[touchedSpot.x.toInt()];
-                              final percentage = touchedSpot.y;
-
-
                             },
-
-                            touchTooltipData: LineTouchTooltipData(
-
-                              getTooltipItems: (List<LineBarSpot> touchedSpots) {
-                                return touchedSpots.map((touchedSpot) {
-                                  final month = monthMap[touchedSpot.x.toInt()];
-                                  final percentage = touchedSpot.y;
-                                  return LineTooltipItem(
-                                    '$month\n${percentage.toStringAsFixed(1)}%',
-                                    const TextStyle(color: Colors.white),
-                                  );
-                                }).toList();
-                              },
-                            ),
                           ),
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            interval: 20,
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                '${value.toInt()}',
+                                style: TextStyle(fontSize: 10),
+                              );
+                            },
+                          ),
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        rightTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                      ),
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: spots,
+                          color: blueColor.withOpacity(.5),
+                          isCurved: true,
+                          preventCurveOverShooting: true,
+                          belowBarData: BarAreaData(
+                            show: true,
+                            color: blueColor.withOpacity(.2),
+                          ),
+                          dotData: FlDotData(
+                            show: true,
+                            getDotPainter:
+                                (spot, percent, barData, index) {
+                              return FlDotCirclePainter(
+                                radius: 4,
+                                color: blueColor.withOpacity(.5),
+                                strokeWidth: 2,
+                                strokeColor: Colors.white,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                      lineTouchData: LineTouchData(
+                        enabled: true,
+                        touchCallback: (FlTouchEvent event,
+                            LineTouchResponse? touchResponse) {
+                          if (!event.isInterestedForInteractions ||
+                              touchResponse == null ||
+                              touchResponse.lineBarSpots == null) {
+                            setState(() {});
+                            return;
+                          }
+
+                          final touchedSpot =
+                              touchResponse.lineBarSpots!.first;
+                          final month =
+                          monthMap[touchedSpot.x.toInt()];
+                          final percentage = touchedSpot.y;
+                        },
+                        touchTooltipData: LineTouchTooltipData(
+                          getTooltipItems:
+                              (List<LineBarSpot> touchedSpots) {
+                            return touchedSpots.map((touchedSpot) {
+                              final month =
+                              monthMap[touchedSpot.x.toInt()];
+                              final percentage = touchedSpot.y;
+                              return LineTooltipItem(
+                                '$month\n${percentage.toStringAsFixed(1)}%',
+                                const TextStyle(color: Colors.white),
+                              );
+                            }).toList();
+                          },
                         ),
                       ),
                     ),
                   ),
-                  Text('${leases} of ${rentals} Units currently occupied - ${occupancy}', style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),)
-                ],
+                ),
               ),
-            ),
-          
-              );
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 4),
+                  child: Text(
+                    '${leases} of ${rentals} Units currently occupied - ${occupancy}',
+                    style: TextStyle(
+                        fontSize: 14,color: Color.fromRGBO(21, 43, 81, 0.8), fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
   }
 }

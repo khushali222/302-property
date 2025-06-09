@@ -331,6 +331,106 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   thickness: 2,
                 ),
                 const SizedBox(height: 4),
+                // First row: Date & Response
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Date: ',
+                            style: subTextStyle.copyWith(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            data.date != null ? data.date! : "-",
+                            style: subTextStyle,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Response: ',
+                            style: subTextStyle.copyWith(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            data.response ?? "-",
+                            style: subTextStyle,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                // Second row: Type & Description
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Type: ',
+                            style: subTextStyle.copyWith(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            data.paymenttype! ?? "-",
+                            style: subTextStyle,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Description: ',
+                            style: subTextStyle.copyWith(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            data.responseText?.isNotEmpty == true
+                                ? ' ${data.responseText}'
+                                : 'N/A',
+                            style: subTextStyle,
+                            // overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                // Rental Address & Action header
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -350,6 +450,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     ),
                   ],
                 ),
+                // Rental Address & Actions
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -360,8 +461,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              _showAlertAcknowledgement(context, data.id!,failureacknowledged!);
-                              // TODO: Add your onTap logic here
+                              _showAlertAcknowledgement(
+                                  context, data.id!, failureacknowledged!);
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -377,7 +478,6 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                           GestureDetector(
                             onTap: () {
                               _showAlertRetry(context, data.id!);
-                              // TODO: Add your onTap logic here
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -394,7 +494,6 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                           GestureDetector(
                             onTap: () {
                               _showAlertSchedule(context, data.id!);
-                              // TODO: Add your onTap logic here
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -416,7 +515,6 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                           GestureDetector(
                             onTap: () {
                               _showAlertRefund(context, data.id!);
-                              // TODO: Add your onTap logic here
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -430,7 +528,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                 size: 15,
                                 color: blueColor,
                               ),
-                            ),),
+                            ),
+                          ),
                           SizedBox(width: 10),
                         ],
                       ),
@@ -441,7 +540,6 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                           GestureDetector(
                             onTap: () {
                               _showAlertvoid(context, data.id!);
-                              // TODO: Add your onTap logic here
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -456,7 +554,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                 weight: 30,
                                 color: blueColor,
                               ),
-                            ), ),
+                            ),
+                          ),
                           SizedBox(width: 10),
                         ],
                       ),

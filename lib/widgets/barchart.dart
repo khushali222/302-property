@@ -96,8 +96,11 @@ class _BarchartState extends State<Barchart> {
   Widget build(BuildContext context) {
     return Container(
       height: 250,
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.symmetric(horizontal: 0),
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
         elevation: 4,
         color: Colors.white,
         surfaceTintColor: Colors.white,

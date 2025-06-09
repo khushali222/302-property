@@ -35,6 +35,7 @@ import 'package:credit_card_validator/credit_card_validator.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'provider/notification_provider.dart';
+import 'screens/Dashboard/admin_dashboard_screen.dart';
 // void main() {
 //   runApp(
 //     MultiProvider(providers: [
@@ -167,8 +168,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: blueColor),
         useMaterial3: false,
       ),
-     // home: DashboardMobileSimple(),
-      home: SplashScreen(),
+     // home: DashboardAdminSample(),
+    home: SplashScreen(),
       builder: (context, child) {
         return ScrollConfiguration(
           behavior: NoGlowScrollBehavior(),
