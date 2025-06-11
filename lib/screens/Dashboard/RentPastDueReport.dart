@@ -77,6 +77,18 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     chargeType = widget.isRentdue == true ? "Payment" : "Charges";
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args != null) {
+      setState(() {
+        monthType = args['monthType'] ?? monthType;
+        chargeType = args['chargeType'] ?? chargeType;
+      });
+    }
+  }
+
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
@@ -999,8 +1011,22 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                             ),
                           );
                         } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else if (snapshot.hasData) {
+                          return Center(
+                            child: Text(
+                              'Error: \\n${snapshot.error}',
+                              style: TextStyle(color: Colors.red, fontSize: 16),
+                            ),
+                          );
+                        }
+                        else if (!snapshot.hasData || snapshot.data == null) {
+                          return Center(
+                            child: Text(
+                              'No data available',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          );
+                        }
+                        else {
                           var rentPastDue = snapshot.data!;
                           List<Transaction> filteredCharges = [];
 
@@ -1023,7 +1049,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
                                       tenantName.contains(searchvalue));
-                            }).toList();
+                            }).toList() ?? [];
                           } else if (chargeType == 'Charges' &&
                               monthType == 'Current Month') {
                             filteredCharges = snapshot
@@ -1037,7 +1063,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
                                       tenantName.contains(searchvalue));
-                            }).toList();
+                            }).toList() ?? [];
                           } else if (chargeType == 'Charges' &&
                               monthType == 'Last Month') {
                             filteredCharges = snapshot
@@ -1046,12 +1072,12 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               var address = charge.rentalData?.address;
                               var tenantName =
                                   charge.tenantData?.tenantFirstName;
-                              //print
+
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
                                       tenantName.contains(searchvalue));
-                            }).toList();
+                            }).toList() ?? [];
                           } else if (chargeType == "Payment" &&
                               monthType == "Current Month") {
                             filteredCharges = snapshot
@@ -1065,7 +1091,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
                                       tenantName.contains(searchvalue));
-                            }).toList();
+                            }).toList() ?? [];
                           } else if (chargeType == "Payment" &&
                               monthType == null) {
                             filteredCharges = snapshot
@@ -1079,7 +1105,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
                                       tenantName.contains(searchvalue));
-                            }).toList();
+                            }).toList() ?? [];
                           } else if (chargeType == "Payment" &&
                               monthType == "Last Month") {
                             filteredCharges = snapshot
@@ -1093,10 +1119,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
                                       tenantName.contains(searchvalue));
-                            }).toList();
+                            }).toList() ?? [];
                           } else {
-                            filteredCharges =
-                                []; // Default to an empty list if no conditions match
+                            filteredCharges = [];
                           }
 
                           return SingleChildScrollView(
@@ -1106,8 +1131,15 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               ),
                               child: Column(
                                 children: [
-                                  //  filters(data: rentPastDue),
-//call the table here base on condition like if selected is charge and and monttype is All call the chrge table
+                                  // Show label only for Rent Past Due, All months
+                                  if (chargeType == 'Charges' && (monthType == 'All' || monthType == null))
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 8.0),
+                                      child: Text(
+                                        'Showing all Rent Past Due for all months',
+                                        style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
+                                      ),
+                                    ),
                                   const SizedBox(height: 15),
                                   if (chargeType == 'Charges' &&
                                           monthType == 'All' ||
@@ -1116,7 +1148,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                     chargeTable(
                                         snapshot.data!.dueRentCharges!.charges!,
                                         snapshot.data!.dueRentCharges!.total!
-                                            .toDouble()!)
+                                            .toDouble())
 
                                   // chargeTable(
                                   //     snapshot.data!.dueRentCharges!.charges!)
@@ -1156,8 +1188,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               ),
                             ),
                           );
-                        } else {
-                          return Text('No data available');
                         }
                       },
                     ),

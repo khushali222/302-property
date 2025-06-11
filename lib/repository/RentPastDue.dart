@@ -122,28 +122,17 @@ class AdminBalanceRepository {
 
       print('Admin Balance response: ${response.body}');
       if (response.statusCode == 200) {
-        final Map<String, dynamic>? jsonData = json.decode(response.body);
-        return RentPastDue.fromJson(jsonData!["data"]);
-       /* if (jsonData == null ||
-            jsonData["data"] == null ||
-            jsonData["data"]["currentDueRentCharges"] == null ||
-            jsonData["data"]["currentDueRentCharges"]["charges"] == null) {
-          print('No charges found in the response.');
-          return [];
+        final dynamic jsonData = json.decode(response.body);
+        // If the response is a List, use the first element
+        if (jsonData is List && jsonData.isNotEmpty) {
+          print('Admin Balance: Response is a List, using first element.');
+          return RentPastDue.fromJson(jsonData[0]["data"] ?? {});
+        } else if (jsonData is Map<String, dynamic>) {
+          return RentPastDue.fromJson(jsonData["data"] ?? {});
+        } else {
+          print('Admin Balance: Unexpected response format.');
+          throw Exception('Unexpected response format');
         }
-
-        final List<dynamic> charges = jsonData["data"]["currentDueRentCharges"]["charges"] ?? [];
-        return charges
-            .map((charge) {
-          try {
-            return RentPastDue.fromJson(charge);
-          } catch (e, stackTrace) {
-            print('Error parsing charge: $charge, Error: $e, StackTrace: $stackTrace');
-            return null;
-          }
-        })
-            .whereType<RentPastDue>()
-            .toList();*/
       } else {
         print('Failed to load Admin Balance. Status code: ${response.statusCode}');
         throw Exception('Failed to load Admin Balance');

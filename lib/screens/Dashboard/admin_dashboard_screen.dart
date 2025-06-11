@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:three_zero_two_property/screens/Dashboard/RentPastDueReport.dart';
 import '../../widgets/appbar.dart';
 
 import '../../constant/constant.dart';
@@ -327,73 +328,95 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                       ),
                       const SizedBox(height: 15),
                       if (selectedRentType == 'Rent Past Due')
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-
-                            Text(
-                              '\$${widget.totalRentPastDue ?? '0.00'}',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: const Color(0xFF7B7F87),
-                                fontWeight: FontWeight.w400,
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RentPastDueReports(title: 'Rent Past Due'),
+                                settings: RouteSettings(
+                                  arguments: {'monthType': 'All', 'chargeType': 'Charges'},
+                                ),
                               ),
-                            ),
-                          ],
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '\$${widget.totalRentPastDue ?? '0.00'}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: const Color(0xFF7B7F87),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
                         )
                       else ...[
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Current Month',
+                        GestureDetector(
+                          onTap: () {
+                            _navigateToRespectiveScreen(context, selectedRentType, "Current Month");
+                          },
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Current Month',
+                                  style: TextStyle(
+                                    fontSize: valueFont,
+                                    color: const Color(0xFF7B7F87),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                selectedRentType == 'Rent Due'
+                                    ? '\$${widget.currentMonthRentDue}'
+                                    : selectedRentType == 'Rent Paid'
+                                        ? '\$${widget.currentMonthRentPaid}'
+                                        : '\$2000.00',
                                 style: TextStyle(
                                   fontSize: valueFont,
                                   color: const Color(0xFF7B7F87),
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
-                            ),
-                            Text(
-                              selectedRentType == 'Rent Due'
-                                  ? '\$${widget.currentMonthRentDue}'
-                                  : selectedRentType == 'Rent Paid'
-                                  ? '\$${widget.currentMonthRentPaid}'
-                                  : '\$2000.00',
-                              style: TextStyle(
-                                fontSize: valueFont,
-                                color: const Color(0xFF7B7F87),
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Last Month',
+                        GestureDetector(
+                          onTap: () {
+                            _navigateToRespectiveScreen(context, selectedRentType, "Last Month");
+                          },
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Last Month',
+                                  style: TextStyle(
+                                    fontSize: valueFont,
+                                    color: const Color(0xFF7B7F87),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                selectedRentType == 'Rent Due'
+                                    ? '\$${widget.lastMonthRentDue}'
+                                    : selectedRentType == 'Rent Paid'
+                                        ? '\$${widget.lastMonthRentPaid}'
+                                        : '\$250.00',
                                 style: TextStyle(
                                   fontSize: valueFont,
                                   color: const Color(0xFF7B7F87),
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
-                            ),
-                            Text(
-                              selectedRentType == 'Rent Due'
-                                  ? '\$${widget.lastMonthRentDue}'
-                                  : selectedRentType == 'Rent Paid'
-                                  ? '\$${widget.lastMonthRentPaid}'
-                                  : '\$250.00',
-                              style: TextStyle(
-                                fontSize: valueFont,
-                                color: const Color(0xFF7B7F87),
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                       const SizedBox(height: 16),
@@ -659,6 +682,28 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
       width: 10,
       height: 10,
       decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    );
+  }
+
+  void _navigateToRespectiveScreen(BuildContext context, String rentType, String monthType) {
+    String chargeType = 'Charges';
+    bool isRentdue = false;
+    String title = rentType;
+    if (rentType == 'Rent Paid') {
+      chargeType = 'Payment';
+      isRentdue = true;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RentPastDueReports(
+          isRentdue: isRentdue,
+          title: title,
+        ),
+        settings: RouteSettings(
+          arguments: {'monthType': monthType, 'chargeType': chargeType},
+        ),
+      ),
     );
   }
 }
