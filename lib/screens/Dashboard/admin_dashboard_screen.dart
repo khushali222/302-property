@@ -9,15 +9,27 @@ import '../../widgets/fl_chart.dart';
 import 'cronjob_payment_table.dart';
 import 'dashboard_leaseExpiring.dart';
 import 'dashbordpolices_table.dart';
+import 'package:three_zero_two_property/screens/Rental/Properties/Properties_table.dart';
+import 'package:three_zero_two_property/screens/Rental/Tenants/Tenants_table.dart';
+import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
+import 'package:three_zero_two_property/screens/Maintenance/Vendor/Vendor_table.dart';
+import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
 
 class DashboardAdminSample extends StatefulWidget {
-  List<int> countList= [];
+  List<int> countList = [];
   double currentMonthRentDue = 0.0;
   double lastMonthRentDue = 0.0;
   double currentMonthRentPaid = 0.0;
   double lastMonthRentPaid = 0.0;
   double totalRentPastDue = 0.0;
-  DashboardAdminSample({super.key,required this.countList, required this.currentMonthRentDue,required this.lastMonthRentDue, required this.currentMonthRentPaid,required this.lastMonthRentPaid,required this.totalRentPastDue});
+  DashboardAdminSample(
+      {super.key,
+        required this.countList,
+        required this.currentMonthRentDue,
+        required this.lastMonthRentDue,
+        required this.currentMonthRentPaid,
+        required this.lastMonthRentPaid,
+        required this.totalRentPastDue});
   @override
   State<DashboardAdminSample> createState() => _DashboardAdminSampleState();
 }
@@ -65,55 +77,108 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
 
   final GlobalKey _dropdownKey = GlobalKey();
 
+  // Helper function to format count as two digits with leading zero if needed
+  String _formatCount(int count) {
+    if (count >= 0 && count < 10) {
+      return count.toString().padLeft(2, '0');
+    }
+    return count.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Main Dashboard',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          const SizedBox(height: 16),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 2.2,
-            children: [
-              _dashboardCard(FontAwesomeIcons.building, '${widget.countList[0]}', 'Properties  ->'),
-              _dashboardCard(FontAwesomeIcons.user, '${widget.countList[1]}', 'Tenants  ->'),
-              _dashboardCard(FontAwesomeIcons.fileLines, '${widget.countList[2]}', 'Applicants  ->'),
-              _dashboardCard(FontAwesomeIcons.truck, '${widget.countList[3]}', 'Vendors  ->'),
-              _dashboardCard(
-                  FontAwesomeIcons.screwdriverWrench, '${widget.countList[4]}', 'Work Orders  ->'),
-            ],
-          ),
-          const SizedBox(height: 15),
-          _rentDataSection(context),
+    return Container(
+      color: Color.fromRGBO(241, 244, 250, 1),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Main Dashboard',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            const SizedBox(height: 16),
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 2.2,
+              children: [
+                _dashboardCard(
+                  FontAwesomeIcons.building,
+                  _formatCount(widget.countList[0]),
+                  'Properties  ->',
+                      () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PropertiesTable()));
+                  },
+                ),
+                _dashboardCard(
+                  FontAwesomeIcons.user,
+                  _formatCount(widget.countList[1]),
+                  'Tenants  ->',
+                      () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Tenants_table()));
+                  },
+                ),
+                _dashboardCard(
+                  FontAwesomeIcons.fileLines,
+                  _formatCount(widget.countList[2]),
+                  'Applicants  ->',
+                      () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Applicants_table()));
+                  },
+                ),
+                _dashboardCard(
+                  FontAwesomeIcons.truck,
+                  _formatCount(widget.countList[3]),
+                  'Vendors  ->',
+                      () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Vendor_table()));
+                  },
+                ),
+                _dashboardCard(
+                  FontAwesomeIcons.screwdriverWrench,
+                  _formatCount(widget.countList[4]),
+                  'Work Orders  ->',
+                      () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Workorder_table()));
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 15),
+            _rentDataSection(context),
 
-         // const SizedBox(height: 10),
-          FlChartApp(
-            data: data,
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(
-                left: 0, right: 0),
-            child: Barchart(),
-          ),
-          const SizedBox(height: 10),
-
-          Dashboard_leaseExpiring(),
-          Dashboard_Policy_Table(),
-          Cronjob_payment_table(),
-        ],
+            FlChartApp(
+              data: data,
+            ),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.only(left: 0, right: 8),
+              child: Barchart(),
+            ),
+            const SizedBox(height: 24),
+            Dashboard_leaseExpiring(),
+            Dashboard_Policy_Table(),
+            Cronjob_payment_table(),
+          ],
+        ),
       ),
-
     );
   }
+
   List<Map<String, dynamic>> data = [
     {"month": "Oct", "rentals": 0, "leases": 0, "occupiedPercentage": 0},
     {"month": "Nov", "rentals": 0, "leases": 0, "occupiedPercentage": 0},
@@ -128,37 +193,45 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
     {"month": "Aug", "rentals": 8, "leases": 1, "occupiedPercentage": 12.5},
     {"month": "Sep", "rentals": 8, "leases": 9, "occupiedPercentage": 102.5},
   ];
-  static Widget _dashboardCard(IconData icon, String number, String label) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.blue[50],
-            child: Icon(icon, color: blueColor),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(number,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: blueColor)),
-              Text(label,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87)),
-            ],
-          ),
-        ],
+  static Widget _dashboardCard(
+      IconData icon, String number, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.blue[50],
+              child: Icon(icon, color: blueColor),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(number,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: blueColor)),
+                Text(label,
+                    style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -254,15 +327,19 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                       ),
                       const SizedBox(height: 15),
                       if (selectedRentType == 'Rent Past Due')
-                        Center(
-                          child: Text(
-                            '\$${widget.totalRentPastDue ?? '0.00'}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: const Color(0xFF7B7F87),
-                              fontWeight: FontWeight.w400,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+                            Text(
+                              '\$${widget.totalRentPastDue ?? '0.00'}',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: const Color(0xFF7B7F87),
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
-                          ),
+                          ],
                         )
                       else ...[
                         Row(
@@ -323,7 +400,6 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                     ],
                   ),
                 ),
-
                 // Bottom bar
                 Container(
                   height: 18,
@@ -473,7 +549,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Leases Expiring in the next 60 days',
-            style: TextStyle(fontWeight: FontWeight.bold,color: blueColor,fontSize: 18)),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: blueColor, fontSize: 18)),
         const SizedBox(height: 10),
         _infoCard('742 Evergreen Terrace', 'Homer Simpson', '05/12/2024'),
       ],
@@ -485,7 +562,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Renter's Insurance Policies Expiring Within 90 days",
-            style: TextStyle(fontWeight: FontWeight.bold,color: blueColor,fontSize: 18)),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: blueColor, fontSize: 18)),
         const SizedBox(height: 10),
         _infoCard('742 Evergreen Terrace', 'Homer Simpson', '05/12/2024'),
       ],
@@ -525,7 +603,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Payment Last 7 days',
-            style: TextStyle(fontWeight: FontWeight.bold,color: blueColor,fontSize: 18)),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: blueColor, fontSize: 18)),
         const SizedBox(height: 10),
         _paymentCard('Zack Wheeler', '.76', '4 Main street'),
         _paymentCard('Zack Wheeler', '.76', '4 Main street'),
@@ -616,7 +695,7 @@ class _RentTypePopup extends StatelessWidget {
           width: popupWidth,
           decoration: BoxDecoration(
             color: const Color(0xFFF9FAFB),
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.10),
@@ -641,7 +720,7 @@ class _RentTypePopup extends StatelessWidget {
                       ),
                     ),
                   InkWell(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(10),
                     onTap: () => onSelect(items[i]),
                     child: Container(
                       width: double.infinity,
@@ -653,7 +732,7 @@ class _RentTypePopup extends StatelessWidget {
                       decoration: isSelected
                           ? BoxDecoration(
                         color: const Color(0xFFE6EEF8),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(10),
                       )
                           : null,
                       child: Center(

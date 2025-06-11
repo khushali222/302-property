@@ -944,7 +944,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       child: Scaffold(
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
+        drawer:CustomDrawer(currentpage: "Settings",dropdown: false,),
         body: ListView(children: [
           SizedBox(
             height: 25,

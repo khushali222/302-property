@@ -686,7 +686,6 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
-
             ],
           ),
           if (isExpanded) ...[
@@ -706,7 +705,6 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
-
                         children: [
                           Text(
                             'Tenant: ',
@@ -779,15 +777,27 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
+                      height: MediaQuery.of(context).size.height * .5,
                       child: Center(
-                        child: Text(
-                          'Leases Expiring in the next 60 days',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: blueColor,
-                            fontSize: 16,
-                          ),
-                          textAlign: TextAlign.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/no_data.jpg",
+                              height: 200,
+                              width: 200,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "No Data Available",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: blueColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -853,8 +863,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                               );
                             }).toList(),
                           ),
-                          if (data.length > 5)
-                          SizedBox(height: 20),
+                          if (data.length > 5) SizedBox(height: 20),
                           if (data.length > 5)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,

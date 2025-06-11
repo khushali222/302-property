@@ -10,18 +10,18 @@ import '../repository/staffpermission_provider.dart';
 import 'drawer_tiles.dart';
 
 import '../model/staffpermission.dart';
+
 class CustomDrawer extends StatefulWidget {
   final String currentpage;
   final bool dropdown;
 
-  CustomDrawer({required this.currentpage,required this.dropdown});
+  CustomDrawer({required this.currentpage, required this.dropdown});
 
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-
   bool isLoading = true;
 
   @override
@@ -29,8 +29,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
     super.initState();
     // _loadPermissions();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -85,23 +83,26 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 Icon(
                   CupertinoIcons.person,
-                  color:widget.currentpage == "Profile" ?Colors.white:blueColor,
-                ),
-                "Profile",
-                widget.currentpage == "Profile",),
-              if (permissions!.propertytypeView == true)
-              buildListTile(
-                context,
-                FaIcon(
-                  FontAwesomeIcons.house,
-                  size: 20,
-                  color: widget.currentpage == "Add Property Type"
+                  color: widget.currentpage == "Profile"
                       ? Colors.white
                       : blueColor,
                 ),
-                "Property Type",
-                widget.currentpage == "Add Property Type",
+                "Profile",
+                widget.currentpage == "Profile",
               ),
+              if (permissions!.propertytypeView == true)
+                buildListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.house,
+                    size: 20,
+                    color: widget.currentpage == "Add Property Type"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  "Property Type",
+                  widget.currentpage == "Add Property Type",
+                ),
               /*buildListTile(
                 context,
                 FaIcon(
@@ -114,34 +115,44 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Staff Member",
                 widget.currentpage == "Add Staff Member",
               ),*/
-          buildDropdownListTile(
-            context,
-            FaIcon(
-              FontAwesomeIcons.key,
-              size: 20,
-              color: blueColor,
-            ),
-            "Rental",
-            // Filter the options based on permissions
-            [
-              if (permissions!.propertyView == true) "Properties",
-              if (permissions!.rentalownerView == true) "Rental Owner",
-              if (permissions!.tenantView == true) "Tenants",
+              buildDropdownListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.key,
+                  size: 20,
+                  color: blueColor,
+                ),
+                "Rental",
+                // Filter the options based on permissions
+                [
+                  if (permissions!.propertyView == true) "Properties",
+                  if (permissions!.rentalownerView == true) "Rental Owner",
+                  if (permissions!.tenantView == true) "Tenants",
+                ],
+                // Filter the icons based on permissions in the same order
+                [
+                  if (permissions.propertyView == true)
+                    FaIcon(FontAwesomeIcons.buildingUser,
+                        size: 20,
+                        color: widget.currentpage == "Properties"
+                            ? Colors.white
+                            : blueColor), // Icon for Properties
+                  if (permissions.rentalownerView == true)
+                    FaIcon(FontAwesomeIcons.users,
+                        size: 20,
+                        color: widget.currentpage == "Rental Owner"
+                            ? Colors.white
+                            : blueColor), // Icon for RentalOwner
 
-            ],
-            // Filter the icons based on permissions in the same order
-            [
-              if (permissions.propertyView == true)
-                FaIcon(FontAwesomeIcons.buildingUser, size: 20, color: widget.currentpage == "Properties" ? Colors.white : blueColor), // Icon for Properties
-              if (permissions.rentalownerView == true)
-                FaIcon(FontAwesomeIcons.users, size: 20, color: widget.currentpage == "Rental Owner" ? Colors.white : blueColor), // Icon for RentalOwner
-
-              if (permissions.tenantView == true)
-                FaIcon(FontAwesomeIcons.houseChimneyUser, size: 20, color: widget.currentpage == "Tenants" ? Colors.white : blueColor), // Icon for Tenants
-                         ],
-            selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
-          ),
-
+                  if (permissions.tenantView == true)
+                    FaIcon(FontAwesomeIcons.houseChimneyUser,
+                        size: 20,
+                        color: widget.currentpage == "Tenants"
+                            ? Colors.white
+                            : blueColor), // Icon for Tenants
+                ],
+                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+              ),
               buildDropdownListTile(
                 context,
                 FaIcon(
@@ -150,37 +161,60 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   color: blueColor,
                 ),
                 "Leasing",
-                ["Rent Roll", "Applicants","Upcoming renewal","Scheduled Payment"],
                 [
-                  FaIcon(FontAwesomeIcons.wallet, size: 20,  color: widget.currentpage == "Rent Roll"
-                      ? Colors.white
-                      : blueColor,), // Icon for Properties
-                  FaIcon(FontAwesomeIcons.addressCard, size: 20,  color: widget.currentpage == "Applicants"
-                      ? Colors.white
-                      : blueColor,),
+                  "Rent Roll",
+                  "Applicants",
+                  "Upcoming renewal",
+                  "Scheduled Payment"
+                ],
+                [
+                  FaIcon(
+                    FontAwesomeIcons.wallet,
+                    size: 20,
+                    color: widget.currentpage == "Rent Roll"
+                        ? Colors.white
+                        : blueColor,
+                  ), // Icon for Properties
+                  FaIcon(
+                    FontAwesomeIcons.addressCard,
+                    size: 20,
+                    color: widget.currentpage == "Applicants"
+                        ? Colors.white
+                        : blueColor,
+                  ),
 
-                  widget.currentpage == "Upcoming renewal" ? SvgPicture.asset(
+                  widget.currentpage == "Upcoming renewal"
+                      ? SvgPicture.asset(
                     "assets/images/upcoming white.svg",
                     fit: BoxFit.cover,
                     height: 27,
                     width: 27,
-                  ) : SvgPicture.asset(
+                  )
+                      : SvgPicture.asset(
                     "assets/images/upcoming renewal.svg",
                     fit: BoxFit.cover,
                     height: 27,
                     width: 27,
                     color: blueColor,
                   ),
-                  FaIcon(FontAwesomeIcons.clock, size: 20,  color: widget.currentpage == "Scheduled Payment"
-                      ? Colors.white
-                      : blueColor,), // Icon for RentalOwner
+                  FaIcon(
+                    FontAwesomeIcons.clock,
+                    size: 20,
+                    color: widget.currentpage == "Scheduled Payment"
+                        ? Colors.white
+                        : blueColor,
+                  ), // Icon for RentalOwner
                   //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
               ),
               buildDropdownListTile(
                 context,
-                FaIcon(FontAwesomeIcons.screwdriverWrench, size: 20,  color:  blueColor,),
+                FaIcon(
+                  FontAwesomeIcons.screwdriverWrench,
+                  size: 20,
+                  color: blueColor,
+                ),
                 "Maintenance",
                 [
                   if (permissions.vendorView ?? false) "Vendor",
@@ -202,7 +236,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       color: widget.currentpage == "Work Order"
                           ? Colors.white
                           : blueColor,
-                    ),  // Icon for RentalOwner
+                    ), // Icon for RentalOwner
                   //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
@@ -258,6 +292,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Reports",
                 widget.currentpage == "Reports",
               ),
+              if (permissions.settingView == true)
+                buildListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.cog,
+                    color: widget.currentpage == "Settings"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  "Settings",
+                  widget.currentpage == "Settings",
+                ),
             ],
           ),
         ),

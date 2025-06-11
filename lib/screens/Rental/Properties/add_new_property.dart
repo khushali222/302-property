@@ -3435,6 +3435,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 staffmemberEmail: email.text,
                                                                                 staffmemberPassword: password.text,
                                                                               );
+                                                                              reload_Screen();
                                                                               setState(() {
                                                                                 loading = false;
                                                                               });

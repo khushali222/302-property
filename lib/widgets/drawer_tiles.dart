@@ -6,7 +6,6 @@ import 'package:three_zero_two_property/screens/Leasing/upcoming_renewal/upcomin
 import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 
-
 import '../screens/Communications/E-mail Logs/email_log_table.dart';
 import '../screens/Communications/Send E-mail/Send_email_table.dart';
 import '../screens/Communications/Templates/Templet_table.dart';
@@ -30,15 +29,14 @@ import '../screens/Property_Type/Property_type_table.dart';
 
 import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
 import '../screens/Staff_Member/Staffmemvertable.dart';
-
-
+import '../screens/Profile/Settings_screen.dart';
 
 Widget buildListTile(
-  BuildContext context,
-  Widget leadingIcon,
-  String title,
-  bool active,
-) {
+    BuildContext context,
+    Widget leadingIcon,
+    String title,
+    bool active,
+    ) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
@@ -60,6 +58,9 @@ Widget buildListTile(
         } else if (title == "Reports" && active != true) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => ReportsMainScreen()));
+        } else if (title == "Settings") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => TabBarExample()));
         }
       },
       leading: leadingIcon,
@@ -88,19 +89,18 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Send E-mail": (context) => Send_Email_table(),
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
-    "Upcoming renewal":(context)=> Upcomingrenewal(),
-    "Scheduled Payment":(context)=> Scheduled_Payments_table(),
-    "Scheduled Charges":(context)=> ScheduledChargeTable(),
-  // "Work Order": (context) => Cardpayment(leaseId: '',),
-
+    "Upcoming renewal": (context) => Upcomingrenewal(),
+    "Scheduled Payment": (context) => Scheduled_Payments_table(),
+    "Scheduled Charges": (context) => ScheduledChargeTable(),
+    // "Work Order": (context) => Cardpayment(leaseId: '',),
   };
 
- // if (isActive != true) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: routes[option]!),
-    );
- // }
+  // if (isActive != true) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: routes[option]!),
+  );
+  // }
 }
 
 Widget buildDropdownListTile(
@@ -113,7 +113,8 @@ Widget buildDropdownListTile(
       bool? initvalue,
     }) {
   // Check if the selectedSubtopic is in the list of subTopics
-  bool isExpanded = selectedSubtopic != null && subTopics.contains(selectedSubtopic);
+  bool isExpanded =
+      selectedSubtopic != null && subTopics.contains(selectedSubtopic);
 
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 14),
@@ -157,4 +158,3 @@ Widget buildDropdownListTile(
     ),
   );
 }
-

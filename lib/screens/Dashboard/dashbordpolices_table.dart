@@ -876,54 +876,65 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
               SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  data.tenantName ?? 'N/A',
+                  data.rentalAddress ?? 'N/A',
                   style: cardTextStyle,
                 ),
               ),
-              Text(
-                data.rentalAddress ?? 'N/A',
-                style: TextStyle(fontSize: 14, color: blueColor),
-              ),
+
             ],
           ),
-          SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(Icons.calendar_today, size: 16, color: blueColor),
-              SizedBox(width: 4),
-              Text(
-                data.expirationDate?.isNotEmpty == true
-                    ? dateProvider.formatCurrentDate(data.expirationDate!)
-                    : 'N/A',
-                style: subTextStyle,
-              ),
-            ],
-          ),
+
+
           if (isExpanded) ...[
             SizedBox(height: 8),
             Divider(thickness: 2),
             SizedBox(height: 4),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Insurance Company: ',
-                    style: subTextStyle.copyWith(
-                        color: blueColor, fontWeight: FontWeight.bold)),
                 Expanded(
-                    child: Text(data.insuranceCompany ?? '-',
-                        style: subTextStyle, overflow: TextOverflow.ellipsis)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tenant: ',
+                        style: subTextStyle.copyWith(
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        data.tenantName ?? "-",
+                        style: subTextStyle,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Expiration Date: ',
+                        style: subTextStyle.copyWith(
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        data.expirationDate != null ? dateProvider.formatCurrentDate(data.expirationDate!) : "-",
+                        style: subTextStyle,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 4),
-            Row(
-              children: [
-                Text('Policy ID: ',
-                    style: subTextStyle.copyWith(
-                        color: blueColor, fontWeight: FontWeight.bold)),
-                Expanded(
-                    child: Text(data.policyId ?? '-',
-                        style: subTextStyle, overflow: TextOverflow.ellipsis)),
-              ],
-            ),
+            const SizedBox(height: 4),
           ],
         ],
       ),

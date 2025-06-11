@@ -289,7 +289,7 @@ class _DashboardState extends State<Dashboard> {
         return await _showExitPopup(context);
       },
       child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromRGBO(241, 244, 250, 1),
           drawer: CustomDrawer(
             currentpage: "Dashboard",
             dropdown: false,

@@ -4750,7 +4750,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Memo',
+                    'Memo *',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
@@ -4768,12 +4768,12 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter Memo',
                     controller: _memoController,
-                    optional: true,
+                   // optional: true,
                   ),
                   const SizedBox(height: 20),
                   if(MediaQuery.of(context).size.width < 500) ...[
                     Text(
-                        'Charge Date',
+                        'Charge Date *',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -5467,7 +5467,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Memo',
+                  'Memo *',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -5485,7 +5485,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   keyboardType: TextInputType.text,
                   hintText: 'Enter Memo',
                   controller: _memoController,
-                  optional: true,
+                 // optional: true,
                 ),
                 const SizedBox(height: 10),
                 Text(

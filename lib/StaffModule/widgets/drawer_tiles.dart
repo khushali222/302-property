@@ -12,8 +12,6 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 
-
-
 import '../screen/Communications/E-mail Logs/email_log_table.dart';
 import '../screen/Communications/Send E-mail/Send_email_table.dart';
 import '../screen/Communications/Templates/Templet_table.dart';
@@ -21,9 +19,7 @@ import '../screen/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/upcoming_renewal/upcoming_renewal.dart';
-
-
-
+import 'package:three_zero_two_property/StaffModule/screen/Settings/Settings_screen.dart';
 
 Widget buildListTile(
     BuildContext context,
@@ -41,18 +37,20 @@ Widget buildListTile(
     child: ListTile(
       onTap: () {
         if (title == "Dashboard" && active != true) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Dashboard_staff()));
         } else if (title == "Property Type" && active != true) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => PropertyTable()));
         } else if (title == "Reports" && active != true) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => ReportsMainScreen()));
-        }
-        else if (title == "Profile") {
+        } else if (title == "Profile") {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => Profile_screen()));
+        } else if (title == "Settings") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => TabBarExample()));
         }
       },
       leading: leadingIcon,
@@ -78,15 +76,15 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     //"Vendor": (context) => Vendor_table(),
-    "Upcoming renewal":(context)=> Upcomingrenewal(),
+    "Upcoming renewal": (context) => Upcomingrenewal(),
     // "Work Order": (context) => Cardpayment(leaseId: '',),
     "Templates": (context) => TempletTable(),
     "E-mail Logs": (context) => Email_log_tablee(),
     "Send E-mail": (context) => Send_Email_table(),
-    "Scheduled Payment":(context)=> Scheduled_Payments_table()
+    "Scheduled Payment": (context) => Scheduled_Payments_table()
   };
   // if (isActive != true) {
-   Navigator.push(
+  Navigator.push(
     context,
     MaterialPageRoute(builder: routes[option]!),
   );
@@ -103,7 +101,8 @@ Widget buildDropdownListTile(
       bool? initvalue,
     }) {
   // Check if the selectedSubtopic is in the list of subTopics
-  bool isExpanded = selectedSubtopic != null && subTopics.contains(selectedSubtopic);
+  bool isExpanded =
+      selectedSubtopic != null && subTopics.contains(selectedSubtopic);
 
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 14),
@@ -147,4 +146,3 @@ Widget buildDropdownListTile(
     ),
   );
 }
-

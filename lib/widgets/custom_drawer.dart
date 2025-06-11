@@ -58,18 +58,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 widget.currentpage == "Dashboard"
                     ? SvgPicture.asset(
-                        "assets/images/tenants/dashboard1.svg",
-                        fit: BoxFit.cover,
-                        height: 20,
-                        width: 20,
-                      )
+                  "assets/images/tenants/dashboard1.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                )
                     : SvgPicture.asset(
-                        "assets/images/tenants/dashboard.svg",
-                        fit: BoxFit.cover,
-                        height: 20,
-                        width: 20,
-                        color: blueColor,
-                      ),
+                  "assets/images/tenants/dashboard.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                  color: blueColor,
+                ),
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
@@ -145,7 +145,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Upcoming renewal",
                   "Scheduled Payment",
                   "Scheduled Charges",
-
                 ],
                 [
                   FaIcon(
@@ -165,18 +164,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                   widget.currentpage == "Upcoming renewal"
                       ? SvgPicture.asset(
-                          "assets/images/upcoming white.svg",
-                          fit: BoxFit.cover,
-                          height: 27,
-                          width: 27,
-                        )
+                    "assets/images/upcoming white.svg",
+                    fit: BoxFit.cover,
+                    height: 27,
+                    width: 27,
+                  )
                       : SvgPicture.asset(
-                          "assets/images/upcoming renewal.svg",
-                          fit: BoxFit.cover,
-                          height: 27,
-                          width: 27,
-                          color: blueColor,
-                        ),
+                    "assets/images/upcoming renewal.svg",
+                    fit: BoxFit.cover,
+                    height: 27,
+                    width: 27,
+                    color: blueColor,
+                  ),
                   FaIcon(
                     FontAwesomeIcons.clock,
                     size: 20,
@@ -184,10 +183,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ? Colors.white
                         : blueColor,
                   ),
-                  Icon(Icons.calendar_month, size: 25,
+                  Icon(
+                    Icons.calendar_month,
+                    size: 25,
                     color: widget.currentpage == "Scheduled Charges"
                         ? Colors.white
-                        : blueColor,)// Icon for RentalOwner
+                        : blueColor,
+                  ) // Icon for RentalOwner
                   // FaIcon(
                   //   FontAwesomeIcons.clock,
                   //   size: 20,
@@ -277,6 +279,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
                 "Reports",
                 widget.currentpage == "Reports",
+              ),
+              buildListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.cog,
+                  color: widget.currentpage == "Settings"
+                      ? Colors.white
+                      : blueColor,
+                ),
+                "Settings",
+                widget.currentpage == "Settings",
               ),
             ],
           ),

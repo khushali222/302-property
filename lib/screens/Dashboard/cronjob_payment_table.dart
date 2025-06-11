@@ -1409,29 +1409,23 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     return Container(
                       child: Center(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            _buildHeaders([]),
-                            // Container(
-                            //   padding: EdgeInsets.all(10),
-                            //   decoration: BoxDecoration(
-                            //     color: Colors.grey.shade300, // Background color
-                            //     borderRadius: BorderRadius.only(
-                            //       bottomLeft: Radius.circular(13),
-                            //       bottomRight: Radius.circular(13),
-                            //     ),
-                            //   ),
-                            //   child: Center(
-                            //     child: Text(
-                            //       "No policies are expiring within 90 days.",
-                            //       textAlign: TextAlign.center,
-                            //       style: TextStyle(
-                            //         fontWeight: FontWeight.bold,
-                            //         color: blueColor,
-                            //         fontSize: 14,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
+                            Image.asset(
+                              "assets/images/no_data.jpg", // Make sure this image exists in your assets
+                              height: 200,
+                              width: 200,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "No Data Available",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: blueColor,
+                                fontSize: 16,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -1495,11 +1489,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 10),
-
                           Text(
                             "Payment Last 7 Days",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold,color: blueColor),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: blueColor),
                           ),
                           SizedBox(height: 10),
                           Column(
@@ -1527,107 +1522,107 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                   }, Propertytype));
                             }).toList(),
                           ),
+                          if (data.length > 5) SizedBox(height: 20),
                           if (data.length > 5)
-                          SizedBox(height: 20),
-                           if (data.length > 5)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  // Text('Rows per page:'),
-                                  SizedBox(width: 10),
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: snapshot
-                                              .data!.metadata!.total! >
-                                              itemsPerPageOptions
-                                                  .first // Condition to check if dropdown should be enabled
-                                              ? (newValue) {
-                                            setState(() {
-                                              itemsPerPage = newValue!;
-                                              currentPage =
-                                              1; // Reset to first page when items per page change
-                                              futurecronjobpayment =
-                                                  cronjob_payment_tableService()
-                                                      .fetchCronjob_payment(
-                                                      limit:
-                                                      itemsPerPage,
-                                                      page:
-                                                      currentPage);
-                                            });
-                                          }
-                                              : null,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    // Text('Rows per page:'),
+                                    SizedBox(width: 10),
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border:
+                                          Border.all(color: Colors.grey),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: snapshot.data!.metadata!
+                                                .total! >
+                                                itemsPerPageOptions
+                                                    .first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
+                                              setState(() {
+                                                itemsPerPage = newValue!;
+                                                currentPage =
+                                                1; // Reset to first page when items per page change
+                                                futurecronjobpayment =
+                                                    cronjob_payment_tableService()
+                                                        .fetchCronjob_payment(
+                                                        limit:
+                                                        itemsPerPage,
+                                                        page:
+                                                        currentPage);
+                                              });
+                                            }
+                                                : null,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: currentPage == 1
-                                          ? Colors.grey
-                                          : blueColor,
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronLeft,
+                                        color: currentPage == 1
+                                            ? Colors.grey
+                                            : blueColor,
+                                      ),
+                                      onPressed: currentPage == 1
+                                          ? null
+                                          : () {
+                                        setState(() {
+                                          currentPage--;
+                                          futurecronjobpayment =
+                                              cronjob_payment_tableService()
+                                                  .fetchCronjob_payment(
+                                                  limit: itemsPerPage,
+                                                  page: currentPage);
+                                        });
+                                      },
                                     ),
-                                    onPressed: currentPage == 1
-                                        ? null
-                                        : () {
-                                      setState(() {
-                                        currentPage--;
-                                        futurecronjobpayment =
-                                            cronjob_payment_tableService()
-                                                .fetchCronjob_payment(
-                                                limit: itemsPerPage,
-                                                page: currentPage);
-                                      });
-                                    },
-                                  ),
-                                  Text('Page ${currentPage} of $totalPages'),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color: currentPage < totalPages
-                                          ? blueColor
-                                          : Colors.grey,
+                                    Text('Page ${currentPage} of $totalPages'),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronRight,
+                                        color: currentPage < totalPages
+                                            ? blueColor
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: currentPage < totalPages
+                                          ? () {
+                                        setState(() {
+                                          currentPage++;
+                                          futurecronjobpayment =
+                                              cronjob_payment_tableService()
+                                                  .fetchCronjob_payment(
+                                                  limit: itemsPerPage,
+                                                  page: currentPage);
+                                        });
+                                      }
+                                          : null,
                                     ),
-                                    onPressed: currentPage < totalPages
-                                        ? () {
-                                      setState(() {
-                                        currentPage++;
-                                        futurecronjobpayment =
-                                            cronjob_payment_tableService()
-                                                .fetchCronjob_payment(
-                                                limit: itemsPerPage,
-                                                page: currentPage);
-                                      });
-                                    }
-                                        : null,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  ],
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     );

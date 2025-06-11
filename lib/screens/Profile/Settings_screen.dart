@@ -1372,7 +1372,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         appBar: widget_302.App_Bar(context: context, isSettingPageActive: true),
         backgroundColor: Colors.white,
         drawer: CustomDrawer(
-          currentpage: "Dashboard",
+          currentpage: "Settings",
           dropdown: false,
         ),
         body: _connectivityResult != ConnectivityResult.none

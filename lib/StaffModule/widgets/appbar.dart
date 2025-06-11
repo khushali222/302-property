@@ -28,7 +28,8 @@ class widget_302 {
     var arrowNearText,
     required BuildContext context,
   }) {
-    Provider.of<NotificationProvider>(context, listen: false).fetchNotificationsStaff(context);
+    Provider.of<NotificationProvider>(context, listen: false)
+        .fetchNotificationsStaff(context);
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
     StaffPermission? permissions = permissionProvider.permissions;
     return AppBar(
@@ -36,7 +37,7 @@ class widget_302 {
       elevation: 1,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
-      titleSpacing:05,
+      titleSpacing: 05,
       //automaticallyImplyLeading: false,
       // title: Image(
       //   image: AssetImage('assets/images/applogo.png'),
@@ -192,7 +193,10 @@ class widget_302 {
                       PopupMenuItem(
                         child: Row(
                           children: [
-                            Icon(Icons.key,color: blueColor,),
+                            Icon(
+                              Icons.key,
+                              color: blueColor,
+                            ),
                             //  FaIcon(
                             //    FontAwesomeIcons.user,
                             //    size: 20,
@@ -201,7 +205,10 @@ class widget_302 {
                             SizedBox(
                               width: 10,
                             ),
-                            Text("Change Password",style: TextStyle(color: blueColor),),
+                            Text(
+                              "Change Password",
+                              style: TextStyle(color: blueColor),
+                            ),
                           ],
                         ),
                         onTap: () {
@@ -209,30 +216,33 @@ class widget_302 {
                               builder: (context) => Change_password()));
                         },
                       ),
-                     if(permissions!.settingView!)
-                     PopupMenuItem(
-                        child: Row(
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.cog,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text("Settings",style: TextStyle(color: blueColor)),
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => TabBarExample()));
-                        },
-                      ),
+                      // if(permissions!.settingView!)
+                      // PopupMenuItem(
+                      //    child: Row(
+                      //      children: [
+                      //        FaIcon(
+                      //          FontAwesomeIcons.cog,
+                      //          size: 20,
+                      //          color: blueColor,
+                      //        ),
+                      //        SizedBox(
+                      //          width: 10,
+                      //        ),
+                      //        Text("Settings",style: TextStyle(color: blueColor)),
+                      //      ],
+                      //    ),
+                      //    onTap: () {
+                      //      Navigator.of(context).push(MaterialPageRoute(
+                      //          builder: (context) => TabBarExample()));
+                      //    },
+                      //  ),
                       PopupMenuItem(
                         child: Row(
                           children: [
-                            Icon(Icons.directions_run_rounded,color: blueColor,),
+                            Icon(
+                              Icons.directions_run_rounded,
+                              color: blueColor,
+                            ),
                             //  FaIcon(
                             //    FontAwesomeIcons,
                             //    size: 20,
@@ -241,18 +251,21 @@ class widget_302 {
                             SizedBox(
                               width: 10,
                             ),
-                            Text("Logout",style: TextStyle(color: blueColor),),
+                            Text(
+                              "Logout",
+                              style: TextStyle(color: blueColor),
+                            ),
                           ],
                         ),
                         onTap: () async {
                           SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
+                          await SharedPreferences.getInstance();
                           prefs.clear();
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Login_Screen()),
-                              (route) => false);
+                                  (route) => false);
                         },
                       ),
                     ],
@@ -285,19 +298,19 @@ class widget_302 {
     }
     return combinationName ?? "L"; // Default to "L" if name is not available
   }
-  // static Future<String> _getNameFromSharedPreferences() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? firstName = prefs.getString("first_name");
-  //   String? lastName = prefs.getString("last_name");
-  //   String combinationName = '';
-  //
-  //   if (firstName != null && firstName.isNotEmpty) {
-  //     combinationName += firstName[0].toUpperCase();
-  //   }
-  //
-  //   if (lastName != null && lastName.isNotEmpty) {
-  //     combinationName += lastName[0].toUpperCase();
-  //   }
-  //   return combinationName ?? "L"; // Default to "L" if name is not available
-  // }
+// static Future<String> _getNameFromSharedPreferences() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String? firstName = prefs.getString("first_name");
+//   String? lastName = prefs.getString("last_name");
+//   String combinationName = '';
+//
+//   if (firstName != null && firstName.isNotEmpty) {
+//     combinationName += firstName[0].toUpperCase();
+//   }
+//
+//   if (lastName != null && lastName.isNotEmpty) {
+//     combinationName += lastName[0].toUpperCase();
+//   }
+//   return combinationName ?? "L"; // Default to "L" if name is not available
+// }
 }
