@@ -28,9 +28,6 @@ import 'package:http/http.dart' as http;
 import '../../../screens/Leasing/RentalRoll/addcard/AddCard.dart';
 import '../Leasing/RentalRoll/newAddLease.dart';
 
-
-
-
 class TabBarExample extends StatefulWidget {
   @override
   State<TabBarExample> createState() => _TabBarExampleState();

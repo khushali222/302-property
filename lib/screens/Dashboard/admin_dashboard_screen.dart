@@ -3,7 +3,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/screens/Dashboard/RentPastDueReport.dart';
 import '../../widgets/appbar.dart';
-
 import '../../constant/constant.dart';
 import '../../widgets/barchart.dart';
 import '../../widgets/fl_chart.dart';
@@ -316,7 +315,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         selectedRentType,
