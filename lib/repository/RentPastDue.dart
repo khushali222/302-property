@@ -121,13 +121,22 @@ class AdminBalanceRepository {
       );
 
       print('Admin Balance response: ${response.body}');
+
       if (response.statusCode == 200) {
         final dynamic jsonData = json.decode(response.body);
-        // If the response is a List, use the first element
+        print('=== DEBUG: API Response Structure ===');
+        print('Response type: ${jsonData.runtimeType}');
         if (jsonData is List && jsonData.isNotEmpty) {
-          print('Admin Balance: Response is a List, using first element.');
+          print('Data is a List with ${jsonData.length} elements');
+          print('First element data structure: ${jsonData[0]["data"]?.keys.toList()}');
+          print('Last Month Data: ${jsonData[0]["data"]?["lastDueRentCharges"]}');
+          print('Current Month Data: ${jsonData[0]["data"]?["currentDueRentCharges"]}');
           return RentPastDue.fromJson(jsonData[0]["data"] ?? {});
         } else if (jsonData is Map<String, dynamic>) {
+          print('Data is a Map with keys: ${jsonData.keys.toList()}');
+          print('Data field structure: ${jsonData["data"]?.keys.toList()}');
+          print('Last Month Data: ${jsonData["data"]?["lastDueRentCharges"]}');
+          print('Current Month Data: ${jsonData["data"]?["currentDueRentCharges"]}');
           return RentPastDue.fromJson(jsonData["data"] ?? {});
         } else {
           print('Admin Balance: Unexpected response format.');

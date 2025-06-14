@@ -1066,18 +1066,23 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                             }).toList() ?? [];
                           } else if (chargeType == 'Charges' &&
                               monthType == 'Last Month') {
+                            print('=== DEBUG: Filtering Last Month Data ===');
+                            print('Month Type: $monthType');
+                            print('Charge Type: $chargeType');
+                            print('Last Month Charges Available: ${snapshot.data!.lastDueRentCharges?.charges?.length ?? 0}');
                             filteredCharges = snapshot
                                 .data!.lastDueRentCharges!.charges!
                                 .where((charge) {
                               var address = charge.rentalData?.address;
                               var tenantName =
                                   charge.tenantData?.tenantFirstName;
-
+                              print('Checking charge - Address: $address, Tenant: $tenantName');
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
                                       tenantName.contains(searchvalue));
                             }).toList() ?? [];
+                            print('Filtered Charges Count: ${filteredCharges.length}');
                           } else if (chargeType == "Payment" &&
                               monthType == "Current Month") {
                             filteredCharges = snapshot
@@ -1124,7 +1129,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                             filteredCharges = [];
                           }
 
-                          return SingleChildScrollView(
+                          return
+                            SingleChildScrollView(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16.0,

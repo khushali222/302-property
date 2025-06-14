@@ -1506,6 +1506,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                             SizedBox(
                               height: 10,
                             ),
+
                           ],
                         ),
                       );
