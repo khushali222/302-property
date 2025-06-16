@@ -77,15 +77,20 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     chargeType = widget.isRentdue == true ? "Payment" : "Charges";
   }
 
+  bool _hasSetInitialValues = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    if (args != null) {
-      setState(() {
-        monthType = args['monthType'] ?? monthType;
-        chargeType = args['chargeType'] ?? chargeType;
-      });
+    if (!_hasSetInitialValues) {
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (args != null) {
+        setState(() {
+          monthType = args['monthType'] ?? monthType;
+          chargeType = args['chargeType'] ?? chargeType;
+        });
+      }
+      _hasSetInitialValues = true;
     }
   }
 
@@ -135,6 +140,17 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       });
       return RentPastDue();
     }
+  }
+
+  // Method to refresh data when month type changes
+  void refreshData() {
+    setState(() {
+      isLoading = true;
+      // Just trigger a rebuild - the data is already fetched and available
+      // No need to make a new API call since we have all month data
+    });
+    // Don't recreate the future, just rebuild the UI
+    // futurePastRentDue = fetchRentPastDueData(report: true);
   }
 
   double grandtotal = 0.0;
@@ -965,7 +981,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   String? daterange;
   String? chargeType;
 
-  String? monthType = 'Current Month';
+  String? monthType = 'Current Month'; // Set default value
+  //String? monthType;
   String? selectedrenatalownerid;
   @override
   Widget build(BuildContext context) {
@@ -1066,23 +1083,17 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                             }).toList() ?? [];
                           } else if (chargeType == 'Charges' &&
                               monthType == 'Last Month') {
-                            print('=== DEBUG: Filtering Last Month Data ===');
-                            print('Month Type: $monthType');
-                            print('Charge Type: $chargeType');
-                            print('Last Month Charges Available: ${snapshot.data!.lastDueRentCharges?.charges?.length ?? 0}');
                             filteredCharges = snapshot
                                 .data!.lastDueRentCharges!.charges!
                                 .where((charge) {
                               var address = charge.rentalData?.address;
                               var tenantName =
                                   charge.tenantData?.tenantFirstName;
-                              print('Checking charge - Address: $address, Tenant: $tenantName');
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
                                       tenantName.contains(searchvalue));
                             }).toList() ?? [];
-                            print('Filtered Charges Count: ${filteredCharges.length}');
                           } else if (chargeType == "Payment" &&
                               monthType == "Current Month") {
                             filteredCharges = snapshot
@@ -1138,26 +1149,21 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               child: Column(
                                 children: [
                                   // Show label only for Rent Past Due, All months
-                                  if (chargeType == 'Charges' && (monthType == 'All' || monthType == null))
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 8.0),
-                                      child: Text(
-                                        'Showing all Rent Past Due for all months',
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
-                                      ),
-                                    ),
+                                  // if (chargeType == 'Charges' && (monthType == 'All' || monthType == null))
+                                  //   Padding(
+                                  //     padding: const EdgeInsets.only(bottom: 8.0),
+                                  //     child: Text(
+                                  //       'Showing all Rent Past Due for all months',
+                                  //       style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
+                                  //     ),
+                                  //   ),
                                   const SizedBox(height: 15),
                                   if (chargeType == 'Charges' &&
-                                          monthType == 'All' ||
-                                      chargeType == 'Charges' &&
-                                          monthType == null)
+                                          (monthType == 'All' || monthType == null))
                                     chargeTable(
                                         snapshot.data!.dueRentCharges!.charges!,
                                         snapshot.data!.dueRentCharges!.total!
                                             .toDouble())
-
-                                  // chargeTable(
-                                  //     snapshot.data!.dueRentCharges!.charges!)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Current Month')
                                     chargeTable(
@@ -1537,6 +1543,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 onChanged: (value) {
                                   setState(() {
                                     chargeType = value;
+                                    // If Payment is selected and month is "All", change to "Current Month"
+                                    if (value == "Payment" && monthType == "All") {
+                                      monthType = "Current Month";
+                                    }
                                   });
                                   // Handle the selected charge type
                                   //printvalue);
@@ -1562,6 +1572,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                         ),
                       ],
                     ),
+                    SizedBox(height: 5),
                     Row(
                       children: [
                         Expanded(
@@ -1573,6 +1584,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 border: Border.all(color: Colors.grey)),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
+                                key: ValueKey('month_dropdown_$monthType'), // Unique key
                                 value: monthType,
                                 padding: EdgeInsets.symmetric(horizontal: 5),
                                 hint: Text(
@@ -1580,6 +1592,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),
+                                isExpanded: true, // Ensure proper dropdown behavior
                                 items: [
                                   if (chargeType != "Payment")
                                     DropdownMenuItem<String>(
@@ -1596,11 +1609,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   ),
                                 ],
                                 onChanged: (value) {
-                                  setState(() {
-                                    monthType = value;
-                                  });
-                                  // Handle the selected charge type
-                                  //printvalue);
+                                  if (mounted) {
+                                    setState(() {
+                                      monthType = value;
+                                    });
+                                  }
                                 },
                               ),
                             ),
