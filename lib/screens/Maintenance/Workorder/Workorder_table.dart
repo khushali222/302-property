@@ -1,29 +1,23 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:three_zero_two_property/Model/propertytype.dart';
-import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Add_workorder.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Edit_workorders.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/workorder_summery.dart';
-import 'package:three_zero_two_property/screens/Property_Type/Add_property_type.dart';
-import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import '../../../constant/constant.dart';
 import '../../../model/workordr.dart';
 import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
-import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Workorder_table extends StatefulWidget {
@@ -1031,13 +1025,13 @@ class _Workorder_tableState extends State<Workorder_table> {
                                           : Colors.white,
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(color: Color(0xFFDBE0E5)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 8,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
+                                  // boxShadow: [
+                                  //   BoxShadow(
+                                  //     color: Colors.black12,
+                                  //     blurRadius: 8,
+                                  //     offset: Offset(0, 2),
+                                  //   ),
+                                  // ],
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1501,278 +1495,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         },
                       ),
                     ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    FutureBuilder<List<Data>>(
-                      future: futureworkorders,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 55.0,
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return const Center(child: Text('No data available'));
-                        } else {
-                          _tableData = snapshot.data!;
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            _tableData = snapshot.data!;
-                          } else if (selectedValue == "All") {
-                            _tableData = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            _tableData = snapshot.data!
-                                .where((property) =>
-                                    property.workOrderData!.workSubject!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    property.rentalAddress!.rentalAdress!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          } else {
-                            _tableData = snapshot.data!
-                                .where((property) =>
-                                    property.workOrderData!.status ==
-                                    selectedValue)
-                                .toList();
-                          }
-                          if (isChecked) {
-                            _tableData = snapshot.data!
-                                .where((workorder) =>
-                                    workorder.workOrderData!.isBillable == true)
-                                .toList();
-                          }
 
-                          totalrecords = _tableData.length;
-                          return SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 35.0, vertical: 5),
-                                    child: Column(
-                                      children: [
-                                        SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Container(
-                                            // width: MediaQuery.of(context).size.width *
-                                            //     .91,
-                                            child: Table(
-                                              defaultColumnWidth:
-                                                  const IntrinsicColumnWidth(),
-                                              children: [
-                                                TableRow(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        // color: blueColor
-                                                        ),
-                                                  ),
-                                                  children: [
-                                                    _buildHeader(
-                                                        'Work Orders',
-                                                        0,
-                                                        (property) => property
-                                                            .workOrderData!
-                                                            .workSubject!),
-                                                    _buildHeader(
-                                                        'Property',
-                                                        1,
-                                                        (property) =>
-                                                            property
-                                                                .rentalAddress
-                                                                ?.rentalAdress ??
-                                                            ""),
-                                                    _buildHeader(
-                                                        'Category',
-                                                        2,
-                                                        (property) => property
-                                                            .workOrderData!
-                                                            .workCategory!),
-                                                    _buildHeader(
-                                                        'Billable',
-                                                        3,
-                                                        (property) => property
-                                                            .workOrderData!
-                                                            .isBillable!
-                                                            .toString()),
-                                                    _buildHeader(
-                                                        'Assign',
-                                                        4,
-                                                        (property) => property
-                                                            .staffMember!
-                                                            .staffmemberName!),
-                                                    _buildHeader(
-                                                        'Status',
-                                                        5,
-                                                        (property) => property
-                                                            .workOrderData!
-                                                            .status!),
-                                                    _buildHeader(
-                                                        'Created At', 6, null),
-                                                    _buildHeader(
-                                                        'Updated At', 7, null),
-                                                    _buildHeader(
-                                                        'Actions', 8, null),
-                                                  ],
-                                                ),
-                                                TableRow(
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    border: Border.symmetric(
-                                                        horizontal:
-                                                            BorderSide.none),
-                                                  ),
-                                                  children: List.generate(
-                                                      9,
-                                                      (index) => TableCell(
-                                                          child: Container(
-                                                              height: 20))),
-                                                ),
-                                                for (var i = 0;
-                                                    i < _pagedData.length;
-                                                    i++)
-                                                  TableRow(
-                                                    decoration: BoxDecoration(
-                                                      border: Border(
-                                                        left: BorderSide(
-                                                            color: blueColor),
-                                                        right: BorderSide(
-                                                            color: blueColor),
-                                                        top: BorderSide(
-                                                            color: blueColor),
-                                                        bottom: i ==
-                                                                _pagedData
-                                                                        .length -
-                                                                    1
-                                                            ? BorderSide(
-                                                                color:
-                                                                    blueColor)
-                                                            : BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    children: [
-                                                      // Text(
-                                                      //     '${_pagedData[i].propertyType!}'),
-                                                      // Text(
-                                                      //     '${_pagedData[i].propertysubType!}'),
-                                                      // Text(
-                                                      //     '${formatDate(_pagedData[i].createdAt!)}'),
-                                                      // Text(
-                                                      //     '${formatDate(_pagedData[i].updatedAt!)}'),
-                                                      InkWell(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          Workorder_summery(
-                                                                            workorder_id:
-                                                                                _pagedData[i].workOrderData?.workOrderId,
-                                                                          )),
-                                                            );
-                                                          },
-                                                          child: _buildDataCell(
-                                                            _pagedData[i]
-                                                                        .workOrderData
-                                                                        ?.workSubject
-                                                                        ?.isNotEmpty ==
-                                                                    true
-                                                                ? _pagedData[i]
-                                                                    .workOrderData!
-                                                                    .workSubject!
-                                                                : 'N/A',
-                                                          )),
-                                                      _buildDataCell(
-                                                        _pagedData[i]
-                                                                    .rentalAddress
-                                                                    ?.rentalAdress
-                                                                    ?.isNotEmpty ==
-                                                                true
-                                                            ? _pagedData[i]
-                                                                .rentalAddress!
-                                                                .rentalAdress!
-                                                            : 'N/A',
-                                                      ),
-                                                      _buildDataCell(
-                                                        _pagedData[i]
-                                                                    .workOrderData
-                                                                    ?.workCategory
-                                                                    ?.isNotEmpty ==
-                                                                true
-                                                            ? _pagedData[i]
-                                                                .workOrderData!
-                                                                .workCategory!
-                                                            : 'N/A',
-                                                      ),
-
-                                                      _buildDataCellBillable(
-                                                          _pagedData[i]
-                                                                  .workOrderData!
-                                                                  .isBillable ==
-                                                              true),
-                                                      _buildDataCell(
-                                                        _pagedData[i]
-                                                                    .staffMember
-                                                                    ?.staffmemberName
-                                                                    ?.isNotEmpty ==
-                                                                true
-                                                            ? _pagedData[i]
-                                                                .staffMember!
-                                                                .staffmemberName!
-                                                            : 'N/A',
-                                                      ),
-                                                      _buildDataCell(
-                                                        _pagedData[i]
-                                                                    .workOrderData
-                                                                    ?.status
-                                                                    ?.isNotEmpty ==
-                                                                true
-                                                            ? _pagedData[i]
-                                                                .workOrderData!
-                                                                .status!
-                                                            : 'N/A',
-                                                      ),
-                                                      _buildDataCell(
-                                                        formatDate4(
-                                                            _pagedData[i]
-                                                                .workOrderData!
-                                                                .createdAt!),
-                                                      ),
-                                                      _buildDataCell(
-                                                        formatDate3(
-                                                            _pagedData[i]
-                                                                .workOrderData!
-                                                                .updatedAt!),
-                                                      ),
-                                                      _buildActionsCell(
-                                                          _pagedData[i]),
-                                                    ],
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 25),
-                                        _buildPaginationControls(),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 25),
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                    ),
                 ],
               ),
             )

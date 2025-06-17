@@ -210,6 +210,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   int visibleCount = 5;
   List<String> _imageUrls = [];
   int selectedTabIndex = 0;
+  bool showAllImages = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1533,6 +1534,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               children: [
                                 // Header
                                 Container(
+                                  height: 50,
                                   width: double.infinity,
                                   padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
@@ -1544,7 +1546,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     'Billing Information',
                                     style: TextStyle(
                                       color: blueColor,
-                                      fontSize: 16,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  400
+                                              ? 14
+                                              : 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1554,39 +1560,43 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   color: grey,
                                   width: double.infinity,
                                 ),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 // Body
-                                Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: Row(
-                                    children: [
-                                      Checkbox(
-                                        value: summery.isBillable ?? false,
-                                        onChanged: (val) {
-                                          setState(
-                                              () => isChecked = val ?? false);
-                                        },
-                                        activeColor: blueColor,
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          'Billable to Tenant',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor,
-                                          ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 1,
+                                    ),
+                                    Checkbox(
+                                      value: summery.isBillable ?? false,
+                                      onChanged: (val) {
+                                        setState(
+                                            () => isChecked = val ?? false);
+                                      },
+                                      activeColor: blueColor,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'Billable to Tenant',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    SizedBox(
+                                      width: 1,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
                         ),
                       ),
-
                       SizedBox(width: 10),
-
                       // Contacts
                       Expanded(
                         child: Material(
@@ -1602,6 +1612,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               children: [
                                 // Header
                                 Container(
+                                  height: 50,
                                   width: double.infinity,
                                   padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
@@ -1613,7 +1624,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     'Contacts',
                                     style: TextStyle(
                                       color: blueColor,
-                                      fontSize: 16,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  400
+                                              ? 14
+                                              : 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1883,7 +1898,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           ),
                         ],
                       ),
-
                       SizedBox(height: 16),
 
                       /// Assignee & Due Date
@@ -1935,8 +1949,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         textAlign: TextAlign.justify,
                       ),
 
-                      SizedBox(height: 16),
+                      SizedBox(height: 5),
                       Divider(color: grey),
+                      SizedBox(height: 5),
 
                       /// Permission & Status
                       Row(
@@ -3148,142 +3163,279 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               ),
                             ),
                           ),
+
+                          // Column(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     if (summery.workorderUpdates != null)
+                          //       Column(
+                          //         children: [
+                          //           SizedBox(height: 10),
+                          //           Wrap(
+                          //             spacing: 10,
+                          //             runSpacing: 10,
+                          //             alignment: WrapAlignment.start,
+                          //             children: summery.workOrderImages!
+                          //                 .map((fileUrl) {
+                          //               bool isMp4 = isVideo(fileUrl);
+                          //               return Container(
+                          //                 width:
+                          //                     summery.workOrderImages!
+                          //                                 .length ==
+                          //                             1
+                          //                         ? MediaQuery.of(context)
+                          //                                 .size
+                          //                                 .width /
+                          //                             3
+                          //                         : (MediaQuery.of(context)
+                          //                                     .size
+                          //                                     .width /
+                          //                                 3) -
+                          //                             10,
+                          //                 decoration: BoxDecoration(
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(10),
+                          //                 ),
+                          //                 child: ClipRRect(
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(10),
+                          //                   child: isMp4
+                          //                       ? Container(
+                          //                           height: 80,
+                          //                           width: 80,
+                          //                           child: GestureDetector(
+                          //                             onTap: () {
+                          //                               _showVideoDialog(
+                          //                                   '$image_url$fileUrl');
+                          //                             },
+                          //                             child: Stack(
+                          //                               alignment:
+                          //                                   Alignment.center,
+                          //                               children: [
+                          //                                 // Image.file(
+                          //                                 //   File(snapshot.data!),
+                          //                                 //   height: 100,
+                          //                                 //   width: 100,
+                          //                                 //   fit: BoxFit.cover,
+                          //                                 // ),
+                          //                                 VideoItem(
+                          //                                   url:
+                          //                                       '$image_url$fileUrl',
+                          //                                 ),
+                          //                                 Icon(
+                          //                                     Icons
+                          //                                         .play_circle_fill,
+                          //                                     color:
+                          //                                         Colors.white,
+                          //                                     size: 40),
+                          //                               ],
+                          //                             ),
+                          //                           ),
+                          //                         )
+                          //                       // FutureBuilder<String?>(
+                          //                       //   future: generateNetworkVideoThumbnail("$image_url$fileUrl"),
+                          //                       //   builder: (context, snapshot) {
+                          //                       //     if (snapshot.connectionState == ConnectionState.waiting) {
+                          //                       //       return Center(
+                          //                       //           child: SpinKitFadingCircle(
+                          //                       //             color: Colors.black,
+                          //                       //             size: 40.0,
+                          //                       //           ));
+                          //                       //     } else if (snapshot.hasData && snapshot.data != null) {
+                          //                       //       return
+                          //                       //         GestureDetector(
+                          //                       //         onTap: (){
+                          //                       //           _showVideoDialog('$image_url$fileUrl');
+                          //                       //         },
+                          //                       //         child: Stack(
+                          //                       //           alignment: Alignment.center,
+                          //                       //           children: [
+                          //                       //             Image.file(
+                          //                       //               File(snapshot.data!),
+                          //                       //               height: 100,
+                          //                       //               width: 100,
+                          //                       //               fit: BoxFit.cover,
+                          //                       //             ),
+                          //                       //             Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
+                          //                       //           ],
+                          //                       //         ),
+                          //                       //       );
+                          //                       //
+                          //                       //     } else {
+                          //                       //       return Icon(Icons.error);
+                          //                       //     }
+                          //                       //   },
+                          //                       // )
+                          //                       : CachedNetworkImage(
+                          //                           height: 140,
+                          //                           imageUrl:
+                          //                               "$image_url$fileUrl",
+                          //                           placeholder: (context,
+                          //                                   url) =>
+                          //                               Center(
+                          //                                   child:
+                          //                                       SpinKitFadingCircle(
+                          //                             color: Colors.black,
+                          //                             size: 40.0,
+                          //                           )),
+                          //                           errorWidget:
+                          //                               (context, url, error) =>
+                          //                                   Icon(Icons.error),
+                          //                           fit: BoxFit.cover,
+                          //                         ),
+                          //                 ),
+                          //               );
+                          //             }).toList(),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     if (summery.workOrderImages!.length == 0)
+                          //       Row(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         children: [
+                          //           Text("No Images Provided"),
+                          //           // Text("(${summery.unitData!.unitName})"),
+                          //         ],
+                          //       ),
+                          //     SizedBox(
+                          //       height: 10,
+                          //     ),
+                          //   ],
+                          // )
+                          // Declare this in your state
+
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (summery.workorderUpdates != null)
+                              if (summery.workOrderImages != null &&
+                                  summery.workOrderImages!.isNotEmpty)
                                 Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(height: 10),
-                                    Wrap(
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      alignment: WrapAlignment.start,
-                                      children: summery.workOrderImages!
-                                          .map((fileUrl) {
-                                        bool isMp4 = isVideo(fileUrl);
-                                        return Container(
-                                          width:
-                                              summery.workOrderImages!
-                                                          .length ==
-                                                      1
-                                                  ? MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      3
-                                                  : (MediaQuery.of(context)
-                                                              .size
-                                                              .width /
-                                                          3) -
-                                                      10,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            child: isMp4
-                                                ? Container(
-                                                    height: 80,
-                                                    width: 80,
-                                                    child: GestureDetector(
-                                                      onTap: () {
-                                                        _showVideoDialog(
-                                                            '$image_url$fileUrl');
-                                                      },
-                                                      child: Stack(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        children: [
-                                                          // Image.file(
-                                                          //   File(snapshot.data!),
-                                                          //   height: 100,
-                                                          //   width: 100,
-                                                          //   fit: BoxFit.cover,
-                                                          // ),
-                                                          VideoItem(
-                                                            url:
-                                                                '$image_url$fileUrl',
+                                    SizedBox(height: 18),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 13),
+                                        child: SizedBox(
+                                          height: 150,
+                                          child: Row(
+                                            children: summery.workOrderImages!
+                                                .take(showAllImages
+                                                    ? summery
+                                                        .workOrderImages!.length
+                                                    : 2)
+                                                .map((fileUrl) {
+                                              bool isMp4 = isVideo(fileUrl);
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(4),
+                                                child: Container(
+                                                  width: 150,
+                                                  height: 150,
+                                                  // color: Colors.blue,
+                                                  margin:
+                                                      EdgeInsets.only(right: 8),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    child: isMp4
+                                                        ? GestureDetector(
+                                                            onTap: () {
+                                                              _showVideoDialog(
+                                                                  '$image_url$fileUrl');
+                                                            },
+                                                            child: Stack(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              children: [
+                                                                VideoItem(
+                                                                    url:
+                                                                        '$image_url$fileUrl'),
+                                                                Icon(
+                                                                  Icons
+                                                                      .play_circle_fill,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  size: 40,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : CachedNetworkImage(
+                                                            imageUrl:
+                                                                "$image_url$fileUrl",
+                                                            fit: BoxFit.fill,
+                                                            placeholder:
+                                                                (context,
+                                                                        url) =>
+                                                                    Center(
+                                                              child:
+                                                                  SpinKitFadingCircle(
+                                                                color: Colors
+                                                                    .black,
+                                                                size: 30.0,
+                                                              ),
+                                                            ),
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    Icon(Icons
+                                                                        .error),
                                                           ),
-                                                          Icon(
-                                                              Icons
-                                                                  .play_circle_fill,
-                                                              color:
-                                                                  Colors.white,
-                                                              size: 40),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  )
-                                                // FutureBuilder<String?>(
-                                                //   future: generateNetworkVideoThumbnail("$image_url$fileUrl"),
-                                                //   builder: (context, snapshot) {
-                                                //     if (snapshot.connectionState == ConnectionState.waiting) {
-                                                //       return Center(
-                                                //           child: SpinKitFadingCircle(
-                                                //             color: Colors.black,
-                                                //             size: 40.0,
-                                                //           ));
-                                                //     } else if (snapshot.hasData && snapshot.data != null) {
-                                                //       return
-                                                //         GestureDetector(
-                                                //         onTap: (){
-                                                //           _showVideoDialog('$image_url$fileUrl');
-                                                //         },
-                                                //         child: Stack(
-                                                //           alignment: Alignment.center,
-                                                //           children: [
-                                                //             Image.file(
-                                                //               File(snapshot.data!),
-                                                //               height: 100,
-                                                //               width: 100,
-                                                //               fit: BoxFit.cover,
-                                                //             ),
-                                                //             Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
-                                                //           ],
-                                                //         ),
-                                                //       );
-                                                //
-                                                //     } else {
-                                                //       return Icon(Icons.error);
-                                                //     }
-                                                //   },
-                                                // )
-                                                : CachedNetworkImage(
-                                                    height: 140,
-                                                    imageUrl:
-                                                        "$image_url$fileUrl",
-                                                    placeholder: (context,
-                                                            url) =>
-                                                        Center(
-                                                            child:
-                                                                SpinKitFadingCircle(
-                                                      color: Colors.black,
-                                                      size: 40.0,
-                                                    )),
-                                                    errorWidget:
-                                                        (context, url, error) =>
-                                                            Icon(Icons.error),
-                                                    fit: BoxFit.cover,
                                                   ),
+                                                ),
+                                              );
+                                            }).toList(),
                                           ),
-                                        );
-                                      }).toList(),
+                                        ),
+                                      ),
                                     ),
+                                    if (summery.workOrderImages!.length > 2)
+                                      SizedBox(height: 15),
+
+                                    /// View More / View Less Button
+                                    if (summery.workOrderImages!.length > 2)
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 18),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              showAllImages = !showAllImages;
+                                            });
+                                          },
+                                          child: Text(
+                                            showAllImages
+                                                ? "View Less"
+                                                : "View More",
+                                            style: TextStyle(
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    SizedBox(height: 18),
                                   ],
                                 ),
-                              if (summery.workOrderImages!.length == 0)
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("No Images Provided"),
-                                    // Text("(${summery.unitData!.unitName})"),
-                                  ],
+
+                              /// If no images
+                              if (summery.workOrderImages == null ||
+                                  summery.workOrderImages!.isEmpty)
+                                Center(
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: Text(
+                                      "No Images Provided",
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black54),
+                                    ),
+                                  ),
                                 ),
-                              SizedBox(
-                                height: 10,
-                              ),
                             ],
                           )
                         ],
@@ -3349,7 +3501,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               Text(
                                 "${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' : ''}",
                                 textAlign: TextAlign.start,
-                                style: TextStyle(fontSize: 13,color: blueColor),
+                                style:
+                                    TextStyle(fontSize: 13, color: blueColor),
                               ),
                               SizedBox(
                                 height: 10,
@@ -3366,19 +3519,23 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   children: [
                                     Text(
                                       "${summery.propertyData!.rental_city}, ",
-                                      style: TextStyle(fontSize: 13,color: blueColor),
+                                      style: TextStyle(
+                                          fontSize: 13, color: blueColor),
                                     ),
                                     Text(
                                       "${summery.propertyData!.rental_state}, ",
-                                      style: TextStyle(fontSize: 13,color: blueColor),
+                                      style: TextStyle(
+                                          fontSize: 13, color: blueColor),
                                     ),
                                     Text(
                                       "${summery.propertyData!.rental_country}, ",
-                                      style: TextStyle(fontSize: 13,color: blueColor),
+                                      style: TextStyle(
+                                          fontSize: 13, color: blueColor),
                                     ),
                                     Text(
                                       "${summery.propertyData!.rental_postcode}",
-                                      style: TextStyle(fontSize: 13,color: blueColor),
+                                      style: TextStyle(
+                                          fontSize: 13, color: blueColor),
                                     ),
                                   ],
                                 ),
@@ -3409,231 +3566,843 @@ class _Workorder_summeryState extends State<Workorder_summery>
     return url.toLowerCase().endsWith(".mp4");
   }
 
+  // void showUpdateDialog(BuildContext context) {
+  //   // Initialize variables to store user input
+  //   String? selectedStatus;
+  //   //  DateTime? selectedDate;
+  //   //String? message;
+  //   TextEditingController message = TextEditingController();
+  //   TextEditingController selectedDate = TextEditingController();
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return StatefulBuilder(
+  //         builder: (BuildContext context, StateSetter setState) {
+  //           return Dialog(
+  //             child: Container(
+  //               // width: double.maxFinite,
+  //               child: Padding(
+  //                 padding: const EdgeInsets.only(
+  //                     left: 10, right: 10, top: 15, bottom: 10),
+  //                 child: Column(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: <Widget>[
+  //                     Row(
+  //                       children: [
+  //                         Text(
+  //                           'Update Work Order',
+  //                           style: TextStyle(
+  //                               color: blueColor,
+  //                               fontWeight: FontWeight.bold,
+  //                               fontSize: 18),
+  //                         ),
+  //                         Spacer(),
+  //                         GestureDetector(
+  //                           onTap: (){
+  //                             Navigator.pop(context);
+  //                           },
+  //                             child: Icon(Icons.close,)),
+  //
+  //                       ],
+  //                     ),
+  //                     SizedBox(height: 10.0),
+  //                     Text('Status',
+  //                         style: TextStyle(
+  //                             color: blueColor, fontWeight: FontWeight.bold)),
+  //                     DropdownButtonHideUnderline(
+  //                       child: DropdownButtonFormField2<String>(
+  //                         decoration: InputDecoration(border: InputBorder.none),
+  //                         isExpanded: true,
+  //                         hint: const Row(
+  //                           children: [
+  //                             Expanded(
+  //                               child: Text(
+  //                                 'Select Status',
+  //                                 style: TextStyle(
+  //                                   fontSize: 14,
+  //                                   fontWeight: FontWeight.w400,
+  //                                   color: Color(0xFFb0b6c3),
+  //                                 ),
+  //                                 overflow: TextOverflow.ellipsis,
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                         items: ['New', 'In Progress', 'On Hold', 'Completed']
+  //                             .map((status) {
+  //                           return DropdownMenuItem<String>(
+  //                             value: status,
+  //                             child: Text(
+  //                               status,
+  //                               style: const TextStyle(
+  //                                 fontSize: 14,
+  //                                 fontWeight: FontWeight.w400,
+  //                                 color: Colors.black87,
+  //                               ),
+  //                               overflow: TextOverflow.ellipsis,
+  //                             ),
+  //                           );
+  //                         }).toList(),
+  //                         value: selectedStatus,
+  //                         onChanged: (value) {
+  //                           selectedStatus = value;
+  //                         },
+  //                         buttonStyleData: ButtonStyleData(
+  //                           height: 45,
+  //                           width: double.infinity,
+  //                           padding: const EdgeInsets.only(left: 14, right: 14),
+  //                           decoration: BoxDecoration(
+  //                             borderRadius: BorderRadius.circular(6),
+  //                             color: Colors.white,
+  //                           ),
+  //                           elevation: 2,
+  //                         ),
+  //                         iconStyleData: const IconStyleData(
+  //                           icon: Icon(Icons.arrow_drop_down),
+  //                           iconSize: 24,
+  //                           iconEnabledColor: Color(0xFFb0b6c3),
+  //                           iconDisabledColor: Colors.grey,
+  //                         ),
+  //                         dropdownStyleData: DropdownStyleData(
+  //                           decoration: BoxDecoration(
+  //                             borderRadius: BorderRadius.circular(6),
+  //                             color: Colors.white,
+  //                           ),
+  //                           scrollbarTheme: ScrollbarThemeData(
+  //                             radius: const Radius.circular(6),
+  //                             thickness: MaterialStateProperty.all(6),
+  //                             thumbVisibility: MaterialStateProperty.all(true),
+  //                           ),
+  //                         ),
+  //                         menuItemStyleData: const MenuItemStyleData(
+  //                           height: 40,
+  //                           padding: EdgeInsets.only(left: 14, right: 14),
+  //                         ),
+  //                         validator: (value) {
+  //                           if (value == null || value.isEmpty) {
+  //                             return 'Please select an option';
+  //                           }
+  //                           return null;
+  //                         },
+  //                       ),
+  //                     ),
+  //                     Text('Due Date',
+  //                         style: TextStyle(
+  //                             color: blueColor, fontWeight: FontWeight.bold)),
+  //                     SizedBox(height: 8.0),
+  //                     Material(
+  //                       elevation: 3,
+  //                       borderRadius: BorderRadius.circular(8.0),
+  //                       child: Container(
+  //                         height: 45,
+  //                         padding: EdgeInsets.symmetric(
+  //                             horizontal: 16.0, vertical: 0),
+  //                         decoration: BoxDecoration(
+  //                           color: Colors.white,
+  //                           borderRadius: BorderRadius.circular(8.0),
+  //                         ),
+  //                         child: TextFormField(
+  //                           onTap: () async {
+  //                             DateTime? pickedDate = await showDatePicker(
+  //                               context: context,
+  //                               initialDate: DateTime.now(),
+  //                               firstDate: DateTime(2000),
+  //                               lastDate: DateTime(2101),
+  //                               helpText: "Due Date",
+  //                               locale: const Locale('en', 'US'),
+  //                               builder: (BuildContext context, Widget? child) {
+  //                                 return Theme(
+  //                                   data: ThemeData.light().copyWith(
+  //                                     colorScheme: const ColorScheme.light(
+  //                                       primary: Color.fromRGBO(21, 43, 83,
+  //                                           1), // header background color
+  //                                       onPrimary:
+  //                                           Colors.white, // header text color
+  //                                       onSurface: Color.fromRGBO(
+  //                                           21, 43, 83, 1), // body text color
+  //                                     ),
+  //                                     textButtonTheme: TextButtonThemeData(
+  //                                       style: TextButton.styleFrom(
+  //                                         foregroundColor: Colors.white,
+  //                                         backgroundColor: const Color.fromRGBO(
+  //                                             21,
+  //                                             43,
+  //                                             83,
+  //                                             1), // button text color
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                   child: child!,
+  //                                 );
+  //                               },
+  //                             );
+  //
+  //                             if (pickedDate != null) {
+  //                               String formattedDate =
+  //                                   "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+  //                               setState(() {
+  //                                 selectedDate.text = formattedDate;
+  //                               });
+  //                             }
+  //                           },
+  //                           //  obscureText: widget.obscureText,
+  //                           readOnly: true,
+  //                           controller: selectedDate,
+  //                           decoration: InputDecoration(
+  //                             suffixIcon:
+  //                                 Icon(Icons.calendar_today, color: blueColor),
+  //                             // hintStyle:
+  //                             // TextStyle(fontSize: 13, color: blueColor),
+  //                             border: InputBorder.none,
+  //                             hintText: "dd-mm-yyyy",
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     /* ElevatedButton(
+  //                   onPressed: () async {
+  //                     final DateTime? pickedDate = await showDatePicker(
+  //                       context: context,
+  //                       initialDate: DateTime.now(),
+  //                       firstDate: DateTime(2000),
+  //                       lastDate: DateTime(2100),
+  //                     );
+  //                     if (pickedDate != null) {
+  //                       selectedDate = pickedDate;
+  //                     }
+  //                   },
+  //                   child: Text(selectedDate == null
+  //                       ? 'Select Date'
+  //                       : '${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}'),
+  //                 ),*/
+  //                     SizedBox(height: 16.0),
+  //                     Text('Assigned To',
+  //                         style: TextStyle(
+  //                             color: blueColor, fontWeight: FontWeight.bold)),
+  //                     SizedBox(height: 8.0),
+  //                     _isLoadingstaff
+  //                         ? const Center(
+  //                             child: SpinKitFadingCircle(
+  //                               color: Colors.black,
+  //                               size: 50.0,
+  //                             ),
+  //                           )
+  //                         : Column(
+  //                             crossAxisAlignment: CrossAxisAlignment.start,
+  //                             children: [
+  //                               DropdownButtonHideUnderline(
+  //                                 child: DropdownButtonFormField2<String>(
+  //                                   decoration: InputDecoration(
+  //                                       border: InputBorder.none),
+  //                                   isExpanded: true,
+  //                                   hint: const Row(
+  //                                     children: [
+  //                                       Expanded(
+  //                                         child: Text(
+  //                                           'Select here',
+  //                                           style: TextStyle(
+  //                                             fontSize: 14,
+  //                                             fontWeight: FontWeight.w400,
+  //                                             color: Color(0xFFb0b6c3),
+  //                                           ),
+  //                                           overflow: TextOverflow.ellipsis,
+  //                                         ),
+  //                                       ),
+  //                                     ],
+  //                                   ),
+  //                                   items: staffs.keys.map((staffmember_id) {
+  //                                     return DropdownMenuItem<String>(
+  //                                       value: staffmember_id,
+  //                                       child: Text(
+  //                                         staffs[staffmember_id]!,
+  //                                         style: const TextStyle(
+  //                                           fontSize: 14,
+  //                                           fontWeight: FontWeight.w400,
+  //                                           color: Colors.black87,
+  //                                         ),
+  //                                         overflow: TextOverflow.ellipsis,
+  //                                       ),
+  //                                     );
+  //                                   }).toList(),
+  //                                   value: _selectedstaffId,
+  //                                   onChanged: (value) {
+  //                                     setState(() {
+  //                                       // _selectedUnitId = null;
+  //                                       _selectedstaffId = value;
+  //                                       _selectedStaffs = staffs[
+  //                                           value]; // Store selected rental_adress
+  //
+  //                                       //StaffId = value.toString();
+  //                                       print(
+  //                                           'Selected Staffs: $_selectedStaffs');
+  //                                       // Fetch units for the selected property
+  //                                     });
+  //                                   },
+  //                                   buttonStyleData: ButtonStyleData(
+  //                                     height: 45,
+  //                                     width: 160,
+  //                                     padding: const EdgeInsets.only(
+  //                                         left: 14, right: 14),
+  //                                     decoration: BoxDecoration(
+  //                                       borderRadius: BorderRadius.circular(6),
+  //                                       color: Colors.white,
+  //                                     ),
+  //                                     elevation: 2,
+  //                                   ),
+  //                                   iconStyleData: const IconStyleData(
+  //                                     icon: Icon(
+  //                                       Icons.arrow_drop_down,
+  //                                     ),
+  //                                     iconSize: 24,
+  //                                     iconEnabledColor: Color(0xFFb0b6c3),
+  //                                     iconDisabledColor: Colors.grey,
+  //                                   ),
+  //                                   dropdownStyleData: DropdownStyleData(
+  //                                     decoration: BoxDecoration(
+  //                                       borderRadius: BorderRadius.circular(6),
+  //                                       color: Colors.white,
+  //                                     ),
+  //                                     scrollbarTheme: ScrollbarThemeData(
+  //                                       radius: const Radius.circular(6),
+  //                                       thickness: MaterialStateProperty.all(6),
+  //                                       thumbVisibility:
+  //                                           MaterialStateProperty.all(true),
+  //                                     ),
+  //                                   ),
+  //                                   menuItemStyleData: const MenuItemStyleData(
+  //                                     height: 40,
+  //                                     padding:
+  //                                         EdgeInsets.only(left: 14, right: 14),
+  //                                   ),
+  //                                   validator: (value) {
+  //                                     if (value == null || value.isEmpty) {
+  //                                       return 'Please select an option';
+  //                                     }
+  //                                     return null;
+  //                                   },
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                     SizedBox(height: 8.0),
+  //                     Text('Photo ',
+  //                         style: TextStyle(
+  //                             fontSize: 13,
+  //                             fontWeight: FontWeight.bold,
+  //                             color: blueColor)),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     SizedBox(height: 8.0),
+  //                     Row(
+  //                       children: [
+  //                         GestureDetector(
+  //                           onTap: () {
+  //                             _pickImage().then((_) {
+  //                               setState(
+  //                                   () {}); // Rebuild the widget after selecting the image
+  //                             });
+  //                           },
+  //                           child: Text(
+  //                             '+ Add',
+  //                             style: TextStyle(color: Colors.green),
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     _images.isNotEmpty
+  //                         ? Row(
+  //                             children: [
+  //                               Expanded(
+  //                                 child: Container(
+  //                                   //color: Colors.blue,
+  //                                   child: Wrap(
+  //                                     spacing:
+  //                                         8.0, // Horizontal spacing between items
+  //                                     runSpacing:
+  //                                         8.0, // Vertical spacing between rows
+  //                                     children: List.generate(
+  //                                       _images.length,
+  //                                       (index) {
+  //                                         return Container(
+  //                                           // color: Colors.green,
+  //                                           width: 85,
+  //                                           child: Column(
+  //                                             mainAxisAlignment:
+  //                                                 MainAxisAlignment.start,
+  //                                             crossAxisAlignment:
+  //                                                 CrossAxisAlignment.start,
+  //                                             children: [
+  //                                               Row(
+  //                                                 children: [
+  //                                                   SizedBox(
+  //                                                     width: 60,
+  //                                                   ),
+  //                                                   GestureDetector(
+  //                                                     onTap: () {
+  //                                                       setState(() {
+  //                                                         _images
+  //                                                             .removeAt(index);
+  //                                                       });
+  //                                                     },
+  //                                                     child: Icon(
+  //                                                       Icons.close,
+  //                                                       color: Colors.grey,
+  //                                                     ),
+  //                                                   ),
+  //                                                 ],
+  //                                               ),
+  //                                               Row(
+  //                                                 mainAxisAlignment:
+  //                                                     MainAxisAlignment.start,
+  //                                                 crossAxisAlignment:
+  //                                                     CrossAxisAlignment.start,
+  //                                                 children: [
+  //                                                   Container(
+  //                                                     // color:Colors.blue,
+  //                                                     child: Image.file(
+  //                                                       _images[index],
+  //                                                       height: 80,
+  //                                                       width: 80,
+  //                                                       fit: BoxFit.cover,
+  //                                                     ),
+  //                                                   ),
+  //                                                 ],
+  //                                               ),
+  //                                             ],
+  //                                           ),
+  //                                         );
+  //                                       },
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           )
+  //                         : Center(
+  //                             child: Text("No images selected."),
+  //                           ),
+  //                     SizedBox(height: 16.0),
+  //                     Text('Message',
+  //                         style: TextStyle(
+  //                             color: blueColor, fontWeight: FontWeight.bold)),
+  //                     Material(
+  //                       elevation: 3,
+  //                       borderRadius: BorderRadius.circular(8.0),
+  //                       child: Container(
+  //                         height: 50,
+  //                         padding: EdgeInsets.symmetric(
+  //                             horizontal: 16.0, vertical: 0),
+  //                         decoration: BoxDecoration(
+  //                           color: Colors.white,
+  //                           borderRadius: BorderRadius.circular(8.0),
+  //                           //border: Border.all(color: blueColor),
+  //                           // boxShadow: [
+  //                           //   BoxShadow(
+  //                           //     color: Colors.black.withOpacity(0.2),
+  //                           //     offset: Offset(4, 4),
+  //                           //     blurRadius: 3,
+  //                           //   ),
+  //                           // ],
+  //                         ),
+  //                         child: TextFormField(
+  //                           /*    onTap: ()async{
+  //                         final DateTime? pickedDate = await showDatePicker(
+  //                           context: context,
+  //                           initialDate: DateTime.now(),
+  //                           firstDate: DateTime(2000),
+  //                           lastDate: DateTime(2100),
+  //                         );
+  //                         if (pickedDate != null) {
+  //                           selectedDate = pickedDate;
+  //                         }
+  //                       },*/
+  //                           //  obscureText: widget.obscureText,
+  //                           // readOnly: true,
+  //                           //keyboardType: widget.keyboardType,
+  //                           /* validator: (value) {
+  //                         if (value == null || value.isEmpty) {
+  //                           state.validate();
+  //                         }
+  //                         return null;
+  //                       },*/
+  //                           controller: message,
+  //
+  //                           decoration: InputDecoration(
+  //                             //  suffixIcon: widget.suffixIcon,
+  //                             hintStyle:
+  //                                 TextStyle(fontSize: 13, color: blueColor),
+  //                             border: InputBorder.none,
+  //                             //   hintText: widget.hintText,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     SizedBox(height: 16.0),
+  //                     Row(
+  //                       children: [
+  //                         ElevatedButton(
+  //                           style: ElevatedButton.styleFrom(
+  //                               backgroundColor: blueColor),
+  //                           onPressed: () async {
+  //                             setState(() {
+  //                               isLoading = true;
+  //                             });
+  //                             SharedPreferences prefs =
+  //                                 await SharedPreferences.getInstance();
+  //                             String? firstName = prefs.getString("first_name");
+  //                             String? lastName = prefs.getString("last_name");
+  //                             final DateFormat formatter =
+  //                                 DateFormat('yyyy-MM-dd HH:mm:ss');
+  //                             String notificationTime =
+  //                                 formatter.format(DateTime.now());
+  //                             Map<String, dynamic> values = {
+  //                               "date":
+  //                                   reverseFormatDate(selectedDate.text.trim()),
+  //                               "message": message.text.trim(),
+  //                               "status": selectedStatus,
+  //                               "statusUpdatedBy": "Admin",
+  //                               "staffmember_name": _selectedStaffs,
+  //                               "staffmember_id": _selectedstaffId,
+  //                               "workOrderUpdate_images": _uploadedFileNames!,
+  //                               'notificationTime': notificationTime,
+  //                             };
+  //                             print('normal date ${selectedDate.text.trim()}');
+  //                             print(
+  //                                 'revers date ${reverseFormatDate(selectedDate.text.trim())}');
+  //                             await WorkOrderRepository.updateworkorderSummary(
+  //                                     values, widget.workorder_id!)
+  //                                 .then((value) {
+  //                               setState(() {
+  //                                 futureworkorderSummary =
+  //                                     WorkOrderRepository.getworkorderSummary(
+  //                                         widget.workorder_id!);
+  //                               });
+  //                             });
+  //
+  //                             // Save the data and close the dialog
+  //                             /*  WorkorderUpdates update = WorkorderUpdates(
+  //                                             status: selectedStatus,
+  //                                             date: selectedDate,
+  //                                             message: message,
+  //                                           );*/
+  //                             // Here you can handle saving the update data
+  //                             // print('Status: ${update.status}');
+  //                             // print('Date: ${update.date}');
+  //                             // print('Message: ${update.message}');
+  //                             Navigator.of(context).pop();
+  //                             setState(() {
+  //                               isLoading = false;
+  //                             }); // Close the dialog
+  //                           },
+  //                           child: isLoading
+  //                               ? Center(
+  //                                   child: SpinKitFadingCircle(
+  //                                     color: Colors.white,
+  //                                     size: 25.0,
+  //                                   ),
+  //                                 )
+  //                               : Text('Save'),
+  //                         ),
+  //                         TextButton(
+  //                           onPressed: () {
+  //                             Navigator.of(context).pop(); // Close the dialog
+  //                           },
+  //                           child: Text(
+  //                             'Cancel',
+  //                             style: TextStyle(color: blueColor),
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
   void showUpdateDialog(BuildContext context) {
-    // Initialize variables to store user input
     String? selectedStatus;
-    //  DateTime? selectedDate;
-    //String? message;
     TextEditingController message = TextEditingController();
     TextEditingController selectedDate = TextEditingController();
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
               child: Container(
-                // width: double.maxFinite,
+                width: MediaQuery.of(context).size.width * 0.99,
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 10, top: 15, bottom: 10),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Update Work Order',
-                        style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
-                      ),
-                      SizedBox(height: 10.0),
-                      Text('Status',
-                          style: TextStyle(
-                              color: blueColor, fontWeight: FontWeight.bold)),
-                      DropdownButtonHideUnderline(
-                        child: DropdownButtonFormField2<String>(
-                          decoration: InputDecoration(border: InputBorder.none),
-                          isExpanded: true,
-                          hint: const Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Select Status',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xFFb0b6c3),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                      // Header with title and close button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Update Work Order',
+                            style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Container(height: 40,width: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                   border: Border.all(color: blueColor),
                                 ),
-                              ),
-                            ],
+                                child: Icon(Icons.close, color: blueColor)),
                           ),
-                          items: ['New', 'In Progress', 'On Hold', 'Completed']
-                              .map((status) {
-                            return DropdownMenuItem<String>(
-                              value: status,
-                              child: Text(
-                                status,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black87,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          }).toList(),
-                          value: selectedStatus,
-                          onChanged: (value) {
-                            selectedStatus = value;
-                          },
-                          buttonStyleData: ButtonStyleData(
-                            height: 45,
-                            width: double.infinity,
-                            padding: const EdgeInsets.only(left: 14, right: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            elevation: 2,
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(Icons.arrow_drop_down),
-                            iconSize: 24,
-                            iconEnabledColor: Color(0xFFb0b6c3),
-                            iconDisabledColor: Colors.grey,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            scrollbarTheme: ScrollbarThemeData(
-                              radius: const Radius.circular(6),
-                              thickness: MaterialStateProperty.all(6),
-                              thumbVisibility: MaterialStateProperty.all(true),
-                            ),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 40,
-                            padding: EdgeInsets.only(left: 14, right: 14),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please select an option';
-                            }
-                            return null;
-                          },
-                        ),
+                        ],
                       ),
-                      Text('Due Date',
-                          style: TextStyle(
-                              color: blueColor, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 8.0),
-                      Material(
-                        elevation: 3,
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Container(
-                          height: 45,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: TextFormField(
-                            onTap: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2101),
-                                helpText: "Due Date",
-                                locale: const Locale('en', 'US'),
-                                builder: (BuildContext context, Widget? child) {
-                                  return Theme(
-                                    data: ThemeData.light().copyWith(
-                                      colorScheme: const ColorScheme.light(
-                                        primary: Color.fromRGBO(21, 43, 83,
-                                            1), // header background color
-                                        onPrimary:
-                                            Colors.white, // header text color
-                                        onSurface: Color.fromRGBO(
-                                            21, 43, 83, 1), // body text color
-                                      ),
-                                      textButtonTheme: TextButtonThemeData(
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: Colors.white,
-                                          backgroundColor: const Color.fromRGBO(
-                                              21,
-                                              43,
-                                              83,
-                                              1), // button text color
-                                        ),
-                                      ),
-                                    ),
-                                    child: child!,
-                                  );
-                                },
-                              );
-
-                              if (pickedDate != null) {
-                                String formattedDate =
-                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                setState(() {
-                                  selectedDate.text = formattedDate;
-                                });
-                              }
-                            },
-                            //  obscureText: widget.obscureText,
-                            readOnly: true,
-                            controller: selectedDate,
-                            decoration: InputDecoration(
-                              suffixIcon:
-                                  Icon(Icons.calendar_today, color: blueColor),
-                              // hintStyle:
-                              // TextStyle(fontSize: 13, color: blueColor),
-                              border: InputBorder.none,
-                              hintText: "dd-mm-yyyy",
-                            ),
-                          ),
-                        ),
-                      ),
-                      /* ElevatedButton(
-                    onPressed: () async {
-                      final DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                      );
-                      if (pickedDate != null) {
-                        selectedDate = pickedDate;
-                      }
-                    },
-                    child: Text(selectedDate == null
-                        ? 'Select Date'
-                        : '${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}'),
-                  ),*/
-                      SizedBox(height: 16.0),
-                      Text('Assigned To',
-                          style: TextStyle(
-                              color: blueColor, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 8.0),
-                      _isLoadingstaff
-                          ? const Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.black,
-                                size: 50.0,
-                              ),
-                            )
-                          : Column(
+                      SizedBox(height: 20),
+                      //assined and Due date
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Text(
+                                  'Assigned',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                _isLoadingstaff
+                                    ? const Center(
+                                  child: SpinKitFadingCircle(
+                                    color: Colors.black,
+                                    size: 50.0,
+                                  ),
+                                )
+                                    : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    DropdownButtonHideUnderline(
+                                      child: DropdownButtonFormField2<String>(
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none),
+                                        isExpanded: true,
+                                        hint: const Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                'Select here',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Color(0xFFb0b6c3),
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        items: staffs.keys.map((staffmember_id) {
+                                          return DropdownMenuItem<String>(
+                                            value: staffmember_id,
+                                            child: Text(
+                                              staffs[staffmember_id]!,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.black87,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList(),
+                                        value: _selectedstaffId,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            // _selectedUnitId = null;
+                                            _selectedstaffId = value;
+                                            _selectedStaffs = staffs[
+                                            value]; // Store selected rental_adress
+
+                                            //StaffId = value.toString();
+                                            print(
+                                                'Selected Staffs: $_selectedStaffs');
+                                            // Fetch units for the selected property
+                                          });
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 50,
+                                          width: 160,
+                                          padding: const EdgeInsets.only(
+                                              left: 14, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: Colors.grey.shade300),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 0,
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(
+                                            Icons.arrow_drop_down,
+                                          ),
+                                          iconSize: 24,
+                                          iconEnabledColor: Color(0xFFb0b6c3),
+                                          iconDisabledColor: Colors.grey,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(6),
+                                            thickness: MaterialStateProperty.all(6),
+                                            thumbVisibility:
+                                            MaterialStateProperty.all(true),
+                                          ),
+                                        ),
+                                        menuItemStyleData: const MenuItemStyleData(
+                                          height: 40,
+                                          padding:
+                                          EdgeInsets.only(left: 14, right: 14),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please select an option';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Due Date',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                  SizedBox(height: 11),
+                                Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: TextFormField(
+                                    controller: selectedDate,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      DateTime? pickedDate = await
+                                      showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.now(),
+                                        firstDate: DateTime(2000),
+                                        lastDate: DateTime(2101),
+                                        locale: const Locale('en', 'US'),
+                                        builder: (BuildContext context,
+                                            Widget? child) {
+                                          return Theme(
+                                            data: ThemeData.light().copyWith(
+                                              colorScheme: ColorScheme.light(
+                                                primary:
+                                                blueColor, // header background color
+                                                onPrimary: Colors
+                                                    .white, // header text color
+                                                onSurface:
+                                                blueColor, // body text color
+                                              ),
+                                              textButtonTheme:
+                                              TextButtonThemeData(
+                                                style: TextButton.styleFrom(
+                                                  foregroundColor: Colors.white,
+                                                  backgroundColor:
+                                                  blueColor, // button text color
+                                                ),
+                                              ),
+                                            ),
+                                            child: child!,
+                                          );
+                                        },
+                                      );
+                                      if (pickedDate != null) {
+                                        setState(() {
+                                          selectedDate.text =
+                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                        });
+                                      }
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 16),
+                                      hintText: "dd-mm-yyyy",
+                                      hintStyle: TextStyle(color:Colors.grey[400]),
+                                      suffixIcon: Icon(Icons.calendar_today,
+                                          size: 20, color: Colors.grey),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Status',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
                                 DropdownButtonHideUnderline(
                                   child: DropdownButtonFormField2<String>(
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none),
+                                    decoration: InputDecoration(border: InputBorder.none),
                                     isExpanded: true,
                                     hint: const Row(
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Select here',
+                                            'Select Status',
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400,
@@ -3644,11 +4413,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         ),
                                       ],
                                     ),
-                                    items: staffs.keys.map((staffmember_id) {
+                                    items: ['New', 'In Progress', 'On Hold', 'Completed']
+                                        .map((status) {
                                       return DropdownMenuItem<String>(
-                                        value: staffmember_id,
+                                        value: status,
                                         child: Text(
-                                          staffs[staffmember_id]!,
+                                          status,
                                           style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
@@ -3658,35 +4428,24 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         ),
                                       );
                                     }).toList(),
-                                    value: _selectedstaffId,
+                                    value: selectedStatus,
                                     onChanged: (value) {
-                                      setState(() {
-                                        // _selectedUnitId = null;
-                                        _selectedstaffId = value;
-                                        _selectedStaffs = staffs[
-                                            value]; // Store selected rental_adress
-
-                                        //StaffId = value.toString();
-                                        print(
-                                            'Selected Staffs: $_selectedStaffs');
-                                        // Fetch units for the selected property
-                                      });
+                                      selectedStatus = value;
                                     },
                                     buttonStyleData: ButtonStyleData(
-                                      height: 45,
+                                      height: 50,
                                       width: 160,
                                       padding: const EdgeInsets.only(
                                           left: 14, right: 14),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: Colors.grey.shade300),
                                         color: Colors.white,
                                       ),
-                                      elevation: 2,
+                                      elevation: 0,
                                     ),
                                     iconStyleData: const IconStyleData(
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                      ),
+                                      icon: Icon(Icons.arrow_drop_down),
                                       iconSize: 24,
                                       iconEnabledColor: Color(0xFFb0b6c3),
                                       iconDisabledColor: Colors.grey,
@@ -3699,14 +4458,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       scrollbarTheme: ScrollbarThemeData(
                                         radius: const Radius.circular(6),
                                         thickness: MaterialStateProperty.all(6),
-                                        thumbVisibility:
-                                            MaterialStateProperty.all(true),
+                                        thumbVisibility: MaterialStateProperty.all(true),
                                       ),
                                     ),
                                     menuItemStyleData: const MenuItemStyleData(
                                       height: 40,
-                                      padding:
-                                          EdgeInsets.only(left: 14, right: 14),
+                                      padding: EdgeInsets.only(left: 14, right: 14),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -3718,236 +4475,250 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ),
                               ],
                             ),
-                      SizedBox(height: 8.0),
-                      Text('Photo ',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: blueColor)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      SizedBox(height: 8.0),
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              _pickImage().then((_) {
-                                setState(
-                                    () {}); // Rebuild the widget after selecting the image
-                              });
-                            },
-                            child: Text(
-                              '+ Add',
-                              style: TextStyle(color: Colors.green),
-                            ),
                           ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      _images.isNotEmpty
-                          ? Row(
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Container(
-                                    //color: Colors.blue,
-                                    child: Wrap(
-                                      spacing:
-                                          8.0, // Horizontal spacing between items
-                                      runSpacing:
-                                          8.0, // Vertical spacing between rows
-                                      children: List.generate(
-                                        _images.length,
-                                        (index) {
-                                          return Container(
-                                            // color: Colors.green,
-                                            width: 85,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 60,
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          _images
-                                                              .removeAt(index);
-                                                        });
-                                                      },
-                                                      child: Icon(
-                                                        Icons.close,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                      // color:Colors.blue,
-                                                      child: Image.file(
-                                                        _images[index],
-                                                        height: 80,
-                                                        width: 80,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                Text(
+                                  'Message',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                SizedBox(height: 11),
+                                Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: TextFormField(
+                                    controller: message,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 16),
+                                      hintText: "Some description here",
+                                      hintStyle: TextStyle(color: Colors.grey[400],fontSize: 14),
                                     ),
                                   ),
                                 ),
                               ],
-                            )
-                          : Center(
-                              child: Text("No images selected."),
                             ),
-                      SizedBox(height: 16.0),
-                      Text('Message',
-                          style: TextStyle(
-                              color: blueColor, fontWeight: FontWeight.bold)),
-                      Material(
-                        elevation: 3,
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8.0),
-                            //border: Border.all(color: blueColor),
-                            // boxShadow: [
-                            //   BoxShadow(
-                            //     color: Colors.black.withOpacity(0.2),
-                            //     offset: Offset(4, 4),
-                            //     blurRadius: 3,
-                            //   ),
-                            // ],
                           ),
-                          child: TextFormField(
-                            /*    onTap: ()async{
-                          final DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) {
-                            selectedDate = pickedDate;
-                          }
-                        },*/
-                            //  obscureText: widget.obscureText,
-                            // readOnly: true,
-                            //keyboardType: widget.keyboardType,
-                            /* validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            state.validate();
-                          }
-                          return null;
-                        },*/
-                            controller: message,
-
-                            decoration: InputDecoration(
-                              //  suffixIcon: widget.suffixIcon,
-                              hintStyle:
-                                  TextStyle(fontSize: 13, color: blueColor),
-                              border: InputBorder.none,
-                              //   hintText: widget.hintText,
-                            ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      // Upload Photo Section
+                      GestureDetector(
+                        onTap: () {
+                          _pickImage().then((_) {
+                            setState(() {});
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.grey.shade300,
+                                style: BorderStyle.solid),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              // Icon(Icons.upload,
+                              //     size: 40, color: Colors.grey[600]),
+                              Image.asset('assets/icons/Upload.png',height: 50,width: 50,),
+                              SizedBox(height: 8),
+                              Text(
+                                'Upload your Photo here',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Maximum File Size is 20MB',
+                                textAlign: TextAlign.center,
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                              Text(
+                                'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                textAlign: TextAlign.center,
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      // Show selected images
+                      if (_images.isNotEmpty) ...[
+                        SizedBox(height: 16),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: List.generate(_images.length, (index) {
+                                  return Stack(
+                                    clipBehavior: Clip.none, // ✅ Allows icon to overflow outside
+                                    children: [
+                                      Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.grey.shade300),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: Image.file(
+                                            _images[index],
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: -8, // ✅ Slightly above
+                                        right: -8, // ✅ Slightly to the right outside
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _images.removeAt(index);
+                                            });
+                                          },
+                                          child: Container(
+                                            width: 24,
+                                            height: 24,
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black26,
+                                                  blurRadius: 4,
+                                                ),
+                                              ],
+                                            ),
+                                            child: Icon(
+                                              Icons.close,
+                                              size: 14,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      ],
+                      SizedBox(height: 24),
+                      // Buttons
                       Row(
                         children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor),
-                            onPressed: () async {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              String? firstName = prefs.getString("first_name");
-                              String? lastName = prefs.getString("last_name");
-                              final DateFormat formatter =
-                                  DateFormat('yyyy-MM-dd HH:mm:ss');
-                              String notificationTime =
-                                  formatter.format(DateTime.now());
-                              Map<String, dynamic> values = {
-                                "date":
-                                    reverseFormatDate(selectedDate.text.trim()),
-                                "message": message.text.trim(),
-                                "status": selectedStatus,
-                                "statusUpdatedBy": "Admin",
-                                "staffmember_name": _selectedStaffs,
-                                "staffmember_id": _selectedstaffId,
-                                "workOrderUpdate_images": _uploadedFileNames!,
-                                'notificationTime': notificationTime,
-                              };
-                              print('normal date ${selectedDate.text.trim()}');
-                              print(
-                                  'revers date ${reverseFormatDate(selectedDate.text.trim())}');
-                              await WorkOrderRepository.updateworkorderSummary(
-                                      values, widget.workorder_id!)
-                                  .then((value) {
-                                setState(() {
-                                  futureworkorderSummary =
-                                      WorkOrderRepository.getworkorderSummary(
-                                          widget.workorder_id!);
-                                });
-                              });
-
-                              // Save the data and close the dialog
-                              /*  WorkorderUpdates update = WorkorderUpdates(
-                                              status: selectedStatus,
-                                              date: selectedDate,
-                                              message: message,
-                                            );*/
-                              // Here you can handle saving the update data
-                              // print('Status: ${update.status}');
-                              // print('Date: ${update.date}');
-                              // print('Message: ${update.message}');
-                              Navigator.of(context).pop();
-                              setState(() {
-                                isLoading = false;
-                              }); // Close the dialog
-                            },
-                            child: isLoading
-                                ? Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.white,
-                                      size: 25.0,
-                                    ),
-                                  )
-                                : Text('Save'),
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  side: BorderSide(color: blueColor),
+                                ),
+                              ),
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight:FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Close the dialog
-                            },
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(color: blueColor),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                setState(() {
+                                  isLoading = true;
+                                });
+
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                final DateFormat formatter =
+                                    DateFormat('yyyy-MM-dd HH:mm:ss');
+                                String notificationTime =
+                                    formatter.format(DateTime.now());
+
+                                Map<String, dynamic> values = {
+                                  "date": reverseFormatDate(
+                                      selectedDate.text.trim()),
+                                  "message": message.text.trim(),
+                                  "status": selectedStatus,
+                                  "statusUpdatedBy": "Admin",
+                                  "staffmember_name": _selectedStaffs,
+                                  "staffmember_id": _selectedstaffId,
+                                  "workOrderUpdate_images": _uploadedFileNames!,
+                                  'notificationTime': notificationTime,
+                                };
+
+                                await WorkOrderRepository
+                                        .updateworkorderSummary(
+                                            values, widget.workorder_id!)
+                                    .then((value) {
+                                  setState(() {
+                                    futureworkorderSummary =
+                                        WorkOrderRepository.getworkorderSummary(
+                                            widget.workorder_id!);
+                                  });
+                                });
+
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: isLoading
+                                  ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Save',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                             ),
                           ),
                         ],
