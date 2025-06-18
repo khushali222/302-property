@@ -24,12 +24,12 @@ class DashboardAdminSample extends StatefulWidget {
   double totalRentPastDue = 0.0;
   DashboardAdminSample(
       {super.key,
-        required this.countList,
-        required this.currentMonthRentDue,
-        required this.lastMonthRentDue,
-        required this.currentMonthRentPaid,
-        required this.lastMonthRentPaid,
-        required this.totalRentPastDue});
+      required this.countList,
+      required this.currentMonthRentDue,
+      required this.lastMonthRentDue,
+      required this.currentMonthRentPaid,
+      required this.lastMonthRentPaid,
+      required this.totalRentPastDue});
   @override
   State<DashboardAdminSample> createState() => _DashboardAdminSampleState();
 }
@@ -39,11 +39,11 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
 
   void _showRentTypeMenu(BuildContext context) async {
     final RenderBox button =
-    _dropdownKey.currentContext!.findRenderObject() as RenderBox;
+        _dropdownKey.currentContext!.findRenderObject() as RenderBox;
     final RenderBox overlay =
-    Overlay.of(context).context.findRenderObject() as RenderBox;
+        Overlay.of(context).context.findRenderObject() as RenderBox;
     final Offset position =
-    button.localToGlobal(Offset.zero, ancestor: overlay);
+        button.localToGlobal(Offset.zero, ancestor: overlay);
 
     final result = await showDialog<String>(
       context: context,
@@ -109,7 +109,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                   FontAwesomeIcons.building,
                   _formatCount(widget.countList[0]),
                   'Properties  ->',
-                      () {
+                  () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -120,16 +120,18 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                   FontAwesomeIcons.user,
                   _formatCount(widget.countList[1]),
                   'Tenants  ->',
-                      () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Tenants_table()));
+                  () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Tenants_table()));
                   },
                 ),
                 _dashboardCard(
                   FontAwesomeIcons.fileLines,
                   _formatCount(widget.countList[2]),
                   'Applicants  ->',
-                      () {
+                  () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -140,16 +142,18 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                   FontAwesomeIcons.truck,
                   _formatCount(widget.countList[3]),
                   'Vendors  ->',
-                      () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Vendor_table()));
+                  () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Vendor_table()));
                   },
                 ),
                 _dashboardCard(
                   FontAwesomeIcons.screwdriverWrench,
                   _formatCount(widget.countList[4]),
-                  'Work Orders  ->',
-                      () {
+                  'Work Orders ->',
+                  () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -160,7 +164,6 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
             ),
             const SizedBox(height: 15),
             _rentDataSection(context),
-
             FlChartApp(
               data: data,
             ),
@@ -171,7 +174,13 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
             ),
             const SizedBox(height: 24),
             Dashboard_leaseExpiring(),
+            SizedBox(
+              height: 20,
+            ),
             Dashboard_Policy_Table(),
+            SizedBox(
+              height: 20,
+            ),
             Cronjob_payment_table(),
           ],
         ),
@@ -206,7 +215,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                 color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
         child: Row(
           children: [
             CircleAvatar(
@@ -240,7 +249,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
     return LayoutBuilder(
       builder: (context, constraints) {
         double maxWidth =
-        constraints.maxWidth > 500 ? 500 : constraints.maxWidth;
+            constraints.maxWidth > 500 ? 500 : constraints.maxWidth;
         double titleFont = maxWidth > 500 ? 28 : 18;
         double dropdownFont = maxWidth > 500 ? 20 : 16;
         double sectionFont = maxWidth > 500 ? 22 : 16;
@@ -315,7 +324,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         selectedRentType,
@@ -328,13 +337,17 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                       const SizedBox(height: 15),
                       if (selectedRentType == 'Rent Past Due')
                         GestureDetector(
-                          onTap: (){
+                          onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => RentPastDueReports(title: 'Rent Past Due'),
+                                builder: (context) =>
+                                    RentPastDueReports(title: 'Rent Past Due'),
                                 settings: RouteSettings(
-                                  arguments: {'monthType': 'All', 'chargeType': 'Charges'},
+                                  arguments: {
+                                    'monthType': 'All',
+                                    'chargeType': 'Charges'
+                                  },
                                 ),
                               ),
                             );
@@ -356,7 +369,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                       else ...[
                         GestureDetector(
                           onTap: () {
-                            _navigateToRespectiveScreen(context, selectedRentType, "Current Month");
+                            _navigateToRespectiveScreen(
+                                context, selectedRentType, "Current Month");
                           },
                           child: Row(
                             children: [
@@ -388,7 +402,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                         const SizedBox(height: 16),
                         GestureDetector(
                           onTap: () {
-                            _navigateToRespectiveScreen(context, selectedRentType, "Last Month");
+                            _navigateToRespectiveScreen(
+                                context, selectedRentType, "Last Month");
                           },
                           child: Row(
                             children: [
@@ -684,7 +699,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
     );
   }
 
-  void _navigateToRespectiveScreen(BuildContext context, String rentType, String monthType) {
+  void _navigateToRespectiveScreen(
+      BuildContext context, String rentType, String monthType) {
     String chargeType = 'Charges';
     bool isRentdue = false;
     String title = rentType;
@@ -775,16 +791,16 @@ class _RentTypePopup extends StatelessWidget {
                       ),
                       decoration: isSelected
                           ? BoxDecoration(
-                        color: const Color(0xFFE6EEF8),
-                        borderRadius: BorderRadius.circular(10),
-                      )
+                              color: const Color(0xFFE6EEF8),
+                              borderRadius: BorderRadius.circular(10),
+                            )
                           : null,
                       child: Center(
                         child: Text(
                           items[i],
                           style: TextStyle(
                             fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.w600,
+                                isSelected ? FontWeight.bold : FontWeight.w600,
                             fontSize: fontSize,
                             color: const Color(0xFF1A2746),
                           ),

@@ -777,24 +777,50 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
-                      height: MediaQuery.of(context).size.height * .5,
+                     // height: MediaQuery.of(context).size.height * .5,
                       child: Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5),
+                              child: Text(
+                                "Leases Expiring in the next 60 days",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 16,
+                                ),
+
+                              ),
                             ),
-                            SizedBox(height: 10),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: blueColor,
-                                fontSize: 16,
+                            SizedBox(height: 5,),
+                            Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: Color(0xFFDBE0E5))
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset('assets/icons/Nodata.png',height: 20,width: 20,color: Color(0xFF101828),),
+                                  SizedBox(width: 10,),
+                                  Center(
+                                    child: Text(
+                                      "No data Available",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF101828),
+                                        fontSize: 15,
+                                      ),
+
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],

@@ -225,45 +225,45 @@ class _Workorder_summeryState extends State<Workorder_summery>
       body: _connectivityResult != ConnectivityResult.none
           ? Column(
               children: [
-                SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  children: [
-                    Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Material(
-                        elevation: 3,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(5),
-                        ),
-                        child: Container(
-                          height: 40,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            color: blueColor,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5),
-                            ),
-                          ),
-                          child: const Center(
-                              child: Text(
-                            "Back",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white),
-                          )),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                // Row(
+                //   children: [
+                //     Spacer(),
+                //     GestureDetector(
+                //       onTap: () {
+                //         Navigator.pop(context);
+                //       },
+                //       child: Material(
+                //         elevation: 3,
+                //         borderRadius: const BorderRadius.all(
+                //           Radius.circular(5),
+                //         ),
+                //         child: Container(
+                //           height: 40,
+                //           width: 80,
+                //           decoration: BoxDecoration(
+                //             color: blueColor,
+                //             borderRadius: BorderRadius.all(
+                //               Radius.circular(5),
+                //             ),
+                //           ),
+                //           child: const Center(
+                //               child: Text(
+                //             "Back",
+                //             style: TextStyle(
+                //                 fontWeight: FontWeight.w500,
+                //                 color: Colors.white),
+                //           )),
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       width: 20,
+                //     ),
+                //   ],
+                // ),
                 SizedBox(
                   height: 20,
                 ),
@@ -1506,7 +1506,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
             ),
           ),
         );
-      } else {
+      }
+      else {
         return SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
@@ -1935,7 +1936,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           ),
                         ],
                       ),
-
                       SizedBox(height: 16),
 
                       /// Description
@@ -2146,7 +2146,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           margin: const EdgeInsets.only(bottom: 12),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.grey[50],
+                            color: Color(0xFFF7F9FC),
                             border: Border.all(color: grey),
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -2823,14 +2823,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             /*  ListTile(
                               title: Text(
                                 "Vendor",
-                                style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
                               ),
                               subtitle: Text(
                                 "Vendor Company Name",
-                                style: TextStyle(color: blueColor),
                               ),
                               leading: Container(
                                 padding: EdgeInsets.only(top: 3),
@@ -3833,7 +3828,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   //                                       _selectedstaffId = value;
   //                                       _selectedStaffs = staffs[
   //                                           value]; // Store selected rental_adress
-  //
+ 
   //                                       //StaffId = value.toString();
   //                                       print(
   //                                           'Selected Staffs: $_selectedStaffs');
@@ -4157,17 +4152,19 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           Text(
                             'Update Work Order',
                             style: TextStyle(
-                              color: blueColor,
+                              color: Color(0xFF101828),
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
                           ),
                           GestureDetector(
                             onTap: () => Navigator.of(context).pop(),
-                            child: Container(height: 40,width: 40,
+                            child: Container(
+                                height: 40,
+                                width: 40,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
-                                   border: Border.all(color: blueColor),
+                                  border: Border.all(color: blueColor),
                                 ),
                                 child: Icon(Icons.close, color: blueColor)),
                           ),
@@ -4192,109 +4189,131 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ),
                                 _isLoadingstaff
                                     ? const Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.black,
-                                    size: 50.0,
-                                  ),
-                                )
+                                        child: SpinKitFadingCircle(
+                                          color: Colors.black,
+                                          size: 50.0,
+                                        ),
+                                      )
                                     : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButtonFormField2<String>(
-                                        decoration: InputDecoration(
-                                            border: InputBorder.none),
-                                        isExpanded: true,
-                                        hint: const Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                'Select here',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color(0xFFb0b6c3),
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          DropdownButtonHideUnderline(
+                                            child: DropdownButtonFormField2<
+                                                String>(
+                                              decoration: InputDecoration(
+                                                  border: InputBorder.none),
+                                              isExpanded: true,
+                                              hint: const Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Select here',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xFFb0b6c3),
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        items: staffs.keys.map((staffmember_id) {
-                                          return DropdownMenuItem<String>(
-                                            value: staffmember_id,
-                                            child: Text(
-                                              staffs[staffmember_id]!,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black87,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          );
-                                        }).toList(),
-                                        value: _selectedstaffId,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            // _selectedUnitId = null;
-                                            _selectedstaffId = value;
-                                            _selectedStaffs = staffs[
-                                            value]; // Store selected rental_adress
+                                              items: staffs.keys
+                                                  .map((staffmember_id) {
+                                                return DropdownMenuItem<String>(
+                                                  value: staffmember_id,
+                                                  child: Text(
+                                                    staffs[staffmember_id]!,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Colors.black87,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: _selectedstaffId,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  // _selectedUnitId = null;
+                                                  _selectedstaffId = value;
+                                                  _selectedStaffs = staffs[
+                                                      value]; // Store selected rental_adress
 
-                                            //StaffId = value.toString();
-                                            print(
-                                                'Selected Staffs: $_selectedStaffs');
-                                            // Fetch units for the selected property
-                                          });
-                                        },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 50,
-                                          width: 160,
-                                          padding: const EdgeInsets.only(
-                                              left: 14, right: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(8),
-                                            border: Border.all(color: Colors.grey.shade300),
-                                            color: Colors.white,
+                                                  //StaffId = value.toString();
+                                                  print(
+                                                      'Selected Staffs: $_selectedStaffs');
+                                                  // Fetch units for the selected property
+                                                });
+                                              },
+                                              buttonStyleData: ButtonStyleData(
+                                                height: 50,
+                                                width: 160,
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, right: 14),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                      color:
+                                                          Colors.grey.shade300),
+                                                  color: Colors.white,
+                                                ),
+                                                elevation: 0,
+                                              ),
+                                              iconStyleData:
+                                                  const IconStyleData(
+                                                icon: Icon(
+                                                  Icons.arrow_drop_down,
+                                                ),
+                                                iconSize: 24,
+                                                iconEnabledColor:
+                                                    Color(0xFFb0b6c3),
+                                                iconDisabledColor: Colors.grey,
+                                              ),
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                  radius:
+                                                      const Radius.circular(6),
+                                                  thickness:
+                                                      MaterialStateProperty.all(
+                                                          6),
+                                                  thumbVisibility:
+                                                      MaterialStateProperty.all(
+                                                          true),
+                                                ),
+                                              ),
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                height: 40,
+                                                padding: EdgeInsets.only(
+                                                    left: 14, right: 14),
+                                              ),
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please select an option';
+                                                }
+                                                return null;
+                                              },
+                                            ),
                                           ),
-                                          elevation: 0,
-                                        ),
-                                        iconStyleData: const IconStyleData(
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                          ),
-                                          iconSize: 24,
-                                          iconEnabledColor: Color(0xFFb0b6c3),
-                                          iconDisabledColor: Colors.grey,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(6),
-                                            thickness: MaterialStateProperty.all(6),
-                                            thumbVisibility:
-                                            MaterialStateProperty.all(true),
-                                          ),
-                                        ),
-                                        menuItemStyleData: const MenuItemStyleData(
-                                          height: 40,
-                                          padding:
-                                          EdgeInsets.only(left: 14, right: 14),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please select an option';
-                                          }
-                                          return null;
-                                        },
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),
@@ -4311,7 +4330,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     fontSize: 14,
                                   ),
                                 ),
-                                  SizedBox(height: 11),
+                                SizedBox(height: 11),
                                 Container(
                                   height: 50,
                                   decoration: BoxDecoration(
@@ -4323,8 +4342,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     controller: selectedDate,
                                     readOnly: true,
                                     onTap: () async {
-                                      DateTime? pickedDate = await
-                                      showDatePicker(
+                                      DateTime? pickedDate =
+                                          await showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
                                         firstDate: DateTime(2000),
@@ -4336,18 +4355,18 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             data: ThemeData.light().copyWith(
                                               colorScheme: ColorScheme.light(
                                                 primary:
-                                                blueColor, // header background color
+                                                    blueColor, // header background color
                                                 onPrimary: Colors
                                                     .white, // header text color
                                                 onSurface:
-                                                blueColor, // body text color
+                                                    blueColor, // body text color
                                               ),
                                               textButtonTheme:
-                                              TextButtonThemeData(
+                                                  TextButtonThemeData(
                                                 style: TextButton.styleFrom(
                                                   foregroundColor: Colors.white,
                                                   backgroundColor:
-                                                  blueColor, // button text color
+                                                      blueColor, // button text color
                                                 ),
                                               ),
                                             ),
@@ -4358,7 +4377,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       if (pickedDate != null) {
                                         setState(() {
                                           selectedDate.text =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                              "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                         });
                                       }
                                     },
@@ -4367,7 +4386,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       contentPadding: EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 16),
                                       hintText: "dd-mm-yyyy",
-                                      hintStyle: TextStyle(color:Colors.grey[400]),
+                                      hintStyle:
+                                          TextStyle(color: Colors.grey[400]),
                                       suffixIcon: Icon(Icons.calendar_today,
                                           size: 20, color: Colors.grey),
                                     ),
@@ -4396,7 +4416,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ),
                                 DropdownButtonHideUnderline(
                                   child: DropdownButtonFormField2<String>(
-                                    decoration: InputDecoration(border: InputBorder.none),
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none),
                                     isExpanded: true,
                                     hint: const Row(
                                       children: [
@@ -4413,8 +4434,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         ),
                                       ],
                                     ),
-                                    items: ['New', 'In Progress', 'On Hold', 'Completed']
-                                        .map((status) {
+                                    items: [
+                                      'New',
+                                      'In Progress',
+                                      'On Hold',
+                                      'Completed'
+                                    ].map((status) {
                                       return DropdownMenuItem<String>(
                                         value: status,
                                         child: Text(
@@ -4439,7 +4464,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           left: 14, right: 14),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.grey.shade300),
+                                        border: Border.all(
+                                            color: Colors.grey.shade300),
                                         color: Colors.white,
                                       ),
                                       elevation: 0,
@@ -4458,12 +4484,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       scrollbarTheme: ScrollbarThemeData(
                                         radius: const Radius.circular(6),
                                         thickness: MaterialStateProperty.all(6),
-                                        thumbVisibility: MaterialStateProperty.all(true),
+                                        thumbVisibility:
+                                            MaterialStateProperty.all(true),
                                       ),
                                     ),
                                     menuItemStyleData: const MenuItemStyleData(
                                       height: 40,
-                                      padding: EdgeInsets.only(left: 14, right: 14),
+                                      padding:
+                                          EdgeInsets.only(left: 14, right: 14),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -4504,7 +4532,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       contentPadding: EdgeInsets.symmetric(
                                           horizontal: 12, vertical: 16),
                                       hintText: "Some description here",
-                                      hintStyle: TextStyle(color: Colors.grey[400],fontSize: 14),
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey[400],
+                                          fontSize: 14),
                                     ),
                                   ),
                                 ),
@@ -4515,15 +4545,63 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       ),
                       SizedBox(height: 20),
                       // Upload Photo Section
-                      GestureDetector(
-                        onTap: () {
-                          _pickImage().then((_) {
-                            setState(() {});
-                          });
-                        },
-                        child: Container(
+                      if (_images.isEmpty)
+                        GestureDetector(
+                          onTap: () {
+                            _pickImage().then((_) {
+                              setState(() {});
+                            });
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  style: BorderStyle.solid),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              children: [
+                                // Icon(Icons.upload,
+                                //     size: 40, color: Colors.grey[600]),
+                                Image.asset(
+                                  'assets/icons/Upload.png',
+                                  height: 50,
+                                  width: 50,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Upload your Photo here',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Maximum File Size is 20MB',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                ),
+                                Text(
+                                  'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      if (_images.isEmpty) SizedBox(height: 16),
+                      if (_images.isNotEmpty) ...[
+                        Container(
                           width: double.infinity,
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             border: Border.all(
                                 color: Colors.grey.shade300,
@@ -4531,104 +4609,112 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Icon(Icons.upload,
-                              //     size: 40, color: Colors.grey[600]),
-                              Image.asset('assets/icons/Upload.png',height: 50,width: 50,),
-                              SizedBox(height: 8),
-                              Text(
-                                'Upload your Photo here',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey[700],
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                // crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                      onTap: () {
+                                        _pickImage().then((_) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      child: Container(
+                                          height: 20,
+                                          width: 20,
+                                          decoration: BoxDecoration(
+                                            color: blueColor,
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          child: Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                            size: 15,
+                                          ))),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 10, right: 10),
+                                  child: Wrap(
+                                    alignment: WrapAlignment.start,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.start,
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children:
+                                        List.generate(_images.length, (index) {
+                                      return Stack(
+                                        clipBehavior: Clip.none, //
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.all(4.0),
+                                            child: Container(
+                                              width: 80,
+                                              height: 80,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                    color:
+                                                        Colors.grey.shade300),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Image.file(
+                                                  _images[index],
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: 0, //
+                                            right: 0, //
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _images.removeAt(index);
+                                                });
+                                              },
+                                              child: Container(
+                                                width: 18,
+                                                height: 18,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  shape: BoxShape.circle,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black,
+                                                      blurRadius: 4,
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Icon(
+                                                  Icons.close,
+                                                  size: 14,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 4),
-                              Text(
-                                'Maximum File Size is 20MB',
-                                textAlign: TextAlign.center,
-                                style:
-                                    TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
-                              Text(
-                                'Supported File Types are .png, .jpeg, .pdf, .csv',
-                                textAlign: TextAlign.center,
-                                style:
-                                    TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
                             ],
                           ),
                         ),
-                      ),
-                      // Show selected images
-                      if (_images.isNotEmpty) ...[
-                        SizedBox(height: 16),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: List.generate(_images.length, (index) {
-                                  return Stack(
-                                    clipBehavior: Clip.none, // ✅ Allows icon to overflow outside
-                                    children: [
-                                      Container(
-                                        width: 80,
-                                        height: 80,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(color: Colors.grey.shade300),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(8),
-                                          child: Image.file(
-                                            _images[index],
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: -8, // ✅ Slightly above
-                                        right: -8, // ✅ Slightly to the right outside
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _images.removeAt(index);
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: BoxDecoration(
-                                              color: Colors.red,
-                                              shape: BoxShape.circle,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black26,
-                                                  blurRadius: 4,
-                                                ),
-                                              ],
-                                            ),
-                                            child: Icon(
-                                              Icons.close,
-                                              size: 14,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }),
-                              ),
-                            ],
-                          ),
-                        ),
-
                       ],
                       SizedBox(height: 24),
                       // Buttons
@@ -4648,7 +4734,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 'Cancel',
                                 style: TextStyle(
                                   color: blueColor,
-                                  fontWeight:FontWeight.bold,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -4716,6 +4803,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       'Save',
                                       style: TextStyle(
                                         color: Colors.white,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),

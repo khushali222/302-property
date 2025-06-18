@@ -295,7 +295,6 @@ class _DashboardState extends State<Dashboard> {
             dropdown: false,
           ),
           appBar: widget_302.App_Bar(context: context),
-
           body: _connectivityResult != ConnectivityResult.none
               ? Center(
               child: loading

@@ -497,25 +497,48 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Renter's Insurance Policies Expiring Within 90 Days",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: blueColor,
-                              fontSize: 16,
-                            ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Text(
+                              "Renter's Insurance Policies Expiring Within 90 Days",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: blueColor,
+                                fontSize: 16,
+                              ),
 
+                            ),
                           ),
                           SizedBox(height: 5,),
-                          Text(
-                            "No data Available",
-                            style: TextStyle(
-                             // fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                              fontSize: 15,
+                          Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Color(0xFFDBE0E5))
                             ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/icons/Nodata.png',height: 20,width: 20,color: Color(0xFF101828),),
+                                SizedBox(width: 10,),
+                                Center(
+                                  child: Text(
+                                    "No data Available",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF101828),
+                                      fontSize: 15,
+                                    ),
 
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -550,7 +573,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                         children: [
                           SizedBox(height: 10),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 0.0),
+                            padding: const EdgeInsets.only(left: 5),
                             child: Text(
                               "Renter's Insurance Policies Expiring Within 60 Days",
                               style: TextStyle(
