@@ -1506,8 +1506,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
             ),
           ),
         );
-      }
-      else {
+      } else {
         return SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
@@ -1783,70 +1782,94 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  CachedNetworkImage(
-                                    imageUrl:
-                                        "$image_url${summery.propertyData!.rental_image}",
-                                    placeholder: (context, url) => Text(
-                                        "${summery.propertyData!.rental_image}"),
-                                    errorWidget: (context, url, error) => Icon(
-                                      Icons.error,
-                                      color: blueColor,
-                                    ),
-                                    /*  imageBuilder: (context, imageProvider) => Container(
-                                    width: 40.0,
-                                    height: 40.0,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
+                                  Padding(
+                                    padding: const EdgeInsets.all(14),
+                                    child: Container(
+                                      child:
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(14),
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              "$image_url${summery.propertyData!.rental_image}",
+                                          placeholder: (context, url) => Text(
+                                              "${summery.propertyData!.rental_image}"),
+                                          errorWidget: (context, url, error) => Icon(
+                                            Icons.error,
+                                            color: blueColor,
+                                          ),
+                                          /*  imageBuilder: (context, imageProvider) => Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),*/
+                                        ),
                                       ),
                                     ),
-                                  ),*/
                                   ),
                                 ],
                               ),
                             SizedBox(
                               height: 10,
                             ),
-                            Text(
-                              "${summery.propertyData!.rentaladress} ",
-                              textAlign: TextAlign.start,
-                              style: TextStyle(color: blueColor, fontSize: 13),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 14,
+                                ),
+                                Text(
+                                  "${summery.propertyData!.rentaladress} ",
+                                  textAlign: TextAlign.start,
+                                  style:
+                                      TextStyle(color: Color(0xFF3A4A57), fontSize: 13,fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            SizedBox(
-                              width: 300,
-                              child: Wrap(
-                                alignment: WrapAlignment.start,
-                                spacing:
-                                    4.0, // Space between texts horizontally
-                                runSpacing:
-                                    4.0, // Space between lines when wrapping
-                                children: [
-                                  Text(
-                                    "${summery.propertyData!.rental_city}, ",
-                                    style: TextStyle(fontSize: 13),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 14,
+                                ),
+                                SizedBox(
+                                  width: 300,
+                                  child: Wrap(
+                                    alignment: WrapAlignment.start,
+                                    spacing:
+                                        4.0, // Space between texts horizontally
+                                    runSpacing:
+                                        4.0, // Space between lines when wrapping
+                                    children: [
+                                      Text(
+                                        "${summery.propertyData!.rental_city}, ",
+                                        style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: Color(0xFF3A4A57)),
+                                      ),
+                                      Text(
+                                        "${summery.propertyData!.rental_state}, ",
+                                        style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: Color(0xFF3A4A57)),
+                                      ),
+                                      Text(
+                                        "${summery.propertyData!.rental_country}, ",
+                                        style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: Color(0xFF3A4A57)),
+                                      ),
+                                      Text(
+                                        "${summery.propertyData!.rental_postcode}",
+                                        style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: Color(0xFF3A4A57)),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    "${summery.propertyData!.rental_state}, ",
-                                    style: TextStyle(fontSize: 13),
-                                  ),
-                                  Text(
-                                    "${summery.propertyData!.rental_country}, ",
-                                    style: TextStyle(fontSize: 13),
-                                  ),
-                                  Text(
-                                    "${summery.propertyData!.rental_postcode}",
-                                    style: TextStyle(fontSize: 13),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                             SizedBox(
-                              height: 10,
+                              height: 20,
                             ),
                           ],
                         )
@@ -3828,7 +3851,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   //                                       _selectedstaffId = value;
   //                                       _selectedStaffs = staffs[
   //                                           value]; // Store selected rental_adress
- 
+
   //                                       //StaffId = value.toString();
   //                                       print(
   //                                           'Selected Staffs: $_selectedStaffs');

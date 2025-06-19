@@ -30,11 +30,11 @@ import '../../widgets/custom_drawer.dart';
 
 class _Dessert {
   _Dessert(
-      this.name,
-      this.property,
-      this.subtype,
-      this.rentalowenername,
-      );
+    this.name,
+    this.property,
+    this.subtype,
+    this.rentalowenername,
+  );
 
   final String name;
   final String property;
@@ -93,10 +93,9 @@ class _StaffTableState extends State<StaffTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFFF4F8FF),
-        borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -131,26 +130,30 @@ class _StaffTableState extends State<StaffTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("    Name", style: TextStyle(color: blueColor,fontWeight: FontWeight.bold))
-                        : Text("    Name", style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                        ? Text("    Name",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("    Name",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -182,8 +185,13 @@ class _StaffTableState extends State<StaffTable> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text("Designation",
-                        style: TextStyle(color: blueColor, fontSize: 15,fontWeight: FontWeight.bold)),
-                    SizedBox(width: 12,),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(
+                      width: 12,
+                    ),
                     // SizedBox(width: 5),
                     // ascending2
                     //     ? Padding(
@@ -334,8 +342,8 @@ class _StaffTableState extends State<StaffTable> {
         context,
         MaterialPageRoute(
             builder: (context) => Edit_staff_member(
-              staff: staff,
-            )));
+                  staff: staff,
+                )));
     if (result == true) {
       setState(() {
         futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
@@ -390,7 +398,7 @@ class _StaffTableState extends State<StaffTable> {
               Navigator.pop(context);
             }
           },
-          color: blueColor ,
+          color: blueColor,
         ),
         DialogButton(
           child: Text(
@@ -458,12 +466,12 @@ class _StaffTableState extends State<StaffTable> {
       type: AlertType.warning,
       title: "Plan Limitation",
       desc:
-      "The limit for adding staffmember according to the plan has been reached.",
+          "The limit for adding staffmember according to the plan has been reached.",
       style: AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
-        //  overlayColor: Colors.black.withOpacity(.8)
-      ),
+          //  overlayColor: Colors.black.withOpacity(.8)
+          ),
       buttons: [
         DialogButton(
           child: Text(
@@ -505,923 +513,1166 @@ class _StaffTableState extends State<StaffTable> {
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.all(0),
-              child: Row(
-                //  mainAxisAlignment: MainAxisAlignment.end,
+              child: Column(
                 children: [
+                  SizedBox(height: 20),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: titleBar(
-                      width: MediaQuery.of(context).size.width * .65,
-                      title: 'Staff Members',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => Add_staffmember()));
-                      if (result == true) {
-                        setState(() {
-                          futureStaffMembers =
-                              StaffMemberRepository().fetchStaffmembers();
-                        });
-                      }
-                      // if (rentalCount < staffCountLimit) {
-                      //   final result = await Navigator.of(context).push(
-                      //       MaterialPageRoute(
-                      //           builder: (context) => Add_staffmember()));
-                      //   if (result == true) {
-                      //     setState(() {
-                      //       futureStaffMembers =
-                      //           StaffMemberRepository().fetchStaffmembers();
-                      //     });
-                      //     fetchstaffadded();
-                      //   }
-                      // } else {
-                      //   _showAlertforLimit(context);
-                      // }
-                    },
-                    child: Container(
-                      // height: 40,
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 50
-                          : MediaQuery.of(context).size.width * 0.062,
-                      width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.25
-                          : MediaQuery.of(context).size.width * 0.25,
-                      decoration: BoxDecoration(
-                        color: blueColor,
-                        borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(0.0, 1.0),
-                            blurRadius: 6.0,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          "+ Add",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize:
-                            MediaQuery.of(context).size.width < 500
-                                ? 16
-                                : 20,
+                    padding: const EdgeInsets.all(0),
+                    child: Row(
+                      //  mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: titleBar(
+                            width: MediaQuery.of(context).size.width * .65,
+                            title: 'Staff Members',
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 5),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 6),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            //search
-            Padding(
-              padding: EdgeInsets.only(left: 11, right: 11),
-              child: Row(
-                children: [
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 2),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 19),
-                  Expanded(
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        // height: 40,
-                        height: MediaQuery.of(context).size.width < 500
-                            ? 49
-                            : 50,
-                        // width: MediaQuery.of(context).size.width < 500
-                        //     ? MediaQuery.of(context).size.width * .45
-                        //     : MediaQuery.of(context).size.width * .4,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Color(0xFF8A95A8)),
-                        ),
-                        child: TextField(
-                          style: TextStyle(
-                              fontSize:
-                              MediaQuery.of(context).size.width < 500
-                                  ? 12
-                                  : 14),
-                          onChanged: (value) {
-                            setState(() {
-                              searchValue = value;
-                              if(currentPage != 0)
-                                currentPage = 0;
-                            });
+                        GestureDetector(
+                          onTap: () async {
+                            final result = await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => Add_staffmember()));
+                            if (result == true) {
+                              setState(() {
+                                futureStaffMembers =
+                                    StaffMemberRepository().fetchStaffmembers();
+                              });
+                            }
+                            // if (rentalCount < staffCountLimit) {
+                            //   final result = await Navigator.of(context).push(
+                            //       MaterialPageRoute(
+                            //           builder: (context) => Add_staffmember()));
+                            //   if (result == true) {
+                            //     setState(() {
+                            //       futureStaffMembers =
+                            //           StaffMemberRepository().fetchStaffmembers();
+                            //     });
+                            //     fetchstaffadded();
+                            //   }
+                            // } else {
+                            //   _showAlertforLimit(context);
+                            // }
                           },
-                          cursorColor: Colors.blue,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Search here...",
-                            hintStyle: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 14
-                                    : 18),
-                            contentPadding: (EdgeInsets.only(
-                                left: 5, bottom: 10, top: 5)),
+                          child: Container(
+                            // height: 40,
+                            height: (MediaQuery.of(context).size.width < 500)
+                                ? 50
+                                : MediaQuery.of(context).size.width * 0.062,
+                            width: (MediaQuery.of(context).size.width < 500)
+                                ? MediaQuery.of(context).size.width * 0.25
+                                : MediaQuery.of(context).size.width * 0.25,
+                            decoration: BoxDecoration(
+                              color: blueColor,
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey,
+                                  offset: Offset(0.0, 1.0),
+                                  blurRadius: 6.0,
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                "+ Add",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 16
+                                          : 20,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        SizedBox(width: 5),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 6),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 22),
+                      ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 6),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 25),
-                ],
-              ),
-            ),
-            if (MediaQuery.of(context).size.width > 500)
-              SizedBox(height: 25),
-            if (MediaQuery.of(context).size.width < 500)
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<Staffmembers>>(
-                  future: futureStaffMembers,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
-                    } else if (snapshot.hasError) {
-                      return Center(
-                          child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData ||
-                        snapshot.data!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
+                  SizedBox(height: 10),
+                  //search
+                  Padding(
+                    padding: EdgeInsets.only(left: 11, right: 11),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 19),
+                        Expanded(
+                          child: Material(
+                            elevation: 3,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              // height: 40,
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 49
+                                  : 50,
+                              // width: MediaQuery.of(context).size.width < 500
+                              //     ? MediaQuery.of(context).size.width * .45
+                              //     : MediaQuery.of(context).size.width * .4,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Color(0xFF8A95A8)),
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
+                              child: TextField(
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 12
+                                            : 14),
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchValue = value;
+                                    if (currentPage != 0) currentPage = 0;
+                                  });
+                                },
+                                cursorColor: Colors.blue,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle: TextStyle(
+                                      color: Color(0xFF8A95A8),
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 14
+                                              : 18),
+                                  contentPadding: (EdgeInsets.only(
+                                      left: 5, bottom: 10, top: 5)),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      );
-                    } else {
-                      var data = snapshot.data!;
-                      if (searchValue == null || searchValue!.isEmpty) {
-                        data = snapshot.data!;
-                      } else if (searchValue == "All") {
-                        data = snapshot.data!;
-                      } else if (searchValue!.isNotEmpty) {
-                        data = snapshot.data!
-                            .where((staff) => staff.staffmemberName!
-                            .toLowerCase()
-                            .contains(searchValue!.toLowerCase()) ||
-                            staff.staffmemberDesignation.toString()
-                                .toLowerCase()
-                                .contains(searchValue!.toLowerCase()) ||
-                            staff.staffmemberPhoneNumber.toString()
-                                .toLowerCase()
-                                .contains(searchValue!.toLowerCase()) ||
-                            staff.staffmemberEmail.toString()
-                                .toLowerCase()
-                                .contains(searchValue!.toLowerCase())
-                        )
-                            .toList();
-                      } else {
-                        data = snapshot.data!
-                            .where((staff) =>
-                        staff.staffmemberName == searchValue)
-                            .toList();
-                      }
-                      if (data.isEmpty) {
-                        return Center(
-                          child:
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
-                          ),
-                        );
-                      }
-                      sortData(data);
-                      final totalPages =
-                      (data.length / itemsPerPage).ceil();
-                      final currentPageData = data
-                          .skip(currentPage * itemsPerPage)
-                          .take(itemsPerPage)
-                          .toList();
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 10),
-                            _buildHeaders(),
-                            SizedBox(height: 10),
-                            Container(
-                              child: Column(
-                                children: currentPageData
-                                    .asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded =
-                                      expandedIndex == index;
-                                  Staffmembers staffmembers = entry.value;
-                                  return Container(
-                                    margin: EdgeInsets.symmetric(vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color:index % 2 != 0
-                                          ? Color(0xFFF4F8FF)
-                                          : Colors.white,
-                                      border: Border.all(color: Color(0xFFDBE0E5)),
-                                      borderRadius: BorderRadius.circular(10),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 6),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 25),
+                      ],
+                    ),
+                  ),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(height: 25),
+                  if (MediaQuery.of(context).size.width < 500)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: FutureBuilder<List<Staffmembers>>(
+                        future: futureStaffMembers,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return ColabShimmerLoadingWidget();
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
                                     ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            var data = snapshot.data!;
+                            if (searchValue == null || searchValue!.isEmpty) {
+                              data = snapshot.data!;
+                            } else if (searchValue == "All") {
+                              data = snapshot.data!;
+                            } else if (searchValue!.isNotEmpty) {
+                              data = snapshot.data!
+                                  .where((staff) =>
+                                      staff.staffmemberName!
+                                          .toLowerCase()
+                                          .contains(
+                                              searchValue!.toLowerCase()) ||
+                                      staff.staffmemberDesignation
+                                          .toString()
+                                          .toLowerCase()
+                                          .contains(
+                                              searchValue!.toLowerCase()) ||
+                                      staff.staffmemberPhoneNumber
+                                          .toString()
+                                          .toLowerCase()
+                                          .contains(
+                                              searchValue!.toLowerCase()) ||
+                                      staff.staffmemberEmail
+                                          .toString()
+                                          .toLowerCase()
+                                          .contains(searchValue!.toLowerCase()))
+                                  .toList();
+                            } else {
+                              data = snapshot.data!
+                                  .where((staff) =>
+                                      staff.staffmemberName == searchValue)
+                                  .toList();
+                            }
+                            if (data.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                            sortData(data);
+                            final totalPages =
+                                (data.length / itemsPerPage).ceil();
+                            final currentPageData = data
+                                .skip(currentPage * itemsPerPage)
+                                .take(itemsPerPage)
+                                .toList();
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 10),
+                                  _buildHeaders(),
+                                  SizedBox(height: 10),
+                                  Container(
                                     child: Column(
-                                      children: <Widget>[
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              if (expandedIndex == index) {
-                                                expandedIndex = null;
-                                              } else {
-                                                expandedIndex = index;
-                                              }
-                                            });
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child:
-                                            Row(
-                                              children: <Widget>[
-                                                Expanded(
-                                                  flex: 3,
+                                      children: currentPageData
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        int index = entry.key;
+                                        bool isExpanded =
+                                            expandedIndex == index;
+                                        Staffmembers staffmembers = entry.value;
+                                        return Container(
+                                          margin:
+                                              EdgeInsets.symmetric(vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
+                                            border: Border.all(
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Column(
+                                            children: <Widget>[
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    if (expandedIndex ==
+                                                        index) {
+                                                      expandedIndex = null;
+                                                    } else {
+                                                      expandedIndex = index;
+                                                    }
+                                                  });
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      16.0),
                                                   child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                                                        color: Colors.grey[600],
-                                                        size: 20,
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        flex: 3,
+                                                        child: Row(
+                                                          children: [
+                                                            Icon(
+                                                              isExpanded
+                                                                  ? Icons
+                                                                      .keyboard_arrow_up
+                                                                  : Icons
+                                                                      .keyboard_arrow_down,
+                                                              color: Colors
+                                                                  .grey[600],
+                                                              size: 20,
+                                                            ),
+                                                            SizedBox(width: 8),
+                                                            Flexible(
+                                                              child: Text(
+                                                                '${staffmembers.staffmemberName}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize: 16,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
-                                                      SizedBox(width: 8),
-                                                      Flexible(
+                                                      Expanded(
+                                                        flex: 2,
                                                         child: Text(
-                                                          '${staffmembers.staffmemberName}',
+                                                          '${staffmembers.staffmemberDesignation}',
                                                           style: TextStyle(
                                                             color: Colors.black,
-                                                            fontWeight: FontWeight.w500,
+                                                            fontWeight:
+                                                                FontWeight.w500,
                                                             fontSize: 16,
                                                           ),
-                                                          overflow: TextOverflow.ellipsis,
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                           maxLines: 1,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    '${staffmembers.staffmemberDesignation}',
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontSize: 16,
+                                              ),
+                                              if (isExpanded)
+                                                Container(
+                                                  padding: EdgeInsets.all(16),
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color:
+                                                              Color(0xFFDBE0E5),
+                                                          width: 1),
                                                     ),
-                                                    textAlign: TextAlign.right,
-                                                    overflow: TextOverflow.ellipsis,
-                                                    maxLines: 1,
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          // Can you add a header in the admin dashboard tables for: Leases Expiring (60 days), Insurance Expiring (90 days), and Payments (Last 7 days).
+                                                          Expanded(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  'Mail-Id :',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor, // Bold and blue
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  '${staffmembers.staffmemberEmail}',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color:
+                                                                        grey, // Light and grey
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 16),
+                                                          Expanded(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                Text(
+                                                                  'Phone number :',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor, // Bold and blue
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  '${staffmembers.staffmemberPhoneNumber}',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color:
+                                                                        grey, // Light and grey
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Expanded(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  'Created At :',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor, // Bold and blue
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  staffmembers.createdAt
+                                                                              ?.isNotEmpty ==
+                                                                          true
+                                                                      ? dateProvider
+                                                                          .formatCurrentDate(
+                                                                              '${staffmembers.createdAt}')
+                                                                      : 'N/A',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color:
+                                                                        grey, // Light and grey
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 16),
+                                                          Expanded(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                Text(
+                                                                  'Updated At :',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor, // Bold and blue
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  staffmembers.updatedAt
+                                                                              ?.isNotEmpty ==
+                                                                          true
+                                                                      ? dateProvider
+                                                                          .formatCurrentDate(
+                                                                              '${staffmembers.updatedAt}')
+                                                                      : 'N/A',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color:
+                                                                        grey, // Light and grey
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      // Row(
+                                                      //   mainAxisAlignment:
+                                                      //   MainAxisAlignment
+                                                      //       .start,
+                                                      //   children: [
+                                                      //     Row(
+                                                      //       mainAxisAlignment:
+                                                      //       MainAxisAlignment
+                                                      //           .start,
+                                                      //       children: [
+                                                      //         FaIcon(
+                                                      //           isExpanded
+                                                      //               ? FontAwesomeIcons
+                                                      //               .sortUp
+                                                      //               : FontAwesomeIcons
+                                                      //               .sortDown,
+                                                      //           size: 50,
+                                                      //           color: Colors
+                                                      //               .transparent,
+                                                      //         ),
+                                                      //       ],
+                                                      //     ),
+                                                      //     Column(
+                                                      //       mainAxisAlignment:
+                                                      //       MainAxisAlignment
+                                                      //           .start,
+                                                      //       crossAxisAlignment:
+                                                      //       CrossAxisAlignment
+                                                      //           .start,
+                                                      //       children: [
+                                                      //         Text.rich(
+                                                      //           TextSpan(
+                                                      //             children: [
+                                                      //               TextSpan(
+                                                      //                 text:
+                                                      //                 'Mail-Id : ',
+                                                      //                 style:
+                                                      //                 TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight.bold,
+                                                      //                   color:
+                                                      //                   blueColor, // Bold and blue
+                                                      //                 ),
+                                                      //               ),
+                                                      //               TextSpan(
+                                                      //                 text:
+                                                      //                 '${staffmembers.staffmemberEmail}',
+                                                      //                 style:
+                                                      //                 TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight.w700,
+                                                      //                   color:
+                                                      //                   grey, // Light and grey
+                                                      //                 ),
+                                                      //               ),
+                                                      //             ],
+                                                      //           ),
+                                                      //         ),
+                                                      //         SizedBox(
+                                                      //             height:
+                                                      //             5),
+                                                      //         Text.rich(
+                                                      //           TextSpan(
+                                                      //             children: [
+                                                      //               TextSpan(
+                                                      //                 text:
+                                                      //                 'Phone number : ',
+                                                      //                 style:
+                                                      //                 TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight.bold,
+                                                      //                   color:
+                                                      //                   blueColor, // Bold and blue
+                                                      //                 ),
+                                                      //               ),
+                                                      //               TextSpan(
+                                                      //                 text: '${staffmembers.staffmemberPhoneNumber}',
+                                                      //                 style:
+                                                      //                 TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight.w700,
+                                                      //                   color:
+                                                      //                   grey, // Light and grey
+                                                      //                 ),
+                                                      //               ),
+                                                      //             ],
+                                                      //           ),
+                                                      //         ),
+                                                      //         SizedBox(
+                                                      //             height:
+                                                      //             5),
+                                                      //         Text.rich(
+                                                      //           TextSpan(
+                                                      //             children: [
+                                                      //               TextSpan(
+                                                      //                 text:
+                                                      //                 'Created At : ',
+                                                      //                 style:
+                                                      //                 TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight.bold,
+                                                      //                   color:
+                                                      //                   blueColor, // Bold and blue
+                                                      //                 ),
+                                                      //               ),
+                                                      //               TextSpan(
+                                                      //                 text: staffmembers.createdAt?.isNotEmpty == true
+                                                      //                     ? dateProvider.formatCurrentDate('${staffmembers.createdAt}')
+                                                      //                     : 'N/A',
+                                                      //                 style:
+                                                      //                 TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight.w700,
+                                                      //                   color:
+                                                      //                   grey, // Light and grey
+                                                      //                 ),
+                                                      //               ),
+                                                      //             ],
+                                                      //           ),
+                                                      //         ),
+                                                      //         SizedBox(
+                                                      //             height:
+                                                      //             5),
+                                                      //         Text.rich(
+                                                      //           TextSpan(
+                                                      //             children: [
+                                                      //               TextSpan(
+                                                      //                 text:
+                                                      //                 'Updated At : ',
+                                                      //                 style:
+                                                      //                 TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight.bold,
+                                                      //                   color:
+                                                      //                   blueColor, // Bold and blue
+                                                      //                 ),
+                                                      //               ),
+                                                      //               TextSpan(
+                                                      //                 text: staffmembers.updatedAt?.isNotEmpty == true
+                                                      //                     ? dateProvider.formatCurrentDate('${staffmembers.updatedAt}')
+                                                      //                     : 'N/A',
+                                                      //                 style:
+                                                      //                 TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight.w700,
+                                                      //                   color:
+                                                      //                   grey, // Light and grey
+                                                      //                 ),
+                                                      //               ),
+                                                      //             ],
+                                                      //           ),
+                                                      //         ),
+                                                      //       ],
+                                                      //     ),
+                                                      //     Spacer(),
+                                                      //     // Container(
+                                                      //     //   width: 40,
+                                                      //     //   child: Column(
+                                                      //     //     children: [
+                                                      //     //       IconButton(
+                                                      //     //         icon: FaIcon(
+                                                      //     //           FontAwesomeIcons.edit,
+                                                      //     //           size: 20,
+                                                      //     //           color: blueColor,
+                                                      //     //         ),
+                                                      //     //         onPressed: () async {
+                                                      //     //           var check = await Navigator.push(
+                                                      //     //             context,
+                                                      //     //             MaterialPageRoute(
+                                                      //     //               builder: (context) => Edit_staff_member(
+                                                      //     //                 staff: staffmembers,
+                                                      //     //               ),
+                                                      //     //             ),
+                                                      //     //           );
+                                                      //     //           if (check == true) {
+                                                      //     //             setState(() {});
+                                                      //     //           }
+                                                      //     //         },
+                                                      //     //       ),
+                                                      //     //       IconButton(
+                                                      //     //         icon: FaIcon(
+                                                      //     //           FontAwesomeIcons.trashCan,
+                                                      //     //           size: 20,
+                                                      //     //           color: blueColor,
+                                                      //     //         ),
+                                                      //     //         onPressed: () {
+                                                      //     //           _showDeleteAlert(context, staffmembers.staffmemberId!);
+                                                      //     //         },
+                                                      //     //       ),
+                                                      //     //     ],
+                                                      //     //   ),
+                                                      //     // ),
+                                                      //     SizedBox(
+                                                      //         width: 5),
+                                                      //
+                                                      //   ],
+                                                      // ),
+                                                      SizedBox(height: 20),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: InkWell(
+                                                              onTap: () async {
+                                                                var check =
+                                                                    await Navigator
+                                                                        .push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            Edit_staff_member(
+                                                                      staff:
+                                                                          staffmembers,
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(() {
+                                                                    futureStaffMembers =
+                                                                        StaffMemberRepository()
+                                                                            .fetchStaffmembers();
+                                                                  });
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .green,
+                                                                      width:
+                                                                          1.5),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    "Edit",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .green,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontSize:
+                                                                          16,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 15),
+                                                          Expanded(
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                _showDeleteAlert(
+                                                                    context,
+                                                                    staffmembers
+                                                                        .staffmemberId!);
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .red,
+                                                                      width:
+                                                                          1.5),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    "Delete",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .red,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontSize:
+                                                                          16,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                            ],
                                           ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: EdgeInsets.all(16),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                top: BorderSide(color:Color(0xFFDBE0E5), width: 1),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          // Text('Rows per page:'),
+                                          SizedBox(width: 10),
+                                          Material(
+                                            elevation: 3,
+                                            child: Container(
+                                              height: 40,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.grey),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<int>(
+                                                  value: itemsPerPage,
+                                                  items: itemsPerPageOptions
+                                                      .map((int value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: Text(
+                                                          value.toString()),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: data.length >
+                                                          itemsPerPageOptions
+                                                              .first // Condition to check if dropdown should be enabled
+                                                      ? (newValue) {
+                                                          setState(() {
+                                                            itemsPerPage =
+                                                                newValue!;
+                                                            currentPage =
+                                                                0; // Reset to first page when items per page change
+                                                          });
+                                                        }
+                                                      : null,
+                                                ),
                                               ),
                                             ),
-                                            child:  Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      children: [
-                                                        FaIcon(
-                                                          isExpanded
-                                                              ? FontAwesomeIcons
-                                                              .sortUp
-                                                              : FontAwesomeIcons
-                                                              .sortDown,
-                                                          size: 50,
-                                                          color: Colors
-                                                              .transparent,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                      children: [
-                                                        Text.rich(
-                                                          TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                'Mail-Id : ',
-                                                                style:
-                                                                TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight.bold,
-                                                                  color:
-                                                                  blueColor, // Bold and blue
-                                                                ),
-                                                              ),
-                                                              TextSpan(
-                                                                text:
-                                                                '${staffmembers.staffmemberEmail}',
-                                                                style:
-                                                                TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight.w700,
-                                                                  color:
-                                                                  grey, // Light and grey
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                            height:
-                                                            5),
-                                                        Text.rich(
-                                                          TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                'Phone number : ',
-                                                                style:
-                                                                TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight.bold,
-                                                                  color:
-                                                                  blueColor, // Bold and blue
-                                                                ),
-                                                              ),
-                                                              TextSpan(
-                                                                text: '${staffmembers.staffmemberPhoneNumber}',
-                                                                style:
-                                                                TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight.w700,
-                                                                  color:
-                                                                  grey, // Light and grey
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                            height:
-                                                            5),
-                                                        Text.rich(
-                                                          TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                'Created At : ',
-                                                                style:
-                                                                TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight.bold,
-                                                                  color:
-                                                                  blueColor, // Bold and blue
-                                                                ),
-                                                              ),
-                                                              TextSpan(
-                                                                text: staffmembers.createdAt?.isNotEmpty == true
-                                                                    ? dateProvider.formatCurrentDate('${staffmembers.createdAt}')
-                                                                    : 'N/A',
-                                                                style:
-                                                                TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight.w700,
-                                                                  color:
-                                                                  grey, // Light and grey
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                            height:
-                                                            5),
-                                                        Text.rich(
-                                                          TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                'Updated At : ',
-                                                                style:
-                                                                TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight.bold,
-                                                                  color:
-                                                                  blueColor, // Bold and blue
-                                                                ),
-                                                              ),
-                                                              TextSpan(
-                                                                text: staffmembers.updatedAt?.isNotEmpty == true
-                                                                    ? dateProvider.formatCurrentDate('${staffmembers.updatedAt}')
-                                                                    : 'N/A',
-                                                                style:
-                                                                TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight.w700,
-                                                                  color:
-                                                                  grey, // Light and grey
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Spacer(),
-                                                    // Container(
-                                                    //   width: 40,
-                                                    //   child: Column(
-                                                    //     children: [
-                                                    //       IconButton(
-                                                    //         icon: FaIcon(
-                                                    //           FontAwesomeIcons.edit,
-                                                    //           size: 20,
-                                                    //           color: blueColor,
-                                                    //         ),
-                                                    //         onPressed: () async {
-                                                    //           var check = await Navigator.push(
-                                                    //             context,
-                                                    //             MaterialPageRoute(
-                                                    //               builder: (context) => Edit_staff_member(
-                                                    //                 staff: staffmembers,
-                                                    //               ),
-                                                    //             ),
-                                                    //           );
-                                                    //           if (check == true) {
-                                                    //             setState(() {});
-                                                    //           }
-                                                    //         },
-                                                    //       ),
-                                                    //       IconButton(
-                                                    //         icon: FaIcon(
-                                                    //           FontAwesomeIcons.trashCan,
-                                                    //           size: 20,
-                                                    //           color: blueColor,
-                                                    //         ),
-                                                    //         onPressed: () {
-                                                    //           _showDeleteAlert(context, staffmembers.staffmemberId!);
-                                                    //         },
-                                                    //       ),
-                                                    //     ],
-                                                    //   ),
-                                                    // ),
-                                                    SizedBox(
-                                                        width: 5),
-
-                                                  ],
-                                                ),
-                                                SizedBox(height: 20),
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: InkWell(
-                                                        onTap: () async {
-                                                          var check = await Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) => Edit_staff_member(
-                                                                staff: staffmembers,
-                                                              ),
-                                                            ),
-                                                          );
-                                                          if (check == true) {
-                                                            setState(() {
-                                                              futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
-                                                            });
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          height: 40,
-                                                          decoration: BoxDecoration(
-                                                            border: Border.all(color: Colors.green, width: 1.5),
-                                                            borderRadius: BorderRadius.circular(8),
-                                                          ),
-                                                          child: Center(
-                                                            child: Text(
-                                                              "Edit",
-                                                              style: TextStyle(
-                                                                color: Colors.green,
-                                                                fontWeight: FontWeight.w500,
-                                                                fontSize: 16,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 15),
-                                                    Expanded(
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          _showDeleteAlert(context, staffmembers.staffmemberId!);
-                                                        },
-                                                        child: Container(
-                                                          height: 40,
-                                                          decoration: BoxDecoration(
-                                                            border: Border.all(color: Colors.red, width: 1.5),
-                                                            borderRadius: BorderRadius.circular(8),
-                                                          ),
-                                                          child: Center(
-                                                            child: Text(
-                                                              "Delete",
-                                                              style: TextStyle(
-                                                                color: Colors.red,
-                                                                fontWeight: FontWeight.w500,
-                                                                fontSize: 16,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronLeft,
+                                              color: currentPage == 0
+                                                  ? Colors.grey
+                                                  : blueColor,
                                             ),
+                                            onPressed: currentPage == 0
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      currentPage--;
+                                                    });
+                                                  },
                                           ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.grey),
-                                        ),
-                                        child:
-                                        DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<
-                                                  int>(
-                                                value: value,
-                                                child: Text(
-                                                    value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: data.length >
-                                                itemsPerPageOptions
-                                                    .first // Condition to check if dropdown should be enabled
-                                                ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage =
-                                                newValue!;
-                                                currentPage =
-                                                0; // Reset to first page when items per page change
-                                              });
-                                            }
-                                                : null,
+                                          // IconButton(
+                                          //   icon: Icon(Icons.arrow_back),
+                                          //   onPressed: currentPage > 0
+                                          //       ? () {
+                                          //     setState(() {
+                                          //       currentPage--;
+                                          //     });
+                                          //   }
+                                          //       : null,
+                                          // ),
+                                          Text(
+                                              'Page ${currentPage + 1} of $totalPages'),
+                                          // IconButton(
+                                          //   icon: Icon(Icons.arrow_forward),
+                                          //   onPressed: currentPage < totalPages - 1
+                                          //       ? () {
+                                          //     setState(() {
+                                          //       currentPage++;
+                                          //     });
+                                          //   }
+                                          //       : null,
+                                          // ),
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronRight,
+                                              color:
+                                                  currentPage < totalPages - 1
+                                                      ? blueColor
+                                                      : Colors.grey,
+                                            ),
+                                            onPressed:
+                                                currentPage < totalPages - 1
+                                                    ? () {
+                                                        setState(() {
+                                                          currentPage++;
+                                                        });
+                                                      }
+                                                    : null,
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons
-                                            .circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : blueColor,
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
-                                    ),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_back),
-                                    //   onPressed: currentPage > 0
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage--;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_forward),
-                                    //   onPressed: currentPage < totalPages - 1
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage++;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons
-                                            .circleChevronRight,
-                                        color:
-                                        currentPage < totalPages - 1
-                                            ? blueColor
-                                            : Colors.grey,
-                                      ),
-                                      onPressed:
-                                      currentPage < totalPages - 1
-                                          ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-            if (MediaQuery.of(context).size.width > 500)
-              FutureBuilder<List<Staffmembers>>(
-                future: futureStaffMembers,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return ShimmerTabletTable();
-                  } else if (snapshot.hasError) {
-                    return Center(
-                        child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData ||
-                      snapshot.data!.isEmpty) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height * .5,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    List<Staffmembers>? filteredData = [];
-                    if (selectedRole == null && searchValue == "") {
-                      filteredData = snapshot.data;
-                    } else if (selectedRole == "All") {
-                      filteredData = snapshot.data;
-                    } else if (searchValue.isNotEmpty) {
-                      filteredData = snapshot.data!
-                          .where((staff) =>
-                      staff.staffmemberName!
-                          .toLowerCase()
-                          .contains(searchValue.toLowerCase()) ||
-                          staff.staffmemberDesignation!
-                              .toLowerCase()
-                              .contains(searchValue.toLowerCase()))
-                          .toList();
-                    } else {
-                      filteredData = snapshot.data!
-                          .where((staff) =>
-                      staff.staffmemberDesignation ==
-                          selectedRole)
-                          .toList();
-                    }
-                    //_tableData = snapshot.data!;
-                    // _tableData = snapshot.data!;
-                    _tableData = filteredData!;
-                    totalrecords = _tableData.length;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 25.0, vertical: 5),
-                      child: Column(
-                        children: [
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Container(
-                              width:
-                              MediaQuery.of(context).size.width * .91,
-                              child: Table(
-                                defaultColumnWidth:
-                                IntrinsicColumnWidth(),
-                                children: [
-                                  TableRow(
-                                    decoration: BoxDecoration(
-                                        border: Border.all()),
-                                    children: [
-                                      _buildHeader(
-                                          'Name',
-                                          0,
-                                              (staff) =>
-                                          staff.staffmemberName!),
-                                      _buildHeader(
-                                          'Role',
-                                          1,
-                                              (staff) => staff
-                                              .staffmemberDesignation!),
-                                      _buildHeader('Email', 2, null),
-                                      _buildHeader('Phone', 3, null),
-                                      _buildHeader('Actions', 4, null),
                                     ],
                                   ),
-                                  TableRow(
-                                    decoration: BoxDecoration(
-                                      border: Border.symmetric(
-                                          horizontal: BorderSide.none),
-                                    ),
-                                    children: List.generate(
-                                        5,
-                                            (index) => TableCell(
-                                            child:
-                                            Container(height: 20))),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  if (MediaQuery.of(context).size.width > 500)
+                    FutureBuilder<List<Staffmembers>>(
+                      future: futureStaffMembers,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ShimmerTabletTable();
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
                                   ),
-                                  for (var i = 0;
-                                  i < _pagedData.length;
-                                  i++)
-                                    TableRow(
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          left: BorderSide(
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1)),
-                                          right: BorderSide(
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1)),
-                                          top: BorderSide(
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1)),
-                                          bottom:
-                                          i == _pagedData.length - 1
-                                              ? BorderSide(
-                                              color: blueColor)
-                                              : BorderSide.none,
-                                        ),
-                                      ),
-                                      children: [
-                                        _buildDataCell(_pagedData[i]
-                                            .staffmemberName!),
-                                        _buildDataCell(_pagedData[i]
-                                            .staffmemberDesignation!),
-                                        _buildDataCell(_pagedData[i]
-                                            .staffmemberEmail!),
-                                        _buildDataCell(_pagedData[i]
-                                            .staffmemberPhoneNumber!),
-                                        _buildActionsCell(_pagedData[i]),
-                                      ],
-                                    ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
                                 ],
                               ),
                             ),
-                          ),
-                          SizedBox(height: 25),
-                          _buildPaginationControls(),
-                        ],
-                      ),
-                    );
-                  }
-                },
+                          );
+                        } else {
+                          List<Staffmembers>? filteredData = [];
+                          if (selectedRole == null && searchValue == "") {
+                            filteredData = snapshot.data;
+                          } else if (selectedRole == "All") {
+                            filteredData = snapshot.data;
+                          } else if (searchValue.isNotEmpty) {
+                            filteredData = snapshot.data!
+                                .where((staff) =>
+                                    staff.staffmemberName!
+                                        .toLowerCase()
+                                        .contains(searchValue.toLowerCase()) ||
+                                    staff.staffmemberDesignation!
+                                        .toLowerCase()
+                                        .contains(searchValue.toLowerCase()))
+                                .toList();
+                          } else {
+                            filteredData = snapshot.data!
+                                .where((staff) =>
+                                    staff.staffmemberDesignation ==
+                                    selectedRole)
+                                .toList();
+                          }
+                          //_tableData = snapshot.data!;
+                          // _tableData = snapshot.data!;
+                          _tableData = filteredData!;
+                          totalrecords = _tableData.length;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 25.0, vertical: 5),
+                            child: Column(
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .91,
+                                    child: Table(
+                                      defaultColumnWidth:
+                                          IntrinsicColumnWidth(),
+                                      children: [
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                              border: Border.all()),
+                                          children: [
+                                            _buildHeader(
+                                                'Name',
+                                                0,
+                                                (staff) =>
+                                                    staff.staffmemberName!),
+                                            _buildHeader(
+                                                'Role',
+                                                1,
+                                                (staff) => staff
+                                                    .staffmemberDesignation!),
+                                            _buildHeader('Email', 2, null),
+                                            _buildHeader('Phone', 3, null),
+                                            _buildHeader('Actions', 4, null),
+                                          ],
+                                        ),
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                            border: Border.symmetric(
+                                                horizontal: BorderSide.none),
+                                          ),
+                                          children: List.generate(
+                                              5,
+                                              (index) => TableCell(
+                                                  child:
+                                                      Container(height: 20))),
+                                        ),
+                                        for (var i = 0;
+                                            i < _pagedData.length;
+                                            i++)
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                left: BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1)),
+                                                right: BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1)),
+                                                top: BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1)),
+                                                bottom:
+                                                    i == _pagedData.length - 1
+                                                        ? BorderSide(
+                                                            color: blueColor)
+                                                        : BorderSide.none,
+                                              ),
+                                            ),
+                                            children: [
+                                              _buildDataCell(_pagedData[i]
+                                                  .staffmemberName!),
+                                              _buildDataCell(_pagedData[i]
+                                                  .staffmemberDesignation!),
+                                              _buildDataCell(_pagedData[i]
+                                                  .staffmemberEmail!),
+                                              _buildDataCell(_pagedData[i]
+                                                  .staffmemberPhoneNumber!),
+                                              _buildActionsCell(_pagedData[i]),
+                                            ],
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 25),
+                                _buildPaginationControls(),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                ],
               ),
-          ],
-        ),
-      )
+            )
           : SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              'No Internet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -1431,8 +1682,8 @@ class _StaffTableState extends State<StaffTable> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -1556,10 +1807,10 @@ class _StaffTableState extends State<StaffTable> {
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -1576,10 +1827,10 @@ class _StaffTableState extends State<StaffTable> {
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -1587,4 +1838,3 @@ class _StaffTableState extends State<StaffTable> {
 }
 
 void main() => runApp(MaterialApp(home: StaffTable()));
-
