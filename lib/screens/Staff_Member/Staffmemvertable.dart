@@ -93,11 +93,9 @@ class _StaffTableState extends State<StaffTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
+        color: Color(0xFFF4F8FF),
+        borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
@@ -128,16 +126,13 @@ class _StaffTableState extends State<StaffTable> {
                       ascending2 = false;
                       ascending3 = false;
                     }
-
-                    // Sorting logic here
                   });
                 },
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name", style: TextStyle(color: Colors.white))
-                        : Text("Name", style: TextStyle(color: Colors.white)),
-                    // Text("Property", style: TextStyle(color: Colors.white)),
+                        ? Text("    Name", style: TextStyle(color: blueColor,fontWeight: FontWeight.bold))
+                        : Text("    Name", style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
@@ -160,6 +155,7 @@ class _StaffTableState extends State<StaffTable> {
                 ),
               ),
             ),
+            Spacer(),
             Expanded(
               child: InkWell(
                 onTap: () {
@@ -179,84 +175,84 @@ class _StaffTableState extends State<StaffTable> {
                       ascending1 = false;
                       ascending3 = false;
                     }
-                    // Sorting logic here
                   });
                 },
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text("Designation",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
-                    SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                        style: TextStyle(color: blueColor, fontSize: 15,fontWeight: FontWeight.bold)),
+                    SizedBox(width: 12,),
+                    // SizedBox(width: 5),
+                    // ascending2
+                    //     ? Padding(
+                    //   padding: const EdgeInsets.only(top: 7, left: 2),
+                    //   child: FaIcon(
+                    //     FontAwesomeIcons.sortUp,
+                    //     size: 20,
+                    //     color: Colors.white,
+                    //   ),
+                    // )
+                    //     : Padding(
+                    //   padding: const EdgeInsets.only(bottom: 7, left: 2),
+                    //   child: FaIcon(
+                    //     FontAwesomeIcons.sortDown,
+                    //     size: 20,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
             ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    SizedBox(width: 5),
-                    Text("   Contact", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // Expanded(
+            //   child: InkWell(
+            //     onTap: () {
+            //       setState(() {
+            //         if (sorting3) {
+            //           sorting1 = false;
+            //           sorting2 = false;
+            //           sorting3 = sorting3;
+            //           ascending3 = sorting3 ? !ascending3 : true;
+            //           ascending2 = false;
+            //           ascending1 = false;
+            //         } else {
+            //           sorting1 = false;
+            //           sorting2 = false;
+            //           sorting3 = !sorting3;
+            //           ascending3 = sorting3 ? !ascending3 : true;
+            //           ascending2 = false;
+            //           ascending1 = false;
+            //         }
+            //       });
+            //     },
+            //     child: Row(
+            //       children: [
+            //         SizedBox(width: 5),
+            //         Text("   Contact", style: TextStyle(color: Colors.white)),
+            //         SizedBox(width: 5),
+            //         ascending3
+            //             ? Padding(
+            //           padding: const EdgeInsets.only(top: 7, left: 2),
+            //           child: FaIcon(
+            //             FontAwesomeIcons.sortUp,
+            //             size: 20,
+            //             color: Colors.white,
+            //           ),
+            //         )
+            //             : Padding(
+            //           padding: const EdgeInsets.only(bottom: 7, left: 2),
+            //           child: FaIcon(
+            //             FontAwesomeIcons.sortDown,
+            //             size: 20,
+            //             color: Colors.white,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -602,83 +598,56 @@ class _StaffTableState extends State<StaffTable> {
                     SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 19),
-                  Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      // height: 40,
-                      height: MediaQuery.of(context).size.width < 500
-                          ? 45
-                          : 50,
-                      width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .45
-                          : MediaQuery.of(context).size.width * .4,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Color(0xFF8A95A8)),
-                      ),
-                      child: TextField(
-                        style: TextStyle(
-                            fontSize:
-                            MediaQuery.of(context).size.width < 500
-                                ? 12
-                                : 14),
-                        onChanged: (value) {
-                          setState(() {
-                            searchValue = value;
-                            if(currentPage != 0)
-                              currentPage = 0;
-                          });
-                        },
-                        cursorColor: Colors.blue,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Search here...",
-                          hintStyle: TextStyle(
-                              color: Color(0xFF8A95A8),
+                  Expanded(
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        // height: 40,
+                        height: MediaQuery.of(context).size.width < 500
+                            ? 49
+                            : 50,
+                        // width: MediaQuery.of(context).size.width < 500
+                        //     ? MediaQuery.of(context).size.width * .45
+                        //     : MediaQuery.of(context).size.width * .4,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Color(0xFF8A95A8)),
+                        ),
+                        child: TextField(
+                          style: TextStyle(
                               fontSize:
                               MediaQuery.of(context).size.width < 500
-                                  ? 14
-                                  : 18),
-                          contentPadding: (EdgeInsets.only(
-                              left: 5, bottom: 10, top: 5)),
+                                  ? 12
+                                  : 14),
+                          onChanged: (value) {
+                            setState(() {
+                              searchValue = value;
+                              if(currentPage != 0)
+                                currentPage = 0;
+                            });
+                          },
+                          cursorColor: Colors.blue,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Search here...",
+                            hintStyle: TextStyle(
+                                color: Color(0xFF8A95A8),
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 14
+                                    : 18),
+                            contentPadding: (EdgeInsets.only(
+                                left: 5, bottom: 10, top: 5)),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  // Spacer(),
-                  // Column(
-                  //   mainAxisAlignment: MainAxisAlignment.end,
-                  //   crossAxisAlignment: CrossAxisAlignment.end,
-                  //   children: [
-                  //     Text(
-                  //       'Added : ${rentalCount.toString()}',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         color: Color(0xFF8A95A8),
-                  //         fontSize:
-                  //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                  //       ),
-                  //     ),
-                  //     SizedBox(
-                  //       height: 5,
-                  //     ),
-                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                  //     Text(
-                  //       'Total: ${staffCountLimit.toString()}',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         color: Color(0xFF8A95A8),
-                  //         fontSize:
-                  //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 10),
+                    SizedBox(width: 6),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 25),
                 ],
@@ -792,14 +761,8 @@ class _StaffTableState extends State<StaffTable> {
                           children: [
                             SizedBox(height: 10),
                             _buildHeaders(),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Color.fromRGBO(
-                                          152, 162, 179, .5))),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -809,462 +772,349 @@ class _StaffTableState extends State<StaffTable> {
                                   bool isExpanded =
                                       expandedIndex == index;
                                   Staffmembers staffmembers = entry.value;
-                                  //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
+                                    margin: EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
-//                                       border: Border.all(color: blueColor
-//
-//
-// ),
+                                      color:index % 2 != 0
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
+                                      border: Border.all(color: Color(0xFFDBE0E5)),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
                                     child: Column(
                                       children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding:
-                                            const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .center,
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              if (expandedIndex == index) {
+                                                expandedIndex = null;
+                                              } else {
+                                                expandedIndex = index;
+                                              }
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child:
+                                            Row(
                                               children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    // setState(() {
-                                                    //    isExpanded = !isExpanded;
-                                                    // //  expandedIndex = !expandedIndex;
-                                                    //
-                                                    // });
-                                                    // setState(() {
-                                                    //   if (isExpanded) {
-                                                    //     expandedIndex = null;
-                                                    //     isExpanded = !isExpanded;
-                                                    //   } else {
-                                                    //     expandedIndex = index;
-                                                    //   }
-                                                    // });
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex =
-                                                        null;
-                                                      } else {
-                                                        expandedIndex =
-                                                            index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin:
-                                                    EdgeInsets.only(
-                                                        left: 5,
-                                                        right: 5),
-                                                    padding: !isExpanded
-                                                        ? EdgeInsets.only(
-                                                        bottom: 10)
-                                                        : EdgeInsets.only(
-                                                        top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                          .sortUp
-                                                          : FontAwesomeIcons
-                                                          .sortDown,
-                                                      size: 20,
-                                                      color: blueColor,
-                                                    ),
-                                                  ),
-                                                ),
                                                 Expanded(
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex =
-                                                          null;
-                                                        } else {
-                                                          expandedIndex =
-                                                              index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      '${staffmembers.staffmemberName}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold,
-                                                        fontSize: 13,
+                                                  flex: 3,
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                                                        color: Colors.grey[600],
+                                                        size: 20,
                                                       ),
-                                                    ),
+                                                      SizedBox(width: 8),
+                                                      Flexible(
+                                                        child: Text(
+                                                          '${staffmembers.staffmemberName}',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 16,
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                          maxLines: 1,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .04),
                                                 Expanded(
+                                                  flex: 2,
                                                   child: Text(
                                                     '${staffmembers.staffmemberDesignation}',
                                                     style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 16,
                                                     ),
+                                                    textAlign: TextAlign.right,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    maxLines: 1,
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .05),
-                                                Expanded(
-                                                  child: Text(
-                                                    formatPhoneNumber(
-                                                        '${staffmembers.staffmemberPhoneNumber}'),
-                                                    // '${staffmembers.staffmemberPhoneNumber}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .01),
                                               ],
                                             ),
                                           ),
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.only(
-                                                left: 2, right: 2),
-                                            margin: EdgeInsets.only(
-                                                bottom: 2),
-                                            child: SingleChildScrollView(
-                                              child: Container(
-                                                //color: Colors.blue,
-                                                child: Column(
+                                            padding: EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                top: BorderSide(color:Color(0xFFDBE0E5), width: 1),
+                                              ),
+                                            ),
+                                            child:  Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .start,
                                                   children: [
                                                     Row(
                                                       mainAxisAlignment:
                                                       MainAxisAlignment
                                                           .start,
                                                       children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                  .sortUp
-                                                                  : FontAwesomeIcons
-                                                                  .sortDown,
-                                                              size: 50,
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                          ],
+                                                        FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                              .sortUp
+                                                              : FontAwesomeIcons
+                                                              .sortDown,
+                                                          size: 50,
+                                                          color: Colors
+                                                              .transparent,
                                                         ),
-                                                        Column(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: [
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Mail-Id: ',
-                                                                    style:
-                                                                    TextStyle(
-                                                                      fontWeight:
-                                                                      FontWeight.bold,
-                                                                      color:
-                                                                      blueColor, // Bold and blue
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                    '${staffmembers.staffmemberEmail}',
-                                                                    style:
-                                                                    TextStyle(
-                                                                      fontWeight:
-                                                                      FontWeight.w700,
-                                                                      color:
-                                                                      grey, // Light and grey
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                                height:
-                                                                5),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Created At: ',
-                                                                    style:
-                                                                    TextStyle(
-                                                                      fontWeight:
-                                                                      FontWeight.bold,
-                                                                      color:
-                                                                      blueColor, // Bold and blue
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: staffmembers.createdAt?.isNotEmpty == true
-                                                                        ? dateProvider.formatCurrentDate('${staffmembers.createdAt}')
-                                                                        : 'N/A',
-                                                                    style:
-                                                                    TextStyle(
-                                                                      fontWeight:
-                                                                      FontWeight.w700,
-                                                                      color:
-                                                                      grey, // Light and grey
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                                height:
-                                                                5),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Updated At: ',
-                                                                    style:
-                                                                    TextStyle(
-                                                                      fontWeight:
-                                                                      FontWeight.bold,
-                                                                      color:
-                                                                      blueColor, // Bold and blue
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: staffmembers.updatedAt?.isNotEmpty == true
-                                                                        ? dateProvider.formatCurrentDate('${staffmembers.updatedAt}')
-                                                                        : 'N/A',
-                                                                    style:
-                                                                    TextStyle(
-                                                                      fontWeight:
-                                                                      FontWeight.w700,
-                                                                      color:
-                                                                      grey, // Light and grey
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Spacer(),
-                                                        // Container(
-                                                        //   width: 40,
-                                                        //   child: Column(
-                                                        //     children: [
-                                                        //       IconButton(
-                                                        //         icon: FaIcon(
-                                                        //           FontAwesomeIcons.edit,
-                                                        //           size: 20,
-                                                        //           color: blueColor,
-                                                        //         ),
-                                                        //         onPressed: () async {
-                                                        //           var check = await Navigator.push(
-                                                        //             context,
-                                                        //             MaterialPageRoute(
-                                                        //               builder: (context) => Edit_staff_member(
-                                                        //                 staff: staffmembers,
-                                                        //               ),
-                                                        //             ),
-                                                        //           );
-                                                        //           if (check == true) {
-                                                        //             setState(() {});
-                                                        //           }
-                                                        //         },
-                                                        //       ),
-                                                        //       IconButton(
-                                                        //         icon: FaIcon(
-                                                        //           FontAwesomeIcons.trashCan,
-                                                        //           size: 20,
-                                                        //           color: blueColor,
-                                                        //         ),
-                                                        //         onPressed: () {
-                                                        //           _showDeleteAlert(context, staffmembers.staffmemberId!);
-                                                        //         },
-                                                        //       ),
-                                                        //     ],
-                                                        //   ),
-                                                        // ),
-                                                        SizedBox(
-                                                            width: 5),
-
                                                       ],
                                                     ),
-                                                    SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Row(
-                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .start,
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
                                                       children: [
-                                                        Expanded(
-                                                          child:
-                                                          GestureDetector(
-                                                            onTap:
-                                                                () async {
-                                                              var check =
-                                                              await Navigator
-                                                                  .push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                      Edit_staff_member(
-                                                                        staff:
-                                                                        staffmembers,
-                                                                      ),
+                                                        Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                'Mail-Id : ',
+                                                                style:
+                                                                TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.bold,
+                                                                  color:
+                                                                  blueColor, // Bold and blue
                                                                 ),
-                                                              );
-                                                              if (check ==
-                                                                  true) {
-                                                                setState(
-                                                                        () {
-                                                                      futureStaffMembers =
-                                                                          StaffMemberRepository().fetchStaffmembers();
-                                                                    });
-                                                              }
-                                                            },
-                                                            child:
-                                                            Container(
-                                                              height: 40,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                border: Border.all(color: Colors.green, width: 1.5),
-                                                                borderRadius: BorderRadius.circular(8),
-                                                              ), // color:Colors.grey[100],
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .edit,
-                                                                    size:
-                                                                    15,
-                                                                    color:
-                                                                    Colors.green,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width:
-                                                                    10,
-                                                                  ),
-                                                                  Text(
-                                                                    "Edit",
-                                                                    style: TextStyle(
-                                                                        color: Colors.green,
-                                                                        fontWeight: FontWeight.bold),
-                                                                  ),
-                                                                ],
                                                               ),
-                                                            ),
+                                                              TextSpan(
+                                                                text:
+                                                                '${staffmembers.staffmemberEmail}',
+                                                                style:
+                                                                TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.w700,
+                                                                  color:
+                                                                  grey, // Light and grey
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                         SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        Expanded(
-                                                          child:
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              _showDeleteAlert(
-                                                                  context,
-                                                                  staffmembers
-                                                                      .staffmemberId!);
-                                                            },
-                                                            child:
-                                                            Container(
-                                                              height: 40,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                border: Border.all(color: Colors.red, width: 1.5),
-                                                                borderRadius: BorderRadius.circular(8),
+                                                            height:
+                                                            5),
+                                                        Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                'Phone number : ',
+                                                                style:
+                                                                TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.bold,
+                                                                  color:
+                                                                  blueColor, // Bold and blue
+                                                                ),
                                                               ),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .trashCan,
-                                                                    size:
-                                                                    15,
-                                                                    color:
-                                                                    Colors.red,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width:
-                                                                    10,
-                                                                  ),
-                                                                  Text(
-                                                                    "Delete",
-                                                                    style: TextStyle(
-                                                                        color: Colors.red,
-                                                                        fontWeight: FontWeight.bold),
-                                                                  )
-                                                                ],
+                                                              TextSpan(
+                                                                text: '${staffmembers.staffmemberPhoneNumber}',
+                                                                style:
+                                                                TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.w700,
+                                                                  color:
+                                                                  grey, // Light and grey
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            height:
+                                                            5),
+                                                        Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                'Created At : ',
+                                                                style:
+                                                                TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.bold,
+                                                                  color:
+                                                                  blueColor, // Bold and blue
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: staffmembers.createdAt?.isNotEmpty == true
+                                                                    ? dateProvider.formatCurrentDate('${staffmembers.createdAt}')
+                                                                    : 'N/A',
+                                                                style:
+                                                                TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.w700,
+                                                                  color:
+                                                                  grey, // Light and grey
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            height:
+                                                            5),
+                                                        Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                'Updated At : ',
+                                                                style:
+                                                                TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.bold,
+                                                                  color:
+                                                                  blueColor, // Bold and blue
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: staffmembers.updatedAt?.isNotEmpty == true
+                                                                    ? dateProvider.formatCurrentDate('${staffmembers.updatedAt}')
+                                                                    : 'N/A',
+                                                                style:
+                                                                TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.w700,
+                                                                  color:
+                                                                  grey, // Light and grey
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Spacer(),
+                                                    // Container(
+                                                    //   width: 40,
+                                                    //   child: Column(
+                                                    //     children: [
+                                                    //       IconButton(
+                                                    //         icon: FaIcon(
+                                                    //           FontAwesomeIcons.edit,
+                                                    //           size: 20,
+                                                    //           color: blueColor,
+                                                    //         ),
+                                                    //         onPressed: () async {
+                                                    //           var check = await Navigator.push(
+                                                    //             context,
+                                                    //             MaterialPageRoute(
+                                                    //               builder: (context) => Edit_staff_member(
+                                                    //                 staff: staffmembers,
+                                                    //               ),
+                                                    //             ),
+                                                    //           );
+                                                    //           if (check == true) {
+                                                    //             setState(() {});
+                                                    //           }
+                                                    //         },
+                                                    //       ),
+                                                    //       IconButton(
+                                                    //         icon: FaIcon(
+                                                    //           FontAwesomeIcons.trashCan,
+                                                    //           size: 20,
+                                                    //           color: blueColor,
+                                                    //         ),
+                                                    //         onPressed: () {
+                                                    //           _showDeleteAlert(context, staffmembers.staffmemberId!);
+                                                    //         },
+                                                    //       ),
+                                                    //     ],
+                                                    //   ),
+                                                    // ),
+                                                    SizedBox(
+                                                        width: 5),
+
+                                                  ],
+                                                ),
+                                                SizedBox(height: 20),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: InkWell(
+                                                        onTap: () async {
+                                                          var check = await Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) => Edit_staff_member(
+                                                                staff: staffmembers,
+                                                              ),
+                                                            ),
+                                                          );
+                                                          if (check == true) {
+                                                            setState(() {
+                                                              futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          height: 40,
+                                                          decoration: BoxDecoration(
+                                                            border: Border.all(color: Colors.green, width: 1.5),
+                                                            borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                          child: Center(
+                                                            child: Text(
+                                                              "Edit",
+                                                              style: TextStyle(
+                                                                color: Colors.green,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: 16,
                                                               ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 15),
+                                                    Expanded(
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          _showDeleteAlert(context, staffmembers.staffmemberId!);
+                                                        },
+                                                        child: Container(
+                                                          height: 40,
+                                                          decoration: BoxDecoration(
+                                                            border: Border.all(color: Colors.red, width: 1.5),
+                                                            borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                          child: Center(
+                                                            child: Text(
+                                                              "Delete",
+                                                              style: TextStyle(
+                                                                color: Colors.red,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
-                                              ),
+                                              ],
                                             ),
                                           ),
                                       ],
