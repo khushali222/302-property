@@ -325,554 +325,229 @@ class _RentalownersSummeryForMobileState
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),
               child: Material(
-                borderRadius: BorderRadius.circular(10),
+                // elevation: 2,
+                borderRadius: BorderRadius.circular(15),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border:
-                        Border.all(color:blueColor),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 15, bottom: 30),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              "Personal Information",
-                              style: TextStyle(
-                                  color:blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  // fontSize: 18
-                                  fontSize: 20),
-                            ),
-                          ],
+                        Text(
+                          "Personal Information",
+                          style: TextStyle(
+                            color: Color(0xFF101828),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
-                        // Divider(
-                        //
-                        //   color: blueColor,
-                        // ),
+                        SizedBox(height: 16),
+                        
+                        // Contact Name Row
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width:
-                                  210, // Adjust this width to match the text width or desired length
-                              child: Divider(
-                                color: grey,
-                                thickness:
-                                    1, // Optional: Adjust the thickness of the divider
-                              ),
-                            ),
-                          ],
-                        ),
-                        Table(
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Name : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.rentalOwnername ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnername}',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: grey,
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Contact Name',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Company Name : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.rentalOwnerCompanyName ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerCompanyName}',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: grey,
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.rentalOwnername ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnername}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
                                   ),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Street Address : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.streetAddress ?? '').isEmpty ? 'N/A' : widget.rentalowners?.streetAddress}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'City : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.city ?? '').isEmpty ? 'N/A' : widget.rentalowners?.city}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'State : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.state ?? '').isEmpty ? 'N/A' : widget.rentalowners?.state}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Country : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.country ?? '').isEmpty ? 'N/A' : widget.rentalowners?.country}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Zip Code: ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.postalCode ?? '').isEmpty ? 'N/A' : widget.rentalowners?.postalCode}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            const SizedBox(
-                              width: 2,
+                                ],
+                              ),
                             ),
-                            Text(
-                              "Contact Information",
-                              style: TextStyle(
-                                  color:blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width:
-                                  210, // Adjust this width to match the text width or desired length
-                              child: Divider(
-                                color: grey,
-                                thickness:
-                                    1, // Optional: Adjust the thickness of the divider
+                            SizedBox(width: 20),
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Company Name',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.rentalOwnerCompanyName ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerCompanyName}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        Table(
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Phone Number : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  formatPhoneNumber('${widget.rentalowners?.rentalOwnerPhoneNumber}'),
-                                 // '${(widget.rentalowners?.rentalOwnerPhoneNumber ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerPhoneNumber}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Home Number : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  formatPhoneNumber('${widget.rentalowners?.rentalOwnerHomeNumber}'),
-                                  //'${(widget.rentalowners?.rentalOwnerHomeNumber ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerHomeNumber}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Business Number : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  formatPhoneNumber('${widget.rentalowners?.rentalOwnerBusinessNumber}'),
-                                  //'${(widget.rentalowners?.rentalOwnerBusinessNumber ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerBusinessNumber}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Email : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.rentalOwnerPrimaryEmail ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerPrimaryEmail}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Alternative Email : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.rentalOwnerAlternateEmail ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerAlternateEmail}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
+                        SizedBox(height: 16),
+                        
+                        // Street Address Row
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(
-                              width: 2,
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Street Address',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.streetAddress ?? '').isEmpty ? 'N/A' : widget.rentalowners?.streetAddress}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            Text(
-                              "Management Agreement",
-                              style: TextStyle(
-                                color:blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                            SizedBox(width: 20),
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'City',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.city ?? '').isEmpty ? 'N/A' : widget.rentalowners?.city}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
+                        SizedBox(height: 16),
+                        
+                        // State Row
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width:
-                                  250, // Adjust this width to match the text width or desired length
-                              child: Divider(
-                                color: grey,
-                                thickness:
-                                    1, // Optional: Adjust the thickness of the divider
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'State',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.state ?? '').isEmpty ? 'N/A' : widget.rentalowners?.state}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Country',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.country ?? '').isEmpty ? 'N/A' : widget.rentalowners?.country}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Table(
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Start Date : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}'),
-
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'End Date : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                           dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}'),
-    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
+                        SizedBox(height: 16),
+                        
+                        // Zipcode
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              "1099-NEC Tax Filling Information ",
-                              style: TextStyle(
-                                color:blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Zipcode',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.postalCode ?? '').isEmpty ? 'N/A' : widget.rentalowners?.postalCode}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width:
-                                  280, // Adjust this width to match the text width or desired length
-                              child: Divider(
-                                color: grey,
-                                thickness:
-                                    1, // Optional: Adjust the thickness of the divider
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Table(
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Tax Identify Type : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.textIdentityType ?? '').isEmpty ? 'N/A' : widget.rentalowners?.textIdentityType}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
-                            TableRow(children: [
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  'Tax PayerId : ',
-                                  style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              )),
-                              TableCell(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Text(
-                                  '${(widget.rentalowners?.textIdentityType ?? '').isEmpty ? 'N/A' : widget.rentalowners?.textIdentityType}',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: grey),
-                                ),
-                              )),
-                            ]),
+                            Expanded(flex: 1, child: SizedBox()), // Empty space for alignment
                           ],
                         ),
                       ],
@@ -881,138 +556,180 @@ class _RentalownersSummeryForMobileState
                 ),
               ),
             ),
-            //card transaction type
+            
+            SizedBox(height: 20),
+            
+            // Contact Information
             Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20,top: 20),
+              padding: const EdgeInsets.only(left: 20, right: 20),
               child: Material(
-                elevation: 6,
-                borderRadius: BorderRadius.circular(10),
+              //  elevation: 2,
+                borderRadius: BorderRadius.circular(15),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: blueColor),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 25, right: 25, top: 20, bottom: 30),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(
+                          "Contact Information",
+                          style: TextStyle(
+                            color: Color(0xFF101828),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        
+                        // Phone Number Row
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              width: 2,
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Phone Number',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    formatPhoneNumber('${widget.rentalowners?.rentalOwnerPhoneNumber}'),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            Text(
-                              "Card Transaction Type \nManagement ",
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  // fontSize: 18
-                                  fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 20
-                                      : 25),
+                            SizedBox(width: 20),
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Home Number',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    formatPhoneNumber('${widget.rentalowners?.rentalOwnerHomeNumber}'),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        SizedBox(height: 16),
+                        
+                        // Business Number Row
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              width: 2,
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Business Number',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    formatPhoneNumber('${widget.rentalowners?.rentalOwnerBusinessNumber}'),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            Text(
-                              "Select the type of card you wish to \naccept",
-                              style: TextStyle(
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 15
-                                      : 20),
+                            SizedBox(width: 20),
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Email',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.rentalOwnerPrimaryEmail ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerPrimaryEmail}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(width: 11),
-                              Text("Credit Card",style: TextStyle(
-                                  fontSize: 16,
-                                color: blueColor,
-                                fontWeight: FontWeight.bold
-                              ),),
-                              SizedBox(width: 11),
-                              Transform.scale(
-                                scale: 1.2,
-                                child:
-                                Icon(
-                                  creditcard ? Icons.check : Icons.close, // Checkmark or empty circle
-                                  color: creditcard ? Colors.green : Colors.red, // Color based on state
-                                  size: 24.0,
-
-                                ),
-
-                                // Checkbox(
-                                //   value: creditcard,
-                                //   onChanged: null,
-                                // //       (value) {
-                                // //   setState(() {
-                                // //     creditcard = value!;
-                                // //   });
-                                // // },
-                                //   activeColor: blueColor,
-                                //
-                                // ),
+                        SizedBox(height: 16),
+                        
+                        // Alternate Email
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Alternate Email',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.rentalOwnerAlternateEmail ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerAlternateEmail}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
                               ),
-
-
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10,),
-                        Container(
-
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(width: 13),
-                              Text("Debit Card ",style: TextStyle(
-                                  fontSize: 16,
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold
-                              ),),
-                              SizedBox(width: 13),
-                              Transform.scale(
-                                scale: 1.2,
-                                child:
-                                Icon(
-                                  debitcard ? Icons.check : Icons.close, // Checkmark or empty circle
-                                  color: debitcard ? Colors.green : Colors.red, // Color based on state
-                                  size: 24.0, // Adjust the size as needed
-                                ),
-                                // Checkbox(
-                                //     value: debitcard,
-                                //     onChanged: null,
-                                // //     onChanged: (value) {
-                                // //   setState(() {
-                                // //     debitcard = value!;
-                                // //   });
-                                // // },
-                                //     activeColor: blueColor),
-                              ),
-
-
-                            ],
-                          ),
+                            ),
+                            Expanded(flex: 1, child: SizedBox()), // Empty space for alignment
+                          ],
                         ),
                       ],
                     ),
@@ -1020,9 +737,272 @@ class _RentalownersSummeryForMobileState
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
+            
+            SizedBox(height: 20),
+            
+            // Management Agreement Details
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Material(
+                elevation: 2,
+                borderRadius: BorderRadius.circular(15),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Management Agreement Details",
+                          style: TextStyle(
+                            color: Color(0xFF101828),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Start Date',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}'),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'End Date',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}'),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
+            
+            SizedBox(height: 20),
+            
+            // 1099 - NEC Tax Filing Information
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Material(
+              //  elevation: 2,
+                borderRadius: BorderRadius.circular(15),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "1099 - NEC Tax Filing Information",
+                          style: TextStyle(
+                            color: Color(0xFF101828),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Tax ID Type',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.textIdentityType ?? '').isEmpty ? 'N/A' : widget.rentalowners?.textIdentityType}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Taxpayer ID',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${(widget.rentalowners?.texpayerId ?? '').isEmpty ? 'N/A' : widget.rentalowners?.texpayerId}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            
+            SizedBox(height: 20),
+            
+            // Card Transaction Type Settings
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Material(
+               // elevation: 2,
+                borderRadius: BorderRadius.circular(15),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Card Transaction Type Settings",
+                          style: TextStyle(
+                            color: Color(0xFF101828),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          "Allowed card types for rental transactions",
+                          style: TextStyle(
+                            color: Color(0xFF8A95A8),
+                            fontSize: 14,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        
+                        // Credit Card Row
+                        Row(
+                          children: [
+                            Icon(
+                              creditcard ? Icons.check : Icons.close,
+                              color: creditcard ? Colors.green : Colors.red,
+                              size: 20,
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              "Credit Card",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        
+                        // Debit Card Row
+                        Row(
+                          children: [
+                            Icon(
+                              debitcard ? Icons.check : Icons.close,
+                              color: debitcard ? Colors.green : Colors.red,
+                              size: 20,
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              "Debit Card",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            
+            SizedBox(height: 20),
           ],
         ),
       ):SizedBox(

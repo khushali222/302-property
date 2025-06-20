@@ -151,7 +151,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                   ],
                 ),
                 child: Text(
-                  "Edit Staff Member",
+                  " Edit Staff Member",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

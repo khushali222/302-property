@@ -1287,7 +1287,6 @@ class _Workorder_tableState extends State<Workorder_table> {
                                 ),
                               );
                             }
-
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
