@@ -692,7 +692,7 @@ class ReportScreen extends StatelessWidget {
               {'title': 'Account Totals Report', 'subtitle': 'Summarized by account and rental owner',"navigate":AccountTotalsReports()},
               {'title': 'Payment Exception Report', 'subtitle': 'Transaction list not assigned to a tenant',"navigate":PaymentExceptionReports()},
               {'title': 'Recurring Payments Configuration', 'subtitle': 'Configured recurring payment by lease',"navigate":Recurring_Payments_Configuration_Report()},
-              {'title': 'Convenience Fee Override', 'subtitle': 'Leases with convenience fee override',"navigate":ConvenienceFeeReports()},
+              {'title': 'Rent Roll Report', 'subtitle': 'Rent balance due by property and tenants',"navigate":RentersInsurances()},
             ],"Track payments, transactions, and owner accounts.",context),
             SizedBox(height: 10,),
             reportSection('assets/images/mingcute_clipboard-fill.svg', 'Maintenance & Work Orders', [
@@ -708,7 +708,7 @@ class ReportScreen extends StatelessWidget {
             reportSection('assets/images/fontisto_person.svg', 'Lease & Tenant Management', [
               {'title': 'Expiring Leases', 'subtitle': 'All leases that will end during a timeframe',"navigate":ExpiringLeases()},
               {'title': 'Delinquent Tenants', 'subtitle': 'Tenants with outstanding ledger balances',"navigate":DelinquentTenants()},
-              {'title': 'Rent Roll Report', 'subtitle': 'Rent balance due by property and tenants',"navigate":RentersInsurances()},
+              {'title': 'Convenience Fee Override', 'subtitle': 'Leases with convenience fee override',"navigate":ConvenienceFeeReports()},
             ],"Active leases and tenant solutions.",context),
             SizedBox(height: 10,),
           ],

@@ -360,7 +360,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Contact Name',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -370,7 +370,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.rentalOwnername ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnername}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -385,7 +385,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Company Name',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -395,7 +395,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.rentalOwnerCompanyName ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerCompanyName}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -417,7 +417,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Street Address',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -427,7 +427,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.streetAddress ?? '').isEmpty ? 'N/A' : widget.rentalowners?.streetAddress}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -442,7 +442,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'City',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -452,7 +452,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.city ?? '').isEmpty ? 'N/A' : widget.rentalowners?.city}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -474,7 +474,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'State',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -484,7 +484,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.state ?? '').isEmpty ? 'N/A' : widget.rentalowners?.state}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -499,7 +499,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Country',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -509,7 +509,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.country ?? '').isEmpty ? 'N/A' : widget.rentalowners?.country}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -531,7 +531,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Zipcode',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -541,7 +541,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.postalCode ?? '').isEmpty ? 'N/A' : widget.rentalowners?.postalCode}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -598,7 +598,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Phone Number',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color:Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -608,7 +608,7 @@ class _RentalownersSummeryForMobileState
                                     formatPhoneNumber('${widget.rentalowners?.rentalOwnerPhoneNumber}'),
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -623,7 +623,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Home Number',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -633,7 +633,7 @@ class _RentalownersSummeryForMobileState
                                     formatPhoneNumber('${widget.rentalowners?.rentalOwnerHomeNumber}'),
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -655,7 +655,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Business Number',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color:Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -665,7 +665,7 @@ class _RentalownersSummeryForMobileState
                                     formatPhoneNumber('${widget.rentalowners?.rentalOwnerBusinessNumber}'),
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -680,7 +680,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Email',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -690,7 +690,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.rentalOwnerPrimaryEmail ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerPrimaryEmail}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -712,7 +712,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Alternate Email',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -722,7 +722,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.rentalOwnerAlternateEmail ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerAlternateEmail}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -744,7 +744,7 @@ class _RentalownersSummeryForMobileState
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),
               child: Material(
-                elevation: 2,
+                // elevation: 2,
                 borderRadius: BorderRadius.circular(15),
                 child: Container(
                   decoration: BoxDecoration(
@@ -760,7 +760,7 @@ class _RentalownersSummeryForMobileState
                         Text(
                           "Management Agreement Details",
                           style: TextStyle(
-                            color: Color(0xFF101828),
+                            color:Color(0xFF101828),
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
@@ -778,7 +778,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Start Date',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -788,7 +788,7 @@ class _RentalownersSummeryForMobileState
                                     dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}'),
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -803,7 +803,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'End Date',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -813,7 +813,7 @@ class _RentalownersSummeryForMobileState
                                     dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}'),
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -868,7 +868,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Tax ID Type',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -878,7 +878,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.textIdentityType ?? '').isEmpty ? 'N/A' : widget.rentalowners?.textIdentityType}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -893,7 +893,7 @@ class _RentalownersSummeryForMobileState
                                   Text(
                                     'Taxpayer ID',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -903,7 +903,7 @@ class _RentalownersSummeryForMobileState
                                     '${(widget.rentalowners?.texpayerId ?? '').isEmpty ? 'N/A' : widget.rentalowners?.texpayerId}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey.shade600,
+                                      color: Color(0xFF636363),
                                     ),
                                   ),
                                 ],
@@ -967,7 +967,7 @@ class _RentalownersSummeryForMobileState
                             Text(
                               "Credit Card",
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Color(0xFF101828),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
                               ),
@@ -988,7 +988,7 @@ class _RentalownersSummeryForMobileState
                             Text(
                               "Debit Card",
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Color(0xFF101828),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
                               ),
