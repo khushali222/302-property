@@ -1041,8 +1041,9 @@ class _PropertyTableState extends State<PropertyTable> {
                         );
                       }
                       sortData(data);
-                      final totalPages =
-                      (data.length / itemsPerPage).ceil();
+                      // final totalPages =
+                      // (data.length / itemsPerPage).ceil();
+                      final totalPages =   (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)

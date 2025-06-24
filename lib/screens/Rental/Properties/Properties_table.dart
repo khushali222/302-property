@@ -86,7 +86,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
     'Accepting Applicant',
     'Not Accepting Applicant',
   ];
+  final List<String> applicantoccupiedOptions = [
+    'All',
+    'Occupied',
+    'Vacant',
+  ];
   String? selectedApplicantStatus = 'All';
+  String? selectedApplicantOcuupied = 'All';
 
   void sortData(List<Rentals> data) {
     if (sorting1) {
@@ -835,16 +841,19 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   ],
                                 ),
                                 buttonStyleData: ButtonStyleData(
-                                  height:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 45
-                                          : 50,
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.only(
-                                      left: 14, right: 14),
+                                  // height: 40,
+                                  height: MediaQuery.of(context).size.width < 500
+                                      ? 45
+                                      : 50,
+                                  width: MediaQuery.of(context).size.width < 500
+                                      ? MediaQuery.of(context).size.width * .37
+                                      : MediaQuery.of(context).size.width * .4,
+                                  padding:
+                                  const EdgeInsets.only(left: 14, right: 14),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
+                                      // color: Colors.black26,
                                       color: Color(0xFF8A95A8),
                                     ),
                                     color: Colors.white,
@@ -853,18 +862,17 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 ),
                                 dropdownStyleData: DropdownStyleData(
                                   maxHeight: 200,
-                                  width: MediaQuery.of(context).size.width < 500
-                                      ? MediaQuery.of(context).size.width * 0.8
-                                      : 300,
+                                  width: 200,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(14),
+                                    //color: Colors.redAccent,
                                   ),
-                                  offset: const Offset(0, 0),
+                                  offset: const Offset(-20, 0),
                                   scrollbarTheme: ScrollbarThemeData(
                                     radius: const Radius.circular(40),
                                     thickness: MaterialStateProperty.all(6),
                                     thumbVisibility:
-                                        MaterialStateProperty.all(true),
+                                    MaterialStateProperty.all(true),
                                   ),
                                 ),
                                 menuItemStyleData: const MenuItemStyleData(
@@ -890,6 +898,98 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 onChanged: (value) {
                                   setState(() {
                                     selectedApplicantStatus = value;
+                                    if (currentPage != 0)
+                                      currentPage =
+                                          0; // Reset to first page when filter changes
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: DropdownButtonHideUnderline(
+                            child: Material(
+                              elevation: 3,
+                              borderRadius: BorderRadius.circular(8),
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                hint: const Row(
+                                  children: [
+                                    SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        'Select Occupancy',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                buttonStyleData: ButtonStyleData(
+                                  // height: 40,
+                                  height: MediaQuery.of(context).size.width < 500
+                                      ? 45
+                                      : 50,
+                                  width: MediaQuery.of(context).size.width < 500
+                                      ? MediaQuery.of(context).size.width * .37
+                                      : MediaQuery.of(context).size.width * .4,
+                                  padding:
+                                  const EdgeInsets.only(left: 14, right: 14),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      // color: Colors.black26,
+                                      color: Color(0xFF8A95A8),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  elevation: 0,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 200,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    //color: Colors.redAccent,
+                                  ),
+                                  offset: const Offset(-20, 0),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: MaterialStateProperty.all(6),
+                                    thumbVisibility:
+                                    MaterialStateProperty.all(true),
+                                  ),
+                                ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  height: 40,
+                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                ),
+                                items: applicantoccupiedOptions
+                                    .map((String item) =>
+                                        DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ))
+                                    .toList(),
+                                value: selectedApplicantOcuupied,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedApplicantOcuupied = value;
                                     if (currentPage != 0)
                                       currentPage =
                                           0; // Reset to first page when filter changes
@@ -1040,9 +1140,25 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       properties.is_available == false)
                                   .toList();
                             }
+
+                            // Filter by occupancy status
+                            if (selectedApplicantOcuupied == 'Occupied') {
+                              data = data
+                                  .where((properties) =>
+                                      properties.tenantsData != null &&
+                                      properties.tenantsData!.length > 0)
+                                  .toList();
+                            } else if (selectedApplicantOcuupied == 'Vacant') {
+                              data = data
+                                  .where((properties) =>
+                                      properties.tenantsData == null ||
+                                      properties.tenantsData!.length == 0)
+                                  .toList();
+                            }
                             sortData(data);
                             final totalPages =
                                 (data.length / itemsPerPage).ceil();
+
                             final currentPageData = data
                                 .skip(currentPage * itemsPerPage)
                                 .take(itemsPerPage)
@@ -1854,6 +1970,21 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             _tableData = _tableData
                                 .where((property) =>
                                     property.is_available == false)
+                                .toList();
+                          }
+
+                          // Filter by occupancy status
+                          if (selectedApplicantOcuupied == 'Occupied') {
+                            _tableData = _tableData
+                                .where((property) =>
+                                    property.tenantsData != null &&
+                                    property.tenantsData!.length > 0)
+                                .toList();
+                          } else if (selectedApplicantOcuupied == 'Vacant') {
+                            _tableData = _tableData
+                                .where((property) =>
+                                    property.tenantsData == null ||
+                                    property.tenantsData!.length == 0)
                                 .toList();
                           }
                           totalrecords = _tableData.length;

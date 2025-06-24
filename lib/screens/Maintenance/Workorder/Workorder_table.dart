@@ -426,8 +426,12 @@ class _Workorder_tableState extends State<Workorder_table> {
   Widget _buildDataCell(String text) {
     return TableCell(
       child: Padding(
-        padding: const EdgeInsets.only(top: 20.0, left: 16),
-        child: Text(text, style: const TextStyle(fontSize: 18)),
+        padding: const EdgeInsets.only(top: 20.0, right: 16),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 18),
+          textAlign: TextAlign.end,
+        ),
       ),
     );
   }
@@ -435,8 +439,9 @@ class _Workorder_tableState extends State<Workorder_table> {
   Widget _buildDataCellBillable(bool isBillable) {
     return TableCell(
       child: Padding(
-        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        padding: const EdgeInsets.only(top: 20.0, right: 16),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             if (isBillable) Icon(Icons.check, color: blueColor),
             if (!isBillable) Icon(Icons.close, color: blueColor),
@@ -1184,19 +1189,20 @@ class _Workorder_tableState extends State<Workorder_table> {
                                           ),
                                           SizedBox(height: 15),
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
                                             children: [
                                               GestureDetector(
                                                 onTap: onDelete,
                                                 child: Container(
                                                   height: 35,
-                                                  width:35,
+                                                  width: 35,
                                                   decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    color: Colors.red.shade50
-                                                  ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color:
+                                                          Colors.red.shade50),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1222,13 +1228,13 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 onTap: onEdit,
                                                 child: Container(
                                                   height: 35,
-                                                  width:35,
+                                                  width: 35,
                                                   decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                      color: Colors.green.shade50
-                                                  ), // color:Colors.grey[100],
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color: Colors.green
+                                                          .shade50), // color:Colors.grey[100],
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1253,9 +1259,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 onTap: onViewSummary,
                                                 child: Container(
                                                   height: 35,
-                                                  width:35,
+                                                  width: 35,
                                                   decoration: BoxDecoration(
-                                                  color: Colors.grey.shade200,
+                                                    color: Colors.grey.shade200,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             8),
@@ -1272,7 +1278,6 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         FontAwesomeIcons.eye,
                                                         size: 15,
                                                         color: Colors.black,
-
                                                       ),
                                                       SizedBox(width: 2),
                                                     ],
@@ -1287,6 +1292,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                 ),
                               );
                             }
+
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
@@ -1494,7 +1500,6 @@ class _Workorder_tableState extends State<Workorder_table> {
                         },
                       ),
                     ),
-
                 ],
               ),
             )
