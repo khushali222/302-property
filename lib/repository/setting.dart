@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:http/http.dart'as http;
-
+import 'package:http/http.dart' as http;
 
 import '../constant/constant.dart';
 import '../model/setting.dart';
@@ -18,59 +17,79 @@ class SurchargeRepository {
   Future<Setting1> fetchSurchargeData(String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminId = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
     final response = await http.get(
         Uri.parse('$baseUrl/api/surcharge/surcharge/getadmin/$adminId'),
         headers: {
           "authorization": "CRM $token",
-          "id":"CRM $id",
+          "id": "CRM $id",
           "Content-Type": "application/json"
-        }
-    );
+        });
+    print("id of id 2 $id");
     final response_Data = jsonDecode(response.body);
     print('surcharge check ${adminId}');
     if (response_Data["statusCode"] == 200) {
       // final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
-      final apiResponse = Setting1.fromJson(jsonDecode(response.body)["data"][0]);
+      final apiResponse =
+          Setting1.fromJson(jsonDecode(response.body)["data"][0]);
       return apiResponse;
     } else {
       throw Exception('Failed to load surcharge data');
     }
   }
 
-  Future<List<Setting1>> fetchUpdat(Map<String,dynamic> data) async {
+  Future<List<Setting1>> fetchUpdat(Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(jsonEncode(data));
-    String? id = prefs.getString("adminId");
+    String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.put(
-        Uri.parse('${Api_url}/api/surcharge/surcharge/$id'),
-        headers: {"authorization" : "CRM $token","id":"CRM $id",},
-        body:data );
-    final response_Data = jsonDecode(response.body,);
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
+    final response =
+        await http.put(Uri.parse('${Api_url}/api/surcharge/surcharge/$adminId'),
+            headers: {
+              "authorization": "CRM $token",
+              "id": "CRM $id",
+            },
+            body: data);
+    final response_Data = jsonDecode(
+      response.body,
+    );
     if (response_Data["statusCode"] == 200) {
-      final apiResponse = ApiResponse.fromJson(jsonDecode(response.body)["data"]);
+      final apiResponse =
+          ApiResponse.fromJson(jsonDecode(response.body)["data"]);
       return apiResponse.data;
     } else {
       throw Exception('Failed to update the data');
     }
   }
 
-  Future<bool> updateSurchargeData(String surchargeId, Map<String, dynamic> data) async {
+  Future<bool> updateSurchargeData(
+      String surchargeId, Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminId = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
     final response = await http.put(
       Uri.parse('$baseUrl/api/surcharge/surcharge/$surchargeId'),
       headers: {
-        "authorization" : "CRM $token",
-        "id":"CRM $id",
-        'Content-Type': 'application/json'},
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json'
+      },
       body: jsonEncode(data),
     );
 
     print(response.body);
-
 
     if (response.statusCode == 200) {
       return true;
@@ -79,17 +98,23 @@ class SurchargeRepository {
     }
   }
 
-  Future<bool> AddSurgeData(String surchargeId, Map<String, dynamic> data) async {
+  Future<bool> AddSurgeData(
+      String surchargeId, Map<String, dynamic> data) async {
     print("$baseUrl/api/surcharge/surcharge");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminId = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
     final response = await http.post(
       Uri.parse('$baseUrl/api/surcharge/surcharge'),
       headers: {
-        "authorization" : "CRM $token",
-        "id":"CRM $id",
-        'Content-Type': 'application/json'},
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json'
+      },
       body: jsonEncode(data),
     );
     print(response.body);
@@ -100,6 +125,7 @@ class SurchargeRepository {
     }
   }
 }
+
 class latefeeRepository {
   final String baseUrl;
 
@@ -108,8 +134,18 @@ class latefeeRepository {
   Future<Setting2> fetchLatefeesData(String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
-    final response = await http.get(Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     final response_Data = jsonDecode(response.body);
     print(response_Data);
     if (response_Data["statusCode"] == 200) {
@@ -123,21 +159,26 @@ class latefeeRepository {
     }
   }
 
-  Future<bool> updateLatefeesData(String surchargeId, Map<String, dynamic> data) async {
+  Future<bool> updateLatefeesData(
+      String surchargeId, Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+
+    print("id of id 1 $id");
     final response = await http.put(
       Uri.parse('$baseUrl/api/latefee/latefee/$surchargeId'),
       headers: {
-        "authorization" : "CRM $token",
-        "id":"CRM $id",
-        'Content-Type': 'application/json'},
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json'
+      },
       body: jsonEncode(data),
     );
     print('$baseUrl/api/latefee/latefee/$surchargeId');
     print(response.body);
-
 
     if (response.statusCode == 200) {
       return true;
@@ -146,18 +187,24 @@ class latefeeRepository {
     }
   }
 
-  Future<bool> AddLatefeesData(String surchargeId, Map<String, dynamic> data) async {
+  Future<bool> AddLatefeesData(
+      String surchargeId, Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
+
     print("$Api_url/api/latefee/latefee");
     print(data);
     final response = await http.post(
       Uri.parse('$Api_url/api/latefee/latefee'),
       headers: {
-        "authorization" : "CRM $token",
+        "authorization": "CRM $token",
         'Content-Type': 'application/json',
-        "id":"CRM $id",
+        "id": "CRM $id",
       },
       body: jsonEncode(data),
     );
@@ -168,7 +215,6 @@ class latefeeRepository {
       return false;
     }
   }
-
 }
 
 class mailserviceRepository {
@@ -178,8 +224,18 @@ class mailserviceRepository {
   Future<Setting3> fetchMailData(String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
-    final response = await http.get(Uri.parse('$baseUrl/api/mail_permission/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/mail_permission/$adminId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     final response_Data = jsonDecode(response.body);
     print('mail data $response_Data');
     if (response_Data["statusCode"] == 200) {
@@ -194,38 +250,20 @@ class mailserviceRepository {
     }
   }
 
-  Future<bool> updateMailData( Map<String, dynamic> data) async {
+  Future<bool> updateMailData(Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
-    final response = await http.put(
-      Uri.parse('$Api_url/api/mail_permission/$id'),
-      headers: {
-        "authorization" : "CRM $token",
-        "id":"CRM $id",
-        'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-    print(response.body);
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
 
-  Future<bool> AddMailData( id,Map<String, dynamic> data) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
-    print("$Api_url/api/mail_permission");
-    print(data);
-    final response = await http.post(
-      Uri.parse('$Api_url/api/mail_permission'),
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
+    final response = await http.put(
+      Uri.parse('$Api_url/api/mail_permission/$adminid'),
       headers: {
-        "authorization" : "CRM $token",
-        'Content-Type': 'application/json',
-        "id":"CRM $id",
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json'
       },
       body: jsonEncode(data),
     );
@@ -237,18 +275,45 @@ class mailserviceRepository {
     }
   }
 
+  Future<bool> AddMailData(id, Map<String, dynamic> data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
+    print("$Api_url/api/mail_permission");
+    print(data);
+    final response = await http.post(
+      Uri.parse('$Api_url/api/mail_permission'),
+      headers: {
+        "authorization": "CRM $token",
+        'Content-Type': 'application/json',
+        "id": "CRM $id",
+      },
+      body: jsonEncode(data),
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
-
-class accountRepository{
-
+class accountRepository {
   Future<List<Setting4>> fetchAccounts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
 
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
     final response = await http.get(
-      Uri.parse('${Api_url}/api/accounts/accounts/$id'),
+      Uri.parse('${Api_url}/api/accounts/accounts/$adminid'),
       headers: {
         'authorization': 'CRM $token',
         'id': 'CRM $id',
@@ -277,17 +342,21 @@ class accountRepository{
       'account': account,
       'account_type': accounttype,
       'fund_type': fundtype,
-
       'notes': notes,
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
+
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/accounts/accounts'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id":"CRM $id",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -298,30 +367,28 @@ class accountRepository{
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add account');
     }
   }
 
-  Future<Map<String, dynamic>> DeleteAccount({
-    required String? account_id
-  }) async {
-
-
+  Future<Map<String, dynamic>> DeleteAccount(
+      {required String? account_id}) async {
     //print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  adminid = prefs.getString('adminId');
- //   String? id = prefs.getString("staff_id");
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
 
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
 
     final http.Response response = await http.delete(
       Uri.parse('${Api_url}/api/accounts/accounts/$account_id'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id":"CRM $adminid",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -330,7 +397,6 @@ class accountRepository{
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to delete account');

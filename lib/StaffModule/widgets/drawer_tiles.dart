@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 
+import '../../screens/Profile/Settings_screen.dart';
 import '../screen/Communications/E-mail Logs/email_log_table.dart';
 import '../screen/Communications/Send E-mail/Send_email_table.dart';
 import '../screen/Communications/Templates/Templet_table.dart';
@@ -19,7 +20,7 @@ import '../screen/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/upcoming_renewal/upcoming_renewal.dart';
-import 'package:three_zero_two_property/StaffModule/screen/Settings/Settings_screen.dart';
+
 
 Widget buildListTile(
     BuildContext context,

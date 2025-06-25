@@ -22,7 +22,6 @@ import 'package:three_zero_two_property/repository/setting.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 
-
 import '../../constant/constant.dart';
 import '../../model/setting.dart';
 import '../../provider/dateProvider.dart';
@@ -39,7 +38,7 @@ class TabBarExample extends StatefulWidget {
 }
 
 class _TabBarExampleState extends State<TabBarExample> {
-  int  _selectedRadio = 0;
+  int _selectedRadio = 0;
   TextEditingController credit = TextEditingController();
   TextEditingController debit = TextEditingController();
   TextEditingController percent = TextEditingController();
@@ -97,14 +96,21 @@ class _TabBarExampleState extends State<TabBarExample> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       dateProvider.loadDateFormat();
-
     });
-   // _customDateController.text = customdate!;
-   //  customdate = customdate ?? "2025-01-23"; // Example default date
-   //  _customDateController.text = customdate!;
+    // _customDateController.text = customdate!;
+    //  customdate = customdate ?? "2025-01-23"; // Example default date
+    //  _customDateController.text = customdate!;
   }
 
+  // Add this helper method after the initState method
+  Future<String?> _getApiId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? staffId = prefs.getString('staff_id');
+    String? adminId = prefs.getString('adminId');
 
+    // Use staff_id if it exists, otherwise use admin_id
+    return (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+  }
 
   fetchAccounts() async {
     List<Setting4> fetchedAccounts = await accountRepository().fetchAccounts();
@@ -143,9 +149,15 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
+
+    // Use staff_id if it exists, otherwise use admin_id
+    String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+
     try {
-      Setting1 surcharges = await surchargeRepository.fetchSurchargeData('${id ?? ""}');
+      Setting1 surcharges =
+          await surchargeRepository.fetchSurchargeData('${adminId ?? ""}');
 
       if (surcharges != null) {
         setState(() {
@@ -159,8 +171,26 @@ class _TabBarExampleState extends State<TabBarExample> {
               ? surcharges.surchargeFlatACH.toString()
               : "";
           surge_id = surcharges.surchargeId.toString();
-          selectedAccount = surcharges!.surcharge_account ?? null;
-          _selectedRadio = surcharges.surchargePercentACH != 0.0 && surcharges.surchargeFlatACH != 0.0 ? 3 : surcharges.surchargePercentACH != 0.0 ?  1:surcharges.surchargeFlatACH != 0.0?2:0;
+          if (surcharges!.surcharge_account != null) {
+            try {
+              var matchingAccount = accounts.firstWhere(
+                (account) => account.account == surcharges!.surcharge_account,
+              );
+              selectedAccount = matchingAccount.accountId;
+            } catch (e) {
+              selectedAccount = null; // No matching account found
+            }
+          } else {
+            selectedAccount = null;
+          }
+          _selectedRadio = surcharges.surchargePercentACH != 0.0 &&
+                  surcharges.surchargeFlatACH != 0.0
+              ? 3
+              : surcharges.surchargePercentACH != 0.0
+                  ? 1
+                  : surcharges.surchargeFlatACH != 0.0
+                      ? 2
+                      : 0;
         });
       }
     } catch (e) {
@@ -194,17 +224,25 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "surcharge_percent":
-            credit.text.trim().isNotEmpty ? double.parse(credit.text.trim()) : null,
-        "surcharge_percent_debit":
-            debit.text.trim().isNotEmpty ? double.parse(debit.text.trim()) : null,
+        "surcharge_percent": credit.text.trim().isNotEmpty
+            ? double.parse(credit.text.trim())
+            : null,
+        "surcharge_percent_debit": debit.text.trim().isNotEmpty
+            ? double.parse(debit.text.trim())
+            : null,
         "surcharge_percent_ACH": percent.text.trim().isNotEmpty
             ? double.parse(percent.text.trim())
             : null, // Add your logic to get this value
-        "surcharge_flat_ACH": flat.text.trim().isNotEmpty
-            ? double.parse(flat.text.trim())
-            : null,
-        "surcharge_account":selectedAccount// Add your logic to get this value
+        "surcharge_flat_ACH":
+            flat.text.trim().isNotEmpty ? double.parse(flat.text.trim()) : null,
+        "surcharge_account": selectedAccount != null
+            ? (accounts.any((account) => account.accountId == selectedAccount)
+                ? accounts
+                    .firstWhere(
+                        (account) => account.accountId == selectedAccount)
+                    .account
+                : selectedAccount)
+            : null
       };
 
       bool success =
@@ -235,17 +273,17 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "surcharge_percent":
-            credit.text.trim().isNotEmpty ? int.parse(credit.text.trim()) : null,
+        "surcharge_percent": credit.text.trim().isNotEmpty
+            ? int.parse(credit.text.trim())
+            : null,
         "surcharge_percent_debit":
             debit.text.trim().isNotEmpty ? int.parse(debit.text.trim()) : null,
         "surcharge_percent_ACH": percent.text.trim().isNotEmpty
             ? int.parse(percent.text.trim())
             : null, // Add your logic to get this value
-        "surcharge_flat_ACH": flat.text.trim().isNotEmpty
-            ? int.parse(flat.text.trim())
-            : null,
-        "surcharge_account":selectedAccount
+        "surcharge_flat_ACH":
+            flat.text.trim().isNotEmpty ? int.parse(flat.text.trim()) : null,
+        "surcharge_account": selectedAccount
         // Add your logic to get this value
       };
 
@@ -274,10 +312,12 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "duration":
-            duration.text.trim().isNotEmpty ? double.parse(duration.text.trim()) : null,
-        "late_fee":
-            late_fee.text.trim().isNotEmpty ? double.parse(late_fee.text.trim()) : null,
+        "duration": duration.text.trim().isNotEmpty
+            ? double.parse(duration.text.trim())
+            : null,
+        "late_fee": late_fee.text.trim().isNotEmpty
+            ? double.parse(late_fee.text.trim())
+            : null,
       };
 
       bool success =
@@ -334,8 +374,12 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "duration": duration.text.trim().isNotEmpty ? int.parse(duration.text.trim()) : null,
-        "late_fee": late_fee.text.trim().isNotEmpty ? int.parse(late_fee.text.trim()) : null,
+        "duration": duration.text.trim().isNotEmpty
+            ? int.parse(duration.text.trim())
+            : null,
+        "late_fee": late_fee.text.trim().isNotEmpty
+            ? int.parse(late_fee.text.trim())
+            : null,
       };
 
       bool success =
@@ -380,7 +424,8 @@ class _TabBarExampleState extends State<TabBarExample> {
       print('Failed to load surcharge data: $e');
     }
   }
-  Map<String,dynamic>? chargesetting;
+
+  Map<String, dynamic>? chargesetting;
 
   void loadChargeSetting() async {
     Map<String, dynamic>? chargeData = await fetchChargeSetting();
@@ -398,15 +443,16 @@ class _TabBarExampleState extends State<TabBarExample> {
   Future<Map<String, dynamic>?> fetchChargeSetting() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? id = prefs.getString("adminId");
+      String? id = await _getApiId(); // Use helper method to get correct ID
       String? token = prefs.getString('token');
+      String? adminid = prefs.getString("adminId");
 
       if (id == null || token == null) {
-        throw Exception("Missing adminId or token in SharedPreferences");
+        throw Exception("Missing ID or token in SharedPreferences");
       }
 
       final response = await http.get(
-        Uri.parse('$Api_url/api/charge-setting/$id'),
+        Uri.parse('$Api_url/api/charge-setting/$adminid'),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
@@ -438,7 +484,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         "duration": durationmail.text.trim().isNotEmpty
             ? double.parse(durationmail.text.trim())
             : null,
-        "replyToEmail":replyToEmail.text.trim(),
+        "replyToEmail": replyToEmail.text.trim(),
       };
 
       bool success = await mailrepository.updateMailData(data);
@@ -456,18 +502,23 @@ class _TabBarExampleState extends State<TabBarExample> {
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
-  Future<bool> AddChargeSettingData( id,Map<String, dynamic> data) async {
+
+  Future<bool> AddChargeSettingData(id, Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminId = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
     print("$Api_url/api/mail_permission");
     print(data);
     final response = await http.post(
       Uri.parse('$Api_url/api/charge-setting'),
       headers: {
-        "authorization" : "CRM $token",
+        "authorization": "CRM $token",
         'Content-Type': 'application/json',
-        "id":"CRM $id",
+        "id": "CRM $id",
       },
       body: jsonEncode(data),
     );
@@ -478,6 +529,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       return false;
     }
   }
+
   Future<void> Addmail() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -486,9 +538,10 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "replyToEmail":replyToEmail.text.trim(),
-        "duration":
-            durationmail.text.trim().isNotEmpty ? int.parse(durationmail.text.trim()) : null,
+        "replyToEmail": replyToEmail.text.trim(),
+        "duration": durationmail.text.trim().isNotEmpty
+            ? int.parse(durationmail.text.trim())
+            : null,
       };
 
       bool success = await mailrepository.AddMailData(id, data);
@@ -1044,7 +1097,6 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   );
   // }
 
-
   String? _selectedCategory;
   final List<String> _category = [
     'Complaint',
@@ -1060,7 +1112,13 @@ class _TabBarExampleState extends State<TabBarExample> {
     'No',
   ];
   String? _selectedStatus = "New";
-  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Closed'];
+  final List<String> _status = [
+    'New',
+    'In Progress',
+    'On Hold',
+    'Completed',
+    'Closed'
+  ];
   final List<String> _account = [
     'Advertizing',
     'Association fees',
@@ -1100,14 +1158,20 @@ class _TabBarExampleState extends State<TabBarExample> {
       _isLoading = true;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
+
     try {
       final response = await http
           .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
+
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
@@ -1135,8 +1199,12 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   Future<void> _loadTenant(String rentalId, String unitId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
     setState(() {
       _isLoadingtenant = true;
     });
@@ -1179,18 +1247,20 @@ class _TabBarExampleState extends State<TabBarExample> {
   //for vendor
   Future<void> _loadVendor() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminid = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
     setState(() {
       _isLoadingvendors = true;
     });
     try {
       final response = await http
-          .get(Uri.parse('${Api_url}/api/vendor/vendors/$id'), headers: {
+          .get(Uri.parse('${Api_url}/api/vendor/vendors/$adminid'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('${Api_url}/api/vendor/vendors/$id');
+      print('${Api_url}/api/vendor/vendors/$adminid');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -1204,7 +1274,7 @@ class _TabBarExampleState extends State<TabBarExample> {
           _isLoadingvendors = false;
         });
       } else {
-       // throw Exception('Failed to load data');
+        // throw Exception('Failed to load data');
       }
     } catch (e) {
       setState(() {
@@ -1218,19 +1288,24 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   Future<void> _loadStaff() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
+
     setState(() {
       _isLoadingstaff = true;
     });
     try {
       final response = await http.get(
-          Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
+          Uri.parse('${Api_url}/api/staffmember/staff_member/$adminId'),
           headers: {
             "authorization": "CRM $token",
             "id": "CRM $id",
           });
-      print('${Api_url}/api/staffmember/staff_member/$id');
+      print('${Api_url}/api/staffmember/staff_member/$adminId');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -1264,24 +1339,28 @@ class _TabBarExampleState extends State<TabBarExample> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminId = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
     final url = '${Api_url}/api/work-order/work-defaults';
     final headers = {
       "authorization": "CRM $token",
-      "id":"CRM $id",
+      "id": "CRM $id",
       'Content-Type': 'application/json; charset=UTF-8',
-
     };
     final body = json.encode({
-      "admin_id": id,
+      "admin_id": adminId,
       "category": _selectedCategory,
-     "entry_allowed": _selectedEntry == 'yes',
-      "staffmember_id":_selectedstaffId,
-      "vendor_id":vendorId,
+      "entry_allowed": _selectedEntry == 'yes',
+      "staffmember_id": _selectedstaffId,
+      "vendor_id": vendorId,
     });
 
     try {
-      final response = await http.post(Uri.parse(url), headers: headers, body: body);
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: body);
 
       var responseData = json.decode(response.body);
       print('add workorder ${responseData}');
@@ -1289,7 +1368,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (responseData["statusCode"] == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
-
       } else {
         Fluttertoast.showToast(msg: responseData["message"]);
         throw Exception('Failed to add workorder');
@@ -1308,21 +1386,30 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   Future<void> fetchWorkData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminId = prefs.getString("adminId");
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
     try {
       Data workorder = await fetchWorkOrderSetting();
       String? entryAllowedString;
       if (workorder.workDefaults?.entryAllowed != null) {
-        entryAllowedString = workorder.workDefaults!.entryAllowed! ? 'Yes' : 'No';
+        entryAllowedString =
+            workorder.workDefaults!.entryAllowed! ? 'Yes' : 'No';
       }
       if (workorder != null) {
         setState(() {
-          _selectedvendorsId = workorder.workDefaults?.vendorId?.isEmpty ?? true ? null : workorder.workDefaults?.vendorId;
-          _selectedCategory  = workorder.workDefaults?.category ?? "";
-          _selectedstaffId = workorder.workDefaults?.staffmemberId?.isEmpty ?? true ? null : workorder.workDefaults?.staffmemberId;
+          _selectedvendorsId = workorder.workDefaults?.vendorId?.isEmpty ?? true
+              ? null
+              : workorder.workDefaults?.vendorId;
+          _selectedCategory = workorder.workDefaults?.category ?? "";
+          _selectedstaffId =
+              workorder.workDefaults?.staffmemberId?.isEmpty ?? true
+                  ? null
+                  : workorder.workDefaults?.staffmemberId;
           _selectedEntry = entryAllowedString;
-         print('vendor check ${workorder.workDefaults?.vendorId ?? ""}');
-
+          print('vendor check ${workorder.workDefaults?.vendorId ?? ""}');
         });
       }
     } catch (e) {
@@ -1330,20 +1417,22 @@ class _TabBarExampleState extends State<TabBarExample> {
     }
   }
 
-
   //for date formate
   Future<void> updateDateFormat(String format, String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminId = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 $id");
     final url = Uri.parse('${Api_url}/api/themes/date-format');
     final response = await http.post(
       url,
       headers: {
         "authorization": "CRM $token",
-        "id":"CRM $id",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
-
       },
       body: json.encode({
         'format': format,
@@ -1354,18 +1443,17 @@ class _TabBarExampleState extends State<TabBarExample> {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to Date format');
     }
-
   }
+
   TextEditingController _customDateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
-   //dateProvider.loadDateFormat();
+    //dateProvider.loadDateFormat();
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
@@ -1561,9 +1649,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 ? Colors.white
                                                 : blueColor,
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20),
                                       ),
@@ -1611,8 +1699,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
-
-
                             ],
                           ),
                         ),
@@ -1656,9 +1742,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 ? Colors.white
                                                 : blueColor,
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20),
                                       ),
@@ -1670,7 +1756,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 width: 10,
                               ),
                               Expanded(
-
                                 child: InkWell(
                                   onTap: () {
                                     final dateProvider =
@@ -1723,8 +1808,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
-
-
                             ],
                           ),
                         ),
@@ -1733,7 +1816,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                         ),
                         SizedBox(
                           height:
-                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
                           width: MediaQuery.of(context).size.width < 500
                               ? 850
                               : 900,
@@ -1770,9 +1853,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   ? Colors.white
                                                   : blueColor,
                                               fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width <
-                                                  500
+                                                          .size
+                                                          .width <
+                                                      500
                                                   ? 15
                                                   : 20),
                                         ),
@@ -1787,7 +1870,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
-
                                     setState(() {
                                       issurge = false;
                                       isaccounts = false;
@@ -1815,9 +1897,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 ? Colors.white
                                                 : blueColor,
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20),
                                       ),
@@ -1868,7 +1950,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               //   ),
                               // ),
 
-                             // Spacer()
+                              // Spacer()
                             ],
                           ),
                         ),
@@ -2750,25 +2832,29 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       SizedBox(width: 380),
                                   ],
                                 ),
-
                               ],
 
                               Container(
                                 width: double.infinity,
                                 child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(height: 15,),
-                                    Text("Account to receive surcharges",style: TextStyle(
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 15
-                                            : 20,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold),),
+                                    SizedBox(
+                                      height: 15,
+                                    ),
+                                    Text(
+                                      "Account to receive surcharges",
+                                      style: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 15
+                                              : 20,
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                     Container(
                                       height: 42,
                                       decoration: BoxDecoration(
@@ -2777,24 +2863,42 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ),
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton<String?>(
-                                          value: selectedAccount,
-                                          padding: EdgeInsets.symmetric(horizontal: 5),
+                                          value: selectedAccount != null &&
+                                                  accounts.any((account) =>
+                                                      account.accountId ==
+                                                      selectedAccount)
+                                              ? selectedAccount
+                                              : null,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 5),
                                           hint: Text(
                                             "Select Account",
                                             style: TextStyle(fontSize: 14),
                                           ),
-                                          items: accounts.map((Setting4 account) {
+                                          items:
+                                              accounts.map((Setting4 account) {
                                             return DropdownMenuItem<String>(
-                                              value: account.account,
-                                              child: Text(account.account!), // Display account name
+                                              value: account
+                                                  .accountId, // This must be unique (account ID)
+                                              child: Text(account
+                                                  .account!), // This is what the user sees (account name)
                                             );
                                           }).toList(),
                                           onChanged: (String? newValue) {
                                             setState(() {
-                                              selectedAccount = newValue;
+                                              selectedAccount =
+                                                  newValue; // This stores the accountId (unique)
                                             });
-                                            // Handle the selected account
-                                           // print(newValue?.); // Print selected account name
+                                            print(
+                                                "Selected Account ID: $newValue");
+                                            // Find the account name for the selected ID
+                                            String? accountName = accounts
+                                                .firstWhere((account) =>
+                                                    account.accountId ==
+                                                    newValue)
+                                                .account;
+                                            print(
+                                                "Selected Account Name: $accountName");
                                           },
                                         ),
                                       ),
@@ -2933,17 +3037,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               Row(
                                 children: [
-
                                   Text(
                                     "Add Your Reply to Address",
                                     style: TextStyle(
                                         fontSize:
-                                        MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 15
-                                            : 20,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 20,
                                         color: blueColor,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -2954,18 +3055,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               Row(
                                 children: [
-
                                   Expanded(
                                     child: Container(
                                       height: 50,
-                                      width:
-                                      MediaQuery.of(context).size.width *
+                                      width: MediaQuery.of(context).size.width *
                                           .5,
                                       decoration: BoxDecoration(
                                         border: Border.all(color: grey),
                                         color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(5),
+                                        borderRadius: BorderRadius.circular(5),
                                       ),
                                       child: Stack(
                                         children: [
@@ -2978,23 +3076,21 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 });
                                               },
                                               //  controller: password,
-                                              cursorColor: Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              cursorColor:
+                                                  Color.fromRGBO(21, 43, 81, 1),
                                               decoration: InputDecoration(
-                                                 hintText: "Enter email",
+                                                hintText: "Enter email",
                                                 hintStyle: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .037,
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .037,
                                                   color: Color(0xFF8A95A8),
                                                 ),
-
                                                 border: InputBorder.none,
                                                 contentPadding:
-                                                EdgeInsets.all(13),
-
+                                                    EdgeInsets.all(13),
                                               ),
                                             ),
                                           ),
@@ -4082,7 +4178,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
                                                       color: Color.fromRGBO(
-                                                          152, 162, 179, .5)),),
+                                                          152, 162, 179, .5)),
+                                                ),
                                                 // decoration: BoxDecoration(
                                                 //     border: Border.all(color: blueColor)),
                                                 child: Column(
@@ -4103,9 +4200,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                             : blueColor
                                                                 .withOpacity(
                                                                     0.09),
-                                                        border:Border.all(
-                                                      color: Color.fromRGBO(
-                                                          152, 162, 179, .5)),
+                                                        border: Border.all(
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    152,
+                                                                    162,
+                                                                    179,
+                                                                    .5)),
                                                       ),
                                                       // decoration: BoxDecoration(
                                                       //   border: Border.all(color: blueColor),
@@ -4275,7 +4376,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   //color: Colors.blue,
                                                                   child: Column(
                                                                     children: [
-
                                                                       Row(
                                                                         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                         children: [
@@ -4895,8 +4995,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     setState(() {
                                                       dateformateselect =
                                                           value!;
-                                                      customdate = ""; // Clear the custom date format when switched to custom
-                                                      _customDateController.text = "";
+                                                      customdate =
+                                                          ""; // Clear the custom date format when switched to custom
+                                                      _customDateController
+                                                          .text = "";
                                                     });
                                                   })),
                                           Text(
@@ -4914,14 +5016,18 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         height: 50,
                                         width: 150,
                                         child: TextFormField(
-                                         // controller: _customDateController,
+                                          // controller: _customDateController,
                                           onChanged: (value) {
                                             setState(() {
                                               customdate = value;
-                                            //  print("custom date  $customdate");
+                                              //  print("custom date  $customdate");
                                             });
                                           },
-                                          initialValue: customdate != null ? customdate : dateProvider.dateFormat.toUpperCase() ?? "",
+                                          initialValue: customdate != null
+                                              ? customdate
+                                              : dateProvider.dateFormat
+                                                      .toUpperCase() ??
+                                                  "",
                                           enabled: dateformateselect == 3,
                                           decoration: InputDecoration(
                                             contentPadding:
@@ -4942,15 +5048,20 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               GestureDetector(
                                 onTap: () async {
-                                  customdate = customdate != null && customdate!.isNotEmpty
+                                  customdate = customdate != null &&
+                                          customdate!.isNotEmpty
                                       ? customdate
                                       : dateProvider.dateFormat;
 
                                   print("Custom Date: $customdate");
-                                  if (dateformateselect == 3 && customdate != null) {
+                                  if (dateformateselect == 3 &&
+                                      customdate != null) {
                                     // Save the custom date format
-                                    String fixedDate = fixDateFormat(customdate!);
-                                    context.read<DateProvider>().updateDateFormat(fixedDate!, 3);
+                                    String fixedDate =
+                                        fixDateFormat(customdate!);
+                                    context
+                                        .read<DateProvider>()
+                                        .updateDateFormat(fixedDate!, 3);
                                     // Optionally, show a success message
                                     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                     //   content: Text("Date format saved!"),
@@ -4961,18 +5072,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   borderRadius: BorderRadius.circular(5.0),
                                   child: Container(
                                     height:
-                                    MediaQuery.of(context).size.width <
-                                        500
-                                        ? 40
-                                        : 50,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 40
+                                            : 50,
                                     width:
-                                    MediaQuery.of(context).size.width <
-                                        500
-                                        ? 100
-                                        : 150,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 100
+                                            : 150,
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(5.0),
+                                      borderRadius: BorderRadius.circular(5.0),
                                       color: blueColor,
                                       boxShadow: [
                                         BoxShadow(
@@ -4989,9 +5097,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 16
                                                 : 20),
                                       ),
@@ -5080,10 +5188,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       fontWeight: FontWeight.bold,
                                       color: blueColor,
                                       fontSize:
-                                      MediaQuery.of(context).size.width <
-                                          500
-                                          ? 18
-                                          : 25,
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 18
+                                              : 25,
                                     ),
                                   ),
                                   Spacer(),
@@ -5098,10 +5206,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       fontWeight: FontWeight.bold,
                                       color: blueColor,
                                       fontSize:
-                                      MediaQuery.of(context).size.width <
-                                          500
-                                          ? 16
-                                          : 25,
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 16
+                                              : 25,
                                     ),
                                   ),
                                 ],
@@ -5117,7 +5225,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 },
                                 builder: (FormFieldState<String> state) {
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
@@ -5148,7 +5257,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                              BorderRadius.circular(6),
+                                                  BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             elevation: 2,
@@ -5162,19 +5271,20 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                              BorderRadius.circular(6),
+                                                  BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
                                               thickness:
-                                              MaterialStateProperty.all(6),
+                                                  MaterialStateProperty.all(6),
                                               thumbVisibility:
-                                              MaterialStateProperty.all(true),
+                                                  MaterialStateProperty.all(
+                                                      true),
                                             ),
                                           ),
                                           menuItemStyleData:
-                                          const MenuItemStyleData(
+                                              const MenuItemStyleData(
                                             height: 50,
                                             padding: EdgeInsets.only(
                                                 left: 14, right: 14),
@@ -5199,24 +5309,24 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               _showTextField
                                   ? Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10, bottom: 10),
-                                child: buildTextField('Other Category',
-                                    'Enter Other Category', other),
-                              )
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10),
+                                      child: buildTextField('Other Category',
+                                          'Enter Other Category', other),
+                                    )
                                   : Container(),
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Vendor *',
+                              Text(
+                                'Vendor *',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: blueColor,
                                   fontSize:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 16
-                                      : 25,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 16
+                                          : 25,
                                 ),
                               ),
                               SizedBox(
@@ -5236,11 +5346,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     builder: (FormFieldState<String> state) {
                                       return Column(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           DropdownButtonHideUnderline(
-                                            child:
-                                            DropdownButtonFormField2<String>(
+                                            child: DropdownButtonFormField2<
+                                                String>(
                                               decoration: const InputDecoration(
                                                 border: InputBorder.none,
                                               ),
@@ -5253,28 +5363,30 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                       style: TextStyle(
                                                         fontSize: 14,
                                                         fontWeight:
-                                                        FontWeight.w400,
-                                                        color: Color(0xFFb0b6c3),
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xFFb0b6c3),
                                                       ),
                                                       overflow:
-                                                      TextOverflow.ellipsis,
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                               items:
-                                              vendors.keys.map((vender_id) {
+                                                  vendors.keys.map((vender_id) {
                                                 return DropdownMenuItem<String>(
                                                   value: vender_id,
                                                   child: Text(
                                                     vendors[vender_id]!,
                                                     style: const TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       color: Colors.black87,
                                                     ),
                                                     overflow:
-                                                    TextOverflow.ellipsis,
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 );
                                               }).toList(),
@@ -5283,7 +5395,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 setState(() {
                                                   _selectedvendorsId = value;
                                                   _selectedVendors =
-                                                  vendors[value];
+                                                      vendors[value];
                                                   vendorId = value.toString();
                                                   print(
                                                       'Selected Vendors: $_selectedVendors');
@@ -5301,39 +5413,41 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     left: 14, right: 14),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                  BorderRadius.circular(6),
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 elevation: 2,
                                               ),
-                                              iconStyleData: const IconStyleData(
-                                                icon: Icon(Icons.arrow_drop_down),
+                                              iconStyleData:
+                                                  const IconStyleData(
+                                                icon:
+                                                    Icon(Icons.arrow_drop_down),
                                                 iconSize: 24,
                                                 iconEnabledColor:
-                                                Color(0xFFb0b6c3),
+                                                    Color(0xFFb0b6c3),
                                                 iconDisabledColor: Colors.grey,
                                               ),
                                               dropdownStyleData:
-                                              DropdownStyleData(
+                                                  DropdownStyleData(
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                  BorderRadius.circular(6),
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 scrollbarTheme:
-                                                ScrollbarThemeData(
+                                                    ScrollbarThemeData(
                                                   radius:
-                                                  const Radius.circular(6),
+                                                      const Radius.circular(6),
                                                   thickness:
-                                                  MaterialStateProperty.all(
-                                                      6),
+                                                      MaterialStateProperty.all(
+                                                          6),
                                                   thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
+                                                      MaterialStateProperty.all(
+                                                          true),
                                                 ),
                                               ),
                                               menuItemStyleData:
-                                              const MenuItemStyleData(
+                                                  const MenuItemStyleData(
                                                 height: 40,
                                                 padding: EdgeInsets.only(
                                                     left: 14, right: 14),
@@ -5367,15 +5481,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Entery Allowed ',
+                              Text(
+                                'Entery Allowed ',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: blueColor,
                                   fontSize:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 16
-                                      : 25,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 16
+                                          : 25,
                                 ),
                               ),
                               SizedBox(
@@ -5429,27 +5543,28 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       radius: const Radius.circular(6),
                                       thickness: MaterialStateProperty.all(6),
                                       thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                          MaterialStateProperty.all(true),
                                     ),
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
                                     height: 40,
-                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                    padding:
+                                        EdgeInsets.only(left: 14, right: 14),
                                   ),
                                 ),
                               ),
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Assigned To *',
+                              Text(
+                                'Assigned To *',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: blueColor,
                                   fontSize:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 16
-                                      : 25,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 16
+                                          : 25,
                                 ),
                               ),
                               SizedBox(
@@ -5469,11 +5584,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     builder: (FormFieldState<String> state) {
                                       return Column(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           DropdownButtonHideUnderline(
-                                            child:
-                                            DropdownButtonFormField2<String>(
+                                            child: DropdownButtonFormField2<
+                                                String>(
                                               decoration: const InputDecoration(
                                                 border: InputBorder.none,
                                               ),
@@ -5486,11 +5601,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                       style: TextStyle(
                                                         fontSize: 14,
                                                         fontWeight:
-                                                        FontWeight.w400,
-                                                        color: Color(0xFFb0b6c3),
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xFFb0b6c3),
                                                       ),
                                                       overflow:
-                                                      TextOverflow.ellipsis,
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ],
@@ -5503,11 +5619,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     staffs[staffmember_id]!,
                                                     style: const TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       color: Colors.black87,
                                                     ),
                                                     overflow:
-                                                    TextOverflow.ellipsis,
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 );
                                               }).toList(),
@@ -5515,7 +5632,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               onChanged: (value) {
                                                 setState(() {
                                                   _selectedstaffId = value;
-                                                  _selectedStaffs = staffs[value];
+                                                  _selectedStaffs =
+                                                      staffs[value];
                                                   StaffId = value.toString();
                                                   print(
                                                       'Selected Staffs: $_selectedStaffs');
@@ -5531,39 +5649,41 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     left: 14, right: 14),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                  BorderRadius.circular(6),
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 elevation: 2,
                                               ),
-                                              iconStyleData: const IconStyleData(
-                                                icon: Icon(Icons.arrow_drop_down),
+                                              iconStyleData:
+                                                  const IconStyleData(
+                                                icon:
+                                                    Icon(Icons.arrow_drop_down),
                                                 iconSize: 24,
                                                 iconEnabledColor:
-                                                Color(0xFFb0b6c3),
+                                                    Color(0xFFb0b6c3),
                                                 iconDisabledColor: Colors.grey,
                                               ),
                                               dropdownStyleData:
-                                              DropdownStyleData(
+                                                  DropdownStyleData(
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                  BorderRadius.circular(6),
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 scrollbarTheme:
-                                                ScrollbarThemeData(
+                                                    ScrollbarThemeData(
                                                   radius:
-                                                  const Radius.circular(6),
+                                                      const Radius.circular(6),
                                                   thickness:
-                                                  MaterialStateProperty.all(
-                                                      6),
+                                                      MaterialStateProperty.all(
+                                                          6),
                                                   thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
+                                                      MaterialStateProperty.all(
+                                                          true),
                                                 ),
                                               ),
                                               menuItemStyleData:
-                                              const MenuItemStyleData(
+                                                  const MenuItemStyleData(
                                                 height: 40,
                                                 padding: EdgeInsets.only(
                                                     left: 14, right: 14),
@@ -5591,53 +5711,53 @@ class _TabBarExampleState extends State<TabBarExample> {
                               SizedBox(
                                 height: 15,
                               ),
-                                 Row(
-                                   children: [
-                                     Container(
-                                       height: 50,
-                                       width: 100,
-                                       decoration: BoxDecoration(
-                                         borderRadius: BorderRadius.circular(8.0),
-                                       ),
-                                       child: ElevatedButton(
-                                         style: ElevatedButton.styleFrom(
-                                           backgroundColor: blueColor,
-                                           shape: RoundedRectangleBorder(
-                                             borderRadius: BorderRadius.circular(8.0),
-                                           ),
-                                         ),
-                                         onPressed: () async {
-                                           print("hello");
-                                           updateWorkOrderSettings();
-                                         },
-                                         child: isLoading
-                                             ? Center(
-                                           child: SpinKitFadingCircle(
-                                             color: Colors.white,
-                                             size: 55.0,
-                                           ),
-                                         )
-                                             : Text(
-                                           'Save',
-                                           style: TextStyle(
-                                             fontWeight: FontWeight.bold,
-                                             fontSize:
-                                             MediaQuery.of(context).size.width <
-                                                 500
-                                                 ? 16
-                                                 : 25,
-                                           ),
-                                         ),
-                                       ),
-                                     ),
-
-                                   ],
-                                 ),
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: blueColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        print("hello");
+                                        updateWorkOrderSettings();
+                                      },
+                                      child: isLoading
+                                          ? Center(
+                                              child: SpinKitFadingCircle(
+                                                color: Colors.white,
+                                                size: 55.0,
+                                              ),
+                                            )
+                                          : Text(
+                                              'Save',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
+                                                    ? 16
+                                                    : 25,
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                        if(ismanagetemplate)
-                          manage_templates(),
-                        if(ischargesetting)
+                        if (ismanagetemplate) manage_templates(),
+                        if (ischargesetting)
                           Column(
                             children: [
                               SizedBox(
@@ -5651,10 +5771,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
                                       fontSize:
-                                      MediaQuery.of(context).size.width <
-                                          500
-                                          ? 18
-                                          : 25,
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 18
+                                              : 25,
                                     ),
                                   ),
                                 ],
@@ -5663,41 +5783,50 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 height: 10,
                               ),
                               Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        "Configure how charges should be recorded — either as a single bundled charge or as separate individual charges.",
-                                        style: TextStyle(
-                                          color: greyColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize:
-                                          MediaQuery.of(context).size.width <
-                                              500
-                                              ? 14
-                                              : 18,
-                                        ),
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Configure how charges should be recorded — either as a single bundled charge or as separate individual charges.",
+                                      style: TextStyle(
+                                        color: greyColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 14
+                                                : 18,
                                       ),
                                     ),
-                                  ],
+                                  ),
+                                ],
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16.0),
                                 child: Row(
                                   children: [
                                     Switch(
-                                      value: chargesetting == null ? true:chargesetting!["unbundle_charges"],
+                                      value: chargesetting == null
+                                          ? true
+                                          : chargesetting!["unbundle_charges"],
                                       onChanged: (value) {
                                         setState(() {
-                                          if(chargesetting != null)
-                                          chargesetting!["unbundle_charges"] = !chargesetting!["unbundle_charges"];
+                                          if (chargesetting != null)
+                                            chargesetting!["unbundle_charges"] =
+                                                !chargesetting![
+                                                    "unbundle_charges"];
                                           else
-                                            chargesetting ={"unbundle_charges":value};
+                                            chargesetting = {
+                                              "unbundle_charges": value
+                                            };
                                         });
 
                                         print(chargesetting);
                                       },
-                                      activeColor: blueColor, // Color when switch is on
-                                      inactiveThumbColor: Colors.grey, // Color when switch is off
+                                      activeColor:
+                                          blueColor, // Color when switch is on
+                                      inactiveThumbColor: Colors
+                                          .grey, // Color when switch is off
                                     ),
                                     SizedBox(
                                       width: 10,
@@ -5719,34 +5848,34 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 children: [
                                   GestureDetector(
                                     onTap: () async {
-                                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
                                       String? token = prefs.getString('token');
-                                      String?  id = prefs.getString('adminId');
-                                      await AddChargeSettingData(id,{
-                                        "admin_id":id,
-                                        "unbundle_charges":chargesetting!["unbundle_charges"]
-                                      }).then((value){
-                                        setState(() {
-
-                                        });
+                                      String? id = prefs.getString('adminId');
+                                      await AddChargeSettingData(id, {
+                                        "admin_id": id,
+                                        "unbundle_charges":
+                                            chargesetting!["unbundle_charges"]
+                                      }).then((value) {
+                                        setState(() {});
                                       });
                                     },
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(5.0),
                                       child: Container(
                                         height:
-                                        MediaQuery.of(context).size.width <
-                                            500
-                                            ? 35
-                                            : 50,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 35
+                                                : 50,
                                         width:
-                                        MediaQuery.of(context).size.width <
-                                            500
-                                            ? 100
-                                            : 150,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 100
+                                                : 150,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(5.0),
+                                              BorderRadius.circular(5.0),
                                           color: blueColor,
                                           boxShadow: [
                                             BoxShadow(
@@ -5763,9 +5892,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width <
-                                                    500
+                                                            .size
+                                                            .width <
+                                                        500
                                                     ? 16
                                                     : 20),
                                           ),
@@ -5773,32 +5902,34 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 10,),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
                                   GestureDetector(
                                     onTap: () async {
-                                         setState(() {
-                                          chargesetting = null;
-                                          print(" $chargesetting");
-                                         });
+                                      setState(() {
+                                        chargesetting = null;
+                                        print(" $chargesetting");
+                                      });
                                     },
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(5.0),
                                       child: Container(
                                         height:
-                                        MediaQuery.of(context).size.width <
-                                            500
-                                            ? 35
-                                            : 50,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 35
+                                                : 50,
                                         width:
-                                        MediaQuery.of(context).size.width <
-                                            500
-                                            ? 100
-                                            : 150,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 100
+                                                : 150,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(5.0),
+                                              BorderRadius.circular(5.0),
                                           color: Colors.white,
-                                          border: Border.all(color:blueColor),
+                                          border: Border.all(color: blueColor),
                                           boxShadow: [
                                             BoxShadow(
                                               color: Colors.grey,
@@ -5814,9 +5945,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 color: blueColor,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width <
-                                                    500
+                                                            .size
+                                                            .width <
+                                                        500
                                                     ? 16
                                                     : 20),
                                           ),
@@ -5826,7 +5957,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ],
                               ),
-
                             ],
                           )
                       ],
@@ -5862,19 +5992,22 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
     );
   }
+
   String fixDateFormat(String customdate) {
     return customdate.replaceAllMapped(
       RegExp(r'[DY]'),
-          (match) {
+      (match) {
         if (match.group(0) == 'D') {
           return 'd';
         } else if (match.group(0) == 'Y') {
           return 'y';
         }
-        return match.group(0)!; // Return the character unchanged if it doesn't match
+        return match
+            .group(0)!; // Return the character unchanged if it doesn't match
       },
     );
   }
+
   Widget _buildRentDueReminderSwitch() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
