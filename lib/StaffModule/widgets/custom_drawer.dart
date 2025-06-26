@@ -11,17 +11,17 @@ import 'drawer_tiles.dart';
 
 import '../model/staffpermission.dart';
 
-class CustomDrawer extends StatefulWidget {
+class CustomDrawerStaff extends StatefulWidget {
   final String currentpage;
   final bool dropdown;
 
-  CustomDrawer({required this.currentpage, required this.dropdown});
+  CustomDrawerStaff({required this.currentpage, required this.dropdown});
 
   @override
-  _CustomDrawerState createState() => _CustomDrawerState();
+  _CustomDrawerStaffState createState() => _CustomDrawerStaffState();
 }
 
-class _CustomDrawerState extends State<CustomDrawer> {
+class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
   bool isLoading = true;
 
   @override
@@ -42,7 +42,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
 */
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
     StaffPermission? permissions = permissionProvider.permissions;
-
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         topRight: Radius.circular(80),

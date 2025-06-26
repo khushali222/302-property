@@ -81,9 +81,9 @@ import '../../../widgets/custom_drawer.dart';
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       appBar: widget_302.App_Bar(context: context),
+//       appBar: widget_302_Staff.App_Bar(context: context),
 //       backgroundColor: Colors.white,
-//       drawer: CustomDrawer(
+//       drawer: CustomDrawerStaff(
 //         currentpage: "Vendor",
 //         dropdown: true,
 //       ),
@@ -1086,9 +1086,9 @@ class _edit_vendorState extends State<edit_vendor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Vendor",
         dropdown: true,
       ),

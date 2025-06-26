@@ -91,8 +91,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
     'Occupied',
     'Vacant',
   ];
-  String? selectedApplicantStatus = 'All';
-  String? selectedApplicantOcuupied = 'All';
+  String? selectedApplicantStatus;
+  String? selectedApplicantOcuupied;
 
   void sortData(List<Rentals> data) {
     if (sorting1) {
@@ -116,13 +116,17 @@ class _PropertiesTableState extends State<PropertiesTable> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
+      // decoration: BoxDecoration(
+      //   color: blueColor,
+      //   borderRadius: BorderRadius.only(
+      //     topLeft: Radius.circular(13),
+      //     topRight: Radius.circular(13),
+      //   ),
+      // ),
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -135,6 +139,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               ),
             ),
             Expanded(
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -161,9 +166,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     SizedBox(width: 6),
                     width < 400
                         ? Text("Property",
-                            style: TextStyle(color: Colors.white, fontSize: 14))
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14))
                         : Text("Property",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -187,55 +196,56 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 ),
               ),
             ),
+            // Expanded(
+            //   child: InkWell(
+            //     onTap: () {
+            //       setState(() {
+            //         if (sorting2) {
+            //           sorting1 = false;
+            //           sorting2 = sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         } else {
+            //           sorting1 = false;
+            //           sorting2 = !sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         }
+            //         // Sorting logic here
+            //       });
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text("     Type",
+            //             style: TextStyle(color: blueColor, fontWeight: FontWeight.bold , fontSize: 15)),
+            //         SizedBox(width: 2),
+            //         ascending2
+            //             ? Padding(
+            //                 padding: const EdgeInsets.only(top: 7, left: 2),
+            //                 child: FaIcon(
+            //                   FontAwesomeIcons.sortUp,
+            //                   size: 20,
+            //                   color: Colors.white,
+            //                 ),
+            //               )
+            //             : Padding(
+            //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
+            //                 child: FaIcon(
+            //                   FontAwesomeIcons.sortDown,
+            //                   size: 20,
+            //                   color: Colors.white,
+            //                 ),
+            //               ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("     Type",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
-                    SizedBox(width: 2),
-                    ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -261,7 +271,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 child: Row(
                   children: [
                     Text("Accepting\nApplication",
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14)),
                     SizedBox(width: 5),
                     // ascending3
                     //     ? Padding(
@@ -646,6 +659,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   ),
                   // SizedBox(height: 10),
                   SizedBox(height: 10),
+                  // search and type
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 11,
@@ -657,167 +671,72 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
                           SizedBox(width: 22),
-                        Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            // height: 40,
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 45
-                                : 50,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * .52
-                                : MediaQuery.of(context).size.width * .49,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                // border: Border.all(color: Colors.grey),
-                                border: Border.all(color: Color(0xFF8A95A8))),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: TextField(
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 14),
-                                    // onChanged: (value) {
-                                    //   setState(() {
-                                    //     cvverror = false;
-                                    //   });
-                                    // },
-                                    // controller: cvv,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        searchvalue = value;
-                                        if (currentPage != 0) currentPage = 0;
-                                      });
-                                    },
-                                    cursorColor: blueColor,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: "Search here...",
-                                      hintStyle: TextStyle(
-                                          // fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: Material(
+                            elevation: 3,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              // height: 40,
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 45
+                                  : 50,
+                              // width: MediaQuery.of(context).size.width < 500
+                              //     ? MediaQuery.of(context).size.width * .52
+                              //     : MediaQuery.of(context).size.width * .49,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  // border: Border.all(color: Colors.grey),
+                                  border: Border.all(color: Color(0xFF8A95A8))),
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: TextField(
+                                      style: TextStyle(
                                           fontSize: MediaQuery.of(context)
                                                       .size
                                                       .width <
                                                   500
-                                              ? 14
-                                              : 18),
-                                      contentPadding: (EdgeInsets.only(
-                                          left: 5, bottom: 12, top: 5)),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 15),
-                        DropdownButtonHideUnderline(
-                          child: Material(
-                            elevation: 3,
-                            borderRadius: BorderRadius.circular(8),
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: const Row(
-                                children: [
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      'Type',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        // fontWeight: FontWeight.bold,
-                                        color: Color(0xFF8A95A8),
+                                              ? 12
+                                              : 14),
+                                      // onChanged: (value) {
+                                      //   setState(() {
+                                      //     cvverror = false;
+                                      //   });
+                                      // },
+                                      // controller: cvv,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          searchvalue = value;
+                                          if (currentPage != 0) currentPage = 0;
+                                        });
+                                      },
+                                      cursorColor: blueColor,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                            color: Color(0xFF495160),
+                                            fontWeight: FontWeight.bold,
+                                            // fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 14
+                                                : 18),
+                                        contentPadding: (EdgeInsets.only(
+                                            left: 5, bottom: 12, top: 5)),
                                       ),
-                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
                               ),
-                              items: items
-                                  .map(
-                                      (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ))
-                                  .toList(),
-                              value: selectedValue,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedValue = value;
-                                });
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                // height: 40,
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 45
-                                    : 50,
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? MediaQuery.of(context).size.width * .37
-                                    : MediaQuery.of(context).size.width * .4,
-                                padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    // color: Colors.black26,
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                  color: Colors.white,
-                                ),
-                                elevation: 0,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: 200,
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  //color: Colors.redAccent,
-                                ),
-                                offset: const Offset(-20, 0),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility:
-                                      MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 14,
-                      right: 14,
-                    ),
-                    child: Row(
-                      children: [
+                        SizedBox(width: 10),
                         Expanded(
                           child: DropdownButtonHideUnderline(
                             child: Material(
@@ -827,29 +746,54 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 isExpanded: true,
                                 hint: const Row(
                                   children: [
-                                    SizedBox(width: 4),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
                                     Expanded(
                                       child: Text(
-                                        'Applicant Status',
+                                        'Select Type',
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF495160),
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],
                                 ),
+                                items: items
+                                    .map((String item) =>
+                                        DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ))
+                                    .toList(),
+                                value: selectedValue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedValue = value;
+                                  });
+                                },
                                 buttonStyleData: ButtonStyleData(
                                   // height: 40,
-                                  height: MediaQuery.of(context).size.width < 500
-                                      ? 45
-                                      : 50,
+                                  height:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 45
+                                          : 50,
                                   width: MediaQuery.of(context).size.width < 500
                                       ? MediaQuery.of(context).size.width * .37
                                       : MediaQuery.of(context).size.width * .4,
-                                  padding:
-                                  const EdgeInsets.only(left: 14, right: 14),
+                                  padding: const EdgeInsets.only(
+                                      left: 14, right: 14),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
@@ -872,7 +816,91 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     radius: const Radius.circular(40),
                                     thickness: MaterialStateProperty.all(6),
                                     thumbVisibility:
-                                    MaterialStateProperty.all(true),
+                                        MaterialStateProperty.all(true),
+                                  ),
+                                ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  height: 40,
+                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 11,
+                      right: 11,
+                    ),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 22),
+                        Expanded(
+                          child: DropdownButtonHideUnderline(
+                            child: Material(
+                              elevation: 3,
+                              borderRadius: BorderRadius.circular(8),
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                hint: const Row(
+                                  children: [
+                                    SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        'Select Availability',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF495160),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                buttonStyleData: ButtonStyleData(
+                                  // height: 40,
+                                  height:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 45
+                                          : 50,
+                                  width: MediaQuery.of(context).size.width < 500
+                                      ? MediaQuery.of(context).size.width * .37
+                                      : MediaQuery.of(context).size.width * .4,
+                                  padding: const EdgeInsets.only(
+                                      left: 14, right: 14),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      // color: Colors.black26,
+                                      color: Color(0xFF8A95A8),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  elevation: 0,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 200,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    //color: Colors.redAccent,
+                                  ),
+                                  offset: const Offset(-20, 0),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: MaterialStateProperty.all(6),
+                                    thumbVisibility:
+                                        MaterialStateProperty.all(true),
                                   ),
                                 ),
                                 menuItemStyleData: const MenuItemStyleData(
@@ -908,7 +936,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           ),
                         ),
                         SizedBox(
-                          width: 20,
+                          width: 10,
                         ),
                         Expanded(
                           child: DropdownButtonHideUnderline(
@@ -925,7 +953,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         'Select Occupancy',
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF495160),
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -934,14 +963,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 ),
                                 buttonStyleData: ButtonStyleData(
                                   // height: 40,
-                                  height: MediaQuery.of(context).size.width < 500
-                                      ? 45
-                                      : 50,
+                                  height:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 45
+                                          : 50,
                                   width: MediaQuery.of(context).size.width < 500
                                       ? MediaQuery.of(context).size.width * .37
                                       : MediaQuery.of(context).size.width * .4,
-                                  padding:
-                                  const EdgeInsets.only(left: 14, right: 14),
+                                  padding: const EdgeInsets.only(
+                                      left: 14, right: 14),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
@@ -964,7 +994,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     radius: const Radius.circular(40),
                                     thickness: MaterialStateProperty.all(6),
                                     thumbVisibility:
-                                    MaterialStateProperty.all(true),
+                                        MaterialStateProperty.all(true),
                                   ),
                                 ),
                                 menuItemStyleData: const MenuItemStyleData(
@@ -1171,10 +1201,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   _buildHeaders(),
                                   SizedBox(height: 20),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+
+                                    // decoration: BoxDecoration(
+                                    //     border: Border.all(
+                                    //         color: Color.fromRGBO(
+                                    //             152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(color: blueColor)),
                                     child: Column(
@@ -1186,19 +1217,22 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         bool isExpanded =
                                             expandedIndex == index;
                                         Rentals rentals = entry.value;
-
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin:
+                                          EdgeInsets.symmetric(vertical: 6),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
                                           // ),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -1264,6 +1298,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                         ),
                                                       ),
                                                       Expanded(
+                                                        flex: 4,
                                                         child: InkWell(
                                                           onTap: () {
                                                             setState(() {
@@ -1296,23 +1331,23 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .01),
-                                                      Expanded(
-                                                        child: Text(
-                                                          '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertyType} - \n ${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertySubType}  ',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
+                                                      // SizedBox(
+                                                      //     width: MediaQuery.of(
+                                                      //                 context)
+                                                      //             .size
+                                                      //             .width *
+                                                      //         .01),
+                                                      // Expanded(
+                                                      //   child: Text(
+                                                      //     '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertyType} - \n ${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertySubType}  ',
+                                                      //     style: TextStyle(
+                                                      //       color: blueColor,
+                                                      //       fontWeight:
+                                                      //           FontWeight.bold,
+                                                      //       fontSize: 13,
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
                                                       // SizedBox(
                                                       //     width:
                                                       //         MediaQuery.of(context)
@@ -1321,87 +1356,88 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       //             .08),
                                                       rentals!.is_available!
                                                           ? Expanded(
+                                                              flex: 2,
                                                               child: Row(
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 20,
-                                                                ),
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    _publishRentAmount(
-                                                                        rentals
-                                                                            .rentalId!,
-                                                                        "0",
-                                                                        isAvailable:
-                                                                            true);
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    height: 35,
-                                                                    width: 35,
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .all(5),
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                8),
-                                                                        color: Colors
-                                                                            .greenAccent
-                                                                            .shade100),
-                                                                    child: Center(
-                                                                        child: Icon(
-                                                                      Icons
-                                                                          .check_circle,
-                                                                      color: Colors
-                                                                          .green,
-                                                                    )),
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 20,
                                                                   ),
-                                                                ),
-                                                                Spacer()
-                                                              ],
-                                                            ))
-                                                          : Expanded(
-                                                              child: Row(
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 20,
-                                                                ),
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    _showPublishRentDialog(
-                                                                        rentals
-                                                                            .rentalId!);
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    height: 35,
-                                                                    width: 35,
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .all(5),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Colors
-                                                                          .redAccent
-                                                                          .withOpacity(
-                                                                              0.3),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      _publishRentAmount(
+                                                                          rentals
+                                                                              .rentalId!,
+                                                                          "0",
+                                                                          isAvailable:
+                                                                              true);
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      height:
+                                                                          35,
+                                                                      width: 35,
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              5),
+                                                                      decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(
                                                                               8),
+                                                                          color: Colors
+                                                                              .greenAccent
+                                                                              .shade100),
+                                                                      child: Center(
+                                                                          child: Icon(
+                                                                        Icons
+                                                                            .check_circle,
+                                                                        color: Colors
+                                                                            .green,
+                                                                      )),
                                                                     ),
-                                                                    child: Center(
-                                                                        child: Icon(
-                                                                      Icons
-                                                                          .lock_rounded,
-                                                                      color: Colors
-                                                                          .red,
-                                                                    )),
                                                                   ),
-                                                                ),
-                                                                Spacer()
-                                                              ],
-                                                            )),
+                                                                  Spacer()
+                                                                ],
+                                                              ))
+                                                          : Expanded(
+                                                              flex: 2,
+                                                              child: Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 20,
+                                                                  ),
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      _showPublishRentDialog(
+                                                                          rentals
+                                                                              .rentalId!);
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      height:
+                                                                          35,
+                                                                      width: 35,
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              5),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Colors
+                                                                            .redAccent
+                                                                            .withOpacity(0.3),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                      ),
+                                                                      child: Center(
+                                                                          child: Icon(
+                                                                        Icons
+                                                                            .lock_rounded,
+                                                                        color: Colors
+                                                                            .red,
+                                                                      )),
+                                                                    ),
+                                                                  ),
+                                                                  Spacer()
+                                                                ],
+                                                              )),
                                                       // SizedBox(
                                                       //     width:
                                                       //         MediaQuery.of(context)
@@ -1414,10 +1450,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 2.0),
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 2),
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color:
+                                                          Color(0xFFDBE0E5),
+                                                          width: 1),
+                                                    ),
+                                                  ),
                                                   child: SingleChildScrollView(
                                                     child: Column(
                                                       children: [
@@ -1443,21 +1483,25 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 },
                                                                 children: [
                                                                   _buildTableRow(
-                                                                      'Rental Company Name:',
+                                                                      'Rental Company Name :',
                                                                       _getDisplayValue(rentals
                                                                           .rentalOwnerData
                                                                           ?.rentalOwnerCompanyName),
-                                                                      'Locality:',
+                                                                      'City :',
                                                                       _getDisplayValue(
                                                                           rentals
                                                                               .rentalCity)),
 
-                                                                  // _buildTableRow(
-                                                                  //     'Tenants:',
-                                                                  //     _getDisplayValue(
-                                                                  //         rentals.tenantsData!.map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim()).join(", ")),
-                                                                  //     '',
-                                                                  //     ''),
+                                                                  _buildTableRow(
+                                                                    'Property Type :',
+                                                                    '${_getDisplayValue(rentals.propertyTypeData?.propertyType)} - ${_getDisplayValue(rentals.propertyTypeData?.propertySubType)}',
+                                                                    'Tenants :',
+                                                                    rentals.tenantsData != null && rentals.tenantsData!.isNotEmpty
+                                                                        ? rentals.tenantsData!
+                                                                        .map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim())
+                                                                        .join(", ")
+                                                                        : "-----",
+                                                                  ),
                                                                 ],
                                                               ),
                                                             ),
@@ -1474,272 +1518,171 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             // ),
                                                           ],
                                                         ),
-                                                        Row(
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 20,
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                            Expanded(
-                                                              child: Padding(
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        8.0),
-                                                                child: Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Text(
-                                                                      "Tenants",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color:
-                                                                              blueColor),
-                                                                    ),
-                                                                    rentals.tenantsData!.length >
-                                                                            0
-                                                                        ? Text(
-                                                                            rentals.tenantsData!.map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim()).join(", "),
-                                                                            style:
-                                                                                TextStyle(color: grey),
-                                                                          )
-                                                                        : Text(
-                                                                            "-----",
-                                                                            style:
-                                                                                TextStyle(color: grey),
-                                                                          ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
+
                                                         SizedBox(
                                                           height: 10,
                                                         ),
                                                         Row(
-                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .end,
                                                           children: [
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
+                                                            SizedBox(width: 12,),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  _showAlert(
                                                                       context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => Summery_page(
-                                                                                properties: rentals,
-                                                                              )));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color:
-                                                                            blueColor,
-                                                                        width:
-                                                                            1.5),
+                                                                      rentals
+                                                                          .rentalId!);
+                                                                });
+                                                              },
+                                                              child:
+                                                              Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        width:
-                                                                            5,
-                                                                      ),
-                                                                      Image
-                                                                          .asset(
-                                                                        'assets/icons/view.png',
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      // FaIcon(
-                                                                      //   FontAwesomeIcons.trashCan,
-                                                                      //   size: 15,
-                                                                      //   color:blueColor,
-                                                                      // ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            8,
-                                                                      ),
-                                                                      Text(
-                                                                        "View Summery",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                11,
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        8),
+                                                                    color: Colors
+                                                                        .red
+                                                                        .shade50
+                                                                ),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .red,
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
                                                             ),
                                                             SizedBox(
                                                               width: 5,
                                                             ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  var check =
-                                                                      await Navigator
-                                                                          .push(
+                                                            GestureDetector(
+                                                              onTap:
+                                                                  () async {
+                                                                var check =
+                                                                await Navigator
+                                                                    .push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                        Edit_properties(
+                                                                          properties:
+                                                                          rentals,
+                                                                          rentalId:
+                                                                          rentals.rentalId!,
+                                                                        ),
+                                                                  ),
+                                                                );
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(
+                                                                          () {
+                                                                        futureRentalOwners =
+                                                                            PropertiesRepository()
+                                                                                .fetchProperties();
+                                                                      });
+                                                                  // Update State
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        8),
+                                                                    color: Colors
+                                                                        .green
+                                                                        .shade50), // color:Colors.grey[100],
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .edit,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .green,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              Edit_properties(
-                                                                        properties:
-                                                                            rentals,
-                                                                        rentalId:
-                                                                            rentals.rentalId!,
-                                                                      ),
+                                                                        builder: (context) => Summery_page(
+                                                                          properties: rentals,
+                                                                        )));
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration:
+                                                                BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade200,
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      8),
+                                                                ),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .eye,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .black,
                                                                     ),
-                                                                  );
-                                                                  if (check ==
-                                                                      true) {
-                                                                    setState(
-                                                                        () {
-                                                                      futureRentalOwners =
-                                                                          PropertiesRepository()
-                                                                              .fetchProperties();
-                                                                    });
-                                                                    // Update State
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .green,
+                                                                    SizedBox(
                                                                         width:
-                                                                            1.5),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ), // color:Colors.grey[100],
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .edit,
-                                                                        size:
-                                                                            15,
-                                                                        color: Colors
-                                                                            .green,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Edit",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.green,
-                                                                            fontWeight: FontWeight.bold),
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                                        2),
+                                                                  ],
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    _showAlert(
-                                                                        context,
-                                                                        rentals
-                                                                            .rentalId!);
-                                                                  });
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .red,
-                                                                        width:
-                                                                            1.5),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .trashCan,
-                                                                        size:
-                                                                            15,
-                                                                        color: Colors
-                                                                            .red,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Delete",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.red,
-                                                                            fontWeight: FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
+                                                            SizedBox(width: 12,),
                                                           ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 15,
                                                         ),
                                                       ],
                                                     ),
@@ -2303,9 +2246,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.only(left: 65,top: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
                   rightLabel,

@@ -220,9 +220,9 @@ class _Change_passwordState extends State<Change_password> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: widget_302.App_Bar(context: context),
+        appBar: widget_302_Staff.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
+        drawer:CustomDrawerStaff(currentpage: "Dashboard",dropdown: false,),
         body:Form(
           key: _formkey,
           child: Container(

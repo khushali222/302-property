@@ -20,6 +20,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
+import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
 
 class AddDocument extends StatefulWidget {
@@ -61,9 +62,9 @@ class _AddDocumentState extends State<AddDocument> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Rent Roll",
         dropdown: true,
       ),

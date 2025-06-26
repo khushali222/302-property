@@ -44,6 +44,7 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../repository/rentalownerreport.dart';
+import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class PaymentExceptionReports extends StatefulWidget {
@@ -1155,8 +1156,8 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
-      drawer: CustomDrawer(
+      appBar: widget_302_Staff.App_Bar(context: context),
+      drawer: CustomDrawerStaff(
         currentpage: "Report",
         dropdown: false,
       ),

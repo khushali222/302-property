@@ -20,8 +20,11 @@ import 'package:three_zero_two_property/repository/SettingWorkorder.dart';
 
 import 'package:three_zero_two_property/repository/setting.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
+    as widget_302_Staff;
 import 'package:http/http.dart' as http;
 
+import '../../StaffModule/widgets/custom_drawer.dart';
 import '../../constant/constant.dart';
 import '../../model/setting.dart';
 import '../../provider/dateProvider.dart';
@@ -65,6 +68,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool isworkorder = false;
   bool ismanagetemplate = false;
   bool ischargesetting = false;
+  bool _isStaffUser = false;
   ConnectivityResult? _connectivityResult;
   List<Setting4> accounts = [];
   String? selectedAccount;
@@ -72,7 +76,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    _checkUserType();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         print(result);
@@ -1450,6 +1454,21 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   TextEditingController _customDateController = TextEditingController();
+  bool _isStaff = false;
+  bool _isInitialized = false;
+  _checkUserType() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? staffid = prefs.getString("staff_id");
+    String? adminId = prefs.getString('adminId');
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+    print("id of id 1 staff $id");
+
+    setState(() {
+      _isStaff = (staffid != null && staffid.isNotEmpty);
+      _isInitialized = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -1457,12 +1476,33 @@ class _TabBarExampleState extends State<TabBarExample> {
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
-        appBar: widget_302.App_Bar(context: context, isSettingPageActive: true),
+        //appBar: widget_302.App_Bar(context: context, isSettingPageActive: true),
+        appBar: !_isInitialized
+            ? widget_302.App_Bar(context: context, isSettingPageActive: true)
+            : (_isStaff
+                ? widget_302_Staff.widget_302_Staff.App_Bar(context: context)
+                : widget_302.App_Bar(
+                    context: context, isSettingPageActive: true)),
         backgroundColor: Colors.white,
-        drawer: CustomDrawer(
+        drawer:  !_isInitialized
+            ? CustomDrawer(
           currentpage: "Settings",
           dropdown: false,
-        ),
+        )
+            : (_isStaff
+            ? CustomDrawerStaff(
+          currentpage: "Settings",
+          dropdown: true,
+        )
+            : CustomDrawer(
+          currentpage: "Settings",
+          dropdown: false,
+        )),
+        // drawer:
+        // CustomDrawer(
+        //   currentpage: "Settings",
+        //   dropdown: false,
+        // ),
         body: _connectivityResult != ConnectivityResult.none
             ? ListView(children: [
                 SizedBox(

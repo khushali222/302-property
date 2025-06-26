@@ -650,9 +650,9 @@ class _PropertyTableState extends State<PropertyTable> {
     StaffPermission? permissions = permissionProvider.permissions;
 
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Add Property Type",
         dropdown: false,
       ),

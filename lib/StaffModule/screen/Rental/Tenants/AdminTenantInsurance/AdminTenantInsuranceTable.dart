@@ -15,6 +15,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
 
 class AdminTenantInsuranceTable extends StatefulWidget {
@@ -461,9 +462,9 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: key,
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Tenants",
         dropdown: true,
       ),

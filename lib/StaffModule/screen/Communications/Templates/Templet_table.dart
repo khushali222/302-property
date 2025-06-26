@@ -381,9 +381,9 @@ class _TempletTableState extends State<TempletTable> {
     // final dateProvider = Provider.of<DateProvider>(context);
     //final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Templates",
         dropdown: true,
       ),

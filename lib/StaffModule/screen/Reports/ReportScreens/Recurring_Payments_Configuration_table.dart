@@ -154,8 +154,8 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: widget_302.App_Bar(context: context),
-        drawer: CustomDrawer(
+        appBar: widget_302_Staff.App_Bar(context: context),
+        drawer: CustomDrawerStaff(
           currentpage: "Reports",
           dropdown: false,
         ),

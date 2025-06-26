@@ -19,7 +19,7 @@ import '../model/staffpermission.dart';
 import '../repository/staffpermission_provider.dart';
 import '../screen/notifications/notifications.dart';
 
-class widget_302 {
+class widget_302_Staff {
   static App_Bar({
     var suffixIcon,
     var leading,

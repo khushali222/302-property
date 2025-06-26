@@ -548,11 +548,11 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        drawer: CustomDrawer(
+        drawer: CustomDrawerStaff(
           currentpage: 'Dashboard',
           dropdown: false,
         ),
-        appBar: widget_302.App_Bar(context: context),
+        appBar: widget_302_Staff.App_Bar(context: context),
         body: _connectivityResult != ConnectivityResult.none
             ? loading
                 ? Center(

@@ -280,9 +280,9 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Scheduled Payment",
         dropdown: true,
       ),

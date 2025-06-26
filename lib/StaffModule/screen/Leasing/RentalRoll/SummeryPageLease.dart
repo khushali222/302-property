@@ -197,9 +197,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       // appBar: widget302.,
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Rent Roll",
         dropdown: true,
       ),

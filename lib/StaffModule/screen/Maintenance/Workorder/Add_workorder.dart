@@ -698,9 +698,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Work Order",
         dropdown: true,
       ),
@@ -3146,9 +3146,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
     double screenWidth = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
-        appBar: widget_302.App_Bar(context: context),
+        appBar: widget_302_Staff.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: CustomDrawer(
+        drawer: CustomDrawerStaff(
           currentpage: "Work Order",
           dropdown: true,
         ),

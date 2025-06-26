@@ -34,9 +34,9 @@ class _Add_propertyState extends State<Add_property> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Add Property Type",dropdown: false,),
+      drawer:CustomDrawerStaff(currentpage: "Add Property Type",dropdown: false,),
       body:
       SingleChildScrollView(
         child: Column(

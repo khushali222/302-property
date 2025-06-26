@@ -160,11 +160,11 @@ class _notificationsState extends State<notifications> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Dashboard",
         dropdown: false,
       ),
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       body: SingleChildScrollView(
         child: Column(
           children: [

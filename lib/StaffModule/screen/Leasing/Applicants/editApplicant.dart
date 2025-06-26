@@ -172,9 +172,9 @@ class _EditApplicantState extends State<EditApplicant> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Applicants",dropdown: true,),
+      drawer:CustomDrawerStaff(currentpage: "Applicants",dropdown: true,),
       body: SingleChildScrollView(
         child: Form(
           key: _formkey,

@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../../../constant/constant.dart';
+import '../../../widgets/appbar.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -26,9 +27,9 @@ class _PropertiesState extends State<Properties> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "RentalOwner",
         dropdown: false,
       ),

@@ -27,6 +27,7 @@ import '../../../../repository/lease.dart';
 
 
 import '../../../../repository/lease_rental_insurance_repo.dart';
+import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
 
 class EditRentersInsurance extends StatefulWidget {
@@ -302,9 +303,9 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: widget_302.App_Bar(context: context),
+        appBar: widget_302_Staff.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: CustomDrawer(
+        drawer: CustomDrawerStaff(
           currentpage: "Rent Roll",
           dropdown: true,
         ),

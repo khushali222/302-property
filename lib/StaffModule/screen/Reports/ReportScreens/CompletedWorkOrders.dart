@@ -715,8 +715,8 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
-      drawer:CustomDrawer(currentpage: "Reports",dropdown: false,),
+      appBar: widget_302_Staff.App_Bar(context: context),
+      drawer:CustomDrawerStaff(currentpage: "Reports",dropdown: false,),
       body: _connectivityResult !=ConnectivityResult.none ?
       SingleChildScrollView(
         child: Column(

@@ -964,9 +964,9 @@ class _addLease3State extends State<addLease3>
         .selectedApplicant
         .isNotEmpty;
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Rent Roll",dropdown: true,),
+      drawer:CustomDrawerStaff(currentpage: "Rent Roll",dropdown: true,),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

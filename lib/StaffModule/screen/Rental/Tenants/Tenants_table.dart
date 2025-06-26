@@ -663,9 +663,9 @@ class _Tenants_tableState extends State<Tenants_table> {
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
     StaffPermission? permissions = permissionProvider.permissions;
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Tenants",
         dropdown: true,
       ),

@@ -696,9 +696,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
     final dateProvider = Provider.of<DateProvider>(context);
     //final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Send E-mail",
         dropdown: true,
       ),

@@ -30,6 +30,7 @@ import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
+import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class RentersInsurance extends StatefulWidget {
@@ -995,8 +996,8 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: widget_302.App_Bar(context: context),
-      drawer: CustomDrawer(
+      appBar: widget_302_Staff.App_Bar(context: context),
+      drawer: CustomDrawerStaff(
         currentpage: "Reports",
         dropdown: false,
       ),

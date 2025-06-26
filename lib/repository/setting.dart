@@ -78,7 +78,7 @@ class SurchargeRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
+    print("id of id 1  staff $id");
     final response = await http.put(
       Uri.parse('$baseUrl/api/surcharge/surcharge/$surchargeId'),
       headers: {

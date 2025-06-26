@@ -756,9 +756,9 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
     final dateProvider = Provider.of<DateProvider>(context);
     //final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "E-mail Logs",
         dropdown: true,
       ),

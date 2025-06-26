@@ -497,6 +497,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                             title: 'Rental Owner',
                           ),
                         ),
+
                         GestureDetector(
                           onTap: () async {
                             // if (rentalownerCount <= rentalOwnerCountLimit) {
@@ -961,7 +962,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                     rentals
                                                                         .rentalownerId!);
                                                               },
-                                                              child: Container(
+                                                              child:
+                                                              Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
@@ -971,7 +973,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                                 8),
                                                                     color: Colors
                                                                         .red
-                                                                        .shade50),
+                                                                        .shade50
+                                                                ),
                                                                 child: Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment

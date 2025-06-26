@@ -28,6 +28,7 @@ import '../../../../model/LeaseSummary.dart';
 import '../../../../repository/lease.dart';
 
 import '../../../../repository/lease_rental_insurance_repo.dart';
+import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
 
 class ViewRentersDetails extends StatefulWidget {
@@ -60,9 +61,9 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
     final dateProvider = Provider.of<DateProvider>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Rent Roll",
         dropdown: true,
       ),

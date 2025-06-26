@@ -1723,8 +1723,8 @@ class _Summery_pageState extends State<Summery_page>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: widget_302.App_Bar(context: context),
-      drawer: CustomDrawer(
+      appBar: widget_302_Staff.App_Bar(context: context),
+      drawer: CustomDrawerStaff(
         currentpage: "Properties",
         dropdown: true,
       ),

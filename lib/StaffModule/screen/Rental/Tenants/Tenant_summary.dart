@@ -883,9 +883,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       // appBar: widget302.,
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Tenants",
         dropdown: true,
       ),
@@ -3212,9 +3212,9 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       // appBar: widget302.,
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Tenants",
         dropdown: true,
       ),

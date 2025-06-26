@@ -832,9 +832,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
     final codeController = TextEditingController(text: ownerDetails?.postalCode);
     return Scaffold(
 
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Properties",dropdown: true,),
+      drawer:CustomDrawerStaff(currentpage: "Properties",dropdown: true,),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(25.0),

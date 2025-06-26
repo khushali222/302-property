@@ -114,9 +114,9 @@ class _Profile_screenState extends State<Profile_screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(currentpage: 'Profile',dropdown: false,),
+      drawer: CustomDrawerStaff(currentpage: 'Profile',dropdown: false,),
       body: _connectivityResult !=ConnectivityResult.none ?
       _isLoading
           ? Center(

@@ -898,8 +898,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
-      drawer:CustomDrawer(currentpage: "Report",dropdown: false,),
+      appBar: widget_302_Staff.App_Bar(context: context),
+      drawer:CustomDrawerStaff(currentpage: "Report",dropdown: false,),
       body: _connectivityResult !=ConnectivityResult.none ?
       SingleChildScrollView(
         child: Column(

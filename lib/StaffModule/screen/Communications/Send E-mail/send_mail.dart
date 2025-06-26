@@ -533,11 +533,11 @@ class _send_emailState extends State<send_email> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Templates",
         dropdown: true,
       ),
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       body: Padding(
         padding: const EdgeInsets.only(left: 16,right: 16,top: 16),
         child: SingleChildScrollView(
