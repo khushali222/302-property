@@ -1375,6 +1375,7 @@ class _StaffTableState extends State<StaffTable> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
+                                  if (data.length > itemsPerPage)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

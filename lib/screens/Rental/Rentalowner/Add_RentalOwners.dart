@@ -265,7 +265,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         currentpage: "Rental Owner",
         dropdown: true,
       ),
-      body: ListView(
+      body:
+      ListView(
         scrollDirection: Axis.vertical,
         children: [
           Padding(

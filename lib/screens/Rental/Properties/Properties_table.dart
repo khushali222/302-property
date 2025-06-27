@@ -556,7 +556,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
+          ?
+      SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(
@@ -1081,7 +1082,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     SizedBox(height: 25),
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(11.0),
                       child: FutureBuilder<List<Rentals>>(
                         future: futureRentalOwners,
                         builder: (context, snapshot) {
@@ -1199,7 +1200,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 children: [
                                   SizedBox(height: 2),
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
 
                                     // decoration: BoxDecoration(
@@ -1696,6 +1697,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
+                                  if (data.length > itemsPerPage)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

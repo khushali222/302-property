@@ -762,6 +762,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                             expandedIndex == index;
                                         upcoming_renewal Propertytype =
                                             entry.value;
+
                                         print(Propertytype.tenantNames);
                                         String tenants = Propertytype
                                             .tenantNames!
@@ -1200,6 +1201,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
+                                  if (data.length > itemsPerPage)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

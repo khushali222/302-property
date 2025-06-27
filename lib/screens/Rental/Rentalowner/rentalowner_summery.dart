@@ -1005,7 +1005,8 @@ class _RentalownersSummeryForMobileState
             SizedBox(height: 20),
           ],
         ),
-      ):SizedBox(
+      )
+          : SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

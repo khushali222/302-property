@@ -1108,6 +1108,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
+                                  if (data.length > itemsPerPage)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

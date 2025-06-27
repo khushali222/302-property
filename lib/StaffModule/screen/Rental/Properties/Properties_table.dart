@@ -510,7 +510,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
+          ?
+      SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -524,91 +525,88 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: titleBar(
-                      width: permissions!.propertyAdd! ?MediaQuery.of(context).size.width * .65 :MediaQuery.of(context).size.width * .93,
+                      width: MediaQuery.of(context).size.width * .65,
                       title: 'Properties',
                     ),
                   ),
-                  if (permissions!.propertyAdd!)
-                    GestureDetector(
-                      onTap: () async {
-                        // if (rentalCount < propertyCountLimit) {
-                        //   final ownerDetailsProvider =
-                        //       Provider.of<OwnerDetailsProvider>(context,
-                        //           listen: false);
-                        //   ownerDetailsProvider.clearOwners();
-                        //   final result = await Navigator.of(context).push(
-                        //       MaterialPageRoute(
-                        //           builder: (context) => Add_new_property()));
-                        //   if (result == true) {
-                        //     setState(() {
-                        //       futureRentalOwners =
-                        //           PropertiesRepository().fetchProperties();
-                        //       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                        //     });
-                        //     fetchRentaladded();
-                        //   }
-                        // } else {
-                        //   _showAlertforLimit(context);
-                        // }
-                        final ownerDetailsProvider =
-                        Provider.of<OwnerDetailsProvider>(context,
-                            listen: false);
-                        ownerDetailsProvider.clearOwners();
-                        final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Add_new_property()));
-                        if (result == true) {
-                          setState(() {
-                            futureRentalOwners =
-                                PropertiesRepository().fetchProperties();
-                            //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                          });
-                          fetchRentaladded();
-                        }
-                      },
-                      child: Container(
-                        //  height: 45,
-                        height: (MediaQuery.of(context).size.width < 500)
-                            ? 50
-                            : 45,
-                        width: (MediaQuery.of(context).size.width < 500)
-                            ? MediaQuery.of(context).size.width * 0.25
-                            : MediaQuery.of(context).size.width * 0.25,
-                        decoration: BoxDecoration(
-                          color: blueColor,
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0),
-                              blurRadius: 6.0,
+                  GestureDetector(
+                    onTap: () async {
+                      // if (rentalCount < propertyCountLimit) {
+                      //   final ownerDetailsProvider =
+                      //       Provider.of<OwnerDetailsProvider>(context,
+                      //           listen: false);
+                      //   ownerDetailsProvider.clearOwners();
+                      //   final result = await Navigator.of(context).push(
+                      //       MaterialPageRoute(
+                      //           builder: (context) => Add_new_property()));
+                      //   if (result == true) {
+                      //     setState(() {
+                      //       futureRentalOwners =
+                      //           PropertiesRepository().fetchProperties();
+                      //       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                      //     });
+                      //     fetchRentaladded();
+                      //   }
+                      // } else {
+                      //   _showAlertforLimit(context);
+                      // }
+                      final ownerDetailsProvider =
+                      Provider.of<OwnerDetailsProvider>(context,
+                          listen: false);
+                      ownerDetailsProvider.clearOwners();
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => Add_new_property()));
+                      if (result == true) {
+                        setState(() {
+                          futureRentalOwners =
+                              PropertiesRepository().fetchProperties();
+                          //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                        });
+                      }
+                    },
+                    child: Container(
+                      //  height: 45,
+                      height: (MediaQuery.of(context).size.width < 500)
+                          ? 50
+                          : 45,
+                      width: (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.25
+                          : MediaQuery.of(context).size.width * 0.25,
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 1.0),
+                            blurRadius: 6.0,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "+ Add",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.of(context).size.width <
+                                    500
+                                    ? 18
+                                    : 20,
+                              ),
                             ),
                           ],
                         ),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "+ Add",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 18
-                                      : 20,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
                     ),
+                  ),
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width:permissions!.propertyAdd! ? 6 :0),
+                    SizedBox(width: 6),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 22),
                 ],
@@ -616,6 +614,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
             ),
             // SizedBox(height: 10),
             SizedBox(height: 10),
+            // search and type
             Padding(
               padding: const EdgeInsets.only(
                 left: 11,
@@ -627,169 +626,72 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 22),
-                  Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      // height: 40,
-                      height: MediaQuery.of(context).size.width < 500
-                          ? 45
-                          : 50,
-                      width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .52
-                          : MediaQuery.of(context).size.width * .49,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          // border: Border.all(color: Colors.grey),
-                          border: Border.all(color: Color(0xFF8A95A8))),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: TextField(
-                              style: TextStyle(
-                                  fontSize:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 12
-                                      : 14),
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     cvverror = false;
-                              //   });
-                              // },
-                              // controller: cvv,
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                  if (currentPage != 0) currentPage = 0;
-                                });
-                              },
-                              cursorColor: blueColor,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(
-                                  // fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        // height: 40,
+                        height: MediaQuery.of(context).size.width < 500
+                            ? 45
+                            : 50,
+                        // width: MediaQuery.of(context).size.width < 500
+                        //     ? MediaQuery.of(context).size.width * .52
+                        //     : MediaQuery.of(context).size.width * .49,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            // border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Color(0xFF8A95A8))),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: TextField(
+                                style: TextStyle(
                                     fontSize: MediaQuery.of(context)
                                         .size
                                         .width <
                                         500
-                                        ? 14
-                                        : 18),
-                                contentPadding: (EdgeInsets.only(
-                                    left: 5, bottom: 12, top: 5)),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 15),
-                  DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Row(
-                          children: [
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Type',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
+                                        ? 12
+                                        : 14),
+                                // onChanged: (value) {
+                                //   setState(() {
+                                //     cvverror = false;
+                                //   });
+                                // },
+                                // controller: cvv,
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchvalue = value;
+                                    if (currentPage != 0) currentPage = 0;
+                                  });
+                                },
+                                cursorColor: blueColor,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle: TextStyle(
+                                      color: Color(0xFF495160),
+                                      fontWeight: FontWeight.bold,
+                                      // fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 14
+                                          : 18),
+                                  contentPadding: (EdgeInsets.only(
+                                      left: 5, bottom: 12, top: 5)),
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
                         ),
-                        items: items
-                            .map(
-                                (String item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ))
-                            .toList(),
-                        value: selectedValue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedValue = value;
-                          });
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          // height: 40,
-                          height: MediaQuery.of(context).size.width < 500
-                              ? 45
-                              : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .37
-                              : MediaQuery.of(context).size.width * .4,
-                          padding:
-                          const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              // color: Colors.black26,
-                              color: Color(0xFF8A95A8),
-                            ),
-                            color: Colors.white,
-                          ),
-                          elevation: 0,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            //color: Colors.redAccent,
-                          ),
-                          offset: const Offset(-20, 0),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility:
-                            MaterialStateProperty.all(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 14, right: 14),
-                        ),
                       ),
                     ),
                   ),
-
-
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 14,
-                right: 14,
-              ),
-              child: Row(
-                children: [
+                  SizedBox(width: 10),
                   Expanded(
                     child: DropdownButtonHideUnderline(
                       child: Material(
@@ -797,17 +699,56 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         borderRadius: BorderRadius.circular(8),
                         child: DropdownButton2<String>(
                           isExpanded: true,
-                          hint: const Text('Applicant Status'),
+                          hint: const Row(
+                            children: [
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Select Type',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF495160),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          items: items
+                              .map((String item) =>
+                              DropdownMenuItem<String>(
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ))
+                              .toList(),
+                          value: selectedValue,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedValue = value;
+                            });
+                          },
                           buttonStyleData: ButtonStyleData(
                             // height: 40,
-                            height: MediaQuery.of(context).size.width < 500
+                            height:
+                            MediaQuery.of(context).size.width < 500
                                 ? 45
                                 : 50,
                             width: MediaQuery.of(context).size.width < 500
                                 ? MediaQuery.of(context).size.width * .37
                                 : MediaQuery.of(context).size.width * .4,
-                            padding:
-                            const EdgeInsets.only(left: 14, right: 14),
+                            padding: const EdgeInsets.only(
+                                left: 14, right: 14),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
@@ -818,9 +759,112 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             ),
                             elevation: 0,
                           ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 200,
+                            width: 200,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              //color: Colors.redAccent,
+                            ),
+                            offset: const Offset(-20, 0),
+                            scrollbarTheme: ScrollbarThemeData(
+                              radius: const Radius.circular(40),
+                              thickness: MaterialStateProperty.all(6),
+                              thumbVisibility:
+                              MaterialStateProperty.all(true),
+                            ),
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                            padding: EdgeInsets.only(left: 14, right: 14),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 11,
+                right: 11,
+              ),
+              child: Row(
+                children: [
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 2),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 22),
+                  Expanded(
+                    child: DropdownButtonHideUnderline(
+                      child: Material(
+                        elevation: 3,
+                        borderRadius: BorderRadius.circular(8),
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: const Row(
+                            children: [
+                              SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  'Select Availability',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF495160),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          buttonStyleData: ButtonStyleData(
+                            // height: 40,
+                            height:
+                            MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .37
+                                : MediaQuery.of(context).size.width * .4,
+                            padding: const EdgeInsets.only(
+                                left: 14, right: 14),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                // color: Colors.black26,
+                                color: Color(0xFF8A95A8),
+                              ),
+                              color: Colors.white,
+                            ),
+                            elevation: 0,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 200,
+                            width: 200,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              //color: Colors.redAccent,
+                            ),
+                            offset: const Offset(-20, 0),
+                            scrollbarTheme: ScrollbarThemeData(
+                              radius: const Radius.circular(40),
+                              thickness: MaterialStateProperty.all(6),
+                              thumbVisibility:
+                              MaterialStateProperty.all(true),
+                            ),
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                            padding: EdgeInsets.only(left: 14, right: 14),
+                          ),
                           items: applicantStatusOptions
-                              .map(
-                                  (String item) => DropdownMenuItem<String>(
+                              .map((String item) =>
+                              DropdownMenuItem<String>(
                                 value: item,
                                 child: Text(
                                   item,
@@ -837,15 +881,17 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           onChanged: (value) {
                             setState(() {
                               selectedApplicantStatus = value;
+                              if (currentPage != 0)
+                                currentPage =
+                                0; // Reset to first page when filter changes
                             });
                           },
-                          // You can copy the style code from the Type dropdown
                         ),
                       ),
                     ),
                   ),
                   SizedBox(
-                    width: 20,
+                    width: 10,
                   ),
                   Expanded(
                     child: DropdownButtonHideUnderline(
@@ -862,7 +908,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   'Select Occupancy',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Color(0xFF8A95A8),
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF495160),
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -870,16 +917,20 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             ],
                           ),
                           buttonStyleData: ButtonStyleData(
+                            // height: 40,
                             height:
                             MediaQuery.of(context).size.width < 500
                                 ? 45
                                 : 50,
-                            width: double.infinity,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .37
+                                : MediaQuery.of(context).size.width * .4,
                             padding: const EdgeInsets.only(
                                 left: 14, right: 14),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
+                                // color: Colors.black26,
                                 color: Color(0xFF8A95A8),
                               ),
                               color: Colors.white,
@@ -888,13 +939,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           ),
                           dropdownStyleData: DropdownStyleData(
                             maxHeight: 200,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * 0.8
-                                : 300,
+                            width: 200,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
+                              //color: Colors.redAccent,
                             ),
-                            offset: const Offset(0, 0),
+                            offset: const Offset(-20, 0),
                             scrollbarTheme: ScrollbarThemeData(
                               radius: const Radius.circular(40),
                               thickness: MaterialStateProperty.all(6),
@@ -934,7 +984,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -987,7 +1036,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(11.0),
                 child: FutureBuilder<List<Rentals>>(
                   future: futureRentalOwners,
                   builder: (context, snapshot) {
@@ -1076,6 +1125,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         properties.is_available == false)
                             .toList();
                       }
+
+                      // Filter by occupancy status
                       if (selectedApplicantOcuupied == 'Occupied') {
                         data = data
                             .where((properties) =>
@@ -1092,6 +1143,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       sortData(data);
                       final totalPages =
                       (data.length / itemsPerPage).ceil();
+
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
@@ -1102,12 +1154,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           children: [
                             SizedBox(height: 2),
                             _buildHeaders(),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Color.fromRGBO(
-                                          152, 162, 179, .5))),
+
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(
+                              //         color: Color.fromRGBO(
+                              //             152, 162, 179, .5))),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -1119,19 +1172,22 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   bool isExpanded =
                                       expandedIndex == index;
                                   Rentals rentals = entry.value;
-
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
+                                    margin:
+                                    EdgeInsets.symmetric(vertical: 6),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
                                     // ),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
                                       border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
+                                          color: Color(0xFFDBE0E5)),
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -1197,6 +1253,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  flex: 4,
                                                   child: InkWell(
                                                     onTap: () {
                                                       setState(() {
@@ -1229,23 +1286,23 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .01),
-                                                Expanded(
-                                                  child: Text(
-                                                    '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertyType} - \n ${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertySubType}  ',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
+                                                // SizedBox(
+                                                //     width: MediaQuery.of(
+                                                //                 context)
+                                                //             .size
+                                                //             .width *
+                                                //         .01),
+                                                // Expanded(
+                                                //   child: Text(
+                                                //     '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertyType} - \n ${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertySubType}  ',
+                                                //     style: TextStyle(
+                                                //       color: blueColor,
+                                                //       fontWeight:
+                                                //           FontWeight.bold,
+                                                //       fontSize: 13,
+                                                //     ),
+                                                //   ),
+                                                // ),
                                                 // SizedBox(
                                                 //     width:
                                                 //         MediaQuery.of(context)
@@ -1254,6 +1311,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                 //             .08),
                                                 rentals!.is_available!
                                                     ? Expanded(
+                                                    flex: 2,
                                                     child: Row(
                                                       children: [
                                                         SizedBox(
@@ -1270,14 +1328,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           },
                                                           child:
                                                           Container(
-                                                            height: 35,
+                                                            height:
+                                                            35,
                                                             width: 35,
                                                             padding:
-                                                            EdgeInsets
-                                                                .all(5),
+                                                            EdgeInsets.all(
+                                                                5),
                                                             decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
+                                                                borderRadius: BorderRadius.circular(
                                                                     8),
                                                                 color: Colors
                                                                     .greenAccent
@@ -1295,6 +1353,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       ],
                                                     ))
                                                     : Expanded(
+                                                    flex: 2,
                                                     child: Row(
                                                       children: [
                                                         SizedBox(
@@ -1308,20 +1367,19 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           },
                                                           child:
                                                           Container(
-                                                            height: 35,
+                                                            height:
+                                                            35,
                                                             width: 35,
                                                             padding:
-                                                            EdgeInsets
-                                                                .all(5),
+                                                            EdgeInsets.all(
+                                                                5),
                                                             decoration:
                                                             BoxDecoration(
                                                               color: Colors
                                                                   .redAccent
-                                                                  .withOpacity(
-                                                                  0.3),
+                                                                  .withOpacity(0.3),
                                                               borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8),
+                                                              BorderRadius.circular(8),
                                                             ),
                                                             child: Center(
                                                                 child: Icon(
@@ -1347,10 +1405,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 2.0),
-                                            margin: EdgeInsets.only(
-                                                bottom: 2),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                top: BorderSide(
+                                                    color:
+                                                    Color(0xFFDBE0E5),
+                                                    width: 1),
+                                              ),
+                                            ),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1376,21 +1438,25 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           },
                                                           children: [
                                                             _buildTableRow(
-                                                                'Rental Company Name:',
+                                                                'Rental Company Name :',
                                                                 _getDisplayValue(rentals
                                                                     .rentalOwnerData
                                                                     ?.rentalOwnerCompanyName),
-                                                                'Locality:',
+                                                                'City :',
                                                                 _getDisplayValue(
                                                                     rentals
                                                                         .rentalCity)),
 
-                                                            // _buildTableRow(
-                                                            //     'Tenants:',
-                                                            //     _getDisplayValue(
-                                                            //         rentals.tenantsData!.map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim()).join(", ")),
-                                                            //     '',
-                                                            //     ''),
+                                                            _buildTableRow(
+                                                              'Property Type :',
+                                                              '${_getDisplayValue(rentals.propertyTypeData?.propertyType)} - ${_getDisplayValue(rentals.propertyTypeData?.propertySubType)}',
+                                                              'Tenants :',
+                                                              rentals.tenantsData != null && rentals.tenantsData!.isNotEmpty
+                                                                  ? rentals.tenantsData!
+                                                                  .map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim())
+                                                                  .join(", ")
+                                                                  : "-----",
+                                                            ),
                                                           ],
                                                         ),
                                                       ),
@@ -1407,253 +1473,171 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       // ),
                                                     ],
                                                   ),
+
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
                                                   Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .end,
                                                     children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                            .sortUp
-                                                            : FontAwesomeIcons
-                                                            .sortDown,
-                                                        size: 20,
-                                                        color: Colors
-                                                            .transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Padding(
-                                                          padding: const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal:
-                                                              8.0),
-                                                          child: Column(
+                                                      SizedBox(width: 12,),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            _showAlert(
+                                                                context,
+                                                                rentals
+                                                                    .rentalId!);
+                                                          });
+                                                        },
+                                                        child:
+                                                        Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
+                                                              color: Colors
+                                                                  .red
+                                                                  .shade50
+                                                          ),
+                                                          child: Row(
                                                             mainAxisAlignment:
                                                             MainAxisAlignment
-                                                                .start,
+                                                                .center,
                                                             crossAxisAlignment:
                                                             CrossAxisAlignment
-                                                                .start,
+                                                                .center,
                                                             children: [
-                                                              Text(
-                                                                "Tenants",
-                                                                style: TextStyle(
-                                                                    fontWeight: FontWeight
-                                                                        .bold,
-                                                                    color:
-                                                                    blueColor),
-                                                              ),
-                                                              rentals.tenantsData!.length >
-                                                                  0
-                                                                  ? Text(
-                                                                rentals.tenantsData!.map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim()).join(", "),
-                                                                style:
-                                                                TextStyle(color: grey),
-                                                              )
-                                                                  : Text(
-                                                                "-----",
-                                                                style:
-                                                                TextStyle(color: grey),
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .trashCan,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .red,
                                                               ),
                                                             ],
                                                           ),
                                                         ),
                                                       ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap:
+                                                            () async {
+                                                          var check =
+                                                          await Navigator
+                                                              .push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                  Edit_properties(
+                                                                    properties:
+                                                                    rentals,
+                                                                    rentalId:
+                                                                    rentals.rentalId!,
+                                                                  ),
+                                                            ),
+                                                          );
+                                                          if (check ==
+                                                              true) {
+                                                            setState(
+                                                                    () {
+                                                                  futureRentalOwners =
+                                                                      PropertiesRepository()
+                                                                          .fetchProperties();
+                                                                });
+                                                            // Update State
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade50), // color:Colors.grey[100],
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .edit,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .green,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) => Summery_page(
+                                                                    properties: rentals,
+                                                                  )));
+                                                        },
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: Colors
+                                                                .grey
+                                                                .shade200,
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                8),
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .eye,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                              SizedBox(
+                                                                  width:
+                                                                  2),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 12,),
                                                     ],
                                                   ),
                                                   SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child:
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) => Summery_page(
-                                                                      properties: rentals,
-                                                                    )));
-                                                          },
-                                                          child:
-                                                          Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                              children: [
-                                                                SizedBox(
-                                                                  width:
-                                                                  5,
-                                                                ),
-                                                                Image
-                                                                    .asset(
-                                                                  'assets/icons/view.png',
-                                                                  color:
-                                                                  blueColor,
-                                                                ),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                SizedBox(
-                                                                  width:
-                                                                  8,
-                                                                ),
-                                                                Text(
-                                                                  "View Summery",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                      11,
-                                                                      color:
-                                                                      blueColor,
-                                                                      fontWeight:
-                                                                      FontWeight.bold),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child:
-                                                        GestureDetector(
-                                                          onTap:
-                                                              () async {
-                                                            var check =
-                                                            await Navigator
-                                                                .push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                    Edit_properties(
-                                                                      properties:
-                                                                      rentals,
-                                                                      rentalId:
-                                                                      rentals.rentalId!,
-                                                                    ),
-                                                              ),
-                                                            );
-                                                            if (check ==
-                                                                true) {
-                                                              setState(
-                                                                      () {
-                                                                    futureRentalOwners =
-                                                                        PropertiesRepository()
-                                                                            .fetchProperties();
-                                                                  });
-                                                              // Update State
-                                                            }
-                                                          },
-                                                          child:
-                                                          Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]), // color:Colors.grey[100],
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .edit,
-                                                                  size:
-                                                                  15,
-                                                                  color:
-                                                                  blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width:
-                                                                  10,
-                                                                ),
-                                                                Text(
-                                                                  "Edit",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      blueColor,
-                                                                      fontWeight:
-                                                                      FontWeight.bold),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child:
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              _showAlert(
-                                                                  context,
-                                                                  rentals
-                                                                      .rentalId!);
-                                                            });
-                                                          },
-                                                          child:
-                                                          Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .trashCan,
-                                                                  size:
-                                                                  15,
-                                                                  color:
-                                                                  blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width:
-                                                                  10,
-                                                                ),
-                                                                Text(
-                                                                  "Delete",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      blueColor,
-                                                                      fontWeight:
-                                                                      FontWeight.bold),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                    height: 15,
                                                   ),
                                                 ],
                                               ),
@@ -1667,123 +1651,124 @@ class _PropertiesTableState extends State<PropertiesTable> {
                               ),
                             ),
                             SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.grey),
-                                        ),
-                                        child:
-                                        DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<
-                                                  int>(
-                                                value: value,
-                                                child: Text(
-                                                    value.toString()),
-                                              );
-                                            }).toList(),
-                                            // onChanged: (newValue) {
-                                            //   setState(() {
-                                            //     itemsPerPage = newValue!;
-                                            //     currentPage =
-                                            //         0; // Reset to first page when items per page change
-                                            //   });
-                                            // },
-                                            onChanged: data.length >
-                                                itemsPerPageOptions
-                                                    .first // Condition to check if dropdown should be enabled
-                                                ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage =
-                                                newValue!;
-                                                currentPage =
-                                                0; // Reset to first page when items per page change
-                                              });
-                                            }
-                                                : null,
+                            if (data.length > itemsPerPage)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Text('Rows per page:'),
+                                      SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey),
+                                          ),
+                                          child:
+                                          DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<
+                                                    int>(
+                                                  value: value,
+                                                  child: Text(
+                                                      value.toString()),
+                                                );
+                                              }).toList(),
+                                              // onChanged: (newValue) {
+                                              //   setState(() {
+                                              //     itemsPerPage = newValue!;
+                                              //     currentPage =
+                                              //         0; // Reset to first page when items per page change
+                                              //   });
+                                              // },
+                                              onChanged: data.length >
+                                                  itemsPerPageOptions
+                                                      .first // Condition to check if dropdown should be enabled
+                                                  ? (newValue) {
+                                                setState(() {
+                                                  itemsPerPage =
+                                                  newValue!;
+                                                  currentPage =
+                                                  0; // Reset to first page when items per page change
+                                                });
+                                              }
+                                                  : null,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons
-                                            .circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : blueColor,
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons
+                                              .circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                          setState(() {
+                                            currentPage--;
+                                          });
+                                        },
                                       ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
-                                    ),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_back),
-                                    //   onPressed: currentPage > 0
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage--;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_forward),
-                                    //   onPressed: currentPage < totalPages - 1
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage++;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons
-                                            .circleChevronRight,
-                                        color:
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_back),
+                                      //   onPressed: currentPage > 0
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage--;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_forward),
+                                      //   onPressed: currentPage < totalPages - 1
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage++;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons
+                                              .circleChevronRight,
+                                          color:
+                                          currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed:
                                         currentPage < totalPages - 1
-                                            ? blueColor
-                                            : Colors.grey,
+                                            ? () {
+                                          setState(() {
+                                            currentPage++;
+                                          });
+                                        }
+                                            : null,
                                       ),
-                                      onPressed:
-                                      currentPage < totalPages - 1
-                                          ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                           ],
                         ),
                       );
@@ -1832,6 +1817,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   } else {
                     List<Rentals>? filteredData = [];
                     _tableData = snapshot.data!;
+                    // Filter by property type
                     if (selectedValue != null && selectedValue != "All") {
                       _tableData = _tableData
                           .where((property) =>
@@ -1839,13 +1825,39 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           selectedValue)
                           .toList();
                     }
+
+                    // Filter by search value
                     if (searchvalue.isNotEmpty) {
                       _tableData = _tableData
-                          .where((property) => property.rentalAddress!
+                          .where((property) =>
+                      property.rentalAddress!
                           .toLowerCase()
-                          .contains(searchvalue.toLowerCase()))
+                          .contains(searchvalue.toLowerCase()) ||
+                          property.propertyTypeData!.propertyType!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()) ||
+                          property.propertyTypeData!.propertySubType!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()) ||
+                          property.rentalOwnerData!.rentalOwnerName!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()) ||
+                          property.rentalOwnerData!
+                              .rentalOwnerPhoneNumber!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()) ||
+                          property.rentalOwnerData!
+                              .rentalOwnerCompanyName!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()) ||
+                          property.rentalOwnerData!
+                              .rentalOwnerPrimaryEmail!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()))
                           .toList();
                     }
+
+                    // Filter by applicant status
                     if (selectedApplicantStatus ==
                         'Accepting Applicant') {
                       _tableData = _tableData
@@ -1857,6 +1869,21 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       _tableData = _tableData
                           .where((property) =>
                       property.is_available == false)
+                          .toList();
+                    }
+
+                    // Filter by occupancy status
+                    if (selectedApplicantOcuupied == 'Occupied') {
+                      _tableData = _tableData
+                          .where((property) =>
+                      property.tenantsData != null &&
+                          property.tenantsData!.length > 0)
+                          .toList();
+                    } else if (selectedApplicantOcuupied == 'Vacant') {
+                      _tableData = _tableData
+                          .where((property) =>
+                      property.tenantsData == null ||
+                          property.tenantsData!.length == 0)
                           .toList();
                     }
                     totalrecords = _tableData.length;

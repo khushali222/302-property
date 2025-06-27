@@ -270,17 +270,18 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         currentpage: "Rental Owner",
         dropdown: true,
       ),
-      body: ListView(
+      body:
+      ListView(
         scrollDirection: Axis.vertical,
         children: [
           Padding(
-            padding: const EdgeInsets.all(25.0),
+            padding: const EdgeInsets.all(15.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(5.0),
               child: Container(
                 height: 50.0,
                 padding: EdgeInsets.only(top: 9, left: 10),
-                width: MediaQuery.of(context).size.width * .91,
+                width: MediaQuery.of(context).size.width * .99,
                 margin: const EdgeInsets.only(bottom: 6.0),
                 //Same as `blurRadius` i guess
                 decoration: BoxDecoration(
@@ -306,19 +307,19 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
           ),
           //Personal information
           Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             child: Material(
-              elevation: 6,
+              //  elevation: 6,
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: blueColor),
+                  border: Border.all(color: Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 25, right: 25, top: 20, bottom: 30),
+                      left: 10, right: 10, top: 10, bottom: 20),
                   child: Column(
                     children: [
                       Row(
@@ -329,7 +330,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Personal information",
                             style: TextStyle(
-                                color: blueColor,
+                                color: Color(0xFF101828),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -343,229 +344,243 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         height: 10,
                       ),
                       //first name
-                      Row(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Name *",
-                            style: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            nameerror = false;
-                                          });
-                                        },
-                                        controller: name,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter first name",
-                                          hintStyle: TextStyle(
+                          Row(
+                            children: [
+                              SizedBox(width: 2),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Name *",
+                                        style: TextStyle(
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                 .size
                                                 .width <
                                                 500
                                                 ? 15
-                                                : 19,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: nameerror
-                                              ? OutlineInputBorder(
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          // width: MediaQuery.of(context)
+                                          //         .size
+                                          //         .width *
+                                          //     .6,
+                                          decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width <
-                                                  500
-                                                  ? 14
-                                                  : 11),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      nameerror = false;
+                                                    });
+                                                  },
+                                                  controller: name,
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    "Enter first name",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 19,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: nameerror
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding: EdgeInsets
+                                                        .all(MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 14
+                                                        : 11),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      nameerror
-                          ? Row(
-                        children: [
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            namemessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          Spacer(),
-
-                        ],
-                      )
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      //company name
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Company Name *",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    ],
                                   ),
                                 ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            comnameerror = false;
-                                          });
-                                        },
-                                        controller: comname,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter company name",
-                                          hintStyle: TextStyle(
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Company Name",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                 .size
                                                 .width <
                                                 500
                                                 ? 15
-                                                : 19,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: comnameerror
-                                              ? OutlineInputBorder(
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          // width: MediaQuery.of(context)
+                                          //         .size
+                                          //         .width *
+                                          //     .6,
+                                          decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width <
-                                                  500
-                                                  ? 14
-                                                  : 11),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      comnameerror = false;
+                                                    });
+                                                  },
+                                                  controller: comname,
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    "Enter company name",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 19,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: comnameerror
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding: EdgeInsets
+                                                        .all(MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 14
+                                                        : 11),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                          SizedBox(width: 2),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: nameerror
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      namemessage,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: comnameerror
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      comnamemessage,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      comnameerror
-                          ? Row(
-                        children: [
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            comnamemessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          Spacer(),
-
-                        ],
-                      )
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      //birth date
                     ],
                   ),
                 ),
@@ -573,23 +588,23 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 15,
           ),
           //merchent id
           Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             child: Material(
-              elevation: 6,
+              // elevation: 6,
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: blueColor),
+                  border: Border.all(color: Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 25, right: 25, top: 20, bottom: 30),
+                      left: 10, right: 10, top: 10, bottom: 10),
                   child: Column(
                     children: [
                       Row(
@@ -600,7 +615,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Merchant Id",
                             style: TextStyle(
-                                color: blueColor,
+                                color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -621,7 +636,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Processor Id",
                             style: TextStyle(
-                                color: Color(0xFF8A95A8),
+                                color: Color(0xFF101828),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
@@ -646,27 +661,24 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                     children: [
                                       Expanded(
                                         child: Material(
-                                          elevation: 3,
+                                          // elevation: 3,
                                           borderRadius:
-                                          BorderRadius.circular(5),
+                                          BorderRadius.circular(10),
                                           child: Container(
                                             height: 50,
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                              BorderRadius.circular(5),
+                                              BorderRadius.circular(10),
                                               color: Colors.white,
                                               border: Border.all(
-                                                  color: Color(0xFF8A95A8)),
+                                                  color: Color(0xFFCED4DA)),
                                             ),
                                             child: Stack(
                                               children: [
                                                 Positioned.fill(
                                                   child: TextField(
                                                     controller: entry.value,
-                                                    cursorColor: blueColor
-
-
-,
+                                                    cursorColor: blueColor,
                                                     decoration: InputDecoration(
                                                       border: InputBorder.none,
                                                       contentPadding:
@@ -678,7 +690,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                       "Enter processor",
                                                       hintStyle: TextStyle(
                                                         color:
-                                                        Color(0xFF8A95A8),
+                                                        Color(0xFFA1A8B0),
                                                         fontSize: MediaQuery.of(
                                                             context)
                                                             .size
@@ -700,15 +712,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                               .size
                                               .width *
                                               .02),
-
                                     ],
                                   ),
                                 );
                               }).toList(),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
+
                             /*  Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -768,24 +777,25 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               ),
             ),
           ),
+
           SizedBox(
-            height: 10,
+            height: 15,
           ),
           //management agreement
           Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             child: Material(
-              elevation: 6,
+              // elevation: 6,
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: blueColor),
+                  border: Border.all(color: Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 25, right: 25, top: 20, bottom: 30),
+                      left: 10, right: 10, top: 10, bottom: 20),
                   child: Column(
                     children: [
                       Row(
@@ -796,7 +806,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Management Agreement ",
                             style: TextStyle(
-                                color: blueColor,
+                                color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -809,255 +819,267 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       SizedBox(
                         height: 10,
                       ),
-
-                      //start date
                       if (MediaQuery.of(context).size.width < 500)
-                        Row(
+                        Column(
                           children: [
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              "Start Date",
-                              style: TextStyle(
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 15
-                                      : 20),
-                            ),
-                          ],
-                        ),
-                      if (MediaQuery.of(context).size.width < 500)
-                        SizedBox(
-                          height: 5,
-                        ),
-                      if (MediaQuery.of(context).size.width < 500)
-                        Row(
-                          children: [
-                            SizedBox(width: 2),
-                            Expanded(
-                              child: Material(
-                                elevation: 4,
-                                child: Container(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width * .6,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(2),
-                                    border: Border.all(
-                                      color: Color(0xFF8A95A8),
-                                    ),
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Positioned.fill(
-                                        child: TextField(
-                                          onChanged: (value) {
-                                            setState(() {
-                                              startdatederror = false;
-                                              // _selectDate(context);
-                                            });
-                                          },
-                                          controller: startdateController,
-                                          cursorColor:
-                                          blueColor,
-                                          decoration: InputDecoration(
-                                            hintText: "dd - mm - yyyy",
-                                            hintStyle: TextStyle(
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(width: 2),
+                                Expanded(
+                                  child: Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Start Date ",
+                                          style: TextStyle(
+                                              color: Color(0xFF101828),
+                                              fontWeight: FontWeight.bold,
                                               fontSize: MediaQuery.of(context)
                                                   .size
                                                   .width <
                                                   500
                                                   ? 15
-                                                  : 18,
-                                              color: Color(0xFF8A95A8),
-                                            ),
-                                            enabledBorder: startdatederror
-                                                ? OutlineInputBorder(
+                                                  : 20),
+                                        ),
+                                        Material(
+                                          //  elevation: 4,
+                                          child: Container(
+                                            height: 50,
+                                            //  width: MediaQuery.of(context).size.width * .6,
+                                            decoration: BoxDecoration(
                                               borderRadius:
-                                              BorderRadius.circular(
-                                                  3),
-                                              borderSide: BorderSide(
-                                                color: Colors.red,
+                                              BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: Color(0xFFCED4DA),
                                               ),
-                                            )
-                                                : InputBorder.none,
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(12),
-                                            suffixIcon: IconButton(
-                                              icon: Icon(Icons.calendar_today),
-                                              onPressed: () {
-                                                _startDate(context);
-                                                setState(() {
-                                                  startdatederror = false;
-                                                });
-                                              },
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                Positioned.fill(
+                                                  child: TextField(
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        startdatederror = false;
+                                                        // _selectDate(context);
+                                                      });
+                                                    },
+                                                    controller:
+                                                    startdateController,
+                                                    cursorColor: blueColor,
+                                                    decoration: InputDecoration(
+                                                      hintText: "YYYY-MM-DD",
+                                                      hintStyle: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                            context)
+                                                            .size
+                                                            .width <
+                                                            500
+                                                            ? 15
+                                                            : 18,
+                                                        color:
+                                                        Color(0xFFA1A8B0),
+                                                      ),
+                                                      enabledBorder:
+                                                      startdatederror
+                                                          ? OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            10),
+                                                        borderSide:
+                                                        BorderSide(
+                                                          color: Colors
+                                                              .red,
+                                                        ),
+                                                      )
+                                                          : InputBorder
+                                                          .none,
+                                                      border: InputBorder.none,
+                                                      contentPadding:
+                                                      EdgeInsets.all(12),
+                                                      suffixIcon: IconButton(
+                                                        icon: Icon(Icons
+                                                            .calendar_today),
+                                                        onPressed: () {
+                                                          _startDate(context);
+                                                          setState(() {
+                                                            startdatederror =
+                                                            false;
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                    readOnly: true,
+                                                    onTap: () {
+                                                      _startDate(context);
+                                                      setState(() {
+                                                        startdatederror = false;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          readOnly: true,
-                                          onTap: () {
-                                            _startDate(context);
-                                            setState(() {
-                                              startdatederror = false;
-                                            });
-                                          },
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 2),
-                          ],
-                        ),
-                      if (MediaQuery.of(context).size.width < 500)
-                        startdatederror
-                            ? Row(
-                          children: [
-                            Spacer(),
-                            Text(
-                              startdatemessage,
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 15
-                                      : 19),
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                          ],
-                        )
-                            : Container(),
-                      if (MediaQuery.of(context).size.width < 500)
-                        SizedBox(
-                          height: 10,
-                        ),
-                      //enddate
-                      if (MediaQuery.of(context).size.width < 500)
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 3,
-                            ),
-                            Text(
-                              "End Date",
-                              style: TextStyle(
-                                // color: Colors.grey,
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 15
-                                      : 20),
-                            ),
-                          ],
-                        ),
-                      if (MediaQuery.of(context).size.width < 500)
-                        SizedBox(
-                          height: 5,
-                        ),
-                      if (MediaQuery.of(context).size.width < 500)
-                        Row(
-                          children: [
-                            SizedBox(width: 2),
-                            Expanded(
-                              child: Material(
-                                elevation: 4,
-                                child: Container(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width * .6,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(2),
-                                    border: Border.all(
-                                      color: Color(0xFF8A95A8),
+                                      ],
                                     ),
                                   ),
-                                  child: Stack(
-                                    children: [
-                                      Positioned.fill(
-                                        child: TextField(
-                                          onChanged: (value) {
-                                            setState(() {
-                                              enddatederror = false;
-                                              // _selectDate(context);
-                                            });
-                                          },
-                                          controller: enddateController,
-                                          cursorColor:
-                                          blueColor,
-                                          decoration: InputDecoration(
-                                            hintText: "dd - mm - yyyy",
-                                            hintStyle: TextStyle(
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "End Date",
+                                          style: TextStyle(
+                                            // color: Colors.grey,
+                                              color: Color(0xFF101828),
+                                              fontWeight: FontWeight.bold,
                                               fontSize: MediaQuery.of(context)
                                                   .size
                                                   .width <
                                                   500
                                                   ? 15
-                                                  : 18,
-                                              color: Color(0xFF8A95A8),
-                                            ),
-                                            enabledBorder: enddatederror
-                                                ? OutlineInputBorder(
+                                                  : 20),
+                                        ),
+                                        Material(
+                                          //elevation: 4,
+                                          child: Container(
+                                            height: 50,
+                                            // width: MediaQuery.of(context).size.width * .6,
+                                            decoration: BoxDecoration(
                                               borderRadius:
-                                              BorderRadius.circular(
-                                                  3),
-                                              borderSide: BorderSide(
-                                                color: Colors.red,
+                                              BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: Color(0xFFCED4DA),
                                               ),
-                                            )
-                                                : InputBorder.none,
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(12),
-                                            suffixIcon: IconButton(
-                                              icon: Icon(Icons.calendar_today),
-                                              onPressed: () =>
-                                                  _endDate(context),
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                Positioned.fill(
+                                                  child: TextField(
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        enddatederror = false;
+                                                        // _selectDate(context);
+                                                      });
+                                                    },
+                                                    controller:
+                                                    enddateController,
+                                                    cursorColor: blueColor,
+                                                    decoration: InputDecoration(
+                                                      hintText: "YYYY-MM-DD",
+                                                      hintStyle: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                            context)
+                                                            .size
+                                                            .width <
+                                                            500
+                                                            ? 15
+                                                            : 18,
+                                                        color:
+                                                        Color(0xFFA1A8B0),
+                                                      ),
+                                                      enabledBorder: enddatederror
+                                                          ? OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            10),
+                                                        borderSide:
+                                                        BorderSide(
+                                                          color:
+                                                          Colors.red,
+                                                        ),
+                                                      )
+                                                          : InputBorder.none,
+                                                      border: InputBorder.none,
+                                                      contentPadding:
+                                                      EdgeInsets.all(12),
+                                                      suffixIcon: IconButton(
+                                                        icon: Icon(Icons
+                                                            .calendar_today),
+                                                        onPressed: () =>
+                                                            _endDate(context),
+                                                      ),
+                                                    ),
+                                                    readOnly: true,
+                                                    onTap: () {
+                                                      _endDate(context);
+                                                      setState(() {
+                                                        enddatederror = false;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          readOnly: true,
-                                          onTap: () {
-                                            _endDate(context);
-                                            setState(() {
-                                              enddatederror = false;
-                                            });
-                                          },
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                            SizedBox(width: 2),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: startdatederror
+                                      ? Padding(
+                                    padding:
+                                    const EdgeInsets.only(top: 4),
+                                    child: Container(
+                                      alignment: Alignment
+                                          .centerLeft, // Ensure left alignment
+                                      child: Text(
+                                        startdatemessage,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.035,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                      : SizedBox.shrink(),
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: enddatederror
+                                      ? Padding(
+                                    padding:
+                                    const EdgeInsets.only(top: 4),
+                                    child: Container(
+                                      alignment: Alignment
+                                          .centerLeft, // Ensure left alignment
+                                      child: Text(
+                                        enddatemessage,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.035,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                      : SizedBox.shrink(),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                      if (MediaQuery.of(context).size.width < 500)
-                        enddatederror
-                            ? Row(
-                          children: [
-                            Spacer(),
-                            Text(
-                              enddatemessage,
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 15
-                                      : 19),
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                          ],
-                        )
-                            : Container(),
-
                       if (MediaQuery.of(context).size.width > 500)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -1107,10 +1129,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   });
                                                 },
                                                 controller: startdateController,
-                                                cursorColor: blueColor
-
-
-,
+                                                cursorColor: blueColor,
                                                 decoration: InputDecoration(
                                                   hintText: "dd - mm - yyyy",
                                                   hintStyle: TextStyle(
@@ -1232,10 +1251,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   });
                                                 },
                                                 controller: enddateController,
-                                                cursorColor: blueColor
-
-
-,
+                                                cursorColor: blueColor,
                                                 decoration: InputDecoration(
                                                   hintText: "dd - mm - yyyy",
                                                   hintStyle: TextStyle(
@@ -1318,23 +1334,23 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 15,
           ),
           //contact information
           Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             child: Material(
-              elevation: 6,
+              //elevation: 6,
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: blueColor),
+                  border: Border.all(color: Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 25, right: 25, top: 20, bottom: 30),
+                      left: 10, right: 10, top: 10, bottom: 20),
                   child: Column(
                     children: [
                       Row(
@@ -1345,7 +1361,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Contact information",
                             style: TextStyle(
-                                color: blueColor,
+                                color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -1358,1102 +1374,1207 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       SizedBox(
                         height: 10,
                       ),
-                      //primary email
-                      Row(
+                      Column(
                         children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Primary E-mail *",
-                            style: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
+                          Row(
+                            children: [
+                              SizedBox(width: 2),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            primaryemailerror = false;
-                                          });
-                                        },
-                                        keyboardType:
-                                        TextInputType.emailAddress,
-                                        controller: primaryemail,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter primary e-mail",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
-                                                ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
+                                    Text(
+                                      "Primary E-mail *",
+                                      style: TextStyle(
+                                          color: Color(0xFF101828),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width <
+                                              500
+                                              ? 15
+                                              : 20),
+                                    ),
+                                    Material(
+                                      // elevation: 4,
+                                      child: Container(
+                                        height: 50,
+                                        width:
+                                        MediaQuery.of(context).size.width *
+                                            .6,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: Color(0xFFCED4DA),
                                           ),
-                                          enabledBorder: primaryemailerror
-                                              ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            Positioned.fill(
+                                              child: TextField(
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    primaryemailerror = false;
+                                                  });
+                                                },
+                                                keyboardType:
+                                                TextInputType.emailAddress,
+                                                controller: primaryemail,
+                                                cursorColor: blueColor,
+                                                decoration: InputDecoration(
+                                                  hintText:
+                                                  "Enter primary e-mail",
+                                                  hintStyle: TextStyle(
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 15
+                                                        : 18,
+                                                    color: Color(0xFFA1A8B0),
+                                                  ),
+                                                  enabledBorder:
+                                                  primaryemailerror
+                                                      ? OutlineInputBorder(
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(
+                                                        10),
+                                                    borderSide:
+                                                    BorderSide(
+                                                      color:
+                                                      Colors.red,
+                                                    ),
+                                                  )
+                                                      : InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                  EdgeInsets.all(12),
+                                                ),
+                                              ),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          ],
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Alternative E-mail",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
+                                            ),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      alternativeerror = false;
+                                                    });
+                                                  },
+                                                  controller: alternativeemail,
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    "Enter alternative e-mail ",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder:
+                                                    alternativeerror
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors
+                                                            .red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: 2),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: primaryemailerror
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      primaryemailmessage,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: alternativeerror
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      alternativemessage,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      primaryemailerror
-                          ? Row(
-                        children: [
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            primaryemailmessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          Spacer(),
-
-                        ],
-                      )
-                          : Container(),
                       SizedBox(
                         height: 10,
                       ),
-                      //alternative email
-                      Row(
+                      //phonenumber and homenumber
+                      Column(
                         children: [
-                          SizedBox(
-                            width: 3,
-                          ),
-                          Text(
-                            "Alternative E-mail",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            alternativeerror = false;
-                                          });
-                                        },
-                                        controller: alternativeemail,
-                                        keyboardType:
-                                        TextInputType.emailAddress,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter alternative e-mail ",
-                                          hintStyle: TextStyle(
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 2),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Phone Number *",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                 .size
                                                 .width <
                                                 500
                                                 ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: alternativeerror
-                                              ? OutlineInputBorder(
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
+                                                    PhoneNumberFormatter(),
+                                                  ],
+                                                  focusNode: _nodeText1,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      phonenumerror = false;
+                                                    });
+                                                  },
+                                                  controller: phonenum,
+                                                  keyboardType:
+                                                  TextInputType.number,
+                                                  // keyboardType:
+                                                  //     TextInputType.numberWithOptions(
+                                                  //         signed: true, decimal: true),
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    "Enter phone number",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: phonenumerror
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Home Number",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
+                                            ),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
+                                                    PhoneNumberFormatter(),
+                                                  ],
+                                                  focusNode: _nodeText2,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      homenumerror = false;
+                                                    });
+                                                  },
+                                                  controller: homenum,
+                                                  keyboardType:
+                                                  TextInputType.number,
+                                                  // keyboardType:
+                                                  //     TextInputType.numberWithOptions(
+                                                  //         signed: true, decimal: true),
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    "Enter home number",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: homenumerror
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 2),
+                            ],
                           ),
-                          SizedBox(width: 2),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: phonenumerror
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      phonenummessage,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: homenumerror
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      homenummessage,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      alternativeerror
-                          ? Row(
-                        children: [
-
-                          Text(
-                            alternativemessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
                       SizedBox(
                         height: 10,
                       ),
-                      //phonenumber
-                      Row(
+                      //office number and city
+                      Column(
                         children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Phone Number *",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        focusNode: _nodeText1,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            phonenumerror = false;
-                                          });
-                                        },
-                                        controller: phonenum,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly,
-                                          LengthLimitingTextInputFormatter(10),
-                                          PhoneNumberFormatter(),
-                                        ],
-                                        // keyboardType:
-                                        // TextInputType.numberWithOptions(
-                                        //     signed: true, decimal: true),
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter phone number",
-                                          hintStyle: TextStyle(
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 2),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Office Number",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                 .size
                                                 .width <
                                                 500
                                                 ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: phonenumerror
-                                              ? OutlineInputBorder(
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          // width: MediaQuery.of(context).size.width * .6,
+                                          decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
+                                                    PhoneNumberFormatter(),
+                                                  ],
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      officenumerror = false;
+                                                    });
+                                                  },
+                                                  controller: officenum,
+                                                  keyboardType:
+                                                  TextInputType.number,
+                                                  // keyboardType:
+                                                  //     TextInputType.numberWithOptions(
+                                                  //         signed: true, decimal: true),
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    "Enter office number",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: officenumerror
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "City",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          // width: MediaQuery.of(context).size.width * .6,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
+                                            ),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  keyboardType:
+                                                  TextInputType.text,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      city2error = false;
+                                                    });
+                                                  },
+                                                  controller: city2,
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText: "Enter city",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: city2error
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 2),
+                            ],
                           ),
-                          SizedBox(width: 2),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: officenumerror
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      officenummessage,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: city2error
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      city2message,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      phonenumerror
-                          ? Row(
-                        children: [
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            phonenummessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          Spacer(),
-
-                        ],
-                      )
-                          : Container(),
                       SizedBox(
                         height: 10,
                       ),
-                      //homenumber
-                      Row(
+                      //state and country
+                      Column(
                         children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Home Number",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        focusNode: _nodeText2,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            homenumerror = false;
-                                          });
-                                        },
-                                        controller: homenum,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly,
-                                          LengthLimitingTextInputFormatter(10),
-                                          PhoneNumberFormatter(),
-                                        ],
-                                        // keyboardType:
-                                        // TextInputType.numberWithOptions(
-                                        //     signed: true, decimal: true),
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter home number",
-                                          hintStyle: TextStyle(
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 2),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "State",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                 .size
                                                 .width <
                                                 500
                                                 ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: homenumerror
-                                              ? OutlineInputBorder(
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  keyboardType:
+                                                  TextInputType.text,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      state2error = false;
+                                                    });
+                                                  },
+                                                  controller: state2,
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText: "Enter state",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: state2error
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Country",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
+                                            ),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  keyboardType:
+                                                  TextInputType.text,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      county2error = false;
+                                                    });
+                                                  },
+                                                  controller: county2,
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText: "Enter country",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: county2error
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: 2),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: street2error
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      state2message,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: county2error
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      county2message,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      homenumerror
-                          ? Row(
-                        children: [
-
-                          Text(
-                            homenummessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
                       SizedBox(
                         height: 10,
                       ),
-                      //office number
-                      Row(
+                      //postal code and street
+                      Column(
                         children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Office Number",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            officenumerror = false;
-                                          });
-                                        },
-                                        controller: officenum,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly,
-                                          LengthLimitingTextInputFormatter(10),
-                                          PhoneNumberFormatter(),
-                                        ],
-                                        // keyboardType:
-                                        // TextInputType.numberWithOptions(
-                                        //     signed: true, decimal: true),
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter office number",
-                                          hintStyle: TextStyle(
+                          Row(
+                            children: [
+                              SizedBox(width: 2),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Zip Code",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                 .size
                                                 .width <
                                                 500
                                                 ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: officenumerror
-                                              ? OutlineInputBorder(
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  focusNode: _nodeText4,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      code2error = false;
+                                                    });
+                                                  },
+                                                  controller: code2,
+                                                  keyboardType:
+                                                  TextInputType.text,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .allow(RegExp(
+                                                        r'[a-zA-Z0-9]')),
+                                                    TextInputFormatter
+                                                        .withFunction((oldValue,
+                                                        newValue) {
+                                                      return TextEditingValue(
+                                                        text: newValue.text
+                                                            .toUpperCase(),
+                                                        selection:
+                                                        newValue.selection,
+                                                      );
+                                                    }),
+                                                  ],
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText: "Enter zip code",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: code2error
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      officenumerror
-                          ? Row(
-                        children: [
-
-                          Text(
-                            officenummessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      //street address
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Street Address",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    ],
                                   ),
                                 ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            street2error = false;
-                                          });
-                                        },
-                                        controller: street2,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter street address",
-                                          hintStyle: TextStyle(
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Street Address",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                 .size
                                                 .width <
                                                 500
                                                 ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: street2error
-                                              ? OutlineInputBorder(
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      street2error = false;
+                                                    });
+                                                  },
+                                                  controller: street2,
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    "Enter street address",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: street2error
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      street2error
-                          ? Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            street2message,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      //enter city
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "City",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    ],
                                   ),
                                 ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        keyboardType: TextInputType.text,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            city2error = false;
-                                          });
-                                        },
-                                        controller: city2,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter city",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
-                                                ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: city2error
-                                              ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
-                                        ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: code2error
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      code2message,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      city2error
-                          ? Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            city2message,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      //emter state
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "State",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
                                   ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        keyboardType: TextInputType.text,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            state2error = false;
-                                          });
-                                        },
-                                        controller: state2,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter state",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
-                                                ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: state2error
-                                              ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
-                                        ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: street2error
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      street2message,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      state2error
-                          ? Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            state2message,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      //enter country
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Country",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
                                   ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        keyboardType: TextInputType.text,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            county2error = false;
-                                          });
-                                        },
-                                        controller: county2,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter country",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
-                                                ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: county2error
-                                              ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                )
+                                    : SizedBox.shrink(),
                               ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      county2error
-                          ? Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            county2message,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      //postal code
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Zip Code",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
+                            ],
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        focusNode: _nodeText4,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            code2error = false;
-                                          });
-                                        },
-                                        controller: code2,
-                                        keyboardType:
-                                       TextInputType.text,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
-                                          TextInputFormatter.withFunction((oldValue, newValue) {
-                                            return TextEditingValue(
-                                              text: newValue.text.toUpperCase(),
-                                              selection: newValue.selection,
-                                            );
-                                          }),
-                                        ],
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter zip code",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
-                                                ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: code2error
-                                              ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      code2error
-                          ? Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            code2message,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
                     ],
                   ),
                 ),
@@ -2461,23 +2582,23 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 15,
           ),
           //tax payer information
           Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             child: Material(
-              elevation: 6,
+              // elevation: 6,
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: blueColor),
+                  border: Border.all(color: Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 25, right: 25, top: 20, bottom: 30),
+                      left: 10, right: 10, top: 10, bottom: 20),
                   child: Column(
                     children: [
                       Row(
@@ -2488,7 +2609,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Tax Payer Information ",
                             style: TextStyle(
-                                color: blueColor,
+                                color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -2501,210 +2622,232 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       SizedBox(
                         height: 10,
                       ),
-                      Row(
+                      Column(
                         children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Tax Identify Type",
-                            style: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            taxtypeerror = false;
-                                          });
-                                        },
-                                        controller: taxtype,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter tax identify type",
-                                          hintStyle: TextStyle(
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 2),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Tax Identify Type",
+                                        style: TextStyle(
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                 .size
                                                 .width <
                                                 500
                                                 ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: taxtypeerror
-                                              ? OutlineInputBorder(
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      taxtypeerror = false;
+                                                    });
+                                                  },
+                                                  controller: taxtype,
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    "Enter tax identify type",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: taxtypeerror
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      taxtypeerror
-                          ? Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            taxtypemessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 3,
-                          ),
-                          Text(
-                            "Tax PayerId",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    ],
                                   ),
                                 ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            taxiderror = false;
-                                          });
-                                        },
-                                        controller: taxid,
-                                        cursorColor:
-                                        blueColor,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter SSN or EIN",
-                                          hintStyle: TextStyle(
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Tax PayerId",
+                                        style: TextStyle(
+                                          // color: Colors.grey,
+                                            color: Color(0xFF101828),
+                                            fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                 .size
                                                 .width <
                                                 500
                                                 ? 15
-                                                : 18,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: taxiderror
-                                              ? OutlineInputBorder(
+                                                : 20),
+                                      ),
+                                      Material(
+                                        // elevation: 4,
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
+                                            BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
                                             ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextField(
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      taxiderror = false;
+                                                    });
+                                                  },
+                                                  controller: taxid,
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    "Enter SSN or EIN",
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 15
+                                                          : 18,
+                                                      color: Color(0xFFA1A8B0),
+                                                    ),
+                                                    enabledBorder: taxiderror
+                                                        ? OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10),
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
+                              SizedBox(width: 2),
+                            ],
                           ),
-                          SizedBox(width: 2),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: taxtypeerror
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      taxtypemessage,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: enddatederror
+                                    ? Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Container(
+                                    alignment: Alignment
+                                        .centerLeft, // Ensure left alignment
+                                    child: Text(
+                                      enddatemessage,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.035,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      taxiderror
-                          ? Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            taxidmessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                MediaQuery.of(context).size.width <
-                                    500
-                                    ? 15
-                                    : 19),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                        ],
-                      )
-                          : Container(),
                     ],
                   ),
                 ),
@@ -2712,22 +2855,22 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 15,
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             child: Material(
-              elevation: 6,
+              // elevation: 6,
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: blueColor),
+                  border: Border.all(color: Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 25, right: 25, top: 20, bottom: 30),
+                      left: 10, right: 10, top: 10, bottom: 10),
                   child: Column(
                     children: [
                       Row(
@@ -2738,7 +2881,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Card Transaction Type \nManagement ",
                             style: TextStyle(
-                                color: blueColor,
+                                color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -2759,7 +2902,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Select the type of card you wish to \naccept",
                             style: TextStyle(
-                                color: Color(0xFF8A95A8),
+                                color: Color(0xFF636363),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
@@ -2771,54 +2914,64 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       SizedBox(
                         height: 5,
                       ),
-                      Container(
-
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Transform.scale(
-                              scale: 1.2,
-                              child: Checkbox(value: creditcard, onChanged: (value) {
-                                setState(() {
-
-                                  creditcard = value!;
-                                });
-                              },activeColor: blueColor,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Transform.scale(
+                                    scale: 1.2,
+                                    child: Checkbox(
+                                      value: creditcard,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          creditcard = value!;
+                                        });
+                                      },
+                                      activeColor: blueColor,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Credit Card",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Color(0xFF101828)),
+                                  )
+                                ],
+                              ),
                             ),
-                            SizedBox(width: 10),
-                            Text("Credit Card",style: TextStyle(
-                                fontSize: 16
-                            ),)
-
-                          ],
-                        ),
-                      ),
-                      Container(
-
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Transform.scale(
-                              scale: 1.2,
-                              child: Checkbox(value: debitcard, onChanged: (value) {
-                                setState(() {
-                                  debitcard = value!;
-                                });
-                              },activeColor: blueColor),
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Transform.scale(
+                                    scale: 1.2,
+                                    child: Checkbox(
+                                        value: debitcard,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            debitcard = value!;
+                                          });
+                                        },
+                                        activeColor: blueColor),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Debit Card",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Color(0xFF101828)),
+                                  )
+                                ],
+                              ),
                             ),
-                            SizedBox(width: 10),
-                            Text("Debit Card",style: TextStyle(
-                                fontSize: 16
-                            ),)
-
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-
-
-
-
-
                     ],
                   ),
                 ),
@@ -2828,48 +2981,364 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
           SizedBox(
             height: 20,
           ),
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 25, right: 25),
+          //   child: Material(
+          //     elevation: 6,
+          //     borderRadius: BorderRadius.circular(10),
+          //     child: Container(
+          //       decoration: BoxDecoration(
+          //         color: Colors.white,
+          //         borderRadius: BorderRadius.circular(10),
+          //         border: Border.all(color: blueColor),
+          //       ),
+          //       child: Padding(
+          //         padding: const EdgeInsets.only(
+          //             left: 25, right: 25, top: 20, bottom: 30),
+          //         child: Column(
+          //           children: [
+          //             Row(
+          //               children: [
+          //                 SizedBox(
+          //                   width: 2,
+          //                 ),
+          //                 Expanded(
+          //                   child: Text(
+          //                     "Card Transaction  Type Management ",
+          //                     style: TextStyle(
+          //                         color: blueColor,
+          //                         fontWeight: FontWeight.bold,
+          //                         // fontSize: 18
+          //                         fontSize:
+          //                         MediaQuery.of(context).size.width < 500
+          //                             ? 20
+          //                             : 25),
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //             SizedBox(
+          //               height: 10,
+          //             ),
+          //             Row(
+          //               children: [
+          //                 // Checkbox(
+          //                 //     activeColor: b,
+          //                 //     value: enableOverrideFee,
+          //                 //     onChanged: (value) {
+          //                 //       setState(() {
+          //                 //         enableOverrideFee = value!;
+          //                 //         if (!enableOverrideFee) {
+          //                 //           overrideFee.clear();
+          //                 //           overRideFeeError = '';
+          //                 //         }
+          //                 //       });
+          //                 //     }),
+          //                 Text('Enable Debit Card Fee',
+          //                     style: TextStyle(
+          //                         fontSize: 13,
+          //                         fontWeight: FontWeight.bold,
+          //                         color: Colors.grey)),
+          //               ],
+          //             ),
+          //             SizedBox(
+          //               height: 10,
+          //             ),
+          //             Row(
+          //               children: [
+          //                 SizedBox(
+          //                   width: 2,
+          //                 ),
+          //                 Text(
+          //                   "Tax Identify Type",
+          //                   style: TextStyle(
+          //                       color: Color(0xFF8A95A8),
+          //                       fontWeight: FontWeight.bold,
+          //                       fontSize:
+          //                       MediaQuery.of(context).size.width < 500
+          //                           ? 15
+          //                           : 20),
+          //                 ),
+          //               ],
+          //             ),
+          //             SizedBox(
+          //               height: 5,
+          //             ),
+          //             Row(
+          //               children: [
+          //                 SizedBox(width: 2),
+          //                 Expanded(
+          //                   child: Material(
+          //                     elevation: 4,
+          //                     child: Container(
+          //                       height: 50,
+          //                       width: MediaQuery.of(context).size.width * .6,
+          //                       decoration: BoxDecoration(
+          //                         borderRadius: BorderRadius.circular(2),
+          //                         border: Border.all(
+          //                           color: Color(0xFF8A95A8),
+          //                         ),
+          //                       ),
+          //                       child: Stack(
+          //                         children: [
+          //                           Positioned.fill(
+          //                             child: TextField(
+          //                               onChanged: (value) {
+          //                                 setState(() {
+          //                                   taxtypeerror = false;
+          //                                 });
+          //                               },
+          //                               controller: taxtype,
+          //                               cursorColor:
+          //                               blueColor,
+          //                               decoration: InputDecoration(
+          //                                 hintText: "Enter tax identify type",
+          //                                 hintStyle: TextStyle(
+          //                                   fontSize: MediaQuery.of(context)
+          //                                       .size
+          //                                       .width <
+          //                                       500
+          //                                       ? 15
+          //                                       : 18,
+          //                                   color: Color(0xFF8A95A8),
+          //                                 ),
+          //                                 enabledBorder: taxtypeerror
+          //                                     ? OutlineInputBorder(
+          //                                   borderRadius:
+          //                                   BorderRadius.circular(2),
+          //                                   borderSide: BorderSide(
+          //                                     color: Colors.red,
+          //                                   ),
+          //                                 )
+          //                                     : InputBorder.none,
+          //                                 border: InputBorder.none,
+          //                                 contentPadding: EdgeInsets.all(12),
+          //                               ),
+          //                             ),
+          //                           ),
+          //                         ],
+          //                       ),
+          //                     ),
+          //                   ),
+          //                 ),
+          //                 SizedBox(width: 2),
+          //               ],
+          //             ),
+          //             taxtypeerror
+          //                 ? Row(
+          //               children: [
+          //                 Spacer(),
+          //                 Text(
+          //                   taxtypemessage,
+          //                   style: TextStyle(
+          //                       color: Colors.red,
+          //                       fontSize:
+          //                       MediaQuery.of(context).size.width <
+          //                           500
+          //                           ? 15
+          //                           : 19),
+          //                 ),
+          //                 SizedBox(
+          //                   width: 2,
+          //                 ),
+          //               ],
+          //             )
+          //                 : Container(),
+          //             SizedBox(
+          //               height: 10,
+          //             ),
+          //             Row(
+          //               children: [
+          //                 SizedBox(
+          //                   width: 3,
+          //                 ),
+          //                 Text(
+          //                   "Tax PayerId",
+          //                   style: TextStyle(
+          //                     // color: Colors.grey,
+          //                       color: Color(0xFF8A95A8),
+          //                       fontWeight: FontWeight.bold,
+          //                       fontSize:
+          //                       MediaQuery.of(context).size.width < 500
+          //                           ? 15
+          //                           : 20),
+          //                 ),
+          //               ],
+          //             ),
+          //             SizedBox(
+          //               height: 5,
+          //             ),
+          //             Row(
+          //               children: [
+          //                 SizedBox(width: 2),
+          //                 Expanded(
+          //                   child: Material(
+          //                     elevation: 4,
+          //                     child: Container(
+          //                       height: 50,
+          //                       width: MediaQuery.of(context).size.width * .6,
+          //                       decoration: BoxDecoration(
+          //                         borderRadius: BorderRadius.circular(2),
+          //                         border: Border.all(
+          //                           color: Color(0xFF8A95A8),
+          //                         ),
+          //                       ),
+          //                       child: Stack(
+          //                         children: [
+          //                           Positioned.fill(
+          //                             child: TextField(
+          //                               onChanged: (value) {
+          //                                 setState(() {
+          //                                   taxiderror = false;
+          //                                 });
+          //                               },
+          //                               controller: taxid,
+          //                               cursorColor:
+          //                               blueColor,
+          //                               decoration: InputDecoration(
+          //                                 hintText: "Enter SSN or EIN",
+          //                                 hintStyle: TextStyle(
+          //                                   fontSize: MediaQuery.of(context)
+          //                                       .size
+          //                                       .width <
+          //                                       500
+          //                                       ? 15
+          //                                       : 18,
+          //                                   color: Color(0xFF8A95A8),
+          //                                 ),
+          //                                 enabledBorder: taxiderror
+          //                                     ? OutlineInputBorder(
+          //                                   borderRadius:
+          //                                   BorderRadius.circular(2),
+          //                                   borderSide: BorderSide(
+          //                                     color: Colors.red,
+          //                                   ),
+          //                                 )
+          //                                     : InputBorder.none,
+          //                                 border: InputBorder.none,
+          //                                 contentPadding: EdgeInsets.all(12),
+          //                               ),
+          //                             ),
+          //                           ),
+          //                         ],
+          //                       ),
+          //                     ),
+          //                   ),
+          //                 ),
+          //                 SizedBox(width: 2),
+          //               ],
+          //             ),
+          //             taxiderror
+          //                 ? Row(
+          //               children: [
+          //                 Spacer(),
+          //                 Text(
+          //                   taxidmessage,
+          //                   style: TextStyle(
+          //                       color: Colors.red,
+          //                       fontSize:
+          //                       MediaQuery.of(context).size.width <
+          //                           500
+          //                           ? 15
+          //                           : 19),
+          //                 ),
+          //                 SizedBox(
+          //                   width: 2,
+          //                 ),
+          //               ],
+          //             )
+          //                 : Container(),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // SizedBox(
+          //   height: 20,
+          // ),
           Row(
             children: [
               if (MediaQuery.of(context).size.width < 500)
-                SizedBox(width: MediaQuery.of(context).size.width * 0.063),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.04),
               if (MediaQuery.of(context).size.width > 500)
                 SizedBox(
                   width: 25,
                 ),
-              GestureDetector(
-                onTap: () async {
-                  print("callllll");
-                  if (name.text.trim().isEmpty) {
-                    setState(() {
-                      nameerror = true;
-                      namemessage = "required";
-                    });
-                  } else {
-                    setState(() {
-                      nameerror = false;
-                    });
-                  }
-                  if (comname.text.trim().isEmpty) {
-                    setState(() {
-                      comnameerror = true;
-                      comnamemessage = "required";
-                    });
-                  } else {
-                    setState(() {
-                      comnameerror = false;
-                    });
-                  }
-                  // if (birthdateController.text.isEmpty) {
-                  //   setState(() {
-                  //     birthdateerror = true;
-                  //     birthdatemessage = "required";
-                  //   });
-                  // } else {
-                  //   setState(() {
-                  //     birthdateerror = false;
-                  //   });
-                  // }
-                  /* if (startdateController.text.isEmpty) {
+              Expanded(
+                child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white,
+                          border: Border.all(color: Color(0x80152B51))
+                        // boxShadow: [
+                        //   BoxShadow(
+                        //     color: Colors.grey,
+                        //     offset: Offset(0.0, 1.0), //(x,y)
+                        //     blurRadius: 6.0,
+                        //   ),
+                        // ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 15
+                                  : 18),
+                        ),
+                      ),
+                    )),
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              Expanded(
+                child: Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Color(0xFF101828)),
+                  child: GestureDetector(
+                    onTap: () async {
+                      print("callllll");
+                      if (name.text.trim().isEmpty) {
+                        setState(() {
+                          nameerror = true;
+                          namemessage = "required";
+                        });
+                      } else {
+                        setState(() {
+                          nameerror = false;
+                        });
+                      }
+                      if (comname.text.trim().isEmpty) {
+                        setState(() {
+                          comnameerror = true;
+                          comnamemessage = "required";
+                        });
+                      } else {
+                        setState(() {
+                          comnameerror = false;
+                        });
+                      }
+                      // if (birthdateController.text.isEmpty) {
+                      //   setState(() {
+                      //     birthdateerror = true;
+                      //     birthdatemessage = "required";
+                      //   });
+                      // } else {
+                      //   setState(() {
+                      //     birthdateerror = false;
+                      //   });
+                      // }
+                      /* if (startdateController.text.isEmpty) {
                     setState(() {
                       startdatederror = true;
                       startdatemessage = "required";
@@ -2889,22 +3358,22 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       enddatederror = false;
                     });
                   }*/
-                  if (primaryemail.text.trim().isEmpty) {
-                    setState(() {
-                      primaryemailerror = true;
-                      primaryemailmessage = "required";
-                    });
-                  } else if (!EmailValidator.validate(primaryemail.text.trim())) {
-                    setState(() {
-                      primaryemailerror = true;
-                      primaryemailmessage = "Email is not valid";
-                    });
-                  }else {
-                    setState(() {
-                      primaryemailerror = false;
-                    });
-                  }
-                  /* if (alternativeemail.text.isEmpty) {
+                      if (primaryemail.text.trim().isEmpty) {
+                        setState(() {
+                          primaryemailerror = true;
+                          primaryemailmessage = "required";
+                        });
+                      } else if (!EmailValidator.validate(primaryemail.text.trim())) {
+                        setState(() {
+                          primaryemailerror = true;
+                          primaryemailmessage = "Email is not valid";
+                        });
+                      }else {
+                        setState(() {
+                          primaryemailerror = false;
+                        });
+                      }
+                      /* if (alternativeemail.text.isEmpty) {
                     setState(() {
                       alternativeerror = true;
                       alternativemessage = "required";
@@ -2914,80 +3383,80 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       alternativeerror = false;
                     });
                   }*/
-                  if (alternativeemail.text.trim().isEmpty) {
-                    setState(() {
-                      alternativeerror = false;
+                      if (alternativeemail.text.trim().isEmpty) {
+                        setState(() {
+                          alternativeerror = false;
 
-                    });
-                  }else if(alternativeemail.text == primaryemail.text){
-                    setState(() {
-                      alternativeerror = true;
-                      alternativemessage = " email cannot be the same";
-                    });
-                  } else {
-                    setState(() {
-                      alternativeerror = false;
-                    });
-                  }
+                        });
+                      }else if(alternativeemail.text == primaryemail.text){
+                        setState(() {
+                          alternativeerror = true;
+                          alternativemessage = " email cannot be the same";
+                        });
+                      } else {
+                        setState(() {
+                          alternativeerror = false;
+                        });
+                      }
 
-                  String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
-                  if (formattedPhoneNumber.isEmpty) {
-                    setState(() {
-                      phonenumerror = true;
-                      phonenummessage = "required";
-                    });
-                  } else if (formattedPhoneNumber.length != 10) {
-                    setState(() {
-                      phonenumerror = true;
-                      phonenummessage = "Phone number must be 10 digits";
-                    });
-                  }else {
-                    setState(() {
-                      phonenumerror = false;
-                    });
-                  }
-                  String formattedhomeNumber = homenum.text.replaceAll(RegExp(r'\D'), '');
-                  if (formattedhomeNumber.isEmpty) {
-                    setState(() {
-                      homenumerror = false;
+                      String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
+                      if (formattedPhoneNumber.isEmpty) {
+                        setState(() {
+                          phonenumerror = true;
+                          phonenummessage = "required";
+                        });
+                      } else if (formattedPhoneNumber.length != 10) {
+                        setState(() {
+                          phonenumerror = true;
+                          phonenummessage = "Phone number must be 10 digits";
+                        });
+                      }else {
+                        setState(() {
+                          phonenumerror = false;
+                        });
+                      }
+                      String formattedhomeNumber = homenum.text.replaceAll(RegExp(r'\D'), '');
+                      if (formattedhomeNumber.isEmpty) {
+                        setState(() {
+                          homenumerror = false;
 
-                    });
-                  }else if(formattedhomeNumber.length != 10){
-                    setState(() {
-                      homenumerror = true;
-                      homenummessage = "Phone number must be 10 digits";
-                    });
-                  } else if(formattedhomeNumber == formattedPhoneNumber){
-                    setState(() {
-                      homenumerror = true;
-                      homenummessage = " number cannot be the same";
-                    });
-                  }else {
-                    setState(() {
-                      homenumerror = false;
-                    });
-                  }
-                  String formattedofficeNumber = officenum.text.replaceAll(RegExp(r'\D'), '');
-                  if (formattedofficeNumber.isEmpty) {
-                    setState(() {
-                      officenumerror = false;
-                    });
-                  }else if(formattedofficeNumber.length != 10){
-                    setState(() {
-                      officenumerror = true;
-                      officenummessage = "Phone number must be 10 digits";
-                    });
-                  }else if(formattedofficeNumber == formattedhomeNumber){
-                    setState(() {
-                      officenumerror = true;
-                      officenummessage = " number cannot be the same";
-                    });
-                  } else {
-                    setState(() {
-                      officenumerror = false;
-                    });
-                  }
-                  /*  if (homenum.text.isEmpty) {
+                        });
+                      }else if(formattedhomeNumber.length != 10){
+                        setState(() {
+                          homenumerror = true;
+                          homenummessage = "Phone number must be 10 digits";
+                        });
+                      } else if(formattedhomeNumber == formattedPhoneNumber){
+                        setState(() {
+                          homenumerror = true;
+                          homenummessage = " number cannot be the same";
+                        });
+                      }else {
+                        setState(() {
+                          homenumerror = false;
+                        });
+                      }
+                      String formattedofficeNumber = officenum.text.replaceAll(RegExp(r'\D'), '');
+                      if (formattedofficeNumber.isEmpty) {
+                        setState(() {
+                          officenumerror = false;
+                        });
+                      }else if(formattedofficeNumber.length != 10){
+                        setState(() {
+                          officenumerror = true;
+                          officenummessage = "Phone number must be 10 digits";
+                        });
+                      }else if(formattedofficeNumber == formattedhomeNumber){
+                        setState(() {
+                          officenumerror = true;
+                          officenummessage = " number cannot be the same";
+                        });
+                      } else {
+                        setState(() {
+                          officenumerror = false;
+                        });
+                      }
+                      /*  if (homenum.text.isEmpty) {
                     setState(() {
                       homenumerror = true;
                       homenummessage = "required";
@@ -3087,130 +3556,135 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       taxiderror = false;
                     });
                   }*/
-                  if (!nameerror &&
-                      !comnameerror &&
-                      !primaryemailerror &&
-                      !alternativeerror &&
-                      !phonenumerror &&
-                  !homenumerror &&
-                  !officenumerror
-                  // !street2error &&
-                  // !city2error &&
-                  //  !state2error &&
-                  // !county2error &&
-                  //    !code2error &&
-                  //  !taxtypeerror &&
-                  //     !taxiderror &&
-                  // !birthdateerror &&
-                  //     !startdatederror &&
-                  //    !enddatederror
-                  ) {
-                    setState(() {
-                      loading = true;
-                    });
+                      if (!nameerror &&
+                          !comnameerror &&
+                          !primaryemailerror &&
+                          !alternativeerror &&
+                          !phonenumerror &&
+                          !homenumerror &&
+                          !officenumerror
+                      // !street2error &&
+                      // !city2error &&
+                      //  !state2error &&
+                      // !county2error &&
+                      //    !code2error &&
+                      //  !taxtypeerror &&
+                      //     !taxiderror &&
+                      // !birthdateerror &&
+                      //     !startdatederror &&
+                      //    !enddatederror
+                      ) {
+                        setState(() {
+                          loading = true;
+                        });
 
-                    print("Callinnnng");
-                    // List<ProcessorList> processor = [];
-                    // for (var i = 0; i < _controllers.length; i++) {
-                    //   if (_controllers.isNotEmpty)
-                    //     processor.add(
-                    //         ProcessorList(processorId: _controllers[i]!.text));
-                    // }
+                        print("Callinnnng");
+                        // List<ProcessorList> processor = [];
+                        // for (var i = 0; i < _controllers.length; i++) {
+                        //   if (_controllers.isNotEmpty)
+                        //     processor.add(
+                        //         ProcessorList(processorId: _controllers[i]!.text));
+                        // }
 
-                    List<ProcessorList> processorList = [];
-                    _controllers.forEach((key, controller) {
-                      if (controller.text.trim().isNotEmpty) {
-                        processorList
-                            .add(ProcessorList(processorId: controller.text));
+                        List<ProcessorList> processorList = [];
+                        _controllers.forEach((key, controller) {
+                          if (controller.text.trim().isNotEmpty) {
+                            processorList
+                                .add(ProcessorList(processorId: controller.text));
+                          }
+                        });
+                        print(processorList.length);
+                        SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        var adminId = prefs.getString("adminId");
+                        final RentalOwnerData rentalOwner = RentalOwnerData(
+                          adminId: adminId,
+                          rentalOwnername: name.text.trim(),
+                          rentalOwnerLastName: lastname.text.trim(),
+                          rentalOwnerCompanyName: comname.text.trim(),
+                          startDate:reverseFormatDate(startdateController.text.trim()),
+                          endDate: reverseFormatDate(enddateController.text.trim()),
+                          rentalOwnerPrimaryEmail: primaryemail.text.trim(),
+                          rentalOwnerAlternateEmail: alternativeemail.text,
+                          rentalOwnerPhoneNumber: phonenum.text.trim(),
+                          rentalOwnerHomeNumber: homenum.text.trim(),
+                          rentalOwnerBusinessNumber: officenum.text.trim(),
+                          streetAddress: street2.text.trim(),
+                          city: city2.text.trim(),
+                          state: state2.text.trim(),
+                          postalCode: code2.text.trim(),
+                          country: county2.text.trim(),
+                          textIdentityType: taxtype.text.trim(),
+                          texpayerId: taxid.text.trim(),
+                          // processorLists:processorIds,
+                          processorList: processorList,
+                        );
+                        print(processorList);
+                        // print(processorIds);
+                        print('hello');
+                        // var result =
+                        //     await RentalOwnerService().addRentalOwner(rentalOwner);
+                        // if (result) {
+                        //   Navigator.of(context).pop(result);
+                        // }else{
+                        //   print("faild");
+                        // }
+                        RentalOwnerService()
+                            .addRentalOwner(rentalOwner)
+                            .then((result) async {
+                          setState(() {
+                            loading = false;
+                          });
+                          if (result != "") {
+                            print("sucess");
+                            Navigator.of(context).pop(result);
+                            await updatePaymentSettings(result);
+                            print('rentaloid ${result}');
+
+                          } else {
+                            print("Failed to add rental owner");
+                          }
+                        }).catchError((e) {
+                          setState(() {
+                            loading = false;
+                          });
+                          print("Error: $e");
+                        });
                       }
-                    });
-                    print(processorList.length);
-                    SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
-                    var adminId = prefs.getString("adminId");
-                    final RentalOwnerData rentalOwner = RentalOwnerData(
-                      adminId: adminId,
-                      rentalOwnername: name.text.trim(),
-                      rentalOwnerLastName: lastname.text.trim(),
-                      rentalOwnerCompanyName: comname.text.trim(),
-                      startDate:reverseFormatDate(startdateController.text.trim()),
-                      endDate: reverseFormatDate(enddateController.text.trim()),
-                      rentalOwnerPrimaryEmail: primaryemail.text.trim(),
-                      rentalOwnerAlternateEmail: alternativeemail.text,
-                      rentalOwnerPhoneNumber: phonenum.text.trim(),
-                      rentalOwnerHomeNumber: homenum.text.trim(),
-                      rentalOwnerBusinessNumber: officenum.text.trim(),
-                      streetAddress: street2.text.trim(),
-                      city: city2.text.trim(),
-                      state: state2.text.trim(),
-                      postalCode: code2.text.trim(),
-                      country: county2.text.trim(),
-                      textIdentityType: taxtype.text.trim(),
-                      texpayerId: taxid.text.trim(),
-                      // processorLists:processorIds,
-                      processorList: processorList,
-                    );
-                    print(processorList);
-                    // print(processorIds);
-                    print('hello');
-                    // var result =
-                    //     await RentalOwnerService().addRentalOwner(rentalOwner);
-                    // if (result) {
-                    //   Navigator.of(context).pop(result);
-                    // }else{
-                    //   print("faild");
-                    // }
-                    RentalOwnerService()
-                        .addRentalOwner(rentalOwner)
-                        .then((result) async {
-                      setState(() {
-                        loading = false;
-                      });
-                      if (result != "") {
-                        print("sucess");
-                        Navigator.of(context).pop(result);
-                        await updatePaymentSettings(result);
-                        print('rentaloid ${result}');
-
-                      } else {
-                        print("Failed to add rental owner");
-                      }
-                    }).catchError((e) {
-                      setState(() {
-                        loading = false;
-                      });
-                      print("Error: $e");
-                    });
-                  }
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5.0),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * .045,
-                    width: MediaQuery.of(context).size.width < 500 ? 160 : 190,
-                    decoration: BoxDecoration(
+                    },
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: blueColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          offset: Offset(0.0, 1.0), //(x,y)
-                          blurRadius: 6.0,
+                      child: Container(
+                        height: 40,
+                        // width: MediaQuery.of(context).size.width < 500 ? 160 : 190,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          color: blueColor,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 1.0), //(x,y)
+                              blurRadius: 6.0,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Center(
-                      child:loading ?SpinKitFadingCircle(
-                        color: Colors.white,
-                        size: 20.0,
-                      ):   Text(
-                        "Add Rental Owner",
-                        style: TextStyle(
+                        child: Center(
+                          child: loading
+                              ? SpinKitFadingCircle(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 15
-                                : 20),
+                            size: 20.0,
+                          )
+                              : Text(
+                            "Add Rental Owner",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 15
+                                    : 20),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -3219,14 +3693,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               SizedBox(
                 width: 15,
               ),
-              InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Cancel")),
             ],
           ),
-
           SizedBox(
             height: 20,
           ),

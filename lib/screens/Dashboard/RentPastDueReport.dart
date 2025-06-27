@@ -83,7 +83,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_hasSetInitialValues) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
       if (args != null) {
         setState(() {
           monthType = args['monthType'] ?? monthType;
@@ -979,7 +980,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   TextEditingController fromDate = TextEditingController();
   TextEditingController toDate = TextEditingController();
   String? daterange;
-  String? chargeType;
+  String? chargeType = 'Charges'; // Initialize with default value
 
   String? monthType = 'Current Month'; // Set default value
   //String? monthType;
@@ -1034,16 +1035,14 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               style: TextStyle(color: Colors.red, fontSize: 16),
                             ),
                           );
-                        }
-                        else if (!snapshot.hasData || snapshot.data == null) {
+                        } else if (!snapshot.hasData || snapshot.data == null) {
                           return Center(
                             child: Text(
                               'No data available',
                               style: TextStyle(fontSize: 16),
                             ),
                           );
-                        }
-                        else {
+                        } else {
                           var rentPastDue = snapshot.data!;
                           List<Transaction> filteredCharges = [];
 
@@ -1053,95 +1052,91 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                             //print'Rental Data: ${charge.rentalData}');
                             //print'Tenant Data: ${charge.tenantData}');
                           });
-                          if (chargeType == 'Charges' &&
-                              (monthType == 'All' || monthType == null)) {
-                            filteredCharges = snapshot
-                                .data!.dueRentCharges!.charges!
-                                .where((charge) {
-                              var address = charge.rentalData?.address;
-                              var tenantName =
-                                  charge.tenantData?.tenantFirstName;
-                              //print
-                              return (address != null &&
-                                      address.contains(searchvalue)) ||
-                                  (tenantName != null &&
-                                      tenantName.contains(searchvalue));
-                            }).toList() ?? [];
-                          } else if (chargeType == 'Charges' &&
-                              monthType == 'Current Month') {
-                            filteredCharges = snapshot
-                                .data!.currentDueRentCharges!.charges!
-                                .where((charge) {
-                              var address = charge.rentalData?.address;
-                              var tenantName =
-                                  charge.tenantData?.tenantFirstName;
-                              //print
-                              return (address != null &&
-                                      address.contains(searchvalue)) ||
-                                  (tenantName != null &&
-                                      tenantName.contains(searchvalue));
-                            }).toList() ?? [];
-                          } else if (chargeType == 'Charges' &&
-                              monthType == 'Last Month') {
-                            filteredCharges = snapshot
-                                .data!.lastDueRentCharges!.charges!
-                                .where((charge) {
-                              var address = charge.rentalData?.address;
-                              var tenantName =
-                                  charge.tenantData?.tenantFirstName;
-                              return (address != null &&
-                                      address.contains(searchvalue)) ||
-                                  (tenantName != null &&
-                                      tenantName.contains(searchvalue));
-                            }).toList() ?? [];
-                          } else if (chargeType == "Payment" &&
-                              monthType == "Current Month") {
-                            filteredCharges = snapshot
-                                .data!.currentPayments!.payments!
-                                .where((payment) {
-                              var address = payment.rentalData?.address;
-                              var tenantName =
-                                  payment.tenantData?.tenantFirstName;
-                              //print
-                              return (address != null &&
-                                      address.contains(searchvalue)) ||
-                                  (tenantName != null &&
-                                      tenantName.contains(searchvalue));
-                            }).toList() ?? [];
-                          } else if (chargeType == "Payment" &&
-                              monthType == null) {
-                            filteredCharges = snapshot
-                                .data!.currentPayments!.payments!
-                                .where((payment) {
-                              var address = payment.rentalData?.address;
-                              var tenantName =
-                                  payment.tenantData?.tenantFirstName;
-                              //print
-                              return (address != null &&
-                                      address.contains(searchvalue)) ||
-                                  (tenantName != null &&
-                                      tenantName.contains(searchvalue));
-                            }).toList() ?? [];
-                          } else if (chargeType == "Payment" &&
-                              monthType == "Last Month") {
-                            filteredCharges = snapshot
-                                .data!.lastPayments!.payments!
-                                .where((payment) {
-                              var address = payment.rentalData?.address;
-                              var tenantName =
-                                  payment.tenantData?.tenantFirstName;
-                              //print
-                              return (address != null &&
-                                      address.contains(searchvalue)) ||
-                                  (tenantName != null &&
-                                      tenantName.contains(searchvalue));
-                            }).toList() ?? [];
+                          // Apply filtering based on charge type and month type
+                          if (chargeType == 'Charges') {
+                            if (monthType == 'All') {
+                              filteredCharges = snapshot
+                                      .data!.dueRentCharges?.charges
+                                      ?.where((charge) {
+                                    var address =
+                                        charge.rentalData?.address ?? '';
+                                    var tenantName =
+                                        charge.tenantData?.tenantFirstName ??
+                                            '';
+                                    return address.toLowerCase().contains(
+                                            searchvalue.toLowerCase()) ||
+                                        tenantName.toLowerCase().contains(
+                                            searchvalue.toLowerCase());
+                                  }).toList() ??
+                                  [];
+                            } else if (monthType == 'Current Month') {
+                              filteredCharges = snapshot
+                                      .data!.currentDueRentCharges?.charges
+                                      ?.where((charge) {
+                                    var address =
+                                        charge.rentalData?.address ?? '';
+                                    var tenantName =
+                                        charge.tenantData?.tenantFirstName ??
+                                            '';
+                                    return address.toLowerCase().contains(
+                                            searchvalue.toLowerCase()) ||
+                                        tenantName.toLowerCase().contains(
+                                            searchvalue.toLowerCase());
+                                  }).toList() ??
+                                  [];
+                            } else if (monthType == 'Last Month') {
+                              filteredCharges = snapshot
+                                      .data!.lastDueRentCharges?.charges
+                                      ?.where((charge) {
+                                    var address =
+                                        charge.rentalData?.address ?? '';
+                                    var tenantName =
+                                        charge.tenantData?.tenantFirstName ??
+                                            '';
+                                    return address.toLowerCase().contains(
+                                            searchvalue.toLowerCase()) ||
+                                        tenantName.toLowerCase().contains(
+                                            searchvalue.toLowerCase());
+                                  }).toList() ??
+                                  [];
+                            }
+                          } else if (chargeType == "Payment") {
+                            if (monthType == "Current Month") {
+                              filteredCharges = snapshot
+                                      .data!.currentPayments?.payments
+                                      ?.where((payment) {
+                                    var address =
+                                        payment.rentalData?.address ?? '';
+                                    var tenantName =
+                                        payment.tenantData?.tenantFirstName ??
+                                            '';
+                                    return address.toLowerCase().contains(
+                                            searchvalue.toLowerCase()) ||
+                                        tenantName.toLowerCase().contains(
+                                            searchvalue.toLowerCase());
+                                  }).toList() ??
+                                  [];
+                            } else if (monthType == "Last Month") {
+                              filteredCharges = snapshot
+                                      .data!.lastPayments?.payments
+                                      ?.where((payment) {
+                                    var address =
+                                        payment.rentalData?.address ?? '';
+                                    var tenantName =
+                                        payment.tenantData?.tenantFirstName ??
+                                            '';
+                                    return address.toLowerCase().contains(
+                                            searchvalue.toLowerCase()) ||
+                                        tenantName.toLowerCase().contains(
+                                            searchvalue.toLowerCase());
+                                  }).toList() ??
+                                  [];
+                            }
                           } else {
                             filteredCharges = [];
                           }
 
-                          return
-                            SingleChildScrollView(
+                          return SingleChildScrollView(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16.0,
@@ -1158,44 +1153,45 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   //     ),
                                   //   ),
                                   const SizedBox(height: 15),
-                                  if (chargeType == 'Charges' &&
-                                          (monthType == 'All' || monthType == null))
+                                  if (chargeType == 'Charges' && monthType == 'All')
                                     chargeTable(
-                                        snapshot.data!.dueRentCharges!.charges!,
-                                        snapshot.data!.dueRentCharges!.total!
-                                            .toDouble())
+                                        snapshot.data!.dueRentCharges?.charges ??
+                                            [],
+                                        snapshot.data!.dueRentCharges?.total
+                                                ?.toDouble() ??
+                                            0.0)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Current Month')
                                     chargeTable(
-                                        snapshot.data!.currentDueRentCharges!
-                                            .charges!,
-                                        snapshot.data!.currentMonthRentDue!)
+                                        snapshot.data!.currentDueRentCharges
+                                                ?.charges ??
+                                            [],
+                                        snapshot.data!.currentMonthRentDue ??
+                                            0.0)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Last Month')
                                     chargeTable(
-                                        snapshot
-                                            .data!.lastDueRentCharges!.charges!,
-                                        snapshot.data!.lastMonthRentDue!)
+                                        snapshot.data!.lastDueRentCharges
+                                                ?.charges ??
+                                            [],
+                                        snapshot.data!.lastMonthRentDue ?? 0.0)
                                   else if (chargeType == "Payment" &&
                                       monthType == "Current Month")
                                     chargeTable(
-                                        snapshot
-                                            .data!.currentPayments!.payments!,
-                                        snapshot.data!.currentPayments!.total!
-                                            .toDouble()!)
-                                  else if (chargeType == "Payment" &&
-                                      monthType == null)
-                                    chargeTable(
-                                        snapshot
-                                            .data!.currentPayments!.payments!,
-                                        snapshot.data!.currentPayments!.total!
-                                            .toDouble()!)
+                                        snapshot.data!.currentPayments
+                                                ?.payments ??
+                                            [],
+                                        snapshot.data!.currentPayments?.total
+                                                ?.toDouble() ??
+                                            0.0)
                                   else if (chargeType == "Payment" &&
                                       monthType == "Last Month")
                                     chargeTable(
-                                        snapshot.data!.lastPayments!.payments!,
-                                        snapshot.data!.lastPayments!.total!
-                                            .toDouble()!),
+                                        snapshot.data!.lastPayments?.payments ??
+                                            [],
+                                        snapshot.data!.lastPayments?.total
+                                                ?.toDouble() ??
+                                            0.0)
                                 ],
                               ),
                             ),
@@ -1239,7 +1235,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     List<Transaction> currentPageData =
         chargedata.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
 
-  //  currentPageData = currentPageData.reversed.toList();
+    //  currentPageData = currentPageData.reversed.toList();
 
     return SingleChildScrollView(
       child: Padding(
@@ -1508,7 +1504,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                       children: [
                         Text(
                           "Charge Type",
-                          style: TextStyle(fontSize: 14, color:blueColor,fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: blueColor,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -1526,7 +1525,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 value: chargeType,
                                 padding: EdgeInsets.symmetric(horizontal: 5),
                                 hint: Text(
-                                  "Charge type" ,
+                                  "Charge type",
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),
@@ -1544,12 +1543,15 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   setState(() {
                                     chargeType = value;
                                     // If Payment is selected and month is "All", change to "Current Month"
-                                    if (value == "Payment" && monthType == "All") {
+                                    if (value == "Payment" &&
+                                        monthType == "All") {
                                       monthType = "Current Month";
                                     }
+                                    // Reset search when filters change
+                                    searchvalue = "";
                                   });
-                                  // Handle the selected charge type
-                                  //printvalue);
+                                  // Refresh data when charge type changes
+                                  refreshData();
                                 },
                               ),
                             ),
@@ -1568,7 +1570,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                       children: [
                         Text(
                           "Select Month",
-                          style: TextStyle(fontSize: 14, color:blueColor,fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: blueColor,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -1584,7 +1589,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 border: Border.all(color: Colors.grey)),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
-                                key: ValueKey('month_dropdown_$monthType'), // Unique key
+                                key: ValueKey(
+                                    'month_dropdown_$monthType'), // Unique key
                                 value: monthType,
                                 padding: EdgeInsets.symmetric(horizontal: 5),
                                 hint: Text(
@@ -1592,7 +1598,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),
-                                isExpanded: true, // Ensure proper dropdown behavior
+                                isExpanded:
+                                    true, // Ensure proper dropdown behavior
                                 items: [
                                   if (chargeType != "Payment")
                                     DropdownMenuItem<String>(
@@ -1612,7 +1619,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   if (mounted) {
                                     setState(() {
                                       monthType = value;
+                                      // Reset search when filters change
+                                      searchvalue = "";
                                     });
+                                    // Refresh data when month type changes
+                                    refreshData();
                                   }
                                 },
                               ),
@@ -1634,7 +1645,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
           children: [
             Text(
               "Search",
-              style: TextStyle(fontSize: 14, color: blueColor,fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 14, color: blueColor, fontWeight: FontWeight.bold),
             ),
           ],
         ),

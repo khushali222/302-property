@@ -456,6 +456,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   //   //return products.fold(0, (sum, item) => sum + item.totalAmount);
   //   return 0;
   // }
+
   double getTotalPrice(List<PartsandchargeData>? partsList) {
     if (partsList == null || partsList.isEmpty) return 0.0;
 

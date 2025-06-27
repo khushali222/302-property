@@ -77,12 +77,9 @@ class _Tenants_tableState extends State<Tenants_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -122,10 +119,10 @@ class _Tenants_tableState extends State<Tenants_table> {
                     width < 400
                         ? Text("Name ",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white))
+                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Name",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -149,56 +146,56 @@ class _Tenants_tableState extends State<Tenants_table> {
                 ),
               ),
             ),
+            // Expanded(
+            //   flex: 3,
+            //   child: InkWell(
+            //     onTap: () {
+            //       setState(() {
+            //         if (sorting2) {
+            //           sorting1 = false;
+            //           sorting2 = sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         } else {
+            //           sorting1 = false;
+            //           sorting2 = !sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         }
+            //         // Sorting logic here
+            //       });
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text("   Phone", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+            //         SizedBox(width: 5),
+            //         ascending2
+            //             ? Padding(
+            //           padding: const EdgeInsets.only(top: 7, left: 2),
+            //           child: FaIcon(
+            //             FontAwesomeIcons.sortUp,
+            //             size: 20,
+            //             color: Colors.white,
+            //           ),
+            //         )
+            //             : Padding(
+            //           padding: const EdgeInsets.only(bottom: 7, left: 2),
+            //           child: FaIcon(
+            //             FontAwesomeIcons.sortDown,
+            //             size: 20,
+            //             color: Colors.white,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Expanded(
-              flex: 3,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("   Phone", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -223,9 +220,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("      Created On",
+                    Text("            Property",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -757,7 +754,6 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             SizedBox(height: 10),
-
             Padding(
               padding: const EdgeInsets.only(left: 11, right: 11),
               child: Row(
@@ -766,59 +762,61 @@ class _Tenants_tableState extends State<Tenants_table> {
                     SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 24),
-                  Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                      width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .52
-                          : MediaQuery.of(context).size.width * .49,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          // border: Border.all(color: Colors.grey),
-                          border: Border.all(color: Color(0xFF8A95A8))),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: TextField(
-                              style: TextStyle(
-                                  fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 12
-                                      : 14),
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     cvverror = false;
-                              //   });
-                              // },
-                              // controller: cvv,
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                  if(currentPage != 0)
-                                    currentPage = 0;
-                                });
-                              },
-                              cursorColor: blueColor,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(
-                                  // fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8A95A8),
+                  Expanded(
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        // height: 40,
+                        height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                        width: MediaQuery.of(context).size.width < 500
+                            ? MediaQuery.of(context).size.width * .52
+                            : MediaQuery.of(context).size.width * .49,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            // border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Color(0xFF8A95A8))),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: TextField(
+                                style: TextStyle(
                                     fontSize:
                                     MediaQuery.of(context).size.width < 500
-                                        ? 14
-                                        : 18),
-                                contentPadding: (EdgeInsets.only(
-                                    left: 8, bottom: 10, top: 5)),
+                                        ? 12
+                                        : 14),
+                                // onChanged: (value) {
+                                //   setState(() {
+                                //     cvverror = false;
+                                //   });
+                                // },
+                                // controller: cvv,
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchvalue = value;
+                                    if(currentPage != 0)
+                                      currentPage = 0;
+                                  });
+                                },
+                                cursorColor: blueColor,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle: TextStyle(
+                                    // fontWeight: FontWeight.bold,
+                                      color: Color(0xFF8A95A8),
+                                      fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 18),
+                                  contentPadding: (EdgeInsets.only(
+                                      left: 8, bottom: 10, top: 5)),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -953,17 +951,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                           children: [
                             SizedBox(height: 10),
                             _buildHeaders(),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                      Color.fromRGBO(152, 162, 179, .5)
-
-
-                                  )),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -974,13 +963,16 @@ class _Tenants_tableState extends State<Tenants_table> {
                                   Tenant tenants = entry.value;
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
+                                    margin:
+                                    EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
                                       border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
+                                          color: Color(0xFFDBE0E5)),
+                                      borderRadius:
+                                      BorderRadius.circular(10),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -1075,31 +1067,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .02),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Text(
-                                                    formatPhoneNumber('${tenants.tenantPhoneNumber}'),
-                                                    // '${tenants.tenantPhoneNumber}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .00),
+                                                        .12),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
-                                                    // '${widget.data.createdAt}',
-                                                    '${dateProvider.formatCurrentDate(tenants.createdAt ??DateTime.now().toString()) ?? ''}',
+                                  '${tenants.rentalAddress!.isEmpty ? "N/A" : tenants.rentalAddress}',
+                                  textAlign:TextAlign.end,
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1113,16 +1086,22 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .02),
+                                                        .05),
                                               ],
                                             ),
                                           ),
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 2.0),
-                                            margin: EdgeInsets.only(bottom: 2),
+                                            padding: EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                top: BorderSide(
+                                                    color:
+                                                    Color(0xFFDBE0E5),
+                                                    width: 1),
+                                              ),
+                                            ),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1180,7 +1159,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                    'Property : ',
+                                                                    'Created On : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
@@ -1190,7 +1169,36 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                    '${tenants.rentalAddress!.isEmpty ? "N/A" : tenants.rentalAddress}',
+                                                                    '${dateProvider.formatCurrentDate(tenants.createdAt ??DateTime.now().toString()) ?? ''}',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color:
+                                                                        grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Phone : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                    formatPhoneNumber('${tenants.tenantPhoneNumber}'),
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
@@ -1210,179 +1218,153 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                     height: 20,
                                                   ),
                                                   Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .end,
                                                     children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) => ResponsiveTenantSummary(
-                                                                        tenants:
-                                                                        tenants,
-                                                                        tenantId:
-                                                                        tenants.tenantId!)));
-
-
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                            BoxDecoration(
-                                                              border: Border.all(color: blueColor, width: 1.5),
-                                                              borderRadius: BorderRadius.circular(8),
-                                                            ),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Image.asset(
-                                                                  'assets/icons/view.png',color: blueColor,),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                SizedBox(
-                                                                  width: 8,
-                                                                ),
-                                                                Text(
-                                                                  "View Summery",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                      11,
-                                                                      color:
-                                                                      blueColor,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                                )
-                                                              ],
-                                                            ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          _showDeleteAlert(
+                                                              context,
+                                                              tenants
+                                                                  .tenantId!);
+                                                        },
+                                                        child:
+                                                        Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
+                                                              color: Colors
+                                                                  .red
+                                                                  .shade50
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .trashCan,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .red,
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
                                                       SizedBox(
                                                         width: 5,
                                                       ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            var check = await Navigator
-                                                                .push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        EditTenants(
-                                                                          tenants: tenants,
-                                                                          tenantId: '',
-                                                                        )));
-                                                            if (check == true) {
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          var check = await Navigator
+                                                              .push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      EditTenants(
+                                                                        tenants: tenants,
+                                                                        tenantId: '',
+                                                                      )));
+                                                          if (check == true) {
 
-                                                              setState(() {
-                                                                futureTenants = TenantsRepository().fetchTenants();
-                                                              });
+                                                            setState(() {
+                                                              futureTenants = TenantsRepository().fetchTenants();
+                                                            });
 
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(color: Colors.green, width: 1.5),
-                                                              borderRadius: BorderRadius.circular(8),
-                                                            ),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .edit,
-                                                                  size: 15,
-                                                                  color:
-                                                                  Colors.green,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Edit",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      Colors.green,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade50), // color:Colors.grey[100],
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .edit,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .green,
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
                                                       SizedBox(
                                                         width: 5,
                                                       ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            _showDeleteAlert(
-                                                                context,
-                                                                tenants
-                                                                    .tenantId!);
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(color: Colors.red, width: 1.5),
-                                                              borderRadius: BorderRadius.circular(8),
-                                                            ),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .trashCan,
-                                                                  size: 15,
-                                                                  color:
-                                                                  Colors.red,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Delete",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      Colors.red,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                                )
-                                                              ],
-                                                            ),
+                                                      GestureDetector(
+                                                        onTap: () {
+
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) => ResponsiveTenantSummary(
+                                                                      tenants:
+                                                                      tenants,
+                                                                      tenantId:
+                                                                      tenants.tenantId!)));
+
+
+                                                        },
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: Colors
+                                                                .grey
+                                                                .shade200,
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                8),
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .eye,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                              SizedBox(
+                                                                  width:
+                                                                  2),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
-
-
                                                     ],
                                                   ),
                                                 ],
@@ -1397,6 +1379,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                               ),
                             ),
                             SizedBox(height: 20),
+                            if (data.length > itemsPerPage)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -1722,7 +1705,8 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
           ],
         ),
-      ):SizedBox(
+      ):
+      SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
