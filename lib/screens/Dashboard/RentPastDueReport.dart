@@ -118,7 +118,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   }
 
   Future<RentPastDue> fetchRentPastDueData(
-      {String? adminid, bool report = false}) async {
+      {String? adminid, bool report = false}) async
+  {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");

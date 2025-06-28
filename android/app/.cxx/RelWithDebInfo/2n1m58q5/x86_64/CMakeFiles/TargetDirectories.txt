@@ -1,0 +1,2 @@
+C:/CLoudeRentalManager/302-property/android/app/.cxx/RelWithDebInfo/2n1m58q5/x86_64/CMakeFiles/edit_cache.dir
+C:/CLoudeRentalManager/302-property/android/app/.cxx/RelWithDebInfo/2n1m58q5/x86_64/CMakeFiles/rebuild_cache.dir
