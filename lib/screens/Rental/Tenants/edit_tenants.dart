@@ -1321,9 +1321,6 @@ class _EditTenantsState extends State<EditTenants> {
                                 ),
                               ],
                             ),
-                            SizedBox(
-                              height: 5,
-                            ),
                             //phone and work number
                             Row(
                               children: [
@@ -1425,9 +1422,6 @@ class _EditTenantsState extends State<EditTenants> {
                                 ),
                               ],
                             ),
-                            SizedBox(
-                              height: 5,
-                            ),
                             //email and alteremail
                             Row(
                               children: [
@@ -1505,9 +1499,6 @@ class _EditTenantsState extends State<EditTenants> {
                                   ),
                                 ),
                               ],
-                            ),
-                            SizedBox(
-                              height: 5,
                             ),
                             //pass and date of birth
                             Row(
@@ -1600,7 +1591,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             !obsecure
                                                 ? CupertinoIcons.eye_slash_fill
                                                 : CupertinoIcons.eye_fill,
-                                            color: Colors.black,
+                                            color: Colors.grey,
                                           ),
                                         ),
                                         validator: (value) {
@@ -1683,221 +1674,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 ),
                               ],
                             ),
-                            //                         //password and date
-                            //                         Row(
-                            //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //                           children: [
-                            //                             Row(
-                            //                               children: [
-                            //                                 Text('Password *',
-                            //                                     style: TextStyle(
-                            //                                         fontSize: 13,
-                            //                                         fontWeight: FontWeight.bold,
-                            //                                         color: Color(0xFF101828))),
-                            //                                 SizedBox(
-                            //                                   width: 5,
-                            //                                 ),
-                            //                                 GestureDetector(
-                            //                                     onTap: () {
-                            //                                       _tooltipKey.currentState
-                            //                                           ?.ensureTooltipVisible();
-                            //                                     },
-                            //                                     child: Tooltip(
-                            //                                         verticalOffset: 16.0,
-                            //                                         exitDuration: Duration(seconds: 2),
-                            //                                         textAlign: TextAlign.start,
-                            //                                         textStyle: TextStyle(
-                            //                                             fontSize: 15,
-                            //                                             color: Colors.white),
-                            //                                         margin: EdgeInsets.only(
-                            //                                           left: 42.0,
-                            //                                           right: 42.0,
-                            //                                         ),
-                            //                                         // padding: EdgeInsets.all(8.0),
-                            //                                         message:
-                            //                                             '''• At least one uppercase letter (A-Z).
-                            // • At least one lowercase letter (a-z).
-                            // • At least one number (0-9).
-                            // • At least one special character (e.g., @ # etc.).
-                            // • Password must be at least 12 characters long.
-                            // • No continuous alphabetical characters (e.g., abcd) or continuous numerical characters (e.g..1234).
-                            // • Avoid strictly sequential patterns (e.g.,Akl 2345678!).
-                            // • Don't use birthdays, names, addresses, or other personal information.
-                            //                                             ''',
-                            //                                         key: _tooltipKey,
-                            //                                         child: Icon(Icons.info)))
-                            //                               ],
-                            //                             ),
-                            //                             IconButton(
-                            //                                 onPressed: () {
-                            //                                   String generatedPassword =
-                            //                                       generateRandomPassword();
-                            //                                   setState(() {
-                            //                                     passWord.text = generatedPassword;
-                            //                                   });
-                            //                                 },
-                            //                                 icon: Icon(Icons.refresh))
-                            //                           ],
-                            //                         ),
-                            //                         SizedBox(
-                            //                           height: 5,
-                            //                         ),
-                            //                         //password and
-                            //                         Row(
-                            //                           children: [
-                            //                             Expanded(
-                            //                               child: Container(
-                            //                                 child: Column(
-                            //                                   crossAxisAlignment:
-                            //                                   CrossAxisAlignment.start,
-                            //                                   children: [
-                            //                                     Row(
-                            //                                       children: [
-                            //                                         Text('Password *',
-                            //                                             style: TextStyle(
-                            //                                                 fontSize: 13,
-                            //                                                 fontWeight: FontWeight.bold,
-                            //                                                 color: Color(0xFF101828))),
-                            //
-                            //                                       ],
-                            //                                     ),
-                            //                                     SizedBox(
-                            //                                         height: 15,
-                            //                                     ),
-                            //                                     CustomTextField(
-                            //                                       keyboardType: TextInputType.text,
-                            //                                       obscureText: obsecure,
-                            //                                       hintText: 'Enter password',
-                            //                                       controller: passWord,
-                            //                                       isInRow:
-                            //                                           true, // ADD FOR ROW ALIGNMENT
-                            //                                       suffixIcon: GestureDetector(
-                            //                                         onTap: () {
-                            //                                           setState(() {
-                            //                                             obsecure = !obsecure;
-                            //                                           });
-                            //                                         },
-                            //                                         child: Icon(
-                            //                                             !obsecure
-                            //                                                 ? CupertinoIcons.eye_fill
-                            //                                                 : CupertinoIcons
-                            //                                                     .eye_slash_fill,
-                            //                                             color: Colors.black),
-                            //                                       ),
-                            //                                       validator: (value) {
-                            //                                         if (value == null) {
-                            //                                           return 'please enter password';
-                            //                                         }
-                            //                                         return null;
-                            //                                       },
-                            //                                       pass: true,
-                            //                                     ),
-                            //                                   ],
-                            //                                 ),
-                            //                               ),
-                            //                             ),
-                            //                             SizedBox(width: 10),
-                            //                             Expanded(
-                            //                               child: Column(
-                            //                                 crossAxisAlignment:
-                            //                                 CrossAxisAlignment.start,
-                            //                                 children: [
-                            //                                   Text('Date of Birth ',
-                            //                                       style: TextStyle(
-                            //                                           fontSize: 13,
-                            //                                           fontWeight: FontWeight.bold,
-                            //                                           color: Color(0xFF101828))),
-                            //                                   SizedBox(
-                            //                                     height: 10,
-                            //                                   ),
-                            //                                   Container(
-                            //                                     height: 50,
-                            //                                     padding: EdgeInsets.symmetric(
-                            //                                         horizontal: 12.0, vertical: 0),
-                            //                                     decoration: BoxDecoration(
-                            //                                         color: Colors.white,
-                            //                                         boxShadow: [
-                            //                                           BoxShadow(
-                            //                                             color: Colors.black26,
-                            //                                             offset: Offset(1.2,
-                            //                                                 1.2), // Shadow offset to the bottom right
-                            //                                             blurRadius:
-                            //                                             3.0, // How much to blur the shadow
-                            //                                             spreadRadius:
-                            //                                             1.0, // How much the shadow should spread
-                            //                                           ),
-                            //                                         ],
-                            //                                         border:
-                            //                                         Border.all(width: 0, color: Colors.white),
-                            //                                         borderRadius: BorderRadius.circular(6.0)),
-                            //                                     child: TextFormField(
-                            //                                       style: TextStyle(
-                            //                                         color: Color(0xFF8898aa), // Text color
-                            //                                         fontSize: 16.0, // Text size
-                            //                                         fontWeight: FontWeight.w400, // Text weight
-                            //                                       ),
-                            //                                       controller: _dateController,
-                            //                                       decoration: InputDecoration(
-                            //                                         hintStyle: TextStyle(
-                            //                                             fontSize: 13, color: Color(0xFFb0b6c3)),
-                            //                                         border: InputBorder.none,
-                            //                                         // labelText: 'Select Date',
-                            //                                         hintText: 'Select Date',
-                            //                                         suffixIcon: IconButton(
-                            //                                           icon: Icon(Icons.calendar_today),
-                            //                                           onPressed: () {
-                            //                                             _selectDate(context);
-                            //                                           },
-                            //                                         ),
-                            //                                       ),
-                            //                                       readOnly: true,
-                            //                                       onTap: () {
-                            //                                         _selectDate(context);
-                            //                                       },
-                            //                                     ),
-                            //                                   ),
-                            //                                 ],
-                            //                               ),
-                            //                             ),
-                            //                             // InkWell(
-                            //                             //   onTap: () {
-                            //                             //     setState(() {
-                            //                             //       obsecure = !obsecure;
-                            //                             //     });
-                            //                             //   },
-                            //                             //   child: Container(
-                            //                             //     width: 38,
-                            //                             //     height: 50,
-                            //                             //     child: Center(
-                            //                             //       child: FaIcon(
-                            //                             //         !obsecure
-                            //                             //             ? FontAwesomeIcons.eyeSlash
-                            //                             //             : FontAwesomeIcons.eye,
-                            //                             //         size: 20,
-                            //                             //         color: Colors.black,
-                            //                             //       ),
-                            //                             //     ),
-                            //                             //     decoration: BoxDecoration(
-                            //                             //       color: Colors.white,
-                            //                             //       boxShadow: [
-                            //                             //         BoxShadow(
-                            //                             //           color: Colors.black26,
-                            //                             //           offset: Offset(1.2, 1.2),
-                            //                             //           blurRadius: 3.0,
-                            //                             //           spreadRadius: 1.0,
-                            //                             //         ),
-                            //                             //       ],
-                            //                             //       border: Border.all(
-                            //                             //           width: 0, color: Colors.white),
-                            //                             //       borderRadius: BorderRadius.circular(6.0),
-                            //                             //     ),
-                            //                             //   ),
-                            //                             // ),
-                            //                           ],
-                            //                         ),
-                            //                         SizedBox(
-                            //                           height: 5,
-                            //                         ),
+                            //taxid and comment
                             Row(
                               children: [
                                 Expanded(
@@ -1986,7 +1763,7 @@ class _EditTenantsState extends State<EditTenants> {
                               height: 20,
                             ),
                             Divider(
-                              color: grey,
+                              color: Color(0xFFCED4DA),
                             ),
                             SizedBox(
                               height: 10,
@@ -2153,7 +1930,7 @@ class _EditTenantsState extends State<EditTenants> {
                               height: 10,
                             ),
                             Divider(
-                              color: grey,
+                              color: Color(0xFFCED4DA),
                             ),
                             SizedBox(
                               height: 10,

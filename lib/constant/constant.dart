@@ -524,3 +524,4 @@ class CustomTableView extends StatelessWidget {
     );
   }
 }
+

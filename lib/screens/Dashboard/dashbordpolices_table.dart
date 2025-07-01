@@ -76,7 +76,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           ),
           child: Center(
             child: Text(
-              "Renter's Insurance Policies Expiring Within 60 Days",
+              "Renter's Insurance Policies Expiring Within 90 Days",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -575,7 +575,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                           Padding(
                             padding: const EdgeInsets.only(left: 5),
                             child: Text(
-                              "Renter's Insurance Policies Expiring Within 60 Days",
+                              "Renter's Insurance Policies Expiring Within 90 Days",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: blueColor,

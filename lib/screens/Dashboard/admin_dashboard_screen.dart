@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/screens/Dashboard/RentPastDueReport.dart';
 import '../../widgets/appbar.dart';
 import '../../constant/constant.dart';
@@ -83,6 +84,19 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
       return count.toString().padLeft(2, '0');
     }
     return count.toString();
+  }
+
+  String _formatCurrency(dynamic amount) {
+    final formatter = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+    double value = 0.0;
+
+    if (amount is String) {
+      value = double.tryParse(amount) ?? 0.0;
+    } else if (amount is num) {
+      value = amount.toDouble();
+    }
+
+    return formatter.format(value);
   }
 
   @override
@@ -356,7 +370,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                '\$${widget.totalRentPastDue ?? '0.00'}',
+                                _formatCurrency(widget.totalRentPastDue),
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: const Color(0xFF7B7F87),
@@ -384,12 +398,26 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                                   ),
                                 ),
                               ),
+                              // Text(
+                              //   selectedRentType == 'Rent Due'
+                              //       ? '\$${widget.currentMonthRentDue}'
+                              //       : selectedRentType == 'Rent Paid'
+                              //           ? '\$${widget.currentMonthRentPaid}'
+                              //           : '\$2000.00',
+                              //   style: TextStyle(
+                              //     fontSize: valueFont,
+                              //     color: const Color(0xFF7B7F87),
+                              //     fontWeight: FontWeight.w400,
+                              //   ),
+                              // ),
                               Text(
                                 selectedRentType == 'Rent Due'
-                                    ? '\$${widget.currentMonthRentDue}'
+                                    ? _formatCurrency(
+                                        widget.currentMonthRentDue)
                                     : selectedRentType == 'Rent Paid'
-                                        ? '\$${widget.currentMonthRentPaid}'
-                                        : '\$2000.00',
+                                        ? _formatCurrency(
+                                            widget.currentMonthRentPaid)
+                                        : _formatCurrency(2000.00),
                                 style: TextStyle(
                                   fontSize: valueFont,
                                   color: const Color(0xFF7B7F87),
@@ -417,12 +445,25 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                                   ),
                                 ),
                               ),
+                              // Text(
+                              //   selectedRentType == 'Rent Due'
+                              //       ? '\$${widget.lastMonthRentDue}'
+                              //       : selectedRentType == 'Rent Paid'
+                              //           ? '\$${widget.lastMonthRentPaid}'
+                              //           : '\$250.00',
+                              //   style: TextStyle(
+                              //     fontSize: valueFont,
+                              //     color: const Color(0xFF7B7F87),
+                              //     fontWeight: FontWeight.w400,
+                              //   ),
+                              // ),
                               Text(
                                 selectedRentType == 'Rent Due'
-                                    ? '\$${widget.lastMonthRentDue}'
+                                    ? _formatCurrency(widget.lastMonthRentDue)
                                     : selectedRentType == 'Rent Paid'
-                                        ? '\$${widget.lastMonthRentPaid}'
-                                        : '\$250.00',
+                                        ? _formatCurrency(
+                                            widget.lastMonthRentPaid)
+                                        : _formatCurrency(250.00),
                                 style: TextStyle(
                                   fontSize: valueFont,
                                   color: const Color(0xFF7B7F87),
