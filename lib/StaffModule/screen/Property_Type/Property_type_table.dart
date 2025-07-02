@@ -45,12 +45,20 @@ class _PropertyTableState extends State<PropertyTable> {
   void sortData(List<propertytype> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.propertyType!.compareTo(b.propertyType!)
-          : b.propertyType!.compareTo(a.propertyType!));
+          ? a.propertyType!
+              .toLowerCase()
+              .compareTo(b.propertyType!.toLowerCase())
+          : b.propertyType!
+              .toLowerCase()
+              .compareTo(a.propertyType!.toLowerCase()));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.propertysubType!.compareTo(b.propertysubType!)
-          : b.propertysubType!.compareTo(a.propertysubType!));
+          ? a.propertysubType!
+              .toLowerCase()
+              .compareTo(b.propertysubType!.toLowerCase())
+          : b.propertysubType!
+              .toLowerCase()
+              .compareTo(a.propertysubType!.toLowerCase()));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
           ? a.createdAt!.compareTo(b.createdAt!)
@@ -120,9 +128,10 @@ class _PropertyTableState extends State<PropertyTable> {
                   children: [
                     width < 400
                         ? Text("Main Type ",
-                            style: TextStyle(color: Colors.white,fontSize: 15))
+                            style: TextStyle(color: Colors.white, fontSize: 15))
                         : Text("Main Type",
-                            style: TextStyle(color: Colors.white,fontSize: 15)),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -170,7 +179,8 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Subtypes", style: TextStyle(color: Colors.white,fontSize: 15)),
+                    Text("Subtypes",
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -218,7 +228,8 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("  Created On", style: TextStyle(color: Colors.white,fontSize: 15)),
+                    Text("  Created On",
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending3
                     //     ? Padding(
@@ -388,8 +399,17 @@ class _PropertyTableState extends State<PropertyTable> {
       _tableData.sort((a, b) {
         final aValue = getField(a);
         final bValue = getField(b);
-        final result = aValue.compareTo(bValue as T);
-        return _sortAscending ? result : -result;
+
+        // For string fields, perform case-insensitive comparison
+        if (aValue is String && bValue is String) {
+          final result = (aValue as String)
+              .toLowerCase()
+              .compareTo((bValue as String).toLowerCase());
+          return _sortAscending ? result : -result;
+        } else {
+          final result = aValue.compareTo(bValue as T);
+          return _sortAscending ? result : -result;
+        }
       });
     });
   }
@@ -673,67 +693,70 @@ class _PropertyTableState extends State<PropertyTable> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: titleBar(
-                            width:permissions!.propertytypeAdd! ? MediaQuery.of(context).size.width * .65 :MediaQuery.of(context).size.width * .93,
+                            width: permissions!.propertytypeAdd!
+                                ? MediaQuery.of(context).size.width * .65
+                                : MediaQuery.of(context).size.width * .93,
                             title: 'Property Type',
                           ),
                         ),
                         if (permissions!.propertytypeAdd!)
-                        GestureDetector(
-                          onTap: () async {
-                            final result = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => Add_property()));
-                            if (result == true) {
-                              setState(() {
-                                futurePropertyTypes = PropertyTypeRepository()
-                                    .fetchPropertyTypes();
-                              });
-                            }
-                          },
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width < 500)
-                                ? 50
-                                : MediaQuery.of(context).size.width * 0.062,
+                          GestureDetector(
+                            onTap: () async {
+                              final result = await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => Add_property()));
+                              if (result == true) {
+                                setState(() {
+                                  futurePropertyTypes = PropertyTypeRepository()
+                                      .fetchPropertyTypes();
+                                });
+                              }
+                            },
+                            child: Container(
+                              height: (MediaQuery.of(context).size.width < 500)
+                                  ? 50
+                                  : MediaQuery.of(context).size.width * 0.062,
 
-                            // height:  MediaQuery.of(context).size.width * 0.07,
-                            // height:  40,
-                            width: (MediaQuery.of(context).size.width < 500)
-                                ? MediaQuery.of(context).size.width * 0.25
-                                : MediaQuery.of(context).size.width * 0.25,
-                            decoration: BoxDecoration(
-                              color: blueColor,
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  offset: Offset(0.0, 4.0),
-                                  blurRadius: 6.0,
-                                ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "+ Add",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 20,
-                                    ),
+                              // height:  MediaQuery.of(context).size.width * 0.07,
+                              // height:  40,
+                              width: (MediaQuery.of(context).size.width < 500)
+                                  ? MediaQuery.of(context).size.width * 0.25
+                                  : MediaQuery.of(context).size.width * 0.25,
+                              decoration: BoxDecoration(
+                                color: blueColor,
+                                borderRadius: BorderRadius.circular(5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    offset: Offset(0.0, 4.0),
+                                    blurRadius: 6.0,
                                   ),
                                 ],
                               ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "+ Add",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 16
+                                                : 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
                         if (MediaQuery.of(context).size.width < 500)
-                           SizedBox(width: permissions!.propertytypeAdd! ? 6 :0),
+                          SizedBox(
+                              width: permissions!.propertytypeAdd! ? 6 : 0),
                         if (MediaQuery.of(context).size.width > 500)
                           SizedBox(width: 22),
                       ],
@@ -945,12 +968,19 @@ class _PropertyTableState extends State<PropertyTable> {
                             );
                           } else {
                             var data = snapshot.data!;
-                            if (selectedValue == null && searchvalue!.isEmpty) {
-                              data = snapshot.data!;
-                            } else if (selectedValue == "All") {
-                              data = snapshot.data!;
-                            } else if (searchvalue!.isNotEmpty) {
-                              data = snapshot.data!
+
+                            // Apply type filter first (if selected and not "All")
+                            if (selectedValue != null &&
+                                selectedValue != "All") {
+                              data = data
+                                  .where((property) =>
+                                      property.propertyType == selectedValue)
+                                  .toList();
+                            }
+
+                            // Apply search filter on top of type filter (if search is not empty)
+                            if (searchvalue!.isNotEmpty) {
+                              data = data
                                   .where((property) =>
                                       property.propertyType!
                                           .toLowerCase()
@@ -970,11 +1000,6 @@ class _PropertyTableState extends State<PropertyTable> {
                                           .toString()
                                           .toLowerCase()
                                           .contains(searchvalue!.toLowerCase()))
-                                  .toList();
-                            } else {
-                              data = snapshot.data!
-                                  .where((property) =>
-                                      property.propertyType == selectedValue)
                                   .toList();
                             }
                             if (data.isEmpty) {
@@ -1220,7 +1245,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              formatDate('${Propertytype.updatedAt??"---"}'),
+                                                                              formatDate('${Propertytype.updatedAt ?? "---"}'),
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey
@@ -1518,12 +1543,18 @@ class _PropertyTableState extends State<PropertyTable> {
                           );
                         } else {
                           _tableData = snapshot.data!;
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            _tableData = snapshot.data!;
-                          } else if (selectedValue == "All") {
-                            _tableData = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            _tableData = snapshot.data!
+
+                          // Apply type filter first (if selected and not "All")
+                          if (selectedValue != null && selectedValue != "All") {
+                            _tableData = _tableData
+                                .where((property) =>
+                                    property.propertyType == selectedValue)
+                                .toList();
+                          }
+
+                          // Apply search filter on top of type filter (if search is not empty)
+                          if (searchvalue.isNotEmpty) {
+                            _tableData = _tableData
                                 .where((property) =>
                                     property.propertyType!
                                         .toLowerCase()
@@ -1531,11 +1562,6 @@ class _PropertyTableState extends State<PropertyTable> {
                                     property.propertysubType!
                                         .toLowerCase()
                                         .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          } else {
-                            _tableData = snapshot.data!
-                                .where((property) =>
-                                    property.propertyType == selectedValue)
                                 .toList();
                           }
                           totalrecords = _tableData.length;
@@ -1566,7 +1592,6 @@ class _PropertyTableState extends State<PropertyTable> {
                                                         ),
                                                   ),
                                                   children: [
-
                                                     _buildHeader(
                                                         'Main Type',
                                                         0,
@@ -1620,7 +1645,6 @@ class _PropertyTableState extends State<PropertyTable> {
                                                       ),
                                                     ),
                                                     children: [
-
                                                       // Text(
                                                       //     '${_pagedData[i].propertyType!}'),
                                                       // Text(

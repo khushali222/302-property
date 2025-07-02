@@ -76,12 +76,20 @@ class _StaffTableState extends State<StaffTable> {
   void sortData(List<Staffmembers> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.staffmemberName!.compareTo(b.staffmemberName!)
-          : b.staffmemberName!.compareTo(a.staffmemberName!));
+          ? a.staffmemberName!
+              .toLowerCase()
+              .compareTo(b.staffmemberName!.toLowerCase())
+          : b.staffmemberName!
+              .toLowerCase()
+              .compareTo(a.staffmemberName!.toLowerCase()));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.staffmemberDesignation!.compareTo(b.staffmemberDesignation!)
-          : b.staffmemberDesignation!.compareTo(a.staffmemberDesignation!));
+          ? a.staffmemberDesignation!
+              .toLowerCase()
+              .compareTo(b.staffmemberDesignation!.toLowerCase())
+          : b.staffmemberDesignation!
+              .toLowerCase()
+              .compareTo(a.staffmemberDesignation!.toLowerCase()));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
           ? a.createdAt!.compareTo(b.createdAt!)
@@ -1376,116 +1384,116 @@ class _StaffTableState extends State<StaffTable> {
                                   ),
                                   SizedBox(height: 20),
                                   if (data.length > itemsPerPage)
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          // Text('Rows per page:'),
-                                          SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: data.length >
-                                                          itemsPerPageOptions
-                                                              .first // Condition to check if dropdown should be enabled
-                                                      ? (newValue) {
-                                                          setState(() {
-                                                            itemsPerPage =
-                                                                newValue!;
-                                                            currentPage =
-                                                                0; // Reset to first page when items per page change
-                                                          });
-                                                        }
-                                                      : null,
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            // Text('Rows per page:'),
+                                            SizedBox(width: 10),
+                                            Material(
+                                              elevation: 3,
+                                              child: Container(
+                                                height: 40,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.0),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.grey),
+                                                ),
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child: DropdownButton<int>(
+                                                    value: itemsPerPage,
+                                                    items: itemsPerPageOptions
+                                                        .map((int value) {
+                                                      return DropdownMenuItem<
+                                                          int>(
+                                                        value: value,
+                                                        child: Text(
+                                                            value.toString()),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged: data.length >
+                                                            itemsPerPageOptions
+                                                                .first // Condition to check if dropdown should be enabled
+                                                        ? (newValue) {
+                                                            setState(() {
+                                                              itemsPerPage =
+                                                                  newValue!;
+                                                              currentPage =
+                                                                  0; // Reset to first page when items per page change
+                                                            });
+                                                          }
+                                                        : null,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronLeft,
+                                                color: currentPage == 0
+                                                    ? Colors.grey
+                                                    : blueColor,
+                                              ),
+                                              onPressed: currentPage == 0
+                                                  ? null
+                                                  : () {
+                                                      setState(() {
+                                                        currentPage--;
+                                                      });
+                                                    },
                                             ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_back),
-                                          //   onPressed: currentPage > 0
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage--;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_forward),
-                                          //   onPressed: currentPage < totalPages - 1
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage++;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color:
+                                            // IconButton(
+                                            //   icon: Icon(Icons.arrow_back),
+                                            //   onPressed: currentPage > 0
+                                            //       ? () {
+                                            //     setState(() {
+                                            //       currentPage--;
+                                            //     });
+                                            //   }
+                                            //       : null,
+                                            // ),
+                                            Text(
+                                                'Page ${currentPage + 1} of $totalPages'),
+                                            // IconButton(
+                                            //   icon: Icon(Icons.arrow_forward),
+                                            //   onPressed: currentPage < totalPages - 1
+                                            //       ? () {
+                                            //     setState(() {
+                                            //       currentPage++;
+                                            //     });
+                                            //   }
+                                            //       : null,
+                                            // ),
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronRight,
+                                                color:
+                                                    currentPage < totalPages - 1
+                                                        ? blueColor
+                                                        : Colors.grey,
+                                              ),
+                                              onPressed:
                                                   currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
+                                                      ? () {
+                                                          setState(() {
+                                                            currentPage++;
+                                                          });
+                                                        }
+                                                      : null,
                                             ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
-                                                        setState(() {
-                                                          currentPage++;
-                                                        });
-                                                      }
-                                                    : null,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                 ],
                               ),
                             );

@@ -86,16 +86,35 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
     return count.toString();
   }
 
+  // String _formatCurrency(dynamic amount) {
+  //   final formatter = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+  //   double value = 0.0;
+  //
+  //   if (amount is String) {
+  //     value = double.tryParse(amount) ?? 0.0;
+  //   } else if (amount is num) {
+  //     value = amount.toDouble();
+  //   }
+  //
+  //   return formatter.format(value);
+  // }
   String _formatCurrency(dynamic amount) {
-    final formatter = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+    final formatter = NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 2);
+
     double value = 0.0;
 
     if (amount is String) {
-      value = double.tryParse(amount) ?? 0.0;
+      value = double.tryParse(amount.replaceAll(',', '')) ?? 0.0;
     } else if (amount is num) {
       value = amount.toDouble();
     }
 
+    // If amount is exactly zero, return simple $0
+    if (value == 0.0) {
+      return '\$0';
+    }
+
+    // For non-zero values, format with US commas and 2 decimal places
     return formatter.format(value);
   }
 
@@ -422,6 +441,10 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                                   fontSize: valueFont,
                                   color: const Color(0xFF7B7F87),
                                   fontWeight: FontWeight.w400,
+
+
+
+
                                 ),
                               ),
                             ],
