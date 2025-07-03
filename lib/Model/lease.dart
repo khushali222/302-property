@@ -65,7 +65,7 @@ class ChargeData {
 
 class Entry {
   String account;
-  dynamic amount;
+  double? amount;
   String chargeType;
   String date;
   bool isRepeatable;
@@ -74,17 +74,16 @@ class Entry {
   String? tenantId;
   String? entry_id;
 
-  Entry({
-    required this.account,
-    required this.amount,
-    required this.chargeType,
-    required this.date,
-    required this.isRepeatable,
-    required this.memo,
-    this.rentCycle,
-    this.tenantId,
-    this.entry_id
-  });
+  Entry(
+      {required this.account,
+      required this.amount,
+      required this.chargeType,
+      required this.date,
+      required this.isRepeatable,
+      required this.memo,
+      this.rentCycle,
+      this.tenantId,
+      this.entry_id});
 
   factory Entry.fromJson(Map<String, dynamic> json) {
     print('\n\nEntry\'s data');
@@ -92,16 +91,16 @@ class Entry {
       print('$key: $value');
     });
     return Entry(
-      account: json['account'],
-      amount: json['amount'] ??"",
-      chargeType: json['charge_type'],
-      date: json['date'],
-      isRepeatable: json['is_repeatable'] ?? false,
-      memo: json['memo'] ?? "",
-      rentCycle: json['rent_cycle'],
-      tenantId: json['tenant_id'],
-      entry_id: json['entry_id']
-    );
+        account: json['account'],
+        amount:
+            json['amount'] != null ? (json['amount'] as num).toDouble() : null,
+        chargeType: json['charge_type'],
+        date: json['date'],
+        isRepeatable: json['is_repeatable'] ?? false,
+        memo: json['memo'] ?? "",
+        rentCycle: json['rent_cycle'],
+        tenantId: json['tenant_id'],
+        entry_id: json['entry_id']);
   }
 
   Map<String, dynamic> toJson() {
@@ -114,9 +113,8 @@ class Entry {
       'memo': memo,
       'tenant_id': tenantId,
       'entry_id': entry_id,
-      'rent_cycle':rentCycle
+      'rent_cycle': rentCycle
     };
-
 
     // if (chargeType != "Recurring Charge") {
     //   data['rent_cycle'] = rentCycle;
@@ -166,7 +164,6 @@ class CosignerData {
   });
 
   factory CosignerData.fromJson(Map<String, dynamic> json) {
-
     return CosignerData(
       adminId: json['admin_id'],
       cosignerAddress: json['cosigner_address'],
@@ -244,7 +241,7 @@ class LeaseData {
       adminId: json['admin_id'],
       companyName: json['company_name'],
       proRatedRent: json['proRatedRent'],
-      memo:json['memo'],
+      memo: json['memo'],
       endDate: json['end_date'],
       entry: (json['entry'] as List).map((i) => Entry.fromJson(i)).toList(),
       leaseAmount: json['lease_amount'],
@@ -412,7 +409,7 @@ class TenantData {
       emergencyContact: EmergencyContacts.fromJson(json['emergency_contact']),
       isDelete: json['is_delete'],
       rentalAddress: json['rental_adress'],
-      rentalUnit: json['rental_unit']??"",
+      rentalUnit: json['rental_unit'] ?? "",
       taxPayerId: json['taxPayer_id'],
       tenantAlternativeEmail: json['tenant_alternativeEmail'],
       tenantAlternativeNumber: json['tenant_alternativeNumber'],
@@ -451,7 +448,7 @@ class TenantData {
       'tenant_lastName': tenantLastName,
       'tenant_password': tenantPassword,
       'tenant_phoneNumber': tenantPhoneNumber,
-      'percentage':rentShare
+      'percentage': rentShare
     };
   }
 }
@@ -471,10 +468,10 @@ class EmergencyContacts {
 
   factory EmergencyContacts.fromJson(Map<String, dynamic> json) {
     return EmergencyContacts(
-      name: json['name']??"",
-      relation: json['relation']??"",
-      email: json['email']??"",
-      phoneNumber: json['phoneNumber']??"",
+      name: json['name'] ?? "",
+      relation: json['relation'] ?? "",
+      email: json['email'] ?? "",
+      phoneNumber: json['phoneNumber'] ?? "",
     );
   }
 

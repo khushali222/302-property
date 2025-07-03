@@ -34,7 +34,6 @@ import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 import '../../../../repository/lease_rental_insurance_repo.dart';
 import '../../../../widgets/custom_drawer.dart';
 import 'Edit_Renters_insurance.dart';
@@ -326,9 +325,11 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                     children: [
                       width < 400
                           ? const Text("  Insurance\n  Company",
-                              style: TextStyle(color: Colors.white ,fontSize: 15))
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 15))
                           : const Text("  Insurance\n  Company",
-                              style: TextStyle(color: Colors.white,fontSize: 15)),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       // ascending1
@@ -378,7 +379,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 child: Row(
                   children: [
                     Text("     Expiration\n        Date",
-                        style: TextStyle(color: Colors.white,fontSize: 15)),
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending2
                     //     ? Padding(
@@ -427,7 +428,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 child: Row(
                   children: [
                     Text("      Effective\n         Date",
-                        style: TextStyle(color: Colors.white,fontSize: 15)),
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending3
                     //     ? Padding(
@@ -522,9 +523,10 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                           // Provider.of<SelectedApplicantProvider>(context,
                           //     listen: false)
                           //     .clearApplicant();
-                          final result = await Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (context) => LeaseAddRentersInsurance(
+                          final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      LeaseAddRentersInsurance(
                                         tenantid: widget.tenantId,
                                         leaseId: widget.leaseId,
                                       )));
@@ -569,7 +571,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                     ],
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(height: 16),
                   if (MediaQuery.of(context).size.width < 500)
@@ -725,7 +727,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                     ),
                                                     Expanded(
                                                       flex:
-                                                      4, // Larger size for the first field
+                                                          4, // Larger size for the first field
                                                       child: Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -790,11 +792,13 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
-                                                          item.effectiveDate?.isNotEmpty ==
-                                                              true
-                                                              ? dateProvider
-                                                              .formatCurrentDate('${item?.effectiveDate?.split('T').first}')
-                                                              : 'N/A',
+                                                        item.effectiveDate
+                                                                    ?.isNotEmpty ==
+                                                                true
+                                                            ? dateProvider
+                                                                .formatCurrentDate(
+                                                                    '${item?.effectiveDate?.split('T').first}')
+                                                            : 'N/A',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -849,12 +853,14 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                     TextSpan(
                                                                       // text: formatDate(
                                                                       //     '${Propertytype.updatedAt}'),
-                                                                      text: item.tenantDetails != null && item.tenantDetails!.isNotEmpty
-                                                                          ? item.tenantDetails!
-                                                                          .map((tenant) =>
-                                                                      '${tenant.tenantFirstName ?? '-'} ${tenant.tenantLastName ?? '-'}')
-                                                                          .join(', ')
-                                                                          : 'N/A' ,
+                                                                      text: item.tenantDetails != null &&
+                                                                              item
+                                                                                  .tenantDetails!.isNotEmpty
+                                                                          ? item
+                                                                              .tenantDetails!
+                                                                              .map((tenant) => '${tenant.tenantFirstName ?? '-'} ${tenant.tenantLastName ?? '-'}')
+                                                                              .join(', ')
+                                                                          : 'N/A',
                                                                       style: TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,
@@ -923,7 +929,6 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                           ),*/
                                                           ],
                                                         ),
-
                                                         SizedBox(
                                                           height: 15,
                                                         ),
@@ -938,15 +943,19 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                   var check = await Navigator.push(
                                                                       context,
                                                                       MaterialPageRoute(
-                                                                          builder: (context) =>
-                                                                          EditRentersInsurance(tenantid: widget.tenantId, leaseId: widget.leaseId, renters_insurance_id:  item.rentersInsuranceId ?? "",)));
+                                                                          builder: (context) => EditRentersInsurance(
+                                                                                tenantid: widget.tenantId,
+                                                                                leaseId: widget.leaseId,
+                                                                                renters_insurance_id: item.rentersInsuranceId ?? "",
+                                                                              )));
                                                                   if (check ==
                                                                       true) {
                                                                     setState(
-                                                                            () {
-                                                                              _futureRentersInsurance = RentersInsuranceService()
-                                                                                  .fetchRentersInsurance(widget.leaseId);
-                                                                        });
+                                                                        () {
+                                                                      _futureRentersInsurance =
+                                                                          RentersInsuranceService()
+                                                                              .fetchRentersInsurance(widget.leaseId);
+                                                                    });
                                                                   }
                                                                 },
                                                                 child:
@@ -1051,7 +1060,11 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                   Navigator.push(
                                                                       context,
                                                                       MaterialPageRoute(
-                                                                          builder: (context) => ViewRentersDetails(tenantid: widget.tenantId, leaseId: widget.leaseId, renters_insurance_id:  item.rentersInsuranceId ?? "",)));
+                                                                          builder: (context) => ViewRentersDetails(
+                                                                                tenantid: widget.tenantId,
+                                                                                leaseId: widget.leaseId,
+                                                                                renters_insurance_id: item.rentersInsuranceId ?? "",
+                                                                              )));
                                                                 },
                                                                 child:
                                                                     Container(

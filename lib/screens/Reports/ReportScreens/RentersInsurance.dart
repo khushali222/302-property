@@ -227,6 +227,33 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     );
   }
 
+  void sortData(List<RentersInsuranceData> data) {
+    if (sorting1) {
+      data.sort((a, b) {
+        final aName = a.tenantName ?? '';
+        final bName = b.tenantName ?? '';
+        return ascending1
+            ? aName.toLowerCase().compareTo(bName.toLowerCase())
+            : bName.toLowerCase().compareTo(aName.toLowerCase());
+      });
+    } else if (sorting2) {
+      data.sort((a, b) {
+        final aCompany = a.rentersInsurance?.insuranceCompany ?? '';
+        final bCompany = b.rentersInsurance?.insuranceCompany ?? '';
+        return ascending2
+            ? aCompany.toLowerCase().compareTo(bCompany.toLowerCase())
+            : bCompany.toLowerCase().compareTo(aCompany.toLowerCase());
+      });
+    } else if (sorting3) {
+      data.sort((a, b) {
+        final aPolicyId = a.rentersInsurance?.policyId ?? '';
+        final bPolicyId = b.rentersInsurance?.policyId ?? '';
+        return ascending3
+            ? aPolicyId.toLowerCase().compareTo(bPolicyId.toLowerCase())
+            : bPolicyId.toLowerCase().compareTo(aPolicyId.toLowerCase());
+      });
+    }
+  }
   void _sort<T>(Comparable<T> Function(RentersInsuranceData d) getField,
       int columnIndex, bool ascending) {
     setState(() {
@@ -283,21 +310,17 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 onTap: () {
                   setState(() {
                     if (sorting1 == true) {
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
+                      // Already sorting by this column, just toggle the order
+                      ascending1 = !ascending1;
                     } else {
-                      sorting1 = !sorting1;
+                      // Start sorting by this column
+                      sorting1 = true;
                       sorting2 = false;
                       sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending1 = true; // Start with A-Z
                       ascending2 = false;
                       ascending3 = false;
                     }
-
-                    // Sorting logic here
                   });
                 },
                 child: Padding(
@@ -311,23 +334,32 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                               style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
-                      // ascending1
-                      //     ? const Padding(
-                      //         padding: EdgeInsets.only(top: 7, left: 2),
-                      //         child: FaIcon(
-                      //           FontAwesomeIcons.sortUp,
-                      //           size: 20,
-                      //           color: Colors.white,
-                      //         ),
-                      //       )
-                      //     : const Padding(
-                      //         padding: EdgeInsets.only(bottom: 7, left: 2),
-                      //         child: FaIcon(
-                      //           FontAwesomeIcons.sortDown,
-                      //           size: 20,
-                      //           color: Colors.white,
-                      //         ),
-                      //       ),
+                      !sorting1
+                          ? const Padding(
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 16,
+                                color: Colors.white70,
+                              ),
+                            )
+                          : ascending1
+                              ? const Padding(
+                                  padding: EdgeInsets.only(top: 7, left: 2),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.sortUp,
+                                    size: 20,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Padding(
+                                  padding: EdgeInsets.only(bottom: 7, left: 2),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.sortDown,
+                                    size: 20,
+                                    color: Colors.white,
+                                  ),
+                                ),
                     ],
                   ),
                 ),
@@ -337,22 +369,18 @@ class _RentersInsuranceState extends State<RentersInsurance> {
               child: InkWell(
                 onTap: () {
                   setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
+                    if (sorting2 == true) {
+                      // Already sorting by this column, just toggle the order
+                      ascending2 = !ascending2;
                     } else {
+                      // Start sorting by this column
                       sorting1 = false;
-                      sorting2 = !sorting2;
+                      sorting2 = true;
                       sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
                       ascending1 = false;
+                      ascending2 = true; // Start with A-Z
                       ascending3 = false;
                     }
-                    // Sorting logic here
                   });
                 },
                 child: Row(
@@ -360,23 +388,32 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                     Text("Insurance\n Provider",
                         style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    // ascending2
-                    //     ? Padding(
-                    //         padding: const EdgeInsets.only(top: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortUp,
-                    //           size: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       )
-                    //     : Padding(
-                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortDown,
-                    //           size: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       ),
+                    !sorting2
+                        ? const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 16,
+                              color: Colors.white70,
+                            ),
+                          )
+                        : ascending2
+                            ? const Padding(
+                                padding: EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
                   ],
                 ),
               ),
@@ -385,46 +422,51 @@ class _RentersInsuranceState extends State<RentersInsurance> {
               child: InkWell(
                 onTap: () {
                   setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
+                    if (sorting3 == true) {
+                      // Already sorting by this column, just toggle the order
+                      ascending3 = !ascending3;
                     } else {
+                      // Start sorting by this column
                       sorting1 = false;
                       sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
+                      sorting3 = true;
                       ascending1 = false;
+                      ascending2 = false;
+                      ascending3 = true; // Start with A-Z
                     }
-
-                    // Sorting logic here
                   });
                 },
                 child: Row(
                   children: [
-                    Text("     Policy Id", style: TextStyle(color: Colors.white)),
+                    Text("     Policy Id",
+                        style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    // ascending3
-                    //     ? Padding(
-                    //         padding: const EdgeInsets.only(top: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortUp,
-                    //           size: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       )
-                    //     : Padding(
-                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
+                    // !sorting3
+                    //     ? const Padding(
+                    //         padding: EdgeInsets.only(bottom: 7, left: 2),
                     //         child: FaIcon(
                     //           FontAwesomeIcons.sortDown,
-                    //           size: 20,
-                    //           color: Colors.white,
+                    //           size: 16,
+                    //           color: Colors.white70,
                     //         ),
-                    //       ),
+                    //       )
+                    //     : ascending3
+                    //         ? const Padding(
+                    //             padding: EdgeInsets.only(top: 7, left: 2),
+                    //             child: FaIcon(
+                    //               FontAwesomeIcons.sortUp,
+                    //               size: 20,
+                    //               color: Colors.white,
+                    //             ),
+                    //           )
+                    //         : const Padding(
+                    //             padding: EdgeInsets.only(bottom: 7, left: 2),
+                    //             child: FaIcon(
+                    //               FontAwesomeIcons.sortDown,
+                    //               size: 20,
+                    //               color: Colors.white,
+                    //             ),
+                    //           ),
                   ],
                 ),
               ),
@@ -471,7 +513,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                     crossAxisAlignment: pw.CrossAxisAlignment.center,
                     children: [
                       pw.Text(
-                       "Renter's Insurance",
+                        "Renter's Insurance",
                         style: pw.TextStyle(
                           fontSize: 18,
                           fontWeight: pw.FontWeight.bold,
@@ -526,24 +568,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 ],
               ),
             ),
-            pw.Table.fromTextArray(
-              headers: [
-                'Unit',
-                'Tenant Name',
-                'Insurance Provider',
-                'Policy ID',
-                'Liability Coverage',
-                'Effective Date',
-                'Expiration Date',
-              ],
-              data: _generateTableData(rentersInsurance),
-              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-              headerDecoration: pw.BoxDecoration(
-                color: PdfColors.grey300,
-                border: pw.TableBorder.all(color: PdfColor.fromHex('#152B53')),
-              ),
-              cellStyle: pw.TextStyle(fontSize: 10),
-              cellAlignment: pw.Alignment.centerLeft,
+            pw.Table(
               border: pw.TableBorder.all(color: PdfColor.fromHex('#152B53')),
               columnWidths: {
                 0: const pw.FixedColumnWidth(80), // Unit
@@ -554,6 +579,102 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 5: const pw.FixedColumnWidth(80), // Effective Date
                 6: const pw.FixedColumnWidth(80), // Expiration Date
               },
+              children: [
+                // Header row
+                pw.TableRow(
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.grey300,
+                    border:
+                        pw.TableBorder.all(color: PdfColor.fromHex('#152B53')),
+                  ),
+                  children: [
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Unit',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Tenant Name',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Insurance Provider',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Policy ID',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Liability Coverage',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Effective Date',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Expiration Date',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                // Data rows
+                ..._generateTableData(rentersInsurance).map(
+                  (row) => pw.TableRow(
+                    decoration: pw.BoxDecoration(
+                      border: pw.TableBorder.all(
+                          color: PdfColor.fromHex('#152B53')),
+                    ),
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child:
+                            pw.Text(row[0], style: pw.TextStyle(fontSize: 10)),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child:
+                            pw.Text(row[1], style: pw.TextStyle(fontSize: 10)),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child:
+                            pw.Text(row[2], style: pw.TextStyle(fontSize: 10)),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child:
+                            pw.Text(row[3], style: pw.TextStyle(fontSize: 10)),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child: pw.Align(
+                          alignment: pw.Alignment.centerRight,
+                          child: pw.Text(row[4],
+                              style: pw.TextStyle(fontSize: 10)),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child:
+                            pw.Text(row[5], style: pw.TextStyle(fontSize: 10)),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child:
+                            pw.Text(row[6], style: pw.TextStyle(fontSize: 10)),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ];
         },
@@ -885,12 +1006,12 @@ class _RentersInsuranceState extends State<RentersInsurance> {
             item.rentersInsurance!.liabilityCoverage != null
                 ? "\$${item.rentersInsurance!.liabilityCoverage}"
                 : '');
-        sheet
-            .getRangeByIndex(rowIndex, 6)
-            .setText(formateDates(item.rentersInsurance!.effectiveDate.toString()) ?? '');
-        sheet
-            .getRangeByIndex(rowIndex, 7)
-            .setText(formateDates(item.rentersInsurance!.expirationDate.toString()) ?? '');
+        sheet.getRangeByIndex(rowIndex, 6).setText(
+            formateDates(item.rentersInsurance!.effectiveDate.toString()) ??
+                '');
+        sheet.getRangeByIndex(rowIndex, 7).setText(
+            formateDates(item.rentersInsurance!.expirationDate.toString()) ??
+                '');
         rowIndex++; // Move to the next row
       }
     }
@@ -903,7 +1024,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     final String fileName = 'RentersInsuranceReport_$formattedDate.xlsx';
     final Directory directory = Platform.isIOS
         ? await getApplicationDocumentsDirectory()
-        : Directory ('/storage/emulated/0/Download');
+        : Directory('/storage/emulated/0/Download');
 
     // Create directory if it doesn't exist (for Android)
     if (!await directory.exists() && !Platform.isIOS) {
@@ -962,7 +1083,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     }
 
     String csv = const ListToCsvConverter().convert(rows);
-     final List<int> bytes = utf8.encode(csvBuffer.toString());
+    final List<int> bytes = utf8.encode(csvBuffer.toString());
     // Define file name with current date and time
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
@@ -1078,6 +1199,8 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                               .toList();
                         }
 
+                        // Apply sorting
+                        sortData(data);
                         // Pagination logic
                         final totalPages = (data.length / itemsPerPage).ceil();
                         final currentPageData = data
@@ -1136,7 +1259,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                         ),
                                       ),
                                       const SizedBox(width: 16),
-                                        ElevatedButton(
+                                      ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: blueColor,
                                         ),
@@ -1385,30 +1508,23 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                 },
                                                                 children: [
                                                                   buildTableRow(
-                                                                      'Effective Date :',
-                                                                      getDisplayValue(item.rentersInsurance?.effectiveDate?.isNotEmpty ==
-                                                                              true
-                                                                          ?dateProvider.formatCurrentDate('${item
-                                                                          .rentersInsurance
-                                                                          ?.effectiveDate
-                                                                          ?.split('T')
-                                                                          .first}')
-                                                                          : 'N/A'),
+                                                                    'Effective Date :',
+                                                                    getDisplayValue(item.rentersInsurance?.effectiveDate?.isNotEmpty ==
+                                                                            true
+                                                                        ? dateProvider
+                                                                            .formatCurrentDate('${item.rentersInsurance?.effectiveDate?.split('T').first}')
+                                                                        : 'N/A'),
                                                                     'Expiration Date :',
                                                                     getDisplayValue(item.rentersInsurance?.expirationDate?.isNotEmpty ==
-                                                                        true
-                                                                        ? dateProvider.formatCurrentDate('${item
-                                                                        .rentersInsurance
-                                                                        ?.expirationDate
-                                                                        ?.split('T')
-                                                                        .first}')
-
+                                                                            true
+                                                                        ? dateProvider
+                                                                            .formatCurrentDate('${item.rentersInsurance?.expirationDate?.split('T').first}')
                                                                         : 'N/A'),
                                                                   ),
                                                                   buildTableRow(
                                                                       'Liability Coverage :',
                                                                       getDisplayValue(item.rentersInsurance?.liabilityCoverage.toString().isNotEmpty ==
-                                                                          true
+                                                                              true
                                                                           ? '\$${item.rentersInsurance?.liabilityCoverage.toString()}'
                                                                           : 'N/A'),
                                                                       '',
@@ -2047,7 +2163,8 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                   (item) => item.rentalAddress == selectedValue)
                               .toList();
                         }
-
+                        // Apply sorting
+                        sortData(data);
                         // Pagination logic
                         final totalPages = (data.length / itemsPerPage).ceil();
                         final currentPageData = data

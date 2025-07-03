@@ -8,7 +8,7 @@ class tenant_lease {
   String? leaseType;
   String? startDate;
   String? endDate;
-  int? leaseAmount;
+  double? leaseAmount;
   List<String>? uploadedFile;
   List<Entry>? entry;
   String? createdAt;
@@ -19,32 +19,32 @@ class tenant_lease {
   String? rentalAdress;
   String? rentCycle;
   String? rentDuedate;
-  int? deposite;
-  int? recurringCharge;
+  double? deposite;
+  double? recurringCharge;
 
   tenant_lease(
       {this.sId,
-        this.leaseId,
-        this.tenantId,
-        this.adminId,
-        this.rentalId,
-        this.unitId,
-        this.leaseType,
-        this.startDate,
-        this.endDate,
-        this.leaseAmount,
-        this.uploadedFile,
-        this.entry,
-        this.createdAt,
-        this.updatedAt,
-        this.isDelete,
-        this.moveoutTenant,
-        this.iV,
-        this.rentalAdress,
-        this.rentCycle,
-        this.rentDuedate,
-        this.deposite,
-        this.recurringCharge});
+      this.leaseId,
+      this.tenantId,
+      this.adminId,
+      this.rentalId,
+      this.unitId,
+      this.leaseType,
+      this.startDate,
+      this.endDate,
+      this.leaseAmount,
+      this.uploadedFile,
+      this.entry,
+      this.createdAt,
+      this.updatedAt,
+      this.isDelete,
+      this.moveoutTenant,
+      this.iV,
+      this.rentalAdress,
+      this.rentCycle,
+      this.rentDuedate,
+      this.deposite,
+      this.recurringCharge});
 
   tenant_lease.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -56,7 +56,9 @@ class tenant_lease {
     leaseType = json['lease_type'];
     startDate = json['start_date'];
     endDate = json['end_date'];
-    leaseAmount = json['lease_amount'];
+    leaseAmount = json['lease_amount'] != null
+        ? (json['lease_amount'] as num).toDouble()
+        : null;
     uploadedFile = json['uploaded_file'].cast<String>();
     if (json['entry'] != null) {
       entry = <Entry>[];
@@ -72,8 +74,11 @@ class tenant_lease {
     rentalAdress = json['rental_adress'];
     rentCycle = json['rent_cycle'];
     rentDuedate = json['rent_duedate'];
-    deposite = json['deposite'];
-    recurringCharge = json['recurringCharge'];
+    deposite =
+        json['deposite'] != null ? (json['deposite'] as num).toDouble() : null;
+    recurringCharge = json['recurringCharge'] != null
+        ? (json['recurringCharge'] as num).toDouble()
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -112,17 +117,17 @@ class Entry {
   String? chargeType;
   String? account;
   String? rentCycle;
-  int? amount;
+  double? amount;
   String? sId;
 
   Entry(
       {this.entryId,
-        this.date,
-        this.chargeType,
-        this.account,
-        this.rentCycle,
-        this.amount,
-        this.sId});
+      this.date,
+      this.chargeType,
+      this.account,
+      this.rentCycle,
+      this.amount,
+      this.sId});
 
   Entry.fromJson(Map<String, dynamic> json) {
     entryId = json['entry_id'];
@@ -130,7 +135,7 @@ class Entry {
     chargeType = json['charge_type'];
     account = json['account'];
     rentCycle = json['rent_cycle'];
-    amount = json['amount'];
+    amount = json['amount'] != null ? (json['amount'] as num).toDouble() : null;
     sId = json['_id'];
   }
 

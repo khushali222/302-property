@@ -64,7 +64,7 @@ class ChargeData {
 
 class Entry {
   String account;
-  dynamic amount;
+  double? amount;
   String chargeType;
   String date;
   bool isRepeatable;
@@ -86,7 +86,8 @@ class Entry {
   factory Entry.fromJson(Map<String, dynamic> json) {
     return Entry(
       account: json['account'],
-      amount: json['amount'],
+      amount:
+          json['amount'] != null ? (json['amount'] as num).toDouble() : null,
       chargeType: json['charge_type'],
       date: json['date'],
       isRepeatable: json['is_repeatable'],
@@ -180,7 +181,7 @@ class LeaseData {
   String? companyName;
   String? endDate;
   List<Entry>? entry;
-  int? leaseAmount;
+  double? leaseAmount;
   String? leaseType;
   String? rentalId;
   String? startDate;
@@ -212,7 +213,9 @@ class LeaseData {
       companyName: json['company_name'],
       endDate: json['end_date'],
       entry: (json['entry'] as List).map((i) => Entry.fromJson(i)).toList(),
-      leaseAmount: json['lease_amount'],
+      leaseAmount: json['lease_amount'] is int
+          ? (json['lease_amount'] as int).toDouble()
+          : json['lease_amount']?.toDouble(),
       leaseType: json['lease_type'],
       rentalId: json['rental_id'],
       startDate: json['start_date'],
@@ -241,7 +244,6 @@ class LeaseData {
     };
   }
 }
-
 
 // class LeaseData {
 //   String? leaseId;
@@ -315,7 +317,6 @@ class LeaseData {
 //     return data;
 //   }
 // }
-
 
 class TenantData {
   String? adminId;

@@ -141,7 +141,7 @@ class Charges {
   String? tenantId;
   String? leaseId;
   List<Entry>? entry;
-  int? totalAmount;
+  double? totalAmount;
   bool? isLeaseAdded;
   String? type;
   List<String>? uploadedFile; // Changed from List<Null> to List<String>
@@ -182,7 +182,9 @@ class Charges {
         entry!.add(Entry.fromJson(v));
       });
     }
-    totalAmount = json['total_amount'];
+    totalAmount = json['total_amount'] != null
+        ? (json['total_amount'] as num).toDouble()
+        : null;
     isLeaseAdded = json['is_leaseAdded'];
     type = json['type'];
     if (json['uploaded_file'] != null) {
@@ -222,7 +224,7 @@ class Entry {
   String? entryId;
   String? memo;
   String? account;
-  int? amount;
+  double? amount;
   String? date;
   bool? isPaid;
   bool? isLateFee;
@@ -252,7 +254,7 @@ class Entry {
     entryId = json['entry_id'];
     memo = json['memo'];
     account = json['account'];
-    amount = json['amount'];
+    amount = json['amount'] != null ? (json['amount'] as num).toDouble() : null;
     date = json['date'];
     isPaid = json['is_paid'];
     isLateFee = json['is_lateFee'];

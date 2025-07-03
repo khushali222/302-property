@@ -109,17 +109,17 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                   children: [
                     width < 400
                         ? const Padding(
-                            padding: EdgeInsets.only(left: 20.0),
-                            child: Text(
-                              "Insurance \nCompany ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14),
-                              textAlign: TextAlign.center,
-                            ),
-                          )
+                      padding: EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        "Insurance \nCompany ",
+                        style:
+                        TextStyle(color: Colors.white, fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
                         : const Text("     Insurance Company",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                            textAlign: TextAlign.center),
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        textAlign: TextAlign.center),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                   ],
@@ -298,8 +298,8 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
       child: InkWell(
         onTap: getField != null
             ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
+          _sort(getField, columnIndex, !_sortAscending);
+        }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -424,10 +424,10 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
           onPressed: _currentPage == 0
               ? null
               : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
+            setState(() {
+              _currentPage--;
+            });
+          },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -442,15 +442,15 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                 :  blueColor
 
 
-, // Change color based on availability
+            , // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
+            setState(() {
+              _currentPage++;
+            });
+          },
         ),
       ],
     );
@@ -483,10 +483,10 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                 GestureDetector(
                   onTap: () async {
                     final result =
-                        await Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AdminAddTenantInsurance(
-                                  tenantid: widget.tenantid,
-                                )));
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => AdminAddTenantInsurance(
+                          tenantid: widget.tenantid,
+                        )));
                     if (result == true) {
                       setState(() {
                         futurePropertyTypes = AdminTenantInsuranceRepository()
@@ -515,7 +515,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: (MediaQuery.of(context).size.width <
-                                      500)
+                                  500)
                                   ? MediaQuery.of(context).size.width * 0.034
                                   : MediaQuery.of(context).size.width * 0.025,
                             ),
@@ -551,9 +551,9 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                         child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 40.0,
-                    ));
+                          color: Colors.black,
+                          size: 40.0,
+                        ));
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -569,8 +569,8 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                     } else if (searchvalue!.isNotEmpty) {
                       data = snapshot.data!
                           .where((property) => property.provider!
-                              .toLowerCase()
-                              .contains(searchvalue!.toLowerCase()))
+                          .toLowerCase()
+                          .contains(searchvalue!.toLowerCase()))
                           .toList();
                     }
                     if (data.length == 0) {
@@ -602,7 +602,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                 border: Border.all(color: blueColor)),
                             child: Column(
                               children:
-                                  currentPageData.asMap().entries.map((entry) {
+                              currentPageData.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 bool isExpanded = expandedIndex == index;
                                 AdminTenantInsuranceModel Propertytype =
@@ -620,9 +620,9 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                           padding: const EdgeInsets.all(2.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            CrossAxisAlignment.center,
                                             children: <Widget>[
                                               InkWell(
                                                 onTap: () {
@@ -653,20 +653,20 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                       left: 5),
                                                   padding: !isExpanded
                                                       ? const EdgeInsets.only(
-                                                          bottom: 10)
+                                                      bottom: 10)
                                                       : const EdgeInsets.only(
-                                                          top: 10),
+                                                      top: 10),
                                                   child: FaIcon(
                                                     isExpanded
                                                         ? FontAwesomeIcons
-                                                            .sortUp
+                                                        .sortUp
                                                         : FontAwesomeIcons
-                                                            .sortDown,
+                                                        .sortDown,
                                                     size: 20,
                                                     color:  blueColor
 
 
-,
+                                                    ,
                                                   ),
                                                 ),
                                               ),
@@ -679,14 +679,14 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                   },
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 5.0),
+                                                    const EdgeInsets.only(
+                                                        left: 5.0),
                                                     child: Text(
                                                       '${Propertytype.provider}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
-                                                            FontWeight.bold,
+                                                        FontWeight.bold,
                                                         fontSize: 13,
                                                       ),
                                                     ),
@@ -695,8 +695,8 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                               ),
                                               SizedBox(
                                                   width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
+                                                      .size
+                                                      .width *
                                                       .08),
                                               Expanded(
                                                 flex: 2,
@@ -711,8 +711,8 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                               ),
                                               SizedBox(
                                                   width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
+                                                      .size
+                                                      .width *
                                                       .08),
                                               Expanded(
                                                 flex: 3,
@@ -730,8 +730,8 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                               ),
                                               SizedBox(
                                                   width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
+                                                      .size
+                                                      .width *
                                                       .02),
                                             ],
                                           ),
@@ -742,49 +742,49 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8.0),
                                           margin:
-                                              const EdgeInsets.only(bottom: 20),
+                                          const EdgeInsets.only(bottom: 20),
                                           child: SingleChildScrollView(
                                             child: Column(
                                               children: [
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                                   children: [
                                                     FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                              .sortUp
+                                                          .sortUp
                                                           : FontAwesomeIcons
-                                                              .sortDown,
+                                                          .sortDown,
                                                       size: 50,
                                                       color: Colors.transparent,
                                                     ),
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                         children: <Widget>[
                                                           Text.rich(
                                                             TextSpan(
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Liability Coverage : ',
+                                                                  'Liability Coverage : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                       color:
-                                                                          blueColor), // Bold and black
+                                                                      blueColor), // Bold and black
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${Propertytype.liabilityCoverage ?? ''}',
+                                                                  '${Propertytype.liabilityCoverage ?? ''}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
+                                                                      FontWeight
+                                                                          .w700,
                                                                       color: Colors
                                                                           .grey), // Light and grey
                                                                 ),
@@ -796,21 +796,21 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Status : ',
+                                                                  'Status : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                       color:
-                                                                          blueColor), // Bold and black
+                                                                      blueColor), // Bold and black
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${Propertytype.status}',
+                                                                  '${Propertytype.status}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
+                                                                      FontWeight
+                                                                          .w700,
                                                                       color: Colors
                                                                           .grey), // Light and grey
                                                                 ),
@@ -822,21 +822,21 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Effective Date : ',
+                                                                  'Effective Date : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                       color:
-                                                                          blueColor), // Bold and black
+                                                                      blueColor), // Bold and black
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${formatDate(Propertytype.effectiveDate!)}',
+                                                                  '${formatDate(Propertytype.effectiveDate!)}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
+                                                                      FontWeight
+                                                                          .w700,
                                                                       color: Colors
                                                                           .grey), // Light and grey
                                                                 ),
@@ -858,7 +858,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                               color:blueColor
 
 
-,
+                                                              ,
                                                             ),
                                                             onPressed:
                                                                 () async {
@@ -868,16 +868,16 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                                   context,
                                                                   MaterialPageRoute(
                                                                       builder: (context) => editAdminInsurance(
-                                                                            data:
-                                                                                Propertytype,
-                                                                          )));
+                                                                        data:
+                                                                        Propertytype,
+                                                                      )));
                                                               if (check ==
                                                                   true) {
                                                                 setState(() {
                                                                   futurePropertyTypes =
                                                                       AdminTenantInsuranceRepository()
                                                                           .fetchTenantInsurance(
-                                                                              widget.tenantid);
+                                                                          widget.tenantid);
                                                                 });
                                                               }
                                                             },
@@ -890,7 +890,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                               color:blueColor
 
 
-,
+                                                              ,
                                                             ),
                                                             onPressed: () {
                                                               //handleDelete(Propertytype);
@@ -957,20 +957,20 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                     padding: const EdgeInsets.only(left: 20),
                                     child: Table(
                                       defaultColumnWidth:
-                                          const IntrinsicColumnWidth(),
+                                      const IntrinsicColumnWidth(),
                                       children: [
                                         TableRow(
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                                // color: blueColor
-                                                ),
+                                              // color: blueColor
+                                            ),
                                           ),
                                           children: [
                                             _buildHeader(
                                                 'Insurance Company',
                                                 0,
-                                                (property) =>
-                                                    property.provider!),
+                                                    (property) =>
+                                                property.provider!),
 
                                             _buildHeader('Policy Id', 2, null),
                                             _buildHeader(
@@ -991,13 +991,13 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                           ),
                                           children: List.generate(
                                               7,
-                                              (index) => TableCell(
+                                                  (index) => TableCell(
                                                   child:
-                                                      Container(height: 20))),
+                                                  Container(height: 20))),
                                         ),
                                         for (var i = 0;
-                                            i < _pagedData.length;
-                                            i++)
+                                        i < _pagedData.length;
+                                        i++)
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
@@ -1005,24 +1005,24 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                     color: blueColor
 
 
-),
+                                                ),
                                                 right:  BorderSide(
                                                     color: blueColor
 
 
-),
+                                                ),
                                                 top:  BorderSide(
                                                     color: blueColor
 
 
-),
+                                                ),
                                                 bottom: i ==
-                                                        _pagedData.length - 1
+                                                    _pagedData.length - 1
                                                     ?  BorderSide(
-                                                        color: blueColor
+                                                    color: blueColor
 
 
-)
+                                                )
                                                     : BorderSide.none,
                                               ),
                                             ),

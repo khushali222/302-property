@@ -123,8 +123,7 @@ class Leases {
       data['leaseData'] = leaseData!.toJson();
     }
     if (recurringCards != null) {
-      data['recurringCards'] =
-          recurringCards!.map((v) => v.toJson()).toList();
+      data['recurringCards'] = recurringCards!.map((v) => v.toJson()).toList();
     }
     if (rentalData != null) {
       data['rentalData'] = rentalData!.toJson();
@@ -145,7 +144,7 @@ class Leases {
 class LeaseData {
   String? leaseId;
   String? startDate;
-  int? leaseAmount;
+  double? leaseAmount;
   double? balance;
 
   LeaseData({this.leaseId, this.startDate, this.leaseAmount, this.balance});
@@ -153,8 +152,11 @@ class LeaseData {
   LeaseData.fromJson(Map<String, dynamic> json) {
     leaseId = json['lease_id'];
     startDate = json['start_date'];
-    leaseAmount = json['lease_amount'];
-    balance = json['balance'] != null ? (json['balance'] as num).toDouble() : null;
+    leaseAmount = json['lease_amount'] != null
+        ? (json['lease_amount'] as num).toDouble()
+        : null;
+    balance =
+        json['balance'] != null ? (json['balance'] as num).toDouble() : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -171,7 +173,7 @@ class RecurringCards {
   String? tenantId;
   String? tenantName;
   String? date;
-  int? amount;
+  double? amount;
 
   RecurringCards({this.tenantId, this.tenantName, this.date, this.amount});
 
@@ -179,7 +181,7 @@ class RecurringCards {
     tenantId = json['tenant_id'];
     tenantName = json['tenant_name'];
     date = json['date'];
-    amount = json['amount'];
+    amount = json['amount'] != null ? (json['amount'] as num).toDouble() : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -272,9 +274,9 @@ class Notes {
 }
 
 class RentSummary {
-  int? totalRentApplied;
-  int? totalRentPaid;
-  int? totalPending;
+  double? totalRentApplied;
+  double? totalRentPaid;
+  double? totalPending;
 
   RentSummary({
     this.totalRentApplied,
@@ -283,9 +285,15 @@ class RentSummary {
   });
 
   RentSummary.fromJson(Map<String, dynamic> json) {
-    totalRentApplied = json['totalRentApplied'];
-    totalRentPaid = json['totalRentPaid'];
-    totalPending = json['totalPending'];
+    totalRentApplied = json['totalRentApplied'] != null
+        ? (json['totalRentApplied'] as num).toDouble()
+        : null;
+    totalRentPaid = json['totalRentPaid'] != null
+        ? (json['totalRentPaid'] as num).toDouble()
+        : null;
+    totalPending = json['totalPending'] != null
+        ? (json['totalPending'] as num).toDouble()
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -300,7 +308,7 @@ class RentSummary {
 class Summary {
   String? rentalOwnerName;
   String? rentalOwnerCompany;
-  int? totalCharged;
+  double? totalCharged;
   double? totalPending;
   String? collectedPercentage;
 
@@ -315,7 +323,9 @@ class Summary {
   Summary.fromJson(Map<String, dynamic> json) {
     rentalOwnerName = json['rentalOwnerName'];
     rentalOwnerCompany = json['rentalOwnerCompany'];
-    totalCharged = json['totalCharged'];
+    totalCharged = json['totalCharged'] != null
+        ? (json['totalCharged'] as num).toDouble()
+        : null;
     totalPending = json['totalPending'] != null
         ? (json['totalPending'] as num).toDouble()
         : null;
@@ -334,7 +344,7 @@ class Summary {
 }
 
 class TotalSummary {
-  int? totalCharged;
+  double? totalCharged;
   double? totalPending;
   String? averageCollectedPercentage;
 
@@ -345,7 +355,9 @@ class TotalSummary {
   });
 
   TotalSummary.fromJson(Map<String, dynamic> json) {
-    totalCharged = json['totalCharged'];
+    totalCharged = json['totalCharged'] != null
+        ? (json['totalCharged'] as num).toDouble()
+        : null;
     totalPending = json['totalPending'] != null
         ? (json['totalPending'] as num).toDouble()
         : null;
@@ -411,8 +423,7 @@ class DeadBeats {
       data['leaseData'] = leaseData!.toJson();
     }
     if (recurringCards != null) {
-      data['recurringCards'] =
-          recurringCards!.map((v) => v.toJson()).toList();
+      data['recurringCards'] = recurringCards!.map((v) => v.toJson()).toList();
     }
     if (rentalData != null) {
       data['rentalData'] = rentalData!.toJson();
@@ -432,13 +443,15 @@ class DeadBeats {
 
 class DeadBeatsSummary {
   int? totalDeadBeats;
-  int? totalBalance;
+  double? totalBalance;
 
   DeadBeatsSummary({this.totalDeadBeats, this.totalBalance});
 
   DeadBeatsSummary.fromJson(Map<String, dynamic> json) {
     totalDeadBeats = json['totalDeadBeats'];
-    totalBalance = json['totalBalance'];
+    totalBalance = json['totalBalance'] != null
+        ? (json['totalBalance'] as num).toDouble()
+        : null;
   }
 
   Map<String, dynamic> toJson() {

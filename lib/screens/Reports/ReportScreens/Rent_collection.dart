@@ -93,6 +93,10 @@ class _Rent_collectionState extends State<Rent_collection> {
     selectedMonth = months[now.month - 1];
     selectedYear = now.year.toString();
 
+    // Initialize filter defaults
+    selectedRentalOwner = 'All';
+    selectedBalanceFilter = 'All';
+
     // Clear the years list first to avoid duplicates
     years.clear();
 
@@ -141,13 +145,24 @@ class _Rent_collectionState extends State<Rent_collection> {
         DelinquentTenantsModel = data;
         isLoading = false;
         errorMessage = null; // Reset error message on successful data fetch
+
+        // Extract unique rental owners for filter
+        Set<String> ownerSet = {'All'};
+        if (data.leases != null) {
+          for (var lease in data.leases!) {
+            if (lease.rentalOwnerData?.rentalOwnerCompanyName != null) {
+              ownerSet.add(lease.rentalOwnerData!.rentalOwnerCompanyName!);
+            }
+          }
+        }
+        rentalOwners = ownerSet.toList();
       });
       return data;
     } catch (e) {
       setState(() {
         isLoading = false;
         errorMessage =
-        'Failed to load renters insurance data. Please try again later.';
+            'Failed to load renters insurance data. Please try again later.';
       });
       return DelinquentTenantsModel!;
     }
@@ -181,7 +196,7 @@ class _Rent_collectionState extends State<Rent_collection> {
     final summaryTableData = _generateSummaryTableData(delinquentTenantsData);
     final detailsTableData = _generateDetailsTableData(delinquentTenantsData);
     final delinquentLeasesTableData =
-    _generateDelinquentLeasesTableData(delinquentTenantsData);
+        _generateDelinquentLeasesTableData(delinquentTenantsData);
     if (summaryTableData.isNotEmpty) {
       pdf.addPage(
         pw.MultiPage(
@@ -241,8 +256,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                         profileData?.companyCountry?.isNotEmpty == true)
                       pw.Text(
                         '${profileData?.companyCity ?? ''}${profileData?.companyCity?.isNotEmpty == true ? ', ' : ''}'
-                            '${profileData?.companyState ?? ''}${profileData?.companyState?.isNotEmpty == true ? ', ' : ''}'
-                            '${profileData?.companyCountry ?? ''}',
+                        '${profileData?.companyState ?? ''}${profileData?.companyState?.isNotEmpty == true ? ', ' : ''}'
+                        '${profileData?.companyCountry ?? ''}',
                         style: pw.TextStyle(
                             fontSize: 10, fontWeight: pw.FontWeight.bold),
                       ),
@@ -315,7 +330,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration:
-                pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
+                    pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
                 cellStyle: pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 border: null,
@@ -373,7 +388,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration:
-                pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
+                    pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
                 cellStyle: pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 headerAlignment: pw.Alignment.centerLeft,
@@ -445,7 +460,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration:
-                pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
+                    pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
                 cellStyle: pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 border: null,
@@ -561,10 +576,10 @@ class _Rent_collectionState extends State<Rent_collection> {
         if (detail.notes != null && detail.notes!.isNotEmpty) {
           notes = detail.notes!
               .map((note) {
-            final date = note.date ?? 'N/A'; // Use your real date field
-            final content = note.content ?? '';
-            return '$date: $content';
-          })
+                final date = note.date ?? 'N/A'; // Use your real date field
+                final content = note.content ?? '';
+                return '$date: $content';
+              })
               .where((content) => content.isNotEmpty)
               .join('\n');
         } else {
@@ -617,10 +632,10 @@ class _Rent_collectionState extends State<Rent_collection> {
           if (detail.notes != null && detail.notes!.isNotEmpty) {
             notes = detail.notes!
                 .map((note) {
-              final date = note.date ?? 'N/A';
-              final content = note.content ?? '';
-              return '$date: $content';
-            })
+                  final date = note.date ?? 'N/A';
+                  final content = note.content ?? '';
+                  return '$date: $content';
+                })
                 .where((content) => content.isNotEmpty)
                 .join('\n');
           } else {
@@ -717,10 +732,10 @@ class _Rent_collectionState extends State<Rent_collection> {
         if (detail.notes != null && detail.notes!.isNotEmpty) {
           notes = detail.notes!
               .map((note) {
-            final date = note.date ?? 'N/A';
-            final content = note.content ?? '';
-            return '$date: $content';
-          })
+                final date = note.date ?? 'N/A';
+                final content = note.content ?? '';
+                return '$date: $content';
+              })
               .where((content) => content.isNotEmpty)
               .join('\n');
         } else {
@@ -773,10 +788,10 @@ class _Rent_collectionState extends State<Rent_collection> {
           if (detail.notes != null && detail.notes!.isNotEmpty) {
             notes = detail.notes!
                 .map((note) {
-              final date = note.date ?? 'N/A';
-              final content = note.content ?? '';
-              return '$date: $content';
-            })
+                  final date = note.date ?? 'N/A';
+                  final content = note.content ?? '';
+                  return '$date: $content';
+                })
                 .where((content) => content.isNotEmpty)
                 .join('\n');
           } else {
@@ -842,14 +857,14 @@ class _Rent_collectionState extends State<Rent_collection> {
     mainSheet.getRangeByName('D$rowIndex').setText('Collected %');
 
     final syncXlsx.Range summaryHeaderRange =
-    mainSheet.getRangeByName('A$rowIndex:D$rowIndex');
+        mainSheet.getRangeByName('A$rowIndex:D$rowIndex');
     summaryHeaderRange.cellStyle.bold = true;
     summaryHeaderRange.cellStyle.fontColor = '#FFFFFF';
     summaryHeaderRange.cellStyle.backColor = '#5A86D5';
     rowIndex++;
 
     final summaryTableData =
-    _generateSummaryTableDataExcel(delinquentTenantsData);
+        _generateSummaryTableDataExcel(delinquentTenantsData);
     for (int i = 0; i < summaryTableData.length; i++) {
       for (int j = 0; j < summaryTableData[i].length; j++) {
         mainSheet
@@ -877,14 +892,14 @@ class _Rent_collectionState extends State<Rent_collection> {
     mainSheet.getRangeByName('H$rowIndex').setText('Notes');
 
     final syncXlsx.Range detailsHeaderRange =
-    mainSheet.getRangeByName('A$rowIndex:H$rowIndex');
+        mainSheet.getRangeByName('A$rowIndex:H$rowIndex');
     detailsHeaderRange.cellStyle.bold = true;
     detailsHeaderRange.cellStyle.fontColor = '#FFFFFF';
     detailsHeaderRange.cellStyle.backColor = '#5A86D5';
     rowIndex++;
 
     final detailsTableData =
-    _generateDetailsTableDataExcel(delinquentTenantsData);
+        _generateDetailsTableDataExcel(delinquentTenantsData);
     for (int i = 0; i < detailsTableData.length; i++) {
       for (int j = 0; j < detailsTableData[i].length; j++) {
         mainSheet
@@ -912,14 +927,14 @@ class _Rent_collectionState extends State<Rent_collection> {
     mainSheet.getRangeByName('H$rowIndex').setText('Notes');
 
     final syncXlsx.Range delinquentHeaderRange =
-    mainSheet.getRangeByName('A$rowIndex:H$rowIndex');
+        mainSheet.getRangeByName('A$rowIndex:H$rowIndex');
     delinquentHeaderRange.cellStyle.bold = true;
     delinquentHeaderRange.cellStyle.fontColor = '#FFFFFF';
     delinquentHeaderRange.cellStyle.backColor = '#5A86D5';
     rowIndex++;
 
     final delinquentLeasesTableData =
-    _generateDelinquentLeasesTableDataExcel(delinquentTenantsData);
+        _generateDelinquentLeasesTableDataExcel(delinquentTenantsData);
     for (int i = 0; i < delinquentLeasesTableData.length; i++) {
       for (int j = 0; j < delinquentLeasesTableData[i].length; j++) {
         mainSheet
@@ -972,7 +987,7 @@ class _Rent_collectionState extends State<Rent_collection> {
     csvBuffer.writeln('Summary');
     csvBuffer.writeln('Rental Owner,Total Charged,Total Pending,Collected %');
     final summaryTableData =
-    _generateSummaryTableDataExcel(delinquentTenantsData);
+        _generateSummaryTableDataExcel(delinquentTenantsData);
     for (var row in summaryTableData) {
       csvBuffer.writeln(row.join(','));
     }
@@ -983,7 +998,7 @@ class _Rent_collectionState extends State<Rent_collection> {
     csvBuffer.writeln(
         'Street,City State Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
     final detailsTableData =
-    _generateDetailsTableDataExcel(delinquentTenantsData);
+        _generateDetailsTableDataExcel(delinquentTenantsData);
     for (var row in detailsTableData) {
       csvBuffer.writeln(row.join(','));
     }
@@ -994,7 +1009,7 @@ class _Rent_collectionState extends State<Rent_collection> {
     csvBuffer.writeln(
         'Street,City State Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
     final delinquentLeasesTableData =
-    _generateDelinquentLeasesTableDataExcel(delinquentTenantsData);
+        _generateDelinquentLeasesTableDataExcel(delinquentTenantsData);
     for (var row in delinquentLeasesTableData) {
       csvBuffer.writeln(row.join(','));
     }
@@ -1314,6 +1329,10 @@ class _Rent_collectionState extends State<Rent_collection> {
   bool _sortAscending = true;
   String searchvalue = "";
   String? selectedValue;
+  String? selectedRentalOwner;
+  String? selectedBalanceFilter;
+  List<String> rentalOwners = ['All'];
+  List<String> balanceFilters = ['All', 'Has Balance', 'No Balance'];
 
   int totalrecords = 0;
   int rowsPerPage = 5;
@@ -1391,9 +1410,9 @@ class _Rent_collectionState extends State<Rent_collection> {
                     children: [
                       width < 400
                           ? const Text("   Entity",
-                          style: TextStyle(color: Colors.white))
+                              style: TextStyle(color: Colors.white))
                           : const Text("   Entity",
-                          style: TextStyle(color: Colors.white)),
+                              style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       // const SizedBox(width: 3),
                       // ascending1
@@ -1539,28 +1558,28 @@ class _Rent_collectionState extends State<Rent_collection> {
                     children: [
                       width < 400
                           ? const Text(" Address",
-                          style: TextStyle(color: Colors.white))
+                              style: TextStyle(color: Colors.white))
                           : const Text(" Address",
-                          style: TextStyle(color: Colors.white)),
+                              style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
                           ? const Padding(
-                        padding: EdgeInsets.only(top: 10, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortUp,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                      )
+                              padding: EdgeInsets.only(top: 10, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            )
                           : const Padding(
-                        padding: EdgeInsets.only(bottom: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortDown,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                      ),
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            ),
                     ],
                   ),
                 ),
@@ -1625,21 +1644,21 @@ class _Rent_collectionState extends State<Rent_collection> {
                     const SizedBox(width: 3),
                     ascending3
                         ? const Padding(
-                      padding: EdgeInsets.only(top: 10, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: EdgeInsets.only(top: 10, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : const Padding(
-                      padding: EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -1666,23 +1685,29 @@ class _Rent_collectionState extends State<Rent_collection> {
     // Replace with your download logic
     print("Downloading as $format");
   }
+
   List<Leases> getSortedLeases(List<Leases> data) {
     List<Leases> sortedData = List<Leases>.from(data);
     if (sorting1) {
       sortedData.sort((a, b) {
         final aAddress = a.rentalData?.rentalAdress ?? '';
         final bAddress = b.rentalData?.rentalAdress ?? '';
-        return ascending1 ? aAddress.compareTo(bAddress) : bAddress.compareTo(aAddress);
+        return ascending1
+            ? aAddress.compareTo(bAddress)
+            : bAddress.compareTo(aAddress);
       });
     } else if (sorting3) {
       sortedData.sort((a, b) {
         final aBalance = a.leaseData?.balance ?? 0.0;
         final bBalance = b.leaseData?.balance ?? 0.0;
-        return ascending3 ? aBalance.compareTo(bBalance) : bBalance.compareTo(aBalance);
+        return ascending3
+            ? aBalance.compareTo(bBalance)
+            : bBalance.compareTo(aBalance);
       });
     }
     return sortedData;
   }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -1694,751 +1719,645 @@ class _Rent_collectionState extends State<Rent_collection> {
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            titleBar(
-              title: 'Rent Collection Report',
-              width: MediaQuery.of(context).size.width * .91,
-            ),
-            if (MediaQuery.of(context).size.width > 500)
-              const SizedBox(height: 16),
-            if (MediaQuery.of(context).size.width < 500)
-              FutureBuilder<Rentcollection_model>(
-                future: _futureRentcollection,
-                builder: (context, snapshot) {
-                  if (isLoading) {
-                    return Padding(
-                      padding: const EdgeInsets.all(0.0),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16),
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
+                  titleBar(
+                    title: 'Rent Collection Report',
+                    width: MediaQuery.of(context).size.width * .91,
+                  ),
+                  if (MediaQuery.of(context).size.width > 500)
+                    const SizedBox(height: 16),
+                  if (MediaQuery.of(context).size.width < 500)
+                    Column(
+                      children: [
+                        SizedBox(height: 10),
+                        // Always show filters
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      DropdownButtonHideUnderline(
-                                        child: Material(
-                                          elevation: 0,
-                                          borderRadius:
-                                          BorderRadius.circular(8),
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Text(
-                                              'Select Month',
-                                              style: TextStyle(
+                                // Month Dropdown
+                                Container(
+                                  width: 130,
+                                  child: DropdownButtonHideUnderline(
+                                    child: Material(
+                                      elevation: 0,
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: DropdownButton2<String>(
+                                        isExpanded: true,
+                                        hint: const Text(
+                                          'Month',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Color(0xFF8A95A8),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        items: months.map((String month) {
+                                          return DropdownMenuItem<String>(
+                                            value: month,
+                                            child: Text(
+                                              month,
+                                              style: const TextStyle(
                                                 fontSize: 14,
-                                                color: Color(0xFF8A95A8),
+                                                color: Colors.black,
                                               ),
-                                              overflow:
-                                              TextOverflow.ellipsis,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                            items: months
-                                                .map((String month) {
-                                              return DropdownMenuItem<
-                                                  String>(
-                                                value: month,
-                                                child: Text(
-                                                  month,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    // fontWeight:
-                                                    //     FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow: TextOverflow
-                                                      .ellipsis,
-                                                ),
-                                              );
-                                            }).toList(),
-                                            value:
-                                            selectedMonth.isNotEmpty
-                                                ? selectedMonth
-                                                : null,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selectedMonth = value!;
-                                              });
-                                            },
-                                            buttonStyleData:
-                                            ButtonStyleData(
-                                              height:
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width <
-                                                  500
-                                                  ? 45
-                                                  : 50,
-                                              width: double.infinity,
-                                              padding:
-                                              const EdgeInsets.only(
-                                                  left: 14,
-                                                  right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    8),
-                                                border: Border.all(
-                                                  color: const Color(
-                                                      0xFF8A95A8),
-                                                ),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 0,
+                                          );
+                                        }).toList(),
+                                        value: selectedMonth.isNotEmpty
+                                            ? selectedMonth
+                                            : null,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedMonth = value!;
+                                          });
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 45,
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.only(
+                                              left: 14, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                              color: const Color(0xFF8A95A8),
                                             ),
-                                            dropdownStyleData:
-                                            DropdownStyleData(
-                                              maxHeight: 250,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    14),
-                                              ),
-                                              offset: const Offset(0, 0),
-                                              scrollbarTheme:
-                                              ScrollbarThemeData(
-                                                radius:
-                                                const Radius.circular(
-                                                    20),
-                                                thickness:
-                                                MaterialStateProperty
-                                                    .all(6),
-                                                thumbVisibility:
-                                                MaterialStateProperty
-                                                    .all(true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                            const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 0,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          maxHeight: 250,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(14),
+                                          ),
+                                          offset: const Offset(0, 0),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(20),
+                                            thickness:
+                                                MaterialStateProperty.all(6),
+                                            thumbVisibility:
+                                                MaterialStateProperty.all(true),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      DropdownButtonHideUnderline(
-                                        child: Material(
-                                          elevation: 0,
-                                          borderRadius:
-                                          BorderRadius.circular(8),
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Text(
-                                              'Select Year',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Color(0xFF8A95A8),
-                                              ),
-                                              overflow:
-                                              TextOverflow.ellipsis,
-                                            ),
-                                            items:
-                                            years.map((String year) {
-                                              return DropdownMenuItem<
-                                                  String>(
-                                                value: year,
-                                                child: Text(
-                                                  year,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    // fontWeight:
-                                                    //     FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow: TextOverflow
-                                                      .ellipsis,
-                                                ),
-                                              );
-                                            }).toList(),
-                                            value: selectedYear.isNotEmpty
-                                                ? selectedYear
-                                                : null,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selectedYear = value!;
-                                              });
-                                            },
-                                            buttonStyleData:
-                                            ButtonStyleData(
-                                              height:
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width <
-                                                  500
-                                                  ? 45
-                                                  : 50,
-                                              width: double.infinity,
-                                              padding:
-                                              const EdgeInsets.only(
-                                                  left: 14,
-                                                  right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    8),
-                                                border: Border.all(
-                                                  color: const Color(
-                                                      0xFF8A95A8),
-                                                ),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 0,
-                                            ),
-                                            dropdownStyleData:
-                                            DropdownStyleData(
-                                              maxHeight: 250,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    14),
-                                              ),
-                                              offset: const Offset(0, 0),
-                                              scrollbarTheme:
-                                              ScrollbarThemeData(
-                                                radius:
-                                                const Radius.circular(
-                                                    20),
-                                                thickness:
-                                                MaterialStateProperty
-                                                    .all(6),
-                                                thumbVisibility:
-                                                MaterialStateProperty
-                                                    .all(true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
+                                        menuItemStyleData:
                                             const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                          ),
+                                          height: 40,
+                                          padding: EdgeInsets.only(
+                                              left: 14, right: 14),
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(width: 10),
+                                const SizedBox(width: 8),
+                                // Year Dropdown
+                                Container(
+                                  width: 100,
+                                  child: DropdownButtonHideUnderline(
+                                    child: Material(
+                                      elevation: 0,
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: DropdownButton2<String>(
+                                        isExpanded: true,
+                                        hint: const Text(
+                                          'Year',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Color(0xFF8A95A8),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        items: years.map((String year) {
+                                          return DropdownMenuItem<String>(
+                                            value: year,
+                                            child: Text(
+                                              year,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList(),
+                                        value: selectedYear.isNotEmpty
+                                            ? selectedYear
+                                            : null,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedYear = value!;
+                                          });
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 45,
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.only(
+                                              left: 14, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                              color: const Color(0xFF8A95A8),
+                                            ),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 0,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          maxHeight: 250,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(14),
+                                          ),
+                                          offset: const Offset(0, 0),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(20),
+                                            thickness:
+                                                MaterialStateProperty.all(6),
+                                            thumbVisibility:
+                                                MaterialStateProperty.all(true),
+                                          ),
+                                        ),
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
+                                          height: 40,
+                                          padding: EdgeInsets.only(
+                                              left: 14, right: 14),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                // Run Report Button
                                 Container(
                                   height: 45,
                                   width: 45,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: Color.fromRGBO(
-                                            206, 212, 218, 1)),
-                                    borderRadius:
-                                    BorderRadius.circular(0),
+                                        color:
+                                            Color.fromRGBO(206, 212, 218, 1)),
+                                    borderRadius: BorderRadius.circular(0),
                                     color: Colors.white,
                                   ),
                                   child: IconButton(
-                                    icon: FaIcon(
-                                        FontAwesomeIcons.circlePlay,
-                                        size: 20),
+                                    icon: FaIcon(FontAwesomeIcons.circlePlay,
+                                        size: 18),
                                     onPressed: () {
                                       setState(() {
                                         isLoading = true;
-                                        int monthNumber = months
-                                            .indexOf(selectedMonth) +
-                                            1;
+                                        int monthNumber =
+                                            months.indexOf(selectedMonth) + 1;
                                         _futureRentcollection =
                                             fetchDelinquentTenantsData(
-                                              monthNumber.toString(),
-                                              selectedYear,
-                                            );
-                                        // isLoading = false;
+                                          monthNumber.toString(),
+                                          selectedYear,
+                                        );
                                       });
                                       print("Run Report");
                                     },
                                     tooltip: "Run Report",
                                   ),
                                 ),
-
+                                const SizedBox(width: 8),
                                 // Download Button
                                 Container(
                                   height: 45,
-                                  width: 65,
+                                  width: 60,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: Color.fromRGBO(
-                                            206, 212, 218, 1)),
-                                    borderRadius:
-                                    BorderRadius.circular(0),
+                                        color:
+                                            Color.fromRGBO(206, 212, 218, 1)),
+                                    borderRadius: BorderRadius.circular(0),
                                     color: Colors.white,
                                   ),
-                                  child: PopupMenuButton<String>(
-                                    offset: Offset(0, 45),
-                                    onSelected: handleDownload,
-                                    icon: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      children: [
-                                        FaIcon(FontAwesomeIcons.download,
-                                            size: 20),
-                                        SizedBox(width: 0),
-                                        Icon(Icons.arrow_drop_down),
-                                      ],
-                                    ),
-                                    tooltip: "Download",
-                                    itemBuilder: (BuildContext context) {
-                                      return downloadOptions
-                                          .map((String option) {
-                                        return PopupMenuItem<String>(
-                                          value: option,
-                                          onTap: () async {
-                                            if (option == "PDF")
-                                              generateDelinquentTenantsPdf(
-                                                  [snapshot.data!]);
-                                            // if(option == "Excel")
-                                            //   generateRentersInsuranceExcel(snapshot.data!);
-                                            // if(option == "CSV")
-                                            //   generateRentersInsuranceCSV(snapshot.data!);
-                                          },
-                                          child:
-                                          Text("Download as $option"),
-                                        );
-                                      }).toList();
+                                  child: FutureBuilder<Rentcollection_model>(
+                                    future: _futureRentcollection,
+                                    builder: (context, snapshot) {
+                                      return PopupMenuButton<String>(
+                                        offset: Offset(0, 45),
+                                        onSelected: handleDownload,
+                                        icon: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            FaIcon(FontAwesomeIcons.download,
+                                                size: 16),
+                                            SizedBox(width: 2),
+                                            Icon(Icons.arrow_drop_down,
+                                                size: 16),
+                                          ],
+                                        ),
+                                        tooltip: "Download",
+                                        itemBuilder: (BuildContext context) {
+                                          if (!snapshot.hasData ||
+                                              snapshot.data!.summary!.isEmpty) {
+                                            return <PopupMenuEntry<String>>[];
+                                          }
+                                          return downloadOptions
+                                              .map((String option) {
+                                            return PopupMenuItem<String>(
+                                              value: option,
+                                              onTap: () async {
+                                                if (option == "PDF")
+                                                  generateDelinquentTenantsPdf(
+                                                      [snapshot.data!]);
+                                                if (option == "Excel")
+                                                  generateDelinquentTenantsExcel(
+                                                      [snapshot.data!]);
+                                                if (option == "CSV")
+                                                  generateDelinquentTenantsCSV(
+                                                      [snapshot.data!]);
+                                              },
+                                              child:
+                                                  Text("Download as $option"),
+                                            );
+                                          }).toList();
+                                        },
+                                      );
                                     },
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0),
-                            child: ColabShimmerLoadingWidget(),
-                          ),
-                        ],
-                      ),
-                    );
-                  } else if (!snapshot.hasData ||
-                      snapshot.data!.summary!.isEmpty) {
-                    return Column(
-                      children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height * .5,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/images/no_data.jpg",
-                                  height: 200,
-                                  width: 200,
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  "No Data Available",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor,
-                                      fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
                         ),
-                      ],
-                    );
-                  }
-
-                  var data = snapshot.data!.summary!;
-                  var dataall = snapshot.data!;
-                  // final currentPageData = data;
-                  var dataa = snapshot.data!.leases!;
-                  var totaldata = snapshot.data;
-                  var delinquentdata = snapshot.data?.deadBeats;
-
-                  return SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        // Dropdown Row
-                        Padding(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    DropdownButtonHideUnderline(
-                                      child: Material(
-                                        elevation: 0,
-                                        borderRadius:
-                                        BorderRadius.circular(8),
-                                        child: DropdownButton2<String>(
-                                          isExpanded: true,
-                                          hint: const Text(
-                                            'Select Month',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Color(0xFF8A95A8),
-                                            ),
-                                            overflow:
-                                            TextOverflow.ellipsis,
-                                          ),
-                                          items:
-                                          months.map((String month) {
-                                            return DropdownMenuItem<
-                                                String>(
-                                              value: month,
-                                              child: Text(
-                                                month,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  // fontWeight:
-                                                  //     FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                                overflow:
-                                                TextOverflow.ellipsis,
-                                              ),
-                                            );
-                                          }).toList(),
-                                          value: selectedMonth.isNotEmpty
-                                              ? selectedMonth
-                                              : null,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectedMonth = value!;
-                                            });
-                                          },
-                                          buttonStyleData:
-                                          ButtonStyleData(
-                                            height: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
-                                                ? 45
-                                                : 50,
-                                            width: double.infinity,
-                                            padding:
-                                            const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  8),
-                                              border: Border.all(
-                                                color: const Color(
-                                                    0xFF8A95A8),
-                                              ),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 0,
-                                          ),
-                                          dropdownStyleData:
-                                          DropdownStyleData(
-                                            maxHeight: 250,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  14),
-                                            ),
-                                            offset: const Offset(0, 0),
-                                            scrollbarTheme:
-                                            ScrollbarThemeData(
-                                              radius:
-                                              const Radius.circular(
-                                                  20),
-                                              thickness:
-                                              MaterialStateProperty
-                                                  .all(6),
-                                              thumbVisibility:
-                                              MaterialStateProperty
-                                                  .all(true),
-                                            ),
-                                          ),
-                                          menuItemStyleData:
-                                          const MenuItemStyleData(
-                                            height: 40,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    DropdownButtonHideUnderline(
-                                      child: Material(
-                                        elevation: 0,
-                                        borderRadius:
-                                        BorderRadius.circular(8),
-                                        child: DropdownButton2<String>(
-                                          isExpanded: true,
-                                          hint: const Text(
-                                            'Select Year',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Color(0xFF8A95A8),
-                                            ),
-                                            overflow:
-                                            TextOverflow.ellipsis,
-                                          ),
-                                          items: years.map((String year) {
-                                            return DropdownMenuItem<
-                                                String>(
-                                              value: year,
-                                              child: Text(
-                                                year,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  // fontWeight:
-                                                  //     FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                                overflow:
-                                                TextOverflow.ellipsis,
-                                              ),
-                                            );
-                                          }).toList(),
-                                          value: selectedYear.isNotEmpty
-                                              ? selectedYear
-                                              : null,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectedYear = value!;
-                                            });
-                                          },
-                                          buttonStyleData:
-                                          ButtonStyleData(
-                                            height: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
-                                                ? 45
-                                                : 50,
-                                            width: double.infinity,
-                                            padding:
-                                            const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  8),
-                                              border: Border.all(
-                                                color: const Color(
-                                                    0xFF8A95A8),
-                                              ),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 0,
-                                          ),
-                                          dropdownStyleData:
-                                          DropdownStyleData(
-                                            maxHeight: 250,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  14),
-                                            ),
-                                            offset: const Offset(0, 0),
-                                            scrollbarTheme:
-                                            ScrollbarThemeData(
-                                              radius:
-                                              const Radius.circular(
-                                                  20),
-                                              thickness:
-                                              MaterialStateProperty
-                                                  .all(6),
-                                              thumbVisibility:
-                                              MaterialStateProperty
-                                                  .all(true),
-                                            ),
-                                          ),
-                                          menuItemStyleData:
-                                          const MenuItemStyleData(
-                                            height: 40,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Container(
-                                height: 45,
-                                width: 45,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Color.fromRGBO(
-                                          206, 212, 218, 1)),
-                                  borderRadius: BorderRadius.circular(0),
-                                  color: Colors.white,
-                                ),
-                                child: IconButton(
-                                  icon: FaIcon(
-                                      FontAwesomeIcons.circlePlay,
-                                      size: 20),
-                                  onPressed: () {
-                                    setState(() {
-                                      isLoading = true;
-                                      int monthNumber =
-                                          months.indexOf(selectedMonth) +
-                                              1;
-                                      _futureRentcollection =
-                                          fetchDelinquentTenantsData(
-                                            monthNumber.toString(),
-                                            selectedYear,
-                                          );
-                                      // isLoading = false;
-                                    });
-                                    print("Run Report");
-                                  },
-                                  tooltip: "Run Report",
-                                ),
-                              ),
-
-                              // Download Button
-                              Container(
-                                height: 45,
-                                width: 65,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Color.fromRGBO(
-                                          206, 212, 218, 1)),
-                                  borderRadius: BorderRadius.circular(0),
-                                  color: Colors.white,
-                                ),
-                                child: PopupMenuButton<String>(
-                                  offset: Offset(0, 45),
-                                  onSelected: handleDownload,
-                                  icon: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                        SizedBox(height: 10),
+                        // Content based on state
+                        FutureBuilder<Rentcollection_model>(
+                          future: _futureRentcollection,
+                          builder: (context, snapshot) {
+                            if (isLoading) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: ColabShimmerLoadingWidget(),
+                              );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.summary!.isEmpty) {
+                              return Container(
+                                height: MediaQuery.of(context).size.height * .5,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      FaIcon(FontAwesomeIcons.download,
-                                          size: 20),
-                                      SizedBox(width: 0),
-                                      Icon(Icons.arrow_drop_down),
+                                      Image.asset(
+                                        "assets/images/no_data.jpg",
+                                        height: 200,
+                                        width: 200,
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        "No Data Available",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 16),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        "Try selecting a different month or year",
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14),
+                                      ),
                                     ],
                                   ),
-                                  tooltip: "Download",
-                                  itemBuilder: (BuildContext context) {
-                                    return downloadOptions.map((String option) {
-                                      return PopupMenuItem<String>(
-                                        value: option,
-                                        onTap: () async {
-                                          // Get the sorted leases
-                                          final sortedLeases = getSortedLeases(snapshot.data!.leases!);
-                                          // Wrap in a Rentcollection_model if needed, or pass as required by your function
-                                          final sortedModel = snapshot.data!;
-                                          sortedModel.leases = sortedLeases;
-
-                                          if (option == "PDF")
-                                            generateDelinquentTenantsPdf([sortedModel]);
-                                          if (option == "Excel")
-                                            generateDelinquentTenantsExcel([sortedModel]);
-                                          if (option == "CSV")
-                                            generateDelinquentTenantsCSV([sortedModel]);
-                                        },
-                                        child: Text("Download as $option"),
-                                      );
-                                    }).toList();
-                                  },
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                              );
+                            }
 
-                        SizedBox(height: 10),
-                        // Tab Row
-                        Padding(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 16),
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE0E0E0),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                _buildTabButton("Summary", 0),
-                                _buildTabButton("Details", 1),
-                                _buildTabButton(
-                                    "   Delinquent\n       Lease", 2),
-                              ],
-                            ),
-                          ),
+                            var data = snapshot.data!.summary!;
+                            var dataall = snapshot.data!;
+                            // final currentPageData = data;
+                            var dataa = snapshot.data!.leases!;
+                            var totaldata = snapshot.data;
+                            var delinquentdata = snapshot.data?.deadBeats;
+
+                            return SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  // Search and Filter Controls
+                                  if (_selectedIndex ==
+                                      1) // Show filters only for Details tab
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 8),
+                                      child: Column(
+                                        children: [
+                                          // Search Bar
+                                          Container(
+                                            height: 45,
+                                            child: TextField(
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  searchvalue = value;
+                                                });
+                                              },
+                                              decoration: InputDecoration(
+                                                hintText:
+                                                    'Search by address or company...',
+                                                prefixIcon: Icon(Icons.search),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 12),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 8),
+                                          // Filter Row - Responsive Layout
+                                          LayoutBuilder(
+                                            builder: (context, constraints) {
+                                              if (constraints.maxWidth < 600) {
+                                                // Stack filters vertically on small screens
+                                                return Column(
+                                                  children: [
+                                                    DropdownButtonFormField<
+                                                        String>(
+                                                      value:
+                                                          selectedRentalOwner,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        labelText:
+                                                            'Rental Owner',
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        12,
+                                                                    vertical:
+                                                                        8),
+                                                      ),
+                                                      items: rentalOwners
+                                                          .map((owner) {
+                                                        return DropdownMenuItem(
+                                                          value: owner,
+                                                          child: Text(
+                                                            owner,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          selectedRentalOwner =
+                                                              value;
+                                                        });
+                                                      },
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    DropdownButtonFormField<
+                                                        String>(
+                                                      value:
+                                                          selectedBalanceFilter,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        labelText:
+                                                            'Balance Filter',
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        12,
+                                                                    vertical:
+                                                                        8),
+                                                      ),
+                                                      items: balanceFilters
+                                                          .map((filter) {
+                                                        return DropdownMenuItem(
+                                                          value: filter,
+                                                          child: Text(
+                                                            filter,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          selectedBalanceFilter =
+                                                              value;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              } else {
+                                                // Keep horizontal layout for larger screens
+                                                return Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child:
+                                                          DropdownButtonFormField<
+                                                              String>(
+                                                        value:
+                                                            selectedRentalOwner,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          labelText:
+                                                              'Rental Owner',
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          contentPadding:
+                                                              EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          8),
+                                                        ),
+                                                        items: rentalOwners
+                                                            .map((owner) {
+                                                          return DropdownMenuItem(
+                                                            value: owner,
+                                                            child: Text(
+                                                              owner,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            selectedRentalOwner =
+                                                                value;
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Expanded(
+                                                      child:
+                                                          DropdownButtonFormField<
+                                                              String>(
+                                                        value:
+                                                            selectedBalanceFilter,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          labelText:
+                                                              'Balance Filter',
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          contentPadding:
+                                                              EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          8),
+                                                        ),
+                                                        items: balanceFilters
+                                                            .map((filter) {
+                                                          return DropdownMenuItem(
+                                                            value: filter,
+                                                            child: Text(
+                                                              filter,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            selectedBalanceFilter =
+                                                                value;
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              }
+                                            },
+                                          ),
+                                          SizedBox(height: 8),
+                                          // Clear Filters Button
+                                          Row(
+                                            children: [
+                                              Spacer(),
+                                              TextButton.icon(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    searchvalue = '';
+                                                    selectedRentalOwner = 'All';
+                                                    selectedBalanceFilter =
+                                                        'All';
+                                                    currentPage = 0;
+                                                  });
+                                                },
+                                                icon:
+                                                    Icon(Icons.clear, size: 16),
+                                                label: Text('Clear Filters'),
+                                                style: TextButton.styleFrom(
+                                                  foregroundColor:
+                                                      Colors.grey[600],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  // Tab Row
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFE0E0E0),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          _buildTabButton("Summary", 0),
+                                          _buildTabButton("Details", 1),
+                                          _buildTabButton(
+                                              "   Delinquent\n       Lease", 2),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  // Conditional Screens
+                                  if (_selectedIndex == 0)
+                                    SummeryScreen(data, totaldata!),
+                                  if (_selectedIndex == 1) DetailScreen(dataa),
+                                  if (_selectedIndex == 2)
+                                    DelinquentLease(
+                                        delinquentdata!, totaldata!),
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                        // const SizedBox(height: 10),
-                        // Conditional Screens
-                        if (_selectedIndex == 0)
-                          SummeryScreen(data, totaldata!),
-                        if (_selectedIndex == 1) DetailScreen(dataa),
-                        if (_selectedIndex == 2)
-                          DelinquentLease(delinquentdata!, totaldata!),
                       ],
                     ),
-                  );
-                },
+                ],
               ),
-          ],
-        ),
-      )
+            )
           : SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              'No Internet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -2490,7 +2409,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 Text(
                   leftLabel,
                   style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -2510,7 +2429,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 Text(
                   centerLabel,
                   style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -2530,7 +2449,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 Text(
                   rightLabel,
                   style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -2610,12 +2529,14 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      '${item.rentalOwnerName ?? '-'} (${item.rentalOwnerCompany ?? '-'})',
+                                      '${item.rentalOwnerCompany ?? '-'} (${item.rentalOwnerCompany ?? '-'})',
                                       style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
                                       ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ),
                                   SizedBox(width: 8),
@@ -2648,9 +2569,9 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                                MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Total Charged',
@@ -2678,9 +2599,9 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                                MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Collected %',
@@ -2722,7 +2643,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                           ? blueColor.withOpacity(0.09)
                           : Colors.white,
                       border:
-                      Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                          Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                     ),
                     child: Column(
                       children: <Widget>[
@@ -2750,7 +2671,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   child: Container(
                                     margin: const EdgeInsets.only(left: 5),
                                     padding: expandedRowIndex !=
-                                        currentPageData.length
+                                            currentPageData.length
                                         ? const EdgeInsets.only(bottom: 10)
                                         : const EdgeInsets.only(top: 10),
                                     child: FaIcon(
@@ -2803,9 +2724,9 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       Expanded(
                                         child: Column(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               'Total Charged',
@@ -2833,9 +2754,9 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       Expanded(
                                         child: Column(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               'Collected %',
@@ -2880,8 +2801,37 @@ class _Rent_collectionState extends State<Rent_collection> {
   }
 
   DetailScreen(List<Leases> currentPageData) {
-    // Make a copy to avoid mutating the original
-    List<Leases> sortedData = List<Leases>.from(currentPageData);
+    // Apply filters first
+    List<Leases> filteredData = currentPageData.where((lease) {
+      // Search filter
+      bool matchesSearch = searchvalue.isEmpty ||
+          lease.rentalData?.rentalAdress
+                  ?.toLowerCase()
+                  .contains(searchvalue.toLowerCase()) ==
+              true ||
+          lease.rentalOwnerData?.rentalOwnerCompanyName
+                  ?.toLowerCase()
+                  .contains(searchvalue.toLowerCase()) ==
+              true;
+
+      // Rental owner filter
+      bool matchesRentalOwner = selectedRentalOwner == null ||
+          selectedRentalOwner == 'All' ||
+          lease.rentalOwnerData?.rentalOwnerCompanyName == selectedRentalOwner;
+
+      // Balance filter
+      bool matchesBalance = selectedBalanceFilter == null ||
+          selectedBalanceFilter == 'All' ||
+          (selectedBalanceFilter == 'Has Balance' &&
+              (lease.leaseData?.balance ?? 0.0) > 0) ||
+          (selectedBalanceFilter == 'No Balance' &&
+              (lease.leaseData?.balance ?? 0.0) == 0);
+
+      return matchesSearch && matchesRentalOwner && matchesBalance;
+    }).toList();
+
+    // Apply sorting (default to reverse chronological order by start date)
+    List<Leases> sortedData = List<Leases>.from(filteredData);
     if (sorting1) {
       sortedData.sort((a, b) {
         final aAddress = a.rentalData?.rentalAdress ?? '';
@@ -2899,6 +2849,14 @@ class _Rent_collectionState extends State<Rent_collection> {
             : bBalance.compareTo(aBalance);
       });
     }
+
+    // Apply pagination
+    int totalItems = sortedData.length;
+    int startIndex = currentPage * itemsPerPage;
+    int endIndex = (startIndex + itemsPerPage > totalItems)
+        ? totalItems
+        : startIndex + itemsPerPage;
+    List<Leases> paginatedData = sortedData.sublist(startIndex, endIndex);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -2912,7 +2870,126 @@ class _Rent_collectionState extends State<Rent_collection> {
               ),
               child: Column(
                 children: [
-                  ...sortedData.asMap().entries.map((entry) {
+                  // Data count info - Responsive
+                  if (filteredData.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          bool isSmallScreen = constraints.maxWidth < 400;
+                          if (isSmallScreen) {
+                            // Stack vertically on small screens
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Showing ${startIndex + 1}-${endIndex} of ${totalItems} records',
+                                  style: TextStyle(
+                                      color: Colors.grey[600], fontSize: 12),
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Text('Items per page: ',
+                                        style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 12)),
+                                    DropdownButton<int>(
+                                      value: itemsPerPage,
+                                      underline: Container(),
+                                      items: itemsPerPageOptions.map((option) {
+                                        return DropdownMenuItem(
+                                          value: option,
+                                          child: Text(option.toString()),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          itemsPerPage = value!;
+                                          currentPage =
+                                              0; // Reset to first page
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          } else {
+                            // Keep horizontal layout for larger screens
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    'Showing ${startIndex + 1}-${endIndex} of ${totalItems} records',
+                                    style: TextStyle(
+                                        color: Colors.grey[600], fontSize: 12),
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Text('Items per page: ',
+                                        style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 12)),
+                                    DropdownButton<int>(
+                                      value: itemsPerPage,
+                                      underline: Container(),
+                                      items: itemsPerPageOptions.map((option) {
+                                        return DropdownMenuItem(
+                                          value: option,
+                                          child: Text(option.toString()),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          itemsPerPage = value!;
+                                          currentPage =
+                                              0; // Reset to first page
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  // Show empty state if no data after filtering
+                  if (filteredData.isEmpty &&
+                      (searchvalue.isNotEmpty ||
+                          selectedRentalOwner != 'All' ||
+                          selectedBalanceFilter != 'All'))
+                    Container(
+                      height: MediaQuery.of(context).size.height * .3,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.filter_alt_off,
+                                size: 60, color: Colors.grey[400]),
+                            SizedBox(height: 10),
+                            Text(
+                              "No Results Found",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 16),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              "Try adjusting your filters",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ...paginatedData.asMap().entries.map((entry) {
                     int rowIndex = entry.key;
                     var item = entry.value;
                     bool isRowExpanded = expandedRowIndex == rowIndex;
@@ -2931,95 +3008,103 @@ class _Rent_collectionState extends State<Rent_collection> {
                             contentPadding: EdgeInsets.zero,
                             title: Padding(
                               padding: const EdgeInsets.all(2.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        if (expandedRowIndex == rowIndex) {
-                                          expandedRowIndex = null;
-                                        } else {
-                                          expandedRowIndex = rowIndex;
-                                          nestedExpandedIndex = null;
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.only(left: 5),
-                                      padding: !isRowExpanded
-                                          ? const EdgeInsets.only(bottom: 10)
-                                          : const EdgeInsets.only(top: 10),
-                                      child: FaIcon(
-                                        isRowExpanded
-                                            ? FontAwesomeIcons.sortUp
-                                            : FontAwesomeIcons.sortDown,
-                                        size: 20,
-                                        color: blueColor,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Expanded(
-                                    flex: 3,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          if (expandedRowIndex == rowIndex) {
-                                            expandedRowIndex = null;
-                                          } else {
-                                            expandedRowIndex = rowIndex;
-                                          }
-                                        });
-                                      },
-                                      child: Text(
-                                        '${item.rentalData?.rentalAdress ?? '-'}',
-                                        style: TextStyle(
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  bool isSmallScreen =
+                                      constraints.maxWidth < 500;
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            if (expandedRowIndex == rowIndex) {
+                                              expandedRowIndex = null;
+                                            } else {
+                                              expandedRowIndex = rowIndex;
+                                              nestedExpandedIndex = null;
+                                            }
+                                          });
+                                        },
+                                        child: Container(
+                                          margin:
+                                              const EdgeInsets.only(left: 5),
+                                          padding: !isRowExpanded
+                                              ? const EdgeInsets.only(
+                                                  bottom: 10)
+                                              : const EdgeInsets.only(top: 10),
+                                          child: FaIcon(
+                                            isRowExpanded
+                                                ? FontAwesomeIcons.sortUp
+                                                : FontAwesomeIcons.sortDown,
+                                            size: 20,
+                                            color: blueColor,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          .05),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      '${item.rentalOwnerData?.rentalOwnerCompanyName}',
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                                      SizedBox(width: isSmallScreen ? 2 : 3),
+                                      Expanded(
+                                        flex: isSmallScreen ? 4 : 3,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              if (expandedRowIndex ==
+                                                  rowIndex) {
+                                                expandedRowIndex = null;
+                                              } else {
+                                                expandedRowIndex = rowIndex;
+                                              }
+                                            });
+                                          },
+                                          child: Text(
+                                            '${item.rentalData?.rentalAdress ?? '-'}',
+                                            style: TextStyle(
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: isSmallScreen ? 12 : 14,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          .05),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      item.leaseData?.balance != null
-                                          ? '\$${item.leaseData!.balance!.toStringAsFixed(2)}'
-                                          : '-',
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                                      SizedBox(width: isSmallScreen ? 4 : 8),
+                                      Expanded(
+                                        flex: isSmallScreen ? 3 : 2,
+                                        child: Text(
+                                          '${item.rentalOwnerData?.rentalOwnerCompanyName ?? '-'}',
+                                          style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: isSmallScreen ? 12 : 14,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  // SizedBox(width: 8),
-                                ],
+                                      SizedBox(width: isSmallScreen ? 4 : 8),
+                                      Expanded(
+                                        flex: isSmallScreen ? 2 : 2,
+                                        child: Text(
+                                          item.leaseData?.balance != null
+                                              ? '\$${item.leaseData!.balance!.toStringAsFixed(2)}'
+                                              : '-',
+                                          style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: isSmallScreen ? 12 : 14,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      SizedBox(width: isSmallScreen ? 2 : 5),
+                                    ],
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -3027,66 +3112,134 @@ class _Rent_collectionState extends State<Rent_collection> {
                             Container(
                               child: Column(
                                 children: [
-                                  // Move-in Date and Monthly Rent Row
-                                  Row(
-                                    children: [
-                                      SizedBox(width: 25),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                  // Move-in Date and Monthly Rent Row - Responsive
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      bool isSmallScreen =
+                                          constraints.maxWidth < 400;
+                                      if (isSmallScreen) {
+                                        // Stack vertically on very small screens
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 25),
+                                          child: Column(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Move-in Date',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4),
+                                                  Text(
+                                                    '${item.leaseData?.startDate ?? 'N/A'}',
+                                                    style: TextStyle(
+                                                      color: grey,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 12),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Monthly Rent',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4),
+                                                  Text(
+                                                    '\$${item.leaseData?.leaseAmount ?? 'N/A'}',
+                                                    style: TextStyle(
+                                                      color: grey,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        // Keep horizontal layout for larger screens
+                                        return Row(
                                           children: [
-                                            Text(
-                                              'Move-in Date',
-                                              style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
+                                            SizedBox(width: 25),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Move-in Date',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4),
+                                                  Text(
+                                                    '${item.leaseData?.startDate ?? 'N/A'}',
+                                                    style: TextStyle(
+                                                      color: grey,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              '${item.leaseData?.startDate ?? 'N/A'}',
-                                              style: TextStyle(
-                                                color: grey,
-                                                fontSize: 14,
+                                            SizedBox(width: 20),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Monthly Rent',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4),
+                                                  Text(
+                                                    '\$${item.leaseData?.leaseAmount ?? 'N/A'}',
+                                                    style: TextStyle(
+                                                      color: grey,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
+                                            SizedBox(width: 20),
                                           ],
-                                        ),
-                                      ),
-                                      SizedBox(width: 20),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Monthly Rent',
-                                              style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              '\$${item.leaseData?.leaseAmount ?? 'N/A'}',
-                                              style: TextStyle(
-                                                color: grey,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(width: 20),
-                                    ],
+                                        );
+                                      }
+                                    },
                                   ),
                                   Divider(
                                       color: Colors.grey.withOpacity(0.3),
                                       thickness:
-                                      1), // Add divider between sections
+                                          1), // Add divider between sections
                                   SizedBox(height: 8),
 
                                   // Balance Row
@@ -3096,7 +3249,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               'Note',
@@ -3109,10 +3262,10 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             SizedBox(height: 4),
                                             Text(
                                               (item.notes?.isNotEmpty == true &&
-                                                  item.notes?.first.date !=
-                                                      null &&
-                                                  item.notes!.first.date!
-                                                      .isNotEmpty)
+                                                      item.notes?.first.date !=
+                                                          null &&
+                                                      item.notes!.first.date!
+                                                          .isNotEmpty)
                                                   ? '${item.notes!.first.date!}\n${item.notes!.first.content ?? '-'}'
                                                   : '-',
                                               style: TextStyle(
@@ -3132,70 +3285,107 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       thickness: 1),
                                   SizedBox(height: 8),
 
-                                  // Auto-Pay Section
-                                  Row(
-                                    children: [
-                                      SizedBox(width: 25),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
+                                  // Auto-Pay Section - Responsive
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25),
+                                    child: Column(
+                                      crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Auto-Pay',
-                                              style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            SizedBox(height: 8),
-                                            // Display recurring cards if available
-                                            if (item.recurringCards != null &&
-                                                item.recurringCards!.isNotEmpty)
-                                              ...item.recurringCards!
-                                                  .map((card) {
-                                                return Padding(
-                                                  padding:
-                                                  const EdgeInsets.only(
-                                                      bottom: 8),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        '${card.date ?? '-'}',
-                                                        style: TextStyle(
-                                                          color: grey,
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 15),
-                                                      Text(
-                                                        '${card.tenantName ?? '-'}',
-                                                        style: TextStyle(
-                                                          color: grey,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }).toList()
-                                            else
-                                              Text(
-                                                '-', // fallback if no data
-                                                style: TextStyle(
-                                                  color: grey,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                          ],
+                                      children: [
+                                        Text(
+                                          'Auto-Pay',
+                                          style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(width: 20),
-                                    ],
+                                        SizedBox(height: 8),
+                                        // Display recurring cards if available
+                                        if (item.recurringCards != null &&
+                                            item.recurringCards!.isNotEmpty)
+                                          ...item.recurringCards!.map((card) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 8),
+                                              child: LayoutBuilder(
+                                                builder:
+                                                    (context, constraints) {
+                                                  bool isSmallScreen =
+                                                      constraints.maxWidth <
+                                                          300;
+                                                  if (isSmallScreen) {
+                                                    // Stack vertically on very small screens
+                                                    return Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          '${card.date ?? '-'}',
+                                                          style: TextStyle(
+                                                            color: grey,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 2),
+                                                        Text(
+                                                          '${card.tenantName ?? '-'}',
+                                                          style: TextStyle(
+                                                            color: grey,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  } else {
+                                                    // Keep horizontal layout for larger screens
+                                                    return Row(
+                                                      children: [
+                                                        Text(
+                                                          '${card.date ?? '-'}',
+                                                          style: TextStyle(
+                                                            color: grey,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 15),
+                                                        Expanded(
+                                                          child: Text(
+                                                            '${card.tenantName ?? '-'}',
+                                                            style: TextStyle(
+                                                              color: grey,
+                                                              fontSize: 13,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                            );
+                                          }).toList()
+                                        else
+                                          Text(
+                                            '-', // fallback if no data
+                                            style: TextStyle(
+                                              color: grey,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(height: 15),
                                 ],
@@ -3205,6 +3395,69 @@ class _Rent_collectionState extends State<Rent_collection> {
                       ),
                     );
                   }).toList(),
+                  // Pagination Controls - Responsive
+                  if (totalItems > itemsPerPage)
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          bool isSmallScreen = constraints.maxWidth < 300;
+                          return Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Previous button
+                                  IconButton(
+                                    onPressed: currentPage > 0
+                                        ? () {
+                                            setState(() {
+                                              currentPage--;
+                                            });
+                                          }
+                                        : null,
+                                    icon: Icon(Icons.chevron_left),
+                                  ),
+                                  // Page info
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: isSmallScreen ? 8 : 16,
+                                        vertical: 8),
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: Colors.grey[300]!),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      isSmallScreen
+                                          ? '${currentPage + 1}/${(totalItems / itemsPerPage).ceil()}'
+                                          : 'Page ${currentPage + 1} of ${(totalItems / itemsPerPage).ceil()}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: isSmallScreen ? 12 : 14,
+                                      ),
+                                    ),
+                                  ),
+                                  // Next button
+                                  IconButton(
+                                    onPressed:
+                                        (currentPage + 1) * itemsPerPage <
+                                                totalItems
+                                            ? () {
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
+                                            : null,
+                                    icon: Icon(Icons.chevron_right),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -3305,8 +3558,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     ),
                                     SizedBox(
                                         width:
-                                        MediaQuery.of(context).size.width *
-                                            .05),
+                                            MediaQuery.of(context).size.width *
+                                                .05),
                                     Expanded(
                                       flex: 2,
                                       child: Text(
@@ -3320,8 +3573,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     ),
                                     SizedBox(
                                         width:
-                                        MediaQuery.of(context).size.width *
-                                            .05),
+                                            MediaQuery.of(context).size.width *
+                                                .05),
                                     Expanded(
                                       flex: 2,
                                       child: Text(
@@ -3354,7 +3607,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Move-in Date',
@@ -3379,7 +3632,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Monthly Rent',
@@ -3406,7 +3659,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     Divider(
                                         color: Colors.grey.withOpacity(0.3),
                                         thickness:
-                                        1), // Add divider between sections
+                                            1), // Add divider between sections
                                     SizedBox(height: 8),
 
                                     // Balance Row
@@ -3416,7 +3669,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Balance',
@@ -3485,12 +3738,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       child: Container(
                                         margin: const EdgeInsets.only(left: 5),
                                         padding: expandedRowIndex !=
-                                            currentPageData.length
+                                                currentPageData.length
                                             ? const EdgeInsets.only(bottom: 10)
                                             : const EdgeInsets.only(top: 10),
                                         child: FaIcon(
                                           expandedRowIndex ==
-                                              currentPageData.length
+                                                  currentPageData.length
                                               ? FontAwesomeIcons.sortUp
                                               : FontAwesomeIcons.sortDown,
                                           size: 20,
