@@ -1744,7 +1744,7 @@ class _Summery_pageState extends State<Summery_page>
                             label = "Tenant($tenentCount)";
                             break;
                           case 3:
-                            label = "Workorder\n($count)";
+                            label = "Work order\n($count)";
                             break;
                           default:
                             label = "";
@@ -2515,7 +2515,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'E-mail: ',
+                                                                        'Email : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2548,7 +2548,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Home Number: ',
+                                                                        'Home Number : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2584,7 +2584,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Business Number: ',
+                                                                        'Business Number : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight

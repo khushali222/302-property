@@ -83,8 +83,8 @@ class _Login_ScreenState extends State<Login_Screen> {
     });
   }
 
-  void selectCompany(
-      String company, String role, String admin_id, String user_id,String userName) {
+  void selectCompany(String company, String role, String admin_id,
+      String user_id, String userName) {
     _selectedCompany = company;
     selectedrole = role;
     adminId = admin_id;
@@ -510,7 +510,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   companies[index]["company"]!,
                                   companies[index]["role"]!,
                                   companies[index]["admin_id"]!,
-                                  companies[index]["user_id"]!,companies[index]["userName"]!);
+                                  companies[index]["user_id"]!,
+                                  companies[index]["userName"]!);
                             },
                           ),
                         ],
@@ -902,7 +903,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 emailerror = true;
                                 emailmessage = "Email is required";
                               });
-                            } else if (!EmailValidator.validate(email.text.trim())) {
+                            } else if (!EmailValidator.validate(
+                                email.text.trim())) {
                               setState(() {
                                 emailerror = true;
                                 emailmessage = "Email is not valid";
@@ -1060,7 +1062,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   companies[index]["company"]!,
                                   companies[index]["role"]!,
                                   companies[index]["admin_id"]!,
-                                  companies[index]["user_id"]!,companies[index]["userName"]!);
+                                  companies[index]["user_id"]!,
+                                  companies[index]["userName"]!);
                             },
                           ),
                         ],
@@ -1110,7 +1113,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   emailerror = true;
                                   emailmessage = "Email is required";
                                 });
-                              } else if (!EmailValidator.validate(email.text.trim())) {
+                              } else if (!EmailValidator.validate(
+                                  email.text.trim())) {
                                 setState(() {
                                   emailerror = true;
                                   emailmessage = "Email is not valid";
@@ -1301,10 +1305,29 @@ class _Login_ScreenState extends State<Login_Screen> {
 
       prefs.setString('last_name', jsonData['last_name']);
       prefs.setString('email', jsonData['email']);
+      // prefs.setString('brand_logo', jsonData['brand_logo']);
+      // print("Saved brand logo: ${jsonData['brand_logo']}");
       // prefs.setString('userid', jsonData['user_id'] ?? "");
-
       prefs.setString('password', password.text);
       // prefs.setString('userid', jsonData['user_id']);
+      String? brandLogo = jsonData['brand_logo'];
+
+      if (brandLogo != null &&
+          brandLogo.isNotEmpty &&
+          brandLogo.startsWith("data:image")) {
+        prefs.setString('brand_logo', brandLogo);
+        print("Saved brand logo.");
+      } else {
+        print("Warning: Brand logo missing or invalid.");
+        prefs.remove('brand_logo'); // Use default in drawer
+        // Optional: block login
+        /*
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed: Invalid brand logo'))
+      );
+      return;
+      */
+      }
 
       print("user id${userId}");
       if (!mounted) return;
@@ -1377,11 +1400,11 @@ class _Login_ScreenState extends State<Login_Screen> {
       List<String> firstname = stafffirstname.split(" ");
       print(firstname);
       prefs.setString('first_name', firstname.first);
-      prefs.setString('last_name',firstname.length>1? firstname.last :"");
+      prefs.setString('last_name', firstname.length > 1 ? firstname.last : "");
       prefs.setString('staffemail', jsonData['staffmember_email']);
       prefs.setString('staffmember_password', password.text);
       //prefs.setString('user_id', jsonData['user_id']);
-     // String? userId = jsonData['user_id'];
+      // String? userId = jsonData['user_id'];
       await Provider.of<StaffPermissionProvider>(context, listen: false)
           .fetchPermissions();
       Navigator.push(
@@ -1424,7 +1447,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('email', jsonData['tenant_email']);
       prefs.setString('tenant_password', password.text);
       //prefs.setString('user_id', jsonData['user_id']);
-     // String? userId = jsonData['user_id'];
+      // String? userId = jsonData['user_id'];
       await Provider.of<PermissionProvider>(context, listen: false)
           .fetchPermissions();
       Navigator.push(context,
@@ -1469,8 +1492,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       print(jsonData["vendor_firstName"]);
       prefs.setString("vendor_id", jsonData["vendor_id"]);
       prefs.setString('checkedToken', token);
-    //  prefs.setString('user_id', jsonData['user_id']);
-     // String? userId = jsonData['user_id'];
+      //  prefs.setString('user_id', jsonData['user_id']);
+      // String? userId = jsonData['user_id'];
       //  prefs.setString('adminId', adminId!);
       // prefs.setString('first_name', jsonData['${rolename.toLowerCase()}_firstName']);
       // prefs.setString('last_name', jsonData['${rolename.toLowerCase()}_lastName']);
@@ -1513,8 +1536,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
-     // prefs.setString('user_id', jsonData['user_id']);
-    //  String? userId = jsonData['user_id'];
+      // prefs.setString('user_id', jsonData['user_id']);
+      //  String? userId = jsonData['user_id'];
       loginsubmit_usingrole(adminId);
     } else {
       setState(() {
@@ -1583,13 +1606,12 @@ class _Login_ScreenState extends State<Login_Screen> {
     });
     print("userid${userId}");
     final response =
-        await http.post(Uri.parse('${Api_url}/api/auth/login'),
-            body: {
+        await http.post(Uri.parse('${Api_url}/api/auth/login'), body: {
       "email": email.text.trim(),
       "password": password.text.trim(),
       "role": selectedrole,
       "admin_id": adminId,
-          "user_id":userId,
+      "user_id": userId,
     });
     print(response.body);
     final jsonData = json.decode(response.body);
@@ -1721,8 +1743,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
             final index = widget.buttonOptions.indexOf(option);
             return SizedBox(
               width: 320, // Adjusted width to make the button smaller
-              child:
-              ElevatedButton(
+              child: ElevatedButton(
                 onPressed: () {
                   setState(() {
                     _selectedIndex = index;
@@ -1754,27 +1775,31 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                     //       _selectedIndex == index ? Colors.white : blueColor,
                     //   size: 40,
                     // ),
-                    const SizedBox(width: 10,),
+                    const SizedBox(
+                      width: 10,
+                    ),
                     Container(
                       width: 30, // Set the width of the container
                       height: 30, // Set the height of the container
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: _selectedIndex == index ? Colors.white : Colors.black, // Border color
+                          color: _selectedIndex == index
+                              ? Colors.white
+                              : Colors.black, // Border color
                           width: 2, // Set the border thickness
                         ),
-                        borderRadius: BorderRadius.circular(3), // Optional: rounded corners
-
+                        borderRadius: BorderRadius.circular(
+                            3), // Optional: rounded corners
                       ),
-                      child:Center(
+                      child: Center(
                         child: _selectedIndex == index
-                            ?
-                        const Icon(
-                          Icons.check_sharp,
-                          color: Colors.white, // Icon color when selected
-                          size: 25, // Set the icon size
-                        )
-                            : SizedBox.shrink(), // This will create a blank space when not selected
+                            ? const Icon(
+                                Icons.check_sharp,
+                                color: Colors.white, // Icon color when selected
+                                size: 25, // Set the icon size
+                              )
+                            : SizedBox
+                                .shrink(), // This will create a blank space when not selected
                       ),
                     ),
                     SizedBox(width: 15),
@@ -1786,7 +1811,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                             SizedBox(
                               width: 250,
                               child: Text(
-                                "${option['userName']!} (${ option['company']!})",
+                                "${option['userName']!} (${option['company']!})",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: _selectedIndex == index
@@ -1796,22 +1821,19 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                                 maxLines: 3,
                               ),
                             ),
-
-
-                            ],
-                          ),
-                          Text(
-                            capitalizeFirstLetter(option["role"]!),
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: _selectedIndex == index
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 13),
-                          ),
-                        ],
-                      ),
-
+                          ],
+                        ),
+                        Text(
+                          capitalizeFirstLetter(option["role"]!),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: _selectedIndex == index
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 13),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

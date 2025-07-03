@@ -25,12 +25,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   void initState() {
     super.initState();
-   // _loadPermissions();
+    // _loadPermissions();
   }
 
   Future<void> _loadPermissions() async {
     try {
-      UserPermissions fetchedPermissions = await PermissionService.fetchPermissions();
+      UserPermissions fetchedPermissions =
+          await PermissionService.fetchPermissions();
       setState(() {
         permissions = fetchedPermissions;
         isLoading = false;
@@ -45,7 +46,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
- /*   if (isLoading) {
+    /*   if (isLoading) {
       return Center(child: Text(""));
     }
 
@@ -76,17 +77,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 widget.currentpage == "Dashboard"
                     ? SvgPicture.asset(
-                  "assets/images/tenants/dashboard1.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                )
+                        "assets/images/tenants/dashboard1.svg",
+                        fit: BoxFit.cover,
+                        height: 20,
+                        width: 20,
+                      )
                     : SvgPicture.asset(
-                  "assets/images/tenants/dashboard.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                ),
+                        "assets/images/tenants/dashboard.svg",
+                        fit: BoxFit.cover,
+                        height: 20,
+                        width: 20,
+                      ),
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
@@ -133,17 +134,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   context,
                   widget.currentpage == "Work Order"
                       ? SvgPicture.asset(
-                    "assets/images/tenants/Work Light.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
-                  )
+                          "assets/images/tenants/Work Light.svg",
+                          fit: BoxFit.cover,
+                          height: 20,
+                          width: 20,
+                        )
                       : SvgPicture.asset(
-                    "assets/images/tenants/workorder.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
-                  ),
+                          "assets/images/tenants/workorder.svg",
+                          fit: BoxFit.cover,
+                          height: 20,
+                          width: 20,
+                        ),
                   "Work Order",
                   widget.currentpage == "Work Order",
                 ),

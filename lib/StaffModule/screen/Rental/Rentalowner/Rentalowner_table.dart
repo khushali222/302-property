@@ -894,7 +894,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                    'Primery E-mail: ',
+                                                                    'Email : ',
                                                                     style: TextStyle(
                                                                         fontWeight: FontWeight.bold,
                                                                         color: blueColor), // Bold and black

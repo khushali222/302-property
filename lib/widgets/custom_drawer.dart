@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,7 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer_tiles.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -19,11 +21,23 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   bool isLoading = true;
-
+  String? _brandLogoBase64;
   @override
   void initState() {
     super.initState();
     // _loadPermissions();
+    _loadBrandLogo();
+  }
+
+  Future<void> _loadBrandLogo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? logo = prefs.getString('brand_logo');
+
+    if (logo != null && logo.isNotEmpty && logo.startsWith('data:image')) {
+      setState(() {
+        _brandLogoBase64 = logo.split(',').last;
+      });
+    }
   }
 
   @override
@@ -49,27 +63,43 @@ class _CustomDrawerState extends State<CustomDrawer> {
           child: Column(
             children: [
               const SizedBox(height: 80),
+              // Padding(
+              //   padding: const EdgeInsets.all(20.0),
+              //   child: Image.asset("assets/images/logo.png"),
+              // ),
               Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
+                padding: const EdgeInsets.all(25.0),
+                child: _brandLogoBase64 != null
+                    ? Container(
+                 // color: Colors.blue,
+                        child: Image.memory(
+                          base64Decode(_brandLogoBase64!),
+                          //  height: 100,
+                          // width: 100,
+                        ),
+                      )
+                    : Image.asset(
+                        "assets/images/logo.png",
+                        // height: 100,
+                      ),
               ),
-              const SizedBox(height: 40),
+              // const SizedBox(height: 5),
               buildListTile(
                 context,
                 widget.currentpage == "Dashboard"
                     ? SvgPicture.asset(
-                  "assets/images/tenants/dashboard1.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                )
+                        "assets/images/tenants/dashboard1.svg",
+                        fit: BoxFit.cover,
+                        height: 20,
+                        width: 20,
+                      )
                     : SvgPicture.asset(
-                  "assets/images/tenants/dashboard.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                  color: blueColor,
-                ),
+                        "assets/images/tenants/dashboard.svg",
+                        fit: BoxFit.cover,
+                        height: 20,
+                        width: 20,
+                        color: blueColor,
+                      ),
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
@@ -164,18 +194,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                   widget.currentpage == "Upcoming renewal"
                       ? SvgPicture.asset(
-                    "assets/images/upcoming white.svg",
-                    fit: BoxFit.cover,
-                    height: 27,
-                    width: 27,
-                  )
+                          "assets/images/upcoming white.svg",
+                          fit: BoxFit.cover,
+                          height: 27,
+                          width: 27,
+                        )
                       : SvgPicture.asset(
-                    "assets/images/upcoming renewal.svg",
-                    fit: BoxFit.cover,
-                    height: 27,
-                    width: 27,
-                    color: blueColor,
-                  ),
+                          "assets/images/upcoming renewal.svg",
+                          fit: BoxFit.cover,
+                          height: 27,
+                          width: 27,
+                          color: blueColor,
+                        ),
                   FaIcon(
                     FontAwesomeIcons.clock,
                     size: 20,

@@ -6820,7 +6820,7 @@ List<bool> select = [];
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text('E-Mail',
+                      const Text('Email',
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,

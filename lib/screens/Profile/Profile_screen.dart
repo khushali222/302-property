@@ -540,7 +540,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         ),
                                         const SizedBox(height: 16.0),
                                         const Text(
-                                          'Email Address *',
+                                          'Email *',
                                           style: TextStyle(
                                               color: Color(0xFF8A95A8),
                                               fontWeight: FontWeight.bold),

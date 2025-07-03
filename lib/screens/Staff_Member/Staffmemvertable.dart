@@ -909,7 +909,7 @@ class _StaffTableState extends State<StaffTable> {
                                                                       .start,
                                                               children: [
                                                                 Text(
-                                                                  'Mail-Id :',
+                                                                  'Email :',
                                                                   style:
                                                                       TextStyle(
                                                                     fontWeight:

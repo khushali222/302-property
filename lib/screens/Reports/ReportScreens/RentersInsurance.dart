@@ -471,7 +471,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                     crossAxisAlignment: pw.CrossAxisAlignment.center,
                     children: [
                       pw.Text(
-                        'Renters Insurance',
+                       "Renter's Insurance",
                         style: pw.TextStyle(
                           fontSize: 18,
                           fontWeight: pw.FontWeight.bold,
@@ -1007,7 +1007,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 children: [
                   const SizedBox(height: 16),
                   titleBar(
-                    title: 'Renters Insurance',
+                    title: 'Renter’s Insurance',
                     width: MediaQuery.of(context).size.width * .91,
                   ),
                   if (MediaQuery.of(context).size.width > 500)

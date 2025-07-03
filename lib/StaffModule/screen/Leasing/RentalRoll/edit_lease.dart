@@ -7100,7 +7100,7 @@ class _AddTenantState extends State<AddTenant> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  const Text('E-Mail',
+                                  const Text('Email',
                                       style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,

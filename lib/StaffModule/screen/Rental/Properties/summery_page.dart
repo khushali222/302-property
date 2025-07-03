@@ -1896,7 +1896,7 @@ class _Summery_pageState extends State<Summery_page>
                                 label = "Tenant($tenentCount)";
                                 break;
                               case 3:
-                                label = "Workorder\n($count)";
+                                label = "Work order\n($count)";
                                 break;
                               default:
                                 label = "";
@@ -2618,7 +2618,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'E-mail: ',
+                                                                        'Email : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
