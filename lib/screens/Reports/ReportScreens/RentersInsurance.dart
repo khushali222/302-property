@@ -230,28 +230,25 @@ class _RentersInsuranceState extends State<RentersInsurance> {
   void sortData(List<RentersInsuranceData> data) {
     if (sorting1) {
       data.sort((a, b) {
-        // For tenant name, combine name and unit for sorting, case-insensitive
-        final aFullName =
-            '${a.tenantName?.toLowerCase() ?? ''}\n${a.unitDetails?.toLowerCase() ?? 'N/A'}';
-        final bFullName =
-            '${b.tenantName?.toLowerCase() ?? ''}\n${b.unitDetails?.toLowerCase() ?? 'N/A'}';
-        return ascending1
-            ? aFullName.compareTo(bFullName)
-            : bFullName.compareTo(aFullName);
+        // For tenant name sorting
+        String aName = (a.tenantName ?? '') + (a.unitDetails ?? '');
+        String bName = (b.tenantName ?? '') + (b.unitDetails ?? '');
+        // Convert to lowercase for case-insensitive sorting
+        aName = aName.toLowerCase();
+        bName = bName.toLowerCase();
+        return ascending1 ? aName.compareTo(bName) : bName.compareTo(aName);
       });
     } else if (sorting2) {
       data.sort((a, b) {
-        // For insurance provider, case-insensitive comparison
-        final aCompany =
-            (a.rentersInsurance?.insuranceCompany ?? '').toLowerCase();
-        final bCompany =
-            (b.rentersInsurance?.insuranceCompany ?? '').toLowerCase();
+        // For insurance provider sorting - keep original case
+        String aCompany = a.rentersInsurance?.insuranceCompany ?? '';
+        String bCompany = b.rentersInsurance?.insuranceCompany ?? '';
+        // Direct comparison without converting to lowercase
         return ascending2
             ? aCompany.compareTo(bCompany)
             : bCompany.compareTo(aCompany);
       });
     }
-    // Removed sorting3 since policy ID sorting is not needed
   }
 
   void _sort<T>(Comparable<T> Function(RentersInsuranceData d) getField,
@@ -290,12 +287,6 @@ class _RentersInsuranceState extends State<RentersInsurance> {
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
-        // leading: Container(
-        //   child: Icon(
-        //     Icons.expand_less,
-        //     color: Colors.transparent,
-        //   ),
-        // ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -310,17 +301,17 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 onTap: () {
                   setState(() {
                     if (sorting1 == true) {
-                      // Already sorting by this column, just toggle the order
                       ascending1 = !ascending1;
                     } else {
-                      // Start sorting by this column
                       sorting1 = true;
                       sorting2 = false;
                       sorting3 = false;
-                      ascending1 = true; // Start with A-Z
+                      ascending1 = true;
                       ascending2 = false;
                       ascending3 = false;
                     }
+                    // Apply sorting immediately
+                    sortData(rentersInsuranceModel);
                   });
                 },
                 child: Padding(
@@ -332,7 +323,6 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                               style: TextStyle(color: Colors.white))
                           : const Text("   Tenant",
                               style: TextStyle(color: Colors.white)),
-                      // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       !sorting1
                           ? const Padding(
@@ -370,17 +360,17 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 onTap: () {
                   setState(() {
                     if (sorting2 == true) {
-                      // Already sorting by this column, just toggle the order
                       ascending2 = !ascending2;
                     } else {
-                      // Start sorting by this column
                       sorting1 = false;
                       sorting2 = true;
                       sorting3 = false;
                       ascending1 = false;
-                      ascending2 = true; // Start with A-Z
+                      ascending2 = true;
                       ascending3 = false;
                     }
+                    // Apply sorting immediately
+                    sortData(rentersInsuranceModel);
                   });
                 },
                 child: Row(
@@ -419,31 +409,11 @@ class _RentersInsuranceState extends State<RentersInsurance> {
               ),
             ),
             Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3 == true) {
-                      // Already sorting by this column, just toggle the order
-                      ascending3 = !ascending3;
-                    } else {
-                      // Start sorting by this column
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = true;
-                      ascending1 = false;
-                      ascending2 = false;
-                      ascending3 = true; // Start with A-Z
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("     Policy Id",
-                        style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    // Removed sorting icon for Policy ID since sorting is not needed
-                  ],
-                ),
+              child: Row(
+                children: [
+                  Text("     Policy Id", style: TextStyle(color: Colors.white)),
+                  SizedBox(width: 5),
+                ],
               ),
             ),
           ],
@@ -695,209 +665,6 @@ class _RentersInsuranceState extends State<RentersInsurance> {
 
     return tableData;
   }
-
-  // Future<void> generaterentersInsurancePdf(
-  //     List<RentersInsuranceData> rentersInsurance) async {
-  //   final pdf = pw.Document();
-  //   final image = pw.MemoryImage(
-  //     (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
-  //   );
-  //   final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
-
-  //   pdf.addPage(
-  //     pw.Page(
-  //       margin: const pw.EdgeInsets.all(30),
-  //       build: (pw.Context context) {
-  //         return pw.Column(
-  //           crossAxisAlignment: pw.CrossAxisAlignment.start,
-  //           children: [
-  //             pw.Row(
-  //               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-  //               children: [
-  //                 pw.Image(image, width: 50, height: 50),
-  //                 pw.SizedBox(width: 50),
-  //                 pw.Column(
-  //                   crossAxisAlignment: pw.CrossAxisAlignment.center,
-  //                   children: [
-  //                     pw.Text(
-  //                       'Completed Work Orders',
-  //                       style: pw.TextStyle(
-  //                         fontSize: 18,
-  //                         fontWeight: pw.FontWeight.bold,
-  //                       ),
-  //                     ),
-  //                     pw.SizedBox(height: 10),
-  //                     pw.Text('As of $currentDate'),
-  //                   ],
-  //                 ),
-  //                 pw.Column(
-  //                   crossAxisAlignment: pw.CrossAxisAlignment.end,
-  //                   children: [
-  //                     pw.Text('302 Properties, LLC'),
-  //                     pw.Text('250 Corporate Blvd., Suite L'),
-  //                     pw.Text('Newark, DE 19702'),
-  //                     pw.Text('(302) 525-4302'),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //             pw.SizedBox(height: 20),
-  //             pw.Table(
-  //               // border: pw.TableBorder.all(color: PdfColors.grey),
-  //               columnWidths: {
-  //                 0: const pw.FlexColumnWidth(2),
-  //                 1: const pw.FlexColumnWidth(2),
-  //                 2: const pw.FlexColumnWidth(2),
-  //                 3: const pw.FlexColumnWidth(2),
-  //                 4: const pw.FlexColumnWidth(2),
-  //                 5: const pw.FlexColumnWidth(2),
-  //                 6: const pw.FlexColumnWidth(2),
-  //               },
-  //               children: [
-  //                 pw.TableRow(
-  //                   decoration: pw.BoxDecoration(
-  //                     border: pw.TableBorder.all(
-  //                       color: PdfColor.fromHex('#152B53'),
-  //                     ),
-  //                     color: PdfColors.grey300,
-  //                   ),
-  //                   children: [
-  //                     pw.Padding(
-  //                       padding: const pw.EdgeInsets.all(8.0),
-  //                       child: pw.Text('Unit',
-  //                           style: pw.TextStyle(
-  //                               fontWeight: pw.FontWeight.bold, fontSize: 12)),
-  //                     ),
-  //                     pw.Padding(
-  //                       padding: const pw.EdgeInsets.all(8.0),
-  //                       child: pw.Text('Tenant Name',
-  //                           style: pw.TextStyle(
-  //                               fontWeight: pw.FontWeight.bold, fontSize: 12)),
-  //                     ),
-  //                     pw.Padding(
-  //                       padding: const pw.EdgeInsets.all(8.0),
-  //                       child: pw.Text('Insurance Provider',
-  //                           style: pw.TextStyle(
-  //                               fontWeight: pw.FontWeight.bold, fontSize: 12)),
-  //                     ),
-  //                     pw.Padding(
-  //                       padding: const pw.EdgeInsets.all(8.0),
-  //                       child: pw.Text('Policy ID',
-  //                           style: pw.TextStyle(
-  //                               fontWeight: pw.FontWeight.bold, fontSize: 12)),
-  //                     ),
-  //                     pw.Padding(
-  //                       padding: const pw.EdgeInsets.all(8.0),
-  //                       child: pw.Text('Liability Coverage',
-  //                           style: pw.TextStyle(
-  //                               fontWeight: pw.FontWeight.bold, fontSize: 12)),
-  //                     ),
-  //                     pw.Padding(
-  //                       padding: const pw.EdgeInsets.all(8.0),
-  //                       child: pw.Text('Effective Date',
-  //                           style: pw.TextStyle(
-  //                               fontWeight: pw.FontWeight.bold, fontSize: 12)),
-  //                     ),
-  //                     pw.Padding(
-  //                       padding: const pw.EdgeInsets.all(8.0),
-  //                       child: pw.Text('Expiration Date',
-  //                           style: pw.TextStyle(
-  //                               fontWeight: pw.FontWeight.bold, fontSize: 12)),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 for (var item in rentersInsurance) ...[
-  //                   pw.TableRow(
-  //                     decoration: pw.BoxDecoration(
-  //                       border: pw.TableBorder.all(
-  //                         color: PdfColor.fromHex('#152B53'),
-  //                       ),
-  //                       color: PdfColors.grey100,
-  //                     ),
-  //                     children: [
-  //                       pw.Padding(
-  //                         padding: const pw.EdgeInsets.all(8.0),
-  //                         child: pw.Text(item.rentalAddress ?? '',
-  //                             style: const pw.TextStyle(fontSize: 10)),
-  //                       ),
-  //                       pw.Padding(
-  //                         padding: const pw.EdgeInsets.all(8.0),
-  //                         child: pw.Text('',
-  //                             style: const pw.TextStyle(fontSize: 10)),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   for (var tenant in item.tenants!)
-  //                     pw.TableRow(
-  //                       decoration: pw.BoxDecoration(
-  //                         border: pw.TableBorder.all(
-  //                           color: PdfColor.fromHex('#152B53'),
-  //                         ),
-  //                       ),
-  //                       children: [
-  //                         pw.Padding(
-  //                           padding: const pw.EdgeInsets.all(8.0),
-  //                           child: pw.Text('',
-  //                               style: const pw.TextStyle(fontSize: 10)),
-  //                         ),
-  //                         pw.Padding(
-  //                           padding: const pw.EdgeInsets.all(8.0),
-  //                           child: pw.Text(tenant.tenantName ?? '',
-  //                               style: const pw.TextStyle(fontSize: 10)),
-  //                         ),
-  //                         pw.Padding(
-  //                           padding: const pw.EdgeInsets.all(8.0),
-  //                           child: pw.Text(
-  //                               tenant.tenantInsurance!.provider.toString() ??
-  //                                   '',
-  //                               style: const pw.TextStyle(fontSize: 10)),
-  //                         ),
-  //                         pw.Padding(
-  //                           padding: const pw.EdgeInsets.all(8.0),
-  //                           child: pw.Text(
-  //                               tenant.tenantInsurance!.policyId.toString() ??
-  //                                   '',
-  //                               style: const pw.TextStyle(fontSize: 10)),
-  //                         ),
-  //                         pw.Padding(
-  //                           padding: const pw.EdgeInsets.all(8.0),
-  //                           child: pw.Text(
-  //                               tenant.tenantInsurance!.liabilityCoverage
-  //                                       .toString() ??
-  //                                   '',
-  //                               style: const pw.TextStyle(fontSize: 10)),
-  //                         ),
-  //                         pw.Padding(
-  //                           padding: const pw.EdgeInsets.all(8.0),
-  //                           child: pw.Text(
-  //                               tenant.tenantInsurance!.effectiveDate
-  //                                       .toString() ??
-  //                                   '',
-  //                               style: const pw.TextStyle(fontSize: 10)),
-  //                         ),
-  //                         pw.Padding(
-  //                           padding: const pw.EdgeInsets.all(8.0),
-  //                           child: pw.Text(
-  //                               tenant.tenantInsurance!.expirationDate
-  //                                       .toString() ??
-  //                                   '',
-  //                               style: const pw.TextStyle(fontSize: 10)),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                 ],
-  //               ],
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     ),
-  //   );
-
-  //   await Printing.layoutPdf(
-  //     onLayout: (PdfPageFormat format) async => pdf.save(),
-  //   );
-  // }
 
   Future<void> generateRentersInsuranceExcel(
       List<RentersInsuranceData> rentersInsurance) async {
