@@ -102,8 +102,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
 
       selectedrenatalownerid = selectedRentalOwnerIds.join(',');
       List<RentalOwnerReport> data = await RentalOwnerReportService()
-          .fetchRentalOwnerReport(
-              id!, fromDate, toDate,
+          .fetchRentalOwnerReport(id!, fromDate, toDate,
               rentalownerid: selectedrenatalownerid, chargetype: chargedata);
 
       setState(() {
@@ -1530,7 +1529,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                     .sortUp
                                                                 : FontAwesomeIcons
                                                                     .sortDown,
-                                                              size: 20,
+                                                            size: 20,
                                                             color: isRowExpanded
                                                                 ? blueColor
                                                                 : blueColor,
@@ -2754,7 +2753,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             ),
     );
   }
-    
+
   String _getDisplayValue(String? value) {
     // Return 'N/A' if the value is null or empty, otherwise return the value
     return (value == null || value.trim().isEmpty) ? 'N/A' : value;
@@ -2854,6 +2853,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         ),
     ];
   }
+
   List<String> selectedRentalOwnerIds = [];
   filters({List<RentalOwnerReport>? data}) {
     return Column(
@@ -2882,9 +2882,11 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           selectedRentalOwnerIds.isEmpty
                               ? "Select Rental Owners"
                               : selectedRentalOwnerIds
-                              .map((id) => rentalowners.firstWhere(
-                                  (owner) => owner['rentalowner_id'] == id)['rentalOwner_name'])
-                              .join(', '),
+                                  .map((id) => rentalowners.firstWhere(
+                                      (owner) =>
+                                          owner['rentalowner_id'] ==
+                                          id)['rentalOwner_name'])
+                                  .join(', '),
                           style: TextStyle(fontSize: 14, color: Colors.black),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -2894,8 +2896,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           value: owner['rentalowner_id'],
                           child: StatefulBuilder(
                             builder: (context, setState) {
-                              bool isSelected =
-                              selectedRentalOwnerIds.contains(owner['rentalowner_id']);
+                              bool isSelected = selectedRentalOwnerIds
+                                  .contains(owner['rentalowner_id']);
                               return CheckboxListTile(
                                 value: isSelected,
                                 title: Text(
@@ -2907,13 +2909,16 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                     color: Colors.black87,
                                   ),
                                 ),
-                                controlAffinity: ListTileControlAffinity.leading,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 onChanged: (bool? checked) {
                                   setState(() {
                                     if (checked == true) {
-                                      selectedRentalOwnerIds.add(owner['rentalowner_id']!);
+                                      selectedRentalOwnerIds
+                                          .add(owner['rentalowner_id']!);
                                     } else {
-                                      selectedRentalOwnerIds.remove(owner['rentalowner_id']!);
+                                      selectedRentalOwnerIds
+                                          .remove(owner['rentalowner_id']!);
                                     }
                                   });
                                   // Update the outer state
@@ -2930,7 +2935,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 ),
               ),
               const SizedBox(width: 6),
-
             ],
           ),
         ),
@@ -2957,20 +2961,28 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       ),
                       items: const [
                         DropdownMenuItem<String>(
-                          value: 'Card',
-                          child: Text('Card'),
+                          value: "All",
+                          child: Text('All'),
                         ),
                         DropdownMenuItem<String>(
                           value: 'ACH',
                           child: Text('ACH'),
                         ),
                         DropdownMenuItem<String>(
-                          value: 'Check',
-                          child: Text('Check'),
+                          value: 'Card',
+                          child: Text('Card'),
                         ),
                         DropdownMenuItem<String>(
                           value: 'Cash',
                           child: Text('Cash'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "Cashier's Check",
+                          child: Text("Cashier's Check"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Check',
+                          child: Text('Check'),
                         ),
                         DropdownMenuItem<String>(
                           value: 'Manual',
@@ -2979,14 +2991,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                         DropdownMenuItem<String>(
                           value: 'Money Order',
                           child: Text('Money Order'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: "Cashier's Check",
-                          child: Text("Cashier's Check"),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: "All",
-                          child: Text('All'),
                         ),
                       ],
                       onChanged: (value) {
@@ -3057,7 +3061,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                 .toString());
                             toDate.text = formatDate(now
                                 .add(Duration(
-                                days: DateTime.daysPerWeek - now.weekday))
+                                    days: DateTime.daysPerWeek - now.weekday))
                                 .toString());
                           } else if (value == "This Month") {
                             customdate = false;
@@ -3096,7 +3100,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 ),
               ),
               const SizedBox(width: 6),
-
             ],
           ),
         ),
@@ -3172,7 +3175,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             ],
           ),
         ),
-
         const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -3206,7 +3208,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           }
                         },
                         itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
+                            <PopupMenuEntry<String>>[
                           const PopupMenuItem<String>(
                               value: 'PDF', child: Text('PDF')),
                           const PopupMenuItem<String>(
@@ -3219,11 +3221,11 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           children: [
                             istenantDataLoading
                                 ? const Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 21.0,
-                              ),
-                            )
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 21.0,
+                                    ),
+                                  )
                                 : Text('Export'),
                             Icon(Icons.arrow_drop_down),
                           ],
@@ -3232,8 +3234,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                     ),
                   ),
                 ),
-              if(!showTableData)
-                Spacer(),
+              if (!showTableData) Spacer(),
               const SizedBox(width: 10),
               Expanded(
                 child: SizedBox(

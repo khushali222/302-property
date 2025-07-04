@@ -176,7 +176,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                 },
                 child: Row(
                   children: [
-                    Text("PhoneNumber", style: TextStyle(color: Colors.white)),
+                    Text("  Phone  Number", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(

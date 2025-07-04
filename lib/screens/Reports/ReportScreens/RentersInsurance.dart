@@ -230,30 +230,30 @@ class _RentersInsuranceState extends State<RentersInsurance> {
   void sortData(List<RentersInsuranceData> data) {
     if (sorting1) {
       data.sort((a, b) {
-        final aName = a.tenantName ?? '';
-        final bName = b.tenantName ?? '';
+        // For tenant name, combine name and unit for sorting, case-insensitive
+        final aFullName =
+            '${a.tenantName?.toLowerCase() ?? ''}\n${a.unitDetails?.toLowerCase() ?? 'N/A'}';
+        final bFullName =
+            '${b.tenantName?.toLowerCase() ?? ''}\n${b.unitDetails?.toLowerCase() ?? 'N/A'}';
         return ascending1
-            ? aName.toLowerCase().compareTo(bName.toLowerCase())
-            : bName.toLowerCase().compareTo(aName.toLowerCase());
+            ? aFullName.compareTo(bFullName)
+            : bFullName.compareTo(aFullName);
       });
     } else if (sorting2) {
       data.sort((a, b) {
-        final aCompany = a.rentersInsurance?.insuranceCompany ?? '';
-        final bCompany = b.rentersInsurance?.insuranceCompany ?? '';
+        // For insurance provider, case-insensitive comparison
+        final aCompany =
+            (a.rentersInsurance?.insuranceCompany ?? '').toLowerCase();
+        final bCompany =
+            (b.rentersInsurance?.insuranceCompany ?? '').toLowerCase();
         return ascending2
-            ? aCompany.toLowerCase().compareTo(bCompany.toLowerCase())
-            : bCompany.toLowerCase().compareTo(aCompany.toLowerCase());
-      });
-    } else if (sorting3) {
-      data.sort((a, b) {
-        final aPolicyId = a.rentersInsurance?.policyId ?? '';
-        final bPolicyId = b.rentersInsurance?.policyId ?? '';
-        return ascending3
-            ? aPolicyId.toLowerCase().compareTo(bPolicyId.toLowerCase())
-            : bPolicyId.toLowerCase().compareTo(aPolicyId.toLowerCase());
+            ? aCompany.compareTo(bCompany)
+            : bCompany.compareTo(aCompany);
       });
     }
+    // Removed sorting3 since policy ID sorting is not needed
   }
+
   void _sort<T>(Comparable<T> Function(RentersInsuranceData d) getField,
       int columnIndex, bool ascending) {
     setState(() {
@@ -441,32 +441,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                     Text("     Policy Id",
                         style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    // !sorting3
-                    //     ? const Padding(
-                    //         padding: EdgeInsets.only(bottom: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortDown,
-                    //           size: 16,
-                    //           color: Colors.white70,
-                    //         ),
-                    //       )
-                    //     : ascending3
-                    //         ? const Padding(
-                    //             padding: EdgeInsets.only(top: 7, left: 2),
-                    //             child: FaIcon(
-                    //               FontAwesomeIcons.sortUp,
-                    //               size: 20,
-                    //               color: Colors.white,
-                    //             ),
-                    //           )
-                    //         : const Padding(
-                    //             padding: EdgeInsets.only(bottom: 7, left: 2),
-                    //             child: FaIcon(
-                    //               FontAwesomeIcons.sortDown,
-                    //               size: 20,
-                    //               color: Colors.white,
-                    //             ),
-                    //           ),
+                    // Removed sorting icon for Policy ID since sorting is not needed
                   ],
                 ),
               ),
@@ -1128,7 +1103,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 children: [
                   const SizedBox(height: 16),
                   titleBar(
-                    title: 'Renter’s Insurance',
+                    title: "Renter's Insurance",
                     width: MediaQuery.of(context).size.width * .91,
                   ),
                   if (MediaQuery.of(context).size.width > 500)

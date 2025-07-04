@@ -17,6 +17,7 @@ import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
+import '../../../screens/Reports/ReportScreens/Rent_collection.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 import 'ReportScreens/RentRollReport.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -735,7 +736,7 @@ class ReportScreen extends StatelessWidget {
         children: [
           SizedBox(height: 10,),
           reportSection('assets/images/entypo_bar-graph.svg', 'Financial Reports', [
-            {'title': 'Rent Collection Report', 'subtitle': 'Rent collection due by property',"navigate":RentersInsurance()},
+            {'title': 'Rent Collection Report', 'subtitle': 'Rent collection due by property',"navigate":Rent_collection()},
             {'title': 'Daily Transaction Report', 'subtitle': 'Listing of all transaction summarized by day',"navigate":DailyTransactions()},
             {'title': 'Rental Owner Report', 'subtitle': 'Listing of all transaction summarized by day owner',"navigate":RentalOwnerReports()},
             {'title': 'Account Totals Report', 'subtitle': 'Listing of all transactions summarized by account and rental owner',"navigate":AccountTotalsReports()},

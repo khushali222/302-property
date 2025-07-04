@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Model/Rent_collection_model.dart';
-import '../constant/constant.dart';
+import '../../Model/Rent_collection_model.dart';
+import '../../constant/constant.dart';
 
 class RentColllectionReport {
   final String baseUrl = '$Api_url/api/rental_owner/rent-collection-report';
@@ -15,6 +15,7 @@ class RentColllectionReport {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     final String endpoint = '/$adminId';
     String url = '$baseUrl$endpoint?month=$selectedmonth&year=$selectedyear';
 
@@ -29,19 +30,19 @@ class RentColllectionReport {
         headers: {
           'Content-Type': 'application/json',
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $staffid",
         },
       );
       print("report rent collection ${response.body}");
 
       if (response.statusCode == 200) {
         final parsedJson = jsonDecode(response.body);
-        print("=== FULL API JSON RESPONSE ===");
+        print("=== STAFF MODULE - FULL API JSON RESPONSE ===");
         print(parsedJson);
 
         // Debug: Print summary data order from JSON
         if (parsedJson['summary'] != null) {
-          print("=== SUMMARY ORDER FROM JSON ===");
+          print("=== STAFF MODULE - SUMMARY ORDER FROM JSON ===");
           List summaryList = parsedJson['summary'];
           for (int i = 0; i < summaryList.length; i++) {
             print(

@@ -142,7 +142,7 @@ class _Rent_collectionState extends State<Rent_collection> {
           .FetchRentColllection(id!, fromDate, toDate, chargetype: chargedata);
 
       // Debug: Print API response structure
-      print("=== API RESPONSE DEBUG ===");
+      print("=== STAFF MODULE - API RESPONSE DEBUG ===");
       print("Report Month: ${data.reportMonth}");
       print("Number of Summary Items: ${data.summary?.length ?? 0}");
       print("Number of Leases: ${data.leases?.length ?? 0}");
@@ -150,7 +150,7 @@ class _Rent_collectionState extends State<Rent_collection> {
 
       // Debug: Print summary data as received from API
       if (data.summary != null) {
-        print("=== SUMMARY DATA FROM API ===");
+        print("=== STAFF MODULE - SUMMARY DATA FROM API ===");
         for (int i = 0; i < data.summary!.length; i++) {
           print(
               "$i: ${data.summary![i].rentalOwnerCompany} - \$${data.summary![i].totalPending}");
@@ -1057,6 +1057,286 @@ class _Rent_collectionState extends State<Rent_collection> {
     });
   }
 
+  // Future<void> generateRentalOwnerReportExcel(
+  //     List<Rentcollection_model> rentalOwnerReports) async
+  // {
+  //   final syncXlsx.Workbook workbook = syncXlsx.Workbook();
+  //   final syncXlsx.Worksheet sheet = workbook.worksheets[0];
+  //
+  //   sheet.getRangeByName('A1:I1').columnWidth = 20;
+  //
+  //   final List<String> headers = [
+  //     'Property',
+  //     'Tenant',
+  //     'Date',
+  //     'Pmt Type',
+  //     'Txn ID',
+  //     'Reference',
+  //     'Crd Type',
+  //     'Crd No',
+  //     'Total',
+  //   ];
+  //
+  //   final syncXlsx.Style headerCellStyle =
+  //   workbook.styles.add('headerCellStyle');
+  //   headerCellStyle.bold = true;
+  //   headerCellStyle.backColor = '#5A86D5';
+  //   headerCellStyle.fontColor = '#FFFFFF';
+  //   headerCellStyle.fontSize = 16;
+  //   headerCellStyle.hAlign = syncXlsx.HAlignType.center;
+  //
+  //   final syncXlsx.Style currencyCellStyle =
+  //   workbook.styles.add('currencyCellStyle');
+  //   currencyCellStyle.numberFormat = '\$#,##0.00'; // Currency format
+  //   currencyCellStyle.hAlign = syncXlsx.HAlignType.right; // Right-align amounts
+  //
+  //   final syncXlsx.Style boldAmountStyle =
+  //   workbook.styles.add('boldAmountStyle');
+  //   boldAmountStyle.bold = true;
+  //   boldAmountStyle.numberFormat = '\$#,##0.00';
+  //   boldAmountStyle.hAlign = syncXlsx.HAlignType.right;
+  //   final syncXlsx.Style AmountTitleStyle =
+  //   workbook.styles.add('AmountTitleStyle');
+  //   boldAmountStyle.bold = true;
+  //   boldAmountStyle.numberFormat = '\$#,##0.00';
+  //
+  //   for (int i = 0; i < headers.length; i++) {
+  //     final cell = sheet.getRangeByIndex(1, i + 1);
+  //     cell.setText(headers[i]);
+  //     cell.cellStyle = headerCellStyle;
+  //   }
+  //
+  //   int rowIndex = 2;
+  //   double grandTotal = 0.0;
+  //
+  //   for (var owner in rentalOwnerReports) {
+  //     final rentalOwnerCell = sheet.getRangeByIndex(rowIndex, 1);
+  //     rentalOwnerCell.setText(owner.date ?? '');
+  //     rentalOwnerCell.cellStyle.bold = true;
+  //     sheet.getRangeByName('A$rowIndex:I$rowIndex').merge();
+  //     rowIndex++;
+  //
+  //     for (var property in owner.charges!) {
+  //       sheet
+  //           .getRangeByIndex(rowIndex, 1)
+  //           .setText(property.rentalData!.rentalAddress ?? 'N/A');
+  //       sheet.getRangeByIndex(rowIndex, 2).setText(
+  //           '${property.tenantData?.tenantFirstName ?? 'N/A'} ${property.tenantData?.tenantLastName ?? 'N/A'}');
+  //       sheet
+  //           .getRangeByIndex(rowIndex, 3)
+  //           .setText(property.updatedAt.toString());
+  //       sheet.getRangeByIndex(rowIndex, 4).setText(property.paymentType ?? 'N/A');
+  //       sheet
+  //           .getRangeByIndex(rowIndex, 5)
+  //           .setText(property.transactionId ?? 'N/A');
+  //       sheet.getRangeByIndex(rowIndex, 6).setText(property.paymentId ?? 'N/A');
+  //       sheet.getRangeByIndex(rowIndex, 7).setText(property.cc_type ?? 'N/A');
+  //       sheet.getRangeByIndex(rowIndex, 8).setText(property.cc_number ?? 'N/A');
+  //       sheet
+  //           .getRangeByIndex(rowIndex, 9)
+  //           .setNumber(property.totalAmount ?? 0.0);
+  //       sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
+  //       rowIndex++;
+  //
+  //       if(property.response != "FAILURE" && property.isDelete!=true)
+  //         for (var payment in property.entry!) {
+  //           sheet.getRangeByIndex(rowIndex, 1).setText(payment.account ?? 'N/A');
+  //           sheet.getRangeByIndex(rowIndex, 9).setNumber(payment.amount);
+  //           sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
+  //           rowIndex++;
+  //         }
+  //
+  //       // if (property.surcharge != 0.0) {
+  //       //   sheet.getRangeByIndex(rowIndex, 1).setText('Surcharge');
+  //       //   sheet.getRangeByIndex(rowIndex, 9).setNumber(property.surcharge);
+  //       //   sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
+  //       //   rowIndex++;
+  //       // }
+  //     }
+  //
+  //     sheet
+  //         .getRangeByIndex(rowIndex, 1)
+  //         .setText('Subtotal - ${owner.date}');
+  //     sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
+  //     sheet.getRangeByIndex(rowIndex, 9).setNumber(owner.subtotal ?? 0.0);
+  //     sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
+  //     sheet.getRangeByName('A$rowIndex:H$rowIndex').merge();
+  //     rowIndex++;
+  //
+  //     grandTotal += owner.subtotal ?? 0.0;
+  //   }
+  //
+  //   sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total');
+  //   sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
+  //   sheet.getRangeByIndex(rowIndex, 9).setNumber(grandTotal);
+  //   sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
+  //   sheet.getRangeByName('A$rowIndex:H$rowIndex').merge();
+  //
+  //   final List<int> bytes = workbook.saveAsStream();
+  //   workbook.dispose();
+  //
+  //   final DateTime now = DateTime.now();
+  //   final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+  //   final String fileName = 'Daily_transaction_report_$formattedDate.xlsx';
+  //
+  //   final Directory directory = Platform.isIOS
+  //       ? await getApplicationDocumentsDirectory()
+  //       : Directory('/storage/emulated/0/Download');
+  //
+  //   final path = '${directory.path}/$fileName';
+  //
+  //   // Create directory if it doesn't exist (for Android)
+  //   if (!await directory.exists() && !Platform.isIOS) {
+  //     await directory.create(recursive: true);
+  //   }
+  //
+  //   final File file = File(path);
+  //   await file.writeAsBytes(bytes, flush: true);
+  //   Share.shareXFiles([XFile(path)]);
+  //   Fluttertoast.showToast(
+  //     msg: 'Excel file saved to $path',
+  //   );
+  // }
+  //
+  // Future<void> generateRentalOwnerReportCsv(
+  //     List<Rentcollection_model> rentalOwnerReports) async
+  // {
+  //   // Define headers for CSV
+  //   final List<String> headers = [
+  //     'Property',
+  //     'Tenant',
+  //     'Date',
+  //     'Pmt Type',
+  //     'Txn ID',
+  //     'Reference',
+  //     'Crd Type',
+  //     'Crd No',
+  //     'Total',
+  //   ];
+  //
+  //   // Create a buffer to store CSV data
+  //   final StringBuffer csvBuffer = StringBuffer();
+  //
+  //   // Add headers to the CSV file
+  //   csvBuffer.writeln(headers.join(','));
+  //
+  //   double grandTotal = 0.0;
+  //
+  //   // Iterate through each rental owner report
+  //   for (var owner in rentalOwnerReports) {
+  //     // Add rental owner name as a row
+  //     csvBuffer.writeln('${owner.date ?? ''}');
+  //
+  //     // Iterate through each property for the current rental owner
+  //     for (var property in owner.charges!) {
+  //       // Replace commas in the rental address with spaces
+  //       final String sanitizedAddress =
+  //       (property.rentalData!.rentalAddress ?? 'N/A').replaceAll(',', ' ');
+  //
+  //       // Add property and tenant details
+  //       csvBuffer.writeln([
+  //         sanitizedAddress,
+  //         '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
+  //         property.updatedAt.toString(),
+  //         property.paymentType ?? 'N/A',
+  //         property.transactionId ?? 'N/A',
+  //         property.paymentId ?? 'N/A',
+  //         property.cc_type ?? 'N/A',
+  //         property.cc_number ?? 'N/A',
+  //         '\$${property.totalAmount?.toStringAsFixed(2) ?? '0.00'}'
+  //       ].join(','));
+  //
+  //       // Iterate through payment entries for the current property
+  //       for (var payment in property.entry!) {
+  //         csvBuffer.writeln([
+  //           payment.account ?? 'N/A',
+  //           '',
+  //           '',
+  //           '',
+  //           '',
+  //           '',
+  //           '',
+  //           '',
+  //           '\$${payment.amount!.toStringAsFixed(2)}'
+  //         ].join(','));
+  //       }
+  //
+  //       // Add surcharge row if applicable
+  //       // if (property.surcharge != 0.0) {
+  //       //   csvBuffer.writeln([
+  //       //     'Surcharge',
+  //       //     '',
+  //       //     '',
+  //       //     '',
+  //       //     '',
+  //       //     '',
+  //       //     '',
+  //       //     '',
+  //       //     '\$${property.surcharge.toStringAsFixed(2)}'
+  //       //   ].join(','));
+  //       // }
+  //     }
+  //
+  //     // Add subtotal row for the current rental owner
+  //     csvBuffer.writeln([
+  //       'Subtotal - ${owner.date}',
+  //       '',
+  //       '',
+  //       '',
+  //       '',
+  //       '',
+  //       '',
+  //       '',
+  //       '\$${(owner.subtotal ?? 0.0).toStringAsFixed(2)}'
+  //     ].join(','));
+  //
+  //     // Accumulate grand total
+  //     grandTotal += owner.subtotal ?? 0.0;
+  //   }
+  //
+  //   // Add grand total row at the end
+  //   csvBuffer.writeln([
+  //     'Grand Total',
+  //     '',
+  //     '',
+  //     '',
+  //     '',
+  //     '',
+  //     '',
+  //     '',
+  //     '\$${grandTotal.toStringAsFixed(2)}'
+  //   ].join(','));
+  //
+  //   // Convert buffer to list of bytes for CSV file
+  //   final List<int> bytes = utf8.encode(csvBuffer.toString());
+  //
+  //   // Define file name with current date and time
+  //   final DateTime now = DateTime.now();
+  //   final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+  //   final String fileName = 'Daily_transaction_report_$formattedDate.csv';
+  //
+  //   // Define file path
+  //   final Directory directory = Platform.isIOS
+  //       ? await getApplicationDocumentsDirectory()
+  //       : Directory('/storage/emulated/0/Download');
+  //
+  //   final path = '${directory.path}/$fileName';
+  //
+  //   // Create directory if it doesn't exist (for Android)
+  //   if (!await directory.exists() && !Platform.isIOS) {
+  //     await directory.create(recursive: true);
+  //   }
+  //
+  //   // Write CSV file to the path
+  //   final File file = File(path);
+  //   await file.writeAsBytes(bytes, flush: true);
+  //   Share.shareXFiles([XFile(path)]);
+  //   // Show success toast message
+  //   Fluttertoast.showToast(
+  //     msg: 'CSV file saved to $path',
+  //   );
+  // }
+
   double grandtotal = 0.0;
 
   int _rowsPerPage = 10;
@@ -1479,8 +1759,8 @@ class _Rent_collectionState extends State<Rent_collection> {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
-      drawer: CustomDrawer(
-        currentpage: "Reports",
+      drawer: CustomDrawerStaff(
+        currentpage: "Report",
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none
@@ -2232,7 +2512,7 @@ class _Rent_collectionState extends State<Rent_collection> {
 
   SummeryScreen(List<Summary> currentPageData, Rentcollection_model data) {
     // Debug: Print the original data order
-    print("=== ORIGINAL SUMMARY DATA ORDER ===");
+    print("=== STAFF MODULE - ORIGINAL SUMMARY DATA ORDER ===");
     for (int i = 0; i < currentPageData.length; i++) {
       print(
           "$i: ${currentPageData[i].rentalOwnerCompany} - \$${currentPageData[i].totalPending}");
@@ -2242,7 +2522,7 @@ class _Rent_collectionState extends State<Rent_collection> {
     List<Summary> sortedData = _getSortedSummaryData(currentPageData);
 
     // Debug: Print the sorted data order
-    print("=== SORTED SUMMARY DATA ORDER ===");
+    print("=== STAFF MODULE - SORTED SUMMARY DATA ORDER ===");
     for (int i = 0; i < sortedData.length; i++) {
       print(
           "$i: ${sortedData[i].rentalOwnerCompany} - \$${sortedData[i].totalPending}");
