@@ -404,7 +404,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   reload_screen() {
     setState(() {
-      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+      _leaseLedgerFuture =
+          LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     });
   }
 
@@ -673,14 +674,15 @@ class _FinancialTableState extends State<FinancialTable> {
   @override
   void initState() {
     super.initState();
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+    _leaseLedgerFuture =
+        LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     _expanded = List.generate(_pagedData.length, (_) => false);
     _fromDateController = TextEditingController(text: '');
     _toDateController = TextEditingController(text: '');
   }
+
   @override
   void dispose() {
-
     _fromDateController.dispose();
     _toDateController.dispose();
     super.dispose();
@@ -705,7 +707,6 @@ class _FinancialTableState extends State<FinancialTable> {
     //   setState(() {});
     // }
   }
-
 
   void _showAlert(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
@@ -986,8 +987,7 @@ class _FinancialTableState extends State<FinancialTable> {
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-                _currentPage == 0 ? grey : blueColor,
+            color: _currentPage == 0 ? grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -1007,10 +1007,7 @@ class _FinancialTableState extends State<FinancialTable> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? grey
-                :  blueColor
-
-
-, // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -1459,7 +1456,6 @@ class _FinancialTableState extends State<FinancialTable> {
     );
   }
 
-
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController _fromDateController;
@@ -1467,38 +1463,25 @@ class _FinancialTableState extends State<FinancialTable> {
   String fdate = "";
   String edate = "";
 
-  Future<void> _selectfromDate(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectfromDate(
+      BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
-      builder: (BuildContext context,
-          Widget? child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme:
-            ColorScheme.light(
-              primary: blueColor
-
-
-              , // header background color
-              onPrimary: Colors
-                  .white, // header text color
-              onSurface: blueColor
-
-
-              , // body text color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: blueColor, // body text color
             ),
-            textButtonTheme:
-            TextButtonThemeData(
+            textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                blueColor
-
-
-                , // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -1516,42 +1499,29 @@ class _FinancialTableState extends State<FinancialTable> {
         //  _filterData();
         controller.text = picked.toLocal().toString().split(' ')[0];
         fdate = controller.text;
-
       });
     }
   }
-  Future<void> _selectendDate(BuildContext context, TextEditingController controller) async {
+
+  Future<void> _selectendDate(
+      BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
-      builder: (BuildContext context,
-          Widget? child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme:
-            ColorScheme.light(
-              primary: blueColor
-
-
-              , // header background color
-              onPrimary: Colors
-                  .white, // header text color
-              onSurface: blueColor
-
-
-              , // body text color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: blueColor, // body text color
             ),
-            textButtonTheme:
-            TextButtonThemeData(
+            textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                blueColor
-
-
-                , // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -1562,7 +1532,7 @@ class _FinancialTableState extends State<FinancialTable> {
 
     if (picked != null) {
       setState(() {
-        edate =  picked.toString();
+        edate = picked.toString();
         // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
         // controller.text = formattedDate;
         //  _filterData();
@@ -1573,9 +1543,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   void sortData(List<Data> data) {
     if (sorting1) {
-      data.sort((a, b) => ascending1
-          ? a.type!.compareTo(b.type!)
-          : b.type!.compareTo(a.type!));
+      data.sort((a, b) =>
+          ascending1 ? a.type!.compareTo(b.type!) : b.type!.compareTo(a.type!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
           ? a.balance!.compareTo(b.balance!)
@@ -1586,6 +1555,7 @@ class _FinancialTableState extends State<FinancialTable> {
           : b.createdAt!.compareTo(a.createdAt!));
     }
   }
+
   final List<String> downloadOptions = ['PDF', 'Excel', 'CSV'];
   @override
   Widget build(BuildContext context) {
@@ -1597,54 +1567,99 @@ class _FinancialTableState extends State<FinancialTable> {
             ?.planDetail
             ?.planName ==
         'Free Plan';
-    return
-      Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 5,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: Row(
-                  children: [
-                    Spacer(), // 👈 Always push everything else to the right
-                    if (!isFreePlan && (widget.status == 'Active' || widget.status == 'Future'))
-                      Container(
-                        height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
-                        decoration: BoxDecoration(
-                          color: blueColor,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
+    return Container(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 5,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Row(
+                children: [
+                  Spacer(), // 👈 Always push everything else to the right
+                  if (!isFreePlan &&
+                      (widget.status == 'Active' || widget.status == 'Future'))
+                    Container(
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddCard(
-                                  leaseId: widget.leaseId,
-                                ),
+                          elevation: 0,
+                          backgroundColor: Colors.transparent,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddCard(
+                                leaseId: widget.leaseId,
                               ),
-                            );
-                          },
-                          child: Text(
-                            ' Add Cards ',
-                            style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 18,
-                              color: Colors.white,
                             ),
+                          );
+                        },
+                        child: Text(
+                          ' Add Cards ',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 12
+                                : 18,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                    SizedBox(width: 5),
+                    ),
+                  SizedBox(width: 5),
+                  Container(
+                    height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
+                    decoration: BoxDecoration(
+                      color: blueColor,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                      ),
+                      onPressed: () async {
+                        final value = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MakePayment(
+                              leaseId: widget.leaseId,
+                              tenantId: widget.tenantId,
+                            ),
+                          ),
+                        );
+                        if (value == true) {
+                          setState(() {
+                            _leaseLedgerFuture = LeaseRepository()
+                                .fetchLeaseLedger(leaseId: widget.leaseId);
+                          });
+                        }
+                      },
+                      child: Text(
+                        'Make Payment',
+                        style: TextStyle(
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 12 : 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                  if (widget.status == 'Active')
                     Container(
                       height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
                       decoration: BoxDecoration(
@@ -1663,9 +1678,8 @@ class _FinancialTableState extends State<FinancialTable> {
                           final value = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => MakePayment(
+                              builder: (context) => enterCharge(
                                 leaseId: widget.leaseId,
-                                tenantId: widget.tenantId,
                               ),
                             ),
                           );
@@ -1677,978 +1691,869 @@ class _FinancialTableState extends State<FinancialTable> {
                           }
                         },
                         child: Text(
-                          'Make Payment',
+                          'Enter Charge',
                           style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 18,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 12
+                                : 18,
                             color: Colors.white,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 5),
-                    if (widget.status == 'Active')
-                      Container(
-                        height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
-                        decoration: BoxDecoration(
-                          color: blueColor,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                          ),
-                          onPressed: () async {
-                            final value = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => enterCharge(
-                                  leaseId: widget.leaseId,
-                                ),
-                              ),
-                            );
-                            if (value == true) {
-                              setState(() {
-                                _leaseLedgerFuture = LeaseRepository()
-                                    .fetchLeaseLedger(leaseId: widget.leaseId);
-                              });
-                            }
-                          },
-                          child: Text(
-                            'Enter Charge',
-                            style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                ],
               ),
-              const SizedBox(
-                height: 6,
-              ),
-              if (MediaQuery.of(context).size.width > 500)
-                const SizedBox(height: 25),
-              if (MediaQuery.of(context).size.width < 500)
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10.0, right: 10.0, bottom: 10.0),
-                  child: FutureBuilder<LeaseLedger?>(
-                    future: _leaseLedgerFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return ColabShimmerLoadingWidget();
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData) {
-                        return Center(child: Text('No data found'));
-                      } else {
-                        final leaseLedger = snapshot.data!;
-                        var data = leaseLedger.data!.toList();;
-                        if (searchvalue != null && searchvalue!.isNotEmpty && searchvalue != "All") {
-                          data = data.where((lease) =>
-                          lease.type!.toLowerCase().contains(searchvalue!.toLowerCase()) ||
-                              lease.createdAt!.toLowerCase().contains(searchvalue!.toLowerCase())
-                          ).toList();
-                        }
-                        print("calling");
-                        // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
-                        //   try {
-                        //     DateTime fromDate = DateTime.parse(_fromDateController.text);
-                        //     DateTime toDate = DateTime.parse(_toDateController.text);
-                        //     print("From Date: $fromDate");
-                        //     print("To Date: $toDate");
-                        //     data = data.where((lease) {
-                        //       DateTime leaseDate = DateTime.parse(lease.entry!.first.date!);
-                        //       print("Lease Date: $leaseDate");
-                        //       return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate.add(Duration(days: 1)));
-                        //     }).toList();
-                        //   } catch (e) {
-                        //
-                        //     print("Date parsing error: $e");
-                        //   }
-                        // }
-
-                        if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
-                          try {
-                            // Use DateFormat to parse the dates
-                            print(_fromDateController.text);
-                            DateTime fromDate = DateFormat('yyyy-MM-dd').parse(_fromDateController.text);
-                            DateTime toDate = DateFormat('yyyy-MM-dd').parse(_toDateController.text);
-                            print("From Date: $fromDate");
-                            print("To Date: $toDate");
-
-                            if (fromDate.isAtSameMomentAs(toDate)) {
-                              // If both dates are the same, only include leases with the same date
-                              data = data.where((lease) {
-                                DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
-                                print("Lease Date: $leaseDate");
-                                return leaseDate.isAtSameMomentAs(fromDate);
-                              }).toList();
-                            } else {
-                              // If dates are different, use the original condition
-                              data = data.where((lease) {
-                                DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
-                                print("Lease Date: $leaseDate");
-                                return (leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate));
-                              }).toList();
-                            }
-                          } catch (e) {
-                            print("Date parsing error: $e");
-                          }
-                        }
-
-                        sortData(data);
-                        final totalPages = (data.length / itemsPerPage).ceil();
-                        final currentPageData = data
-                            .skip(currentPage * itemsPerPage)
-                            .take(itemsPerPage)
+            ),
+            const SizedBox(
+              height: 6,
+            ),
+            if (MediaQuery.of(context).size.width > 500)
+              const SizedBox(height: 25),
+            if (MediaQuery.of(context).size.width < 500)
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 10.0, right: 10.0, bottom: 10.0),
+                child: FutureBuilder<LeaseLedger?>(
+                  future: _leaseLedgerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return ColabShimmerLoadingWidget();
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData) {
+                      return Center(child: Text('No data found'));
+                    } else {
+                      final leaseLedger = snapshot.data!;
+                      var data = leaseLedger.data!.toList();
+                      ;
+                      if (searchvalue != null &&
+                          searchvalue!.isNotEmpty &&
+                          searchvalue != "All") {
+                        data = data
+                            .where((lease) =>
+                                lease.type!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()) ||
+                                lease.createdAt!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()))
                             .toList();
-                        return SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: 6,
-                              ),
-                              Expanded(
-                                flex: 0,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 5.0, vertical: 5),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Material(
-                                          elevation: 0,
-                                          borderRadius:
-                                          BorderRadius.circular(8),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            height: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
-                                                ? 48
-                                                : 50,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                              BorderRadius.circular(8),
-                                              border: Border.all(
-                                                  color:
-                                                  const Color(0xFF8A95A8)),
-                                            ),
-                                            child: TextField(
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  searchvalue = value;
-                                                  if (currentPage != 0) currentPage = 0;
-                                                });
-                                              },
-                                              decoration: const InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: "Search here...",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8)),
-                                              ),
+                      }
+                      print("calling");
+                      // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
+                      //   try {
+                      //     DateTime fromDate = DateTime.parse(_fromDateController.text);
+                      //     DateTime toDate = DateTime.parse(_toDateController.text);
+                      //     print("From Date: $fromDate");
+                      //     print("To Date: $toDate");
+                      //     data = data.where((lease) {
+                      //       DateTime leaseDate = DateTime.parse(lease.entry!.first.date!);
+                      //       print("Lease Date: $leaseDate");
+                      //       return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate.add(Duration(days: 1)));
+                      //     }).toList();
+                      //   } catch (e) {
+                      //
+                      //     print("Date parsing error: $e");
+                      //   }
+                      // }
+
+                      if (_fromDateController.text.isNotEmpty &&
+                          _toDateController.text.isNotEmpty) {
+                        try {
+                          // Use DateFormat to parse the dates
+                          print(_fromDateController.text);
+                          DateTime fromDate = DateFormat('yyyy-MM-dd')
+                              .parse(_fromDateController.text);
+                          DateTime toDate = DateFormat('yyyy-MM-dd')
+                              .parse(_toDateController.text);
+                          print("From Date: $fromDate");
+                          print("To Date: $toDate");
+
+                          if (fromDate.isAtSameMomentAs(toDate)) {
+                            // If both dates are the same, only include leases with the same date
+                            data = data.where((lease) {
+                              DateTime leaseDate = DateFormat('yyyy-MM-dd')
+                                  .parse(lease.entry!.first.date!);
+                              print("Lease Date: $leaseDate");
+                              return leaseDate.isAtSameMomentAs(fromDate);
+                            }).toList();
+                          } else {
+                            // If dates are different, use the original condition
+                            data = data.where((lease) {
+                              DateTime leaseDate = DateFormat('yyyy-MM-dd')
+                                  .parse(lease.entry!.first.date!);
+                              print("Lease Date: $leaseDate");
+                              return (leaseDate.isAfter(fromDate) &&
+                                  leaseDate.isBefore(toDate));
+                            }).toList();
+                          }
+                        } catch (e) {
+                          print("Date parsing error: $e");
+                        }
+                      }
+
+                      sortData(data);
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                              height: 6,
+                            ),
+                            Expanded(
+                              flex: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 5.0, vertical: 5),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Material(
+                                        elevation: 0,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 48
+                                              : 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                                color: const Color(0xFF8A95A8)),
+                                          ),
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              setState(() {
+                                                searchvalue = value;
+                                                if (currentPage != 0)
+                                                  currentPage = 0;
+                                              });
+                                            },
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "Search here...",
+                                              hintStyle: TextStyle(
+                                                  color: Color(0xFF8A95A8)),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 10),
-                                      // Container(
-                                      //   height: 45,
-                                      //   width: 110,
-                                      //   decoration: BoxDecoration(
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(8.0)),
-                                      //   child: ElevatedButton(
-                                      //     style: ElevatedButton.styleFrom(
-                                      //       backgroundColor: blueColor,
-                                      //     ),
-                                      //     onPressed: () {},
-                                      //     child: PopupMenuButton<String>(
-                                      //       onSelected: (value) async {
-                                      //         // Add your export logic here based on the selected value
-                                      //         if (value == 'PDF') {
-                                      //           print('pdf');
-                                      //           generateWorkOrderPdf(data);
-                                      //           // Export as PDF
-                                      //         } else if (value == 'XLSX') {
-                                      //           print('XLSX');
-                                      //           generateWorkOrderExcel(data);
-                                      //           // Export as XLSX
-                                      //         } else if (value == 'CSV') {
-                                      //           print('CSV');
-                                      //           generateWorkOrderCsv(data);
-                                      //           // Export as CSV
-                                      //         }
-                                      //       },
-                                      //       itemBuilder:
-                                      //           (BuildContext context) =>
-                                      //               <PopupMenuEntry<String>>[
-                                      //         const PopupMenuItem<String>(
-                                      //           value: 'PDF',
-                                      //           child: Text('PDF'),
-                                      //         ),
-                                      //         const PopupMenuItem<String>(
-                                      //           value: 'XLSX',
-                                      //           child: Text('XLSX'),
-                                      //         ),
-                                      //         const PopupMenuItem<String>(
-                                      //           value: 'CSV',
-                                      //           child: Text('CSV'),
-                                      //         ),
-                                      //       ],
-                                      //       child: Row(
-                                      //         mainAxisSize: MainAxisSize.min,
-                                      //         children: [
-                                      //           Text(
-                                      //
-                                      //             'Export',
-                                      //
-                                      //             style: TextStyle(
-                                      //                 fontWeight: FontWeight.bold,
-                                      //                 fontSize: 15,
-                                      //               ),
-                                      //
-                                      //           ),
-                                      //           SizedBox(
-                                      //
-                                      //             width: 2,
-                                      //
-                                      //           ),
-                                      //           Icon(
-                                      //
-                                      //             Icons.arrow_drop_down,
-                                      //
-                                      //             size: 25,
-                                      //
-                                      //           ),
-                                      //         ],
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                      Container(
-                                        height: 45,
-                                        width: 75,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color:
-                                          const Color(0xFF8A95A8)),
-                                          borderRadius: BorderRadius.circular(5),
-                                          color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    // Container(
+                                    //   height: 45,
+                                    //   width: 110,
+                                    //   decoration: BoxDecoration(
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(8.0)),
+                                    //   child: ElevatedButton(
+                                    //     style: ElevatedButton.styleFrom(
+                                    //       backgroundColor: blueColor,
+                                    //     ),
+                                    //     onPressed: () {},
+                                    //     child: PopupMenuButton<String>(
+                                    //       onSelected: (value) async {
+                                    //         // Add your export logic here based on the selected value
+                                    //         if (value == 'PDF') {
+                                    //           print('pdf');
+                                    //           generateWorkOrderPdf(data);
+                                    //           // Export as PDF
+                                    //         } else if (value == 'XLSX') {
+                                    //           print('XLSX');
+                                    //           generateWorkOrderExcel(data);
+                                    //           // Export as XLSX
+                                    //         } else if (value == 'CSV') {
+                                    //           print('CSV');
+                                    //           generateWorkOrderCsv(data);
+                                    //           // Export as CSV
+                                    //         }
+                                    //       },
+                                    //       itemBuilder:
+                                    //           (BuildContext context) =>
+                                    //               <PopupMenuEntry<String>>[
+                                    //         const PopupMenuItem<String>(
+                                    //           value: 'PDF',
+                                    //           child: Text('PDF'),
+                                    //         ),
+                                    //         const PopupMenuItem<String>(
+                                    //           value: 'XLSX',
+                                    //           child: Text('XLSX'),
+                                    //         ),
+                                    //         const PopupMenuItem<String>(
+                                    //           value: 'CSV',
+                                    //           child: Text('CSV'),
+                                    //         ),
+                                    //       ],
+                                    //       child: Row(
+                                    //         mainAxisSize: MainAxisSize.min,
+                                    //         children: [
+                                    //           Text(
+                                    //
+                                    //             'Export',
+                                    //
+                                    //             style: TextStyle(
+                                    //                 fontWeight: FontWeight.bold,
+                                    //                 fontSize: 15,
+                                    //               ),
+                                    //
+                                    //           ),
+                                    //           SizedBox(
+                                    //
+                                    //             width: 2,
+                                    //
+                                    //           ),
+                                    //           Icon(
+                                    //
+                                    //             Icons.arrow_drop_down,
+                                    //
+                                    //             size: 25,
+                                    //
+                                    //           ),
+                                    //         ],
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    Container(
+                                      height: 45,
+                                      width: 75,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: const Color(0xFF8A95A8)),
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: Colors.white,
+                                      ),
+                                      child: PopupMenuButton<String>(
+                                        offset: Offset(5, 50),
+                                        // onSelected: handleDownload,
+                                        icon: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            FaIcon(FontAwesomeIcons
+                                                .download), // Your download icon
+                                            SizedBox(
+                                                width:
+                                                    5), // Adds spacing between the icons
+                                            Icon(Icons
+                                                .arrow_drop_down), // The dropdown arrow icon
+                                          ],
                                         ),
-                                        child: PopupMenuButton<String>(
-                                          offset: Offset(5, 50),
-                                          // onSelected: handleDownload,
-                                          icon: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              FaIcon(FontAwesomeIcons.download), // Your download icon
-                                              SizedBox(width: 5), // Adds spacing between the icons
-                                              Icon(Icons.arrow_drop_down), // The dropdown arrow icon
-                                            ],
-                                          ),
-                                          tooltip: "Download",
-                                          itemBuilder: (BuildContext context) {
-                                            return downloadOptions.map((String option) {
-                                              return PopupMenuItem<String>(
-                                                value: option,
-                                                onTap: () async {
-                                                  if(option == "PDF")
-                                                    generateWorkOrderPdf(data);
-                                                  // generaterentersInsurancePdf(snapshot.data!);
-                                                  if(option == "Excel")
-                                                    generateWorkOrderExcel(data);
-                                                  //generateRentersInsuranceExcel(snapshot.data!);
-                                                  if(option == "CSV")
-                                                    generateWorkOrderCsv(data);
-                                                  // generateRentersInsuranceCSV(snapshot.data!);
-                                                },
-                                                child: Text("Download as $option"),
-                                              );
-                                            }).toList();
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                        tooltip: "Download",
+                                        itemBuilder: (BuildContext context) {
+                                          return downloadOptions
+                                              .map((String option) {
+                                            return PopupMenuItem<String>(
+                                              value: option,
+                                              onTap: () async {
+                                                if (option == "PDF")
+                                                  generateWorkOrderPdf(data);
+                                                // generaterentersInsurancePdf(snapshot.data!);
+                                                if (option == "Excel")
+                                                  generateWorkOrderExcel(data);
+                                                //generateRentersInsuranceExcel(snapshot.data!);
+                                                if (option == "CSV")
+                                                  generateWorkOrderCsv(data);
+                                                // generateRentersInsuranceCSV(snapshot.data!);
+                                              },
+                                              child:
+                                                  Text("Download as $option"),
+                                            );
+                                          }).toList();
+                                        },
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-                              // SizedBox(height: 10),
-                              Container(
-                                // width: double.infinity,
-                                // decoration: BoxDecoration(
-                                //   border: Border.all(
-                                //     color: blueColor,
-                                //   ),
-                                //   borderRadius: BorderRadius.circular(10.0),
-                                // ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 5, horizontal: 5),
-                                  child: Form(
-                                    key: _formKey,
-                                    child: screenWidth > 500
-                                        ? Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text('From',
-                                                  style: TextStyle(
-                                                      color: Colors
-                                                          .grey[600],
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .w600)),
-                                              SizedBox(height: 5),
-                                              Container(
-                                                child: TextFormField(
-                                                  controller:
-                                                  _fromDateController,
-                                                  readOnly: true,
-                                                  onTap: () =>
-                                                      _selectfromDate(
-                                                          context,
-                                                          _fromDateController),
-                                                  decoration:
-                                                  InputDecoration(
-                                                    hintText:
-                                                    'yyyy-mm-dd',
-                                                    suffixIcon: Icon(Icons
-                                                        .calendar_today),
-                                                    border:
-                                                    OutlineInputBorder(),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(width: 40),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text('To',
-                                                  style: TextStyle(
-                                                      color: Colors
-                                                          .grey[600],
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .w600)),
-                                              SizedBox(height: 5),
-                                              TextFormField(
-                                                controller:
-                                                _toDateController,
-                                                readOnly: true,
-                                                onTap: () =>
-                                                    _selectendDate(
-                                                        context,
-                                                        _toDateController),
-                                                decoration:
-                                                InputDecoration(
-                                                  hintText: 'dd-mm-yyyy',
-                                                  suffixIcon: Icon(Icons
-                                                      .calendar_today),
-                                                  border:
-                                                  OutlineInputBorder(),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                        : Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                            ),
+                            // SizedBox(height: 10),
+                            Container(
+                              // width: double.infinity,
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(
+                              //     color: blueColor,
+                              //   ),
+                              //   borderRadius: BorderRadius.circular(10.0),
+                              // ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 5),
+                                child: Form(
+                                  key: _formKey,
+                                  child: screenWidth > 500
+                                      ? Row(
                                           children: [
                                             Expanded(
-                                              child: Container(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .start,
-                                                  children: [
-                                                    // Text('From',
-                                                    //     style: TextStyle(
-                                                    //         color: blueColor,
-                                                    //         fontSize: 15,
-                                                    //         fontWeight: FontWeight.w600)),
-                                                    // SizedBox(height: 4),
-
-                                                    Material(
-                                                      elevation: 0,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          8.0),
-                                                      child: Container(
-                                                        height: 50,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                            horizontal:
-                                                            10.0,
-                                                            vertical:
-                                                            0),
-                                                        decoration:
-                                                        BoxDecoration(
-                                                          color: Colors
-                                                              .white,
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              8.0),
-                                                          border: Border.all(
-                                                              color:
-                                                              const Color(0xFF8A95A8)),
-
-                                                        ),
-                                                        child:
-                                                        TextFormField(
-                                                          controller:
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('From',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.grey[600],
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w600)),
+                                                  SizedBox(height: 5),
+                                                  Container(
+                                                    child: TextFormField(
+                                                      controller:
                                                           _fromDateController,
-                                                          // initialValue: fdate,
-                                                          readOnly: true,
-                                                          onTap: () =>
-                                                              _selectfromDate(
-                                                                  context,
-                                                                  _fromDateController),
-                                                          decoration:
+                                                      readOnly: true,
+                                                      onTap: () => _selectfromDate(
+                                                          context,
+                                                          _fromDateController),
+                                                      decoration:
                                                           InputDecoration(
-                                                            // contentPadding: EdgeInsets.all(8.0),
-                                                            // contentPadding: EdgeInsets.symmetric(),
-                                                            suffixIconConstraints: BoxConstraints(
-                                                                maxWidth:
-                                                                20,
-                                                                maxHeight:
-                                                                20,
-                                                                minHeight:
-                                                                20,
-                                                                minWidth:
-                                                                20),
-                                                            hintStyle: TextStyle(
-                                                                fontSize:
-                                                                15,
-                                                                color: Color(
-                                                                    0xFFb0b6c3)),
-                                                            border:
-                                                            InputBorder
-                                                                .none,
-                                                            hintText:
-                                                            'From date',
-                                                            suffixIcon:
-                                                            IconButton(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical:
-                                                                  1),
-                                                              iconSize:
-                                                              20,
-                                                              icon: Icon(Icons
-                                                                  .calendar_today),
-                                                              onPressed:
-                                                                  () {},
-                                                            ),
-                                                          ),
-                                                        ),
+                                                        hintText: 'yyyy-mm-dd',
+                                                        suffixIcon: Icon(Icons
+                                                            .calendar_today),
+                                                        border:
+                                                            OutlineInputBorder(),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: 16,
-                                            ),
+                                            SizedBox(width: 40),
                                             Expanded(
-                                              child: Container(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .start,
-                                                  children: [
-                                                    // Text('To',
-                                                    //     style: TextStyle(
-                                                    //         color: blueColor,
-                                                    //         fontSize: 15,
-                                                    //         fontWeight: FontWeight.w600)),
-                                                    // SizedBox(height: 4),
-
-                                                    Material(
-                                                      elevation: 0,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          8.0),
-                                                      child: Container(
-                                                        height: 50,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                            horizontal:
-                                                            10.0,
-                                                            vertical:
-                                                            0),
-                                                        decoration:
-                                                        BoxDecoration(
-                                                          color: Colors
-                                                              .white,
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              8.0),
-                                                          border: Border.all(
-                                                              color:
-                                                              const Color(0xFF8A95A8)),
-                                                        ),
-                                                        child:
-                                                        TextFormField(
-                                                          controller:
-                                                          _toDateController,
-                                                          readOnly: true,
-                                                          onTap: () {
-                                                            _selectendDate(
-                                                                context,
-                                                                _toDateController);
-                                                          },
-                                                          decoration:
-                                                          InputDecoration(
-                                                            // contentPadding: EdgeInsets.all(8.0),
-                                                            // contentPadding: EdgeInsets.symmetric(),
-                                                            suffixIconConstraints: BoxConstraints(
-                                                                maxWidth:
-                                                                20,
-                                                                maxHeight:
-                                                                20,
-                                                                minHeight:
-                                                                20,
-                                                                minWidth:
-                                                                20),
-                                                            hintStyle: TextStyle(
-                                                                fontSize:
-                                                                15,
-                                                                color: Color(
-                                                                    0xFFb0b6c3)),
-                                                            border:
-                                                            InputBorder
-                                                                .none,
-                                                            hintText:
-                                                            'To date',
-                                                            suffixIcon:
-                                                            IconButton(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical:
-                                                                  1),
-                                                              iconSize:
-                                                              20,
-                                                              icon: Icon(Icons
-                                                                  .calendar_today),
-                                                              onPressed:
-                                                                  () {},
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('To',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.grey[600],
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w600)),
+                                                  SizedBox(height: 5),
+                                                  TextFormField(
+                                                    controller:
+                                                        _toDateController,
+                                                    readOnly: true,
+                                                    onTap: () => _selectendDate(
+                                                        context,
+                                                        _toDateController),
+                                                    decoration: InputDecoration(
+                                                      hintText: 'dd-mm-yyyy',
+                                                      suffixIcon: Icon(
+                                                          Icons.calendar_today),
+                                                      border:
+                                                          OutlineInputBorder(),
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
+                                        )
+                                      : Column(
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Text('From',
+                                                        //     style: TextStyle(
+                                                        //         color: blueColor,
+                                                        //         fontSize: 15,
+                                                        //         fontWeight: FontWeight.w600)),
+                                                        // SizedBox(height: 4),
+
+                                                        Material(
+                                                          elevation: 0,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          child: Container(
+                                                            height: 50,
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10.0,
+                                                                    vertical:
+                                                                        0),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                              border: Border.all(
+                                                                  color: const Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child:
+                                                                TextFormField(
+                                                              controller:
+                                                                  _fromDateController,
+                                                              // initialValue: fdate,
+                                                              readOnly: true,
+                                                              onTap: () =>
+                                                                  _selectfromDate(
+                                                                      context,
+                                                                      _fromDateController),
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                // contentPadding: EdgeInsets.all(8.0),
+                                                                // contentPadding: EdgeInsets.symmetric(),
+                                                                suffixIconConstraints:
+                                                                    BoxConstraints(
+                                                                        maxWidth:
+                                                                            20,
+                                                                        maxHeight:
+                                                                            20,
+                                                                        minHeight:
+                                                                            20,
+                                                                        minWidth:
+                                                                            20),
+                                                                hintStyle: TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Color(
+                                                                        0xFFb0b6c3)),
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                                hintText:
+                                                                    'From date',
+                                                                suffixIcon:
+                                                                    IconButton(
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          vertical:
+                                                                              1),
+                                                                  iconSize: 20,
+                                                                  icon: Icon(Icons
+                                                                      .calendar_today),
+                                                                  onPressed:
+                                                                      () {},
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 16,
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Text('To',
+                                                        //     style: TextStyle(
+                                                        //         color: blueColor,
+                                                        //         fontSize: 15,
+                                                        //         fontWeight: FontWeight.w600)),
+                                                        // SizedBox(height: 4),
+
+                                                        Material(
+                                                          elevation: 0,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          child: Container(
+                                                            height: 50,
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10.0,
+                                                                    vertical:
+                                                                        0),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                              border: Border.all(
+                                                                  color: const Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child:
+                                                                TextFormField(
+                                                              controller:
+                                                                  _toDateController,
+                                                              readOnly: true,
+                                                              onTap: () {
+                                                                _selectendDate(
+                                                                    context,
+                                                                    _toDateController);
+                                                              },
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                // contentPadding: EdgeInsets.all(8.0),
+                                                                // contentPadding: EdgeInsets.symmetric(),
+                                                                suffixIconConstraints:
+                                                                    BoxConstraints(
+                                                                        maxWidth:
+                                                                            20,
+                                                                        maxHeight:
+                                                                            20,
+                                                                        minHeight:
+                                                                            20,
+                                                                        minWidth:
+                                                                            20),
+                                                                hintStyle: TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Color(
+                                                                        0xFFb0b6c3)),
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                                hintText:
+                                                                    'To date',
+                                                                suffixIcon:
+                                                                    IconButton(
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          vertical:
+                                                                              1),
+                                                                  iconSize: 20,
+                                                                  icon: Icon(Icons
+                                                                      .calendar_today),
+                                                                  onPressed:
+                                                                      () {},
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                                 ),
                               ),
-                              SizedBox(height: 10),
-                              if (data.isNotEmpty)
-                              _buildHeaders(),
-                              const SizedBox(height: 20),
-                              Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color:
-                                        Color.fromRGBO(
-                                            152, 162, 179, .5)
+                            ),
+                            SizedBox(height: 10),
+                            if (data.isNotEmpty) _buildHeaders(),
+                            const SizedBox(height: 20),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color:
+                                          Color.fromRGBO(152, 162, 179, .5))),
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(color: blueColor),
+                              // ),
+                              child: Column(
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  bool isExpanded = expandedIndex == index;
+                                  Data data = entry.value;
+                                  double? surcharge = data?.surcharge;
+                                  double? totalAmount = data?.totalAmount;
 
-
-)),
-                                // decoration: BoxDecoration(
-                                //   border: Border.all(color: blueColor),
-                                // ),
-                                child: Column(
-                                  children: currentPageData.asMap().entries.map((entry) {
-                                    int index = entry.key;
-                                    bool isExpanded = expandedIndex == index;
-                                    Data data = entry.value;
-                                    double? surcharge = data?.surcharge;
-                                    double? totalAmount = data?.totalAmount;
-
-                                    String percentage = (surcharge != null &&
-                                            totalAmount != null &&
-                                            totalAmount > 0)
-                                        ? ((surcharge /
-                                                        (totalAmount -
-                                                            surcharge)) *
-                                                    100)
-                                                .toStringAsFixed(2) +
-                                            "%"
-                                        : "N/A";
-                                    final uniqueEntries =
-                                        data.entry?.toSet().toList() ?? [];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: index % 2 != 0
-                                            ? Colors.white
-                                            : blueColor.withOpacity(0.09),
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5)),
-                                      ),
-                                      // decoration: BoxDecoration(
-                                      //   border: Border.all(color: blueColor),
-                                      // ),
-                                      child: Column(
-                                        children: <Widget>[
-                                          ListTile(
-                                            contentPadding: EdgeInsets.zero,
-                                            title: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(2.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex = null;
-                                                        } else {
-                                                          expandedIndex = index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              left: 5),
-                                                      padding: !isExpanded
-                                                          ? const EdgeInsets
-                                                              .only(bottom: 10)
-                                                          : const EdgeInsets
-                                                              .only(top: 10),
-                                                      child: FaIcon(
+                                  String percentage = (surcharge != null &&
+                                          totalAmount != null &&
+                                          totalAmount > 0)
+                                      ? ((surcharge /
+                                                      (totalAmount -
+                                                          surcharge)) *
+                                                  100)
+                                              .toStringAsFixed(2) +
+                                          "%"
+                                      : "N/A";
+                                  final uniqueEntries =
+                                      data.entry?.toSet().toList() ?? [];
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: index % 2 != 0
+                                          ? Colors.white
+                                          : blueColor.withOpacity(0.09),
+                                      border: Border.all(
+                                          color: Color.fromRGBO(
+                                              152, 162, 179, .5)),
+                                    ),
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(color: blueColor),
+                                    // ),
+                                    child: Column(
+                                      children: <Widget>[
+                                        ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (expandedIndex ==
+                                                          index) {
+                                                        expandedIndex = null;
+                                                      } else {
+                                                        expandedIndex = index;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 5),
+                                                    padding: !isExpanded
+                                                        ? const EdgeInsets.only(
+                                                            bottom: 10)
+                                                        : const EdgeInsets.only(
+                                                            top: 10),
+                                                    child: FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                              .sortUp
+                                                          : FontAwesomeIcons
+                                                              .sortDown,
+                                                      size: 20,
+                                                      color: blueColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      ' ${data.type}' ?? "",
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .08,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    ' \$${data.balance!.abs().toStringAsFixed(2)}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .08,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    dateProvider.formatCurrentDate(
+                                                        '${data.entry!.first.date}'),
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .02,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        if (isExpanded)
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            margin: EdgeInsets.only(
+                                                bottom: (data.type != "Refund")
+                                                    ? 2
+                                                    : 20),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
                                                                 .sortUp
                                                             : FontAwesomeIcons
                                                                 .sortDown,
-                                                        size: 20,
-                                                        color: blueColor
-
-
-,
+                                                        size: 30,
+                                                        color:
+                                                            Colors.transparent,
                                                       ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Text(
-                                                        ' ${data.type}' ?? "",
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      ' \$${data.balance!.abs().toStringAsFixed(2)}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      dateProvider.formatCurrentDate(
-                                                          '${data.entry!.first.date}'),
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          if (isExpanded)
-
-
-
-
-                                            Container(
-                                              padding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 8.0),
-                                              margin: EdgeInsets.only(
-                                                  bottom:
-                                                  (data.type != "Refund")
-                                                      ? 2
-                                                      : 20),
-                                              child: SingleChildScrollView(
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      children: [
-                                                        FaIcon(
-                                                          isExpanded
-                                                              ? FontAwesomeIcons
-                                                              .sortUp
-                                                              : FontAwesomeIcons
-                                                              .sortDown,
-                                                          size: 30,
-                                                          color: Colors
-                                                              .transparent,
-                                                        ),
-                                                        Expanded(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                            children: <Widget>[
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Description : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color:
+                                                                            blueColor), // Bold and black
+                                                                  ),
+                                                                  if (data.type !=
+                                                                      "Charge")
                                                                     TextSpan(
                                                                       text:
-                                                                      'Description : ',
+                                                                          'Manual ${data.type} ${data.response} For ${data.paymenttype}',
                                                                       style: TextStyle(
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          color: blueColor), // Bold and black
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
+                                                                          color:
+                                                                              grey), // Light and grey
                                                                     ),
-                                                                    if (data.type !=
-                                                                        "Charge")
-                                                                      TextSpan(
-                                                                        text:
-                                                                        'Manual ${data.type} ${data.response} For ${data.paymenttype}',
-                                                                        style: TextStyle(
-                                                                            fontWeight: FontWeight.w700,
-                                                                            color: grey), // Light and grey
-                                                                      ),
-                                                                    if (data.type ==
-                                                                        "Charge")
-                                                                      TextSpan(
-                                                                        text:
-                                                                        '${data.entry?.first.memo}',
-                                                                        style: TextStyle(
-                                                                            fontWeight: FontWeight.w700,
-                                                                            color: grey), // Light and grey
-                                                                      ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
+                                                                  if (data.type ==
+                                                                      "Charge")
                                                                     TextSpan(
                                                                       text:
-                                                                      'Amount : ',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight.bold,
-                                                                        color:
-                                                                        blueColor,
-                                                                      ),
+                                                                          '${data.entry?.first.memo}',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
+                                                                          color:
+                                                                              grey), // Light and grey
                                                                     ),
-                                                                    TextSpan(
-                                                                      text: data.type == "Refund" ||
-                                                                          data.type == "Charge"
-                                                                          ? '\$${data.totalAmount!.toStringAsFixed(2)}'
-                                                                          : ' - \$${data.totalAmount!.toStringAsFixed(2)}',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight.w700,
-                                                                        color:
-                                                                        grey,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                ],
                                                               ),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                      'Tenant : ',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight.bold,
-                                                                        color:
-                                                                        blueColor,
-                                                                      ),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text: data.tenantData !=
-                                                                          null
-                                                                          ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
-                                                                          : 'N/A',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight.w700,
-                                                                        color:
-                                                                        grey,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    if (data.type ==
-                                                        "Payment" ||
-                                                        data.type == "Charge")
-                                                      Padding(
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .only(
-                                                            left: 10.0,
-                                                            top: 10),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                  .sortUp
-                                                                  : FontAwesomeIcons
-                                                                  .sortDown,
-                                                              size: 20,
-                                                              color: Colors
-                                                                  .transparent,
                                                             ),
-                                                            Expanded(
-                                                              flex: 4,
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                          'Account : ',
-                                                                          style:
-                                                                          TextStyle(
-                                                                            fontWeight: FontWeight.bold,
-                                                                            color: blueColor,
-                                                                          ),
-                                                                        ),
-                                                                      ],
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Amount : ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: data.type ==
+                                                                                "Refund" ||
+                                                                            data.type ==
+                                                                                "Charge"
+                                                                        ? '\$${data.totalAmount!.toStringAsFixed(2)}'
+                                                                        : ' - \$${data.totalAmount!.toStringAsFixed(2)}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey,
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                          '  Amount : ',
-                                                                          style:
-                                                                          TextStyle(
-                                                                            fontWeight: FontWeight.bold,
-                                                                            color: blueColor,
-                                                                          ),
-                                                                        ),
-                                                                      ],
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Tenant : ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: data.tenantData !=
+                                                                            null
+                                                                        ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
+                                                                        : 'N/A',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey,
                                                                     ),
                                                                   ),
                                                                 ],
@@ -2657,97 +2562,176 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ],
                                                         ),
                                                       ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    if (data.type ==
-                                                        "Payment" ||
-                                                        data.type == "Charge")
-                                                      Column(
-                                                        children:
-                                                        uniqueEntries
-                                                            .map((entry) {
-                                                          return Padding(
-                                                            padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left:
-                                                                10.0,
-                                                                bottom:
-                                                                10),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                              children: [
-                                                                FaIcon(
-                                                                  isExpanded
-                                                                      ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                      : FontAwesomeIcons
-                                                                      .sortDown,
-                                                                  size: 20,
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 4,
-                                                                  child:
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                    children: <Widget>[
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: '${entry.account ?? "N/A"}',
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w700,
-                                                                                color: grey,
-                                                                              ),
-                                                                            ),
-                                                                          ],
+                                                    ],
+                                                  ),
+                                                  if (data.type == "Payment" ||
+                                                      data.type == "Charge")
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10.0,
+                                                              top: 10),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 20,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            flex: 4,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Account : ',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 15,
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 2,
-                                                                  child:
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                    children: <Widget>[
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: ' \$ ${entry.amount ?? "N/A"}',
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w700,
-                                                                                color: grey,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      // Add additional fields if needed
                                                                     ],
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
-                                                          );
-                                                        }).toList(),
+                                                          ),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '  Amount : ',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color:
+                                                                              blueColor,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
-                                                    /* if (data.paymenttype ==
+                                                    ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  if (data.type == "Payment" ||
+                                                      data.type == "Charge")
+                                                    Column(
+                                                      children: uniqueEntries
+                                                          .map((entry) {
+                                                        return Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 10.0,
+                                                                  bottom: 10),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              FaIcon(
+                                                                isExpanded
+                                                                    ? FontAwesomeIcons
+                                                                        .sortUp
+                                                                    : FontAwesomeIcons
+                                                                        .sortDown,
+                                                                size: 20,
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                              Expanded(
+                                                                flex: 4,
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                '${entry.account ?? "N/A"}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 15,
+                                                              ),
+                                                              Expanded(
+                                                                flex: 2,
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                ' \$ ${entry.amount ?? "N/A"}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    // Add additional fields if needed
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  /* if (data.paymenttype ==
                                                         "Card" &&  data.type == "Payment")
                                                       Padding(
                                                         padding:
@@ -2827,407 +2811,393 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ],
                                                         ),
                                                       ),*/
-                                                    if (data.type != "Refund" &&
-                                                        data.type !=
-                                                            "Charge" &&
-                                                        (data.paymenttype ==
-                                                            "Card" ||
-                                                            data.paymenttype ==
-                                                                "ACH"))
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          // SizedBox(width: 5,),
-                                                          Expanded(
-                                                            child:
-                                                            GestureDetector(
-                                                              onTap: () {
+                                                  if (data.type != "Refund" &&
+                                                      data.type != "Charge" &&
+                                                      (data.paymenttype ==
+                                                              "Card" ||
+                                                          data.paymenttype ==
+                                                              "ACH"))
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        // SizedBox(width: 5,),
+                                                        Expanded(
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                _amountController
+                                                                    .text = (data
+                                                                            .totalAmount! -
+                                                                        data.surcharge!)
+                                                                    .toString();
+                                                                _dateController
+                                                                        .text =
+                                                                    formatDate(DateTime
+                                                                            .now()
+                                                                        .toString());
+                                                              });
+                                                              _showRefundDialog(
+                                                                  context,
+                                                                  data);
+                                                              // Navigator.of(context)
+                                                              //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
+                                                            },
+                                                            child: Container(
+                                                              height: 40,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                  Icon(Icons
+                                                                      .wallet),
+                                                                  // FaIcon(
+                                                                  //   FontAwesomeIcons.trashCan,
+                                                                  //   size: 15,
+                                                                  //   color:blueColor,
+                                                                  // ),
+                                                                  SizedBox(
+                                                                    width: 8,
+                                                                  ),
+                                                                  Text(
+                                                                    "Refund",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                        color:
+                                                                            blueColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  if (data.type == "Charge")
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Expanded(
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () async {
+                                                              final value =
+                                                                  await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => enterCharge(
+                                                                                leaseId: widget.leaseId,
+                                                                                chargeid: data.chargeId,
+                                                                              )));
+                                                              if (value ==
+                                                                  true) {
                                                                 setState(() {
-                                                                  _amountController
-                                                                      .text = (data.totalAmount! -
-                                                                      data.surcharge!)
-                                                                      .toString();
-                                                                  _dateController
-                                                                      .text = formatDate(DateTime
-                                                                      .now()
-                                                                      .toString());
+                                                                  _leaseLedgerFuture =
+                                                                      LeaseRepository().fetchLeaseLedger(
+                                                                          leaseId:
+                                                                              widget.leaseId);
                                                                 });
-                                                                _showRefundDialog(
-                                                                    context,
-                                                                    data);
-                                                                // Navigator.of(context)
-                                                                //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
-                                                              },
-                                                              child:
-                                                              Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .grey[
-                                                                    350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width:
-                                                                      5,
-                                                                    ),
-                                                                    Icon(Icons
-                                                                        .wallet),
-                                                                    // FaIcon(
-                                                                    //   FontAwesomeIcons.trashCan,
-                                                                    //   size: 15,
-                                                                    //   color:blueColor,
-                                                                    // ),
-                                                                    SizedBox(
-                                                                      width:
-                                                                      8,
-                                                                    ),
-                                                                    Text(
-                                                                      "Refund",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                          12,
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold),
-                                                                    )
-                                                                  ],
-                                                                ),
+                                                              }
+                                                              // var check = await Navigator.push(
+                                                              //   context,
+                                                              //   MaterialPageRoute(
+                                                              //     builder: (context) => Edit_properties(
+                                                              //       properties: rentals,
+                                                              //       rentalId: rentals.rentalId!,
+                                                              //     ),
+                                                              //   ),
+                                                              // );
+                                                              // if (check == true) {
+                                                              //   setState(() {
+                                                              //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                              //
+                                                              //   });
+                                                              //   // Update State
+                                                              // }
+                                                            },
+                                                            child: Container(
+                                                              height: 40,
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      350]), // color:Colors.grey[100],
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .edit,
+                                                                    size: 15,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    "Edit",
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            blueColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                    if (data.type == "Charge")
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                            GestureDetector(
-                                                              onTap:
-                                                                  () async {
-                                                                final value = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => enterCharge(
-                                                                          leaseId: widget.leaseId,
-                                                                          chargeid: data.chargeId,
-                                                                        )));
-                                                                if (value ==
-                                                                    true) {
-                                                                  setState(
-                                                                          () {
-                                                                        _leaseLedgerFuture =
-                                                                            LeaseRepository()
-                                                                                .fetchLeaseLedger(leaseId: widget.leaseId);
-                                                                      });
-                                                                }
-                                                                // var check = await Navigator.push(
-                                                                //   context,
-                                                                //   MaterialPageRoute(
-                                                                //     builder: (context) => Edit_properties(
-                                                                //       properties: rentals,
-                                                                //       rentalId: rentals.rentalId!,
-                                                                //     ),
-                                                                //   ),
-                                                                // );
-                                                                // if (check == true) {
-                                                                //   setState(() {
-                                                                //     futureRentalOwners = PropertiesRepository().fetchProperties();
-                                                                //
-                                                                //   });
-                                                                //   // Update State
-                                                                // }
-                                                              },
-                                                              child:
-                                                              Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .edit,
-                                                                      size:
-                                                                      15,
-                                                                      color:
-                                                                      blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width:
-                                                                      10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Edit",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Expanded(
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              _showAlert(
+                                                                  context,
+                                                                  data.chargeId!);
+                                                              //   _showAlert(context, rentals.rentalId!);
+                                                            },
+                                                            child: Container(
+                                                              height: 40,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .trashCan,
+                                                                    size: 15,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    "Delete",
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            blueColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  )
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                _showAlert(
-                                                                    context,
-                                                                    data.chargeId!);
-                                                                //   _showAlert(context, rentals.rentalId!);
-                                                              },
-                                                              child:
-                                                              Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .grey[
-                                                                    350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size:
-                                                                      15,
-                                                                      color:
-                                                                      blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width:
-                                                                      10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Delete",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold),
-                                                                    )
-                                                                  ],
-                                                                ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  if (data.type == "Payment" &&
+                                                      (data.paymenttype !=
+                                                              "Card" &&
+                                                          data.paymenttype !=
+                                                              "ACH"))
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Expanded(
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () async {
+                                                              final value =
+                                                                  await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => EditMakePayment(
+                                                                                leaseId: widget.leaseId,
+                                                                                tenantId: data.tenantData["tenant_id"],
+                                                                                isEdit: true,
+                                                                                data: data,
+                                                                              )));
+                                                              if (value ==
+                                                                  true) {
+                                                                setState(() {
+                                                                  _leaseLedgerFuture =
+                                                                      LeaseRepository().fetchLeaseLedger(
+                                                                          leaseId:
+                                                                              widget.leaseId);
+                                                                });
+                                                              }
+                                                              // var check = await Navigator.push(
+                                                              //   context,
+                                                              //   MaterialPageRoute(
+                                                              //     builder: (context) => Edit_properties(
+                                                              //       properties: rentals,
+                                                              //       rentalId: rentals.rentalId!,
+                                                              //     ),
+                                                              //   ),
+                                                              // );
+                                                              // if (check == true) {
+                                                              //   setState(() {
+                                                              //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                              //
+                                                              //   });
+                                                              //   // Update State
+                                                              // }
+                                                            },
+                                                            child: Container(
+                                                              height: 40,
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      350]), // color:Colors.grey[100],
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .edit,
+                                                                    size: 15,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    "Edit",
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            blueColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                    if (data.type ==
-                                                        "Payment" &&
-                                                        (data.paymenttype !=
-                                                            "Card" &&
-                                                            data.paymenttype !=
-                                                                "ACH"))
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                            GestureDetector(
-                                                              onTap:
-                                                                  () async {
-                                                                final value = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => EditMakePayment(
-                                                                          leaseId: widget.leaseId,
-                                                                          tenantId: data.tenantData["tenant_id"],
-                                                                          isEdit: true,
-                                                                          data: data,
-                                                                        )));
-                                                                if (value ==
-                                                                    true) {
-                                                                  setState(
-                                                                          () {
-                                                                        _leaseLedgerFuture =
-                                                                            LeaseRepository()
-                                                                                .fetchLeaseLedger(leaseId: widget.leaseId);
-                                                                      });
-                                                                }
-                                                                // var check = await Navigator.push(
-                                                                //   context,
-                                                                //   MaterialPageRoute(
-                                                                //     builder: (context) => Edit_properties(
-                                                                //       properties: rentals,
-                                                                //       rentalId: rentals.rentalId!,
-                                                                //     ),
-                                                                //   ),
-                                                                // );
-                                                                // if (check == true) {
-                                                                //   setState(() {
-                                                                //     futureRentalOwners = PropertiesRepository().fetchProperties();
-                                                                //
-                                                                //   });
-                                                                //   // Update State
-                                                                // }
-                                                              },
-                                                              child:
-                                                              Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .edit,
-                                                                      size:
-                                                                      15,
-                                                                      color:
-                                                                      blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width:
-                                                                      10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Edit",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Expanded(
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              _showAlertpayment(
+                                                                  context,
+                                                                  data.paymentId!);
+                                                              //   _showAlert(context, rentals.rentalId!);
+                                                            },
+                                                            child: Container(
+                                                              height: 40,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .trashCan,
+                                                                    size: 15,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    "Delete",
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            blueColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  )
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                _showAlertpayment(
-                                                                    context,
-                                                                    data.paymentId!);
-                                                                //   _showAlert(context, rentals.rentalId!);
-                                                              },
-                                                              child:
-                                                              Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .grey[
-                                                                    350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size:
-                                                                      15,
-                                                                      color:
-                                                                      blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width:
-                                                                      10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Delete",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                  ],
-                                                ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                ],
                                               ),
                                             ),
-                                        ],
+                                          ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+
+                            if (data.isEmpty)
+                              Container(
+                                height: MediaQuery.of(context).size.height * .3,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/no_data.jpg",
+                                        height: 200,
+                                        width: 200,
                                       ),
-                                    );
-                                  }).toList(),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "No Data Available",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 16),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
 
-                              if (data.isEmpty)
-                                Container(
-                                  height:
-                                  MediaQuery.of(context).size.height * .3,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/no_data.jpg",
-                                          height: 200,
-                                          width: 200,
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          "No Data Available",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor,
-                                              fontSize: 16),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-
-                              SizedBox(height: 20),
-                              if (data.isNotEmpty)
+                            SizedBox(height: 20),
+                            if (data.isNotEmpty)
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -3243,7 +3213,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                               horizontal: 12.0),
                                           decoration: BoxDecoration(
                                             border:
-                                            Border.all(color: Colors.grey),
+                                                Border.all(color: Colors.grey),
                                           ),
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<int>(
@@ -3256,15 +3226,16 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 );
                                               }).toList(),
                                               onChanged: data.length >
-                                                  itemsPerPageOptions
-                                                      .first // Condition to check if dropdown should be enabled
+                                                      itemsPerPageOptions
+                                                          .first // Condition to check if dropdown should be enabled
                                                   ? (newValue) {
-                                                setState(() {
-                                                  itemsPerPage = newValue!;
-                                                  currentPage =
-                                                  0; // Reset to first page when items per page change
-                                                });
-                                              }
+                                                      setState(() {
+                                                        itemsPerPage =
+                                                            newValue!;
+                                                        currentPage =
+                                                            0; // Reset to first page when items per page change
+                                                      });
+                                                    }
                                                   : null,
                                             ),
                                           ),
@@ -3284,10 +3255,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                         onPressed: currentPage == 0
                                             ? null
                                             : () {
-                                          setState(() {
-                                            currentPage--;
-                                          });
-                                        },
+                                                setState(() {
+                                                  currentPage--;
+                                                });
+                                              },
                                       ),
                                       // IconButton(
                                       //   icon: Icon(Icons.arrow_back),
@@ -3320,520 +3291,475 @@ class _FinancialTableState extends State<FinancialTable> {
                                         ),
                                         onPressed: currentPage < totalPages - 1
                                             ? () {
-                                          setState(() {
-                                            currentPage++;
-                                          });
-                                        }
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
                                             : null,
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-              if (MediaQuery.of(context).size.width > 500)
-                FutureBuilder<LeaseLedger?>(
-                  future: _leaseLedgerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: SpinKitSpinningLines(
-                          color: Colors.black,
-                          size: 55.0,
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData) {
-                      return const Center(child: Text('No data available'));
-                    } else {
-                      _tableData = snapshot.data!.data!;
-                      totalrecords = _tableData.length;
-
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Container(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0, vertical: 5),
-                                child: Column(
-                                  children: [
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Container(
-                                        child: Table(
-                                          defaultColumnWidth:
-                                              const IntrinsicColumnWidth(),
-                                          children: [
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    // color: blueColor
-                                                    ),
-                                              ),
-                                              children: [
-                                                _buildHeader(
-                                                    'Type',
-                                                    0,
-                                                    (property) => property!
-                                                        .totalAmount
-                                                        .toString()),
-                                                _buildHeader(
-                                                    'Tenant',
-                                                    1,
-                                                    (property) => property!
-                                                        .totalAmount
-                                                        .toString()),
-                                                _buildHeader(
-                                                    'Description', 2, null),
-                                                _buildHeader(
-                                                    'Increase', 3, null),
-                                                _buildHeader(
-                                                    'Decrease', 3, null),
-                                                _buildHeader(
-                                                    'Balance', 4, null),
-                                                _buildHeader('Date', 4, null),
-                                              ],
-                                            ),
-                                            TableRow(
-                                              decoration: const BoxDecoration(
-                                                border: Border.symmetric(
-                                                    horizontal:
-                                                        BorderSide.none),
-                                              ),
-                                              children: List.generate(
-                                                  7,
-                                                  (index) => TableCell(
-                                                      child: Container(
-                                                          height: 20))),
-                                            ),
-                                            for (var i = 0;
-                                                i < _pagedData.length;
-                                                i++)
-                                              TableRow(
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    left:  BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    right:  BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    top:  BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    bottom: i ==
-                                                            _pagedData.length -
-                                                                1
-                                                        ? const BorderSide(
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    81,
-                                                                    1))
-                                                        : BorderSide.none,
-                                                  ),
-                                                ),
-                                                children: [
-                                                  _buildDataCell(_pagedData[i]!
-                                                      .type
-                                                      .toString()),
-                                                  _buildDataCell(
-                                                      '${_pagedData[i]!.tenantData["tenant_firstName"].toString()} ${_pagedData[i]!.tenantData["tenant_lastName"].toString()}'),
-                                                  _buildDataCell(
-                                                      'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})'),
-                                                  _buildDataCell(
-                                                    _pagedData[i]!.type ==
-                                                                "Refund" &&
-                                                            _pagedData[i]!
-                                                                    .type ==
-                                                                "Charge"
-                                                        ? _pagedData[i]!
-                                                            .totalAmount
-                                                            .toString()
-                                                        : 'N/A',
-                                                  ),
-                                                  _buildDataCell(
-                                                    _pagedData[i]!.type !=
-                                                                "Refund" &&
-                                                            _pagedData[i]!
-                                                                    .type !=
-                                                                "Charge"
-                                                        ? _pagedData[i]!
-                                                            .totalAmount
-                                                            .toString()
-                                                        : 'N/A',
-                                                  ),
-                                                  _buildDataCell(
-                                                    _pagedData[i]!
-                                                        .balance!
-                                                        .abs()
-                                                        .toStringAsFixed(2),
-                                                  ),
-                                                  _buildDataCell(
-                                                    formatDate3(_pagedData[i]!
-                                                        .createdAt
-                                                        .toString()),
-                                                  ),
-                                                ],
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 25),
-                                    _buildPaginationControls(),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 25),
                           ],
                         ),
                       );
                     }
                   },
                 ),
-              if (MediaQuery.of(context).size.width > 500)
-                FutureBuilder<LeaseLedger?>(
-                  future: _leaseLedgerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData ||
-                        snapshot.data!.data!.isEmpty) {
-                      return const Center(child: Text('No data available'));
-                    } else {
-                      _tableData = snapshot.data!.data!;
-                      totalrecords = _tableData.length;
-                      return SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 5),
-                          child: Column(
-                            children: [
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Table(
-                                  defaultColumnWidth:
-                                      const IntrinsicColumnWidth(),
-                                  //border: TableBorder.all(),
-                                  children: [
-                                    // Header Row
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<LeaseLedger?>(
+                future: _leaseLedgerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: SpinKitSpinningLines(
+                        color: Colors.black,
+                        size: 55.0,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData) {
+                    return const Center(child: Text('No data available'));
+                  } else {
+                    _tableData = snapshot.data!.data!;
+                    totalrecords = _tableData.length;
+
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 5),
+                              child: Column(
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Container(
+                                      child: Table(
+                                        defaultColumnWidth:
+                                            const IntrinsicColumnWidth(),
+                                        children: [
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  // color: blueColor
+                                                  ),
+                                            ),
+                                            children: [
+                                              _buildHeader(
+                                                  'Type',
+                                                  0,
+                                                  (property) => property!
+                                                      .totalAmount
+                                                      .toString()),
+                                              _buildHeader(
+                                                  'Tenant',
+                                                  1,
+                                                  (property) => property!
+                                                      .totalAmount
+                                                      .toString()),
+                                              _buildHeader(
+                                                  'Description', 2, null),
+                                              _buildHeader('Increase', 3, null),
+                                              _buildHeader('Decrease', 3, null),
+                                              _buildHeader('Balance', 4, null),
+                                              _buildHeader('Date', 4, null),
+                                            ],
+                                          ),
+                                          TableRow(
+                                            decoration: const BoxDecoration(
+                                              border: Border.symmetric(
+                                                  horizontal: BorderSide.none),
+                                            ),
+                                            children: List.generate(
+                                                7,
+                                                (index) => TableCell(
+                                                    child:
+                                                        Container(height: 20))),
+                                          ),
+                                          for (var i = 0;
+                                              i < _pagedData.length;
+                                              i++)
+                                            TableRow(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  left: BorderSide(
+                                                      color: blueColor),
+                                                  right: BorderSide(
+                                                      color: blueColor),
+                                                  top: BorderSide(
+                                                      color: blueColor),
+                                                  bottom: i ==
+                                                          _pagedData.length - 1
+                                                      ? const BorderSide(
+                                                          color: Color.fromRGBO(
+                                                              21, 43, 81, 1))
+                                                      : BorderSide.none,
+                                                ),
+                                              ),
+                                              children: [
+                                                _buildDataCell(_pagedData[i]!
+                                                    .type
+                                                    .toString()),
+                                                _buildDataCell(
+                                                    '${_pagedData[i]!.tenantData["tenant_firstName"].toString()} ${_pagedData[i]!.tenantData["tenant_lastName"].toString()}'),
+                                                _buildDataCell(
+                                                    'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})'),
+                                                _buildDataCell(
+                                                  _pagedData[i]!.type ==
+                                                              "Refund" &&
+                                                          _pagedData[i]!.type ==
+                                                              "Charge"
+                                                      ? _pagedData[i]!
+                                                          .totalAmount
+                                                          .toString()
+                                                      : 'N/A',
+                                                ),
+                                                _buildDataCell(
+                                                  _pagedData[i]!.type !=
+                                                              "Refund" &&
+                                                          _pagedData[i]!.type !=
+                                                              "Charge"
+                                                      ? _pagedData[i]!
+                                                          .totalAmount
+                                                          .toString()
+                                                      : 'N/A',
+                                                ),
+                                                _buildDataCell(
+                                                  _pagedData[i]!
+                                                      .balance!
+                                                      .abs()
+                                                      .toStringAsFixed(2),
+                                                ),
+                                                _buildDataCell(
+                                                  formatDate3(_pagedData[i]!
+                                                      .createdAt
+                                                      .toString()),
+                                                ),
+                                              ],
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 25),
+                                  _buildPaginationControls(),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<LeaseLedger?>(
+                future: _leaseLedgerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return ColabShimmerLoadingWidget();
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.data!.isEmpty) {
+                    return const Center(child: Text('No data available'));
+                  } else {
+                    _tableData = snapshot.data!.data!;
+                    totalrecords = _tableData.length;
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 5),
+                        child: Column(
+                          children: [
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Table(
+                                defaultColumnWidth:
+                                    const IntrinsicColumnWidth(),
+                                //border: TableBorder.all(),
+                                children: [
+                                  // Header Row
+                                  TableRow(
+                                    decoration:
+                                        BoxDecoration(border: Border.all()),
+                                    children: List.generate(7, (index) {
+                                      switch (index) {
+                                        case 0:
+                                          return _buildHeader(
+                                              'Type',
+                                              0,
+                                              (property) => property!
+                                                  .totalAmount
+                                                  .toString());
+                                        case 1:
+                                          return _buildHeader(
+                                              'Tenant',
+                                              1,
+                                              (property) => property!
+                                                  .totalAmount
+                                                  .toString());
+                                        case 2:
+                                          return _buildHeader(
+                                              'Description', 2, null);
+                                        case 3:
+                                          return _buildHeader(
+                                              'Increase', 3, null);
+                                        case 4:
+                                          return _buildHeader(
+                                              'Decrease', 4, null);
+                                        case 5:
+                                          return _buildHeader(
+                                              'Balance', 5, null);
+                                        case 6:
+                                          return _buildHeader('Date', 6, null);
+                                        default:
+                                          return Container();
+                                      }
+                                    }),
+                                  ),
+                                  // Empty Row for spacing
+                                  TableRow(
+                                    decoration: const BoxDecoration(
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide.none)),
+                                    children: List.generate(
+                                        7,
+                                        (index) => TableCell(
+                                            child: Container(height: 20))),
+                                  ),
+                                  // Data Rows
+                                  for (var i = 0;
+                                      i < _pagedData.length;
+                                      i++) ...[
                                     TableRow(
-                                      decoration:
-                                          BoxDecoration(border: Border.all()),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: blueColor),
+                                          right: BorderSide(color: blueColor),
+                                          top: BorderSide(color: blueColor),
+                                          bottom: i == _pagedData.length - 1
+                                              ? BorderSide(color: blueColor)
+                                              : BorderSide.none,
+                                        ),
+                                      ),
                                       children: List.generate(7, (index) {
                                         switch (index) {
                                           case 0:
-                                            return _buildHeader(
-                                                'Type',
-                                                0,
-                                                (property) => property!
-                                                    .totalAmount
-                                                    .toString());
+                                            return _buildInteractiveCells(
+                                                _pagedData[i]!.type.toString(),
+                                                () => _toggleExpansion(i));
                                           case 1:
-                                            return _buildHeader(
-                                                'Tenant',
-                                                1,
-                                                (property) => property!
-                                                    .totalAmount
-                                                    .toString());
+                                            return _buildInteractiveCells(
+                                              '${_pagedData[i]!.tenantData["tenant_firstName"]} ${_pagedData[i]!.tenantData["tenant_lastName"]}',
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 2:
-                                            return _buildHeader(
-                                                'Description', 2, null);
+                                            return _buildInteractiveCells(
+                                              'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})',
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 3:
-                                            return _buildHeader(
-                                                'Increase', 3, null);
+                                            return _buildInteractiveCells(
+                                              (_pagedData[i]!.type ==
+                                                          "Refund" ||
+                                                      _pagedData[i]!.type ==
+                                                          "Charge")
+                                                  ? _pagedData[i]!
+                                                      .totalAmount
+                                                      .toString()
+                                                  : 'N/A',
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 4:
-                                            return _buildHeader(
-                                                'Decrease', 4, null);
+                                            return _buildInteractiveCells(
+                                              (_pagedData[i]!.type !=
+                                                          "Refund" &&
+                                                      _pagedData[i]!.type !=
+                                                          "Charge")
+                                                  ? _pagedData[i]!
+                                                      .totalAmount
+                                                      .toString()
+                                                  : 'N/A',
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 5:
-                                            return _buildHeader(
-                                                'Balance', 5, null);
+                                            return _buildInteractiveCells(
+                                              _pagedData[i]!
+                                                  .balance!
+                                                  .abs()
+                                                  .toStringAsFixed(2),
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 6:
-                                            return _buildHeader(
-                                                'Date', 6, null);
+                                            return _buildInteractiveCells(
+                                              formatDate3(_pagedData[i]!
+                                                  .createdAt
+                                                  .toString()),
+                                              () => _toggleExpansion(i),
+                                            );
                                           default:
                                             return Container();
                                         }
                                       }),
                                     ),
-                                    // Empty Row for spacing
-                                    TableRow(
-                                      decoration: const BoxDecoration(
-                                          border: Border.symmetric(
-                                              horizontal: BorderSide.none)),
-                                      children: List.generate(
-                                          7,
-                                          (index) => TableCell(
-                                              child: Container(height: 20))),
-                                    ),
-                                    // Data Rows
-                                    for (var i = 0;
-                                        i < _pagedData.length;
-                                        i++) ...[
+                                    // Expanded Row (if any)
+                                    if (_expandedIndex != null &&
+                                        _expandedIndex == i)
                                       TableRow(
                                         decoration: BoxDecoration(
                                           border: Border(
-                                            left:  BorderSide(
-                                                color: blueColor
-
-
-),
-                                            right:  BorderSide(
-                                                color: blueColor
-
-
-),
-                                            top:  BorderSide(
-                                                color: blueColor
-
-
-),
-                                            bottom: i == _pagedData.length - 1
-                                                ?  BorderSide(
-                                                    color: blueColor
-
-
-)
+                                            left: BorderSide(
+                                              color: blueColor,
+                                              width: 1.0,
+                                            ),
+                                            bottom: (i == _pagedData.length - 1)
+                                                ? BorderSide(
+                                                    color: blueColor,
+                                                    width: 1.0,
+                                                  )
                                                 : BorderSide.none,
                                           ),
                                         ),
                                         children: List.generate(7, (index) {
-                                          switch (index) {
-                                            case 0:
-                                              return _buildInteractiveCells(
-                                                  _pagedData[i]!
-                                                      .type
-                                                      .toString(),
-                                                  () => _toggleExpansion(i));
-                                            case 1:
-                                              return _buildInteractiveCells(
-                                                '${_pagedData[i]!.tenantData["tenant_firstName"]} ${_pagedData[i]!.tenantData["tenant_lastName"]}',
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 2:
-                                              return _buildInteractiveCells(
-                                                'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})',
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 3:
-                                              return _buildInteractiveCells(
-                                                (_pagedData[i]!.type ==
-                                                            "Refund" ||
-                                                        _pagedData[i]!.type ==
-                                                            "Charge")
-                                                    ? _pagedData[i]!
-                                                        .totalAmount
-                                                        .toString()
-                                                    : 'N/A',
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 4:
-                                              return _buildInteractiveCells(
-                                                (_pagedData[i]!.type !=
-                                                            "Refund" &&
-                                                        _pagedData[i]!.type !=
-                                                            "Charge")
-                                                    ? _pagedData[i]!
-                                                        .totalAmount
-                                                        .toString()
-                                                    : 'N/A',
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 5:
-                                              return _buildInteractiveCells(
-                                                _pagedData[i]!
-                                                    .balance!
-                                                    .abs()
-                                                    .toStringAsFixed(2),
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 6:
-                                              return _buildInteractiveCells(
-                                                formatDate3(_pagedData[i]!
-                                                    .createdAt
-                                                    .toString()),
-                                                () => _toggleExpansion(i),
-                                              );
-                                            default:
-                                              return Container();
+                                          if (index == 1) {
+                                            return TableCell(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text('Account',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            16,
+                                                                        color:
+                                                                            blueColor)),
+                                                                ...?_pagedData[
+                                                                            _expandedIndex!]!
+                                                                        .entry
+                                                                        ?.map((entry) =>
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Text('${entry.account ?? "N/A"}', style: TextStyle(fontWeight: FontWeight.bold, color: grey, fontSize: 16)),
+                                                                                ),
+                                                                              ],
+                                                                            ))
+                                                                        .toList() ??
+                                                                    [],
+                                                                // Add more details as needed
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              30),
+                                                                  child: Text(
+                                                                      'Amount',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              blueColor)),
+                                                                ),
+                                                                ...?_pagedData[
+                                                                            _expandedIndex!]!
+                                                                        .entry
+                                                                        ?.map((entry) =>
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.only(left: 5),
+                                                                                    child: Center(
+                                                                                      child: Text('${entry.amount ?? "N/A"}',
+                                                                                          style: TextStyle(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color: grey,
+                                                                                            fontSize: 15,
+                                                                                          )),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ))
+                                                                        .toList() ??
+                                                                    [],
+                                                                // Add more details as needed
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return TableCell(
+                                                child:
+                                                    Container()); // Empty cells for alignment
                                           }
                                         }),
                                       ),
-                                      // Expanded Row (if any)
-                                      if (_expandedIndex != null &&
-                                          _expandedIndex == i)
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              left: BorderSide(
-                                                color: blueColor
-
-
-,
-                                                width: 1.0,
-                                              ),
-                                              bottom:
-                                                  (i == _pagedData.length - 1)
-                                                      ? BorderSide(
-                                                          color:blueColor
-
-
-,
-                                                          width: 1.0,
-                                                        )
-                                                      : BorderSide.none,
-                                            ),
-                                          ),
-                                          children: List.generate(7, (index) {
-                                            if (index == 1) {
-                                              return TableCell(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Container(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                      'Account',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                              16,
-                                                                          color:
-                                                                              blueColor)),
-                                                                  ...?_pagedData[
-                                                                              _expandedIndex!]!
-                                                                          .entry
-                                                                          ?.map((entry) =>
-                                                                              Row(
-                                                                                children: [
-                                                                                  Expanded(
-                                                                                    child: Text('${entry.account ?? "N/A"}', style: TextStyle(fontWeight: FontWeight.bold, color: grey, fontSize: 16)),
-                                                                                  ),
-                                                                                ],
-                                                                              ))
-                                                                          .toList() ??
-                                                                      [],
-                                                                  // Add more details as needed
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Container(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            30),
-                                                                    child: Text(
-                                                                        'Amount',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor)),
-                                                                  ),
-                                                                  ...?_pagedData[
-                                                                              _expandedIndex!]!
-                                                                          .entry
-                                                                          ?.map((entry) =>
-                                                                              Row(
-                                                                                children: [
-                                                                                  Expanded(
-                                                                                    child: Padding(
-                                                                                      padding: const EdgeInsets.only(left: 5),
-                                                                                      child: Center(
-                                                                                        child: Text('${entry.amount ?? "N/A"}',
-                                                                                            style: TextStyle(
-                                                                                              fontWeight: FontWeight.bold,
-                                                                                              color: grey,
-                                                                                              fontSize: 15,
-                                                                                            )),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ))
-                                                                          .toList() ??
-                                                                      [],
-                                                                  // Add more details as needed
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              return TableCell(
-                                                  child:
-                                                      Container()); // Empty cells for alignment
-                                            }
-                                          }),
-                                        ),
-                                    ],
                                   ],
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    }
-                  },
-                ),
-              SizedBox(
-                height: 20,
+                      ),
+                    );
+                  }
+                },
               ),
-            ],
-          ),
+            SizedBox(
+              height: 20,
+            ),
+          ],
         ),
-      );
-
+      ),
+    );
   }
 
   Widget _buildInteractiveCell(String text, VoidCallback onTap) {

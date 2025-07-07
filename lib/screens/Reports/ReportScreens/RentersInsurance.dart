@@ -229,24 +229,73 @@ class _RentersInsuranceState extends State<RentersInsurance> {
 
   void sortData(List<RentersInsuranceData> data) {
     if (sorting1) {
+      // Sort by Tenant Name - Lowercase first, then uppercase
       data.sort((a, b) {
-        // For tenant name sorting
-        String aName = (a.tenantName ?? '') + (a.unitDetails ?? '');
-        String bName = (b.tenantName ?? '') + (b.unitDetails ?? '');
-        // Convert to lowercase for case-insensitive sorting
-        aName = aName.toLowerCase();
-        bName = bName.toLowerCase();
-        return ascending1 ? aName.compareTo(bName) : bName.compareTo(aName);
+        String nameA = (a.tenantName ?? '');
+        String nameB = (b.tenantName ?? '');
+
+        // Check if first character is lowercase or uppercase
+        bool aIsLowercase =
+            nameA.isNotEmpty && nameA[0] != nameA[0].toUpperCase();
+        bool bIsLowercase =
+            nameB.isNotEmpty && nameB[0] != nameB[0].toUpperCase();
+
+        // If one is lowercase and other is uppercase, lowercase comes first
+        if (aIsLowercase && !bIsLowercase) {
+          return ascending1 ? -1 : 1;
+        } else if (!aIsLowercase && bIsLowercase) {
+          return ascending1 ? 1 : -1;
+        }
+
+        // If both have same case type, sort alphabetically (case-insensitive)
+        int result = nameA.toLowerCase().compareTo(nameB.toLowerCase());
+        return ascending1 ? result : -result;
       });
     } else if (sorting2) {
+      // Sort by Insurance Provider - Lowercase first, then uppercase
       data.sort((a, b) {
-        // For insurance provider sorting - keep original case
-        String aCompany = a.rentersInsurance?.insuranceCompany ?? '';
-        String bCompany = b.rentersInsurance?.insuranceCompany ?? '';
-        // Direct comparison without converting to lowercase
-        return ascending2
-            ? aCompany.compareTo(bCompany)
-            : bCompany.compareTo(aCompany);
+        String providerA = (a.rentersInsurance?.insuranceCompany ?? '');
+        String providerB = (b.rentersInsurance?.insuranceCompany ?? '');
+
+        // Check if first character is lowercase or uppercase
+        bool aIsLowercase =
+            providerA.isNotEmpty && providerA[0] != providerA[0].toUpperCase();
+        bool bIsLowercase =
+            providerB.isNotEmpty && providerB[0] != providerB[0].toUpperCase();
+
+        // If one is lowercase and other is uppercase, lowercase comes first
+        if (aIsLowercase && !bIsLowercase) {
+          return ascending2 ? -1 : 1;
+        } else if (!aIsLowercase && bIsLowercase) {
+          return ascending2 ? 1 : -1;
+        }
+
+        // If both have same case type, sort alphabetically (case-insensitive)
+        int result = providerA.toLowerCase().compareTo(providerB.toLowerCase());
+        return ascending2 ? result : -result;
+      });
+    } else if (sorting3) {
+      // Sort by Policy ID - Lowercase first, then uppercase
+      data.sort((a, b) {
+        String policyA = (a.rentersInsurance?.policyId ?? '');
+        String policyB = (b.rentersInsurance?.policyId ?? '');
+
+        // Check if first character is lowercase or uppercase
+        bool aIsLowercase =
+            policyA.isNotEmpty && policyA[0] != policyA[0].toUpperCase();
+        bool bIsLowercase =
+            policyB.isNotEmpty && policyB[0] != policyB[0].toUpperCase();
+
+        // If one is lowercase and other is uppercase, lowercase comes first
+        if (aIsLowercase && !bIsLowercase) {
+          return ascending3 ? -1 : 1;
+        } else if (!aIsLowercase && bIsLowercase) {
+          return ascending3 ? 1 : -1;
+        }
+
+        // If both have same case type, sort alphabetically (case-insensitive)
+        int result = policyA.toLowerCase().compareTo(policyB.toLowerCase());
+        return ascending3 ? result : -result;
       });
     }
   }

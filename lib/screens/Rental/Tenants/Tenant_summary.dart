@@ -2036,6 +2036,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
 
                                                                               ],
                                                                             ),
+                                                                            SizedBox(
+                                                                              height: 5,
+                                                                            ),
                                                                             // Row(
                                                                             //   //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                             //   children: [

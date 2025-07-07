@@ -196,16 +196,18 @@ class DateProvider with ChangeNotifier {
   String fixDateFormat(String customdate) {
     return customdate.replaceAllMapped(
       RegExp(r'[DY]'),
-          (match) {
+      (match) {
         if (match.group(0) == 'D') {
           return 'd';
         } else if (match.group(0) == 'Y') {
           return 'y';
         }
-        return match.group(0)!; // Return the character unchanged if it doesn't match
+        return match
+            .group(0)!; // Return the character unchanged if it doesn't match
       },
     );
   }
+
   Future<void> loadDateFormat() async {
     print("calling loadDate");
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -255,8 +257,7 @@ class DateProvider with ChangeNotifier {
     }
   }
 
-  void updateDateFormat(String newFormat,  selectIndex) {
-
+  void updateDateFormat(String newFormat, selectIndex) {
     print(newFormat);
     _dateFormat = newFormat;
     dateformateselect = selectIndex;
@@ -265,8 +266,7 @@ class DateProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  String formatCurrentDate(String dateTime ){
-
+  String formatCurrentDate(String dateTime) {
     dateTime = dateTime.trim();
 
     List<String> dateFormats = [
@@ -292,7 +292,7 @@ class DateProvider with ChangeNotifier {
     }
 
     if (parsedDate == null) {
-      return dateTime; // Return original if parsing fails
+      return 'Invalid date'; // Return 'Invalid date' if parsing fails
     }
 
     // Convert the parsed date to 'yyyy-MM-dd' format first
@@ -363,23 +363,19 @@ class DateProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         _dateFormat = jsonData['themes']?['format']?.toString() ?? 'MM-dd-yyyy';
-        if(_dateFormat == "YYYY-MM-DD")
-          {
-            dateformateselect = 1;
-            _dateFormat = 'yyyy-MM-dd';
-          }
-        else if(_dateFormat == "YYYY-MMM-DD")
-          {
-            dateformateselect = 2;
-            _dateFormat = 'yyyy-MMM-dd';
-          }
-        else if(_dateFormat == "MM/DD/YYYY"){
+        if (_dateFormat == "YYYY-MM-DD") {
+          dateformateselect = 1;
+          _dateFormat = 'yyyy-MM-dd';
+        } else if (_dateFormat == "YYYY-MMM-DD") {
+          dateformateselect = 2;
+          _dateFormat = 'yyyy-MMM-dd';
+        } else if (_dateFormat == "MM/DD/YYYY") {
           dateformateselect = 0;
           _dateFormat = 'MM/dd/yyyy';
-        }else {
+        } else {
           // Handle custom case
           dateformateselect = 3;
-        //  customdate = _dateFormat; // Store the custom format
+          //  customdate = _dateFormat; // Store the custom format
         }
         _dateFormat = fixDateFormat(_dateFormat);
         notifyListeners();
@@ -390,7 +386,6 @@ class DateProvider with ChangeNotifier {
       print("Error in checkToken: $e");
     }
   }
-
 
   Future<void> _saveSelectedDateFormat() async {
     final prefs = await SharedPreferences.getInstance();
@@ -410,11 +405,3 @@ class DateProvider with ChangeNotifier {
     }
   }
 }
-
-
-
-
-
-
-
-

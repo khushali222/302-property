@@ -262,7 +262,7 @@ class TenantsRepository {
     required String tenantEmail,
     required String tenantAlternativeEmail,
     required String tenantPassword,
-     String? tenantBirthDate,
+    String? tenantBirthDate,
     required String taxPayerId,
     required String comments,
     required String emergencyContactName,
@@ -341,12 +341,12 @@ class TenantsRepository {
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
       final http.Response response = await http.delete(
-        uri,
-        headers: <String, String>{
-          "authorization": "CRM $token",
-          "id": "CRM $id",
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+          uri,
+          headers: <String, String>{
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
           body: jsonEncode({"reason":reason})
       );
 

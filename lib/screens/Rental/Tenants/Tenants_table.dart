@@ -665,8 +665,7 @@ class _Tenants_tableState extends State<Tenants_table> {
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ?
-      SingleChildScrollView(
+          ? SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(
@@ -762,7 +761,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                           SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
                           SizedBox(width: 24),
-                         Expanded(
+                        Expanded(
                           child: Material(
                             elevation: 3,
                             borderRadius: BorderRadius.circular(8),
@@ -956,7 +955,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                             sortData(data);
                             print(
                                 'table password ${snapshot.data?.first.tenantPassword}');
-                            data = data.reversed.toList();
+                            //data = data.reversed.toList();
                             final totalPages =
                                 (data.length / itemsPerPage).ceil();
                             final currentPageData = data
@@ -1188,7 +1187,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              '${dateProvider.formatCurrentDate(tenants.createdAt ?? DateTime.now().toString()) ?? ''}',
+                                                                              '${tenants.createdAt != null && tenants.createdAt!.isNotEmpty ? (dateProvider.formatCurrentDate(tenants.createdAt!) ?? 'Invalid date') : 'Invalid date'}',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey

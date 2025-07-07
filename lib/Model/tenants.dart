@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class TenantResponse {
@@ -89,7 +88,6 @@ class Tenant {
   }); // Added leaseData
 
   Tenant.fromJson(Map<String, dynamic> json) {
-
     print("calling tenants");
     tenantId = json['tenant_id'];
     applicantId = json['applicant_id'];
@@ -105,7 +103,7 @@ class Tenant {
     tenantBirthDate = json['tenant_birthDate'];
     taxPayerId = json['taxPayer_id'];
     comments = json['comments'];
-    rentshare = json['percentage']??"";
+    rentshare = json['percentage'] ?? "";
     emergencyContact = json['emergency_contact'] != null
         ? EmergencyContact.fromJson(json['emergency_contact'])
         : null;
@@ -147,8 +145,8 @@ class Tenant {
     if (emergencyContact != null) {
       data['emergency_contact'] = emergencyContact!.toJson();
     }
-    data['createdAt'] = updatedAt;
-    data['updatedAt'] = createdAt;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
     data['rental_adress'] = rentalAddress;
     data['override_fee'] = overRideFee;
     data['enable_override_fee'] = enableoverrideFee;
