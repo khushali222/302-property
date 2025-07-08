@@ -110,6 +110,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
         if (a!.is_available! == b!.is_available!) return 0;
         return a!.is_available! ? -1 : 1; // true comes before false
       });
+    } else {
+      // Default sorting by createdAt in descending order (newest first)
+      data.sort((a, b) {
+        if (a.createdAt == null || b.createdAt == null) return 0;
+        return DateTime.parse(b.createdAt!)
+            .compareTo(DateTime.parse(a.createdAt!));
+      });
+      // Then sort by property name in ascending order
+      data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
     }
   }
 
@@ -326,13 +335,26 @@ class _PropertiesTableState extends State<PropertiesTable> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        // print(result);
         _connectivityResult = result;
       });
     });
     checkInternet();
-    futureRentalOwners = PropertiesRepository().fetchProperties();
+    futureRentalOwners = PropertiesRepository().fetchProperties().then((data) {
+      // Sort by createdAt in descending order first
+      data.sort((a, b) {
+        if (a.createdAt == null || b.createdAt == null) return 0;
+        return DateTime.parse(b.createdAt!)
+            .compareTo(DateTime.parse(a.createdAt!));
+      });
+      // Then sort by property name in ascending order
+      data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
+      return data;
+    });
     fetchRentaladded();
+    // Set initial sorting to createdAt
+    sorting1 = false;
+    sorting2 = false;
+    sorting3 = false;
   }
 
   void checkInternet() async {
@@ -375,7 +397,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => Summery_page(properties: properties)));
+            builder: (context) => Summery_page(
+                  properties: properties,
+
+            )));
     /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -556,8 +581,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ?
-      SingleChildScrollView(
+          ? SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(
@@ -1187,6 +1211,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   .toList();
                             }
                             sortData(data);
+                            //data = data.reversed.toList();
                             final totalPages =
                                 (data.length / itemsPerPage).ceil();
 
@@ -1202,7 +1227,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   _buildHeaders(),
                                   SizedBox(height: 10),
                                   Container(
-
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(
                                     //         color: Color.fromRGBO(
@@ -1221,7 +1245,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                              EdgeInsets.symmetric(vertical: 6),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
                                           // ),
@@ -1232,8 +1256,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                             border: Border.all(
                                                 color: Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
-
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -1455,7 +1478,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                     border: Border(
                                                       top: BorderSide(
                                                           color:
-                                                          Color(0xFFDBE0E5),
+                                                              Color(0xFFDBE0E5),
                                                           width: 1),
                                                     ),
                                                   ),
@@ -1492,15 +1515,19 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                       _getDisplayValue(
                                                                           rentals
                                                                               .rentalCity)),
-
                                                                   _buildTableRow(
                                                                     'Property Type :',
                                                                     '${_getDisplayValue(rentals.propertyTypeData?.propertyType)} - ${_getDisplayValue(rentals.propertyTypeData?.propertySubType)}',
                                                                     'Tenants :',
-                                                                    rentals.tenantsData != null && rentals.tenantsData!.isNotEmpty
-                                                                        ? rentals.tenantsData!
-                                                                        .map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim())
-                                                                        .join(", ")
+                                                                    rentals.tenantsData !=
+                                                                                null &&
+                                                                            rentals
+                                                                                .tenantsData!.isNotEmpty
+                                                                        ? rentals
+                                                                            .tenantsData!
+                                                                            .map((tenant) =>
+                                                                                "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim())
+                                                                            .join(", ")
                                                                         : "-----",
                                                                   ),
                                                                 ],
@@ -1519,16 +1546,17 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             // ),
                                                           ],
                                                         ),
-
                                                         SizedBox(
                                                           height: 10,
                                                         ),
                                                         Row(
                                                           mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .end,
+                                                              MainAxisAlignment
+                                                                  .end,
                                                           children: [
-                                                            SizedBox(width: 12,),
+                                                            SizedBox(
+                                                              width: 12,
+                                                            ),
                                                             GestureDetector(
                                                               onTap: () {
                                                                 setState(() {
@@ -1538,26 +1566,24 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                           .rentalId!);
                                                                 });
                                                               },
-                                                              child:
-                                                              Container(
+                                                              child: Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        8),
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
                                                                     color: Colors
                                                                         .red
-                                                                        .shade50
-                                                                ),
+                                                                        .shade50),
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
@@ -1574,31 +1600,30 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               width: 5,
                                                             ),
                                                             GestureDetector(
-                                                              onTap:
-                                                                  () async {
+                                                              onTap: () async {
                                                                 var check =
-                                                                await Navigator
-                                                                    .push(
+                                                                    await Navigator
+                                                                        .push(
                                                                   context,
                                                                   MaterialPageRoute(
                                                                     builder:
                                                                         (context) =>
-                                                                        Edit_properties(
-                                                                          properties:
+                                                                            Edit_properties(
+                                                                      properties:
                                                                           rentals,
-                                                                          rentalId:
-                                                                          rentals.rentalId!,
-                                                                        ),
+                                                                      rentalId:
+                                                                          rentals
+                                                                              .rentalId!,
+                                                                    ),
                                                                   ),
                                                                 );
                                                                 if (check ==
                                                                     true) {
-                                                                  setState(
-                                                                          () {
-                                                                        futureRentalOwners =
-                                                                            PropertiesRepository()
-                                                                                .fetchProperties();
-                                                                      });
+                                                                  setState(() {
+                                                                    futureRentalOwners =
+                                                                        PropertiesRepository()
+                                                                            .fetchProperties();
+                                                                  });
                                                                   // Update State
                                                                 }
                                                               },
@@ -1607,19 +1632,19 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        8),
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
                                                                     color: Colors
                                                                         .green
                                                                         .shade50), // color:Colors.grey[100],
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
@@ -1637,33 +1662,42 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             ),
                                                             GestureDetector(
                                                               onTap: () {
+                                                                // Check if property is multi-unit based on property type data
+                                                                bool
+                                                                    isMultiUnit =
+                                                                    rentals.propertyTypeData
+                                                                            ?.isMultiunit ??
+                                                                        false;
+
                                                                 Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
-                                                                        builder: (context) => Summery_page(
-                                                                          properties: rentals,
-                                                                        )));
+                                                                        builder: (context) =>
+                                                                            Summery_page(
+                                                                              properties: rentals,
+
+                                                                            )));
                                                               },
                                                               child: Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration:
-                                                                BoxDecoration(
+                                                                    BoxDecoration(
                                                                   color: Colors
                                                                       .grey
                                                                       .shade200,
                                                                   borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      8),
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
                                                                 ),
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
@@ -1674,12 +1708,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                     ),
                                                                     SizedBox(
                                                                         width:
-                                                                        2),
+                                                                            2),
                                                                   ],
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(width: 12,),
+                                                            SizedBox(
+                                                              width: 12,
+                                                            ),
                                                           ],
                                                         ),
                                                         SizedBox(
@@ -1698,123 +1734,125 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   ),
                                   SizedBox(height: 20),
                                   if (data.length > itemsPerPage)
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          // Text('Rows per page:'),
-                                          SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  // onChanged: (newValue) {
-                                                  //   setState(() {
-                                                  //     itemsPerPage = newValue!;
-                                                  //     currentPage =
-                                                  //         0; // Reset to first page when items per page change
-                                                  //   });
-                                                  // },
-                                                  onChanged: data.length >
-                                                          itemsPerPageOptions
-                                                              .first // Condition to check if dropdown should be enabled
-                                                      ? (newValue) {
-                                                          setState(() {
-                                                            itemsPerPage =
-                                                                newValue!;
-                                                            currentPage =
-                                                                0; // Reset to first page when items per page change
-                                                          });
-                                                        }
-                                                      : null,
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            // Text('Rows per page:'),
+                                            SizedBox(width: 10),
+                                            Material(
+                                              elevation: 3,
+                                              child: Container(
+                                                height: 40,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.0),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.grey),
+                                                ),
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child: DropdownButton<int>(
+                                                    value: _rowsPerPage,
+                                                    items: itemsPerPageOptions
+                                                        .map((int value) {
+                                                      return DropdownMenuItem<
+                                                          int>(
+                                                        value: value,
+                                                        child: Text(
+                                                            value.toString()),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged: _tableData
+                                                                .length >
+                                                            itemsPerPageOptions
+                                                                .first
+                                                        ? (newValue) {
+                                                            setState(() {
+                                                              _rowsPerPage =
+                                                                  newValue!;
+                                                              _currentPage =
+                                                                  0; // Reset to first page when items per page change
+                                                            });
+                                                          }
+                                                        : null,
+                                                    icon: Icon(
+                                                      Icons.arrow_drop_down,
+                                                      size: 40,
+                                                    ),
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 17),
+                                                    dropdownColor: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronLeft,
+                                                color: _currentPage == 0
+                                                    ? Colors.grey
+                                                    : blueColor,
+                                              ),
+                                              onPressed: _currentPage == 0
+                                                  ? null
+                                                  : () {
+                                                      setState(() {
+                                                        _currentPage--;
+                                                      });
+                                                    },
                                             ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_back),
-                                          //   onPressed: currentPage > 0
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage--;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_forward),
-                                          //   onPressed: currentPage < totalPages - 1
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage++;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color:
-                                                  currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
+                                            // IconButton(
+                                            //   icon: Icon(Icons.arrow_back),
+                                            //   onPressed: currentPage > 0
+                                            //       ? () {
+                                            //     setState(() {
+                                            //       currentPage--;
+                                            //     });
+                                            //   }
+                                            //       : null,
+                                            // ),
+                                            Text(
+                                                'Page ${_currentPage + 1} of $totalPages'),
+                                            // IconButton(
+                                            //   icon: Icon(Icons.arrow_forward),
+                                            //   onPressed: currentPage < totalPages - 1
+                                            //       ? () {
+                                            //     setState(() {
+                                            //       currentPage++;
+                                            //     });
+                                            //   }
+                                            //       : null,
+                                            // ),
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronRight,
+                                                color: _currentPage <
+                                                        totalPages - 1
+                                                    ? blueColor
+                                                    : Colors.grey,
+                                              ),
+                                              onPressed:
+                                                  _currentPage < totalPages - 1
+                                                      ? () {
+                                                          setState(() {
+                                                            _currentPage++;
+                                                          });
+                                                        }
+                                                      : null,
                                             ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
-                                                        setState(() {
-                                                          currentPage++;
-                                                        });
-                                                      }
-                                                    : null,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                 ],
                               ),
                             );
@@ -2248,7 +2286,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.only(left: 65,top: 8),
+            padding: EdgeInsets.only(left: 65, top: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -2312,7 +2350,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Summery_page(properties: inkText)));
+                      builder: (context) => Summery_page(
+                            properties: inkText,
+                      )));
             },
             child: Text(text?.isNotEmpty == true ? text! : 'N/A',
                 style: const TextStyle(fontSize: 18))),
@@ -2385,17 +2425,21 @@ class _PropertiesTableState extends State<PropertiesTable> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
                 value: _rowsPerPage,
-                items: [10, 2, 5, 1].map((int value) {
+                items: itemsPerPageOptions.map((int value) {
                   return DropdownMenuItem<int>(
                     value: value,
                     child: Text(value.toString()),
                   );
                 }).toList(),
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    _changeRowsPerPage(newValue);
-                  }
-                },
+                onChanged: _tableData.length > itemsPerPageOptions.first
+                    ? (newValue) {
+                        setState(() {
+                          _rowsPerPage = newValue!;
+                          _currentPage =
+                              0; // Reset to first page when items per page change
+                        });
+                      }
+                    : null,
                 icon: Icon(
                   Icons.arrow_drop_down,
                   size: 40,
@@ -2409,7 +2453,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
         SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
-            size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
@@ -2427,7 +2470,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
         ),
         IconButton(
           icon: FaIcon(
-            size: 30,
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey

@@ -98,28 +98,28 @@ class _PropertiesTableState extends State<PropertiesTable> {
   void sortData(List<Rentals> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.rentalAddress!
-              .toLowerCase()
-              .compareTo(b.rentalAddress!.toLowerCase())
-          : b.rentalAddress!
-              .toLowerCase()
-              .compareTo(a.rentalAddress!.toLowerCase()));
+          ? a.rentalAddress!.compareTo(b.rentalAddress!)
+          : b.rentalAddress!.compareTo(a.rentalAddress!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
           ? a.propertyTypeData!.propertyType!
-              .toLowerCase()
-              .compareTo(b.propertyTypeData!.propertyType!.toLowerCase())
+              .compareTo(b.propertyTypeData!.propertyType!)
           : b.propertyTypeData!.propertyType!
-              .toLowerCase()
-              .compareTo(a.propertyTypeData!.propertyType!.toLowerCase()));
+              .compareTo(a.propertyTypeData!.propertyType!));
     } else if (sorting3) {
-      data.sort((a, b) => ascending3
-          ? a.propertyTypeData!.propertySubType!
-              .toLowerCase()
-              .compareTo(b.propertyTypeData!.propertySubType!.toLowerCase())
-          : b.propertyTypeData!.propertySubType!
-              .toLowerCase()
-              .compareTo(a.propertyTypeData!.propertySubType!.toLowerCase()));
+      data.sort((a, b) {
+        if (a!.is_available! == b!.is_available!) return 0;
+        return a!.is_available! ? -1 : 1; // true comes before false
+      });
+    } else {
+      // Default sorting by createdAt in descending order (newest first)
+      data.sort((a, b) {
+        if (a.createdAt == null || b.createdAt == null) return 0;
+        return DateTime.parse(b.createdAt!)
+            .compareTo(DateTime.parse(a.createdAt!));
+      });
+      // Then sort by property name in ascending order
+      data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
     }
   }
 
@@ -281,15 +281,26 @@ class _PropertiesTableState extends State<PropertiesTable> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
     checkInternet();
-    futureRentalOwners = PropertiesRepository().fetchProperties();
-    Provider.of<StaffPermissionProvider>(context, listen: false)
-        .fetchPermissions();
+    futureRentalOwners = PropertiesRepository().fetchProperties().then((data) {
+      // Sort by createdAt in descending order first
+      data.sort((a, b) {
+        if (a.createdAt == null || b.createdAt == null) return 0;
+        return DateTime.parse(b.createdAt!)
+            .compareTo(DateTime.parse(a.createdAt!));
+      });
+      // Then sort by property name in ascending order
+      data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
+      return data;
+    });
     fetchRentaladded();
+    // Set initial sorting to createdAt
+    sorting1 = false;
+    sorting2 = false;
+    sorting3 = false;
   }
 
   ConnectivityResult? _connectivityResult;
@@ -331,7 +342,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => Summery_page(properties: properties)));
+            builder: (context) => Summery_page(
+                  properties: properties,
+                  showUnitTab: properties.propertyTypeData?.isMultiunit ?? false,
+                )));
     /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -1611,6 +1625,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                         builder: (context) =>
                                                                             Summery_page(
                                                                               properties: rentals,
+                                                                              showUnitTab: rentals.propertyTypeData?.isMultiunit ?? false,
                                                                             )));
                                                               },
                                                               child: Container(
@@ -2248,7 +2263,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Summery_page(properties: inkText)));
+                      builder: (context) => Summery_page(
+                          properties: inkText,
+                          showUnitTab: inkText.propertyTypeData?.isMultiunit ??
+                              false)));
             },
             child: Text(text?.isNotEmpty == true ? text! : 'N/A',
                 style: const TextStyle(fontSize: 18))),

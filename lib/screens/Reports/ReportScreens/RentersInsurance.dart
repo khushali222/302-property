@@ -350,12 +350,14 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 onTap: () {
                   setState(() {
                     if (sorting1 == true) {
+                      // Already sorting by this column, just toggle the order
                       ascending1 = !ascending1;
                     } else {
+                      // Start sorting by this column
                       sorting1 = true;
                       sorting2 = false;
                       sorting3 = false;
-                      ascending1 = true;
+                      ascending1 = true; // Start with A-Z
                       ascending2 = false;
                       ascending3 = false;
                     }
@@ -409,13 +411,15 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 onTap: () {
                   setState(() {
                     if (sorting2 == true) {
+                      // Already sorting by this column, just toggle the order
                       ascending2 = !ascending2;
                     } else {
+                      // Start sorting by this column
                       sorting1 = false;
                       sorting2 = true;
                       sorting3 = false;
                       ascending1 = false;
-                      ascending2 = true;
+                      ascending2 = true; // Start with A-Z
                       ascending3 = false;
                     }
                     // Apply sorting immediately
@@ -458,11 +462,58 @@ class _RentersInsuranceState extends State<RentersInsurance> {
               ),
             ),
             Expanded(
-              child: Row(
-                children: [
-                  Text("     Policy Id", style: TextStyle(color: Colors.white)),
-                  SizedBox(width: 5),
-                ],
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3 == true) {
+                      // Already sorting by this column, just toggle the order
+                      ascending3 = !ascending3;
+                    } else {
+                      // Start sorting by this column
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = true;
+                      ascending1 = false;
+                      ascending2 = false;
+                      ascending3 = true; // Start with A-Z
+                    }
+                    // Apply sorting immediately
+                    sortData(rentersInsuranceModel);
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("     Policy Id",
+                        style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    !sorting3
+                        ? const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 16,
+                              color: Colors.white70,
+                            ),
+                          )
+                        : ascending3
+                            ? const Padding(
+                                padding: EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                  ],
+                ),
               ),
             ),
           ],

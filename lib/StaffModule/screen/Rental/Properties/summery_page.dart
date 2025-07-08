@@ -55,6 +55,7 @@ class Summery_page extends StatefulWidget {
   unit_properties? unit;
   String? rentalid;
   bool? notification_redirect;
+  final bool showUnitTab;
 
   //RentalSummary? tenantsummery;
   Summery_page(
@@ -63,7 +64,8 @@ class Summery_page extends StatefulWidget {
       this.tenants,
       this.unit,
       this.rentalid,
-      this.notification_redirect});
+      this.notification_redirect,
+      required this.showUnitTab});
   @override
   _Summery_pageState createState() => _Summery_pageState();
 }
@@ -178,7 +180,8 @@ class _Summery_pageState extends State<Summery_page>
     futureworkordersummery =
         Properies_summery_Repo().fetchWorkOrders(widget.properties.rentalId!);
     // futuresummery = Properies_summery_Repo().fetchPropertiessummery(widget.properties.rentalId!);
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController =
+        TabController(length: widget.showUnitTab ? 4 : 3, vsync: this);
     // street3.text = widget.unit!.rentalunitadress!;
     _fetchData();
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -1882,7 +1885,8 @@ class _Summery_pageState extends State<Summery_page>
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: List.generate(4, (index) {
+                          children: List.generate(widget.showUnitTab ? 4 : 3,
+                              (index) {
                             // Define tab text dynamically
                             String label;
                             switch (index) {
@@ -1890,10 +1894,14 @@ class _Summery_pageState extends State<Summery_page>
                                 label = "Summary";
                                 break;
                               case 1:
-                                label = "Unit($unitCount)";
+                                label = widget.showUnitTab
+                                    ? "Unit($unitCount)"
+                                    : "Tenant($tenentCount)";
                                 break;
                               case 2:
-                                label = "Tenant($tenentCount)";
+                                label = widget.showUnitTab
+                                    ? "Tenant($tenentCount)"
+                                    : "Work order\n($count)";
                                 break;
                               case 3:
                                 label = "Work order\n($count)";
@@ -1912,13 +1920,14 @@ class _Summery_pageState extends State<Summery_page>
                                   });
                                 },
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 5),
                                   margin: EdgeInsets.symmetric(horizontal: 0),
                                   decoration: BoxDecoration(
-
-                                    color: isSelected ? blueColor : Colors.grey.shade200,
+                                    color: isSelected
+                                        ? blueColor
+                                        : Colors.grey.shade200,
                                     borderRadius: BorderRadius.circular(3),
-
                                   ),
                                   child: Center(
                                     child: Text(
@@ -1926,7 +1935,9 @@ class _Summery_pageState extends State<Summery_page>
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        color: isSelected ? Colors.white : blueColor,
+                                        color: isSelected
+                                            ? Colors.white
+                                            : blueColor,
                                         fontSize: 13,
                                       ),
                                     ),
@@ -1968,17 +1979,32 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget _buildTabContent(BuildContext context) {
-    switch (_selectedIndex) {
-      case 0:
-        return Summary_page();
-      case 1:
-        return showdetails ? unitScreen1(context, unit!) : Unit_page(context);
-      case 2:
-        return Tenants(context);
-      case 3:
-        return Workorder(context);
-      default:
-        return Container(); // Fallback for safety
+    if (widget.showUnitTab) {
+      // For multi-unit properties (4 tabs)
+      switch (_selectedIndex) {
+        case 0:
+          return Summary_page();
+        case 1:
+          return showdetails ? unitScreen1(context, unit!) : Unit_page(context);
+        case 2:
+          return Tenants(context);
+        case 3:
+          return Workorder(context);
+        default:
+          return Container();
+      }
+    } else {
+      // For non-multi-unit properties (3 tabs)
+      switch (_selectedIndex) {
+        case 0:
+          return Summary_page();
+        case 1:
+          return Tenants(context);
+        case 2:
+          return Workorder(context);
+        default:
+          return Container();
+      }
     }
   }
 
@@ -2908,7 +2934,6 @@ class _Summery_pageState extends State<Summery_page>
                                     decoration:
                                         BoxDecoration(border: Border.all()),
                                     children: [
-
                                       _buildHeaderrent(
                                           'Contact Name',
                                           0,
@@ -3217,9 +3242,7 @@ class _Summery_pageState extends State<Summery_page>
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: blueColor),
                                     ),
-                                    child:
-                                    buildTenantCard(
-                                        tenants[index],
+                                    child: buildTenantCard(tenants[index],
                                         tenants: tenants,
                                         isMoveouts: (snapshot
                                                     .data![index].moveoutDate ==
@@ -11127,7 +11150,6 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                             ),
                                             children: [
-
                                               _buildHeadermulti(
                                                   'Unit',
                                                   0,
@@ -13489,7 +13511,6 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                           ),
                                           children: [
-
                                             _buildHeader(
                                                 'Work Orders',
                                                 0,
@@ -13548,7 +13569,6 @@ class _Summery_pageState extends State<Summery_page>
                                               ),
                                             ),
                                             children: [
-
                                               // Text(
                                               //     '${_pagedData[i].propertyType!}'),
                                               // Text(
@@ -14671,7 +14691,6 @@ class _LeasesTableState extends State<LeasesTable> {
                                   decoration:
                                       BoxDecoration(border: Border.all()),
                                   children: [
-
                                     _buildHeader('Status', 0,
                                         (rental) => rental.startDate!),
                                     _buildHeader('Start-End', 1,
@@ -16310,7 +16329,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       decoration:
                                           BoxDecoration(border: Border.all()),
                                       children: [
-
                                         _buildHeader('Name', 0,
                                             (rental) => rental.applianceName!),
                                         _buildHeader(

@@ -33,6 +33,7 @@ class _notificationsState extends State<notifications> {
     // fetchnoti = fetchNotifications()!;
     loadNotifications();
   }
+
   void loadNotifications() {
     setState(() {
       fetchnoti = fetchNotifications()!;
@@ -94,9 +95,35 @@ class _notificationsState extends State<notifications> {
     return DateFormat('dd-MM-yyyy hh:mm a').format(parsedDateTime);
   }
 
+  Future<bool> fetchRentalDetails(String rentalId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+
+    try {
+      final response = await http.get(
+        Uri.parse('${Api_url}/api/rentals/rental_summary/$rentalId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        if (jsonData['data'] != null && jsonData['data'].isNotEmpty) {
+          return jsonData['data'][0]['is_multiunit'] ?? false;
+        }
+      }
+      return false;
+    } catch (e) {
+      print("Error fetching rental details: $e");
+      return false;
+    }
+  }
+
   Future<void> handleNotificationTap(
-      BuildContext context, bool isWorkOrder, String notificationId)
-  async {
+      BuildContext context, bool isWorkOrder, String notificationId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
@@ -106,7 +133,6 @@ class _notificationsState extends State<notifications> {
     print("Notification ID: $notificationId");
 
     try {
-      // Make the PUT request to the API
       var response = await http.put(
         Uri.parse(apiUrl),
         headers: {
@@ -123,7 +149,7 @@ class _notificationsState extends State<notifications> {
 
         final responseData = jsonData['data'];
         print(responseData);
-        // Check if it's a work order or payment
+
         if (responseData['is_workorder'] == true) {
           print("Navigating to Edit Work Order...");
           String workOrderId =
@@ -137,13 +163,16 @@ class _notificationsState extends State<notifications> {
           print("Navigating to Property...");
           String rentalId = responseData['rental_id'];
 
+          // Fetch rental details to determine if it's multi-unit
+          bool isMultiUnit = await fetchRentalDetails(rentalId);
+
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => Summery_page(
+                showUnitTab: isMultiUnit,
                 properties: Rentals(rentalId: rentalId),
                 notification_redirect: true,
-                // Pass the Rentals object to the Summery_page
               ),
             ),
           );
@@ -184,8 +213,7 @@ class _notificationsState extends State<notifications> {
                     return Container(
                       height: MediaQuery.of(context).size.height * .7,
                       child: Center(
-                        child:
-                        SpinKitFadingCircle(
+                        child: SpinKitFadingCircle(
                           color: blueColor,
                           size: 50.0,
                         ),
@@ -255,9 +283,15 @@ class _notificationsState extends State<notifications> {
                                                 color: blueColor),
                                           ),
                                           Text(
-                                              notification['createdAt']?.isEmpty ?? true
-                                                  ? 'No date available'
-                                                  : timeago.format(DateTime.parse(notification['createdAt']).toLocal(), locale: 'en_custom'),
+                                            notification['createdAt']
+                                                        ?.isEmpty ??
+                                                    true
+                                                ? 'No date available'
+                                                : timeago.format(
+                                                    DateTime.parse(notification[
+                                                            'createdAt'])
+                                                        .toLocal(),
+                                                    locale: 'en_custom'),
                                             style: TextStyle(
                                                 color: Colors.black
                                                     .withOpacity(.7),
