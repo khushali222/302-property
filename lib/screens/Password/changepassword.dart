@@ -85,7 +85,8 @@ class _ChangepasswordState extends State<Changepassword> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: Form(
+        body:
+        Form(
           key: formKey,
           child: ListView(
             children: [
@@ -350,7 +351,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     height: MediaQuery.of(context).size.height * 0.06,
                     width: MediaQuery.of(context).size.width * 0.8,
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color: Color(0xFF152B51),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(

@@ -183,7 +183,7 @@ class _otp_verifyState extends State<otp_verify> {
                   Text(
                     "Don't Recive Otp? ",
                     style: TextStyle(
-                        color: Colors.black,
+                        color: Color(0xFF152B51),
                         fontSize: MediaQuery.of(context).size.width * 0.04),
                   ),
                   GestureDetector(
@@ -195,7 +195,7 @@ class _otp_verifyState extends State<otp_verify> {
                         "Resend Otp",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                            color:  Color(0xFF152B51),
                             fontSize:
                                 MediaQuery.of(context).size.width * 0.037),
                       ),
@@ -218,7 +218,7 @@ class _otp_verifyState extends State<otp_verify> {
                     height: MediaQuery.of(context).size.height * 0.06,
                     width: MediaQuery.of(context).size.width * 0.8,
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color:  Color(0xFF152B51),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(

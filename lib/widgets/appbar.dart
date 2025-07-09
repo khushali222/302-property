@@ -274,16 +274,19 @@ class widget_302 {
                       PopupMenuItem(
                         child: Row(
                           children: [
+                            SizedBox(
+                              width: 4,
+                            ),
                             FaIcon(
                               FontAwesomeIcons.clipboardList,
                               size: 20,
                               color: blueColor,
                             ),
                             SizedBox(
-                              width: 10,
+                              width: 13,
                             ),
                             Text(
-                              "Activity",
+                              " Activity",
                               style: TextStyle(color: blueColor),
                             ),
                           ],

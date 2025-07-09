@@ -13,7 +13,6 @@ class Signup extends StatefulWidget {
   @override
   _SignupState createState() => _SignupState();
 }
-
 class _SignupState extends State<Signup> {
   int currentStep = 0;
   bool loading = false;
@@ -401,7 +400,7 @@ class _SignupState extends State<Signup> {
                     height: MediaQuery.of(context).size.height * 0.06,
                     width: MediaQuery.of(context).size.width * 0.8,
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color: Color(0xFF152B51),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child:
@@ -459,7 +458,7 @@ class _SignupState extends State<Signup> {
                         height: 30,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.black,
+                          color:Color(0xFF152B51),
                         ),
                         child: Center(
                           child: Text(

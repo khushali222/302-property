@@ -323,10 +323,11 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   child: Text(
                                     "Forgot password?",
                                     style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
                                                 0.02,
-                                        color: Colors.blue),
+                                        color: Color(0xFF152B51)),
                                   ),
                                 ),
                                 SizedBox(
@@ -369,7 +370,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               height: MediaQuery.of(context).size.height * 0.05,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
-                                color: Colors.black,
+                                color: Color(0xFF152B51),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(
@@ -621,7 +622,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   MediaQuery.of(context).size.height * 0.045,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
-                                color: Colors.black,
+                                color: Color(0xFF152B51),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(
@@ -644,20 +645,20 @@ class _Login_ScreenState extends State<Login_Screen> {
                                                         .width *
                                                     0.03),
                                           ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.015,
-                                          ),
-                                          Icon(
-                                            Icons.arrow_forward_ios_sharp,
-                                            color: Colors.white,
-                                            size: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.03,
-                                          ),
+                                          // SizedBox(
+                                          //   height: MediaQuery.of(context)
+                                          //           .size
+                                          //           .width *
+                                          //       0.015,
+                                          // ),
+                                          // Icon(
+                                          //   Icons.arrow_forward_ios_sharp,
+                                          //   color: Colors.white,
+                                          //   size: MediaQuery.of(context)
+                                          //           .size
+                                          //           .width *
+                                          //       0.03,
+                                          // ),
                                         ],
                                       ),
                               ),
@@ -677,7 +678,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       Text(
                         "Don't have an account ? ",
                         style: TextStyle(
-                            color: Colors.black,
+                            color: Color(0xFF152B51),
                             fontSize: MediaQuery.of(context).size.width * 0.03),
                       ),
                       GestureDetector(
@@ -692,7 +693,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                             "Register now",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue,
+                                color: Color(0xFF152B51),
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.03),
                           ),
@@ -875,10 +876,11 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   child: Text(
                                     "Forgot password?",
                                     style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
                                                 0.035,
-                                        color: Colors.blue),
+                                        color: Color(0xFF152B51)),
                                   ),
                                 ),
                                 SizedBox(
@@ -922,7 +924,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               height: MediaQuery.of(context).size.height * 0.06,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
-                                color: Colors.black,
+                                color: Color(0xFF7A8AA0),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(
@@ -1092,7 +1094,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     fontSize:
                                         MediaQuery.of(context).size.width *
                                             0.035,
-                                    color: Colors.blue),
+                                    color: Color(0xFF152B51),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -1104,7 +1108,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                           height: MediaQuery.of(context).size.height * 0.025,
                         ),
                         // Login button
-
                         GestureDetector(
                           onTap: () async {
                             setState(() {
@@ -1177,7 +1180,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               height: MediaQuery.of(context).size.height * 0.06,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
-                                color: Colors.black,
+                                color: Color(0xFF152B51),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(
@@ -1189,6 +1192,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     : Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
+
                                         children: [
                                           Text(
                                             "Login",
@@ -1200,20 +1204,20 @@ class _Login_ScreenState extends State<Login_Screen> {
                                                         .width *
                                                     0.045),
                                           ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.015,
-                                          ),
-                                          Icon(
-                                            Icons.arrow_forward_ios_sharp,
-                                            color: Colors.white,
-                                            size: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.045,
-                                          ),
+                                          // SizedBox(
+                                          //   height: MediaQuery.of(context)
+                                          //           .size
+                                          //           .width *
+                                          //       0.015,
+                                          // ),
+                                          // Icon(
+                                          //   Icons.arrow_forward_ios_sharp,
+                                          //   color: Colors.white,
+                                          //   size: MediaQuery.of(context)
+                                          //           .size
+                                          //           .width *
+                                          //       0.045,
+                                          // ),
                                         ],
                                       ),
                               ),
@@ -1222,7 +1226,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                         ),
                       ],
                     ),
-
                   // Register now
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.04,
@@ -1233,7 +1236,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       Text(
                         "Don't have an account ? ",
                         style: TextStyle(
-                            color: Colors.black,
+                            color: Color(0xFF152B51),
                             fontSize: MediaQuery.of(context).size.width * 0.04),
                       ),
                       GestureDetector(
@@ -1248,7 +1251,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                             "Register now",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue,
+                                color: Color(0xFF152B51),
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.037),
                           ),
