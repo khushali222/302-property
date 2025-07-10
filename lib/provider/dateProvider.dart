@@ -269,6 +269,11 @@ class DateProvider with ChangeNotifier {
   String formatCurrentDate(String dateTime) {
     dateTime = dateTime.trim();
 
+    // Handle special cases
+    if (dateTime == "At Will" || dateTime == "---") {
+      return dateTime;
+    }
+
     List<String> dateFormats = [
       'yyyy-MM-dd',
       'yyyy-M-d',
@@ -292,7 +297,7 @@ class DateProvider with ChangeNotifier {
     }
 
     if (parsedDate == null) {
-      return 'Invalid date'; // Return 'Invalid date' if parsing fails
+      return dateTime; // Return original string if parsing fails
     }
 
     // Convert the parsed date to 'yyyy-MM-dd' format first

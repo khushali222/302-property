@@ -344,7 +344,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         MaterialPageRoute(
             builder: (context) => Summery_page(
                   properties: properties,
-                  showUnitTab: properties.propertyTypeData?.isMultiunit ?? false,
+
                 )));
     /* if (result == true) {
       setState(() {
@@ -1625,7 +1625,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                         builder: (context) =>
                                                                             Summery_page(
                                                                               properties: rentals,
-                                                                              showUnitTab: rentals.propertyTypeData?.isMultiunit ?? false,
+
                                                                             )));
                                                               },
                                                               child: Container(
@@ -2265,8 +2265,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   MaterialPageRoute(
                       builder: (context) => Summery_page(
                           properties: inkText,
-                          showUnitTab: inkText.propertyTypeData?.isMultiunit ??
-                              false)));
+                          )));
             },
             child: Text(text?.isNotEmpty == true ? text! : 'N/A',
                 style: const TextStyle(fontSize: 18))),

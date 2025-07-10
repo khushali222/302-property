@@ -24,6 +24,8 @@ import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Ap
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/workorder_summery.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/unit.dart';
+import '../../../../Model/properties_Lease_model.dart';
+import '../../../../widgets/custom_lease_table.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/rental_widget.dart';
 
@@ -55,7 +57,6 @@ class Summery_page extends StatefulWidget {
   unit_properties? unit;
   String? rentalid;
   bool? notification_redirect;
-  final bool showUnitTab;
 
   //RentalSummary? tenantsummery;
   Summery_page(
@@ -64,8 +65,7 @@ class Summery_page extends StatefulWidget {
       this.tenants,
       this.unit,
       this.rentalid,
-      this.notification_redirect,
-      required this.showUnitTab});
+      this.notification_redirect});
   @override
   _Summery_pageState createState() => _Summery_pageState();
 }
@@ -74,9 +74,10 @@ class _Summery_pageState extends State<Summery_page>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
   late Future<List<TenantData>> futurePropertysummery;
-
+  late Future<Rentals> futureRentalDetails;
   late Future<List<unit_properties>> futureUnitsummery;
   late Future<List<Rentals>> futurerentalowners;
+  late Future<List<Properties_lease_model>> futureLeaseDetails;
   bool isLoaders = false;
   //late Future<List<RentalSummary>> futuresummery;
 
@@ -180,9 +181,20 @@ class _Summery_pageState extends State<Summery_page>
     futureworkordersummery =
         Properies_summery_Repo().fetchWorkOrders(widget.properties.rentalId!);
     // futuresummery = Properies_summery_Repo().fetchPropertiessummery(widget.properties.rentalId!);
-    _tabController =
-        TabController(length: widget.showUnitTab ? 4 : 3, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     // street3.text = widget.unit!.rentalunitadress!;
+    futureRentalDetails = Properies_summery_Repo()
+        .fetchrentalDetails(widget.properties.rentalId!);
+    // futureLeaseDetails = Properies_summery_Repo().fetchrLeaseDetails(widget.unit?.unitId ?? "");
+    futureUnitsummery.then((units) {
+      if (units.isNotEmpty) {
+        // Get the first unit's ID and fetch lease details
+        String unitId = units.first.unitId!;
+        futureLeaseDetails =
+            Properies_summery_Repo().fetchrLeaseDetails(unitId);
+        print("unit id with new $unitId");
+      }
+    });
     _fetchData();
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     futurerentalowners = PropertiesRepository().fetchProperties();
@@ -1732,83 +1744,73 @@ class _Summery_pageState extends State<Summery_page>
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? isLoaders
-              ? Center(
-                  child: SpinKitFadingCircle(
-                    color: blueColor,
-                    size: 50.0,
+          ? SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(
+                    height: 20,
                   ),
-                )
-              : SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
+                  Row(
+                    children: [
                       const SizedBox(
-                        height: 20,
+                        width: 20,
                       ),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width > 500
-                                ? 200
-                                : 170,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 1),
-                              child: Text(
-                                '${widget.properties?.rentalAddress}',
-                                maxLines: 5, // Set maximum number of lines
-                                overflow: TextOverflow
-                                    .ellipsis, // Handle overflow with ellipsis
-                                style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                      SizedBox(
+                        width:
+                            MediaQuery.of(context).size.width > 500 ? 200 : 170,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 1),
+                          child: Text(
+                            '${widget.properties?.rentalAddress}',
+                            maxLines: 5, // Set maximum number of lines
+                            overflow: TextOverflow
+                                .ellipsis, // Handle overflow with ellipsis
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 13
+                                  : 18,
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          // Text('${widget.properties.rentalAddress}',
-                          //     style: TextStyle(
-                          //       color: blueColor,
-                          //       fontWeight: FontWeight.bold,
-                          //       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
-                          //     )),
-                        ],
+                        ),
                       ),
+                      // Text('${widget.properties.rentalAddress}',
+                      //     style: TextStyle(
+                      //       color: blueColor,
+                      //       fontWeight: FontWeight.bold,
+                      //       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                      //     )),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
                       const SizedBox(
-                        height: 10,
+                        width: 20,
                       ),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                              '${widget.properties.propertyTypeData?.propertyType}',
-                              style: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 13
-                                        : 20,
-                              )),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      /* Container(
+                      Text(
+                          '${widget.properties.propertyTypeData?.propertyType}',
+                          style: TextStyle(
+                            color: Color(0xFF8A95A8),
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 13
+                                : 20,
+                          )),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  /*  Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
               height: 60,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                border: Border.all(color:blueColor),
+                      border: Border.all(color: blueColor),
                 // color: Colors.blue,
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -1817,13 +1819,14 @@ class _Summery_pageState extends State<Summery_page>
                 dividerColor: Colors.transparent,
                 indicatorWeight: 5,
                 labelStyle: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                        fontSize:
+                            MediaQuery.of(context).size.width < 500 ? 14 : 20,
                   // fontWeight: FontWeight.bold,
                 ),
                 //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-                indicatorColor:blueColor,
-                labelColor:blueColor,
-                unselectedLabelColor:blueColor,
+                      indicatorColor: blueColor,
+                      labelColor: blueColor,
+                      unselectedLabelColor: blueColor,
                 tabs: [
                   Tab(
                     text: 'Summary',
@@ -1840,8 +1843,7 @@ class _Summery_pageState extends State<Summery_page>
                   StatefulBuilder(
                     builder: (BuildContext context,
                         void Function(void Function()) setState) {
-                      return Tab(
-                          text: 'Work');
+                            return Tab(text: 'Work');
                     },
                   ),
                   // Consumer<WorkOrderCountProvider>(
@@ -1851,72 +1853,75 @@ class _Summery_pageState extends State<Summery_page>
                   // ),
                 ],
               ),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  Summary_page(),
-                  // showdetails
-                  //     ? unitScreen(properties: widget.properties
-                  //         //properties: widget.properties,
-                  //       //  unit: unit,
-                  //       )
-                  //     : Unit_page(),
-                  // showdetails ? unitScreen1(context, unit!) : Unit_page(context),
-                  showdetails ? unitScreen1(context, unit!) : Unit_page(context),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     SizedBox(width: 2,),
+                    //     Expanded(
+                    //       child: Container(
+                    //         height: 43,
+                    //         decoration: BoxDecoration(
+                    //           color: blueColor,
+                    //           borderRadius: BorderRadius.circular(5),
+                    //         ),
+                    //           child: Center(child: Text("Summary",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                    //     ),
+                    //     SizedBox(width: 5,),
+                    //     Expanded(
+                    //       child: Container( height: 43,
+                    //           decoration: BoxDecoration(
+                    //               color: blueColor,
+                    //             borderRadius: BorderRadius.circular(5),
+                    //           ),
+                    //           child: Center(child: Text("Unit",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                    //     ),
+                    //     SizedBox(width: 5,),
+                    //     Expanded(
+                    //       child: Container(
+                    //           height: 43,
+                    //           decoration: BoxDecoration(
+                    //               color: blueColor,
+                    //             borderRadius: BorderRadius.circular(5),
+                    //           ),
+                    //           child: Center(child: Text("Tenats",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                    //     ),
+                    //     SizedBox(width: 5,),
+                    //     Expanded(
+                    //       child: Container(
+                    //           height: 43,
+                    //           decoration: BoxDecoration(
+                    //               color: blueColor,
+                    //             borderRadius: BorderRadius.circular(5),
+                    //           ),
+                    //           child: Center(child: Text("Workorder",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                    //     ),
+                    //     SizedBox(width: 2,),
+                    //   ],
+                    // ),
+                  ),*/
 
-                  // unitScreen(),
-                  // Center(child: Text('Content of Tab 2')),
-                  //  Container(color:Colors.blue),
-                  Tenants(context),
-                  Workorder(context),
-                ],
-              ),
-            ),*/
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        height: 50,
-                        // margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          border: Border.all(color: Colors.transparent),
-                          // borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Row(
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border.all(color: Colors.transparent),
+                    ),
+                    child: FutureBuilder<Rentals>(
+                      future: futureRentalDetails,
+                      builder: (context, snapshot) {
+                        final bool isMultiUnit =
+                            snapshot.data?.propertyTypeData?.isMultiunit ??
+                                false;
+
+                        return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: List.generate(widget.showUnitTab ? 4 : 3,
-                              (index) {
-                            // Define tab text dynamically
-                            String label;
-                            switch (index) {
-                              case 0:
-                                label = "Summary";
-                                break;
-                              case 1:
-                                label = widget.showUnitTab
-                                    ? "Unit($unitCount)"
-                                    : "Tenant($tenentCount)";
-                                break;
-                              case 2:
-                                label = widget.showUnitTab
-                                    ? "Tenant($tenentCount)"
-                                    : "Work order\n($count)";
-                                break;
-                              case 3:
-                                label = "Work order\n($count)";
-                                break;
-                              default:
-                                label = "";
-                            }
-
-                            bool isSelected = _selectedIndex == index;
-
-                            return Expanded(
+                          children: [
+                            Expanded(
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    _selectedIndex = index;
+                                    _selectedIndex = 0;
                                   });
                                 },
                                 child: Container(
@@ -1924,18 +1929,18 @@ class _Summery_pageState extends State<Summery_page>
                                       vertical: 0, horizontal: 5),
                                   margin: EdgeInsets.symmetric(horizontal: 0),
                                   decoration: BoxDecoration(
-                                    color: isSelected
+                                    color: _selectedIndex == 0
                                         ? blueColor
                                         : Colors.grey.shade200,
                                     borderRadius: BorderRadius.circular(3),
                                   ),
                                   child: Center(
                                     child: Text(
-                                      label,
+                                      "Summary",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        color: isSelected
+                                        color: _selectedIndex == 0
                                             ? Colors.white
                                             : blueColor,
                                         fontSize: 13,
@@ -1944,14 +1949,214 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                 ),
                               ),
-                            );
-                          }),
-                        ),
-                      ),
-                      _buildTabContent(context),
-                    ],
+                            ),
+                            if (isMultiUnit)
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedIndex = 1;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 0, horizontal: 5),
+                                    margin: EdgeInsets.symmetric(horizontal: 0),
+                                    decoration: BoxDecoration(
+                                      color: _selectedIndex == 1
+                                          ? blueColor
+                                          : Colors.grey.shade200,
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Unit($unitCount)",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: _selectedIndex == 1
+                                              ? Colors.white
+                                              : blueColor,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedIndex = isMultiUnit ? 2 : 1;
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 5),
+                                  margin: EdgeInsets.symmetric(horizontal: 0),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        _selectedIndex == (isMultiUnit ? 2 : 1)
+                                            ? blueColor
+                                            : Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Tenant($tenentCount)",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: _selectedIndex ==
+                                                (isMultiUnit ? 2 : 1)
+                                            ? Colors.white
+                                            : blueColor,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedIndex = isMultiUnit ? 3 : 2;
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 5),
+                                  margin: EdgeInsets.symmetric(horizontal: 0),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        _selectedIndex == (isMultiUnit ? 3 : 2)
+                                            ? blueColor
+                                            : Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Work order\n($count)",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: _selectedIndex ==
+                                                (isMultiUnit ? 3 : 2)
+                                            ? Colors.white
+                                            : blueColor,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedIndex = isMultiUnit ? 4 : 3;
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 5),
+                                  margin: EdgeInsets.symmetric(horizontal: 0),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        _selectedIndex == (isMultiUnit ? 4 : 3)
+                                            ? blueColor
+                                            : Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Lease",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: _selectedIndex ==
+                                                (isMultiUnit ? 4 : 3)
+                                            ? Colors.white
+                                            : blueColor,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Expanded(
+                            //   child: GestureDetector(
+                            //     onTap: () {
+                            //       setState(() {
+                            //         _selectedIndex = isMultiUnit ? 4 : 3;
+                            //       });
+                            //     },
+                            //     child: Container(
+                            //       padding: EdgeInsets.symmetric(
+                            //           vertical: 0, horizontal: 5),
+                            //       margin: EdgeInsets.symmetric(horizontal: 0),
+                            //       decoration: BoxDecoration(
+                            //         color:
+                            //             _selectedIndex == (isMultiUnit ? 4 : 3)
+                            //                 ? blueColor
+                            //                 : Colors.grey.shade200,
+                            //         borderRadius: BorderRadius.circular(3),
+                            //       ),
+                            //       child: Center(
+                            //         child: Text(
+                            //           "Lease",
+                            //           textAlign: TextAlign.center,
+                            //           style: TextStyle(
+                            //             fontWeight: FontWeight.w600,
+                            //             color: _selectedIndex ==
+                            //                     (isMultiUnit ? 4 : 3)
+                            //                 ? Colors.white
+                            //                 : blueColor,
+                            //             fontSize: 13,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                )
+                  _buildTabContent(context),
+                  /* Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        Summary_page(),
+                        // showdetails
+                        //     ? unitScreen(properties: widget.properties
+                        //         //properties: widget.properties,
+                        //       //  unit: unit,
+                        //       )
+                        //     : Unit_page(),
+                        // showdetails ? unitScreen1(context, unit!) : Unit_page(context),
+                        showdetails
+                            ? unitScreen1(context, unit!)
+                            : Unit_page(context),
+
+                        // unitScreen(),
+                        // Center(child: Text('Content of Tab 2')),
+                        //  Container(color:Colors.blue),
+                        Tenants(context),
+                        Workorder(context),
+                      ],
+                    ),
+                  ),*/
+                ],
+              ),
+            )
           : SizedBox(
               width: double.infinity,
               child: Column(
@@ -1979,108 +2184,415 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget _buildTabContent(BuildContext context) {
-    if (widget.showUnitTab) {
-      // For multi-unit properties (4 tabs)
-      switch (_selectedIndex) {
-        case 0:
+    return FutureBuilder<Rentals>(
+      future: futureRentalDetails,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: SpinKitFadingCircle(
+              color: Colors.black,
+              size: 50.0,
+            ),
+          );
+        }
+        final bool isMultiUnit =
+            snapshot.data?.propertyTypeData?.isMultiunit ?? false;
+
+        if (_selectedIndex == 0) {
           return Summary_page();
-        case 1:
-          return showdetails ? unitScreen1(context, unit!) : Unit_page(context);
-        case 2:
-          return Tenants(context);
-        case 3:
-          return Workorder(context);
-        default:
-          return Container();
-      }
-    } else {
-      // For non-multi-unit properties (3 tabs)
-      switch (_selectedIndex) {
-        case 0:
-          return Summary_page();
-        case 1:
-          return Tenants(context);
-        case 2:
-          return Workorder(context);
-        default:
-          return Container();
-      }
-    }
+        } else if (_selectedIndex == 1) {
+          if (isMultiUnit) {
+            return showdetails
+                ? unitScreen1(context, unit!)
+                : Unit_page(context);
+          } else {
+            return Tenants(context);
+          }
+        } else if (_selectedIndex == 2) {
+          if (isMultiUnit) {
+            return Tenants(context);
+          } else {
+            return Workorder(context);
+          }
+        } else if (_selectedIndex == 3) {
+          if (isMultiUnit) {
+            return Workorder(context);
+          } else {
+            return Lease_page();
+          }
+        } else if (_selectedIndex == 4 && isMultiUnit) {
+          return Lease_page();
+        }
+        return Container();
+      },
+    );
   }
 
+  Lease_page() {
+    print("calling lease page from my screen");
+    return Container(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width < 500 ? 24 : 50,
+                  height: MediaQuery.of(context).size.width < 500 ? 24 : 50,
+                  child: Checkbox(
+                    value: isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        isChecked = value ?? false;
+                      });
+                    },
+                    activeColor: isChecked ? blueColor : Colors.black,
+                  ),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  "Show Past Leases",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: FutureBuilder<List<Properties_lease_model>>(
+              future: futureLeaseDetails,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: SpinKitFadingCircle(color: Colors.black, size: 40),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height * .5,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset("assets/images/no_data.jpg",
+                              height: 200, width: 200),
+                          const SizedBox(height: 10),
+                          const Text(
+                            "No Lease Data Available",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                                fontSize: 16),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  var data = snapshot.data!;
+
+                  // Search Filter
+                  if (searchValuerent != null &&
+                      searchValuerent!.isNotEmpty &&
+                      searchValuerent != "All") {
+                    data = data
+                        .where((e) =>
+                            e.tenantNames != null &&
+                            e.tenantNames!
+                                .toLowerCase()
+                                .contains(searchValuerent!.toLowerCase()))
+                        .toList();
+                  }
+
+                  // Rental ID filter
+                  data = data
+                      .where((e) => e.rentalId == widget.properties.rentalId)
+                      .toList();
+
+                  // Past/Current Lease Filter
+                  DateTime currentDate = DateTime.now();
+                  data = data.where((lease) {
+                    if (lease.endDate == null || lease.endDate!.isEmpty)
+                      return false;
+
+                    // Handle "At Will" case - consider it as a current/future lease
+                    if (lease.endDate == "At Will") {
+                      return !isChecked; // Show only when displaying current/future leases
+                    }
+
+                    // Try to parse the date with multiple formats
+                    DateTime? endDate;
+                    List<String> dateFormats = [
+                      'yyyy-MM-dd',
+                      'yyyy-M-d',
+                      'dd-MM-yyyy',
+                      'd-M-yyyy',
+                      'M/d/yyyy',
+                      'MM/dd/yyyy',
+                      'yyyy/MM/dd',
+                      'dd/MM/yyyy'
+                    ];
+
+                    for (String format in dateFormats) {
+                      try {
+                        endDate =
+                            DateFormat(format).parse(lease.endDate!.trim());
+                        break;
+                      } catch (e) {
+                        continue;
+                      }
+                    }
+
+                    if (endDate == null) {
+                      return !isChecked; // Show in current/future by default if date can't be parsed
+                    }
+
+                    if (isChecked) {
+                      // Show past leases when checked
+                      return endDate.isBefore(currentDate);
+                    } else {
+                      // Show current/future leases when unchecked
+                      return endDate.isAfter(currentDate) ||
+                          endDate.isAtSameMomentAs(currentDate);
+                    }
+                  }).toList();
+
+                  // Pagination
+                  final totalPages = (data.length / itemsPerPage).ceil();
+                  final currentPageData = data
+                      .skip(currentPage * itemsPerPage)
+                      .take(itemsPerPage)
+                      .toList();
+
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        CustomLeaseTable(
+                          leaseData: currentPageData,
+                          onSort: (columnIndex) {
+                            setState(() {
+                              switch (columnIndex) {
+                                case 1:
+                                  data.sort((a, b) => (a.tenantNames ?? '')
+                                      .compareTo(b.tenantNames ?? ''));
+                                  break;
+                                case 2:
+                                  data.sort((a, b) => (a.endDate ?? '')
+                                      .compareTo(b.endDate ?? ''));
+                                  break;
+                                case 3:
+                                  data.sort((a, b) => (a.rentCycle ?? '')
+                                      .compareTo(b.rentCycle ?? ''));
+                                  break;
+                              }
+                            });
+                          },
+                          blueColor: blueColor,
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(width: 10),
+                                Material(
+                                  elevation: 3,
+                                  child: Container(
+                                    height: 40,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 12.0),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<int>(
+                                        value: itemsPerPage,
+                                        items: itemsPerPageOptions
+                                            .map((int value) {
+                                          return DropdownMenuItem<int>(
+                                            value: value,
+                                            child: Text(value.toString()),
+                                          );
+                                        }).toList(),
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            itemsPerPage = newValue!;
+                                            currentPage = 0;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.circleChevronLeft,
+                                    color: currentPage == 0
+                                        ? Colors.grey
+                                        : blueColor,
+                                  ),
+                                  onPressed: currentPage == 0
+                                      ? null
+                                      : () {
+                                          setState(() {
+                                            currentPage--;
+                                          });
+                                        },
+                                ),
+                                Text('Page ${currentPage + 1} of $totalPages'),
+                                IconButton(
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.circleChevronRight,
+                                    color: currentPage < totalPages - 1
+                                        ? blueColor
+                                        : Colors.grey,
+                                  ),
+                                  onPressed: currentPage < totalPages - 1
+                                      ? () {
+                                          setState(() {
+                                            currentPage++;
+                                          });
+                                        }
+                                      : null,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget _buildTabContent(BuildContext context) {
+  //   switch (_selectedIndex) {
+  //     case 0:
+  //       return Summary_page();
+  //     case 1:
+  //       return showdetails ? unitScreen1(context, unit!) : Unit_page(context);
+  //     case 2:
+  //       return Tenants(context);
+  //     case 3:
+  //       return Workorder(context);
+  //     default:
+  //       return Container(); // Fallback for safety
+  //   }
+  // }
   Summary_page() {
     print("$image_url${widget.properties.rentalImage}");
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
+    return FutureBuilder<Rentals>(
+      future: futureRentalDetails,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: SpinKitFadingCircle(
+              color: Colors.black,
+              size: 40,
             ),
-            Container(
-              // height: 150,
-              // width: MediaQuery.of(context).size.width * .94,
-              decoration: BoxDecoration(
-                border: Border.all(color: blueColor),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // const SizedBox(
-                    //   height: 4,
-                    // ),
-                    Row(
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('assets/no_internet.json'),
+                Text('Error: ${snapshot.error}'),
+              ],
+            ),
+          );
+        } else if (!snapshot.hasData) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('assets/no_data.jpg'),
+                const Text('No data available'),
+              ],
+            ),
+          );
+        }
+        final rentalDetails = snapshot.data!;
+        print("property data summery with api ${rentalDetails.rentalAddress}");
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  // height: 150,
+                  // width: MediaQuery.of(context).size.width * .94,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: blueColor),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        // Container(
-                        //   // height: 150,
-                        //   width: 150,
-                        //   decoration: BoxDecoration(color: Colors.blue),
-                        //   child: Image.network(
-                        //     "$image_url${widget.properties.rentalImage}"??'https://st.depositphotos.com/1763233/3344/i/450/depositphotos_33445577-stock-photo-wooden-house.jpg',
-                        //     fit: BoxFit.fill,
-                        //     height: 100,
-                        //   ),
+                        // const SizedBox(
+                        //   height: 4,
                         // ),
-                        Container(
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 150
-                              : 250,
-                          height: MediaQuery.of(context).size.width < 500
-                              ? 120
-                              : 200,
-                          child: SizedBox(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: CachedNetworkImage(
-                                imageUrl: (widget.properties.rentalImage !=
-                                            null &&
-                                        widget
-                                            .properties.rentalImage!.isNotEmpty
-                                    ? "$image_url${widget.properties.rentalImage}"
-                                    : 'assets/images/no_image.jpg'),
-                                fit: BoxFit.cover,
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 140
-                                    : 220,
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? 160
-                                    : 220,
-                                placeholder: (context, url) =>
-                                    Shimmer.fromColors(
-                                  baseColor: Colors.grey[300]!,
-                                  highlightColor: Colors.grey[100]!,
-                                  child: Container(
-                                    color: Colors.grey[300],
+                        Row(
+                          children: [
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            // Container(
+                            //   // height: 150,
+                            //   width: 150,
+                            //   decoration: BoxDecoration(color: Colors.blue),
+                            //   child: Image.network(
+                            //     "$image_url${widget.properties.rentalImage}"??'https://st.depositphotos.com/1763233/3344/i/450/depositphotos_33445577-stock-photo-wooden-house.jpg',
+                            //     fit: BoxFit.fill,
+                            //     height: 100,
+                            //   ),
+                            // ),
+
+                            Container(
+                              width: MediaQuery.of(context).size.width < 500
+                                  ? 150
+                                  : 250,
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 120
+                                  : 200,
+                              child: SizedBox(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: CachedNetworkImage(
+                                    imageUrl: (rentalDetails.rentalImage !=
+                                                null &&
+                                            rentalDetails
+                                                .rentalImage!.isNotEmpty
+                                        ? "$image_url${rentalDetails.rentalImage}"
+                                        : 'assets/images/no_image.jpg'),
+                                    fit: BoxFit.cover,
                                     height:
                                         MediaQuery.of(context).size.width < 500
                                             ? 140
@@ -2089,1036 +2601,2202 @@ class _Summery_pageState extends State<Summery_page>
                                         MediaQuery.of(context).size.width < 500
                                             ? 160
                                             : 220,
+                                    placeholder: (context, url) =>
+                                        Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        color: Colors.grey[300],
+                                        height:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 140
+                                                : 220,
+                                        width:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 160
+                                                : 220,
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                      "assets/images/no_image.jpg",
+                                      fit: BoxFit.fill,
+                                    ),
                                   ),
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    Image.asset(
-                                  "assets/images/no_image.jpg",
-                                  fit: BoxFit.fill,
                                 ),
                               ),
                             ),
-                          ),
-                        ),
 
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(
-                            width: 15,
-                          ),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(
-                            width: 25,
-                          ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                            // Container(
+                            //   width: MediaQuery.of(context).size.width < 500
+                            //       ? 150
+                            //       : 250,
+                            //   height: MediaQuery.of(context).size.width < 500
+                            //       ? 120
+                            //       : 200,
+                            //   //decoration: const BoxDecoration(color: Colors.blue),
+                            //   child: SizedBox(
+                            //     child: ClipRRect(
+                            //       borderRadius: BorderRadius.circular(8.0),
+                            //       child: CachedNetworkImage(
+                            //         imageUrl: widget.properties.rentalImage !=
+                            //                     null &&
+                            //                 widget
+                            //                     .properties.rentalImage!.isNotEmpty
+                            //             ? "$image_url${widget.properties.rentalImage}"
+                            //             : 'assets/images/no_image.jpg',
+                            //         fit: BoxFit.cover,
+                            //         height: MediaQuery.of(context).size.width < 500
+                            //             ? 140
+                            //             : 220,
+                            //         width: MediaQuery.of(context).size.width < 500
+                            //             ? 160
+                            //             : 220,
+                            //         placeholder: (context, url) =>
+                            //             Shimmer.fromColors(
+                            //           baseColor: Colors.grey[300]!,
+                            //           highlightColor: Colors.grey[100]!,
+                            //           child: Container(
+                            //             color: Colors.grey[300],
+                            //             height:
+                            //                 MediaQuery.of(context).size.width < 500
+                            //                     ? 140
+                            //                     : 220,
+                            //             width:
+                            //                 MediaQuery.of(context).size.width < 500
+                            //                     ? 160
+                            //                     : 220,
+                            //           ),
+                            //         ),
+                            //         errorWidget: (context, url, error) =>
+                            //             Image.asset(
+                            //           "assets/images/no_image.jpg",
+                            //           fit: BoxFit.fill,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+
+                            if (MediaQuery.of(context).size.width < 500)
+                              SizedBox(
+                                width: 15,
+                              ),
+                            if (MediaQuery.of(context).size.width > 500)
+                              SizedBox(
+                                width: 25,
+                              ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      'Property Details',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 14
+                                                : 22,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text('Address',
+                                        style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 13
+                                              : 18,
+                                        )),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                        '${rentalDetails.propertyTypeData?.propertyType}',
+                                        style: TextStyle(
+                                          color: blueColor,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 13
+                                              : 18,
+                                        )),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width > 500
+                                      ? 200
+                                      : 160,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      '${rentalDetails.rentalAddress}',
+                                      maxLines:
+                                          4, // Set maximum number of lines
+                                      overflow: TextOverflow
+                                          .ellipsis, // Handle overflow with ellipsis
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 13
+                                                : 18,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width > 500
+                                      ? 200
+                                      : 173,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      [
+                                        rentalDetails.rentalCity,
+                                        rentalDetails.rentalState,
+                                        rentalDetails.rentalCountry,
+                                        rentalDetails.rentalPostcode,
+                                      ]
+                                          .where((element) =>
+                                              element != null &&
+                                              element
+                                                  .isNotEmpty) // Filter out null or empty elements
+                                          .map((element) =>
+                                              element!) // Ensure non-null elements
+                                          .join(' , '),
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 13
+                                                : 18,
+                                      ),
+                                      maxLines: 6,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                // Row(
+                                //   children: [
+                                //     SizedBox(
+                                //       width: 10,
+                                //     ),
+                                //     Text(
+                                //       '${widget.properties.rentalCountry},',
+                                //       style: TextStyle(
+                                //         color: blueColor,
+                                //         fontSize:
+                                //             MediaQuery.of(context).size.width < 500
+                                //                 ? 13
+                                //                 : 18,
+                                //       ),
+                                //     ),
+                                //     SizedBox(width: 3),
+                                //     Text(
+                                //       '${widget.properties.rentalPostcode}',
+                                //       style: TextStyle(
+                                //         color: blueColor,
+                                //         fontSize:
+                                //             MediaQuery.of(context).size.width < 500
+                                //                 ? 13
+                                //                 : 18,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  'Property Details',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 14
-                                            : 22,
-                                    color: blueColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 5),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text('Address',
-                                    style: TextStyle(
-                                      color: Color(0xFF8A95A8),
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 13
-                                              : 18,
-                                    )),
-                              ],
-                            ),
-                            SizedBox(height: 5),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                    '${widget.properties.propertyTypeData?.propertyType}',
-                                    style: TextStyle(
-                                      color: blueColor,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 13
-                                              : 18,
-                                    )),
-                              ],
-                            ),
-                            SizedBox(height: 5),
                             SizedBox(
-                              width: MediaQuery.of(context).size.width > 500
-                                  ? 200
-                                  : 150,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 12),
-                                child: Text(
-                                  '${widget.properties?.rentalAddress}',
-                                  maxLines: 3, // Set maximum number of lines
-                                  overflow: TextOverflow
-                                      .ellipsis, // Handle overflow with ellipsis
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 13
-                                            : 18,
-                                    color: Colors.grey[800],
+                              width: 15,
+                            ),
+                            Container(
+                              height: 30,
+                              width: 90,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: blueColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
+                                ),
+                                onPressed: () async {
+                                  _pickImage().then((_) {
+                                    setState(
+                                        () {}); // Rebuild the widget after selecting the image
+                                  });
+                                },
+                                child: Text(
+                                  'Upload',
+                                  style: TextStyle(color: Color(0xFFf7f8f9)),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 5),
                             SizedBox(
-                              width: MediaQuery.of(context).size.width > 500
-                                  ? 200
-                                  : 173,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 12),
-                                child: Text(
-                                  [
-                                    widget.properties.rentalCity,
-                                    widget.properties.rentalState,
-                                    widget.properties.rentalCountry,
-                                    widget.properties.rentalPostcode,
-                                  ]
-                                      .where((element) =>
-                                          element != null &&
-                                          element
-                                              .isNotEmpty) // Filter out null or empty elements
-                                      .map((element) =>
-                                          element!) // Ensure non-null elements
-                                      .join(' , '),
-                                  style: TextStyle(
-                                    color: blueColor,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 13
-                                            : 18,
+                              width: 8,
+                            ),
+                            if (_imageUrls.isNotEmpty ||
+                                rentalDetails.rentalImage != '')
+                              Container(
+                                height: 30,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: blueColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
                                   ),
-                                  maxLines: 7,
+                                  onPressed: () async {
+                                    _removeImage();
+                                  },
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(color: Color(0xFFf7f8f9)),
+                                  ),
                                 ),
                               ),
-                            ),
-                            // Row(
-                            //   children: [
-                            //     SizedBox(
-                            //       width: 10,
-                            //     ),
-                            //     Text(
-                            //       '${widget.properties.rentalCity},',
-                            //       style: TextStyle(
-                            //         color: blueColor,
-                            //         fontSize:
-                            //         MediaQuery.of(context).size.width < 500
-                            //             ? 13
-                            //             : 18,
-                            //       ),
-                            //     ),
-                            //     SizedBox(width: 3),
-                            //     Text(
-                            //       '${widget.properties.rentalState},',
-                            //       style: TextStyle(
-                            //         color: blueColor,
-                            //         fontSize:
-                            //         MediaQuery.of(context).size.width < 500
-                            //             ? 13
-                            //             : 18,
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
-                            // SizedBox(height: 5),
-                            // Row(
-                            //   children: [
-                            //     SizedBox(
-                            //       width: 10,
-                            //     ),
-                            //     Text(
-                            //       '${widget.properties.rentalCountry},',
-                            //       style: TextStyle(
-                            //         color: blueColor,
-                            //         fontSize:
-                            //         MediaQuery.of(context).size.width < 500
-                            //             ? 13
-                            //             : 18,
-                            //       ),
-                            //     ),
-                            //     SizedBox(width: 3),
-                            //     Text(
-                            //       '${widget.properties.rentalPostcode}',
-                            //       style: TextStyle(
-                            //         color: blueColor,
-                            //         fontSize:
-                            //         MediaQuery.of(context).size.width < 500
-                            //             ? 13
-                            //             : 18,
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
                           ],
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Container(
-                          height: 30,
-                          width: 90,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: blueColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            onPressed: () async {
-                              _pickImage().then((_) {
-                                setState(
-                                    () {}); // Rebuild the widget after selecting the image
-                              });
-                            },
-                            child: Text(
-                              'Upload',
-                              style: TextStyle(color: Color(0xFFf7f8f9)),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        if (_imageUrls.isNotEmpty ||
-                            widget.properties.rentalImage != '')
-                          Container(
-                            height: 30,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                              onPressed: () async {
-                                _removeImage();
-                              },
-                              child: Text(
-                                'Delete',
-                                style: TextStyle(color: Color(0xFFf7f8f9)),
-                              ),
-                            ),
-                          ),
-                      ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    if (MediaQuery.of(context).size.width > 500)
+                      SizedBox(
+                        width: 6,
+                      ),
+                    if (MediaQuery.of(context).size.width < 500)
+                      SizedBox(
+                        width: 10,
+                      ),
+                    Text(
+                      "Rental Owners",
+                      style: TextStyle(
+                          color: blueColor,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
                 if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(
-                    width: 6,
-                  ),
+                  SizedBox(height: 10),
+                if (MediaQuery.of(context).size.width > 500)
+                  SizedBox(height: 5),
                 if (MediaQuery.of(context).size.width < 500)
-                  SizedBox(
-                    width: 10,
-                  ),
-                Text(
-                  "Rental Owners",
-                  style: TextStyle(
-                      color: blueColor,
-                      fontSize:
-                          MediaQuery.of(context).size.width < 500 ? 16 : 20,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 10),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 5),
-            if (MediaQuery.of(context).size.width < 500)
-              Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: FutureBuilder<List<Rentals>>(
-                  future: futurerentalowners,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      var data = snapshot.data!;
-                      if (searchValuerent == null || searchValuerent!.isEmpty) {
-                        data = snapshot.data!;
-                      } else if (searchValuerent == "All") {
-                        data = snapshot.data!;
-                      } else if (searchValuerent!.isNotEmpty) {
-                        data = snapshot.data!
-                            .where((rentals) => rentals
-                                .rentalOwnerData!.rentalOwnerName!
-                                .toLowerCase()
-                                .contains(searchValuerent!.toLowerCase()))
-                            .toList();
-                      } else {
-                        data = snapshot.data!
-                            .where((rentals) =>
-                                rentals
-                                    .rentalOwnerData!.rentalOwnerCompanyName! ==
-                                searchValuerent)
-                            .toList();
-                      }
-                      data = data
-                          .where(
-                              (e) => e.rentalId == widget.properties.rentalId)
-                          .toList();
-                      final totalPages = (data.length / itemsPerPage).ceil();
-                      final currentPageData = data
-                          .skip(currentPage * itemsPerPage)
-                          .take(itemsPerPage)
-                          .toList();
-                      print("currentpage data ${currentPageData.length}");
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 5),
-                            _buildHeadersrent(),
-                            SizedBox(height: 20),
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: FutureBuilder<List<Rentals>>(
+                      future: futurerentalowners,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                              child: SpinKitFadingCircle(
+                            color: Colors.black,
+                            size: 40.0,
+                          ));
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
                               child: Column(
-                                children: currentPageData
-                                    .asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded = expandedIndex == index;
-                                  Rentals rentals = entry.value;
-                                  //return CustomExpansionTile(data: Propertytype, index: index);
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          var data = snapshot.data!;
+                          if (searchValuerent == null ||
+                              searchValuerent!.isEmpty) {
+                            data = snapshot.data!;
+                          } else if (searchValuerent == "All") {
+                            data = snapshot.data!;
+                          } else if (searchValuerent!.isNotEmpty) {
+                            data = snapshot.data!
+                                .where((rentals) => rentals
+                                    .rentalOwnerData!.rentalOwnerName!
+                                    .toLowerCase()
+                                    .contains(searchValuerent!.toLowerCase()))
+                                .toList();
+                          } else {
+                            data = snapshot.data!
+                                .where((rentals) =>
+                                    rentals.rentalOwnerData!
+                                        .rentalOwnerCompanyName! ==
+                                    searchValuerent)
+                                .toList();
+                          }
+                          data = data
+                              .where((e) =>
+                                  e.rentalId == widget.properties.rentalId)
+                              .toList();
+                          final totalPages =
+                              (data.length / itemsPerPage).ceil();
+                          final currentPageData = data
+                              .skip(currentPage * itemsPerPage)
+                              .take(itemsPerPage)
+                              .toList();
+                          print("currentpage data ${currentPageData.length}");
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 5),
+                                _buildHeadersrent(),
+                                SizedBox(height: 20),
+                                Container(
+                                  decoration: BoxDecoration(
                                       border: Border.all(
                                           color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
-                                    ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    // setState(() {
-                                                    //    isExpanded = !isExpanded;
-                                                    // //  expandedIndex = !expandedIndex;
-                                                    //
-                                                    // });
-                                                    // setState(() {
-                                                    //   if (isExpanded) {
-                                                    //     expandedIndex = null;
-                                                    //     isExpanded = !isExpanded;
-                                                    //   } else {
-                                                    //     expandedIndex = index;
-                                                    //   }
-                                                    // });
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 5, right: 5),
-                                                    padding: !isExpanded
-                                                        ? EdgeInsets.only(
-                                                            bottom: 10)
-                                                        : EdgeInsets.only(
-                                                            top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
-                                                      size: 20,
-                                                      color: blueColor,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex = null;
-                                                        } else {
-                                                          expandedIndex = index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      '${(rentals.rentalOwnerData?.rentalOwnerName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerName} ',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
+                                              152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(color: blueColor)),
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      Rentals rentals = entry.value;
+                                      //return CustomExpansionTile(data: Propertytype, index: index);
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: index % 2 != 0
+                                              ? Colors.white
+                                              : blueColor.withOpacity(0.09),
+                                          border: Border.all(
+                                              color: Color.fromRGBO(
+                                                  152, 162, 179, .5)),
+                                        ),
+                                        // decoration: BoxDecoration(
+                                        //   border: Border.all(color: blueColor),
+                                        // ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        // setState(() {
+                                                        //    isExpanded = !isExpanded;
+                                                        // //  expandedIndex = !expandedIndex;
+                                                        //
+                                                        // });
+                                                        // setState(() {
+                                                        //   if (isExpanded) {
+                                                        //     expandedIndex = null;
+                                                        //     isExpanded = !isExpanded;
+                                                        //   } else {
+                                                        //     expandedIndex = index;
+                                                        //   }
+                                                        // });
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 5, right: 5),
+                                                        padding: !isExpanded
+                                                            ? EdgeInsets.only(
+                                                                bottom: 10)
+                                                            : EdgeInsets.only(
+                                                                top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
+                                                    Expanded(
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Text(
+                                                          '${(rentals.rentalOwnerData?.rentalOwnerName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerName} ',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width *
                                                             .08),
-                                                Expanded(
-                                                  child: Text(
-                                                    '${(rentals.rentalOwnerData?.rentalOwnerCompanyName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerCompanyName}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 12,
+                                                    Expanded(
+                                                      child: Text(
+                                                        '${(rentals.rentalOwnerData?.rentalOwnerCompanyName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerCompanyName}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width *
-                                                            .08),
-                                                Expanded(
-                                                  child: Text(
-                                                    formatPhoneNumber(rentals
-                                                            .rentalOwnerData
-                                                            ?.rentalOwnerPhoneNumber ??
-                                                        "N/A"),
-                                                    // '${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 12,
+                                                            .06),
+                                                    Expanded(
+                                                      child: Text(
+                                                        formatPhoneNumber(rentals
+                                                                .rentalOwnerData
+                                                                ?.rentalOwnerPhoneNumber ??
+                                                            "N/A"),
+                                                        //'${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width *
                                                             .02),
-                                              ],
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
+                                            if (isExpanded)
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8.0),
+                                                margin:
+                                                    EdgeInsets.only(bottom: 20),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
                                                     children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                                .sortUp
-                                                            : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 50,
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 50,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                SizedBox(
+                                                                  height: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height *
+                                                                      .01,
+                                                                ),
+                                                                Text.rich(
                                                                   TextSpan(
-                                                                    text:
-                                                                        'Email : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Email : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: Colors.grey), // Light and grey
+                                                                      ),
+                                                                    ],
                                                                   ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height *
+                                                                      .01,
+                                                                ),
+                                                                Text.rich(
                                                                   TextSpan(
-                                                                    text:
-                                                                        '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Home Number : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerHomeNumber ??
+                                                                            "N/A"),
+                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: Colors.grey), // Light and grey
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
+                                                                ),
+                                                                SizedBox(
+                                                                  height: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height *
+                                                                      .01,
+                                                                ),
+                                                                Text.rich(
                                                                   TextSpan(
-                                                                    text:
-                                                                        'Home Number: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Business Number : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ??
+                                                                            "N/A"),
+                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: Colors.grey), // Light and grey
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  TextSpan(
-                                                                    text: formatPhoneNumber(rentals
-                                                                            .rentalOwnerData
-                                                                            ?.rentalOwnerHomeNumber ??
-                                                                        "N/A"),
-                                                                    // '${(rentals.rentalOwnerData?.rentalOwnerHomeNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Business Number: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatPhoneNumber(rentals
-                                                                            .rentalOwnerData
-                                                                            ?.rentalOwnerBuisinessNumber ??
-                                                                        "N/A"),
-                                                                    // '${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),
-                                                ],
+                                                ),
+                                              ),
+                                            //SizedBox(height: 13,),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        // Text('Rows per page:'),
+                                        SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    itemsPerPage = newValue!;
+                                                    currentPage =
+                                                        0; // Reset to first page when items per page change
+                                                  });
+                                                },
                                               ),
                                             ),
                                           ),
-                                        //SizedBox(height: 13,),
+                                        ),
                                       ],
                                     ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
-                                              });
-                                            },
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : blueColor,
                                           ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : blueColor,
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
-                                    ),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_back),
-                                    //   onPressed: currentPage > 0
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage--;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_forward),
-                                    //   onPressed: currentPage < totalPages - 1
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage++;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1
-                                            ? blueColor
-                                            : Colors.grey,
-                                      ),
-                                      onPressed: currentPage < totalPages - 1
-                                          ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
-                                          : null,
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_back),
+                                        //   onPressed: currentPage > 0
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage--;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_forward),
+                                        //   onPressed: currentPage < totalPages - 1
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage++;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? blueColor
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-            if (MediaQuery.of(context).size.width > 500)
-              FutureBuilder<List<Rentals>>(
-                future: futurerentalowners,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                        child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 40.0,
-                    ));
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height * .5,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                if (MediaQuery.of(context).size.width > 500)
+                  FutureBuilder<List<Rentals>>(
+                    future: futurerentalowners,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                            child: SpinKitFadingCircle(
+                          color: Colors.black,
+                          size: 40.0,
+                        ));
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height * .5,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/no_data.jpg",
+                                  height: 200,
+                                  width: 200,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "No Data Available",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize: 16),
+                                )
+                              ],
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    List<Rentals>? filteredData = [];
-                    _tableDatarent = snapshot.data!;
-                    if (selectedRolerent == null && searchValuerent == "") {
-                      filteredData = snapshot.data;
-                    } else if (selectedRolerent == "All") {
-                      filteredData = snapshot.data;
-                    } else if (searchValuerent.isNotEmpty) {
-                      filteredData = snapshot.data!
-                          .where((staff) =>
-                              staff.rentalOwnerData!.rentalOwnerName!
-                                  .toLowerCase()
-                                  .contains(searchValuerent.toLowerCase()) ||
-                              staff.rentalOwnerData!.rentalOwnerPhoneNumber!
-                                  .toLowerCase()
-                                  .contains(searchValuerent.toLowerCase()))
-                          .toList();
-                    }
+                          ),
+                        );
+                      } else {
+                        List<Rentals>? filteredData = [];
+                        _tableDatarent = snapshot.data!;
+                        if (selectedRolerent == null && searchValuerent == "") {
+                          filteredData = snapshot.data;
+                        } else if (selectedRolerent == "All") {
+                          filteredData = snapshot.data;
+                        } else if (searchValuerent.isNotEmpty) {
+                          filteredData = snapshot.data!
+                              .where((staff) =>
+                                  staff.rentalOwnerData!.rentalOwnerName!
+                                      .toLowerCase()
+                                      .contains(
+                                          searchValuerent.toLowerCase()) ||
+                                  staff.rentalOwnerData!.rentalOwnerPhoneNumber!
+                                      .toLowerCase()
+                                      .contains(searchValuerent.toLowerCase()))
+                              .toList();
+                        }
 
-                    _tableDatarent = filteredData!;
-                    totalrecordsrent = _tableDatarent.length;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Column(
-                        children: [
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Container(
-                              // width: MediaQuery.of(context).size.width * .91,
-                              child: Table(
-                                defaultColumnWidth: IntrinsicColumnWidth(),
-                                children: [
-                                  TableRow(
-                                    decoration:
-                                        BoxDecoration(border: Border.all()),
+                        _tableDatarent = filteredData!;
+                        totalrecordsrent = _tableDatarent.length;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Column(
+                            children: [
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Container(
+                                  // width: MediaQuery.of(context).size.width * .91,
+                                  child: Table(
+                                    defaultColumnWidth: IntrinsicColumnWidth(),
                                     children: [
-                                      _buildHeaderrent(
-                                          'Contact Name',
-                                          0,
-                                          (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerFirstName!),
-                                      _buildHeaderrent(
-                                          'Company Name',
-                                          1,
-                                          (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerCompanyName!),
-                                      _buildHeaderrent(
-                                          'Email',
-                                          2,
-                                          (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerPrimaryEmail!),
-                                      _buildHeaderrent(
-                                          'Phone Number',
-                                          3,
-                                          (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerPhoneNumber!),
-                                      _buildHeaderrent(
-                                          'Home Number',
-                                          4,
-                                          (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerHomeNumber!),
-                                      _buildHeaderrent(
-                                          'Business Number',
-                                          5,
-                                          (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerBuisinessNumber!),
+                                      TableRow(
+                                        decoration:
+                                            BoxDecoration(border: Border.all()),
+                                        children: [
+                                          _buildHeaderrent(
+                                              'Contact Name',
+                                              0,
+                                              (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerFirstName!),
+                                          _buildHeaderrent(
+                                              'Company Name',
+                                              1,
+                                              (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerCompanyName!),
+                                          _buildHeaderrent(
+                                              'Email',
+                                              2,
+                                              (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerPrimaryEmail!),
+                                          _buildHeaderrent(
+                                              'Phone Number',
+                                              3,
+                                              (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerPhoneNumber!),
+                                          _buildHeaderrent(
+                                              'Home Number',
+                                              4,
+                                              (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerHomeNumber!),
+                                          _buildHeaderrent(
+                                              'Business Number',
+                                              5,
+                                              (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerBuisinessNumber!),
+                                        ],
+                                      ),
+                                      TableRow(
+                                        decoration: BoxDecoration(
+                                          border: Border.symmetric(
+                                              horizontal: BorderSide.none),
+                                        ),
+                                        children: List.generate(
+                                            6,
+                                            (index) => TableCell(
+                                                child: Container(height: 20))),
+                                      ),
+                                      for (var i = 0;
+                                          i < _pagedDatarent.length;
+                                          i++)
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              left: BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1)),
+                                              right: BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1)),
+                                              top: BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1)),
+                                              bottom: i ==
+                                                      _pagedDatarent.length - 1
+                                                  ? BorderSide(color: blueColor)
+                                                  : BorderSide.none,
+                                            ),
+                                          ),
+                                          children: [
+                                            _buildDataCellrent(
+                                                '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerName!}'),
+                                            // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
+                                            _buildDataCellrent(
+                                              _pagedDatarent[i]
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerCompanyName!,
+                                            ),
+                                            _buildDataCellrent(_pagedDatarent[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerPrimaryEmail!),
+                                            _buildDataCellrent(_pagedDatarent[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerPhoneNumber!),
+                                            _buildDataCellrent(_pagedDatarent[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerHomeNumber!),
+                                            _buildDataCellrent(_pagedDatarent[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerBuisinessNumber!),
+                                          ],
+                                        ),
                                     ],
                                   ),
-                                  TableRow(
-                                    decoration: BoxDecoration(
-                                      border: Border.symmetric(
-                                          horizontal: BorderSide.none),
-                                    ),
-                                    children: List.generate(
-                                        6,
-                                        (index) => TableCell(
-                                            child: Container(height: 20))),
-                                  ),
-                                  for (var i = 0;
-                                      i < _pagedDatarent.length;
-                                      i++)
-                                    TableRow(
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          left: BorderSide(
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1)),
-                                          right: BorderSide(
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1)),
-                                          top: BorderSide(
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1)),
-                                          bottom: i == _pagedDatarent.length - 1
-                                              ? BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1))
-                                              : BorderSide.none,
-                                        ),
-                                      ),
-                                      children: [
-                                        _buildDataCellrent(
-                                            '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerName!}'),
-                                        // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
-                                        _buildDataCellrent(
-                                          _pagedDatarent[i]
-                                              .rentalOwnerData!
-                                              .rentalOwnerCompanyName!,
-                                        ),
-                                        _buildDataCellrent(_pagedDatarent[i]
-                                            .rentalOwnerData!
-                                            .rentalOwnerPrimaryEmail!),
-                                        _buildDataCellrent(_pagedDatarent[i]
-                                            .rentalOwnerData!
-                                            .rentalOwnerPhoneNumber!),
-                                        _buildDataCellrent(_pagedDatarent[i]
-                                            .rentalOwnerData!
-                                            .rentalOwnerHomeNumber!),
-                                        _buildDataCellrent(_pagedDatarent[i]
-                                            .rentalOwnerData!
-                                            .rentalOwnerBuisinessNumber!),
-                                      ],
-                                    ),
-                                ],
+                                ),
+                              ),
+                              if (_tableDatarent.isEmpty)
+                                Text("No Search Records Found"),
+                              SizedBox(height: 25),
+                              _buildPaginationControlsrent(),
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    if (MediaQuery.of(context).size.width > 500)
+                      SizedBox(
+                        width: 6,
+                      ),
+                    if (MediaQuery.of(context).size.width < 500)
+                      SizedBox(
+                        width: 5,
+                      ),
+                    Text(
+                      "Staff Details",
+                      style: TextStyle(
+                          color: blueColor,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 17 : 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5, right: 5),
+                  child: Table(
+                    border: TableBorder.all(color: blueColor),
+                    children: [
+                      TableRow(
+                          decoration: BoxDecoration(
+                            color: blueColor,
+                            //  borderRadius: BorderRadius.circular(10),
+                          ),
+                          children: [
+                            TableCell(
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Staff Member',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 16
+                                              : 19,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ]),
+                      TableRow(children: [
+                        TableCell(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              rentalDetails.staffMemberData?.staffmemberName !=
+                                          null &&
+                                      rentalDetails.staffMemberData!
+                                          .staffmemberName!.isNotEmpty
+                                  ? '${rentalDetails.staffMemberData!.staffmemberName}'
+                                  : 'N/A',
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 16
+                                        : 19,
                               ),
                             ),
                           ),
-                          if (_tableDatarent.isEmpty)
-                            Text("No Search Records Found"),
-                          SizedBox(height: 25),
-                          _buildPaginationControlsrent(),
-                        ],
-                      ),
-                    );
-                  }
-                },
-              ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(
-                    width: 6,
+                        ),
+                      ])
+                    ],
                   ),
-                if (MediaQuery.of(context).size.width < 500)
-                  SizedBox(
-                    width: 5,
-                  ),
-                Text(
-                  "Staff Details",
-                  style: TextStyle(
-                      color: blueColor,
-                      fontSize:
-                          MediaQuery.of(context).size.width < 500 ? 17 : 20,
-                      fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 50,
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5, right: 5),
-              child: Table(
-                border: TableBorder.all(color: blueColor),
-                children: [
-                  TableRow(
-                      decoration: BoxDecoration(
-                        color: blueColor,
-                        //  borderRadius: BorderRadius.circular(10),
-                      ),
-                      children: [
-                        TableCell(
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'Staff Member',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 16
-                                          : 19,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ]),
-                  TableRow(children: [
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          widget.properties.staffMemberData?.staffmemberName !=
-                                      null &&
-                                  widget.properties.staffMemberData!
-                                      .staffmemberName!.isNotEmpty
-                              ? '${widget.properties.staffMemberData!.staffmemberName}'
-                              : 'N/A',
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 16
-                                : 19,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ])
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
+  // Summary_page() {
+  //   print("$image_url${widget.properties.rentalImage}");
+  //   return Container(
+  //     margin: const EdgeInsets.symmetric(horizontal: 10),
+  //     child: SingleChildScrollView(
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.start,
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           const SizedBox(
+  //             height: 20,
+  //           ),
+  //           Container(
+  //             // height: 150,
+  //             // width: MediaQuery.of(context).size.width * .94,
+  //             decoration: BoxDecoration(
+  //               border: Border.all(color: blueColor),
+  //               borderRadius: BorderRadius.circular(10),
+  //             ),
+  //             child: Padding(
+  //               padding: const EdgeInsets.only(top: 20, bottom: 20),
+  //               child: Column(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 crossAxisAlignment: CrossAxisAlignment.center,
+  //                 children: [
+  //                   // const SizedBox(
+  //                   //   height: 4,
+  //                   // ),
+  //                   Row(
+  //                     children: [
+  //                       const SizedBox(
+  //                         width: 15,
+  //                       ),
+  //                       // Container(
+  //                       //   // height: 150,
+  //                       //   width: 150,
+  //                       //   decoration: BoxDecoration(color: Colors.blue),
+  //                       //   child: Image.network(
+  //                       //     "$image_url${widget.properties.rentalImage}"??'https://st.depositphotos.com/1763233/3344/i/450/depositphotos_33445577-stock-photo-wooden-house.jpg',
+  //                       //     fit: BoxFit.fill,
+  //                       //     height: 100,
+  //                       //   ),
+  //                       // ),
+  //                       Container(
+  //                         width: MediaQuery.of(context).size.width < 500
+  //                             ? 150
+  //                             : 250,
+  //                         height: MediaQuery.of(context).size.width < 500
+  //                             ? 120
+  //                             : 200,
+  //                         child: SizedBox(
+  //                           child: ClipRRect(
+  //                             borderRadius: BorderRadius.circular(8.0),
+  //                             child: CachedNetworkImage(
+  //                               imageUrl: (widget.properties.rentalImage !=
+  //                                           null &&
+  //                                       widget
+  //                                           .properties.rentalImage!.isNotEmpty
+  //                                   ? "$image_url${widget.properties.rentalImage}"
+  //                                   : 'assets/images/no_image.jpg'),
+  //                               fit: BoxFit.cover,
+  //                               height: MediaQuery.of(context).size.width < 500
+  //                                   ? 140
+  //                                   : 220,
+  //                               width: MediaQuery.of(context).size.width < 500
+  //                                   ? 160
+  //                                   : 220,
+  //                               placeholder: (context, url) =>
+  //                                   Shimmer.fromColors(
+  //                                 baseColor: Colors.grey[300]!,
+  //                                 highlightColor: Colors.grey[100]!,
+  //                                 child: Container(
+  //                                   color: Colors.grey[300],
+  //                                   height:
+  //                                       MediaQuery.of(context).size.width < 500
+  //                                           ? 140
+  //                                           : 220,
+  //                                   width:
+  //                                       MediaQuery.of(context).size.width < 500
+  //                                           ? 160
+  //                                           : 220,
+  //                                 ),
+  //                               ),
+  //                               errorWidget: (context, url, error) =>
+  //                                   Image.asset(
+  //                                 "assets/images/no_image.jpg",
+  //                                 fit: BoxFit.fill,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //
+  //                       if (MediaQuery.of(context).size.width < 500)
+  //                         SizedBox(
+  //                           width: 15,
+  //                         ),
+  //                       if (MediaQuery.of(context).size.width > 500)
+  //                         SizedBox(
+  //                           width: 25,
+  //                         ),
+  //                       Column(
+  //                         mainAxisAlignment: MainAxisAlignment.start,
+  //                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                         children: [
+  //                           Row(
+  //                             children: [
+  //                               SizedBox(
+  //                                 width: 10,
+  //                               ),
+  //                               Text(
+  //                                 'Property Details',
+  //                                 style: TextStyle(
+  //                                   fontWeight: FontWeight.bold,
+  //                                   fontSize:
+  //                                       MediaQuery.of(context).size.width < 500
+  //                                           ? 14
+  //                                           : 22,
+  //                                   color: blueColor,
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                           SizedBox(height: 5),
+  //                           Row(
+  //                             children: [
+  //                               SizedBox(
+  //                                 width: 10,
+  //                               ),
+  //                               Text('Address',
+  //                                   style: TextStyle(
+  //                                     color: Color(0xFF8A95A8),
+  //                                     fontSize:
+  //                                         MediaQuery.of(context).size.width <
+  //                                                 500
+  //                                             ? 13
+  //                                             : 18,
+  //                                   )),
+  //                             ],
+  //                           ),
+  //                           SizedBox(height: 5),
+  //                           Row(
+  //                             children: [
+  //                               SizedBox(
+  //                                 width: 10,
+  //                               ),
+  //                               Text(
+  //                                   '${widget.properties.propertyTypeData?.propertyType}',
+  //                                   style: TextStyle(
+  //                                     color: blueColor,
+  //                                     fontSize:
+  //                                         MediaQuery.of(context).size.width <
+  //                                                 500
+  //                                             ? 13
+  //                                             : 18,
+  //                                   )),
+  //                             ],
+  //                           ),
+  //                           SizedBox(height: 5),
+  //                           SizedBox(
+  //                             width: MediaQuery.of(context).size.width > 500
+  //                                 ? 200
+  //                                 : 150,
+  //                             child: Padding(
+  //                               padding: const EdgeInsets.only(left: 12),
+  //                               child: Text(
+  //                                 '${widget.properties?.rentalAddress}',
+  //                                 maxLines: 3, // Set maximum number of lines
+  //                                 overflow: TextOverflow
+  //                                     .ellipsis, // Handle overflow with ellipsis
+  //                                 style: TextStyle(
+  //                                   fontSize:
+  //                                       MediaQuery.of(context).size.width < 500
+  //                                           ? 13
+  //                                           : 18,
+  //                                   color: Colors.grey[800],
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           SizedBox(height: 5),
+  //                           SizedBox(
+  //                             width: MediaQuery.of(context).size.width > 500
+  //                                 ? 200
+  //                                 : 173,
+  //                             child: Padding(
+  //                               padding: const EdgeInsets.only(left: 12),
+  //                               child: Text(
+  //                                 [
+  //                                   widget.properties.rentalCity,
+  //                                   widget.properties.rentalState,
+  //                                   widget.properties.rentalCountry,
+  //                                   widget.properties.rentalPostcode,
+  //                                 ]
+  //                                     .where((element) =>
+  //                                         element != null &&
+  //                                         element
+  //                                             .isNotEmpty) // Filter out null or empty elements
+  //                                     .map((element) =>
+  //                                         element!) // Ensure non-null elements
+  //                                     .join(' , '),
+  //                                 style: TextStyle(
+  //                                   color: blueColor,
+  //                                   fontSize:
+  //                                       MediaQuery.of(context).size.width < 500
+  //                                           ? 13
+  //                                           : 18,
+  //                                 ),
+  //                                 maxLines: 7,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           // Row(
+  //                           //   children: [
+  //                           //     SizedBox(
+  //                           //       width: 10,
+  //                           //     ),
+  //                           //     Text(
+  //                           //       '${widget.properties.rentalCity},',
+  //                           //       style: TextStyle(
+  //                           //         color: blueColor,
+  //                           //         fontSize:
+  //                           //         MediaQuery.of(context).size.width < 500
+  //                           //             ? 13
+  //                           //             : 18,
+  //                           //       ),
+  //                           //     ),
+  //                           //     SizedBox(width: 3),
+  //                           //     Text(
+  //                           //       '${widget.properties.rentalState},',
+  //                           //       style: TextStyle(
+  //                           //         color: blueColor,
+  //                           //         fontSize:
+  //                           //         MediaQuery.of(context).size.width < 500
+  //                           //             ? 13
+  //                           //             : 18,
+  //                           //       ),
+  //                           //     ),
+  //                           //   ],
+  //                           // ),
+  //                           // SizedBox(height: 5),
+  //                           // Row(
+  //                           //   children: [
+  //                           //     SizedBox(
+  //                           //       width: 10,
+  //                           //     ),
+  //                           //     Text(
+  //                           //       '${widget.properties.rentalCountry},',
+  //                           //       style: TextStyle(
+  //                           //         color: blueColor,
+  //                           //         fontSize:
+  //                           //         MediaQuery.of(context).size.width < 500
+  //                           //             ? 13
+  //                           //             : 18,
+  //                           //       ),
+  //                           //     ),
+  //                           //     SizedBox(width: 3),
+  //                           //     Text(
+  //                           //       '${widget.properties.rentalPostcode}',
+  //                           //       style: TextStyle(
+  //                           //         color: blueColor,
+  //                           //         fontSize:
+  //                           //         MediaQuery.of(context).size.width < 500
+  //                           //             ? 13
+  //                           //             : 18,
+  //                           //       ),
+  //                           //     ),
+  //                           //   ],
+  //                           // ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   SizedBox(
+  //                     height: 10,
+  //                   ),
+  //                   Row(
+  //                     children: [
+  //                       SizedBox(
+  //                         width: 15,
+  //                       ),
+  //                       Container(
+  //                         height: 30,
+  //                         width: 90,
+  //                         decoration: BoxDecoration(
+  //                           borderRadius: BorderRadius.circular(8.0),
+  //                         ),
+  //                         child: ElevatedButton(
+  //                           style: ElevatedButton.styleFrom(
+  //                             backgroundColor: blueColor,
+  //                             shape: RoundedRectangleBorder(
+  //                               borderRadius: BorderRadius.circular(8.0),
+  //                             ),
+  //                           ),
+  //                           onPressed: () async {
+  //                             _pickImage().then((_) {
+  //                               setState(
+  //                                   () {}); // Rebuild the widget after selecting the image
+  //                             });
+  //                           },
+  //                           child: Text(
+  //                             'Upload',
+  //                             style: TextStyle(color: Color(0xFFf7f8f9)),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         width: 8,
+  //                       ),
+  //                       if (_imageUrls.isNotEmpty ||
+  //                           widget.properties.rentalImage != '')
+  //                         Container(
+  //                           height: 30,
+  //                           width: 100,
+  //                           decoration: BoxDecoration(
+  //                             borderRadius: BorderRadius.circular(8.0),
+  //                           ),
+  //                           child: ElevatedButton(
+  //                             style: ElevatedButton.styleFrom(
+  //                               backgroundColor: blueColor,
+  //                               shape: RoundedRectangleBorder(
+  //                                 borderRadius: BorderRadius.circular(8.0),
+  //                               ),
+  //                             ),
+  //                             onPressed: () async {
+  //                               _removeImage();
+  //                             },
+  //                             child: Text(
+  //                               'Delete',
+  //                               style: TextStyle(color: Color(0xFFf7f8f9)),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //           const SizedBox(
+  //             height: 20,
+  //           ),
+  //           Row(
+  //             children: [
+  //               if (MediaQuery.of(context).size.width > 500)
+  //                 SizedBox(
+  //                   width: 6,
+  //                 ),
+  //               if (MediaQuery.of(context).size.width < 500)
+  //                 SizedBox(
+  //                   width: 10,
+  //                 ),
+  //               Text(
+  //                 "Rental Owners",
+  //                 style: TextStyle(
+  //                     color: blueColor,
+  //                     fontSize:
+  //                         MediaQuery.of(context).size.width < 500 ? 16 : 20,
+  //                     fontWeight: FontWeight.bold),
+  //               ),
+  //             ],
+  //           ),
+  //           if (MediaQuery.of(context).size.width > 500) SizedBox(height: 10),
+  //           if (MediaQuery.of(context).size.width > 500) SizedBox(height: 5),
+  //           if (MediaQuery.of(context).size.width < 500)
+  //             Padding(
+  //               padding: const EdgeInsets.all(5.0),
+  //               child: FutureBuilder<List<Rentals>>(
+  //                 future: futurerentalowners,
+  //                 builder: (context, snapshot) {
+  //                   if (snapshot.connectionState == ConnectionState.waiting) {
+  //                     return Center(
+  //                         child: SpinKitFadingCircle(
+  //                       color: Colors.black,
+  //                       size: 40.0,
+  //                     ));
+  //                   } else if (snapshot.hasError) {
+  //                     return Center(child: Text('Error: ${snapshot.error}'));
+  //                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+  //                     return Container(
+  //                       height: MediaQuery.of(context).size.height * .5,
+  //                       child: Center(
+  //                         child: Column(
+  //                           mainAxisAlignment: MainAxisAlignment.center,
+  //                           crossAxisAlignment: CrossAxisAlignment.center,
+  //                           children: [
+  //                             Image.asset(
+  //                               "assets/images/no_data.jpg",
+  //                               height: 200,
+  //                               width: 200,
+  //                             ),
+  //                             SizedBox(
+  //                               height: 10,
+  //                             ),
+  //                             Text(
+  //                               "No Data Available",
+  //                               style: TextStyle(
+  //                                   fontWeight: FontWeight.bold,
+  //                                   color: blueColor,
+  //                                   fontSize: 16),
+  //                             )
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     );
+  //                   } else {
+  //                     var data = snapshot.data!;
+  //                     if (searchValuerent == null || searchValuerent!.isEmpty) {
+  //                       data = snapshot.data!;
+  //                     } else if (searchValuerent == "All") {
+  //                       data = snapshot.data!;
+  //                     } else if (searchValuerent!.isNotEmpty) {
+  //                       data = snapshot.data!
+  //                           .where((rentals) => rentals
+  //                               .rentalOwnerData!.rentalOwnerName!
+  //                               .toLowerCase()
+  //                               .contains(searchValuerent!.toLowerCase()))
+  //                           .toList();
+  //                     } else {
+  //                       data = snapshot.data!
+  //                           .where((rentals) =>
+  //                               rentals
+  //                                   .rentalOwnerData!.rentalOwnerCompanyName! ==
+  //                               searchValuerent)
+  //                           .toList();
+  //                     }
+  //                     data = data
+  //                         .where(
+  //                             (e) => e.rentalId == widget.properties.rentalId)
+  //                         .toList();
+  //                     final totalPages = (data.length / itemsPerPage).ceil();
+  //                     final currentPageData = data
+  //                         .skip(currentPage * itemsPerPage)
+  //                         .take(itemsPerPage)
+  //                         .toList();
+  //                     print("currentpage data ${currentPageData.length}");
+  //                     return SingleChildScrollView(
+  //                       child: Column(
+  //                         children: [
+  //                           SizedBox(height: 5),
+  //                           _buildHeadersrent(),
+  //                           SizedBox(height: 20),
+  //                           Container(
+  //                             decoration: BoxDecoration(
+  //                                 border: Border.all(
+  //                                     color:
+  //                                         Color.fromRGBO(152, 162, 179, .5))),
+  //                             // decoration: BoxDecoration(
+  //                             //     border: Border.all(color: blueColor)),
+  //                             child: Column(
+  //                               children: currentPageData
+  //                                   .asMap()
+  //                                   .entries
+  //                                   .map((entry) {
+  //                                 int index = entry.key;
+  //                                 bool isExpanded = expandedIndex == index;
+  //                                 Rentals rentals = entry.value;
+  //                                 //return CustomExpansionTile(data: Propertytype, index: index);
+  //                                 return Container(
+  //                                   decoration: BoxDecoration(
+  //                                     color: index % 2 != 0
+  //                                         ? Colors.white
+  //                                         : blueColor.withOpacity(0.09),
+  //                                     border: Border.all(
+  //                                         color: Color.fromRGBO(
+  //                                             152, 162, 179, .5)),
+  //                                   ),
+  //                                   // decoration: BoxDecoration(
+  //                                   //   border: Border.all(color: blueColor),
+  //                                   // ),
+  //                                   child: Column(
+  //                                     children: <Widget>[
+  //                                       ListTile(
+  //                                         contentPadding: EdgeInsets.zero,
+  //                                         title: Padding(
+  //                                           padding: const EdgeInsets.all(2.0),
+  //                                           child: Row(
+  //                                             mainAxisAlignment:
+  //                                                 MainAxisAlignment.start,
+  //                                             crossAxisAlignment:
+  //                                                 CrossAxisAlignment.center,
+  //                                             children: <Widget>[
+  //                                               InkWell(
+  //                                                 onTap: () {
+  //                                                   // setState(() {
+  //                                                   //    isExpanded = !isExpanded;
+  //                                                   // //  expandedIndex = !expandedIndex;
+  //                                                   //
+  //                                                   // });
+  //                                                   // setState(() {
+  //                                                   //   if (isExpanded) {
+  //                                                   //     expandedIndex = null;
+  //                                                   //     isExpanded = !isExpanded;
+  //                                                   //   } else {
+  //                                                   //     expandedIndex = index;
+  //                                                   //   }
+  //                                                   // });
+  //                                                   setState(() {
+  //                                                     if (expandedIndex ==
+  //                                                         index) {
+  //                                                       expandedIndex = null;
+  //                                                     } else {
+  //                                                       expandedIndex = index;
+  //                                                     }
+  //                                                   });
+  //                                                 },
+  //                                                 child: Container(
+  //                                                   margin: EdgeInsets.only(
+  //                                                       left: 5, right: 5),
+  //                                                   padding: !isExpanded
+  //                                                       ? EdgeInsets.only(
+  //                                                           bottom: 10)
+  //                                                       : EdgeInsets.only(
+  //                                                           top: 10),
+  //                                                   child: FaIcon(
+  //                                                     isExpanded
+  //                                                         ? FontAwesomeIcons
+  //                                                             .sortUp
+  //                                                         : FontAwesomeIcons
+  //                                                             .sortDown,
+  //                                                     size: 20,
+  //                                                     color: blueColor,
+  //                                                   ),
+  //                                                 ),
+  //                                               ),
+  //                                               Expanded(
+  //                                                 child: InkWell(
+  //                                                   onTap: () {
+  //                                                     setState(() {
+  //                                                       if (expandedIndex ==
+  //                                                           index) {
+  //                                                         expandedIndex = null;
+  //                                                       } else {
+  //                                                         expandedIndex = index;
+  //                                                       }
+  //                                                     });
+  //                                                   },
+  //                                                   child: Text(
+  //                                                     '${(rentals.rentalOwnerData?.rentalOwnerName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerName} ',
+  //                                                     style: TextStyle(
+  //                                                       color: blueColor,
+  //                                                       fontWeight:
+  //                                                           FontWeight.bold,
+  //                                                       fontSize: 13,
+  //                                                     ),
+  //                                                   ),
+  //                                                 ),
+  //                                               ),
+  //                                               SizedBox(
+  //                                                   width:
+  //                                                       MediaQuery.of(context)
+  //                                                               .size
+  //                                                               .width *
+  //                                                           .08),
+  //                                               Expanded(
+  //                                                 child: Text(
+  //                                                   '${(rentals.rentalOwnerData?.rentalOwnerCompanyName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerCompanyName}',
+  //                                                   style: TextStyle(
+  //                                                     color: blueColor,
+  //                                                     fontWeight:
+  //                                                         FontWeight.bold,
+  //                                                     fontSize: 12,
+  //                                                   ),
+  //                                                 ),
+  //                                               ),
+  //                                               SizedBox(
+  //                                                   width:
+  //                                                       MediaQuery.of(context)
+  //                                                               .size
+  //                                                               .width *
+  //                                                           .08),
+  //                                               Expanded(
+  //                                                 child: Text(
+  //                                                   formatPhoneNumber(rentals
+  //                                                           .rentalOwnerData
+  //                                                           ?.rentalOwnerPhoneNumber ??
+  //                                                       "N/A"),
+  //                                                   // '${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
+  //                                                   style: TextStyle(
+  //                                                     color: blueColor,
+  //                                                     fontWeight:
+  //                                                         FontWeight.bold,
+  //                                                     fontSize: 12,
+  //                                                   ),
+  //                                                 ),
+  //                                               ),
+  //                                               SizedBox(
+  //                                                   width:
+  //                                                       MediaQuery.of(context)
+  //                                                               .size
+  //                                                               .width *
+  //                                                           .02),
+  //                                             ],
+  //                                           ),
+  //                                         ),
+  //                                       ),
+  //                                       if (isExpanded)
+  //                                         Container(
+  //                                           padding: EdgeInsets.symmetric(
+  //                                               horizontal: 8.0),
+  //                                           margin: EdgeInsets.only(bottom: 20),
+  //                                           child: SingleChildScrollView(
+  //                                             child: Column(
+  //                                               children: [
+  //                                                 Row(
+  //                                                   mainAxisAlignment:
+  //                                                       MainAxisAlignment.start,
+  //                                                   children: [
+  //                                                     FaIcon(
+  //                                                       isExpanded
+  //                                                           ? FontAwesomeIcons
+  //                                                               .sortUp
+  //                                                           : FontAwesomeIcons
+  //                                                               .sortDown,
+  //                                                       size: 50,
+  //                                                       color:
+  //                                                           Colors.transparent,
+  //                                                     ),
+  //                                                     Expanded(
+  //                                                       child: Column(
+  //                                                         crossAxisAlignment:
+  //                                                             CrossAxisAlignment
+  //                                                                 .start,
+  //                                                         children: <Widget>[
+  //                                                           SizedBox(
+  //                                                             height: MediaQuery.of(
+  //                                                                         context)
+  //                                                                     .size
+  //                                                                     .height *
+  //                                                                 .01,
+  //                                                           ),
+  //                                                           Text.rich(
+  //                                                             TextSpan(
+  //                                                               children: [
+  //                                                                 TextSpan(
+  //                                                                   text:
+  //                                                                       'Email : ',
+  //                                                                   style: TextStyle(
+  //                                                                       fontWeight:
+  //                                                                           FontWeight
+  //                                                                               .bold,
+  //                                                                       color:
+  //                                                                           blueColor), // Bold and black
+  //                                                                 ),
+  //                                                                 TextSpan(
+  //                                                                   text:
+  //                                                                       '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
+  //                                                                   style: TextStyle(
+  //                                                                       fontWeight:
+  //                                                                           FontWeight
+  //                                                                               .w700,
+  //                                                                       color: Colors
+  //                                                                           .grey), // Light and grey
+  //                                                                 ),
+  //                                                               ],
+  //                                                             ),
+  //                                                           ),
+  //                                                           SizedBox(
+  //                                                             height: MediaQuery.of(
+  //                                                                         context)
+  //                                                                     .size
+  //                                                                     .height *
+  //                                                                 .01,
+  //                                                           ),
+  //                                                           Text.rich(
+  //                                                             TextSpan(
+  //                                                               children: [
+  //                                                                 TextSpan(
+  //                                                                   text:
+  //                                                                       'Home Number: ',
+  //                                                                   style: TextStyle(
+  //                                                                       fontWeight:
+  //                                                                           FontWeight
+  //                                                                               .bold,
+  //                                                                       color:
+  //                                                                           blueColor), // Bold and black
+  //                                                                 ),
+  //                                                                 TextSpan(
+  //                                                                   text: formatPhoneNumber(rentals
+  //                                                                           .rentalOwnerData
+  //                                                                           ?.rentalOwnerHomeNumber ??
+  //                                                                       "N/A"),
+  //                                                                   // '${(rentals.rentalOwnerData?.rentalOwnerHomeNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
+  //                                                                   style: TextStyle(
+  //                                                                       fontWeight:
+  //                                                                           FontWeight
+  //                                                                               .w700,
+  //                                                                       color: Colors
+  //                                                                           .grey), // Light and grey
+  //                                                                 ),
+  //                                                               ],
+  //                                                             ),
+  //                                                           ),
+  //                                                           SizedBox(
+  //                                                             height: MediaQuery.of(
+  //                                                                         context)
+  //                                                                     .size
+  //                                                                     .height *
+  //                                                                 .01,
+  //                                                           ),
+  //                                                           Text.rich(
+  //                                                             TextSpan(
+  //                                                               children: [
+  //                                                                 TextSpan(
+  //                                                                   text:
+  //                                                                       'Business Number: ',
+  //                                                                   style: TextStyle(
+  //                                                                       fontWeight:
+  //                                                                           FontWeight
+  //                                                                               .bold,
+  //                                                                       color:
+  //                                                                           blueColor), // Bold and black
+  //                                                                 ),
+  //                                                                 TextSpan(
+  //                                                                   text: formatPhoneNumber(rentals
+  //                                                                           .rentalOwnerData
+  //                                                                           ?.rentalOwnerBuisinessNumber ??
+  //                                                                       "N/A"),
+  //                                                                   // '${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
+  //                                                                   style: TextStyle(
+  //                                                                       fontWeight:
+  //                                                                           FontWeight
+  //                                                                               .w700,
+  //                                                                       color: Colors
+  //                                                                           .grey), // Light and grey
+  //                                                                 ),
+  //                                                               ],
+  //                                                             ),
+  //                                                           ),
+  //                                                         ],
+  //                                                       ),
+  //                                                     ),
+  //                                                   ],
+  //                                                 ),
+  //                                               ],
+  //                                             ),
+  //                                           ),
+  //                                         ),
+  //                                       //SizedBox(height: 13,),
+  //                                     ],
+  //                                   ),
+  //                                 );
+  //                               }).toList(),
+  //                             ),
+  //                           ),
+  //                           SizedBox(height: 20),
+  //                           Row(
+  //                             mainAxisAlignment: MainAxisAlignment.end,
+  //                             children: [
+  //                               Row(
+  //                                 children: [
+  //                                   // Text('Rows per page:'),
+  //                                   SizedBox(width: 10),
+  //                                   Material(
+  //                                     elevation: 3,
+  //                                     child: Container(
+  //                                       height: 40,
+  //                                       padding: EdgeInsets.symmetric(
+  //                                           horizontal: 12.0),
+  //                                       decoration: BoxDecoration(
+  //                                         border:
+  //                                             Border.all(color: Colors.grey),
+  //                                       ),
+  //                                       child: DropdownButtonHideUnderline(
+  //                                         child: DropdownButton<int>(
+  //                                           value: itemsPerPage,
+  //                                           items: itemsPerPageOptions
+  //                                               .map((int value) {
+  //                                             return DropdownMenuItem<int>(
+  //                                               value: value,
+  //                                               child: Text(value.toString()),
+  //                                             );
+  //                                           }).toList(),
+  //                                           onChanged: (newValue) {
+  //                                             setState(() {
+  //                                               itemsPerPage = newValue!;
+  //                                               currentPage =
+  //                                                   0; // Reset to first page when items per page change
+  //                                             });
+  //                                           },
+  //                                         ),
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                               Row(
+  //                                 children: [
+  //                                   IconButton(
+  //                                     icon: FaIcon(
+  //                                       FontAwesomeIcons.circleChevronLeft,
+  //                                       color: currentPage == 0
+  //                                           ? Colors.grey
+  //                                           : blueColor,
+  //                                     ),
+  //                                     onPressed: currentPage == 0
+  //                                         ? null
+  //                                         : () {
+  //                                             setState(() {
+  //                                               currentPage--;
+  //                                             });
+  //                                           },
+  //                                   ),
+  //                                   // IconButton(
+  //                                   //   icon: Icon(Icons.arrow_back),
+  //                                   //   onPressed: currentPage > 0
+  //                                   //       ? () {
+  //                                   //     setState(() {
+  //                                   //       currentPage--;
+  //                                   //     });
+  //                                   //   }
+  //                                   //       : null,
+  //                                   // ),
+  //                                   Text(
+  //                                       'Page ${currentPage + 1} of $totalPages'),
+  //                                   // IconButton(
+  //                                   //   icon: Icon(Icons.arrow_forward),
+  //                                   //   onPressed: currentPage < totalPages - 1
+  //                                   //       ? () {
+  //                                   //     setState(() {
+  //                                   //       currentPage++;
+  //                                   //     });
+  //                                   //   }
+  //                                   //       : null,
+  //                                   // ),
+  //                                   IconButton(
+  //                                     icon: FaIcon(
+  //                                       FontAwesomeIcons.circleChevronRight,
+  //                                       color: currentPage < totalPages - 1
+  //                                           ? blueColor
+  //                                           : Colors.grey,
+  //                                     ),
+  //                                     onPressed: currentPage < totalPages - 1
+  //                                         ? () {
+  //                                             setState(() {
+  //                                               currentPage++;
+  //                                             });
+  //                                           }
+  //                                         : null,
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     );
+  //                   }
+  //                 },
+  //               ),
+  //             ),
+  //           if (MediaQuery.of(context).size.width > 500)
+  //             FutureBuilder<List<Rentals>>(
+  //               future: futurerentalowners,
+  //               builder: (context, snapshot) {
+  //                 if (snapshot.connectionState == ConnectionState.waiting) {
+  //                   return Center(
+  //                       child: SpinKitFadingCircle(
+  //                     color: Colors.black,
+  //                     size: 40.0,
+  //                   ));
+  //                 } else if (snapshot.hasError) {
+  //                   return Center(child: Text('Error: ${snapshot.error}'));
+  //                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+  //                   return Container(
+  //                     height: MediaQuery.of(context).size.height * .5,
+  //                     child: Center(
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.center,
+  //                         crossAxisAlignment: CrossAxisAlignment.center,
+  //                         children: [
+  //                           Image.asset(
+  //                             "assets/images/no_data.jpg",
+  //                             height: 200,
+  //                             width: 200,
+  //                           ),
+  //                           SizedBox(
+  //                             height: 10,
+  //                           ),
+  //                           Text(
+  //                             "No Data Available",
+  //                             style: TextStyle(
+  //                                 fontWeight: FontWeight.bold,
+  //                                 color: blueColor,
+  //                                 fontSize: 16),
+  //                           )
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   );
+  //                 } else {
+  //                   List<Rentals>? filteredData = [];
+  //                   _tableDatarent = snapshot.data!;
+  //                   if (selectedRolerent == null && searchValuerent == "") {
+  //                     filteredData = snapshot.data;
+  //                   } else if (selectedRolerent == "All") {
+  //                     filteredData = snapshot.data;
+  //                   } else if (searchValuerent.isNotEmpty) {
+  //                     filteredData = snapshot.data!
+  //                         .where((staff) =>
+  //                             staff.rentalOwnerData!.rentalOwnerName!
+  //                                 .toLowerCase()
+  //                                 .contains(searchValuerent.toLowerCase()) ||
+  //                             staff.rentalOwnerData!.rentalOwnerPhoneNumber!
+  //                                 .toLowerCase()
+  //                                 .contains(searchValuerent.toLowerCase()))
+  //                         .toList();
+  //                   }
+  //
+  //                   _tableDatarent = filteredData!;
+  //                   totalrecordsrent = _tableDatarent.length;
+  //                   return Padding(
+  //                     padding: const EdgeInsets.symmetric(horizontal: 5),
+  //                     child: Column(
+  //                       children: [
+  //                         SingleChildScrollView(
+  //                           scrollDirection: Axis.horizontal,
+  //                           child: Container(
+  //                             // width: MediaQuery.of(context).size.width * .91,
+  //                             child: Table(
+  //                               defaultColumnWidth: IntrinsicColumnWidth(),
+  //                               children: [
+  //                                 TableRow(
+  //                                   decoration:
+  //                                       BoxDecoration(border: Border.all()),
+  //                                   children: [
+  //                                     _buildHeaderrent(
+  //                                         'Contact Name',
+  //                                         0,
+  //                                         (rental) => rental.rentalOwnerData!
+  //                                             .rentalOwnerFirstName!),
+  //                                     _buildHeaderrent(
+  //                                         'Company Name',
+  //                                         1,
+  //                                         (rental) => rental.rentalOwnerData!
+  //                                             .rentalOwnerCompanyName!),
+  //                                     _buildHeaderrent(
+  //                                         'Email',
+  //                                         2,
+  //                                         (rental) => rental.rentalOwnerData!
+  //                                             .rentalOwnerPrimaryEmail!),
+  //                                     _buildHeaderrent(
+  //                                         'Phone Number',
+  //                                         3,
+  //                                         (rental) => rental.rentalOwnerData!
+  //                                             .rentalOwnerPhoneNumber!),
+  //                                     _buildHeaderrent(
+  //                                         'Home Number',
+  //                                         4,
+  //                                         (rental) => rental.rentalOwnerData!
+  //                                             .rentalOwnerHomeNumber!),
+  //                                     _buildHeaderrent(
+  //                                         'Business Number',
+  //                                         5,
+  //                                         (rental) => rental.rentalOwnerData!
+  //                                             .rentalOwnerBuisinessNumber!),
+  //                                   ],
+  //                                 ),
+  //                                 TableRow(
+  //                                   decoration: BoxDecoration(
+  //                                     border: Border.symmetric(
+  //                                         horizontal: BorderSide.none),
+  //                                   ),
+  //                                   children: List.generate(
+  //                                       6,
+  //                                       (index) => TableCell(
+  //                                           child: Container(height: 20))),
+  //                                 ),
+  //                                 for (var i = 0;
+  //                                     i < _pagedDatarent.length;
+  //                                     i++)
+  //                                   TableRow(
+  //                                     decoration: BoxDecoration(
+  //                                       border: Border(
+  //                                         left: BorderSide(
+  //                                             color: Color.fromRGBO(
+  //                                                 21, 43, 81, 1)),
+  //                                         right: BorderSide(
+  //                                             color: Color.fromRGBO(
+  //                                                 21, 43, 81, 1)),
+  //                                         top: BorderSide(
+  //                                             color: Color.fromRGBO(
+  //                                                 21, 43, 81, 1)),
+  //                                         bottom: i == _pagedDatarent.length - 1
+  //                                             ? BorderSide(
+  //                                                 color: Color.fromRGBO(
+  //                                                     21, 43, 81, 1))
+  //                                             : BorderSide.none,
+  //                                       ),
+  //                                     ),
+  //                                     children: [
+  //                                       _buildDataCellrent(
+  //                                           '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerName!}'),
+  //                                       // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
+  //                                       _buildDataCellrent(
+  //                                         _pagedDatarent[i]
+  //                                             .rentalOwnerData!
+  //                                             .rentalOwnerCompanyName!,
+  //                                       ),
+  //                                       _buildDataCellrent(_pagedDatarent[i]
+  //                                           .rentalOwnerData!
+  //                                           .rentalOwnerPrimaryEmail!),
+  //                                       _buildDataCellrent(_pagedDatarent[i]
+  //                                           .rentalOwnerData!
+  //                                           .rentalOwnerPhoneNumber!),
+  //                                       _buildDataCellrent(_pagedDatarent[i]
+  //                                           .rentalOwnerData!
+  //                                           .rentalOwnerHomeNumber!),
+  //                                       _buildDataCellrent(_pagedDatarent[i]
+  //                                           .rentalOwnerData!
+  //                                           .rentalOwnerBuisinessNumber!),
+  //                                     ],
+  //                                   ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         if (_tableDatarent.isEmpty)
+  //                           Text("No Search Records Found"),
+  //                         SizedBox(height: 25),
+  //                         _buildPaginationControlsrent(),
+  //                       ],
+  //                     ),
+  //                   );
+  //                 }
+  //               },
+  //             ),
+  //           const SizedBox(
+  //             height: 10,
+  //           ),
+  //           Row(
+  //             children: [
+  //               if (MediaQuery.of(context).size.width > 500)
+  //                 SizedBox(
+  //                   width: 6,
+  //                 ),
+  //               if (MediaQuery.of(context).size.width < 500)
+  //                 SizedBox(
+  //                   width: 5,
+  //                 ),
+  //               Text(
+  //                 "Staff Details",
+  //                 style: TextStyle(
+  //                     color: blueColor,
+  //                     fontSize:
+  //                         MediaQuery.of(context).size.width < 500 ? 17 : 20,
+  //                     fontWeight: FontWeight.bold),
+  //               ),
+  //             ],
+  //           ),
+  //           const SizedBox(
+  //             height: 10,
+  //           ),
+  //           Padding(
+  //             padding: const EdgeInsets.only(left: 5, right: 5),
+  //             child: Table(
+  //               border: TableBorder.all(color: blueColor),
+  //               children: [
+  //                 TableRow(
+  //                     decoration: BoxDecoration(
+  //                       color: blueColor,
+  //                       //  borderRadius: BorderRadius.circular(10),
+  //                     ),
+  //                     children: [
+  //                       TableCell(
+  //                         child: Padding(
+  //                           padding: EdgeInsets.all(8.0),
+  //                           child: Text(
+  //                             'Staff Member',
+  //                             style: TextStyle(
+  //                                 color: Colors.white,
+  //                                 fontSize:
+  //                                     MediaQuery.of(context).size.width < 500
+  //                                         ? 16
+  //                                         : 19,
+  //                                 fontWeight: FontWeight.bold),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ]),
+  //                 TableRow(children: [
+  //                   TableCell(
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.all(8.0),
+  //                       child: Text(
+  //                         widget.properties.staffMemberData?.staffmemberName !=
+  //                                     null &&
+  //                                 widget.properties.staffMemberData!
+  //                                     .staffmemberName!.isNotEmpty
+  //                             ? '${widget.properties.staffMemberData!.staffmemberName}'
+  //                             : 'N/A',
+  //                         style: TextStyle(
+  //                           fontSize: MediaQuery.of(context).size.width < 500
+  //                               ? 16
+  //                               : 19,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ])
+  //               ],
+  //             ),
+  //           ),
+  //           const SizedBox(
+  //             height: 50,
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Tenants(BuildContext context) {
     return LayoutBuilder(

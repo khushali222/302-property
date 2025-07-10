@@ -170,7 +170,6 @@ class _notificationsState extends State<notifications> {
             context,
             MaterialPageRoute(
               builder: (context) => Summery_page(
-                showUnitTab: isMultiUnit,
                 properties: Rentals(rentalId: rentalId),
                 notification_redirect: true,
               ),
