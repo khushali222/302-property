@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../Model/properties_Lease_model.dart';
-import '../constant/constant.dart';
-import '../screens/Leasing/RentalRoll/SummeryPageLease.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/SummeryPageLease.dart';
+import '../../Model/properties_Lease_model.dart';
+import '../../constant/constant.dart';
 
-class CustomLeaseTable extends StatefulWidget {
+
+class CustomStaffLeaseTable extends StatefulWidget {
   final List<Properties_lease_model> leaseData;
   final Function(int) onSort;
   final Color blueColor;
 
-  const CustomLeaseTable({
+  const CustomStaffLeaseTable({
     Key? key,
     required this.leaseData,
     required this.onSort,
@@ -17,10 +18,10 @@ class CustomLeaseTable extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CustomLeaseTable> createState() => _CustomLeaseTableState();
+  State<CustomStaffLeaseTable> createState() => _CustomStaffLeaseTableState();
 }
 
-class _CustomLeaseTableState extends State<CustomLeaseTable> {
+class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
   int? expandedIndex;
   bool sorting1 = false;
   bool sorting2 = false;
@@ -44,7 +45,9 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            SizedBox(width: 4,),
+            SizedBox(
+              width: 4,
+            ),
             Container(
               child: Icon(
                 Icons.expand_less,
@@ -160,7 +163,7 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:  EdgeInsets.all(10.0),
+      padding: EdgeInsets.all(10.0),
       child: Column(
         children: [
           _buildHeaders(),
@@ -179,11 +182,12 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
                     color: index % 2 != 0
                         ? Colors.white
                         : widget.blueColor.withOpacity(0.09),
-                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                    border:
+                        Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                   ),
                   child: Column(
                     children: <Widget>[
-                       ListTile(
+                      ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Padding(
                           padding: const EdgeInsets.all(2.0),
@@ -231,7 +235,8 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
                                 ),
                               ),
                               SizedBox(
-                                  width: MediaQuery.of(context).size.width * .099),
+                                  width:
+                                      MediaQuery.of(context).size.width * .099),
                               Expanded(
                                 child: Text(
                                   lease.endDate ?? 'N/A',
@@ -243,7 +248,8 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
                                 ),
                               ),
                               SizedBox(
-                                  width: MediaQuery.of(context).size.width * .09),
+                                  width:
+                                      MediaQuery.of(context).size.width * .09),
                               Expanded(
                                 child: Text(
                                   lease.rentCycle ?? 'N/A',
@@ -255,12 +261,14 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
                                 ),
                               ),
                               SizedBox(
-                                  width: MediaQuery.of(context).size.width * .02),
+                                  width:
+                                      MediaQuery.of(context).size.width * .02),
                             ],
                           ),
                         ),
                       ),
-                      if (isExpanded)Container(
+                      if (isExpanded)
+                        Container(
                           padding: EdgeInsets.symmetric(horizontal: 8.0),
                           margin: EdgeInsets.only(bottom: 5),
                           child: SingleChildScrollView(
@@ -298,7 +306,7 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                  "${lease.remainingDays ?? 0} days",
+                                                      "${lease.remainingDays ?? 0} days",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.grey,
@@ -323,7 +331,8 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text: "\$${lease.totalBalance ?? 0.0}",
+                                                  text:
+                                                      "\$${lease.totalBalance ?? 0.0}",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.grey,
@@ -367,7 +376,6 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
                                   height: 20,
                                 ),
                                 Row(
-                                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: GestureDetector(
@@ -382,35 +390,32 @@ class _CustomLeaseTableState extends State<CustomLeaseTable> {
                                         },
                                         child: Container(
                                           height: 40,
-                                          decoration: BoxDecoration( border: Border.all(color: blueColor, width: 1.5),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: blueColor, width: 1.5),
                                             borderRadius:
-                                            BorderRadius.circular(
-                                                8),
-
+                                                BorderRadius.circular(8),
                                           ),
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
-                                              SizedBox(
-                                                width: 5,
-                                              ),
+                                              SizedBox(width: 5),
                                               Image.asset(
                                                 'assets/icons/view.png',
                                                 color: blueColor,
+                                                height: 20,
                                               ),
-                                              // FaIcon(
-                                              //   FontAwesomeIcons.trashCan,
-                                              //   size: 15,
-                                              //   color:blueColor,
-                                              // ),
-                                              SizedBox(
-                                                width: 8,
-                                              ),
+                                              SizedBox(width: 5),
                                               Text(
-                                                "View Summery",
-                                                style: TextStyle(fontSize: 11, color: blueColor, fontWeight: FontWeight.bold),
-                                              )
+                                                'View Details',
+                                                style: TextStyle(
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),

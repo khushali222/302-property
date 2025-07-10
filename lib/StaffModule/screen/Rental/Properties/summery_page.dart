@@ -25,7 +25,7 @@ import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder
 import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/unit.dart';
 import '../../../../Model/properties_Lease_model.dart';
-import '../../../../widgets/custom_lease_table.dart';
+import '../../../widgets/custom_staff_lease_table.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/rental_widget.dart';
 
@@ -2375,7 +2375,7 @@ class _Summery_pageState extends State<Summery_page>
                   return SingleChildScrollView(
                     child: Column(
                       children: [
-                        CustomLeaseTable(
+                        CustomStaffLeaseTable(
                           leaseData: currentPageData,
                           onSort: (columnIndex) {
                             setState(() {

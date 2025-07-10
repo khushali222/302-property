@@ -48,7 +48,7 @@ import 'moveout/repository.dart';
 import '../../Leasing/RentalRoll/NewAddLease.dart';
 import '../../Maintenance/Workorder/Add_workorder.dart';
 import '../../../widgets/custom_drawer.dart';
-import '../../../widgets/custom_lease_table.dart';
+import '../../../widgets/custom_admin_lease_table.dart';
 import '../../../widgets/custom_pagination.dart';
 
 class Summery_page extends StatefulWidget {
@@ -2170,7 +2170,7 @@ class _Summery_pageState extends State<Summery_page>
                   return SingleChildScrollView(
                     child: Column(
                       children: [
-                        CustomLeaseTable(
+                        CustomAdminLeaseTable(
                           leaseData: currentPageData,
                           onSort: (columnIndex) {
                             setState(() {
