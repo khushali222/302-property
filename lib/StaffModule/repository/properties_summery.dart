@@ -10,6 +10,7 @@ import 'package:three_zero_two_property/model/properties_summery.dart';
 
 import '../../../constant/constant.dart';
 import '../../../model/properties_workorders.dart';
+import '../../Model/Properties_revenue_model.dart';
 import '../../Model/properties_Lease_model.dart';
 import '../../model/unitsummery_propeties.dart';
 
@@ -393,7 +394,31 @@ class Properies_summery_Repo{
       //throw Exception('Failed to load data');
     }
   }
-
+  Future<List<Properties_Revenu_model>> fetchrRevenueDetails(String unitId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //String? id = prefs.getString("rentalid");
+    String? adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    print(id);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/leases/revenue/$adminid/$unitId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    print(" get summery lease details ${response.body}");
+    print("lease  api for calling ${'${Api_url}/api/leases/revenue/$adminid/$unitId'}");
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse.map((data) => Properties_Revenu_model.fromJson(data)).toList();
+    } else {
+      print('Failed to fetch lease revenue table properties: ${response.body}');
+      return [];
+      //throw Exception('Failed to load data');
+    }
+  }
   Future<List<propertiesworkData>> fetchWorkOrders(String rentalId) async {
     // Retrieve admin ID and token from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();

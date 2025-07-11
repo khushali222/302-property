@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../Model/Properties_revenue_model.dart';
 import '../Model/properties_Lease_model.dart';
 import '../constant/constant.dart';
 import '../screens/Leasing/RentalRoll/SummeryPageLease.dart';
 
-class CustomAdminLeaseTable extends StatefulWidget {
-  final List<Properties_lease_model> leaseData;
+class CustomAdminRevenueTable extends StatefulWidget {
+  final List<Properties_Revenu_model> revenueData;
   final Function(int) onSort;
   final Color blueColor;
 
-  const CustomAdminLeaseTable({
+  const CustomAdminRevenueTable({
     Key? key,
-    required this.leaseData,
+    required this.revenueData,
     required this.onSort,
     required this.blueColor,
   }) : super(key: key);
 
   @override
-  State<CustomAdminLeaseTable> createState() => _CustomAdminLeaseTableState();
+  State<CustomAdminRevenueTable> createState() =>
+      _CustomAdminRevenueTableState();
 }
 
-class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
+class _CustomAdminRevenueTableState extends State<CustomAdminRevenueTable> {
   int? expandedIndex;
   bool sorting1 = false;
   bool sorting2 = false;
@@ -33,9 +35,12 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+        color: widget.blueColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        ),
+      ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -74,13 +79,13 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Tenant\nNames",
+                        ? Text("Date",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold))
-                        : Text("Tenant\nNames",
+                            style: TextStyle(color: Colors.white, fontSize: 15))
+                        : Text("Date",
                             textAlign: TextAlign.center,
                             style:
-                                TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                                TextStyle(color: Colors.white, fontSize: 15)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -110,9 +115,9 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Lease End",
+                    Text("Tenant\nNames",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color:blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -142,9 +147,9 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Rent Cycle",
+                    Text("  Status",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
                   ],
                 ),
               ),
@@ -163,24 +168,23 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
       child: Column(
         children: [
           _buildHeaders(),
-          SizedBox(height: 10),
+          SizedBox(height: 20),
           Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+            ),
             child: Column(
-              children: widget.leaseData.asMap().entries.map((entry) {
+              children: widget.revenueData.asMap().entries.map((entry) {
                 int index = entry.key;
                 bool isExpanded = expandedIndex == index;
-                Properties_lease_model lease = entry.value;
+                Properties_Revenu_model lease = entry.value;
                 return Container(
-                  margin:
-                  EdgeInsets.symmetric(vertical: 6),
                   decoration: BoxDecoration(
                     color: index % 2 != 0
-                        ? Color(0xFFF4F8FF)
-                        : Colors.white,
-                    border: Border.all(
-                        color: Color(0xFFDBE0E5)),
-                    borderRadius:
-                    BorderRadius.circular(10),
+                        ? Colors.white
+                        : widget.blueColor.withOpacity(0.09),
+                    border:
+                        Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                   ),
                   child: Column(
                     children: <Widget>[
@@ -222,7 +226,7 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                                     });
                                   },
                                   child: Text(
-                                    lease.tenantNames ?? 'N/A',
+                                    lease.entry?.first.date ?? 'N/A',
                                     style: TextStyle(
                                       color: widget.blueColor,
                                       fontWeight: FontWeight.bold,
@@ -236,7 +240,7 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                                       MediaQuery.of(context).size.width * .099),
                               Expanded(
                                 child: Text(
-                                  lease.endDate ?? 'N/A',
+                                  "${lease.tenantData?.tenantFirstName ?? 'N/A'} ${lease.tenantData?.tenantLastName ?? 'N/A'}",
                                   style: TextStyle(
                                     color: widget.blueColor,
                                     fontWeight: FontWeight.bold,
@@ -249,7 +253,7 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                                       MediaQuery.of(context).size.width * .09),
                               Expanded(
                                 child: Text(
-                                  lease.rentCycle ?? 'N/A',
+                                  lease.response ?? 'N/A',
                                   style: TextStyle(
                                     color: widget.blueColor,
                                     fontWeight: FontWeight.bold,
@@ -295,15 +299,17 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                                             TextSpan(
                                               children: [
                                                 TextSpan(
-                                                  text: 'Remaining Days : ',
+                                                  text: 'Amount : ',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: widget.blueColor,
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text:
-                                                      "${lease.remainingDays ?? 0} days",
+                                                  text: lease.totalAmount !=
+                                                          null
+                                                      ? "\$${lease.formattedTotalAmount}"
+                                                      : 'N/A',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.grey,
@@ -321,7 +327,7 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                                             TextSpan(
                                               children: [
                                                 TextSpan(
-                                                  text: 'Current Balance : ',
+                                                  text: 'Payment Type : ',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: widget.blueColor,
@@ -329,7 +335,7 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                      "\$${lease.totalBalance ?? 0.0}",
+                                                      "${lease.paymentType ?? ""}",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.grey,
@@ -343,27 +349,6 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                                                       .size
                                                       .height *
                                                   .01),
-                                          Text.rich(
-                                            TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: 'Rent : ',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: widget.blueColor,
-                                                  ),
-                                                ),
-                                                TextSpan(
-                                                  text:
-                                                      "\$${lease.amount ?? 0.0}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
                                         ],
                                       ),
                                     ),
@@ -371,56 +356,6 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                                 ),
                                 SizedBox(
                                   height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          // Navigate to admin lease details
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SummeryPageLease(
-                                                        leaseId: lease.leaseId!,
-                                                        enddate: lease.endDate,
-                                                      )));
-                                        },
-                                        child: Container(
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: blueColor, width: 1.5),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              SizedBox(width: 5),
-                                              Image.asset(
-                                                'assets/icons/view.png',
-                                                color: blueColor,
-                                                height: 20,
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                'View Details',
-                                                style: TextStyle(
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
                                 ),
                               ],
                             ),

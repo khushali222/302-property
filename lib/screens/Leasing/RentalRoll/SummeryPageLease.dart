@@ -38,6 +38,7 @@ import '../Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../scheduled_charges/ScheduledCharge.dart';
 import 'Commnunication/communication.dart';
 import 'Document_Rental/Document_rental_table.dart';
+import 'Evict_tenant.dart';
 import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -1783,58 +1784,113 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
                                 ),
-                                Spacer(),
-                                Visibility(
-                                  visible:
-                                      leasesummery.data!.is_renewing ?? true,
+                               SizedBox(width: 10,),
+                                Expanded(
                                   child: GestureDetector(
                                     onTap: () {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => Renewlease(
-                                                    leaseId: widget.leaseId,
-                                                    lease: leasesummery,
-                                                    startdate: leasesummery
-                                                        .data!.startDate,
-                                                    enddate: leasesummery
-                                                        .data!.endDate,
-                                                    leasetype: leasesummery
-                                                        .data!.leaseType,
-                                                    rentamount: leasesummery
-                                                        .data!.amount
-                                                        .toString(),
-                                                  )));
+                                              builder: (context) => Evict_tenant(
+                                                leaseId: widget.leaseId,
+                                                lease: leasesummery,
+                                                startdate: leasesummery
+                                                    .data!.startDate,
+                                                enddate: leasesummery
+                                                    .data!.endDate,
+                                                leasetype: leasesummery
+                                                    .data!.leaseType,
+                                                rentamount: leasesummery
+                                                    .data!.amount
+                                                    .toString(),
+                                              )));
                                     },
                                     child: Container(
                                         height:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 35
-                                                : 45,
-                                        width:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 120
-                                                : 165,
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 35
+                                            : 45,
+                                        // width:
+                                        // MediaQuery.of(context).size.width <
+                                        //     500
+                                        //     ? 120
+                                        //     : 165,
                                         decoration: BoxDecoration(
                                             color: blueColor,
                                             borderRadius:
-                                                BorderRadius.circular(5.0)),
+                                            BorderRadius.circular(5.0)),
                                         child: Center(
                                           child: Text(
-                                            'Renew Lease',
+                                            'Evict Tenants',
                                             style: TextStyle(
                                                 fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        500
+                                                    .size
+                                                    .width <
+                                                    500
                                                     ? 14
                                                     : 18,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white),
                                           ),
                                         )),
+                                  ),
+                                ),
+                                SizedBox(width: 5,),
+                                Expanded(
+                                  child: Visibility(
+                                    visible:
+                                        leasesummery.data!.is_renewing ?? true,
+                                    child:
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Renewlease(
+                                                      leaseId: widget.leaseId,
+                                                      lease: leasesummery,
+                                                      startdate: leasesummery
+                                                          .data!.startDate,
+                                                      enddate: leasesummery
+                                                          .data!.endDate,
+                                                      leasetype: leasesummery
+                                                          .data!.leaseType,
+                                                      rentamount: leasesummery
+                                                          .data!.amount
+                                                          .toString(),
+                                                    )));
+                                      },
+                                      child: Container(
+                                          height:
+                                              MediaQuery.of(context).size.width <
+                                                      500
+                                                  ? 35
+                                                  : 45,
+                                          // width:
+                                          //     MediaQuery.of(context).size.width <
+                                          //             500
+                                          //         ? 120
+                                          //         : 165,
+                                          decoration: BoxDecoration(
+                                              color: blueColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0)),
+                                          child: Center(
+                                            child: Text(
+                                              'Renew Lease',
+                                              style: TextStyle(
+                                                  fontSize: MediaQuery.of(context)
+                                                              .size
+                                                              .width <
+                                                          500
+                                                      ? 14
+                                                      : 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          )),
+                                    ),
                                   ),
                                 ),
                               ],

@@ -345,7 +345,7 @@ class _RenewleaseState extends State<Renewlease> {
       print('lease ${renewlease}');
       String? id = prefs.getString("adminId");
       final response =
-          await http.post(Uri.parse('$Api_url/api/leases/renew_lease'),
+          await http.post(Uri.parse('$Api_url/api/tenant/evict-tenant'),
               headers: {
                 "authorization": "CRM $token",
                 "id": "CRM $id",

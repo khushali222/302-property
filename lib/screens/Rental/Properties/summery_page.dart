@@ -24,6 +24,7 @@ import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_ta
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
+import '../../../Model/Properties_revenue_model.dart';
 import '../../../Model/properties_Lease_model.dart';
 import '../../../Model/unit.dart';
 import '../../../StaffModule/screen/Leasing/RentalRoll/addcard/AddCard.dart';
@@ -41,6 +42,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../repository/unit_data.dart';
 
+import '../../../widgets/Properties_revenue_table.dart';
 import '../../Leasing/RentalRoll/addcard/CardModel.dart';
 import '../../Maintenance/Workorder/workorder_summery.dart';
 import 'moveout/Moveout_properties.dart';
@@ -68,6 +70,7 @@ class _Summery_pageState extends State<Summery_page>
   late Future<List<TenantData>> futurePropertysummery;
   late Future<Rentals> futureRentalDetails;
   late Future<List<Properties_lease_model>> futureLeaseDetails;
+  late Future<List<Properties_Revenu_model>> futureLeaseRevenueDetails;
   late Future<List<unit_properties>> futureUnitsummery;
   late Future<List<Rentals>> futurerentalowners;
   int _selectedIndex = 0;
@@ -149,6 +152,15 @@ class _Summery_pageState extends State<Summery_page>
         String unitId = units.first.unitId!;
         futureLeaseDetails =
             Properies_summery_Repo().fetchrLeaseDetails(unitId);
+        print("unit id with new $unitId");
+      }
+    });
+    futureUnitsummery.then((units) {
+      if (units.isNotEmpty) {
+        // Get the first unit's ID and fetch lease details
+        String unitId = units.first.unitId!;
+        futureLeaseRevenueDetails =
+            Properies_summery_Repo().fetchrRevenueDetails(unitId);
         print("unit id with new $unitId");
       }
     });
@@ -550,6 +562,7 @@ class _Summery_pageState extends State<Summery_page>
   bool ascending2 = false;
   bool ascending3 = false;
   bool isChecked = false;
+  bool isCheckedlease = false;
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -1736,7 +1749,6 @@ class _Summery_pageState extends State<Summery_page>
                     //   ],
                     // ),
                   ),*/
-
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     height: 50,
@@ -1750,7 +1762,6 @@ class _Summery_pageState extends State<Summery_page>
                         final bool isMultiUnit =
                             snapshot.data?.propertyTypeData?.isMultiunit ??
                                 false;
-
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1930,7 +1941,7 @@ class _Summery_pageState extends State<Summery_page>
                             //   child: GestureDetector(
                             //     onTap: () {
                             //       setState(() {
-                            //         _selectedIndex = isMultiUnit ? 4 : 3;
+                            //         _selectedIndex = isMultiUnit ? 5 : 4;
                             //       });
                             //     },
                             //     child: Container(
@@ -1939,19 +1950,19 @@ class _Summery_pageState extends State<Summery_page>
                             //       margin: EdgeInsets.symmetric(horizontal: 0),
                             //       decoration: BoxDecoration(
                             //         color:
-                            //             _selectedIndex == (isMultiUnit ? 4 : 3)
+                            //             _selectedIndex == (isMultiUnit ? 5 : 4)
                             //                 ? blueColor
                             //                 : Colors.grey.shade200,
                             //         borderRadius: BorderRadius.circular(3),
                             //       ),
                             //       child: Center(
                             //         child: Text(
-                            //           "Lease",
+                            //           "Revenue",
                             //           textAlign: TextAlign.center,
                             //           style: TextStyle(
                             //             fontWeight: FontWeight.w600,
                             //             color: _selectedIndex ==
-                            //                     (isMultiUnit ? 4 : 3)
+                            //                     (isMultiUnit ? 5 : 4)
                             //                 ? Colors.white
                             //                 : blueColor,
                             //             fontSize: 13,
@@ -2033,13 +2044,13 @@ class _Summery_pageState extends State<Summery_page>
                   width: MediaQuery.of(context).size.width < 500 ? 24 : 50,
                   height: MediaQuery.of(context).size.width < 500 ? 24 : 50,
                   child: Checkbox(
-                    value: isChecked,
+                    value: isCheckedlease,
                     onChanged: (value) {
                       setState(() {
-                        isChecked = value ?? false;
+                        isCheckedlease = value ?? false;
                       });
                     },
-                    activeColor: isChecked ? blueColor : Colors.black,
+                    activeColor: isCheckedlease ? blueColor : Colors.black,
                   ),
                 ),
                 SizedBox(
@@ -2119,7 +2130,7 @@ class _Summery_pageState extends State<Summery_page>
                     if (lease.endDate == "At Will" ||
                         lease.endDate == "---" ||
                         lease.endDate == "N/A") {
-                      return !isChecked; // Show only when displaying current/future leases
+                      return !isCheckedlease; // Show only when displaying current/future leases
                     }
 
                     // Try to parse the date with multiple formats
@@ -2147,10 +2158,10 @@ class _Summery_pageState extends State<Summery_page>
 
                     // If we couldn't parse the date with any format
                     if (endDate == null) {
-                      return !isChecked; // Show in current/future by default if date can't be parsed
+                      return !isCheckedlease; // Show in current/future by default if date can't be parsed
                     }
 
-                    if (isChecked) {
+                    if (isCheckedlease) {
                       // Show past leases when checked
                       return endDate.isBefore(currentDate);
                     } else {
@@ -2278,6 +2289,199 @@ class _Summery_pageState extends State<Summery_page>
       ),
     );
   }
+  Revenue_page() {
+    print("calling revenue page from my screen");
+    return Container(
+      child: Column(
+        children: [
+          // Padding(
+          //   padding: const EdgeInsets.all(16.0),
+          //   child: Row(
+          //     children: [
+          //       Text(
+          //         "Revenue ",
+          //         style: TextStyle(
+          //           fontSize: 14,
+          //           fontWeight: FontWeight.bold,
+          //           color: blueColor,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: FutureBuilder<List<Properties_Revenu_model>>(
+              future: futureLeaseRevenueDetails,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: SpinKitFadingCircle(color: Colors.black, size: 40),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height * .5,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset("assets/images/no_data.jpg",
+                              height: 200, width: 200),
+                           SizedBox(height: 10),
+                           Text(
+                            "No Lease Data Available",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                                fontSize: 16),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  var data = snapshot.data!;
+
+                  // Search Filter
+                  if (searchValuerent != null &&
+                      searchValuerent!.isNotEmpty &&
+                      searchValuerent != "All") {
+                    data = data
+                        .where((e) =>
+                    e != null &&
+                        e.response!
+                            .toLowerCase()
+                            .contains(searchValuerent!.toLowerCase()))
+                        .toList();
+                  }
+
+                  // // Rental ID filter
+                  // data = data
+                  //     .where((e) => e. == widget.properties.rentalId)
+                  //     .toList();
+
+
+                  // Pagination
+                  final totalPages = (data.length / itemsPerPage).ceil();
+                  final currentPageData = data
+                      .skip(currentPage * itemsPerPage)
+                      .take(itemsPerPage)
+                      .toList();
+                   print("check data of revenue ${data.first.paymentType}");
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 5),
+                        CustomAdminRevenueTable(
+                          revenueData: currentPageData,
+                          onSort: (columnIndex) {
+                            setState(() {
+                              switch (columnIndex) {
+                                case 1:
+                                  data.sort((a, b) => (a.response ?? '')
+                                      .compareTo(b.response ?? ''));
+                                  break;
+                                case 2:
+                                  data.sort((a, b) => (a.tenantData?.tenantFirstName ?? '')
+                                      .compareTo(b.tenantData?.tenantFirstName ?? ''));
+                                  break;
+                                case 3:
+                                  data.sort((a, b) => (a.paymentType ?? '')
+                                      .compareTo(b.paymentType ?? ''));
+                                  break;
+                              }
+                            });
+                          },
+                          blueColor: blueColor,
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(width: 10),
+                                Material(
+                                  elevation: 3,
+                                  child: Container(
+                                    height: 40,
+                                    padding:
+                                    EdgeInsets.symmetric(horizontal: 12.0),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<int>(
+                                        value: itemsPerPage,
+                                        items: itemsPerPageOptions
+                                            .map((int value) {
+                                          return DropdownMenuItem<int>(
+                                            value: value,
+                                            child: Text(value.toString()),
+                                          );
+                                        }).toList(),
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            itemsPerPage = newValue!;
+                                            currentPage = 0;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.circleChevronLeft,
+                                    color: currentPage == 0
+                                        ? Colors.grey
+                                        : blueColor,
+                                  ),
+                                  onPressed: currentPage == 0
+                                      ? null
+                                      : () {
+                                    setState(() {
+                                      currentPage--;
+                                    });
+                                  },
+                                ),
+                                Text('Page ${currentPage + 1} of $totalPages'),
+                                IconButton(
+                                  icon: FaIcon(
+                                    FontAwesomeIcons.circleChevronRight,
+                                    color: currentPage < totalPages - 1
+                                        ? blueColor
+                                        : Colors.grey,
+                                  ),
+                                  onPressed: currentPage < totalPages - 1
+                                      ? () {
+                                    setState(() {
+                                      currentPage++;
+                                    });
+                                  }
+                                      : null,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildTabContent(BuildContext context) {
     return FutureBuilder<Rentals>(
@@ -2319,6 +2523,16 @@ class _Summery_pageState extends State<Summery_page>
         } else if (_selectedIndex == 4 && isMultiUnit) {
           return Lease_page();
         }
+        // else if (_selectedIndex == 4) {
+        //   if (isMultiUnit) {
+        //     return Lease_page();
+        //   } else {
+        //     return Revenue_page();
+        //   }
+        // } else if (_selectedIndex == 5 && isMultiUnit) {
+        //   return Revenue_page();
+        // }
+
         return Container();
       },
     );

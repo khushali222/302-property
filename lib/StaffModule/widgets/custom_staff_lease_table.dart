@@ -34,12 +34,9 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: widget.blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -80,11 +77,11 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
                     width < 400
                         ? Text("Tenant\nNames",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 14))
+                            style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold))
                         : Text("Tenant\nNames",
                             textAlign: TextAlign.center,
                             style:
-                                TextStyle(color: Colors.white, fontSize: 14)),
+                                TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -116,7 +113,7 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
                   children: [
                     Text("Lease End",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                        style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -148,7 +145,7 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
                   children: [
                     Text("Rent Cycle",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                        style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -169,21 +166,22 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
           _buildHeaders(),
           SizedBox(height: 20),
           Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
-            ),
             child: Column(
               children: widget.leaseData.asMap().entries.map((entry) {
                 int index = entry.key;
                 bool isExpanded = expandedIndex == index;
                 Properties_lease_model lease = entry.value;
                 return Container(
+                  margin:
+                  EdgeInsets.symmetric(vertical: 6),
                   decoration: BoxDecoration(
                     color: index % 2 != 0
-                        ? Colors.white
-                        : widget.blueColor.withOpacity(0.09),
-                    border:
-                        Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                        ? Color(0xFFF4F8FF)
+                      : Colors.white,
+                    border: Border.all(
+                        color: Color(0xFFDBE0E5)),
+                    borderRadius:
+                    BorderRadius.circular(10),
                   ),
                   child: Column(
                     children: <Widget>[
