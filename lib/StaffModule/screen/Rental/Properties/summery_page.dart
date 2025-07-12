@@ -27,6 +27,7 @@ import 'package:three_zero_two_property/screens/Rental/Properties/unit.dart';
 import '../../../../Model/Properties_revenue_model.dart';
 import '../../../../Model/properties_Lease_model.dart';
 import '../../../../widgets/Properties_revenue_table.dart';
+import '../../../widgets/Properties_revenue_table.dart';
 import '../../../widgets/custom_staff_lease_table.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/rental_widget.dart';
@@ -2103,41 +2104,41 @@ class _Summery_pageState extends State<Summery_page>
                                 ),
                               ),
                             ),
-                            // Expanded(
-                            //   child: GestureDetector(
-                            //     onTap: () {
-                            //       setState(() {
-                            //         _selectedIndex = isMultiUnit ? 5 : 4;
-                            //       });
-                            //     },
-                            //     child: Container(
-                            //       padding: EdgeInsets.symmetric(
-                            //           vertical: 0, horizontal: 5),
-                            //       margin: EdgeInsets.symmetric(horizontal: 0),
-                            //       decoration: BoxDecoration(
-                            //         color:
-                            //         _selectedIndex == (isMultiUnit ? 5 : 4)
-                            //             ? blueColor
-                            //             : Colors.grey.shade200,
-                            //         borderRadius: BorderRadius.circular(3),
-                            //       ),
-                            //       child: Center(
-                            //         child: Text(
-                            //           "Revenue",
-                            //           textAlign: TextAlign.center,
-                            //           style: TextStyle(
-                            //             fontWeight: FontWeight.w600,
-                            //             color: _selectedIndex ==
-                            //                 (isMultiUnit ? 5 : 4)
-                            //                 ? Colors.white
-                            //                 : blueColor,
-                            //             fontSize: 13,
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedIndex = isMultiUnit ? 5 : 4;
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 5),
+                                  margin: EdgeInsets.symmetric(horizontal: 0),
+                                  decoration: BoxDecoration(
+                                    color:
+                                    _selectedIndex == (isMultiUnit ? 5 : 4)
+                                        ? blueColor
+                                        : Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Revenue",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: _selectedIndex ==
+                                            (isMultiUnit ? 5 : 4)
+                                            ? Colors.white
+                                            : blueColor,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         );
                       },
@@ -2237,15 +2238,15 @@ class _Summery_pageState extends State<Summery_page>
         } else if (_selectedIndex == 4 && isMultiUnit) {
           return Lease_page();
         }
-        // else if (_selectedIndex == 4) {
-        //   if (isMultiUnit) {
-        //     return Lease_page();
-        //   } else {
-        //     return Revenue_page();
-        //   }
-        // } else if (_selectedIndex == 5 && isMultiUnit) {
-        //   return Revenue_page();
-        // }
+        else if (_selectedIndex == 4) {
+          if (isMultiUnit) {
+            return Lease_page();
+          } else {
+            return Revenue_page();
+          }
+        } else if (_selectedIndex == 5 && isMultiUnit) {
+          return Revenue_page();
+        }
         return Container();
       },
     );
@@ -2308,11 +2309,11 @@ class _Summery_pageState extends State<Summery_page>
                           Image.asset("assets/images/no_data.jpg",
                               height: 200, width: 200),
                           const SizedBox(height: 10),
-                          const Text(
+                           Text(
                             "No Lease Data Available",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue,
+                                color:blueColor,
                                 fontSize: 16),
                           )
                         ],
@@ -2549,10 +2550,10 @@ class _Summery_pageState extends State<Summery_page>
                               height: 200, width: 200),
                           SizedBox(height: 10),
                           Text(
-                            "No Lease Data Available",
+                            "No Revenue Data Available",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue,
+                                color: blueColor,
                                 fontSize: 16),
                           )
                         ],
@@ -2592,7 +2593,7 @@ class _Summery_pageState extends State<Summery_page>
                     child: Column(
                       children: [
                         SizedBox(height: 5),
-                        CustomAdminRevenueTable(
+                        CustomStaffRevenueTable(
                           revenueData: currentPageData,
                           onSort: (columnIndex) {
                             setState(() {

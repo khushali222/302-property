@@ -35,12 +35,9 @@ class _CustomAdminRevenueTableState extends State<CustomAdminRevenueTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: widget.blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -81,11 +78,11 @@ class _CustomAdminRevenueTableState extends State<CustomAdminRevenueTable> {
                     width < 400
                         ? Text("Date",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 15))
+                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold, fontSize: 15))
                         : Text("Date",
                             textAlign: TextAlign.center,
                             style:
-                                TextStyle(color: Colors.white, fontSize: 15)),
+                                TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 15)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -117,7 +114,7 @@ class _CustomAdminRevenueTableState extends State<CustomAdminRevenueTable> {
                   children: [
                     Text("Tenant\nNames",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
+                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 15)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -149,7 +146,7 @@ class _CustomAdminRevenueTableState extends State<CustomAdminRevenueTable> {
                   children: [
                     Text("  Status",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
+                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold,fontSize: 15)),
                   ],
                 ),
               ),
@@ -160,7 +157,10 @@ class _CustomAdminRevenueTableState extends State<CustomAdminRevenueTable> {
       ),
     );
   }
-
+  String formatDate(String? date) {
+    if (date == null || date.trim().isEmpty) return 'Invalid Date';
+    return date;
+  }
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -168,23 +168,25 @@ class _CustomAdminRevenueTableState extends State<CustomAdminRevenueTable> {
       child: Column(
         children: [
           _buildHeaders(),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
-            ),
             child: Column(
               children: widget.revenueData.asMap().entries.map((entry) {
                 int index = entry.key;
                 bool isExpanded = expandedIndex == index;
                 Properties_Revenu_model lease = entry.value;
+                print("date ${lease.entry?.first.date}");
                 return Container(
+                  margin:
+                  EdgeInsets.symmetric(vertical: 6),
                   decoration: BoxDecoration(
                     color: index % 2 != 0
-                        ? Colors.white
-                        : widget.blueColor.withOpacity(0.09),
-                    border:
-                        Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                        ? Color(0xFFF4F8FF)
+                        : Colors.white,
+                    border: Border.all(
+                        color: Color(0xFFDBE0E5)),
+                    borderRadius:
+                    BorderRadius.circular(10),
                   ),
                   child: Column(
                     children: <Widget>[
@@ -226,7 +228,7 @@ class _CustomAdminRevenueTableState extends State<CustomAdminRevenueTable> {
                                     });
                                   },
                                   child: Text(
-                                    lease.entry?.first.date ?? 'N/A',
+                                    formatDate(lease.entry?.first.date),
                                     style: TextStyle(
                                       color: widget.blueColor,
                                       fontWeight: FontWeight.bold,

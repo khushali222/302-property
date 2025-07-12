@@ -10,24 +10,7 @@ String formatAmount(double? amount) {
   return amount.toString();
 }
 
-class PropertiesRevenueResponse {
-  final int statusCode;
-  final List<Properties_Revenu_model> data;
 
-  PropertiesRevenueResponse({
-    required this.statusCode,
-    required this.data,
-  });
-
-  factory PropertiesRevenueResponse.fromJson(Map<String, dynamic> json) {
-    return PropertiesRevenueResponse(
-      statusCode: json['statusCode'],
-      data: (json['data'] as List)
-          .map((item) => Properties_Revenu_model.fromJson(item))
-          .toList(),
-    );
-  }
-}
 
 class Properties_Revenu_model {
   String? sId;
@@ -53,7 +36,6 @@ class Properties_Revenu_model {
   String? createdAt;
   String? updatedAt;
   bool? isDelete;
-  int? iV;
   LeaseDataa? leaseData;
   UnitDataa? unitData;
   TenantDataa? tenantData;
@@ -89,13 +71,13 @@ class Properties_Revenu_model {
     this.createdAt,
     this.updatedAt,
     this.isDelete,
-    this.iV,
     this.leaseData,
     this.unitData,
     this.tenantData,
   });
 
   Properties_Revenu_model.fromJson(Map<String, dynamic> json) {
+
     sId = json['_id'];
     paymentId = json['payment_id'];
     adminId = json['admin_id'];
@@ -111,7 +93,8 @@ class Properties_Revenu_model {
             : json['surcharge'])
         : null;
     paymentType = json['payment_type'];
-    transactionId = json['transaction_id'];
+    // transactionId = json['transaction_id'];
+    transactionId = json.containsKey('transaction_id') ? json['transaction_id'] : null;
     response = json['response'];
     authcode = json['authcode'];
     responseCode = json['responseCode'];
@@ -129,7 +112,7 @@ class Properties_Revenu_model {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     isDelete = json['is_delete'];
-    iV = json['__v']?.toInt();
+
     leaseData = json['leaseData'] != null
         ? new LeaseDataa.fromJson(json['leaseData'])
         : null;
@@ -171,7 +154,6 @@ class Properties_Revenu_model {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['is_delete'] = this.isDelete;
-    data['__v'] = this.iV;
     if (this.leaseData != null) {
       data['leaseData'] = this.leaseData!.toJson();
     }
@@ -210,6 +192,7 @@ class Entry {
       this.status});
 
   Entry.fromJson(Map<String, dynamic> json) {
+    print('Parsing date: ${json['date']}');
     entryId = json['entry_id'];
     account = json['account'];
     amount = json['amount'] != null
@@ -217,7 +200,7 @@ class Entry {
             ? (json['amount'] as int).toDouble()
             : json['amount'])
         : null;
-    date = json['date'];
+    date = json['date'] ?? "";
     // Handle numeric conversion for integer fields
     duePaid = json['due_paid'] != null ? json['due_paid'].toInt() : null;
     isPrepaid = json['is_prepaid'];
@@ -410,7 +393,7 @@ class Entry_revenu {
             ? (json['amount'] as int).toDouble()
             : json['amount'])
         : null;
-    date = json['date'];
+    date = json['date'] ?? "";
     chargeType = json['charge_type'];
     memo = json['memo'];
     rentCycle = json['rent_cycle'];
@@ -444,6 +427,7 @@ class LeaseHistory {
       {this.historyId, this.startDate, this.endDate, this.amount, this.sId});
 
   LeaseHistory.fromJson(Map<String, dynamic> json) {
+
     historyId = json['history_id'];
     startDate = json['start_date'];
     endDate = json['end_date'];
@@ -545,7 +529,7 @@ class TenantDataa {
   String? comments;
   EmergencyContact? emergencyContact;
   bool? enableOverrideFee;
-  Null? overrideFee;
+  int? overrideFee;
   String? createdAt;
   String? updatedAt;
   bool? isDelete;
@@ -574,6 +558,7 @@ class TenantDataa {
       this.iV});
 
   TenantDataa.fromJson(Map<String, dynamic> json) {
+
     sId = json['_id'];
     tenantId = json['tenant_id'];
     adminId = json['admin_id'];
