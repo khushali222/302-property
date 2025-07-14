@@ -43,7 +43,6 @@ import '../../Maintenance/Workorder/Add_workorder.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/custom_admin_lease_table.dart';
 
-
 class Summery_page extends StatefulWidget {
   Rentals properties;
   TenantData? tenants;
@@ -81,35 +80,7 @@ class _Summery_pageState extends State<Summery_page>
   TextEditingController bed3 = TextEditingController();
   bool isLoading = false;
   bool iserror = false;
-  Future<void> _startDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: startdate ?? DateTime.now(),
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != startdate) {
-      setState(() {
-        startdate = picked;
-        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-      });
-    }
-  }
 
-  Future<void> _endDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: enddate ?? DateTime.now(),
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != enddate) {
-      setState(() {
-        enddate = picked;
-        enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
-      });
-    }
-  }
 
   ConnectivityResult? _connectivityResult;
 
@@ -398,27 +369,6 @@ class _Summery_pageState extends State<Summery_page>
   int tenentCount = 0;
   int count = 0;
   int complete_count = 0;
-
-  // Future<void> _fetchData() async {
-  //   try {
-  //     final data = await unitRepository.fetchunit(widget.properties.rentalId ?? "");
-  //     final data1 = await Properies_summery_Repo()
-  //         .fetchPropertiessummery(widget.properties.rentalId ?? "");
-  //     final data2 = await Properies_summery_Repo()
-  //         .fetchWorkOrders(widget.properties.rentalId ?? "");
-  //     print('Unit count: ${data.length }');
-  //
-  //     setState(() {
-  //       unitCount = data.isNotEmpty ? data.length : 0;
-  //       tenentCount = data1.isNotEmpty ? data1.length : 0;
-  //       count = data2.isNotEmpty ? data2.length : 0;
-  //       complete_count = data2.length;
-  //     });
-  //   } catch (e) {
-  //     // Handle error
-  //     print(e);
-  //   }
-  // }
 
   Future<void> _fetchData() async {
     try {
@@ -941,12 +891,6 @@ class _Summery_pageState extends State<Summery_page>
   bool ascending1multi = false;
   bool ascending2multi = false;
   bool ascending3multi = false;
-
-  // countupdateunit(int cnt) {
-  //   setState(() {
-  //     unitCount = cnt;
-  //   });
-  // }
 
   Widget _buildHeadersmulti() {
     var width = MediaQuery.of(context).size.width;
@@ -2022,6 +1966,21 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
+
+  //work order
+  int totalrecordslease = 0;
+
+  int rowsPerPagelease = 5;
+  int sortColumnIndexlease = 0;
+  bool sortAscendinglease = true;
+  int currentPagelease = 0;
+  int itemsPerPagelease = 10;
+  List<int> itemsPerPageOptionslease = [
+    10,
+    25,
+    50,
+    100,
+  ]; //
   Lease_page() {
     print("calling lease page from my screen");
     return Container(
@@ -2078,8 +2037,8 @@ class _Summery_pageState extends State<Summery_page>
                         children: [
                           Image.asset("assets/images/no_data.jpg",
                               height: 200, width: 200),
-                           SizedBox(height: 10),
-                           Text(
+                          SizedBox(height: 10),
+                          Text(
                             "No Lease Data Available",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -2163,10 +2122,10 @@ class _Summery_pageState extends State<Summery_page>
                   }).toList();
 
                   // Pagination
-                  final totalPages = (data.length / itemsPerPage).ceil();
+                  final totalPages = (data.length / itemsPerPagelease).ceil();
                   final currentPageData = data
-                      .skip(currentPage * itemsPerPage)
-                      .take(itemsPerPage)
+                      .skip(currentPagelease * itemsPerPagelease)
+                      .take(itemsPerPagelease)
                       .toList();
 
                   return SingleChildScrollView(
@@ -2212,8 +2171,8 @@ class _Summery_pageState extends State<Summery_page>
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<int>(
-                                        value: itemsPerPage,
-                                        items: itemsPerPageOptions
+                                        value: itemsPerPagelease,
+                                        items: itemsPerPageOptionsrent
                                             .map((int value) {
                                           return DropdownMenuItem<int>(
                                             value: value,
@@ -2222,8 +2181,8 @@ class _Summery_pageState extends State<Summery_page>
                                         }).toList(),
                                         onChanged: (newValue) {
                                           setState(() {
-                                            itemsPerPage = newValue!;
-                                            currentPage = 0;
+                                            itemsPerPagelease = newValue!;
+                                            currentPagelease = 0;
                                           });
                                         },
                                       ),
@@ -2237,19 +2196,19 @@ class _Summery_pageState extends State<Summery_page>
                                 IconButton(
                                   icon: FaIcon(
                                     FontAwesomeIcons.circleChevronLeft,
-                                    color: currentPage == 0
+                                    color: currentPagelease == 0
                                         ? Colors.grey
                                         : blueColor,
                                   ),
-                                  onPressed: currentPage == 0
+                                  onPressed: currentPagelease == 0
                                       ? null
                                       : () {
                                           setState(() {
-                                            currentPage--;
+                                            currentPagelease--;
                                           });
                                         },
                                 ),
-                                Text('Page ${currentPage + 1} of $totalPages'),
+                                Text('Page ${currentPagelease + 1} of $totalPages'),
                                 IconButton(
                                   icon: FaIcon(
                                     FontAwesomeIcons.circleChevronRight,
@@ -2257,10 +2216,10 @@ class _Summery_pageState extends State<Summery_page>
                                         ? blueColor
                                         : Colors.grey,
                                   ),
-                                  onPressed: currentPage < totalPages - 1
+                                  onPressed: currentPagelease < totalPages - 1
                                       ? () {
                                           setState(() {
-                                            currentPage++;
+                                            currentPagelease++;
                                           });
                                         }
                                       : null,
@@ -2280,26 +2239,25 @@ class _Summery_pageState extends State<Summery_page>
       ),
     );
   }
+
+  int totalrecordsrevenue = 0;
+
+  int rowsPerPagerevenue = 5;
+  int sortColumnIndexrevenue  = 0;
+  bool sortAscendingrevenue = true;
+  int currentPagerevenue  = 0;
+  int itemsPerPagerevenue  = 10;
+  List<int> itemsPerPageOptionsrevenue  = [
+    10,
+    25,
+    50,
+    100,
+  ];
   Revenue_page() {
     print("calling revenue page from my screen");
     return Container(
       child: Column(
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.all(16.0),
-          //   child: Row(
-          //     children: [
-          //       Text(
-          //         "Revenue ",
-          //         style: TextStyle(
-          //           fontSize: 14,
-          //           fontWeight: FontWeight.bold,
-          //           color: blueColor,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: FutureBuilder<List<Properties_Revenu_model>>(
@@ -2318,10 +2276,10 @@ class _Summery_pageState extends State<Summery_page>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                           Image.asset("assets/images/no_data.jpg",
+                          Image.asset("assets/images/no_data.jpg",
                               height: 200, width: 200),
-                           SizedBox(height: 10),
-                           Text(
+                          SizedBox(height: 10),
+                          Text(
                             "No Revenue Data Available",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -2341,10 +2299,10 @@ class _Summery_pageState extends State<Summery_page>
                       searchValuerent != "All") {
                     data = data
                         .where((e) =>
-                    e != null &&
-                        e.response!
-                            .toLowerCase()
-                            .contains(searchValuerent!.toLowerCase()))
+                            e != null &&
+                            e.response!
+                                .toLowerCase()
+                                .contains(searchValuerent!.toLowerCase()))
                         .toList();
                   }
 
@@ -2353,15 +2311,14 @@ class _Summery_pageState extends State<Summery_page>
                   //     .where((e) => e. == widget.properties.rentalId)
                   //     .toList();
 
-
                   // Pagination
-                  final totalPages = (data.length / itemsPerPage).ceil();
+                  final totalPages = (data.length / itemsPerPagerevenue).ceil();
                   final currentPageData = data
-                      .skip(currentPage * itemsPerPage)
-                      .take(itemsPerPage)
+                      .skip(currentPagerevenue * itemsPerPagerevenue)
+                      .take(itemsPerPagerevenue)
                       .toList();
-                   print("check data of revenue ${data.first.paymentType}");
-                   print("check data of date  ${data.first.entry?.first.date}");
+                  print("check data of revenue ${data.first.paymentType}");
+                  print("check data of date  ${data.first.entry?.first.date}");
                   return SingleChildScrollView(
                     child: Column(
                       children: [
@@ -2376,8 +2333,11 @@ class _Summery_pageState extends State<Summery_page>
                                       .compareTo(b.response ?? ''));
                                   break;
                                 case 2:
-                                  data.sort((a, b) => (a.tenantData?.tenantFirstName ?? '')
-                                      .compareTo(b.tenantData?.tenantFirstName ?? ''));
+                                  data.sort((a, b) => (a
+                                              .tenantData?.tenantFirstName ??
+                                          '')
+                                      .compareTo(
+                                          b.tenantData?.tenantFirstName ?? ''));
                                   break;
                                 case 3:
                                   data.sort((a, b) => (a.paymentType ?? '')
@@ -2400,14 +2360,14 @@ class _Summery_pageState extends State<Summery_page>
                                   child: Container(
                                     height: 40,
                                     padding:
-                                    EdgeInsets.symmetric(horizontal: 12.0),
+                                        EdgeInsets.symmetric(horizontal: 12.0),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.grey),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<int>(
-                                        value: itemsPerPage,
-                                        items: itemsPerPageOptions
+                                        value: itemsPerPagerevenue,
+                                        items: itemsPerPageOptionsrevenue
                                             .map((int value) {
                                           return DropdownMenuItem<int>(
                                             value: value,
@@ -2416,8 +2376,8 @@ class _Summery_pageState extends State<Summery_page>
                                         }).toList(),
                                         onChanged: (newValue) {
                                           setState(() {
-                                            itemsPerPage = newValue!;
-                                            currentPage = 0;
+                                            itemsPerPagerevenue = newValue!;
+                                            currentPagerevenue = 0;
                                           });
                                         },
                                       ),
@@ -2431,32 +2391,32 @@ class _Summery_pageState extends State<Summery_page>
                                 IconButton(
                                   icon: FaIcon(
                                     FontAwesomeIcons.circleChevronLeft,
-                                    color: currentPage == 0
+                                    color: currentPagerevenue == 0
                                         ? Colors.grey
                                         : blueColor,
                                   ),
-                                  onPressed: currentPage == 0
+                                  onPressed: currentPagerevenue == 0
                                       ? null
                                       : () {
-                                    setState(() {
-                                      currentPage--;
-                                    });
-                                  },
+                                          setState(() {
+                                            currentPagerevenue--;
+                                          });
+                                        },
                                 ),
-                                Text('Page ${currentPage + 1} of $totalPages'),
+                                Text('Page ${currentPagerevenue + 1} of $totalPages'),
                                 IconButton(
                                   icon: FaIcon(
                                     FontAwesomeIcons.circleChevronRight,
-                                    color: currentPage < totalPages - 1
+                                    color: currentPagerevenue < totalPages - 1
                                         ? blueColor
                                         : Colors.grey,
                                   ),
-                                  onPressed: currentPage < totalPages - 1
+                                  onPressed: currentPagerevenue < totalPages - 1
                                       ? () {
-                                    setState(() {
-                                      currentPage++;
-                                    });
-                                  }
+                                          setState(() {
+                                            currentPagerevenue++;
+                                          });
+                                        }
                                       : null,
                                 ),
                               ],
@@ -2514,8 +2474,7 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 4 && isMultiUnit) {
           return Lease_page();
-        }
-        else if (_selectedIndex == 4) {
+        } else if (_selectedIndex == 4) {
           if (isMultiUnit) {
             return Lease_page();
           } else {
@@ -2660,58 +2619,6 @@ class _Summery_pageState extends State<Summery_page>
                                 ),
                               ),
                             ),
-
-                            // Container(
-                            //   width: MediaQuery.of(context).size.width < 500
-                            //       ? 150
-                            //       : 250,
-                            //   height: MediaQuery.of(context).size.width < 500
-                            //       ? 120
-                            //       : 200,
-                            //   //decoration: const BoxDecoration(color: Colors.blue),
-                            //   child: SizedBox(
-                            //     child: ClipRRect(
-                            //       borderRadius: BorderRadius.circular(8.0),
-                            //       child: CachedNetworkImage(
-                            //         imageUrl: widget.properties.rentalImage !=
-                            //                     null &&
-                            //                 widget
-                            //                     .properties.rentalImage!.isNotEmpty
-                            //             ? "$image_url${widget.properties.rentalImage}"
-                            //             : 'assets/images/no_image.jpg',
-                            //         fit: BoxFit.cover,
-                            //         height: MediaQuery.of(context).size.width < 500
-                            //             ? 140
-                            //             : 220,
-                            //         width: MediaQuery.of(context).size.width < 500
-                            //             ? 160
-                            //             : 220,
-                            //         placeholder: (context, url) =>
-                            //             Shimmer.fromColors(
-                            //           baseColor: Colors.grey[300]!,
-                            //           highlightColor: Colors.grey[100]!,
-                            //           child: Container(
-                            //             color: Colors.grey[300],
-                            //             height:
-                            //                 MediaQuery.of(context).size.width < 500
-                            //                     ? 140
-                            //                     : 220,
-                            //             width:
-                            //                 MediaQuery.of(context).size.width < 500
-                            //                     ? 160
-                            //                     : 220,
-                            //           ),
-                            //         ),
-                            //         errorWidget: (context, url, error) =>
-                            //             Image.asset(
-                            //           "assets/images/no_image.jpg",
-                            //           fit: BoxFit.fill,
-                            //         ),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-
                             if (MediaQuery.of(context).size.width < 500)
                               SizedBox(
                                 width: 15,
@@ -3034,11 +2941,12 @@ class _Summery_pageState extends State<Summery_page>
                                   e.rentalId == widget.properties.rentalId)
                               .toList();
                           final totalPages =
-                              (data.length / itemsPerPage).ceil();
+                              (data.length / itemsPerPagerent).ceil();
                           final currentPageData = data
-                              .skip(currentPage * itemsPerPage)
-                              .take(itemsPerPage)
+                              .skip(currentPagerent * itemsPerPagerent)
+                              .take(itemsPerPagerent)
                               .toList();
+
                           print("currentpage data ${currentPageData.length}");
                           return SingleChildScrollView(
                             child: Column(
@@ -3360,8 +3268,8 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                             child: DropdownButtonHideUnderline(
                                               child: DropdownButton<int>(
-                                                value: itemsPerPage,
-                                                items: itemsPerPageOptions
+                                                value: itemsPerPagerent,
+                                                items: itemsPerPageOptionsrent
                                                     .map((int value) {
                                                   return DropdownMenuItem<int>(
                                                     value: value,
@@ -3371,8 +3279,8 @@ class _Summery_pageState extends State<Summery_page>
                                                 }).toList(),
                                                 onChanged: (newValue) {
                                                   setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage =
+                                                    itemsPerPagerent = newValue!;
+                                                    currentPagerent =
                                                         0; // Reset to first page when items per page change
                                                   });
                                                 },
@@ -3387,15 +3295,15 @@ class _Summery_pageState extends State<Summery_page>
                                         IconButton(
                                           icon: FaIcon(
                                             FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPage == 0
+                                            color: currentPagerent == 0
                                                 ? Colors.grey
                                                 : blueColor,
                                           ),
-                                          onPressed: currentPage == 0
+                                          onPressed: currentPagerent == 0
                                               ? null
                                               : () {
                                                   setState(() {
-                                                    currentPage--;
+                                                    currentPagerent--;
                                                   });
                                                 },
                                         ),
@@ -3410,7 +3318,7 @@ class _Summery_pageState extends State<Summery_page>
                                         //       : null,
                                         // ),
                                         Text(
-                                            'Page ${currentPage + 1} of $totalPages'),
+                                            'Page ${currentPagerent + 1} of $totalPages'),
                                         // IconButton(
                                         //   icon: Icon(Icons.arrow_forward),
                                         //   onPressed: currentPage < totalPages - 1
@@ -3424,15 +3332,15 @@ class _Summery_pageState extends State<Summery_page>
                                         IconButton(
                                           icon: FaIcon(
                                             FontAwesomeIcons.circleChevronRight,
-                                            color: currentPage < totalPages - 1
+                                            color: currentPagerent < totalPages - 1
                                                 ? blueColor
                                                 : Colors.grey,
                                           ),
                                           onPressed:
-                                              currentPage < totalPages - 1
+                                          currentPagerent < totalPages - 1
                                                   ? () {
                                                       setState(() {
-                                                        currentPage++;
+                                                        currentPagerent++;
                                                       });
                                                     }
                                                   : null,
@@ -3719,1141 +3627,6 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
-  // Summary_page() {
-  //   print("$image_url${widget.properties.rentalImage}");
-  //   return Container(
-  //     margin: const EdgeInsets.symmetric(horizontal: 10),
-  //     child: SingleChildScrollView(
-  //       child: Column(
-  //         mainAxisAlignment: MainAxisAlignment.start,
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           const SizedBox(
-  //             height: 20,
-  //           ),
-  //           Container(
-  //             // height: 150,
-  //             // width: MediaQuery.of(context).size.width * .94,
-  //             decoration: BoxDecoration(
-  //               border: Border.all(color: blueColor),
-  //               borderRadius: BorderRadius.circular(10),
-  //             ),
-  //             child: Padding(
-  //               padding: const EdgeInsets.only(top: 20, bottom: 20),
-  //               child: Column(
-  //                 mainAxisAlignment: MainAxisAlignment.center,
-  //                 crossAxisAlignment: CrossAxisAlignment.center,
-  //                 children: [
-  //                   // const SizedBox(
-  //                   //   height: 4,
-  //                   // ),
-  //                   Row(
-  //                     children: [
-  //                       const SizedBox(
-  //                         width: 15,
-  //                       ),
-  //                       // Container(
-  //                       //   // height: 150,
-  //                       //   width: 150,
-  //                       //   decoration: BoxDecoration(color: Colors.blue),
-  //                       //   child: Image.network(
-  //                       //     "$image_url${widget.properties.rentalImage}"??'https://st.depositphotos.com/1763233/3344/i/450/depositphotos_33445577-stock-photo-wooden-house.jpg',
-  //                       //     fit: BoxFit.fill,
-  //                       //     height: 100,
-  //                       //   ),
-  //                       // ),
-  //
-  //                       Container(
-  //                         width: MediaQuery.of(context).size.width < 500
-  //                             ? 150
-  //                             : 250,
-  //                         height: MediaQuery.of(context).size.width < 500
-  //                             ? 120
-  //                             : 200,
-  //                         child: SizedBox(
-  //                           child: ClipRRect(
-  //                             borderRadius: BorderRadius.circular(8.0),
-  //                             child: CachedNetworkImage(
-  //                               imageUrl: (widget.properties.rentalImage !=
-  //                                   null &&
-  //                                   widget
-  //                                       .properties.rentalImage!.isNotEmpty
-  //                                   ? "$image_url${widget.properties.rentalImage}"
-  //                                   : 'assets/images/no_image.jpg'),
-  //                               fit: BoxFit.cover,
-  //                               height: MediaQuery.of(context).size.width < 500
-  //                                   ? 140
-  //                                   : 220,
-  //                               width: MediaQuery.of(context).size.width < 500
-  //                                   ? 160
-  //                                   : 220,
-  //                               placeholder: (context, url) =>
-  //                                   Shimmer.fromColors(
-  //                                     baseColor: Colors.grey[300]!,
-  //                                     highlightColor: Colors.grey[100]!,
-  //                                     child: Container(
-  //                                       color: Colors.grey[300],
-  //                                       height:
-  //                                       MediaQuery.of(context).size.width < 500
-  //                                           ? 140
-  //                                           : 220,
-  //                                       width:
-  //                                       MediaQuery.of(context).size.width < 500
-  //                                           ? 160
-  //                                           : 220,
-  //                                     ),
-  //                                   ),
-  //                               errorWidget: (context, url, error) =>
-  //                                   Image.asset(
-  //                                     "assets/images/no_image.jpg",
-  //                                     fit: BoxFit.fill,
-  //                                   ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //
-  //                       // Container(
-  //                       //   width: MediaQuery.of(context).size.width < 500
-  //                       //       ? 150
-  //                       //       : 250,
-  //                       //   height: MediaQuery.of(context).size.width < 500
-  //                       //       ? 120
-  //                       //       : 200,
-  //                       //   //decoration: const BoxDecoration(color: Colors.blue),
-  //                       //   child: SizedBox(
-  //                       //     child: ClipRRect(
-  //                       //       borderRadius: BorderRadius.circular(8.0),
-  //                       //       child: CachedNetworkImage(
-  //                       //         imageUrl: widget.properties.rentalImage !=
-  //                       //                     null &&
-  //                       //                 widget
-  //                       //                     .properties.rentalImage!.isNotEmpty
-  //                       //             ? "$image_url${widget.properties.rentalImage}"
-  //                       //             : 'assets/images/no_image.jpg',
-  //                       //         fit: BoxFit.cover,
-  //                       //         height: MediaQuery.of(context).size.width < 500
-  //                       //             ? 140
-  //                       //             : 220,
-  //                       //         width: MediaQuery.of(context).size.width < 500
-  //                       //             ? 160
-  //                       //             : 220,
-  //                       //         placeholder: (context, url) =>
-  //                       //             Shimmer.fromColors(
-  //                       //           baseColor: Colors.grey[300]!,
-  //                       //           highlightColor: Colors.grey[100]!,
-  //                       //           child: Container(
-  //                       //             color: Colors.grey[300],
-  //                       //             height:
-  //                       //                 MediaQuery.of(context).size.width < 500
-  //                       //                     ? 140
-  //                       //                     : 220,
-  //                       //             width:
-  //                       //                 MediaQuery.of(context).size.width < 500
-  //                       //                     ? 160
-  //                       //                     : 220,
-  //                       //           ),
-  //                       //         ),
-  //                       //         errorWidget: (context, url, error) =>
-  //                       //             Image.asset(
-  //                       //           "assets/images/no_image.jpg",
-  //                       //           fit: BoxFit.fill,
-  //                       //         ),
-  //                       //       ),
-  //                       //     ),
-  //                       //   ),
-  //                       // ),
-  //
-  //                       if (MediaQuery.of(context).size.width < 500)
-  //                         SizedBox(
-  //                           width: 15,
-  //                         ),
-  //                       if (MediaQuery.of(context).size.width > 500)
-  //                         SizedBox(
-  //                           width: 25,
-  //                         ),
-  //                       Column(
-  //                         mainAxisAlignment: MainAxisAlignment.start,
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Row(
-  //                             children: [
-  //                               SizedBox(
-  //                                 width: 10,
-  //                               ),
-  //                               Text(
-  //                                 'Property Details',
-  //                                 style: TextStyle(
-  //                                   fontWeight: FontWeight.bold,
-  //                                   fontSize:
-  //                                   MediaQuery.of(context).size.width < 500
-  //                                       ? 14
-  //                                       : 22,
-  //                                   color: blueColor,
-  //                                 ),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                           SizedBox(height: 5),
-  //                           Row(
-  //                             children: [
-  //                               SizedBox(
-  //                                 width: 10,
-  //                               ),
-  //                               Text('Address',
-  //                                   style: TextStyle(
-  //                                     color: Color(0xFF8A95A8),
-  //                                     fontSize:
-  //                                     MediaQuery.of(context).size.width <
-  //                                         500
-  //                                         ? 13
-  //                                         : 18,
-  //                                   )),
-  //                             ],
-  //                           ),
-  //                           SizedBox(height: 5),
-  //                           Row(
-  //                             children: [
-  //                               SizedBox(
-  //                                 width: 10,
-  //                               ),
-  //                               Text(
-  //                                   '${widget.properties.propertyTypeData?.propertyType}',
-  //                                   style: TextStyle(
-  //                                     color: blueColor,
-  //                                     fontSize:
-  //                                     MediaQuery.of(context).size.width <
-  //                                         500
-  //                                         ? 13
-  //                                         : 18,
-  //                                   )),
-  //                             ],
-  //                           ),
-  //                           SizedBox(height: 5),
-  //                           SizedBox(
-  //                             width: MediaQuery.of(context).size.width > 500
-  //                                 ? 200
-  //                                 : 160,
-  //                             child: Padding(
-  //                               padding: const EdgeInsets.only(left: 10),
-  //                               child: Text(
-  //                                 '${widget.properties?.rentalAddress}',
-  //                                 maxLines: 4, // Set maximum number of lines
-  //                                 overflow: TextOverflow
-  //                                     .ellipsis, // Handle overflow with ellipsis
-  //                                 style: TextStyle(
-  //                                   fontSize:
-  //                                   MediaQuery.of(context).size.width < 500
-  //                                       ? 13
-  //                                       : 18,
-  //                                   color: blueColor,
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                           SizedBox(height: 5),
-  //                           SizedBox(
-  //                             width: MediaQuery.of(context).size.width > 500
-  //                                 ? 200
-  //                                 : 173,
-  //                             child: Padding(
-  //                               padding: const EdgeInsets.only(left: 10),
-  //                               child: Text(
-  //                                 [
-  //                                   widget.properties.rentalCity,
-  //                                   widget.properties.rentalState,
-  //                                   widget.properties.rentalCountry,
-  //                                   widget.properties.rentalPostcode,
-  //                                 ]
-  //                                     .where((element) =>
-  //                                 element != null &&
-  //                                     element
-  //                                         .isNotEmpty) // Filter out null or empty elements
-  //                                     .map((element) =>
-  //                                 element!) // Ensure non-null elements
-  //                                     .join(' , '),
-  //                                 style: TextStyle(
-  //                                   color: blueColor,
-  //                                   fontSize:
-  //                                   MediaQuery.of(context).size.width < 500
-  //                                       ? 13
-  //                                       : 18,
-  //                                 ),
-  //                                 maxLines: 6,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                           SizedBox(height: 5),
-  //                           // Row(
-  //                           //   children: [
-  //                           //     SizedBox(
-  //                           //       width: 10,
-  //                           //     ),
-  //                           //     Text(
-  //                           //       '${widget.properties.rentalCountry},',
-  //                           //       style: TextStyle(
-  //                           //         color: blueColor,
-  //                           //         fontSize:
-  //                           //             MediaQuery.of(context).size.width < 500
-  //                           //                 ? 13
-  //                           //                 : 18,
-  //                           //       ),
-  //                           //     ),
-  //                           //     SizedBox(width: 3),
-  //                           //     Text(
-  //                           //       '${widget.properties.rentalPostcode}',
-  //                           //       style: TextStyle(
-  //                           //         color: blueColor,
-  //                           //         fontSize:
-  //                           //             MediaQuery.of(context).size.width < 500
-  //                           //                 ? 13
-  //                           //                 : 18,
-  //                           //       ),
-  //                           //     ),
-  //                           //   ],
-  //                           // ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   SizedBox(
-  //                     height: 10,
-  //                   ),
-  //                   Row(
-  //                     children: [
-  //                       SizedBox(
-  //                         width: 15,
-  //                       ),
-  //                       Container(
-  //                         height: 30,
-  //                         width:90,
-  //                         decoration: BoxDecoration(
-  //                           borderRadius: BorderRadius.circular(8.0),
-  //                         ),
-  //                         child: ElevatedButton(
-  //                           style: ElevatedButton.styleFrom(
-  //                             backgroundColor: blueColor,
-  //                             shape: RoundedRectangleBorder(
-  //                               borderRadius: BorderRadius.circular(8.0),
-  //                             ),
-  //                           ),
-  //                           onPressed: () async {
-  //                             _pickImage().then((_) {
-  //                               setState(
-  //                                       () {}); // Rebuild the widget after selecting the image
-  //                             });
-  //                           },
-  //                           child: Text(
-  //                             'Upload',
-  //                             style: TextStyle(color: Color(0xFFf7f8f9)),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       SizedBox(
-  //                         width: 8,
-  //                       ),
-  //                       if (_imageUrls.isNotEmpty ||
-  //                           widget.properties.rentalImage != '')
-  //                         Container(
-  //                           height: 30,
-  //                           width: 100,
-  //                           decoration: BoxDecoration(
-  //                             borderRadius: BorderRadius.circular(8.0),
-  //                           ),
-  //                           child: ElevatedButton(
-  //                             style: ElevatedButton.styleFrom(
-  //                               backgroundColor: blueColor,
-  //                               shape: RoundedRectangleBorder(
-  //                                 borderRadius: BorderRadius.circular(8.0),
-  //                               ),
-  //                             ),
-  //                             onPressed: () async {
-  //                               _removeImage();
-  //                             },
-  //                             child: Text(
-  //                               'Delete',
-  //                               style: TextStyle(color: Color(0xFFf7f8f9)),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //           const SizedBox(
-  //             height: 20,
-  //           ),
-  //           Row(
-  //             children: [
-  //               if (MediaQuery.of(context).size.width > 500)
-  //                 SizedBox(
-  //                   width: 6,
-  //                 ),
-  //               if (MediaQuery.of(context).size.width < 500)
-  //                 SizedBox(
-  //                   width: 10,
-  //                 ),
-  //               Text(
-  //                 "Rental Owners",
-  //                 style: TextStyle(
-  //                     color: blueColor,
-  //                     fontSize:
-  //                     MediaQuery.of(context).size.width < 500 ? 16 : 20,
-  //                     fontWeight: FontWeight.bold),
-  //               ),
-  //             ],
-  //           ),
-  //           if (MediaQuery.of(context).size.width > 500) SizedBox(height: 10),
-  //           if (MediaQuery.of(context).size.width > 500) SizedBox(height: 5),
-  //           if (MediaQuery.of(context).size.width < 500)
-  //             Padding(
-  //               padding: const EdgeInsets.all(5.0),
-  //               child: FutureBuilder<List<Rentals>>(
-  //                 future: futurerentalowners,
-  //                 builder: (context, snapshot) {
-  //                   if (snapshot.connectionState == ConnectionState.waiting) {
-  //                     return Center(
-  //                         child: SpinKitFadingCircle(
-  //                           color: Colors.black,
-  //                           size: 40.0,
-  //                         ));
-  //                   } else if (snapshot.hasError) {
-  //                     return Center(child: Text('Error: ${snapshot.error}'));
-  //                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-  //                     return Container(
-  //                       height: MediaQuery.of(context).size.height * .5,
-  //                       child: Center(
-  //                         child: Column(
-  //                           mainAxisAlignment: MainAxisAlignment.center,
-  //                           crossAxisAlignment: CrossAxisAlignment.center,
-  //                           children: [
-  //                             Image.asset(
-  //                               "assets/images/no_data.jpg",
-  //                               height: 200,
-  //                               width: 200,
-  //                             ),
-  //                             SizedBox(
-  //                               height: 10,
-  //                             ),
-  //                             Text(
-  //                               "No Data Available",
-  //                               style: TextStyle(
-  //                                   fontWeight: FontWeight.bold,
-  //                                   color: blueColor,
-  //                                   fontSize: 16),
-  //                             )
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     );
-  //                   } else {
-  //                     var data = snapshot.data!;
-  //                     if (searchValuerent == null || searchValuerent!.isEmpty) {
-  //                       data = snapshot.data!;
-  //                     } else if (searchValuerent == "All") {
-  //                       data = snapshot.data!;
-  //                     } else if (searchValuerent!.isNotEmpty) {
-  //                       data = snapshot.data!
-  //                           .where((rentals) => rentals
-  //                           .rentalOwnerData!.rentalOwnerName!
-  //                           .toLowerCase()
-  //                           .contains(searchValuerent!.toLowerCase()))
-  //                           .toList();
-  //                     } else {
-  //                       data = snapshot.data!
-  //                           .where((rentals) =>
-  //                       rentals
-  //                           .rentalOwnerData!.rentalOwnerCompanyName! ==
-  //                           searchValuerent)
-  //                           .toList();
-  //                     }
-  //                     data = data
-  //                         .where(
-  //                             (e) => e.rentalId == widget.properties.rentalId)
-  //                         .toList();
-  //                     final totalPages = (data.length / itemsPerPage).ceil();
-  //                     final currentPageData = data
-  //                         .skip(currentPage * itemsPerPage)
-  //                         .take(itemsPerPage)
-  //                         .toList();
-  //                     print("currentpage data ${currentPageData.length}");
-  //                     return SingleChildScrollView(
-  //                       child: Column(
-  //                         children: [
-  //                           SizedBox(height: 5),
-  //                           _buildHeadersrent(),
-  //                           SizedBox(height: 20),
-  //                           Container(
-  //                             decoration: BoxDecoration(
-  //                                 border: Border.all(
-  //                                     color:
-  //                                     Color.fromRGBO(152, 162, 179, .5))),
-  //                             // decoration: BoxDecoration(
-  //                             //     border: Border.all(color: blueColor)),
-  //                             child: Column(
-  //                               children: currentPageData
-  //                                   .asMap()
-  //                                   .entries
-  //                                   .map((entry) {
-  //                                 int index = entry.key;
-  //                                 bool isExpanded = expandedIndex == index;
-  //                                 Rentals rentals = entry.value;
-  //                                 //return CustomExpansionTile(data: Propertytype, index: index);
-  //                                 return Container(
-  //                                   decoration: BoxDecoration(
-  //                                     color: index % 2 != 0
-  //                                         ? Colors.white
-  //                                         : blueColor.withOpacity(0.09),
-  //                                     border: Border.all(
-  //                                         color: Color.fromRGBO(
-  //                                             152, 162, 179, .5)),
-  //                                   ),
-  //                                   // decoration: BoxDecoration(
-  //                                   //   border: Border.all(color: blueColor),
-  //                                   // ),
-  //                                   child: Column(
-  //                                     children: <Widget>[
-  //                                       ListTile(
-  //                                         contentPadding: EdgeInsets.zero,
-  //                                         title: Padding(
-  //                                           padding: const EdgeInsets.all(2.0),
-  //                                           child: Row(
-  //                                             mainAxisAlignment:
-  //                                             MainAxisAlignment.start,
-  //                                             crossAxisAlignment:
-  //                                             CrossAxisAlignment.center,
-  //                                             children: <Widget>[
-  //                                               InkWell(
-  //                                                 onTap: () {
-  //                                                   // setState(() {
-  //                                                   //    isExpanded = !isExpanded;
-  //                                                   // //  expandedIndex = !expandedIndex;
-  //                                                   //
-  //                                                   // });
-  //                                                   // setState(() {
-  //                                                   //   if (isExpanded) {
-  //                                                   //     expandedIndex = null;
-  //                                                   //     isExpanded = !isExpanded;
-  //                                                   //   } else {
-  //                                                   //     expandedIndex = index;
-  //                                                   //   }
-  //                                                   // });
-  //                                                   setState(() {
-  //                                                     if (expandedIndex ==
-  //                                                         index) {
-  //                                                       expandedIndex = null;
-  //                                                     } else {
-  //                                                       expandedIndex = index;
-  //                                                     }
-  //                                                   });
-  //                                                 },
-  //                                                 child: Container(
-  //                                                   margin: EdgeInsets.only(
-  //                                                       left: 5, right: 5),
-  //                                                   padding: !isExpanded
-  //                                                       ? EdgeInsets.only(
-  //                                                       bottom: 10)
-  //                                                       : EdgeInsets.only(
-  //                                                       top: 10),
-  //                                                   child: FaIcon(
-  //                                                     isExpanded
-  //                                                         ? FontAwesomeIcons
-  //                                                         .sortUp
-  //                                                         : FontAwesomeIcons
-  //                                                         .sortDown,
-  //                                                     size: 20,
-  //                                                     color: blueColor,
-  //                                                   ),
-  //                                                 ),
-  //                                               ),
-  //                                               Expanded(
-  //                                                 child: InkWell(
-  //                                                   onTap: () {
-  //                                                     setState(() {
-  //                                                       if (expandedIndex ==
-  //                                                           index) {
-  //                                                         expandedIndex = null;
-  //                                                       } else {
-  //                                                         expandedIndex = index;
-  //                                                       }
-  //                                                     });
-  //                                                   },
-  //                                                   child: Text(
-  //                                                     '${(rentals.rentalOwnerData?.rentalOwnerName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerName} ',
-  //                                                     style: TextStyle(
-  //                                                       color: blueColor,
-  //                                                       fontWeight:
-  //                                                       FontWeight.bold,
-  //                                                       fontSize: 13,
-  //                                                     ),
-  //                                                   ),
-  //                                                 ),
-  //                                               ),
-  //                                               SizedBox(
-  //                                                   width:
-  //                                                   MediaQuery.of(context)
-  //                                                       .size
-  //                                                       .width *
-  //                                                       .08),
-  //                                               Expanded(
-  //                                                 child: Text(
-  //                                                   '${(rentals.rentalOwnerData?.rentalOwnerCompanyName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerCompanyName}',
-  //                                                   style: TextStyle(
-  //                                                     color: blueColor,
-  //                                                     fontWeight:
-  //                                                     FontWeight.bold,
-  //                                                     fontSize: 12,
-  //                                                   ),
-  //                                                 ),
-  //                                               ),
-  //                                               SizedBox(
-  //                                                   width:
-  //                                                   MediaQuery.of(context)
-  //                                                       .size
-  //                                                       .width *
-  //                                                       .06),
-  //                                               Expanded(
-  //                                                 child: Text(
-  //                                                   formatPhoneNumber(rentals
-  //                                                       .rentalOwnerData
-  //                                                       ?.rentalOwnerPhoneNumber ??
-  //                                                       "N/A"),
-  //                                                   //'${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
-  //                                                   style: TextStyle(
-  //                                                     color: blueColor,
-  //                                                     fontWeight:
-  //                                                     FontWeight.bold,
-  //                                                     fontSize: 12,
-  //                                                   ),
-  //                                                 ),
-  //                                               ),
-  //                                               SizedBox(
-  //                                                   width:
-  //                                                   MediaQuery.of(context)
-  //                                                       .size
-  //                                                       .width *
-  //                                                       .02),
-  //                                             ],
-  //                                           ),
-  //                                         ),
-  //                                       ),
-  //                                       if (isExpanded)
-  //                                         Container(
-  //                                           padding: EdgeInsets.symmetric(
-  //                                               horizontal: 8.0),
-  //                                           margin: EdgeInsets.only(bottom: 20),
-  //                                           child: SingleChildScrollView(
-  //                                             child: Column(
-  //                                               children: [
-  //                                                 Row(
-  //                                                   mainAxisAlignment:
-  //                                                   MainAxisAlignment.start,
-  //                                                   children: [
-  //                                                     FaIcon(
-  //                                                       isExpanded
-  //                                                           ? FontAwesomeIcons
-  //                                                           .sortUp
-  //                                                           : FontAwesomeIcons
-  //                                                           .sortDown,
-  //                                                       size: 50,
-  //                                                       color:
-  //                                                       Colors.transparent,
-  //                                                     ),
-  //                                                     Expanded(
-  //                                                       child: Column(
-  //                                                         crossAxisAlignment:
-  //                                                         CrossAxisAlignment
-  //                                                             .start,
-  //                                                         children: <Widget>[
-  //                                                           SizedBox(
-  //                                                             height: MediaQuery.of(
-  //                                                                 context)
-  //                                                                 .size
-  //                                                                 .height *
-  //                                                                 .01,
-  //                                                           ),
-  //                                                           Text.rich(
-  //                                                             TextSpan(
-  //                                                               children: [
-  //                                                                 TextSpan(
-  //                                                                   text:
-  //                                                                   'Email : ',
-  //                                                                   style: TextStyle(
-  //                                                                       fontWeight:
-  //                                                                       FontWeight
-  //                                                                           .bold,
-  //                                                                       color:
-  //                                                                       blueColor), // Bold and black
-  //                                                                 ),
-  //                                                                 TextSpan(
-  //                                                                   text:
-  //                                                                   '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
-  //                                                                   style: TextStyle(
-  //                                                                       fontWeight:
-  //                                                                       FontWeight
-  //                                                                           .w700,
-  //                                                                       color: Colors
-  //                                                                           .grey), // Light and grey
-  //                                                                 ),
-  //                                                               ],
-  //                                                             ),
-  //                                                           ),
-  //                                                           SizedBox(
-  //                                                             height: MediaQuery.of(
-  //                                                                 context)
-  //                                                                 .size
-  //                                                                 .height *
-  //                                                                 .01,
-  //                                                           ),
-  //                                                           Text.rich(
-  //                                                             TextSpan(
-  //                                                               children: [
-  //                                                                 TextSpan(
-  //                                                                   text:
-  //                                                                   'Home Number : ',
-  //                                                                   style: TextStyle(
-  //                                                                       fontWeight:
-  //                                                                       FontWeight
-  //                                                                           .bold,
-  //                                                                       color:
-  //                                                                       blueColor), // Bold and black
-  //                                                                 ),
-  //                                                                 TextSpan(
-  //                                                                   text: formatPhoneNumber(rentals
-  //                                                                       .rentalOwnerData
-  //                                                                       ?.rentalOwnerHomeNumber ??
-  //                                                                       "N/A"),
-  //                                                                   //'${(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
-  //                                                                   style: TextStyle(
-  //                                                                       fontWeight:
-  //                                                                       FontWeight
-  //                                                                           .w700,
-  //                                                                       color: Colors
-  //                                                                           .grey), // Light and grey
-  //                                                                 ),
-  //                                                               ],
-  //                                                             ),
-  //                                                           ),
-  //                                                           SizedBox(
-  //                                                             height: MediaQuery.of(
-  //                                                                 context)
-  //                                                                 .size
-  //                                                                 .height *
-  //                                                                 .01,
-  //                                                           ),
-  //                                                           Text.rich(
-  //                                                             TextSpan(
-  //                                                               children: [
-  //                                                                 TextSpan(
-  //                                                                   text:
-  //                                                                   'Business Number : ',
-  //                                                                   style: TextStyle(
-  //                                                                       fontWeight:
-  //                                                                       FontWeight
-  //                                                                           .bold,
-  //                                                                       color:
-  //                                                                       blueColor), // Bold and black
-  //                                                                 ),
-  //                                                                 TextSpan(
-  //                                                                   text: formatPhoneNumber(rentals
-  //                                                                       .rentalOwnerData
-  //                                                                       ?.rentalOwnerBuisinessNumber ??
-  //                                                                       "N/A"),
-  //                                                                   //'${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
-  //                                                                   style: TextStyle(
-  //                                                                       fontWeight:
-  //                                                                       FontWeight
-  //                                                                           .w700,
-  //                                                                       color: Colors
-  //                                                                           .grey), // Light and grey
-  //                                                                 ),
-  //                                                               ],
-  //                                                             ),
-  //                                                           ),
-  //                                                         ],
-  //                                                       ),
-  //                                                     ),
-  //                                                   ],
-  //                                                 ),
-  //                                               ],
-  //                                             ),
-  //                                           ),
-  //                                         ),
-  //                                       //SizedBox(height: 13,),
-  //                                     ],
-  //                                   ),
-  //                                 );
-  //                               }).toList(),
-  //                             ),
-  //                           ),
-  //                           SizedBox(height: 20),
-  //                           Row(
-  //                             mainAxisAlignment: MainAxisAlignment.end,
-  //                             children: [
-  //                               Row(
-  //                                 children: [
-  //                                   // Text('Rows per page:'),
-  //                                   SizedBox(width: 10),
-  //                                   Material(
-  //                                     elevation: 3,
-  //                                     child: Container(
-  //                                       height: 40,
-  //                                       padding: EdgeInsets.symmetric(
-  //                                           horizontal: 12.0),
-  //                                       decoration: BoxDecoration(
-  //                                         border:
-  //                                         Border.all(color: Colors.grey),
-  //                                       ),
-  //                                       child: DropdownButtonHideUnderline(
-  //                                         child: DropdownButton<int>(
-  //                                           value: itemsPerPage,
-  //                                           items: itemsPerPageOptions
-  //                                               .map((int value) {
-  //                                             return DropdownMenuItem<int>(
-  //                                               value: value,
-  //                                               child: Text(value.toString()),
-  //                                             );
-  //                                           }).toList(),
-  //                                           onChanged: (newValue) {
-  //                                             setState(() {
-  //                                               itemsPerPage = newValue!;
-  //                                               currentPage =
-  //                                               0; // Reset to first page when items per page change
-  //                                             });
-  //                                           },
-  //                                         ),
-  //                                       ),
-  //                                     ),
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                               Row(
-  //                                 children: [
-  //                                   IconButton(
-  //                                     icon: FaIcon(
-  //                                       FontAwesomeIcons.circleChevronLeft,
-  //                                       color: currentPage == 0
-  //                                           ? Colors.grey
-  //                                           : blueColor,
-  //                                     ),
-  //                                     onPressed: currentPage == 0
-  //                                         ? null
-  //                                         : () {
-  //                                       setState(() {
-  //                                         currentPage--;
-  //                                       });
-  //                                     },
-  //                                   ),
-  //                                   // IconButton(
-  //                                   //   icon: Icon(Icons.arrow_back),
-  //                                   //   onPressed: currentPage > 0
-  //                                   //       ? () {
-  //                                   //     setState(() {
-  //                                   //       currentPage--;
-  //                                   //     });
-  //                                   //   }
-  //                                   //       : null,
-  //                                   // ),
-  //                                   Text(
-  //                                       'Page ${currentPage + 1} of $totalPages'),
-  //                                   // IconButton(
-  //                                   //   icon: Icon(Icons.arrow_forward),
-  //                                   //   onPressed: currentPage < totalPages - 1
-  //                                   //       ? () {
-  //                                   //     setState(() {
-  //                                   //       currentPage++;
-  //                                   //     });
-  //                                   //   }
-  //                                   //       : null,
-  //                                   // ),
-  //                                   IconButton(
-  //                                     icon: FaIcon(
-  //                                       FontAwesomeIcons.circleChevronRight,
-  //                                       color: currentPage < totalPages - 1
-  //                                           ? blueColor
-  //                                           : Colors.grey,
-  //                                     ),
-  //                                     onPressed: currentPage < totalPages - 1
-  //                                         ? () {
-  //                                       setState(() {
-  //                                         currentPage++;
-  //                                       });
-  //                                     }
-  //                                         : null,
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     );
-  //                   }
-  //                 },
-  //               ),
-  //             ),
-  //           if (MediaQuery.of(context).size.width > 500)
-  //             FutureBuilder<List<Rentals>>(
-  //               future: futurerentalowners,
-  //               builder: (context, snapshot) {
-  //                 if (snapshot.connectionState == ConnectionState.waiting) {
-  //                   return Center(
-  //                       child: SpinKitFadingCircle(
-  //                         color: Colors.black,
-  //                         size: 40.0,
-  //                       ));
-  //                 } else if (snapshot.hasError) {
-  //                   return Center(child: Text('Error: ${snapshot.error}'));
-  //                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-  //                   return Container(
-  //                     height: MediaQuery.of(context).size.height * .5,
-  //                     child: Center(
-  //                       child: Column(
-  //                         mainAxisAlignment: MainAxisAlignment.center,
-  //                         crossAxisAlignment: CrossAxisAlignment.center,
-  //                         children: [
-  //                           Image.asset(
-  //                             "assets/images/no_data.jpg",
-  //                             height: 200,
-  //                             width: 200,
-  //                           ),
-  //                           SizedBox(
-  //                             height: 10,
-  //                           ),
-  //                           Text(
-  //                             "No Data Available",
-  //                             style: TextStyle(
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: blueColor,
-  //                                 fontSize: 16),
-  //                           )
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   );
-  //                 } else {
-  //                   List<Rentals>? filteredData = [];
-  //                   _tableDatarent = snapshot.data!;
-  //                   if (selectedRolerent == null && searchValuerent == "") {
-  //                     filteredData = snapshot.data;
-  //                   } else if (selectedRolerent == "All") {
-  //                     filteredData = snapshot.data;
-  //                   } else if (searchValuerent.isNotEmpty) {
-  //                     filteredData = snapshot.data!
-  //                         .where((staff) =>
-  //                     staff.rentalOwnerData!.rentalOwnerName!
-  //                         .toLowerCase()
-  //                         .contains(searchValuerent.toLowerCase()) ||
-  //                         staff.rentalOwnerData!.rentalOwnerPhoneNumber!
-  //                             .toLowerCase()
-  //                             .contains(searchValuerent.toLowerCase()))
-  //                         .toList();
-  //                   }
-  //
-  //                   _tableDatarent = filteredData!;
-  //                   totalrecordsrent = _tableDatarent.length;
-  //                   return Padding(
-  //                     padding: const EdgeInsets.symmetric(horizontal: 5),
-  //                     child: Column(
-  //                       children: [
-  //                         SingleChildScrollView(
-  //                           scrollDirection: Axis.horizontal,
-  //                           child: Container(
-  //                             // width: MediaQuery.of(context).size.width * .91,
-  //                             child: Table(
-  //                               defaultColumnWidth: IntrinsicColumnWidth(),
-  //                               children: [
-  //                                 TableRow(
-  //                                   decoration:
-  //                                   BoxDecoration(border: Border.all()),
-  //                                   children: [
-  //
-  //                                     _buildHeaderrent(
-  //                                         'Contact Name',
-  //                                         0,
-  //                                             (rental) => rental.rentalOwnerData!
-  //                                             .rentalOwnerFirstName!),
-  //                                     _buildHeaderrent(
-  //                                         'Company Name',
-  //                                         1,
-  //                                             (rental) => rental.rentalOwnerData!
-  //                                             .rentalOwnerCompanyName!),
-  //                                     _buildHeaderrent(
-  //                                         'Email',
-  //                                         2,
-  //                                             (rental) => rental.rentalOwnerData!
-  //                                             .rentalOwnerPrimaryEmail!),
-  //                                     _buildHeaderrent(
-  //                                         'Phone Number',
-  //                                         3,
-  //                                             (rental) => rental.rentalOwnerData!
-  //                                             .rentalOwnerPhoneNumber!),
-  //                                     _buildHeaderrent(
-  //                                         'Home Number',
-  //                                         4,
-  //                                             (rental) => rental.rentalOwnerData!
-  //                                             .rentalOwnerHomeNumber!),
-  //                                     _buildHeaderrent(
-  //                                         'Business Number',
-  //                                         5,
-  //                                             (rental) => rental.rentalOwnerData!
-  //                                             .rentalOwnerBuisinessNumber!),
-  //                                   ],
-  //                                 ),
-  //                                 TableRow(
-  //                                   decoration: BoxDecoration(
-  //                                     border: Border.symmetric(
-  //                                         horizontal: BorderSide.none),
-  //                                   ),
-  //                                   children: List.generate(
-  //                                       6,
-  //                                           (index) => TableCell(
-  //                                           child: Container(height: 20))),
-  //                                 ),
-  //                                 for (var i = 0;
-  //                                 i < _pagedDatarent.length;
-  //                                 i++)
-  //                                   TableRow(
-  //                                     decoration: BoxDecoration(
-  //                                       border: Border(
-  //                                         left: BorderSide(
-  //                                             color: Color.fromRGBO(
-  //                                                 21, 43, 81, 1)),
-  //                                         right: BorderSide(
-  //                                             color: Color.fromRGBO(
-  //                                                 21, 43, 81, 1)),
-  //                                         top: BorderSide(
-  //                                             color: Color.fromRGBO(
-  //                                                 21, 43, 81, 1)),
-  //                                         bottom: i == _pagedDatarent.length - 1
-  //                                             ? BorderSide(color: blueColor)
-  //                                             : BorderSide.none,
-  //                                       ),
-  //                                     ),
-  //                                     children: [
-  //                                       _buildDataCellrent(
-  //                                           '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerName!}'),
-  //                                       // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
-  //                                       _buildDataCellrent(
-  //                                         _pagedDatarent[i]
-  //                                             .rentalOwnerData!
-  //                                             .rentalOwnerCompanyName!,
-  //                                       ),
-  //                                       _buildDataCellrent(_pagedDatarent[i]
-  //                                           .rentalOwnerData!
-  //                                           .rentalOwnerPrimaryEmail!),
-  //                                       _buildDataCellrent(_pagedDatarent[i]
-  //                                           .rentalOwnerData!
-  //                                           .rentalOwnerPhoneNumber!),
-  //                                       _buildDataCellrent(_pagedDatarent[i]
-  //                                           .rentalOwnerData!
-  //                                           .rentalOwnerHomeNumber!),
-  //                                       _buildDataCellrent(_pagedDatarent[i]
-  //                                           .rentalOwnerData!
-  //                                           .rentalOwnerBuisinessNumber!),
-  //                                     ],
-  //                                   ),
-  //                               ],
-  //                             ),
-  //                           ),
-  //                         ),
-  //                         if (_tableDatarent.isEmpty)
-  //                           Text("No Search Records Found"),
-  //                         SizedBox(height: 25),
-  //                         _buildPaginationControlsrent(),
-  //                       ],
-  //                     ),
-  //                   );
-  //                 }
-  //               },
-  //             ),
-  //           const SizedBox(
-  //             height: 10,
-  //           ),
-  //           Row(
-  //             children: [
-  //               if (MediaQuery.of(context).size.width > 500)
-  //                 SizedBox(
-  //                   width: 6,
-  //                 ),
-  //               if (MediaQuery.of(context).size.width < 500)
-  //                 SizedBox(
-  //                   width: 5,
-  //                 ),
-  //               Text(
-  //                 "Staff Details",
-  //                 style: TextStyle(
-  //                     color: blueColor,
-  //                     fontSize:
-  //                     MediaQuery.of(context).size.width < 500 ? 17 : 20,
-  //                     fontWeight: FontWeight.bold),
-  //               ),
-  //             ],
-  //           ),
-  //           const SizedBox(
-  //             height: 10,
-  //           ),
-  //           Padding(
-  //             padding: const EdgeInsets.only(left: 5, right: 5),
-  //             child: Table(
-  //               border: TableBorder.all(color: blueColor),
-  //               children: [
-  //                 TableRow(
-  //                     decoration: BoxDecoration(
-  //                       color: blueColor,
-  //                       //  borderRadius: BorderRadius.circular(10),
-  //                     ),
-  //                     children: [
-  //                       TableCell(
-  //                         child: Padding(
-  //                           padding: EdgeInsets.all(8.0),
-  //                           child: Text(
-  //                             'Staff Member',
-  //                             style: TextStyle(
-  //                                 color: Colors.white,
-  //                                 fontSize:
-  //                                 MediaQuery.of(context).size.width < 500
-  //                                     ? 16
-  //                                     : 19,
-  //                                 fontWeight: FontWeight.bold),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ]),
-  //                 TableRow(children: [
-  //                   TableCell(
-  //                     child: Padding(
-  //                       padding: const EdgeInsets.all(8.0),
-  //                       child: Text(
-  //                         widget.properties.staffMemberData?.staffmemberName !=
-  //                             null &&
-  //                             widget.properties.staffMemberData!
-  //                                 .staffmemberName!.isNotEmpty
-  //                             ? '${widget.properties.staffMemberData!.staffmemberName}'
-  //                             : 'N/A',
-  //                         style: TextStyle(
-  //                           fontSize: MediaQuery.of(context).size.width < 500
-  //                               ? 16
-  //                               : 19,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ])
-  //               ],
-  //             ),
-  //           ),
-  //           const SizedBox(
-  //             height: 50,
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   bool recurringswith = false;
   Tenants(BuildContext context) {
     return LayoutBuilder(
@@ -5044,538 +3817,6 @@ class _Summery_pageState extends State<Summery_page>
       },
     );
   }
-
-  // recurringCardDialog(List<TenantData> tenants) async {
-  //
-  //   List<List<BillingData>>? billingDataList;
-  //   List<String> tenant_card = List<String>.generate(tenants.length, (index) => '').toList();
-  //
-  //   // Fetch the response to determine if credit or debit cards are accepted
-  //   Map<String, Map<String, bool>> cardAcceptanceResponses = {};
-  //   for (var tenant in tenants) {
-  //     var response = await  tenant_cards().fetchCardAcceptance(tenant.tenantId!.first,tenant.leaseId!);
-  //     cardAcceptanceResponses[tenant.tenantId!.first] = response;
-  //
-  //   }
-  //   return showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return
-  //         Dialog(
-  //           backgroundColor: Colors.white,
-  //           surfaceTintColor: Colors.white,
-  //           shape: RoundedRectangleBorder(
-  //               borderRadius:
-  //               BorderRadius.circular(10.0)),
-  //           child:
-  //           Container(
-  //             // width: MediaQuery.of(context).size.width - 10,
-  //               width: 999,
-  //                  height: 400,
-  //               child: Padding(
-  //                 padding: const EdgeInsets.all(8.0),
-  //                 child: Column(
-  //
-  //                   mainAxisAlignment: MainAxisAlignment.start,
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     SizedBox(height: 10),
-  //                     Text(
-  //                       "Select Recurring Cards",
-  //                       style: TextStyle(
-  //                         color: blueColor,
-  //                         fontSize: 20,
-  //                         fontWeight: FontWeight.bold,
-  //                       ),
-  //                     ),
-  //                     Divider(color: grey,),
-  //                     SizedBox(height: 10),
-  //                     Expanded(
-  //                       child: FutureBuilder<List<Map<String, dynamic>>>(
-  //                         future: Future.wait(
-  //                           tenants.map((tenant) async {
-  //                             var paymentSettings = await tenant_cards().fetchCardAcceptance(
-  //                               tenant.tenantId!.first,
-  //                               tenant.leaseId!,
-  //                             );
-  //
-  //                             bool creditAccepted = paymentSettings['creditCardAccepted']!;
-  //                             bool debitAccepted = paymentSettings['debitCardAccepted']!;
-  //
-  //                             // Fetch and filter cards based on payment settings.
-  //                             var cards = await tenant_cards().fetchcreditcard(tenant.tenantId!.first);
-  //                             var filteredCards = cards.where((card) {
-  //                               if (creditAccepted && card.binResult == 'CREDIT') return true;
-  //                               if (debitAccepted && card.binResult == 'DEBIT') return true;
-  //                               return false;
-  //                             }).toList();
-  //
-  //                             // Return the tenant and their valid cards
-  //                             return {'tenant': tenant, 'cards': filteredCards};
-  //                           }).toList(),
-  //                         ),
-  //                         builder: (context, snapshot) {
-  //                           if (snapshot.hasData) {
-  //                             List<Map<String, dynamic>> tenantsWithCards = snapshot.data!
-  //                                 .where((entry) => entry['cards'].isNotEmpty)
-  //                                 .toList();
-  //
-  //                             // If no tenants have valid cards, show a message
-  //                             if (tenantsWithCards.isEmpty) {
-  //                               return Center(child: Text('No tenants with valid cards.'));
-  //                             }
-  //                             List<List<BillingData>> Cardsdata = tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList();
-  //                             // Initialize the tenant card data in the provider
-  //                             Provider.of<DropdownProvider>(context, listen: false)
-  //                                 .initializeTenantCard(
-  //                                 tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList());
-  //
-  //                             return ListView.builder(
-  //                               shrinkWrap: true,
-  //                               physics: ClampingScrollPhysics(),
-  //                               itemCount: tenantsWithCards.length,
-  //                               itemBuilder: (context, index) {
-  //                                 TenantData tenantsdata = tenantsWithCards[index]["tenant"];
-  //                                 String tenantId = tenantsdata.tenantId!.first;
-  //                                 Map<String, bool> cardAcceptanceResponse = cardAcceptanceResponses[tenantId]!;
-  //
-  //                                 List<BillingData> filteredCards = tenant_cards().filterCards(
-  //                                   Cardsdata[index],
-  //                                   cardAcceptanceResponse,
-  //                                 );
-  //                                 return Consumer<DropdownProvider>(
-  //                                   builder: (context, provider, child) {
-  //                                     // Filter the cards based on the card acceptance response
-  //                                     return Padding(
-  //                                       padding: const EdgeInsets.all(3.0),
-  //                                       child: Column(
-  //                                         mainAxisAlignment: MainAxisAlignment.start,
-  //                                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                                         children: [
-  //                                           Text(
-  //                                             "${tenantsdata.firstName} ${tenantsdata.lastName}",
-  //                                             style: TextStyle(
-  //                                               fontSize: 15,
-  //                                               color: blueColor,
-  //                                               fontWeight: FontWeight.bold,
-  //                                             ),
-  //                                           ),
-  //                                           SizedBox(
-  //                                             height: 5,
-  //                                           ),
-  //                                           Container(
-  //                                             height: 45,
-  //                                             decoration: BoxDecoration(
-  //                                               border: Border.all(),
-  //                                               borderRadius: BorderRadius.circular(5),
-  //                                             ),
-  //                                             padding: EdgeInsets.symmetric(horizontal: 2),
-  //                                             child: DropdownButtonHideUnderline(
-  //                                               child: DropdownButton<String>(
-  //                                                 isExpanded: true,
-  //                                                 value: provider.tenantCard[index], // Use ccNumber as selected value
-  //                                                 // Custom display of the selected item:
-  //                                                 selectedItemBuilder: (BuildContext context) {
-  //                                                   return filteredCards.map((card) {
-  //                                                     return Align(
-  //                                                       alignment: Alignment.centerLeft,
-  //                                                       child: Text(
-  //                                                         card.ccNumber!, // Only display ccNumber in selected state
-  //                                                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-  //                                                       ),
-  //                                                     );
-  //                                                   }).toList();
-  //                                                 },
-  //                                                 // Expanded dropdown list items:
-  //                                                 items: filteredCards.map((card) {
-  //                                                   return DropdownMenuItem(
-  //                                                     value: card.ccNumber, // ccNumber remains the value
-  //                                                     child: Column(
-  //                                                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                                                       children: [
-  //                                                         Text(
-  //                                                           card.ccNumber!,
-  //                                                           style: TextStyle(fontWeight: FontWeight.bold),
-  //                                                         ),
-  //                                                         Text(
-  //                                                           card.binResult ?? '',
-  //                                                           style: TextStyle(color: Colors.grey),
-  //                                                         ),
-  //                                                       ],
-  //                                                     ),
-  //                                                   );
-  //                                                 }).toList(),
-  //                                                 onChanged: (String? selectedCard) {
-  //                                                   if (selectedCard != null) {
-  //                                                     provider.updateTenantCard(index, selectedCard);
-  //                                                   }
-  //                                                 },
-  //                                               ),
-  //                                             ),
-  //                                           ),
-  //
-  //                                         ],
-  //                                       ),
-  //                                     );
-  //                                   },
-  //                                 );
-  //                               },
-  //                             );
-  //                           } else if (snapshot.hasError) {
-  //                             return Text('Error: ${snapshot.error}');
-  //                           } else {
-  //                             return Center(
-  //                                 child: SpinKitFadingCircle(
-  //                                   color: Colors.black,
-  //                                   size: 40.0,
-  //                                 ));
-  //                           }
-  //                         },
-  //                       ),
-  //                     ),
-  //                     Row(
-  //                       mainAxisAlignment: MainAxisAlignment.end,
-  //                       crossAxisAlignment: CrossAxisAlignment.end,
-  //                       children: [
-  //                         GestureDetector(
-  //                           onTap: () {
-  //                             Navigator.pop(context);
-  //                           },
-  //                           child: Container(
-  //                             height: 45,
-  //                             width: 100,
-  //                             decoration: BoxDecoration(
-  //                               border: Border.all(color: blueColor),
-  //                               borderRadius: BorderRadius.circular(6),
-  //                             ),
-  //                             child: Center(
-  //                               child: Text(
-  //                                 "Cancel",
-  //                                 style: TextStyle(color: blueColor, fontSize: 16),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                         SizedBox(width: 10,),
-  //                         GestureDetector(
-  //                           onTap: () async {
-  //                             SharedPreferences prefs = await SharedPreferences.getInstance();
-  //                             String? token = prefs.getString('token');
-  //                             String? id = prefs.getString('adminId');
-  //                             final provider = Provider.of<DropdownProvider>(context, listen: false);
-  //                             List<Map<String, dynamic>> data = [];
-  //                             for (var i = 0; i < tenants.length; i++) {
-  //                               List<String> selected_card = provider.tenantCard;
-  //                               print(selected_card);
-  //                               List<BillingData> billdata = billingDataList![i];
-  //                               BillingData current_data =
-  //                               billdata.firstWhere((element) => element.ccNumber == selected_card[i]);
-  //                               data.add({
-  //                                 "lease_id": tenants[i].leaseId,
-  //                                 "tenant_id": tenants[i].tenantId!.first,
-  //                                 "card_type": current_data.binResult,
-  //                                 "customer_vault_id": current_data.customerVaultId,
-  //                                 "billing_id": current_data.billingId,
-  //                               });
-  //                             }
-  //                             print(data);
-  //
-  //                             await Properies_summery_Repo().addrecurringtenant({
-  //                               "admin_id": id,
-  //                               "rental_id": widget.properties.rentalId,
-  //                               "recurrings": data
-  //                             }).then((value){
-  //                               Navigator.pop(context);
-  //                               setState(() {
-  //
-  //                               });
-  //                             });
-  //                           },
-  //                           child: Container(
-  //                             height: 45,
-  //                             width: 100,
-  //                             decoration: BoxDecoration(
-  //                               color: blueColor,
-  //                               borderRadius: BorderRadius.circular(6),
-  //                             ),
-  //                             child: Center(
-  //                               child: Text(
-  //                                 "Save",
-  //                                 style: TextStyle(color: Colors.white, fontSize: 16),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),),
-  //         );
-  //       //   AlertDialog(
-  //       //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-  //       //   content:
-  //       //   Container(
-  //       //     height: 350.0,
-  //       //     width: 450.0,
-  //       //     child: Column(
-  //       //       mainAxisAlignment: MainAxisAlignment.start,
-  //       //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       //       children: [
-  //       //         Text(
-  //       //           "Select Recurring Cards",
-  //       //           style: TextStyle(
-  //       //             color: blueColor,
-  //       //             fontSize: 20,
-  //       //             fontWeight: FontWeight.bold,
-  //       //           ),
-  //       //         ),
-  //       //         SizedBox(height: 10),
-  //       //         Expanded(
-  //       //           child: FutureBuilder<List<Map<String, dynamic>>>(
-  //       //             future: Future.wait(
-  //       //               tenants.map((tenant) async {
-  //       //                 var paymentSettings = await tenant_cards().fetchCardAcceptance(
-  //       //                   tenant.tenantId!.first,
-  //       //                   tenant.leaseId!,
-  //       //                 );
-  //       //
-  //       //                 bool creditAccepted = paymentSettings['creditCardAccepted']!;
-  //       //                 bool debitAccepted = paymentSettings['debitCardAccepted']!;
-  //       //
-  //       //                 // Fetch and filter cards based on payment settings.
-  //       //                 var cards = await tenant_cards().fetchcreditcard(tenant.tenantId!.first);
-  //       //                 var filteredCards = cards.where((card) {
-  //       //                   if (creditAccepted && card.binResult == 'CREDIT') return true;
-  //       //                   if (debitAccepted && card.binResult == 'DEBIT') return true;
-  //       //                   return false;
-  //       //                 }).toList();
-  //       //
-  //       //                 // Return the tenant and their valid cards
-  //       //                 return {'tenant': tenant, 'cards': filteredCards};
-  //       //               }).toList(),
-  //       //             ),
-  //       //             builder: (context, snapshot) {
-  //       //               if (snapshot.hasData) {
-  //       //                 List<Map<String, dynamic>> tenantsWithCards = snapshot.data!
-  //       //                     .where((entry) => entry['cards'].isNotEmpty)
-  //       //                     .toList();
-  //       //
-  //       //                 // If no tenants have valid cards, show a message
-  //       //                 if (tenantsWithCards.isEmpty) {
-  //       //                   return Center(child: Text('No tenants with valid cards.'));
-  //       //                 }
-  //       //                 List<List<BillingData>> Cardsdata = tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList();
-  //       //                 // Initialize the tenant card data in the provider
-  //       //                 Provider.of<DropdownProvider>(context, listen: false)
-  //       //                     .initializeTenantCard(
-  //       //                     tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList());
-  //       //
-  //       //                 return ListView.builder(
-  //       //                   shrinkWrap: true,
-  //       //                   physics: ClampingScrollPhysics(),
-  //       //                   itemCount: tenantsWithCards.length,
-  //       //                   itemBuilder: (context, index) {
-  //       //                     TenantData tenantsdata = tenantsWithCards[index]["tenant"];
-  //       //                     String tenantId = tenantsdata.tenantId!.first;
-  //       //                     Map<String, bool> cardAcceptanceResponse = cardAcceptanceResponses[tenantId]!;
-  //       //
-  //       //                     List<BillingData> filteredCards = tenant_cards().filterCards(
-  //       //                       Cardsdata[index],
-  //       //                       cardAcceptanceResponse,
-  //       //                     );
-  //       //
-  //       //                     return Consumer<DropdownProvider>(
-  //       //                       builder: (context, provider, child) {
-  //       //                         // Filter the cards based on the card acceptance response
-  //       //
-  //       //
-  //       //                         return Padding(
-  //       //                           padding: const EdgeInsets.only(top: 3,bottom: 3),
-  //       //                           child: Row(
-  //       //                             mainAxisAlignment: MainAxisAlignment.start,
-  //       //                             crossAxisAlignment: CrossAxisAlignment.start,
-  //       //                             children: [
-  //       //                               SizedBox(
-  //       //                                 width: MediaQuery.of(context)
-  //       //                                     .size
-  //       //                                     .width >
-  //       //                                     500
-  //       //                                     ? 100
-  //       //                                     : 90,
-  //       //                                 child: Text(
-  //       //                                  ' ${tenantsdata.firstName} ${tenantsdata.lastName}',
-  //       //                                   maxLines:
-  //       //                                   5, // Set maximum number of lines
-  //       //                                   overflow: TextOverflow
-  //       //                                       .ellipsis,
-  //       //                                   textAlign: TextAlign.left,
-  //       //                                   style: TextStyle(
-  //       //                                     fontSize: MediaQuery.of(context)
-  //       //                                         .size
-  //       //                                         .width <
-  //       //                                         500
-  //       //                                         ? 13
-  //       //                                         : 18,
-  //       //                                     color: blueColor,
-  //       //                                     fontWeight: FontWeight.bold,
-  //       //                                   ),
-  //       //                                 ),
-  //       //                               ),
-  //       //                               // Text(
-  //       //                               //   "${tenantsdata.firstName} ${tenantsdata.lastName}",
-  //       //                               //   style: TextStyle(
-  //       //                               //     fontSize: 16,
-  //       //                               //     fontWeight: FontWeight.w500,
-  //       //                               //   ),
-  //       //                               // ),
-  //       //                               SizedBox(width: 3),
-  //       //                               Expanded(
-  //       //                                 child: Container(
-  //       //                                   height: 45,
-  //       //                                   decoration: BoxDecoration(
-  //       //                                     border: Border.all(),
-  //       //                                     borderRadius: BorderRadius.circular(5),
-  //       //                                   ),
-  //       //                                   padding: EdgeInsets.symmetric(horizontal: 5),
-  //       //                                   child: DropdownButtonHideUnderline(
-  //       //                                     child: DropdownButton<String>(
-  //       //                                       isExpanded: true,
-  //       //                                       value: provider.tenantCard[index], // Use ccNumber as selected value
-  //       //                                       // Custom display of the selected item:
-  //       //                                       selectedItemBuilder: (BuildContext context) {
-  //       //                                         return filteredCards.map((card) {
-  //       //                                           return Align(
-  //       //                                             alignment: Alignment.centerLeft,
-  //       //                                             child: Text(
-  //       //                                               card.ccNumber!, // Only display ccNumber in selected state
-  //       //                                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-  //       //                                             ),
-  //       //                                           );
-  //       //                                         }).toList();
-  //       //                                       },
-  //       //                                       // Expanded dropdown list items:
-  //       //                                       items: filteredCards.map((card) {
-  //       //                                         return DropdownMenuItem(
-  //       //                                           value: card.ccNumber, // ccNumber remains the value
-  //       //                                           child: Column(
-  //       //                                             crossAxisAlignment: CrossAxisAlignment.start,
-  //       //                                             children: [
-  //       //                                               Text(
-  //       //                                                 card.ccNumber!,
-  //       //                                                 style: TextStyle(fontWeight: FontWeight.bold),
-  //       //                                               ),
-  //       //                                               Text(
-  //       //                                                 card.binResult ?? '',
-  //       //                                                 style: TextStyle(color: Colors.grey),
-  //       //                                               ),
-  //       //                                             ],
-  //       //                                           ),
-  //       //                                         );
-  //       //                                       }).toList(),
-  //       //                                       onChanged: (String? selectedCard) {
-  //       //                                         if (selectedCard != null) {
-  //       //                                           provider.updateTenantCard(index, selectedCard);
-  //       //                                         }
-  //       //                                       },
-  //       //                                     ),
-  //       //                                   ),
-  //       //                                 ),
-  //       //                               ),
-  //       //
-  //       //
-  //       //                             ],
-  //       //                           ),
-  //       //                         );
-  //       //                       },
-  //       //                     );
-  //       //                   },
-  //       //                 );
-  //       //               } else if (snapshot.hasError) {
-  //       //                 return Text('Error: ${snapshot.error}');
-  //       //               } else {
-  //       //                 return Center(child: CircularProgressIndicator());
-  //       //               }
-  //       //             },
-  //       //           ),
-  //       //         ),
-  //       //       ],
-  //       //     ),
-  //       //   ),
-  //       //   actions: [
-  //       //     GestureDetector(
-  //       //       onTap: () {
-  //       //         Navigator.pop(context);
-  //       //       },
-  //       //       child: Container(
-  //       //         height: 45,
-  //       //         width: 100,
-  //       //         decoration: BoxDecoration(
-  //       //           border: Border.all(color: blueColor),
-  //       //           borderRadius: BorderRadius.circular(6),
-  //       //         ),
-  //       //         child: Center(
-  //       //           child: Text(
-  //       //             "Cancel",
-  //       //             style: TextStyle(color: blueColor, fontSize: 16),
-  //       //           ),
-  //       //         ),
-  //       //       ),
-  //       //     ),
-  //       //     GestureDetector(
-  //       //       onTap: () async {
-  //       //         SharedPreferences prefs = await SharedPreferences.getInstance();
-  //       //         String? token = prefs.getString('token');
-  //       //         String? id = prefs.getString('adminId');
-  //       //         final provider = Provider.of<DropdownProvider>(context, listen: false);
-  //       //         List<Map<String, dynamic>> data = [];
-  //       //         for (var i = 0; i < tenants.length; i++) {
-  //       //           List<String> selected_card = provider.tenantCard;
-  //       //           print(selected_card);
-  //       //           List<BillingData> billdata = billingDataList![i];
-  //       //           BillingData current_data =
-  //       //           billdata.firstWhere((element) => element.ccNumber == selected_card[i]);
-  //       //           data.add({
-  //       //             "lease_id": tenants[i].leaseId,
-  //       //             "tenant_id": tenants[i].tenantId!.first,
-  //       //             "card_type": current_data.binResult,
-  //       //             "customer_vault_id": current_data.customerVaultId,
-  //       //             "billing_id": current_data.billingId,
-  //       //           });
-  //       //         }
-  //       //         print(data);
-  //       //
-  //       //        await Properies_summery_Repo().addrecurringtenant({
-  //       //           "admin_id": id,
-  //       //           "rental_id": widget.properties.rentalId,
-  //       //           "recurrings": data
-  //       //         }).then((value){
-  //       //           Navigator.pop(context);
-  //       //           setState(() {
-  //       //
-  //       //           });
-  //       //        });
-  //       //       },
-  //       //       child: Container(
-  //       //         height: 45,
-  //       //         width: 100,
-  //       //         decoration: BoxDecoration(
-  //       //           color: blueColor,
-  //       //           borderRadius: BorderRadius.circular(6),
-  //       //         ),
-  //       //         child: Center(
-  //       //           child: Text(
-  //       //             "Save",
-  //       //             style: TextStyle(color: Colors.white, fontSize: 16),
-  //       //           ),
-  //       //         ),
-  //       //       ),
-  //       //     ),
-  //       //   ],
-  //       // );
-  //     },
-  //   );
-  // }
 
   List<String> tenantCardControllers = [];
   List<TextEditingController> amountControllers = [];
@@ -14809,157 +13050,6 @@ class _Summery_pageState extends State<Summery_page>
           Properies_summery_Repo().fetchunit(widget.properties.rentalId ?? "");
     });
   }
-
-  // Lease_page() {
-  //   print("calling lease page from my screen");
-  //   print("$image_url${widget.properties.rentalImage}");
-  //   return
-  //     Container(
-  //       child: Column(
-  //         children: [
-  //           Text("Leasee  Table "),
-  //           Padding(
-  //             padding: const EdgeInsets.all(5.0),
-  //             child: FutureBuilder<List<Properties_lease_model>>(
-  //               future: futureLeaseDetails,
-  //               builder: (context, snapshot) {
-  //                 if (snapshot.connectionState == ConnectionState.waiting) {
-  //                   return const Center(
-  //                     child: SpinKitFadingCircle(color: Colors.black, size: 40),
-  //                   );
-  //                 } else if (snapshot.hasError) {
-  //                   return Center(child: Text('Error: ${snapshot.error}'));
-  //                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-  //                   return Container(
-  //                     height: MediaQuery.of(context).size.height * .5,
-  //                     child: Center(
-  //                       child: Column(
-  //                         mainAxisAlignment: MainAxisAlignment.center,
-  //                         children: [
-  //                           Image.asset("assets/images/no_data.jpg", height: 200, width: 200),
-  //                           const SizedBox(height: 10),
-  //                           const Text(
-  //                             "No Lease Data Available",
-  //                             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 16),
-  //                           )
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   );
-  //                 } else {
-  //                   var data = snapshot.data!;
-  //
-  //                   // Search Filter
-  //                   if (searchValuerent != null && searchValuerent!.isNotEmpty && searchValuerent != "All") {
-  //                     data = data
-  //                         .where((e) =>
-  //                     e.tenantNames != null &&
-  //                         e.tenantNames!.toLowerCase().contains(searchValuerent!.toLowerCase()))
-  //                         .toList();
-  //                   }
-  //
-  //                   // Rental ID filter
-  //                   data = data.where((e) => e.rentalId == widget.properties.rentalId).toList();
-  //
-  //                   // Pagination
-  //                   final totalPages = (data.length / itemsPerPage).ceil();
-  //                   final currentPageData = data.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
-  //
-  //                   return SingleChildScrollView(
-  //                     child: Column(
-  //                       children: [
-  //                         SizedBox(height: 5),
-  //                         _buildHeadersrent(), // your custom header row widget
-  //                         SizedBox(height: 20),
-  //                         Text("Leasee  Table "),
-  //                         // Table rows
-  //                         Container(
-  //                           decoration: BoxDecoration(border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
-  //                           child: Column(
-  //                             children: currentPageData.asMap().entries.map((entry) {
-  //                               int index = entry.key;
-  //                               Properties_lease_model lease = entry.value;
-  //
-  //                               return Container(
-  //                                 decoration: BoxDecoration(
-  //                                   color: index % 2 == 0 ? Colors.white : Colors.blue.withOpacity(0.08),
-  //                                   border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
-  //                                 ),
-  //                                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-  //                                 child: Row(
-  //                                   children: [
-  //                                     Expanded(child: Text(lease.tenantNames ?? '-')),
-  //                                     Expanded(child: Text(lease.rentalUnit ?? '-')),
-  //                                     Expanded(child: Text(lease.startDate ?? '-')),
-  //                                     Expanded(child: Text(lease.endDate ?? '-')),
-  //                                     Expanded(child: Text("₹${lease.amount ?? 0}")),
-  //                                     Expanded(child: Text("${lease.remainingDays ?? 0} days")),
-  //                                   ],
-  //                                 ),
-  //                               );
-  //                             }).toList(),
-  //                           ),
-  //                         ),
-  //
-  //                         SizedBox(height: 20),
-  //
-  //                         // // Pagination controls
-  //                         // Row(
-  //                         //   mainAxisAlignment: MainAxisAlignment.end,
-  //                         //   children: [
-  //                         //     Text("Rows per page: "),
-  //                         //     DropdownButton<int>(
-  //                         //       value: itemsPerPage,
-  //                         //       items: [5, 10, 20].map((int value) {
-  //                         //         return DropdownMenuItem<int>(
-  //                         //           value: value,
-  //                         //           child: Text(value.toString()),
-  //                         //         );
-  //                         //       }).toList(),
-  //                         //       onChanged: (value) {
-  //                         //         setState(() {
-  //                         //           itemsPerPage = value!;
-  //                         //           currentPage = 0;
-  //                         //         });
-  //                         //       },
-  //                         //     ),
-  //                         //     IconButton(
-  //                         //       icon: Icon(Icons.chevron_left, color: currentPage == 0 ? Colors.grey : Colors.blue),
-  //                         //       onPressed: currentPage == 0
-  //                         //           ? null
-  //                         //           : () {
-  //                         //         setState(() {
-  //                         //           currentPage--;
-  //                         //         });
-  //                         //       },
-  //                         //     ),
-  //                         //     Text('Page ${currentPage + 1} of $totalPages'),
-  //                         //     IconButton(
-  //                         //       icon: Icon(Icons.chevron_right,
-  //                         //           color: currentPage < totalPages - 1 ? Colors.blue : Colors.grey),
-  //                         //       onPressed: currentPage < totalPages - 1
-  //                         //           ? () {
-  //                         //         setState(() {
-  //                         //           currentPage++;
-  //                         //         });
-  //                         //       }
-  //                         //           : null,
-  //                         //     ),
-  //                         //   ],
-  //                         // )
-  //                       ],
-  //                     ),
-  //                   );
-  //                 }
-  //               },
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //
-  //
-  // }
 }
 
 class LeasesTable extends StatefulWidget {

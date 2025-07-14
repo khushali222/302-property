@@ -76,11 +76,16 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                     width < 400
                         ? Text("Tenant\nNames",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold))
                         : Text("Tenant\nNames",
                             textAlign: TextAlign.center,
-                            style:
-                                TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: blueColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -112,7 +117,10 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                   children: [
                     Text("Lease End",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color:blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -144,7 +152,10 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                   children: [
                     Text("Rent Cycle",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -171,16 +182,11 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                 bool isExpanded = expandedIndex == index;
                 Properties_lease_model lease = entry.value;
                 return Container(
-                  margin:
-                  EdgeInsets.symmetric(vertical: 6),
+                  margin: EdgeInsets.symmetric(vertical: 6),
                   decoration: BoxDecoration(
-                    color: index % 2 != 0
-                        ? Color(0xFFF4F8FF)
-                        : Colors.white,
-                    border: Border.all(
-                        color: Color(0xFFDBE0E5)),
-                    borderRadius:
-                    BorderRadius.circular(10),
+                    color: index % 2 != 0 ? Color(0xFFF4F8FF) : Colors.white,
+                    border: Border.all(color: Color(0xFFDBE0E5)),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
                     children: <Widget>[
