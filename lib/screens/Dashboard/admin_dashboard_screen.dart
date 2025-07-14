@@ -99,7 +99,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
   //   return formatter.format(value);
   // }
   String _formatCurrency(dynamic amount) {
-    final formatter = NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 2);
+    final formatter =
+        NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 2);
 
     double value = 0.0;
 
@@ -215,6 +216,40 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
               height: 20,
             ),
             Cronjob_payment_table(),
+            // SizedBox(
+            //   height: 20,
+            // ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+            //   child: Center(
+            //     child: LayoutBuilder(
+            //       builder: (context, constraints) {
+            //         double screenWidth = constraints.maxWidth;
+            //         double imageHeight =
+            //             screenWidth < 400 ? 32 : (screenWidth < 600 ? 40 : 48);
+            //
+            //         return Column(
+            //           mainAxisSize: MainAxisSize.min,
+            //           children: [
+            //             Text(
+            //               "Powered By",
+            //               style: TextStyle(
+            //                 fontWeight: FontWeight.bold,
+            //                 fontSize: 16,
+            //               ),
+            //             ),
+            //             SizedBox(height: 6),
+            //             Image.asset(
+            //               "assets/images/logo.png",
+            //               height: imageHeight,
+            //               fit: BoxFit.contain,
+            //             ),
+            //           ],
+            //         );
+            //       },
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -441,10 +476,6 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                                   fontSize: valueFont,
                                   color: const Color(0xFF7B7F87),
                                   fontWeight: FontWeight.w400,
-
-
-
-
                                 ),
                               ),
                             ],
