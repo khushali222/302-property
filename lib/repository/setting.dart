@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
 
+import '../Model/categories_model.dart';
 import '../constant/constant.dart';
 import '../model/setting.dart';
 
@@ -400,6 +401,58 @@ class accountRepository {
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to delete account');
+    }
+  }
+
+  Future<List<categories_model>> fetchCategories() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/settings/categories/$adminid'),
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse
+          .map((data) => categories_model.fromJson(data))
+          .toList();
+    } else {
+      print('Failed to fetch settings: ${response.body}');
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> DeleteCategories(
+      {required String? categories_id, String? reason}) async {
+    // print('$apiUrl/$id');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+    final http.Response response = await http.delete(
+        Uri.parse('${Api_url}/api/settings/categories/$adminid/$categories_id'),
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          "id": "CRM $adminid",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"reason": reason}));
+    var responseData = json.decode(response.body);
+    print(" check the  delete the ${response.body}");
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to delete categories');
     }
   }
 }

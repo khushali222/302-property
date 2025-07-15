@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 //import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -24,6 +25,7 @@ import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
     as widget_302_Staff;
 import 'package:http/http.dart' as http;
 
+import '../../Model/categories_model.dart';
 import '../../StaffModule/widgets/custom_drawer.dart';
 import '../../constant/constant.dart';
 import '../../model/setting.dart';
@@ -34,6 +36,8 @@ import '../../widgets/custom_drawer.dart';
 import '../Leasing/RentalRoll/newAddLease.dart';
 import '../Rental/Tenants/add_tenants.dart';
 import 'manage_template.dart';
+import 'package:three_zero_two_property/Model/All_categories_model.dart';
+import 'package:three_zero_two_property/repository/fetch_allcategories.dart';
 
 class TabBarExample extends StatefulWidget {
   @override
@@ -50,7 +54,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController duration = TextEditingController();
   TextEditingController durationmail = TextEditingController();
   TextEditingController replyToEmail = TextEditingController();
-
+  TextEditingController categories = TextEditingController();
+  late Future<List<categories_model>> futureCategories;
   bool rentDueReminderEmail = false;
 
   String surge_id = "";
@@ -66,12 +71,18 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool isloading = false;
   bool isdateformate = false;
   bool isworkorder = false;
+  bool iscategories = false;
   bool ismanagetemplate = false;
   bool ischargesetting = false;
   bool _isStaffUser = false;
   ConnectivityResult? _connectivityResult;
   List<Setting4> accounts = [];
   String? selectedAccount;
+  // 1. Add state variables
+  List<allcategories_model> _dropdownCategories = [];
+  allcategories_model? _selectedDropdownCategory;
+  bool _isLoadingCategories = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -104,6 +115,26 @@ class _TabBarExampleState extends State<TabBarExample> {
     // _customDateController.text = customdate!;
     //  customdate = customdate ?? "2025-01-23"; // Example default date
     //  _customDateController.text = customdate!;
+    futureCategories = accountRepository().fetchCategories();
+    _loadDropdownCategories();
+  }
+
+  void _loadDropdownCategories() async {
+    setState(() {
+      _isLoadingCategories = true;
+    });
+    try {
+      final cats = await FetchAllcategories().fetchAllCategories();
+      setState(() {
+        _dropdownCategories = cats;
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingCategories = false;
+      });
+      // Optionally show error
+    }
   }
 
   // Add this helper method after the initState method
@@ -1348,6 +1379,20 @@ class _TabBarExampleState extends State<TabBarExample> {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
     print("id of id 1 $id");
+
+    // Ensure a category is selected
+    if (_selectedDropdownCategory == null ||
+        _selectedDropdownCategory?.categoryId == null) {
+      Fluttertoast.showToast(msg: "Please select a category");
+      setState(() {
+        isloading = false;
+      });
+      return;
+    }
+
+    print(
+        "Sending categoryId: " + (_selectedDropdownCategory?.categoryId ?? ""));
+
     final url = '${Api_url}/api/work-order/work-defaults';
     final headers = {
       "authorization": "CRM $token",
@@ -1356,7 +1401,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     };
     final body = json.encode({
       "admin_id": adminId,
-      "category": _selectedCategory,
+      "category": _selectedDropdownCategory?.categoryId, // Send category_id
       "entry_allowed": _selectedEntry == 'yes',
       "staffmember_id": _selectedstaffId,
       "vendor_id": vendorId,
@@ -1367,8 +1412,8 @@ class _TabBarExampleState extends State<TabBarExample> {
           await http.post(Uri.parse(url), headers: headers, body: body);
 
       var responseData = json.decode(response.body);
-      print('add workorder ${responseData}');
-      print('add workorder  ${response.body}');
+      print('add workorder \${responseData}');
+      print('add workorder  \${response.body}');
       if (responseData["statusCode"] == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
@@ -1403,17 +1448,30 @@ class _TabBarExampleState extends State<TabBarExample> {
             workorder.workDefaults!.entryAllowed! ? 'Yes' : 'No';
       }
       if (workorder != null) {
+        // Get category_id from workDefaults.category
+        String? fetchedCategoryId = workorder.workDefaults?.category;
+        print("Fetched category_id from workDefaults: " + (fetchedCategoryId ?? "null"));
         setState(() {
           _selectedvendorsId = workorder.workDefaults?.vendorId?.isEmpty ?? true
               ? null
               : workorder.workDefaults?.vendorId;
-          _selectedCategory = workorder.workDefaults?.category ?? "";
+          _selectedCategory = fetchedCategoryId ?? "";
+          print("workorder default category selcted $_selectedCategory ");
           _selectedstaffId =
               workorder.workDefaults?.staffmemberId?.isEmpty ?? true
                   ? null
                   : workorder.workDefaults?.staffmemberId;
           _selectedEntry = entryAllowedString;
           print('vendor check ${workorder.workDefaults?.vendorId ?? ""}');
+          // Set the dynamic dropdown value by categoryId if categories are loaded
+          if (_selectedCategory != null &&
+              _selectedCategory!.isNotEmpty &&
+              _dropdownCategories.isNotEmpty) {
+            _selectedDropdownCategory = _dropdownCategories.firstWhere(
+              (cat) => cat.categoryId == _selectedCategory,
+              orElse: () => _dropdownCategories.first,
+            );
+          }
         });
       }
     } catch (e) {
@@ -1484,20 +1542,20 @@ class _TabBarExampleState extends State<TabBarExample> {
                 : widget_302.App_Bar(
                     context: context, isSettingPageActive: true)),
         backgroundColor: Colors.white,
-        drawer:  !_isInitialized
+        drawer: !_isInitialized
             ? CustomDrawer(
-          currentpage: "Settings",
-          dropdown: false,
-        )
+                currentpage: "Settings",
+                dropdown: false,
+              )
             : (_isStaff
-            ? CustomDrawerStaff(
-          currentpage: "Settings",
-          dropdown: true,
-        )
-            : CustomDrawer(
-          currentpage: "Settings",
-          dropdown: false,
-        )),
+                ? CustomDrawerStaff(
+                    currentpage: "Settings",
+                    dropdown: true,
+                  )
+                : CustomDrawer(
+                    currentpage: "Settings",
+                    dropdown: false,
+                  )),
         // drawer:
         // CustomDrawer(
         //   currentpage: "Settings",
@@ -1573,6 +1631,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = false;
                                       ismanagetemplate = false;
                                       ischargesetting = false;
+                                      iscategories = false;
                                     });
                                   },
                                   child: Container(
@@ -1619,6 +1678,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = false;
                                       ismanagetemplate = false;
                                       ischargesetting = false;
+                                      iscategories = false;
                                     });
                                   },
                                   child: Container(
@@ -1671,6 +1731,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isaccounts = false;
                                       isdateformate = false;
                                       isworkorder = false;
+                                      iscategories = false;
                                     });
                                   },
                                   child: Container(
@@ -1713,6 +1774,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = false;
                                       isworkorder = false;
                                       ischargesetting = false;
+                                      iscategories = false;
                                     });
                                   },
                                   child: Container(
@@ -1764,6 +1826,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = false;
                                       isworkorder = false;
                                       ischargesetting = false;
+                                      iscategories = false;
                                     });
                                   },
                                   child: Container(
@@ -1810,6 +1873,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = false;
                                       ismanagetemplate = false;
                                       ischargesetting = false;
+                                      iscategories = false;
                                       DateTime now = DateTime.now();
                                       dateformateselect =
                                           dateProvider.dateformateselect;
@@ -1873,6 +1937,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = false;
                                       isdateformate = false;
                                       ismanagetemplate = false;
+                                      iscategories = false;
                                     });
                                   },
                                   child: Visibility(
@@ -1918,6 +1983,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = false;
                                       isworkorder = false;
                                       ismanagetemplate = true;
+                                      iscategories = false;
                                       //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
                                     });
                                   },
@@ -1991,6 +2057,63 @@ class _TabBarExampleState extends State<TabBarExample> {
                               // ),
 
                               // Spacer()
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 850
+                              : 900,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = true;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ismanagetemplate = false;
+                                    });
+                                  },
+                                  child: Visibility(
+                                    visible: true,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: blueColor),
+                                        color: !iscategories
+                                            ? Colors.white
+                                            : blueColor,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Categories",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: iscategories
+                                                  ? Colors.white
+                                                  : blueColor,
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 15
+                                                  : 20),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -5255,106 +5378,80 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ],
                               ),
                               SizedBox(height: 15),
-                              FormField<String>(
-                                validator: (value) {
-                                  if (_selectedCategory == null ||
-                                      _selectedCategory!.isEmpty) {
-                                    return 'Please select a category';
-                                  }
-                                  return null;
-                                },
-                                builder: (FormFieldState<String> state) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      DropdownButtonHideUnderline(
-                                        child: DropdownButton2<String>(
-                                          isExpanded: true,
-                                          hint: const Text('Select Category'),
-                                          value: _selectedCategory,
-                                          items: _category.map((method) {
-                                            return DropdownMenuItem<String>(
-                                              value: method,
-                                              child: Text(method),
-                                            );
-                                          }).toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              _selectedCategory = newValue;
-                                              _showTextField =
-                                                  _selectedCategory == 'Other';
-                                              state.didChange(newValue);
-                                            });
-                                            print(
-                                                'Selected category: $_selectedCategory');
-                                            state.reset();
-                                            // Notify FormField of value change
-                                          },
-                                          buttonStyleData: ButtonStyleData(
-                                            height: 45,
-                                            padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 2,
+                              // Dynamic categories dropdown for work order
+                              _isLoadingCategories
+                                  ? SpinKitFadingCircle(
+                                      color: Colors.black, size: 40.0)
+                                  : DropdownButtonHideUnderline(
+                                      child:
+                                          DropdownButton2<allcategories_model>(
+                                        isExpanded: true,
+                                        hint: const Text('Select Category'),
+                                        value: _selectedDropdownCategory,
+                                        items: _dropdownCategories.map((cat) {
+                                          return DropdownMenuItem<
+                                              allcategories_model>(
+                                            value: cat,
+                                            child: Text(cat.name ?? ''),
+                                          );
+                                        }).toList(),
+                                        onChanged:
+                                            (allcategories_model? newValue) {
+                                          setState(() {
+                                            _selectedDropdownCategory =
+                                                newValue;
+                                            _showTextField =
+                                                newValue?.name == 'Other';
+                                          });
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 45,
+                                          padding: const EdgeInsets.only(
+                                              left: 14, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
                                           ),
-                                          iconStyleData: const IconStyleData(
-                                            icon: Icon(Icons.arrow_drop_down),
-                                            iconSize: 24,
-                                            iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
+                                          elevation: 2,
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(Icons.arrow_drop_down),
+                                          iconSize: 24,
+                                          iconEnabledColor: Color(0xFFb0b6c3),
+                                          iconDisabledColor: Colors.grey,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          maxHeight:
+                                              250, // Set max height for scroll
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
                                           ),
-                                          dropdownStyleData: DropdownStyleData(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            scrollbarTheme: ScrollbarThemeData(
-                                              radius: const Radius.circular(6),
-                                              thickness:
-                                                  MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
-                                            ),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(6),
+                                            thickness:
+                                                MaterialStateProperty.all(6),
+                                            thumbVisibility:
+                                                MaterialStateProperty.all(true),
                                           ),
-                                          menuItemStyleData:
-                                              const MenuItemStyleData(
-                                            height: 50,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
-                                          ),
+                                        ),
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
+                                          height: 50,
+                                          padding: EdgeInsets.only(
+                                              left: 14, right: 14),
                                         ),
                                       ),
-                                      if (state.hasError)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 14, top: 8),
-                                          child: Text(
-                                            state.errorText!,
-                                            style: const TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  );
-                                },
-                              ),
-                              _showTextField
-                                  ? Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: buildTextField('Other Category',
-                                          'Enter Other Category', other),
-                                    )
-                                  : Container(),
+                                    ),
+                              if (_showTextField)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10, bottom: 10),
+                                  child: buildTextField('Other Category',
+                                      'Enter Other Category', other),
+                                ),
                               SizedBox(
                                 height: 10,
                               ),
@@ -5998,7 +6095,214 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ],
                               ),
                             ],
-                          )
+                          ),
+                        if (iscategories)
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Manage Categories",
+                                    style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 18
+                                              : 25,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 16),
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey.shade400),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      alignment: Alignment.centerLeft,
+                                      child: TextField(
+                                        controller: categories,
+                                        decoration: InputDecoration.collapsed(
+                                          hintText: 'Enter category name',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      addCategory();
+                                    },
+                                    child: Container(
+                                      height: 43,
+                                      width: 150,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color(
+                                            0xFF1A2F5B), // Dark blue like the image
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Add Category',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              // Category Table
+                              FutureBuilder<List<categories_model>>(
+                                future: futureCategories,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                        child: SpinKitFadingCircle(
+                                      color: Colors.black,
+                                      size: 40.0,
+                                    ));
+                                  } else if (snapshot.hasError) {
+                                    return Center(
+                                        child:
+                                            Text('Error: \\${snapshot.error}'));
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data!.isEmpty) {
+                                    return Center(
+                                        child: Text('No categories found'));
+                                  } else {
+                                    final categoriesList = snapshot.data!;
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Header
+                                        Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.grey.shade400,
+                                              width: 1,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            color: Color(0xFFF4F8FF),
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 12, horizontal: 8),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  'CATEGORY NAME',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    letterSpacing: 1.1,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                'ACTION',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 1.1,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                        // Rows
+                                        ...categoriesList
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
+                                          int idx = entry.key;
+                                          var cat = entry.value;
+                                          return Container(
+                                            margin: EdgeInsets.only(bottom: 8),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey.shade400,
+                                                  width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              color: idx % 2 == 0
+                                                  ? Colors.white
+                                                  : Color(0xFFF4F8FF),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 16,
+                                                            horizontal: 12),
+                                                    child: Text(
+                                                      cat.name ?? '',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color:
+                                                              Colors.black87),
+                                                    ),
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: Icon(Icons.delete,
+                                                      color: Colors.red),
+                                                  onPressed: () {
+                                                    print(
+                                                        "caling delete categories ");
+                                                    setState(() {
+                                                      _showDeleteCategoryAlert(
+                                                          context,
+                                                          cat.categoryId ?? '');
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ],
+                                    );
+                                  }
+                                },
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ),
                       ],
                     ),
                   ),
@@ -6102,92 +6406,59 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController accountname = TextEditingController();
   TextEditingController note = TextEditingController();
 
-  // void _showAccountType(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return
-  //         StatefulBuilder(builder: (context, setState) {
-  //           return
-  //             AlertDialog(
-  //               title: Text('Account Type', style: TextStyle(
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Color.fromRGBO(
-  //                     21, 43, 81, 1),),),
-  //               actions: <Widget>[
-  //                 InkWell(
-  //                   onTap: (){
-  //                     Navigator.pop(context);
-  //                   },
-  //                   child: Container(
-  //                     height: 40,
-  //                     decoration: BoxDecoration(
-  //                       color: blueColor,
-  //                       borderRadius: BorderRadius.circular(3),
-  //                     ),
-  //                     child: Center(
-  //                       child: Text('Cancel',style: TextStyle(
-  //                           color: Colors.white
-  //                       ),),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ],
-  //               content: Container(
-  //                 height: 150,
-  //                 child: Column(
-  //                   children: [
-  //                     SizedBox(
-  //                       height: 20,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         Text("Select Account Type",
-  //                             style: TextStyle(
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: Color.fromRGBO(
-  //                                     21, 43, 81, 1),
-  //                                 fontSize: 17)
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 20,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         CustomDropdown(
-  //                           validator: (value) {
-  //                             if (value == null || value.isEmpty) {
-  //                               return 'Please select a account';
-  //                             }
-  //                             return null;
-  //                           },
-  //                           labelText: 'Select',
-  //                           items: accountitems,
-  //                           selectedValue: _selectedAccount,
-  //                           onChanged: (String? value) {
-  //                             print(_selectedAccount);
-  //                             setState(() {
-  //                               _selectedAccount = value;
-  //                               Navigator.pop(context);
-  //                               _showAccount(
-  //                                   context,_selectedAccount);
-  //                             });
-  //                           },
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //
-  //             );
-  //         });
-  //
-  //     },
-  //   );
-  // }
+  // Add this function to handle category addition
+  Future<void> addCategory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString('adminId');
+    String categoryName = categories.text.trim();
+    String? token = prefs.getString('token');
+
+    print("adminId: $adminId, categoryName: $categoryName, token: $token");
+
+    if (categoryName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a category name')),
+      );
+      return;
+    }
+    if (adminId == null || adminId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Admin ID is missing')),
+      );
+      return;
+    }
+
+    final url = Uri.parse('${Api_url}/api/settings/categories');
+    final response = await http.post(
+      url,
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $adminId",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "admin_id": adminId,
+        "name": categoryName,
+      }),
+    );
+
+    final responseData = jsonDecode(response.body);
+    print("responce categories $responseData");
+    if (response.statusCode == 200 && responseData["statusCode"] == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Category added successfully')),
+      );
+      categories.clear();
+      setState(() {
+        futureCategories = accountRepository().fetchCategories();
+      }); // Refresh UI and reload categories
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(responseData["message"] ?? 'Failed to add category')),
+      );
+    }
+  }
 
   //popup
   void _showAccountType(BuildContext context) {
@@ -6267,254 +6538,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       },
     );
   }
-
-  // void _showAccount(BuildContext context , String? selectedAccountType) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return
-  //         StatefulBuilder(builder: (context, setState) {
-  //           return
-  //             AlertDialog(
-  //               title: Text('Add Account', style: TextStyle(
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Color.fromRGBO(
-  //                     21, 43, 81, 1),),),
-  //
-  //               content: SingleChildScrollView(
-  //                 child: Column(
-  //                   children: [
-  //                     SizedBox(
-  //                       height: 20,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         Text("Account Name",
-  //                             style: TextStyle(
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: Color.fromRGBO(
-  //                                     21, 43, 81, 1),
-  //                                 fontSize: 16)
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     CustomTextField(
-  //                       validator: (value) {
-  //                         if (value == null || value.isEmpty) {
-  //                           return 'Please enter account name';
-  //                         }
-  //                         return null;
-  //                       },
-  //                       keyboardType: TextInputType.text,
-  //                       hintText: 'Enter account name',
-  //                       controller: accountname,
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     //account type
-  //                     Row(
-  //                       children: [
-  //                         Text("Account Type",
-  //                             style: TextStyle(
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: Color.fromRGBO(
-  //                                     21, 43, 81, 1),
-  //                                 fontSize: 16)
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         CustomDropdown(
-  //                           validator: (value) {
-  //                             if (value == null || value.isEmpty) {
-  //                               return 'Please select a account';
-  //                             }
-  //                             return null;
-  //                           },
-  //                           labelText: 'Select',
-  //                           items: accounttypeitems,
-  //                           selectedValue: _selectedAccounttype,
-  //                           onChanged: (String? value) {
-  //                             print(_selectedAccounttype);
-  //                             setState(() {
-  //                               _selectedAccounttype = value;
-  //
-  //                             });
-  //                           },
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     //fundtype
-  //                     Row(
-  //                       children: [
-  //                         Text("Fund Type",
-  //                             style: TextStyle(
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: Color.fromRGBO(
-  //                                     21, 43, 81, 1),
-  //                                 fontSize: 16)
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         CustomDropdown(
-  //                           validator: (value) {
-  //                             if (value == null || value.isEmpty) {
-  //                               return 'Please select a account';
-  //                             }
-  //                             return null;
-  //                           },
-  //                           labelText: 'Select',
-  //                           items: fundtypeitems,
-  //                           selectedValue: _selectedFundtype,
-  //                           onChanged: (String? value) {
-  //                             print(_selectedFundtype);
-  //                             setState(() {
-  //                               _selectedFundtype = value;
-  //
-  //                             });
-  //                           },
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         Text("Note",
-  //                             style: TextStyle(
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: Color.fromRGBO(
-  //                                     21, 43, 81, 1),
-  //                                 fontSize: 16)
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     CustomTextField(
-  //                       validator: (value) {
-  //                         if (value == null || value.isEmpty) {
-  //                           return 'Please enter notes';
-  //                         }
-  //                         return null;
-  //                       },
-  //                       keyboardType: TextInputType.text,
-  //                       hintText: 'Enter notes',
-  //                       controller: note,
-  //                     ),
-  //                     SizedBox(
-  //                       height: 20,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         InkWell(
-  //                           onTap: () async {
-  //                             if (_selectedAccounttype == null ||
-  //                                 accountname.text.isEmpty ||
-  //                                 _selectedFundtype == null) {
-  //                               setState(() {
-  //                                 isError = true;
-  //                               });
-  //                             } else {
-  //                               setState(() {
-  //                                 isLoading = true;
-  //                                 isError = false;
-  //                               });
-  //
-  //                               SharedPreferences prefs = await SharedPreferences.getInstance();
-  //                               String? id = prefs.getString("adminId");
-  //                               // Post the account data
-  //                               await accountRepository().addAccount(
-  //                                 adminId: id!,
-  //                                 account: accountname.text,
-  //                                 accounttype: _selectedAccounttype,
-  //                                 fundtype: _selectedFundtype,
-  //                                 chargetype: _selectedAccount,
-  //                                 notes: note.text,
-  //                               ).then((value) {
-  //                                 setState(() {
-  //                                   isLoading = false;
-  //                                 });
-  //                                 Navigator.pop(context, true);
-  //                                 _refreshAccounts();
-  //                               }).catchError((e) {
-  //                                 setState(() {
-  //                                   isLoading = false;
-  //                                 });
-  //                               });
-  //                             }
-  //                           },
-  //                           child: Container(
-  //                             height: 40,
-  //                             width: 100,
-  //                             decoration: BoxDecoration(
-  //                               color: blueColor,
-  //                               borderRadius: BorderRadius.circular(3),
-  //                             ),
-  //                             child: Center(
-  //                               child: Text('Add',style: TextStyle(
-  //                                   color: Colors.white
-  //                               ),),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                         SizedBox(width: 20,),
-  //                         InkWell(
-  //                           onTap: (){
-  //                             Navigator.pop(context);
-  //                           },
-  //                           child: Container(
-  //                             height: 40,
-  //                             width: 100,
-  //                             decoration: BoxDecoration(
-  //                               color: Colors.white,
-  //                               borderRadius: BorderRadius.circular(3),
-  //                             ),
-  //                             child: Center(
-  //                               child: Text('Cancel',style: TextStyle(
-  //                                   color: blueColor
-  //                               ),),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     if (isError)
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(top: 8.0),
-  //                         child: Text(
-  //                           'Please fill all fields',
-  //                           style: TextStyle(color: Colors.red),
-  //                         ),
-  //                       ),
-  //                   ],
-  //                 ),
-  //               ),
-  //
-  //             );
-  //         });
-  //
-  //     },
-  //   );
-  // }
 
   void _showAccount(BuildContext context) {
     showDialog(
@@ -6759,5 +6782,66 @@ class _TabBarExampleState extends State<TabBarExample> {
         ),
       ],
     );
+  }
+
+  // Add this function to show a delete confirmation dialog with reason for categories
+  void _showDeleteCategoryAlert(BuildContext context, String id) {
+    print("calling this detele categories 1");
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this category!",
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for deletion',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+        ],
+      ),
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            print("calling this detele categories 2");
+            if (reason.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              await accountRepository()
+                  .DeleteCategories(categories_id: id, reason: reason.text);
+              setState(() {
+                futureCategories = accountRepository().fetchCategories();
+              });
+              Navigator.pop(context);
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+      ],
+    ).show();
   }
 }
