@@ -119,7 +119,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     _loadDropdownCategories();
   }
 
-  void _loadDropdownCategories() async {
+  Future<void> _loadDropdownCategories() async {
     setState(() {
       _isLoadingCategories = true;
     });
@@ -1392,6 +1392,8 @@ class _TabBarExampleState extends State<TabBarExample> {
 
     print(
         "Sending categoryId: " + (_selectedDropdownCategory?.categoryId ?? ""));
+    print(
+        'Selected category for update: ${_selectedDropdownCategory?.name} (${_selectedDropdownCategory?.categoryId})');
 
     final url = '${Api_url}/api/work-order/work-defaults';
     final headers = {
@@ -1404,7 +1406,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       "category": _selectedDropdownCategory?.categoryId, // Send category_id
       "entry_allowed": _selectedEntry == 'yes',
       "staffmember_id": _selectedstaffId,
-      "vendor_id": vendorId,
+      "vendor_id": _selectedvendorsId,
     });
 
     try {
@@ -1412,8 +1414,8 @@ class _TabBarExampleState extends State<TabBarExample> {
           await http.post(Uri.parse(url), headers: headers, body: body);
 
       var responseData = json.decode(response.body);
-      print('add workorder \${responseData}');
-      print('add workorder  \${response.body}');
+      print('add and update workorder  \\${responseData}');
+      print('add workorder  \\${response.body}');
       if (responseData["statusCode"] == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
@@ -1450,27 +1452,29 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (workorder != null) {
         // Get category_id from workDefaults.category
         String? fetchedCategoryId = workorder.workDefaults?.category;
-        print("Fetched category_id from workDefaults: " + (fetchedCategoryId ?? "null"));
+        print("Fetched category_id from workDefaults: " +
+            (fetchedCategoryId ?? "null"));
         setState(() {
           _selectedvendorsId = workorder.workDefaults?.vendorId?.isEmpty ?? true
               ? null
               : workorder.workDefaults?.vendorId;
-          _selectedCategory = fetchedCategoryId ?? "";
-          print("workorder default category selcted $_selectedCategory ");
           _selectedstaffId =
               workorder.workDefaults?.staffmemberId?.isEmpty ?? true
                   ? null
                   : workorder.workDefaults?.staffmemberId;
           _selectedEntry = entryAllowedString;
-          print('vendor check ${workorder.workDefaults?.vendorId ?? ""}');
-          // Set the dynamic dropdown value by categoryId if categories are loaded
-          if (_selectedCategory != null &&
-              _selectedCategory!.isNotEmpty &&
-              _dropdownCategories.isNotEmpty) {
-            _selectedDropdownCategory = _dropdownCategories.firstWhere(
-              (cat) => cat.categoryId == _selectedCategory,
-              orElse: () => _dropdownCategories.first,
-            );
+          // Set the dropdown value by matching the ID
+          if (fetchedCategoryId != null && _dropdownCategories.isNotEmpty) {
+            final match = _dropdownCategories
+                .where((cat) => cat.categoryId == fetchedCategoryId)
+                .toList();
+            if (match.length == 1) {
+              _selectedDropdownCategory = match.first;
+            } else {
+              _selectedDropdownCategory = null;
+            }
+          } else {
+            _selectedDropdownCategory = null;
           }
         });
       }
@@ -1928,7 +1932,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             children: [
                               Expanded(
                                 child: InkWell(
-                                  onTap: () {
+                                  onTap: () async {
                                     setState(() {
                                       issurge = false;
                                       ismail = false;
@@ -1939,6 +1943,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismanagetemplate = false;
                                       iscategories = false;
                                     });
+                                    await _loadDropdownCategories(); // Always fetch latest categories from backend
+                                    await fetchWorkData(); // Fetch work order settings after categories are loaded
                                   },
                                   child: Visibility(
                                     visible: true,
@@ -5379,38 +5385,32 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               SizedBox(height: 15),
                               // Dynamic categories dropdown for work order
-                              _isLoadingCategories
-                                  ? SpinKitFadingCircle(
-                                      color: Colors.black, size: 40.0)
-                                  : DropdownButtonHideUnderline(
-                                      child:
-                                          DropdownButton2<allcategories_model>(
+                              DropdownButtonHideUnderline(
+                                child: DropdownButton2<allcategories_model>(
                                         isExpanded: true,
-                                        hint: const Text('Select Category'),
-                                        value: _selectedDropdownCategory,
+                                  hint: Text(_isLoadingCategories ? 'Loading categories...' : 'Select Category'),
+                                  value: _dropdownCategories.contains(_selectedDropdownCategory)
+                                            ? _selectedDropdownCategory
+                                            : null,
                                         items: _dropdownCategories.map((cat) {
-                                          return DropdownMenuItem<
-                                              allcategories_model>(
+                                    return DropdownMenuItem<allcategories_model>(
                                             value: cat,
                                             child: Text(cat.name ?? ''),
                                           );
                                         }).toList(),
-                                        onChanged:
-                                            (allcategories_model? newValue) {
-                                          setState(() {
-                                            _selectedDropdownCategory =
-                                                newValue;
-                                            _showTextField =
-                                                newValue?.name == 'Other';
-                                          });
-                                        },
+                                        onChanged: _isLoadingCategories
+                                      ? null // disables dropdown while loading
+                                            : (allcategories_model? newValue) {
+                                                setState(() {
+                                            _selectedDropdownCategory = newValue;
+                                            _showTextField = newValue?.name == 'Other';
+                                                });
+                                              },
                                         buttonStyleData: ButtonStyleData(
                                           height: 45,
-                                          padding: const EdgeInsets.only(
-                                              left: 14, right: 14),
+                                    padding: const EdgeInsets.only(left: 14, right: 14),
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(6),
                                             color: Colors.white,
                                           ),
                                           elevation: 2,
@@ -5422,26 +5422,20 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           iconDisabledColor: Colors.grey,
                                         ),
                                         dropdownStyleData: DropdownStyleData(
-                                          maxHeight:
-                                              250, // Set max height for scroll
+                                    maxHeight: 250,
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(6),
                                             color: Colors.white,
                                           ),
                                           scrollbarTheme: ScrollbarThemeData(
                                             radius: const Radius.circular(6),
-                                            thickness:
-                                                MaterialStateProperty.all(6),
-                                            thumbVisibility:
-                                                MaterialStateProperty.all(true),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility: MaterialStateProperty.all(true),
                                           ),
                                         ),
-                                        menuItemStyleData:
-                                            const MenuItemStyleData(
+                                  menuItemStyleData: const MenuItemStyleData(
                                           height: 50,
-                                          padding: EdgeInsets.only(
-                                              left: 14, right: 14),
+                                    padding: EdgeInsets.only(left: 14, right: 14),
                                         ),
                                       ),
                                     ),

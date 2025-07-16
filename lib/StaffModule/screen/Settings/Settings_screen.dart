@@ -1172,9 +1172,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                     ),
                   ),
 
-
-
-
                   if (issurge)
                     Column(
                       children: [

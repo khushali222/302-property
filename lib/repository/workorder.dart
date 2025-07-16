@@ -64,6 +64,7 @@ class WorkOrderRepository {
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
     String? notificationTime,
+    String? categoryId,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
@@ -79,6 +80,7 @@ class WorkOrderRepository {
       'tenant_id': tenant,
       'rental_id': rentalid,
       'unit_id': unitid,
+      'category_id': categoryId,
       'workOrder_images': workOrderImages,
       'vendor_id': vendorId,
       'vendor_notes': vendorNotes,
@@ -199,6 +201,7 @@ class WorkOrderRepository {
     bool? workChargeTo,
     String? date,
     bool? isBillable,
+    String? categoryId,
     List<Map<String, dynamic>>? parts,
     String? notificationTime,
   }) async {
@@ -221,6 +224,7 @@ class WorkOrderRepository {
       'vendor_id': vendorId,
       'vendor_notes': vendorNotes,
       'priority': priority,
+      'category_id': categoryId,
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,

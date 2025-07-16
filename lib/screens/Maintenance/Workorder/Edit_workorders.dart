@@ -15,8 +15,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/Edit_workorder.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
 
+import '../../../Model/All_categories_model.dart';
 import '../../../constant/constant.dart';
 
+import '../../../repository/fetch_allcategories.dart';
 import '../../../widgets/VideoPlayerWidget.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/drawer_tiles.dart';
@@ -89,6 +91,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   String? _selectedProperty;
   String? _selectedUnitId;
   String? _selectedUnit;
+  List<allcategories_model> _dropdownCategories = [];
+  allcategories_model? _selectedDropdownCategory;
+  bool _isLoadingCategories = false;
 
   //for vendor
   Map<String, String> vendors = {};
@@ -105,14 +110,37 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   String? _selectedTenants;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _initializeData();
     _loadProperties();
     _loadVendor();
     _loadStaff();
-    // _loadTenant();
-    fetchWorkordersDetails(widget.workorderId);
     partsAndLabor.clear();
+  }
+
+  Future<void> _initializeData() async {
+    await _loadDropdownCategories();
+    await fetchWorkordersDetails(widget.workorderId);
+  }
+
+  Future<void> _loadDropdownCategories() async {
+    setState(() {
+      _isLoadingCategories = true;
+    });
+    try {
+      final cats = await FetchAllcategories().fetchAllCategories();
+      print('Fetched categories in EditWorkOrder: ' +
+          cats.map((c) => c.name).toList().toString());
+      setState(() {
+        _dropdownCategories = cats;
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      print('Error fetching categories in EditWorkOrder: ' + e.toString());
+      setState(() {
+        _isLoadingCategories = false;
+      });
+    }
   }
 
   String? initialSubject;
@@ -314,7 +342,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       setState(() {
         _isLoading = false;
       });
-
     }
   }
 
@@ -390,7 +417,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       setState(() {
         _isLoadingvendors = false;
       });
-
     }
   }
 
@@ -428,7 +454,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       setState(() {
         _isLoadingstaff = false;
       });
-
     }
   }
 
@@ -469,7 +494,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       setState(() {
         _isLoadingtenant = false;
       });
-
     }
   }
 
@@ -1374,96 +1398,156 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           SizedBox(
                             height: 10,
                           ),
-                          FormField<String>(
-                            validator: (value) {
-                              if (_selectedCategory == null) {
-                                return 'Please select a category';
-                              }
-                              return null;
-                            },
-                            builder: (FormFieldState<String> state) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  DropdownButtonHideUnderline(
-                                    child: DropdownButton2<String>(
-                                      isExpanded: true,
-                                      hint: Text('Select Category'),
-                                      value: _selectedCategory,
-                                      items: _category.map((method) {
-                                        return DropdownMenuItem<String>(
-                                          value: method,
-                                          child: Text(method),
-                                        );
-                                      }).toList(),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          state.didChange(
-                                              newValue); // Notify form field of the change
-                                          _selectedCategory = newValue;
-                                          _showTextField =
-                                              _selectedCategory == 'Other';
-                                        });
-                                        state.reset();
-                                        print(
-                                            'Selected category: $_selectedCategory');
-                                      },
-                                      buttonStyleData: ButtonStyleData(
-                                        height: 45,
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color: Colors.white,
-                                        ),
-                                        elevation: 2,
-                                      ),
-                                      iconStyleData: const IconStyleData(
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
-                                        ),
-                                        iconSize: 24,
-                                        iconEnabledColor: Color(0xFFb0b6c3),
-                                        iconDisabledColor: Colors.grey,
-                                      ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color: Colors.white,
-                                        ),
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(6),
-                                          thickness:
-                                              MaterialStateProperty.all(6),
-                                          thumbVisibility:
-                                              MaterialStateProperty.all(true),
-                                        ),
-                                      ),
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
-                                        height: 50,
-                                        padding: EdgeInsets.only(
-                                            left: 14, right: 14),
-                                      ),
-                                    ),
-                                  ),
-                                  if (state.hasError)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 14, top: 8),
-                                      child: Text(
-                                        state.errorText!,
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              );
-                            },
+                          // FormField<String>(
+                          //   validator: (value) {
+                          //     if (_selectedCategory == null) {
+                          //       return 'Please select a category';
+                          //     }
+                          //     return null;
+                          //   },
+                          //   builder: (FormFieldState<String> state) {
+                          //     return Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         DropdownButtonHideUnderline(
+                          //           child: DropdownButton2<String>(
+                          //             isExpanded: true,
+                          //             hint: Text('Select Category'),
+                          //             value: _selectedCategory,
+                          //             items: _category.map((method) {
+                          //               return DropdownMenuItem<String>(
+                          //                 value: method,
+                          //                 child: Text(method),
+                          //               );
+                          //             }).toList(),
+                          //             onChanged: (String? newValue) {
+                          //               setState(() {
+                          //                 state.didChange(
+                          //                     newValue); // Notify form field of the change
+                          //                 _selectedCategory = newValue;
+                          //                 _showTextField =
+                          //                     _selectedCategory == 'Other';
+                          //               });
+                          //               state.reset();
+                          //               print(
+                          //                   'Selected category: $_selectedCategory');
+                          //             },
+                          //             buttonStyleData: ButtonStyleData(
+                          //               height: 45,
+                          //               padding: const EdgeInsets.only(
+                          //                   left: 14, right: 14),
+                          //               decoration: BoxDecoration(
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(6),
+                          //                 color: Colors.white,
+                          //               ),
+                          //               elevation: 2,
+                          //             ),
+                          //             iconStyleData: const IconStyleData(
+                          //               icon: Icon(
+                          //                 Icons.arrow_drop_down,
+                          //               ),
+                          //               iconSize: 24,
+                          //               iconEnabledColor: Color(0xFFb0b6c3),
+                          //               iconDisabledColor: Colors.grey,
+                          //             ),
+                          //             dropdownStyleData: DropdownStyleData(
+                          //               decoration: BoxDecoration(
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(6),
+                          //                 color: Colors.white,
+                          //               ),
+                          //               scrollbarTheme: ScrollbarThemeData(
+                          //                 radius: const Radius.circular(6),
+                          //                 thickness:
+                          //                     MaterialStateProperty.all(6),
+                          //                 thumbVisibility:
+                          //                     MaterialStateProperty.all(true),
+                          //               ),
+                          //             ),
+                          //             menuItemStyleData:
+                          //                 const MenuItemStyleData(
+                          //               height: 50,
+                          //               padding: EdgeInsets.only(
+                          //                   left: 14, right: 14),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         if (state.hasError)
+                          //           Padding(
+                          //             padding: const EdgeInsets.only(
+                          //                 left: 14, top: 8),
+                          //             child: Text(
+                          //               state.errorText!,
+                          //               style: const TextStyle(
+                          //                 color: Colors.red,
+                          //                 fontSize: 12,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //       ],
+                          //     );
+                          //   },
+                          // ),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2<allcategories_model>(
+                              isExpanded: true,
+                              hint: Text(_isLoadingCategories
+                                  ? 'Loading categories...'
+                                  : 'Select Category'),
+                              value: _dropdownCategories
+                                      .contains(_selectedDropdownCategory)
+                                  ? _selectedDropdownCategory
+                                  : null,
+                              items: _dropdownCategories.map((cat) {
+                                return DropdownMenuItem<allcategories_model>(
+                                  value: cat,
+                                  child: Text(cat.name ?? ''),
+                                );
+                              }).toList(),
+                              onChanged: _isLoadingCategories
+                                  ? null // disables dropdown while loading
+                                  : (allcategories_model? newValue) {
+                                      setState(() {
+                                        _selectedDropdownCategory = newValue;
+                                        _showTextField =
+                                            newValue?.name == 'Other';
+                                      });
+                                    },
+                              buttonStyleData: ButtonStyleData(
+                                height: 45,
+                                padding:
+                                    const EdgeInsets.only(left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                elevation: 2,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconSize: 24,
+                                iconEnabledColor: Color(0xFFb0b6c3),
+                                iconDisabledColor: Colors.grey,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 250,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(6),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 50,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
                           ),
                           _showTextField
                               ? Padding(
@@ -1915,7 +1999,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           ),
                           ElevatedButton(
                             onPressed: addRow,
-                            style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor),
                             child: Text('Add Row'),
                           ),
                           SizedBox(
@@ -2531,6 +2616,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       String? rentalId = _selectedPropertyId;
       String? unitId = _selectedUnitId;
 
+      // Determine category name and id
+      String? categoryName =
+          _selectedDropdownCategory?.name ?? _selectedCategory;
+      String? categoryId =
+          _selectedDropdownCategory?.categoryId ?? _selectedCategory;
+
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
           'parts_id': part['parts_id'],
@@ -2551,7 +2642,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           workOrderid: widget.workorderId,
           workSubject: subject.text.trim(),
           staffMemberName: _selectedstaffId,
-          workCategory: _selectedCategory,
+          workCategory: categoryName,
+          categoryId: categoryId,
           workPerformed: perform.text.trim(),
           status: _selectedStatus,
           rentalAddress: properties[_selectedPropertyId],
@@ -2804,7 +2896,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       setState(() {
         _isLoading = false;
       });
-
     }
   }
 
@@ -2880,7 +2971,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       setState(() {
         _isLoadingvendors = false;
       });
-
     }
   }
 
@@ -2919,7 +3009,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       setState(() {
         _isLoadingstaff = false;
       });
-
     }
   }
 
@@ -2960,7 +3049,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       setState(() {
         _isLoadingtenant = false;
       });
-
     }
   }
 
