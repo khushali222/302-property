@@ -121,6 +121,33 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   Future<void> _initializeData() async {
     await _loadDropdownCategories();
     await fetchWorkordersDetails(widget.workorderId);
+    _ensureCategoryInDropdown();
+  }
+
+  void _ensureCategoryInDropdown() {
+    if (initialSelectedCategory != null &&
+        initialSelectedCategory!.isNotEmpty) {
+      // Try to find a matching category by name
+      final match = _dropdownCategories.firstWhere(
+        (cat) => cat.name == initialSelectedCategory,
+        orElse: () => allcategories_model(
+          categoryId: null,
+          name: initialSelectedCategory,
+        ),
+      );
+
+      // If not found, add the old category as a temporary option
+      if (!_dropdownCategories
+          .any((cat) => cat.name == initialSelectedCategory)) {
+        setState(() {
+          _dropdownCategories.add(match);
+        });
+      }
+
+      setState(() {
+        _selectedDropdownCategory = match;
+      });
+    }
   }
 
   Future<void> _loadDropdownCategories() async {
@@ -239,6 +266,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       subject.text = fetchedDetails.workSubject!;
       _selectedstaffId = fetchedDetails.staffData?.staffName;
       _selectedCategory = fetchedDetails.workCategory;
+      print("categories fetch ${fetchedDetails.workCategory}");
       perform.text = fetchedDetails.workPerformed!;
       _selectedStatus = fetchedDetails.status! ?? "";
       vendornote.text = fetchedDetails.vendorNotes ?? "";
@@ -2619,8 +2647,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       // Determine category name and id
       String? categoryName =
           _selectedDropdownCategory?.name ?? _selectedCategory;
-      String? categoryId =
-          _selectedDropdownCategory?.categoryId ?? _selectedCategory;
+      String? categoryId = _selectedDropdownCategory?.categoryId;
+      // If categoryId is empty or null, set it to null (not empty string)
+      if (categoryId == null || categoryId.isEmpty) {
+        categoryId = null;
+      }
 
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {

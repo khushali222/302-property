@@ -63,6 +63,7 @@ class WorkOrderRepository {
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
     String? notificationTime,
+    String? categoryId,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
@@ -70,6 +71,7 @@ class WorkOrderRepository {
       'work_subject': workSubject,
       'staffmember_id': staffMemberName,
       'work_category': workCategory,
+      'category_id': categoryId,
       'work_performed': workPerformed,
       'status': status,
       'rental_address': rentalAddress,
@@ -156,6 +158,7 @@ class WorkOrderRepository {
     String? workSubject,
     String? staffMemberName,
     String? workCategory,
+    String? categoryId,
     String? workPerformed,
     String? status,
     String? rentalAddress,
@@ -181,6 +184,7 @@ class WorkOrderRepository {
       'work_subject': workSubject,
       'staffmember_id': staffMemberName,
       'work_category': workCategory,
+      'category_id': categoryId,
       'work_performed': workPerformed,
       'status': status,
       'rental_address': rentalAddress,

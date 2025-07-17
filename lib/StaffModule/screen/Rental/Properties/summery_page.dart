@@ -2117,9 +2117,9 @@ class _Summery_pageState extends State<Summery_page>
                                   margin: EdgeInsets.symmetric(horizontal: 0),
                                   decoration: BoxDecoration(
                                     color:
-                                    _selectedIndex == (isMultiUnit ? 5 : 4)
-                                        ? blueColor
-                                        : Colors.grey.shade200,
+                                        _selectedIndex == (isMultiUnit ? 5 : 4)
+                                            ? blueColor
+                                            : Colors.grey.shade200,
                                     borderRadius: BorderRadius.circular(3),
                                   ),
                                   child: Center(
@@ -2129,7 +2129,7 @@ class _Summery_pageState extends State<Summery_page>
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: _selectedIndex ==
-                                            (isMultiUnit ? 5 : 4)
+                                                (isMultiUnit ? 5 : 4)
                                             ? Colors.white
                                             : blueColor,
                                         fontSize: 13,
@@ -2237,8 +2237,7 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 4 && isMultiUnit) {
           return Lease_page();
-        }
-        else if (_selectedIndex == 4) {
+        } else if (_selectedIndex == 4) {
           if (isMultiUnit) {
             return Lease_page();
           } else {
@@ -2343,10 +2342,10 @@ class _Summery_pageState extends State<Summery_page>
                       searchValuerent != "All") {
                     data = data
                         .where((e) =>
-                    e.tenantNames != null &&
-                        e.tenantNames!
-                            .toLowerCase()
-                            .contains(searchValuerent!.toLowerCase()))
+                            e.tenantNames != null &&
+                            e.tenantNames!
+                                .toLowerCase()
+                                .contains(searchValuerent!.toLowerCase()))
                         .toList();
                   }
 
@@ -2450,7 +2449,7 @@ class _Summery_pageState extends State<Summery_page>
                                   child: Container(
                                     height: 40,
                                     padding:
-                                    EdgeInsets.symmetric(horizontal: 12.0),
+                                        EdgeInsets.symmetric(horizontal: 12.0),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.grey),
                                     ),
@@ -2488,12 +2487,13 @@ class _Summery_pageState extends State<Summery_page>
                                   onPressed: currentPagelease == 0
                                       ? null
                                       : () {
-                                    setState(() {
-                                      currentPagelease--;
-                                    });
-                                  },
+                                          setState(() {
+                                            currentPagelease--;
+                                          });
+                                        },
                                 ),
-                                Text('Page ${currentPagelease + 1} of $totalPages'),
+                                Text(
+                                    'Page ${currentPagelease + 1} of $totalPages'),
                                 IconButton(
                                   icon: FaIcon(
                                     FontAwesomeIcons.circleChevronRight,
@@ -2503,10 +2503,10 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                   onPressed: currentPagelease < totalPages - 1
                                       ? () {
-                                    setState(() {
-                                      currentPagelease++;
-                                    });
-                                  }
+                                          setState(() {
+                                            currentPagelease++;
+                                          });
+                                        }
                                       : null,
                                 ),
                               ],
@@ -2528,11 +2528,11 @@ class _Summery_pageState extends State<Summery_page>
   int totalrecordsrevenue = 0;
 
   int rowsPerPagerevenue = 5;
-  int sortColumnIndexrevenue  = 0;
+  int sortColumnIndexrevenue = 0;
   bool sortAscendingrevenue = true;
-  int currentPagerevenue  = 0;
-  int itemsPerPagerevenue  = 10;
-  List<int> itemsPerPageOptionsrevenue  = [
+  int currentPagerevenue = 0;
+  int itemsPerPagerevenue = 10;
+  List<int> itemsPerPageOptionsrevenue = [
     10,
     25,
     50,
@@ -2584,10 +2584,10 @@ class _Summery_pageState extends State<Summery_page>
                       searchValuerent != "All") {
                     data = data
                         .where((e) =>
-                    e != null &&
-                        e.response!
-                            .toLowerCase()
-                            .contains(searchValuerent!.toLowerCase()))
+                            e != null &&
+                            e.response!
+                                .toLowerCase()
+                                .contains(searchValuerent!.toLowerCase()))
                         .toList();
                   }
 
@@ -2619,10 +2619,10 @@ class _Summery_pageState extends State<Summery_page>
                                   break;
                                 case 2:
                                   data.sort((a, b) => (a
-                                      .tenantData?.tenantFirstName ??
-                                      '')
+                                              .tenantData?.tenantFirstName ??
+                                          '')
                                       .compareTo(
-                                      b.tenantData?.tenantFirstName ?? ''));
+                                          b.tenantData?.tenantFirstName ?? ''));
                                   break;
                                 case 3:
                                   data.sort((a, b) => (a.paymentType ?? '')
@@ -2645,7 +2645,7 @@ class _Summery_pageState extends State<Summery_page>
                                   child: Container(
                                     height: 40,
                                     padding:
-                                    EdgeInsets.symmetric(horizontal: 12.0),
+                                        EdgeInsets.symmetric(horizontal: 12.0),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.grey),
                                     ),
@@ -2683,12 +2683,13 @@ class _Summery_pageState extends State<Summery_page>
                                   onPressed: currentPagerevenue == 0
                                       ? null
                                       : () {
-                                    setState(() {
-                                      currentPagerevenue--;
-                                    });
-                                  },
+                                          setState(() {
+                                            currentPagerevenue--;
+                                          });
+                                        },
                                 ),
-                                Text('Page ${currentPagerevenue + 1} of $totalPages'),
+                                Text(
+                                    'Page ${currentPagerevenue + 1} of $totalPages'),
                                 IconButton(
                                   icon: FaIcon(
                                     FontAwesomeIcons.circleChevronRight,
@@ -2698,10 +2699,10 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                   onPressed: currentPagerevenue < totalPages - 1
                                       ? () {
-                                    setState(() {
-                                      currentPagerevenue++;
-                                    });
-                                  }
+                                          setState(() {
+                                            currentPagerevenue++;
+                                          });
+                                        }
                                       : null,
                                 ),
                               ],
@@ -3177,9 +3178,9 @@ class _Summery_pageState extends State<Summery_page>
                             ConnectionState.waiting) {
                           return Center(
                               child: SpinKitFadingCircle(
-                                color: Colors.black,
-                                size: 40.0,
-                              ));
+                            color: Colors.black,
+                            size: 40.0,
+                          ));
                         } else if (snapshot.hasError) {
                           return Center(
                               child: Text('Error: ${snapshot.error}'));
@@ -3221,24 +3222,24 @@ class _Summery_pageState extends State<Summery_page>
                           } else if (searchValuerent!.isNotEmpty) {
                             data = snapshot.data!
                                 .where((rentals) => rentals
-                                .rentalOwnerData!.rentalOwnerName!
-                                .toLowerCase()
-                                .contains(searchValuerent!.toLowerCase()))
+                                    .rentalOwnerData!.rentalOwnerName!
+                                    .toLowerCase()
+                                    .contains(searchValuerent!.toLowerCase()))
                                 .toList();
                           } else {
                             data = snapshot.data!
                                 .where((rentals) =>
-                            rentals.rentalOwnerData!
-                                .rentalOwnerCompanyName! ==
-                                searchValuerent)
+                                    rentals.rentalOwnerData!
+                                        .rentalOwnerCompanyName! ==
+                                    searchValuerent)
                                 .toList();
                           }
                           data = data
                               .where((e) =>
-                          e.rentalId == widget.properties.rentalId)
+                                  e.rentalId == widget.properties.rentalId)
                               .toList();
                           final totalPages =
-                          (data.length / itemsPerPagerent).ceil();
+                              (data.length / itemsPerPagerent).ceil();
                           final currentPageData = data
                               .skip(currentPagerent * itemsPerPagerent)
                               .take(itemsPerPagerent)
@@ -3285,12 +3286,12 @@ class _Summery_pageState extends State<Summery_page>
                                               contentPadding: EdgeInsets.zero,
                                               title: Padding(
                                                 padding:
-                                                const EdgeInsets.all(2.0),
+                                                    const EdgeInsets.all(2.0),
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                                      MainAxisAlignment.start,
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                                      CrossAxisAlignment.center,
                                                   children: <Widget>[
                                                     InkWell(
                                                       onTap: () {
@@ -3311,7 +3312,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           if (expandedIndex ==
                                                               index) {
                                                             expandedIndex =
-                                                            null;
+                                                                null;
                                                           } else {
                                                             expandedIndex =
                                                                 index;
@@ -3323,15 +3324,15 @@ class _Summery_pageState extends State<Summery_page>
                                                             left: 5, right: 5),
                                                         padding: !isExpanded
                                                             ? EdgeInsets.only(
-                                                            bottom: 10)
+                                                                bottom: 10)
                                                             : EdgeInsets.only(
-                                                            top: 10),
+                                                                top: 10),
                                                         child: FaIcon(
                                                           isExpanded
                                                               ? FontAwesomeIcons
-                                                              .sortUp
+                                                                  .sortUp
                                                               : FontAwesomeIcons
-                                                              .sortDown,
+                                                                  .sortDown,
                                                           size: 20,
                                                           color: blueColor,
                                                         ),
@@ -3344,7 +3345,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             if (expandedIndex ==
                                                                 index) {
                                                               expandedIndex =
-                                                              null;
+                                                                  null;
                                                             } else {
                                                               expandedIndex =
                                                                   index;
@@ -3356,7 +3357,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
-                                                            FontWeight.bold,
+                                                                FontWeight.bold,
                                                             fontSize: 13,
                                                           ),
                                                         ),
@@ -3364,9 +3365,9 @@ class _Summery_pageState extends State<Summery_page>
                                                     ),
                                                     SizedBox(
                                                         width: MediaQuery.of(
-                                                            context)
-                                                            .size
-                                                            .width *
+                                                                    context)
+                                                                .size
+                                                                .width *
                                                             .08),
                                                     Expanded(
                                                       child: Text(
@@ -3374,37 +3375,37 @@ class _Summery_pageState extends State<Summery_page>
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                              FontWeight.bold,
                                                           fontSize: 12,
                                                         ),
                                                       ),
                                                     ),
                                                     SizedBox(
                                                         width: MediaQuery.of(
-                                                            context)
-                                                            .size
-                                                            .width *
+                                                                    context)
+                                                                .size
+                                                                .width *
                                                             .06),
                                                     Expanded(
                                                       child: Text(
                                                         formatPhoneNumber(rentals
-                                                            .rentalOwnerData
-                                                            ?.rentalOwnerPhoneNumber ??
+                                                                .rentalOwnerData
+                                                                ?.rentalOwnerPhoneNumber ??
                                                             "N/A"),
                                                         //'${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                              FontWeight.bold,
                                                           fontSize: 12,
                                                         ),
                                                       ),
                                                     ),
                                                     SizedBox(
                                                         width: MediaQuery.of(
-                                                            context)
-                                                            .size
-                                                            .width *
+                                                                    context)
+                                                                .size
+                                                                .width *
                                                             .02),
                                                   ],
                                                 ),
@@ -3415,21 +3416,21 @@ class _Summery_pageState extends State<Summery_page>
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 8.0),
                                                 margin:
-                                                EdgeInsets.only(bottom: 20),
+                                                    EdgeInsets.only(bottom: 20),
                                                 child: SingleChildScrollView(
                                                   child: Column(
                                                     children: [
                                                       Row(
                                                         mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .start,
+                                                            MainAxisAlignment
+                                                                .start,
                                                         children: [
                                                           FaIcon(
                                                             isExpanded
                                                                 ? FontAwesomeIcons
-                                                                .sortUp
+                                                                    .sortUp
                                                                 : FontAwesomeIcons
-                                                                .sortDown,
+                                                                    .sortDown,
                                                             size: 50,
                                                             color: Colors
                                                                 .transparent,
@@ -3437,14 +3438,14 @@ class _Summery_pageState extends State<Summery_page>
                                                           Expanded(
                                                             child: Column(
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                                  CrossAxisAlignment
+                                                                      .start,
                                                               children: <Widget>[
                                                                 SizedBox(
                                                                   height: MediaQuery.of(
-                                                                      context)
-                                                                      .size
-                                                                      .height *
+                                                                              context)
+                                                                          .size
+                                                                          .height *
                                                                       .01,
                                                                 ),
                                                                 Text.rich(
@@ -3452,18 +3453,18 @@ class _Summery_pageState extends State<Summery_page>
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                        'Email : ',
+                                                                            'Email : ',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                            FontWeight.bold,
+                                                                                FontWeight.bold,
                                                                             color: blueColor), // Bold and black
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                        '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
+                                                                            '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                            FontWeight.w700,
+                                                                                FontWeight.w700,
                                                                             color: Colors.grey), // Light and grey
                                                                       ),
                                                                     ],
@@ -3471,9 +3472,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                 ),
                                                                 SizedBox(
                                                                   height: MediaQuery.of(
-                                                                      context)
-                                                                      .size
-                                                                      .height *
+                                                                              context)
+                                                                          .size
+                                                                          .height *
                                                                       .01,
                                                                 ),
                                                                 Text.rich(
@@ -3481,10 +3482,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                        'Home Number : ',
+                                                                            'Home Number : ',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                            FontWeight.bold,
+                                                                                FontWeight.bold,
                                                                             color: blueColor), // Bold and black
                                                                       ),
                                                                       TextSpan(
@@ -3493,7 +3494,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                         //'${(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                            FontWeight.w700,
+                                                                                FontWeight.w700,
                                                                             color: Colors.grey), // Light and grey
                                                                       ),
                                                                     ],
@@ -3501,9 +3502,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                 ),
                                                                 SizedBox(
                                                                   height: MediaQuery.of(
-                                                                      context)
-                                                                      .size
-                                                                      .height *
+                                                                              context)
+                                                                          .size
+                                                                          .height *
                                                                       .01,
                                                                 ),
                                                                 Text.rich(
@@ -3511,10 +3512,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                        'Business Number : ',
+                                                                            'Business Number : ',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                            FontWeight.bold,
+                                                                                FontWeight.bold,
                                                                             color: blueColor), // Bold and black
                                                                       ),
                                                                       TextSpan(
@@ -3523,7 +3524,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                         //'${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                            FontWeight.w700,
+                                                                                FontWeight.w700,
                                                                             color: Colors.grey), // Light and grey
                                                                       ),
                                                                     ],
@@ -3571,14 +3572,15 @@ class _Summery_pageState extends State<Summery_page>
                                                   return DropdownMenuItem<int>(
                                                     value: value,
                                                     child:
-                                                    Text(value.toString()),
+                                                        Text(value.toString()),
                                                   );
                                                 }).toList(),
                                                 onChanged: (newValue) {
                                                   setState(() {
-                                                    itemsPerPagerent = newValue!;
+                                                    itemsPerPagerent =
+                                                        newValue!;
                                                     currentPagerent =
-                                                    0; // Reset to first page when items per page change
+                                                        0; // Reset to first page when items per page change
                                                   });
                                                 },
                                               ),
@@ -3599,10 +3601,10 @@ class _Summery_pageState extends State<Summery_page>
                                           onPressed: currentPagerent == 0
                                               ? null
                                               : () {
-                                            setState(() {
-                                              currentPagerent--;
-                                            });
-                                          },
+                                                  setState(() {
+                                                    currentPagerent--;
+                                                  });
+                                                },
                                         ),
                                         // IconButton(
                                         //   icon: Icon(Icons.arrow_back),
@@ -3629,18 +3631,19 @@ class _Summery_pageState extends State<Summery_page>
                                         IconButton(
                                           icon: FaIcon(
                                             FontAwesomeIcons.circleChevronRight,
-                                            color: currentPagerent < totalPages - 1
-                                                ? blueColor
-                                                : Colors.grey,
+                                            color:
+                                                currentPagerent < totalPages - 1
+                                                    ? blueColor
+                                                    : Colors.grey,
                                           ),
                                           onPressed:
-                                          currentPagerent < totalPages - 1
-                                              ? () {
-                                            setState(() {
-                                              currentPagerent++;
-                                            });
-                                          }
-                                              : null,
+                                              currentPagerent < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPagerent++;
+                                                      });
+                                                    }
+                                                  : null,
                                         ),
                                       ],
                                     ),
@@ -3835,9 +3838,128 @@ class _Summery_pageState extends State<Summery_page>
                       }
                     },
                   ),
-                const SizedBox(
-                  height: 10,
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: Text(
+                    "Purchase Information",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: blueColor,
+                    ),
+                  ),
                 ),
+                SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6, right: 6),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFF4F8FF),
+                      borderRadius:
+                          BorderRadius.circular(16), // Increased corner radius
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          16), // Ensure content inside respects corners
+                      child: Table(
+                        columnWidths: const {
+                          0: FlexColumnWidth(2),
+                          1: FlexColumnWidth(2),
+                          2: FlexColumnWidth(2),
+                        },
+                        border: TableBorder(
+                          horizontalInside:
+                              BorderSide(color: Colors.grey.shade400, width: 1),
+                          top: BorderSide.none,
+                          bottom: BorderSide.none,
+                          left: BorderSide.none,
+                          right: BorderSide.none,
+                        ),
+                        children: [
+                          // Header Row
+                          TableRow(
+                            decoration: BoxDecoration(
+                              color: Color(0xFF1A2F5B).withOpacity(0.08),
+                            ),
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  "Purchase Date",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A2F5B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  "Purchase Price",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A2F5B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  "Parcel Number #",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A2F5B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // Data Row
+                          TableRow(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  (rentalDetails.purchaseDate == null || rentalDetails.purchaseDate!.isEmpty)
+                                      ? "N/A"
+                                      : rentalDetails.purchaseDate!,
+                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  (rentalDetails.purchasePrice == null || rentalDetails.purchasePrice == 0)
+                                      ? "N/A"
+                                      : "\$${rentalDetails.purchasePrice!.toStringAsFixed(0)}",
+                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  (rentalDetails.parcelNumber == null || rentalDetails.parcelNumber!.isEmpty)
+                                      ? "N/A"
+                                      : rentalDetails.parcelNumber!,
+                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
                 Row(
                   children: [
                     if (MediaQuery.of(context).size.width > 500)

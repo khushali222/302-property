@@ -23,6 +23,10 @@ class Rentals {
   String? updatedAt;
   String? processor_id;
   bool? is_available;
+  double? publishedRentAmount;
+  String? parcelNumber;
+  String? purchaseDate;
+  double? purchasePrice;
 
   List<String>? rentalImages;
   bool? isDelete;
@@ -54,7 +58,11 @@ class Rentals {
       this.staffMemberData,
       this.processor_id,
       this.tenantsData,
-      this.is_available});
+      this.is_available,
+      this.publishedRentAmount,
+      this.parcelNumber,
+      this.purchaseDate,
+      this.purchasePrice});
 
   // Define the fromJson method within the Rental class
   factory Rentals.fromJson(Map<String, dynamic> json) {
@@ -80,6 +88,14 @@ class Rentals {
           .toList(),
       isDelete: json['is_delete'] ?? "",
       is_available: json["is_available"] ?? false,
+      publishedRentAmount: (json['published_rent_amount'] is int)
+          ? (json['published_rent_amount'] as int).toDouble()
+          : (json['published_rent_amount'] as num?)?.toDouble(),
+      parcelNumber: json['parcel_number'] ?? "",
+      purchaseDate: json['purchase_date'] ?? "",
+      purchasePrice: (json['purchase_price'] is int)
+          ? (json['purchase_price'] as int).toDouble()
+          : (json['purchase_price'] as num?)?.toDouble(),
       rentalOwnerData:
           RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
       propertyTypeData:

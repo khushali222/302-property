@@ -133,7 +133,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
 
   @override
   void didPopNext() {
-    // Called when coming back to this screen
+    // Always refetch categories when returning to this screen
     _loadDropdownCategories();
     super.didPopNext();
   }
@@ -2520,12 +2520,17 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       print(parts);
       print(DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()));
       try {
+        // Use dynamic category dropdown values
+        String? categoryName = _selectedDropdownCategory?.name ?? _selectedCategory;
+        String? categoryId = _selectedDropdownCategory?.categoryId;
+        if (categoryId == null || categoryId.isEmpty) categoryId = null;
         final workorder = await WorkOrderRepository()
             .addWorkOrder(
           adminId: id,
           workSubject: subject.text,
           staffMemberName: _selectedstaffId,
-          workCategory: _selectedDropdownCategory?.categoryId,
+          workCategory: categoryName,
+          categoryId: categoryId,
           workPerformed: perform.text,
           status: _selectedStatus,
           rentalAddress: properties[_selectedPropertyId],
@@ -2539,7 +2544,6 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           priority: _selectedOption,
           isBillable: isChecked,
           workChargeTo: isChecked == 'Tenants',
-          //  workChargeTo: "isbillable true hoy to static tenant mokli devanu",
           date: _dateController.text,
           entry: _selectedEntry == 'yes',
           parts: parts,

@@ -28,6 +28,4 @@ class FetchAllcategories {
       throw Exception('Failed to load categories');
     }
   }
-
-
 }

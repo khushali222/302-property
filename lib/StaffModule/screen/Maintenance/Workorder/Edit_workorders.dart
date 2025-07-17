@@ -25,6 +25,8 @@ import 'package:http/http.dart' as http;
 
 import '../../Rental/Tenants/add_tenants.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../../Model/All_categories_model.dart';
+import '../../../../repository/fetch_allcategories.dart';
 
 class ResponsiveEditWorkOrder extends StatefulWidget {
   EditData? property;
@@ -69,12 +71,9 @@ class EditWorkOrderForMobile extends StatefulWidget {
 
 class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   final TextEditingController subject = TextEditingController();
-
   final TextEditingController other = TextEditingController();
-
   final TextEditingController perform = TextEditingController();
   final TextEditingController vendornote = TextEditingController();
-
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController _dateController = TextEditingController();
   bool form_valid = false;
@@ -103,16 +102,65 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   Map<String, String> tenants = {};
   String? _selectedtenantId;
   String? _selectedTenants;
+
+  // Dynamic categories
+  List<allcategories_model> _dropdownCategories = [];
+  allcategories_model? _selectedDropdownCategory;
+  bool _isLoadingCategories = false;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _initializeData();
     _loadProperties();
     _loadVendor();
     _loadStaff();
-    // _loadTenant();
-    fetchWorkordersDetails(widget.workorderId);
     partsAndLabor.clear();
+  }
+
+  Future<void> _initializeData() async {
+    await _loadDropdownCategories();
+    await fetchWorkordersDetails(widget.workorderId);
+    _ensureCategoryInDropdown();
+  }
+
+  Future<void> _loadDropdownCategories() async {
+    setState(() {
+      _isLoadingCategories = true;
+    });
+    try {
+      final cats = await FetchAllcategories().fetchAllCategories();
+      setState(() {
+        _dropdownCategories = cats;
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingCategories = false;
+      });
+    }
+  }
+
+  void _ensureCategoryInDropdown() {
+    if (initialSelectedCategory != null &&
+        initialSelectedCategory!.isNotEmpty) {
+      final match = _dropdownCategories.firstWhere(
+        (cat) => cat.name == initialSelectedCategory,
+        orElse: () => allcategories_model(
+          categoryId: null,
+          name: initialSelectedCategory,
+        ),
+      );
+      if (!_dropdownCategories
+          .any((cat) => cat.name == initialSelectedCategory)) {
+        setState(() {
+          _dropdownCategories.add(match);
+        });
+      }
+      setState(() {
+        _selectedDropdownCategory = match;
+      });
+    }
   }
 
   String? initialSubject;
@@ -132,35 +180,19 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   List<Map<String, dynamic>>? initialSelectedparts;
 
   Future<void> fetchWorkordersDetails(String workorderId) async {
-    //try {
-    // await _loadProperties();
     EditData fetchedDetails =
         await WorkOrderRepository().fetchWorkordersDetails(workorderId);
-    print(workorderId);
-
-    print('Address ${fetchedDetails.propertyData?.address}');
-    print('rentalid ${fetchedDetails.rentalId}');
-    print('category ${fetchedDetails.workCategory}');
-    print('vendors ${fetchedDetails.vendorId}');
-    print('entry ${fetchedDetails.entryAllowed}');
-    print('Staffff ${fetchedDetails.staffmemberId}');
-    print('partt ${fetchedDetails.partsandchargeData}');
-    print('image ${fetchedDetails.workOrderImages}');
-    // print('Fetched parts and charge data: ${fetchedDetails.partsandchargeData?.first.account}');
     String? entryAllowedString;
     if (fetchedDetails.entryAllowed != null) {
       entryAllowedString = fetchedDetails.entryAllowed! ? 'Yes' : 'No';
     }
-
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
-      // print(fetchedDetails.rental.rentalAddress);
       if (fetchedDetails.workOrderImages != null) {
         _imageUrls = fetchedDetails.workOrderImages!.map((fileName) {
-          return '$fileName'; // Adjust the path as needed
+          return '$fileName';
         }).toList();
       }
-
       initialSubject = fetchedDetails.workSubject;
       initialPerform = fetchedDetails.workPerformed;
       initialVendorNote = fetchedDetails.vendorNotes;
@@ -193,8 +225,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                   calculateTotal(qtyController, priceController,
                       totalController, subtotalcontroller);
                 });
-                print('part id ${data.partsQuantity}');
-                print('part account ${data.account}');
                 return {
                   "parts_id": data.partsId,
                   "qtyController": qtyController,
@@ -206,8 +236,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                 };
               }).toList() ??
               [];
-
-      //_imageUrls = fetchedDetails.workOrderImages ?? [];
       subject.text = fetchedDetails.workSubject!;
       _selectedstaffId = fetchedDetails.staffData?.staffName;
       _selectedCategory = fetchedDetails.workCategory;
@@ -244,7 +272,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                   calculateTotal(qtyController, priceController,
                       totalController, subtotalcontroller);
                 });
-                print('part id ${data.partsQuantity}');
                 return {
                   "parts_id": data.partsId,
                   "qtyController": qtyController,
@@ -256,29 +283,18 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                 };
               }).toList() ??
               [];
-
-      //   partsAndLabor.clear();
       updateTotalAmount();
-
-      // totalAmount = calculateTotalAmount(partsAndLabor);
     });
-
-    print(fetchedDetails.tenantId);
     _loadUnits(_selectedPropertyId!);
     if (_selectedUnitId != null) {
       _loadTenant(_selectedPropertyId!, _selectedUnitId!);
     }
-    // _loadUnits(renderId)
     if (_selectedProperty != null) {
       await _loadUnits(_selectedProperty!);
     }
     setState(() {
       _selectedUnit = fetchedDetails.unitId;
-      print('fetch unit ${fetchedDetails.unitId}');
     });
-    //} catch (e) {
-    //print('Failed to fetch lease details: $e');
-    //}
   }
 
   Future<void> _loadProperties() async {
@@ -770,64 +786,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       });
     }
   }
-  //for tenants
 
-  // File? _image;
-  // List<File> _images = [];
-  // String? _uploadedFileName;
-  // List<String> _uploadedFileNames = [];
-  // Future<String?> uploadImage(File imageFile) async {
-  //   print(imageFile.path);
-  //   final String uploadUrl = '${image_upload_url}/api/images/upload';
-  //
-  //   var request = http.MultipartRequest(
-  //       'POST',
-  //       Uri.parse(
-  //         uploadUrl,
-  //       ));
-  //   request.files
-  //       .add(await http.MultipartFile.fromPath('files', imageFile.path));
-  //
-  //   var response = await request.send();
-  //   var responseData = await http.Response.fromStream(response);
-  //   print(responseData.body);
-  //
-  //   var responseBody = json.decode(responseData.body);
-  //   if (responseBody['status'] == 'ok') {
-  //     List file = responseBody['files'];
-  //     return file.first["filename"];
-  //   } else {
-  //     throw Exception('Failed to upload file: ${responseBody['message']}');
-  //   }
-  // }
-  //
-  // Future<void> _pickImage() async {
-  //   final ImagePicker _picker = ImagePicker();
-  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-  //
-  //   if (image != null) {
-  //     setState(() {
-  //       _image = File(image.path);
-  //       _images.add(File(image.path));
-  //     });
-  //     _uploadImage(File(image.path));
-  //   }
-  // }
-  //
-  // Future<void> _uploadImage(File imageFile) async {
-  //   try {
-  //     String? fileName = await uploadImage(imageFile);
-  //     setState(() {
-  //       _uploadedFileNames.add(fileName!);
-  //       _uploadedFileName = fileName;
-  //       _imageUrls.add(fileName!);
-  //     });
-  //   } catch (e) {
-  //     print('Image upload failed: $e');
-  //   }
-  // }
-  //
-  // List<String> _imageUrls = [];
+  //for tenants
   File? _image;
   List<File> _images = [];
   String? _uploadedFileName;
@@ -1063,9 +1023,10 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                       children: [
                                                         isMp4
                                                             ? Container(
-                                                          height: 80,
-                                                          width: 80,
-                                                              child: GestureDetector(
+                                                                height: 80,
+                                                                width: 80,
+                                                                child:
+                                                                    GestureDetector(
                                                                   onTap: () {
                                                                     _showVideoDialog(
                                                                         '$image_url${_imageUrls[index]}');
@@ -1089,7 +1050,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                                     ],
                                                                   ),
                                                                 ),
-                                                            )
+                                                              )
                                                             : Container(
                                                                 child: Image
                                                                     .network(
@@ -1514,97 +1475,157 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           SizedBox(
                             height: 10,
                           ),
-                          FormField<String>(
-                            validator: (value) {
-                              if (_selectedCategory == null) {
-                                return 'Please select a category';
-                              }
-                              return null;
-                            },
-                            builder: (FormFieldState<String> state) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  DropdownButtonHideUnderline(
-                                    child: DropdownButton2<String>(
-                                      isExpanded: true,
-                                      hint: Text('Select Category'),
-                                      value: _selectedCategory,
-                                      items: _category.map((method) {
-                                        return DropdownMenuItem<String>(
-                                          value: method,
-                                          child: Text(method),
-                                        );
-                                      }).toList(),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          state.didChange(
-                                              newValue); // Notify form field of the change
-                                          _selectedCategory = newValue;
-                                          _showTextField =
-                                              _selectedCategory == 'Other';
-                                        });
-                                        state.reset();
-                                        print(
-                                            'Selected category: $_selectedCategory');
-                                      },
-                                      buttonStyleData: ButtonStyleData(
-                                        height: 45,
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color: Colors.white,
-                                        ),
-                                        elevation: 2,
-                                      ),
-                                      iconStyleData: const IconStyleData(
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
-                                        ),
-                                        iconSize: 24,
-                                        iconEnabledColor: Color(0xFFb0b6c3),
-                                        iconDisabledColor: Colors.grey,
-                                      ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color: Colors.white,
-                                        ),
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(6),
-                                          thickness:
-                                              MaterialStateProperty.all(6),
-                                          thumbVisibility:
-                                              MaterialStateProperty.all(true),
-                                        ),
-                                      ),
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
-                                        height: 50,
-                                        padding: EdgeInsets.only(
-                                            left: 14, right: 14),
-                                      ),
-                                    ),
-                                  ),
-                                  if (state.hasError)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 14, top: 8),
-                                      child: Text(
-                                        state.errorText!,
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              );
-                            },
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2<allcategories_model>(
+                              isExpanded: true,
+                              hint: Text(_isLoadingCategories
+                                  ? 'Loading categories...'
+                                  : 'Select Category'),
+                              value: _dropdownCategories
+                                  .contains(_selectedDropdownCategory)
+                                  ? _selectedDropdownCategory
+                                  : null,
+                              items: _dropdownCategories.map((cat) {
+                                return DropdownMenuItem<allcategories_model>(
+                                  value: cat,
+                                  child: Text(cat.name ?? ''),
+                                );
+                              }).toList(),
+                              onChanged: _isLoadingCategories
+                                  ? null // disables dropdown while loading
+                                  : (allcategories_model? newValue) {
+                                setState(() {
+                                  _selectedDropdownCategory = newValue;
+                                  _showTextField =
+                                      newValue?.name == 'Other';
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 45,
+                                padding:
+                                const EdgeInsets.only(left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                elevation: 2,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconSize: 24,
+                                iconEnabledColor: Color(0xFFb0b6c3),
+                                iconDisabledColor: Colors.grey,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 250,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(6),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                  MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 50,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
                           ),
+                          // FormField<String>(
+                          //   validator: (value) {
+                          //     if (_selectedCategory == null) {
+                          //       return 'Please select a category';
+                          //     }
+                          //     return null;
+                          //   },
+                          //   builder: (FormFieldState<String> state) {
+                          //     return Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         DropdownButtonHideUnderline(
+                          //           child: DropdownButton2<String>(
+                          //             isExpanded: true,
+                          //             hint: Text('Select Category'),
+                          //             value: _selectedCategory,
+                          //             items: _category.map((method) {
+                          //               return DropdownMenuItem<String>(
+                          //                 value: method,
+                          //                 child: Text(method),
+                          //               );
+                          //             }).toList(),
+                          //             onChanged: (String? newValue) {
+                          //               setState(() {
+                          //                 state.didChange(
+                          //                     newValue); // Notify form field of the change
+                          //                 _selectedCategory = newValue;
+                          //                 _showTextField =
+                          //                     _selectedCategory == 'Other';
+                          //               });
+                          //               state.reset();
+                          //               print(
+                          //                   'Selected category: $_selectedCategory');
+                          //             },
+                          //             buttonStyleData: ButtonStyleData(
+                          //               height: 45,
+                          //               padding: const EdgeInsets.only(
+                          //                   left: 14, right: 14),
+                          //               decoration: BoxDecoration(
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(6),
+                          //                 color: Colors.white,
+                          //               ),
+                          //               elevation: 2,
+                          //             ),
+                          //             iconStyleData: const IconStyleData(
+                          //               icon: Icon(
+                          //                 Icons.arrow_drop_down,
+                          //               ),
+                          //               iconSize: 24,
+                          //               iconEnabledColor: Color(0xFFb0b6c3),
+                          //               iconDisabledColor: Colors.grey,
+                          //             ),
+                          //             dropdownStyleData: DropdownStyleData(
+                          //               decoration: BoxDecoration(
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(6),
+                          //                 color: Colors.white,
+                          //               ),
+                          //               scrollbarTheme: ScrollbarThemeData(
+                          //                 radius: const Radius.circular(6),
+                          //                 thickness:
+                          //                     MaterialStateProperty.all(6),
+                          //                 thumbVisibility:
+                          //                     MaterialStateProperty.all(true),
+                          //               ),
+                          //             ),
+                          //             menuItemStyleData:
+                          //                 const MenuItemStyleData(
+                          //               height: 50,
+                          //               padding: EdgeInsets.only(
+                          //                   left: 14, right: 14),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         if (state.hasError)
+                          //           Padding(
+                          //             padding: const EdgeInsets.only(
+                          //                 left: 14, top: 8),
+                          //             child: Text(
+                          //               state.errorText!,
+                          //               style: const TextStyle(
+                          //                 color: Colors.red,
+                          //                 fontSize: 12,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //       ],
+                          //     );
+                          //   },
+                          // ),
                           _showTextField
                               ? Padding(
                                   padding: const EdgeInsets.only(
@@ -2550,7 +2571,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         print("no changes");
 
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
         Navigator.pop(context, false);
         return; // Exit the method
@@ -2563,6 +2584,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       String? token = prefs.getString('token');
       String? rentalId = _selectedPropertyId;
       String? unitId = _selectedUnitId;
+
+      // Use dynamic category dropdown value for categoryId
+      String? categoryName =
+          _selectedDropdownCategory?.name ?? _selectedCategory;
+      String? categoryId = _selectedDropdownCategory?.categoryId;
+      if (categoryId == null || categoryId.isEmpty) categoryId = null;
 
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
@@ -2584,7 +2611,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           workOrderid: widget.workorderId,
           workSubject: subject.text.trim(),
           staffMemberName: _selectedstaffId,
-          workCategory: _selectedCategory,
+          workCategory: categoryName,
+          categoryId: categoryId,
           workPerformed: perform.text.trim(),
           status: _selectedStatus,
           rentalAddress: properties[_selectedPropertyId],
@@ -5696,14 +5724,13 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         rentalid: rentalId,
         unitid: unitId,
         workOrderImages: _imageUrls,
-        //vendorId: vendorId,
         vendorId: finalVendorId,
         vendorNotes: vendornote.text.trim(),
         priority: _selectedOption,
         isBillable: isChecked,
         workChargeTo: isChecked == 'Tenants',
         date: _dateController.text.trim(),
-        entry: _selectedEntry == 'yes',
+        entry: _selectedEntry == 'Yes',
         parts: parts,
         notificationTime:
             DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),

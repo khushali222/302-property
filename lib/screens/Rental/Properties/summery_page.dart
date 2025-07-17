@@ -3356,6 +3356,125 @@ class _Summery_pageState extends State<Summery_page>
                       },
                     ),
                   ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: Text(
+                    "Purchase Information",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6,right: 6),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFF4F8FF),
+                      borderRadius: BorderRadius.circular(16), // Increased corner radius
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16), // Ensure content inside respects corners
+                      child: Table(
+                        columnWidths: const {
+                          0: FlexColumnWidth(2),
+                          1: FlexColumnWidth(2),
+                          2: FlexColumnWidth(2),
+                        },
+                        border: TableBorder(
+                          horizontalInside: BorderSide(color: Colors.grey.shade400, width: 1),
+                          top: BorderSide.none,
+                          bottom: BorderSide.none,
+                          left: BorderSide.none,
+                          right: BorderSide.none,
+                        ),
+                        children: [
+                          // Header Row
+                          TableRow(
+                            decoration: BoxDecoration(
+                              color: Color(0xFF1A2F5B).withOpacity(0.08),
+                            ),
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  "Purchase Date",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A2F5B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  "Purchase Price",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A2F5B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  "Parcel Number #",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A2F5B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // Data Row
+                          TableRow(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  (rentalDetails.purchaseDate == null || rentalDetails.purchaseDate!.isEmpty)
+                                      ? "N/A"
+                                      : rentalDetails.purchaseDate!,
+                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  (rentalDetails.purchasePrice == null || rentalDetails.purchasePrice == 0)
+                                      ? "N/A"
+                                      : "\$${rentalDetails.purchasePrice!.toStringAsFixed(0)}",
+                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  (rentalDetails.parcelNumber == null || rentalDetails.parcelNumber!.isEmpty)
+                                      ? "N/A"
+                                      : rentalDetails.parcelNumber!,
+                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
                 if (MediaQuery.of(context).size.width > 500)
                   FutureBuilder<List<Rentals>>(
                     future: futurerentalowners,
