@@ -137,18 +137,37 @@ class Properies_summery_Repo {
   Future<Map<String, dynamic>> addappliances({
     String? adminId,
     String? unitId,
-    String? applianceid,
     String? appliancename,
     String? appliancedescription,
     String? installeddate,
+    String? type,
+    String? brand,
+    String? model,
+    String? serialNumber,
+    String? warrantyExpiry,
+    String? lastMaintenanceDate,
+    String? maintenanceNotes,
+    String? status,
+    String? categoryId,
+    List<dynamic>? filters,
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
       'unit_id': unitId,
-      'appliance_id': applianceid,
       'appliance_name': appliancename,
       'appliance_description': appliancedescription,
       'installed_date': installeddate,
+      'type': type,
+      'brand': brand,
+      'model': model,
+      'serial_number': serialNumber,
+      'warranty_expiry': warrantyExpiry,
+      'last_maintenance_date': lastMaintenanceDate,
+      'maintenance_notes': maintenanceNotes,
+      'status': status,
+      'category_id': categoryId,
+      'filters': filters ?? [],
+      'appliance_id': "",
     };
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -163,7 +182,7 @@ class Properies_summery_Repo {
       },
       body: jsonEncode(data),
     );
-    print(response.body);
+    print(" add appliences ${response.body}");
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: "add appliances successfully");
@@ -363,6 +382,7 @@ class Properies_summery_Repo {
       throw Exception('Failed to load rental details');
     }
   }
+
   Future<List<Properties_lease_model>> fetchrLeaseDetails(String unitId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String? id = prefs.getString("rentalid");
@@ -377,17 +397,22 @@ class Properies_summery_Repo {
       },
     );
     print(" get summery lease details ${response.body}");
-    print("lease  api for calling ${'${Api_url}/api/leases/leases/$id/$unitId'}");
+    print(
+        "lease  api for calling ${'${Api_url}/api/leases/leases/$id/$unitId'}");
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
-      return jsonResponse.map((data) => Properties_lease_model.fromJson(data)).toList();
+      return jsonResponse
+          .map((data) => Properties_lease_model.fromJson(data))
+          .toList();
     } else {
       print('Failed to fetch lease table properties: ${response.body}');
       return [];
       //throw Exception('Failed to load data');
     }
   }
-  Future<List<Properties_Revenu_model>> fetchrRevenueDetails(String unitId) async {
+
+  Future<List<Properties_Revenu_model>> fetchrRevenueDetails(
+      String unitId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String? id = prefs.getString("rentalid");
     String? id = prefs.getString('adminId');
@@ -401,16 +426,20 @@ class Properies_summery_Repo {
       },
     );
     print(" get properties revenue details ${response.body}");
-    print("properties revenue api for calling ${'${Api_url}/api/leases/revenue/$id/$unitId'}");
+    print(
+        "properties revenue api for calling ${'${Api_url}/api/leases/revenue/$id/$unitId'}");
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
-      return jsonResponse.map((data) => Properties_Revenu_model.fromJson(data)).toList();
+      return jsonResponse
+          .map((data) => Properties_Revenu_model.fromJson(data))
+          .toList();
     } else {
       print('Failed to fetch lease revenue table properties: ${response.body}');
       return [];
       //throw Exception('Failed to load data');
     }
   }
+
   Future<List<propertiesworkData>> fetchWorkOrders(String rentalId) async {
     // Retrieve admin ID and token from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -440,6 +469,7 @@ class Properies_summery_Repo {
       throw Exception('No work order found');
     }
   }
+
   Future<void> addrecurringtenant(Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');

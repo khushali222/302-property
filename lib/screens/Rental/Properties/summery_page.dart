@@ -18,6 +18,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../../Model/All_categories_model.dart';
 import '../../../Model/Properties_revenue_model.dart';
 import '../../../Model/properties_Lease_model.dart';
 import '../../../Model/unit.dart';
@@ -29,6 +30,7 @@ import '../../../model/properties_workorders.dart';
 import '../../../model/unitsummery_propeties.dart';
 import '../../../provider/lease_provider.dart';
 import '../../../provider/properties_workorders.dart';
+import '../../../repository/fetch_allcategories.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
@@ -80,7 +82,6 @@ class _Summery_pageState extends State<Summery_page>
   TextEditingController bed3 = TextEditingController();
   bool isLoading = false;
   bool iserror = false;
-
 
   ConnectivityResult? _connectivityResult;
 
@@ -1966,7 +1967,6 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
-
   //work order
   int totalrecordslease = 0;
 
@@ -2208,7 +2208,8 @@ class _Summery_pageState extends State<Summery_page>
                                           });
                                         },
                                 ),
-                                Text('Page ${currentPagelease + 1} of $totalPages'),
+                                Text(
+                                    'Page ${currentPagelease + 1} of $totalPages'),
                                 IconButton(
                                   icon: FaIcon(
                                     FontAwesomeIcons.circleChevronRight,
@@ -2243,11 +2244,11 @@ class _Summery_pageState extends State<Summery_page>
   int totalrecordsrevenue = 0;
 
   int rowsPerPagerevenue = 5;
-  int sortColumnIndexrevenue  = 0;
+  int sortColumnIndexrevenue = 0;
   bool sortAscendingrevenue = true;
-  int currentPagerevenue  = 0;
-  int itemsPerPagerevenue  = 10;
-  List<int> itemsPerPageOptionsrevenue  = [
+  int currentPagerevenue = 0;
+  int itemsPerPagerevenue = 10;
+  List<int> itemsPerPageOptionsrevenue = [
     10,
     25,
     50,
@@ -2403,7 +2404,8 @@ class _Summery_pageState extends State<Summery_page>
                                           });
                                         },
                                 ),
-                                Text('Page ${currentPagerevenue + 1} of $totalPages'),
+                                Text(
+                                    'Page ${currentPagerevenue + 1} of $totalPages'),
                                 IconButton(
                                   icon: FaIcon(
                                     FontAwesomeIcons.circleChevronRight,
@@ -3279,7 +3281,8 @@ class _Summery_pageState extends State<Summery_page>
                                                 }).toList(),
                                                 onChanged: (newValue) {
                                                   setState(() {
-                                                    itemsPerPagerent = newValue!;
+                                                    itemsPerPagerent =
+                                                        newValue!;
                                                     currentPagerent =
                                                         0; // Reset to first page when items per page change
                                                   });
@@ -3332,12 +3335,13 @@ class _Summery_pageState extends State<Summery_page>
                                         IconButton(
                                           icon: FaIcon(
                                             FontAwesomeIcons.circleChevronRight,
-                                            color: currentPagerent < totalPages - 1
-                                                ? blueColor
-                                                : Colors.grey,
+                                            color:
+                                                currentPagerent < totalPages - 1
+                                                    ? blueColor
+                                                    : Colors.grey,
                                           ),
                                           onPressed:
-                                          currentPagerent < totalPages - 1
+                                              currentPagerent < totalPages - 1
                                                   ? () {
                                                       setState(() {
                                                         currentPagerent++;
@@ -3370,15 +3374,17 @@ class _Summery_pageState extends State<Summery_page>
                 ),
                 SizedBox(height: 2),
                 Padding(
-                  padding: const EdgeInsets.only(left: 6,right: 6),
+                  padding: const EdgeInsets.only(left: 6, right: 6),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Color(0xFFF4F8FF),
-                      borderRadius: BorderRadius.circular(16), // Increased corner radius
+                      borderRadius:
+                          BorderRadius.circular(16), // Increased corner radius
                       border: Border.all(color: Colors.grey.shade300),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16), // Ensure content inside respects corners
+                      borderRadius: BorderRadius.circular(
+                          16), // Ensure content inside respects corners
                       child: Table(
                         columnWidths: const {
                           0: FlexColumnWidth(2),
@@ -3386,7 +3392,8 @@ class _Summery_pageState extends State<Summery_page>
                           2: FlexColumnWidth(2),
                         },
                         border: TableBorder(
-                          horizontalInside: BorderSide(color: Colors.grey.shade400, width: 1),
+                          horizontalInside:
+                              BorderSide(color: Colors.grey.shade400, width: 1),
                           top: BorderSide.none,
                           bottom: BorderSide.none,
                           left: BorderSide.none,
@@ -3443,28 +3450,34 @@ class _Summery_pageState extends State<Summery_page>
                               Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
-                                  (rentalDetails.purchaseDate == null || rentalDetails.purchaseDate!.isEmpty)
+                                  (rentalDetails.purchaseDate == null ||
+                                          rentalDetails.purchaseDate!.isEmpty)
                                       ? "N/A"
                                       : rentalDetails.purchaseDate!,
-                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
                                 ),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
-                                  (rentalDetails.purchasePrice == null || rentalDetails.purchasePrice == 0)
+                                  (rentalDetails.purchasePrice == null ||
+                                          rentalDetails.purchasePrice == 0)
                                       ? "N/A"
                                       : "\$${rentalDetails.purchasePrice!.toStringAsFixed(0)}",
-                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
                                 ),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
-                                  (rentalDetails.parcelNumber == null || rentalDetails.parcelNumber!.isEmpty)
+                                  (rentalDetails.parcelNumber == null ||
+                                          rentalDetails.parcelNumber!.isEmpty)
                                       ? "N/A"
                                       : rentalDetails.parcelNumber!,
-                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
                                 ),
                               ),
                             ],
@@ -14299,6 +14312,15 @@ class _AppliancesPartState extends State<AppliancesPart> {
   final _name = TextEditingController();
   final _description = TextEditingController();
   final _installedDate = TextEditingController();
+
+  TextEditingController _type = TextEditingController();
+  TextEditingController _model = TextEditingController();
+  TextEditingController _serialNumber = TextEditingController();
+
+  TextEditingController _warrantyExpiry = TextEditingController();
+  TextEditingController _lastMaintenanceDate = TextEditingController();
+  TextEditingController _maintenanceNotes = TextEditingController();
+
   final UnitData leaseRepository = UnitData();
   List<unit_appliance> leases = [];
 
@@ -14323,10 +14345,31 @@ class _AppliancesPartState extends State<AppliancesPart> {
     //}
   }
 
+  Future<void> _loadDropdownCategories() async {
+    setState(() {
+      _isLoadingCategories = true;
+    });
+    try {
+      final cats = await FetchAllcategories().fetchAllCategories();
+      print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
+      setState(() {
+        _dropdownCategories = cats;
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      print('Error fetching categories in AddWorkOrderForMobile: ' +
+          e.toString());
+      setState(() {
+        _isLoadingCategories = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _loadDropdownCategories();
     fetchLeases();
     futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
   }
@@ -14804,6 +14847,62 @@ class _AppliancesPartState extends State<AppliancesPart> {
     );
   }
 
+  List<allcategories_model> _dropdownCategories = [];
+  allcategories_model? _selectedDropdownCategory;
+  bool _isLoadingCategories = false;
+
+  List<String> brandList = [
+    'Amana',
+    'Badger',
+    'Bosch',
+    'Carrier',
+    'Daikin',
+    'Frigidaire',
+    'GE',
+    'Goodman',
+    'InSinkErator',
+    'KitchenAid',
+    'Lennox',
+    'LG',
+    'Maytag',
+    'Mitsubishi Electric',
+    'Moen',
+    'Rheem',
+    'Samsung',
+    'Trane',
+    'Waste King',
+    'Whirlpool',
+    'York',
+    'Other',
+  ];
+  List<String> statusList = ['Working', 'Needs Repair', "Out of Service"];
+
+  String? _selectedBrand;
+  String? _selectedStatus;
+  // Add these to your state class
+  List<Map<String, TextEditingController>> filterControllers = [];
+  bool showFilters = false;
+
+// Add this method to handle adding new filter
+  void addNewFilter() {
+    setState(() {
+      filterControllers.add({
+        'name': TextEditingController(),
+        'size': TextEditingController(),
+      });
+    });
+  }
+
+// Add this method to remove filter
+  void removeFilter(int index) {
+    setState(() {
+      filterControllers[index]['name']?.dispose();
+      filterControllers[index]['size']?.dispose();
+      filterControllers.removeAt(index);
+    });
+  }
+
+  bool showFiltersSection = false;
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -14845,241 +14944,866 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         _name.clear();
                         _description.clear();
                         _installedDate.clear();
+                        _serialNumber.clear();
+                        _model.clear();
+                        _type.clear();
+                        _warrantyExpiry.clear();
+                        _lastMaintenanceDate.clear();
+                        _maintenanceNotes.clear();
+                        _selectedDropdownCategory = null;
+                        _selectedBrand = null;
+                        _selectedStatus = null;
+                        // Clear filters
+                        for (var controllers in filterControllers) {
+                          controllers['name']?.dispose();
+                          controllers['size']?.dispose();
+                        }
+                        filterControllers.clear();
+                        showFiltersSection = false;
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return StatefulBuilder(
                               builder:
                                   (BuildContext context, StateSetter setState) {
-                                return AlertDialog(
+                                return Dialog(
                                   backgroundColor: Colors.white,
                                   surfaceTintColor: Colors.white,
-                                  title: const Text('Add Appliances'),
-                                  content: Form(
-                                    key: _formKey,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        CustomTextFormField(
-                                          labelText: 'Name',
-                                          hintText: 'Enter Name',
-                                          keyboardType: TextInputType.text,
-                                          controller: _name,
-                                          // validator: (value) {
-                                          //   if (value == null || value.isEmpty) {
-                                          //     return 'Please enter name';
-                                          //   }
-                                          //   return null;
-                                          // },
-                                        ),
-                                        CustomTextFormField(
-                                          labelText: 'Description',
-                                          hintText: 'Enter description',
-                                          keyboardType: TextInputType.text,
-                                          controller: _description,
-                                          // validator: (value) {
-                                          //   if (value == null || value.isEmpty) {
-                                          //     return 'Please enter description';
-                                          //   }
-                                          //   return null;
-                                          // },
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            showDatePicker(
-                                              context: context,
-                                              initialDate: DateTime.now(),
-                                              firstDate: DateTime(2000),
-                                              lastDate: DateTime(2100),
-                                              builder: (BuildContext context,
-                                                  Widget? child) {
-                                                return Theme(
-                                                  data: ThemeData.light()
-                                                      .copyWith(
-                                                    // primaryColor: blueColor,
-                                                    //  hintColor: blueColor,
-                                                    colorScheme:
-                                                        ColorScheme.light(
-                                                      primary: blueColor,
-                                                      // onPrimary:blueColor,
-                                                      //  surface: blueColor,
-                                                      onSurface: Colors.black,
+                                  child: SingleChildScrollView(
+                                    child: SizedBox(
+                                      width: 800,
+                                      // width: double.infinity,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Form(
+                                          key: _formKey,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Add Home Systems",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
+                                                        color: blueColor),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Name',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              CustomTextFormField(
+                                                labelText: '',
+                                                hintText: 'Enter Name',
+                                                controller: _name,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                              ),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Description',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              CustomTextFormField(
+                                                labelText: '',
+                                                hintText: 'Enter description',
+                                                controller: _description,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                              ),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Category',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              //categories dropdwoun
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child: DropdownButton2<
+                                                      allcategories_model>(
+                                                    isExpanded: true,
+                                                    hint: Text(_isLoadingCategories
+                                                        ? 'Loading categories...'
+                                                        : 'Select Category'),
+                                                    value: _dropdownCategories
+                                                            .contains(
+                                                                _selectedDropdownCategory)
+                                                        ? _selectedDropdownCategory
+                                                        : null,
+                                                    items: _dropdownCategories
+                                                        .map((cat) {
+                                                      return DropdownMenuItem<
+                                                          allcategories_model>(
+                                                        value: cat,
+                                                        child: Text(
+                                                            cat.name ?? ''),
+                                                      );
+                                                    }).toList(),
+                                                    // onChanged: _isLoadingCategories
+                                                    //     ? null // disables dropdown while loading
+                                                    //     : (allcategories_model? newValue) {
+                                                    //   setState(() {
+                                                    //     _selectedDropdownCategory = newValue;
+                                                    //     // _showTextField =
+                                                    //     //     newValue?.name == 'Other';
+                                                    //   });
+                                                    // },
+                                                    onChanged:
+                                                        _isLoadingCategories
+                                                            ? null // disables dropdown while loading
+                                                            : (allcategories_model?
+                                                                newValue) {
+                                                                setState(() {
+                                                                  _selectedDropdownCategory =
+                                                                      newValue;
+
+                                                                  // Check if HVAC is selected and show/hide filters section
+                                                                  if (newValue
+                                                                          ?.name
+                                                                          ?.toLowerCase() ==
+                                                                      'hvac') {
+                                                                    showFiltersSection =
+                                                                        true;
+                                                                    // Add an initial filter if none exist
+                                                                    if (filterControllers
+                                                                        .isEmpty) {
+                                                                      filterControllers
+                                                                          .add({
+                                                                        'name':
+                                                                            TextEditingController(),
+                                                                        'size':
+                                                                            TextEditingController(),
+                                                                      });
+                                                                    }
+                                                                  } else {
+                                                                    showFiltersSection =
+                                                                        false;
+                                                                    // Clear any existing filters if not HVAC
+                                                                    for (var controllers
+                                                                        in filterControllers) {
+                                                                      controllers[
+                                                                              'name']
+                                                                          ?.dispose();
+                                                                      controllers[
+                                                                              'size']
+                                                                          ?.dispose();
+                                                                    }
+                                                                    filterControllers
+                                                                        .clear();
+                                                                  }
+                                                                });
+                                                              },
+                                                    buttonStyleData:
+                                                        ButtonStyleData(
+                                                      height: 45,
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 14,
+                                                              right: 14),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color: Colors.white,
+                                                      ),
+                                                      elevation: 2,
                                                     ),
-                                                    buttonTheme:
-                                                        ButtonThemeData(
-                                                      textTheme: ButtonTextTheme
-                                                          .primary,
+                                                    iconStyleData:
+                                                        const IconStyleData(
+                                                      icon: Icon(Icons
+                                                          .arrow_drop_down),
+                                                      iconSize: 24,
+                                                      iconEnabledColor:
+                                                          Color(0xFFb0b6c3),
+                                                      iconDisabledColor:
+                                                          Colors.grey,
+                                                    ),
+                                                    dropdownStyleData:
+                                                        DropdownStyleData(
+                                                      maxHeight: 250,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color: Colors.white,
+                                                      ),
+                                                      scrollbarTheme:
+                                                          ScrollbarThemeData(
+                                                        radius: const Radius
+                                                            .circular(6),
+                                                        thickness:
+                                                            MaterialStateProperty
+                                                                .all(6),
+                                                        thumbVisibility:
+                                                            MaterialStateProperty
+                                                                .all(true),
+                                                      ),
+                                                    ),
+                                                    menuItemStyleData:
+                                                        const MenuItemStyleData(
+                                                      height: 50,
+                                                      padding: EdgeInsets.only(
+                                                          left: 14, right: 14),
                                                     ),
                                                   ),
-                                                  child: child!,
-                                                );
-                                              },
-                                            ).then((date) {
-                                              if (date != null) {
-                                                setState(() {
-                                                  _selectedDate = date;
-                                                  _installedDate.text =
-                                                      formatDate(
-                                                          date.toString());
-                                                });
-                                              }
-                                            });
-                                          },
-                                          child: AbsorbPointer(
-                                            child: CustomTextFormField(
-                                              labelText: 'Date',
-                                              hintText: 'Select Date',
-                                              keyboardType:
-                                                  TextInputType.datetime,
-                                              controller: _installedDate,
-                                              // validator: (value) {
-                                              //   if (value == null ||
-                                              //       value.isEmpty) {
-                                              //     return 'Please select date';
-                                              //   }
-                                              //   return null;
-                                              // },
-                                            ),
-                                          ),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Container(
-                                                height: 42,
-                                                width: 80,
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
+                                                ),
+                                              ),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Type',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              CustomTextFormField(
+                                                labelText: '',
+                                                hintText: 'Enter type',
+                                                controller: _type,
+                                                keyboardType:
+                                                    TextInputType.name,
+                                              ),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Brand',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child:
+                                                      DropdownButton2<String>(
+                                                    isExpanded: true,
+                                                    hint: const Text(
+                                                        'Select Brand'),
+                                                    value: brandList.contains(
+                                                            _selectedBrand)
+                                                        ? _selectedBrand
+                                                        : null,
+                                                    items:
+                                                        brandList.map((brand) {
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: brand,
+                                                        child: Text(brand),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged:
+                                                        (String? newValue) {
+                                                      setState(() {
+                                                        _selectedBrand =
+                                                            newValue;
+                                                      });
+                                                    },
+                                                    buttonStyleData:
+                                                        ButtonStyleData(
+                                                      height: 45,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 14),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color: Colors.white,
+                                                      ),
+                                                      elevation: 2,
+                                                    ),
+                                                    iconStyleData:
+                                                        const IconStyleData(
+                                                      icon: Icon(Icons
+                                                          .arrow_drop_down),
+                                                      iconSize: 24,
+                                                      iconEnabledColor:
+                                                          Color(0xFFb0b6c3),
+                                                      iconDisabledColor:
+                                                          Colors.grey,
+                                                    ),
+                                                    dropdownStyleData:
+                                                        DropdownStyleData(
+                                                      maxHeight: 250,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color: Colors.white,
+                                                      ),
+                                                      scrollbarTheme:
+                                                          ScrollbarThemeData(
+                                                        radius: const Radius
+                                                            .circular(6),
+                                                        thickness:
+                                                            MaterialStateProperty
+                                                                .all(6),
+                                                        thumbVisibility:
+                                                            MaterialStateProperty
+                                                                .all(true),
+                                                      ),
+                                                    ),
+                                                    menuItemStyleData:
+                                                        const MenuItemStyleData(
+                                                      height: 50,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 14),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 10),
+                                                child: Text(
+                                                  'Model',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              CustomTextFormField(
+                                                labelText: '',
+                                                hintText: 'Enter model',
+                                                controller: _model,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                              ),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Serial Number',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              CustomTextFormField(
+                                                labelText: '',
+                                                hintText: 'Enter serial number',
+                                                controller: _serialNumber,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                              ),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Installed Date',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              dateField(
+                                                  'Installed Date',
+                                                  _installedDate,
+                                                  context,
+                                                  setState),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Warranty Expiry',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              dateField(
+                                                  'Warranty Expiry',
+                                                  _warrantyExpiry,
+                                                  context,
+                                                  setState),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Last Maintenance Date',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              dateField(
+                                                  'Last Maintenance Date',
+                                                  _lastMaintenanceDate,
+                                                  context,
+                                                  setState),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Status',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child:
+                                                      DropdownButton2<String>(
+                                                    isExpanded: true,
+                                                    hint: const Text(
+                                                        'Select Status'),
+                                                    value: statusList.contains(
+                                                            _selectedStatus)
+                                                        ? _selectedStatus
+                                                        : null,
+                                                    items: statusList
+                                                        .map((status) {
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: status,
+                                                        child: Text(status),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged:
+                                                        (String? newValue) {
+                                                      setState(() {
+                                                        _selectedStatus =
+                                                            newValue;
+                                                      });
+                                                    },
+                                                    buttonStyleData:
+                                                        ButtonStyleData(
+                                                      height: 45,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 14),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color: Colors.white,
+                                                      ),
+                                                      elevation: 2,
+                                                    ),
+                                                    iconStyleData:
+                                                        const IconStyleData(
+                                                      icon: Icon(Icons
+                                                          .arrow_drop_down),
+                                                      iconSize: 24,
+                                                      iconEnabledColor:
+                                                          Color(0xFFb0b6c3),
+                                                      iconDisabledColor:
+                                                          Colors.grey,
+                                                    ),
+                                                    dropdownStyleData:
+                                                        DropdownStyleData(
+                                                      maxHeight: 250,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color: Colors.white,
+                                                      ),
+                                                      scrollbarTheme:
+                                                          ScrollbarThemeData(
+                                                        radius: const Radius
+                                                            .circular(6),
+                                                        thickness:
+                                                            MaterialStateProperty
+                                                                .all(6),
+                                                        thumbVisibility:
+                                                            MaterialStateProperty
+                                                                .all(true),
+                                                      ),
+                                                    ),
+                                                    menuItemStyleData:
+                                                        const MenuItemStyleData(
+                                                      height: 50,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 14),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(height: 8),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Text(
+                                                  'Maintenance Notes',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              CustomTextFormField(
+                                                labelText: '',
+                                                hintText: 'Enter notes',
+                                                controller: _maintenanceNotes,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                              ),
+                                              const SizedBox(height: 16),
+                                              // Add this after your Status dropdown
+                                              if (_selectedDropdownCategory
+                                                      ?.name ==
+                                                  'HVAC') ...[
+                                                SizedBox(height: 16),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      'Filters',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          addNewFilter();
+                                                        });
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            blueColor,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                      ),
+                                                      child: Text('Add Filter',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .white)),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Text(
+                                                  'Optional: Add filters for HVAC systems',
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8),
+                                                ...filterControllers
+                                                    .asMap()
+                                                    .entries
+                                                    .map((entry) {
+                                                  int index = entry.key;
+                                                  var controllers = entry.value;
+                                                  return Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 16),
+                                                    padding: EdgeInsets.all(16),
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Colors
+                                                              .grey.shade300),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                                'Filter ${index + 1}'),
+                                                            IconButton(
+                                                              icon: Icon(
+                                                                  Icons
+                                                                      .remove_circle_outline,
+                                                                  color: Colors
+                                                                      .red),
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  removeFilter(
+                                                                      index);
+                                                                });
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 8),
+                                                        CustomTextFormField(
+                                                          labelText: '',
+                                                          hintText:
+                                                              'Filter Name',
+                                                          controller:
+                                                              controllers[
+                                                                  'name']!,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .text,
+                                                        ),
+                                                        SizedBox(height: 8),
+                                                        CustomTextFormField(
+                                                          labelText: '',
+                                                          hintText:
+                                                              'Filter Size (e.g., 16x20x1)',
+                                                          controller:
+                                                              controllers[
+                                                                  'size']!,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .text,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              ],
+                                              const SizedBox(height: 16),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
                                                       backgroundColor:
                                                           blueColor,
                                                       shape:
                                                           RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8.0))),
-                                                  onPressed: () async {
-                                                    if (_name.text.isEmpty ||
-                                                        _description
-                                                            .text.isEmpty ||
-                                                        _installedDate
-                                                            .text.isEmpty) {
-                                                      setState(() {
-                                                        iserror = true;
-                                                      });
-                                                    } else {
-                                                      setState(() {
-                                                        isLoading = true;
-                                                        iserror = false;
-                                                      });
-                                                      SharedPreferences prefs =
-                                                          await SharedPreferences
-                                                              .getInstance();
-                                                      String? id = prefs
-                                                          .getString("adminId");
-                                                      print("calling");
-                                                      Properies_summery_Repo()
-                                                          .addappliances(
-                                                        adminId: id,
-                                                        unitId:
-                                                            widget.unit?.unitId,
-                                                        appliancename:
-                                                            _name.text,
-                                                        appliancedescription:
-                                                            _description.text,
-                                                        installeddate:
-                                                            reverseFormatDate(
-                                                                _installedDate
-                                                                    .text),
-                                                      )
-                                                          .then((value) {
-                                                        print(widget.properties
-                                                            ?.adminId);
-                                                        print(widget
-                                                            .unit?.unitId);
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
+                                                    onPressed: () async {
+                                                      if (_name.text.isEmpty ||
+                                                          _description
+                                                              .text.isEmpty ||
+                                                          _installedDate
+                                                              .text.isEmpty ||
+                                                          _selectedDropdownCategory ==
+                                                              null || // Add validation for required fields
+                                                          _selectedStatus ==
+                                                              null ||
+                                                          _selectedBrand ==
+                                                              null) {
+                                                        setState(() =>
+                                                            iserror = true);
+                                                      } else {
                                                         setState(() {
-                                                          isLoading = false;
-
-                                                          leases.add(
-                                                              unit_appliance(
-                                                            applianceName:
-                                                                _name.text,
-                                                            applianceDescription:
-                                                                _description
-                                                                    .text,
-                                                            installedDate:
-                                                                _installedDate
-                                                                    .text,
-                                                            adminId: id,
-                                                            unitId: widget
-                                                                .unit?.unitId,
-                                                          ));
+                                                          isLoading = true;
+                                                          iserror = false;
                                                         });
-                                                        reload_screen();
 
-                                                        Navigator.pop(
-                                                            context, true);
-                                                      }).catchError((e) {
-                                                        setState(() {
-                                                          isLoading = false;
+                                                        SharedPreferences
+                                                            prefs =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        String? id =
+                                                            prefs.getString(
+                                                                "adminId");
+                                                        List<
+                                                                Map<String,
+                                                                    dynamic>>
+                                                            filters =
+                                                            showFiltersSection
+                                                                ? filterControllers
+                                                                    .map(
+                                                                        (controller) {
+                                                                    return {
+                                                                      "filter_name":
+                                                                          controller['name']?.text ??
+                                                                              '',
+                                                                      "filter_size":
+                                                                          controller['size']?.text ??
+                                                                              '',
+                                                                    };
+                                                                  }).toList()
+                                                                : [];
+                                                        Properies_summery_Repo()
+                                                            .addappliances(
+                                                          adminId: id,
+                                                          unitId: widget
+                                                              .unit?.unitId,
+                                                          appliancename:
+                                                              _name.text,
+                                                          appliancedescription:
+                                                              _description.text,
+                                                          installeddate:
+                                                              _installedDate
+                                                                  .text,
+                                                          type: _type.text,
+                                                          brand: _selectedBrand,
+                                                          model: _model.text,
+                                                          serialNumber:
+                                                              _serialNumber
+                                                                  .text,
+                                                          warrantyExpiry:
+                                                              _warrantyExpiry
+                                                                      .text
+                                                                      .isNotEmpty
+                                                                  ? _warrantyExpiry
+                                                                      .text
+                                                                  : null,
+                                                          lastMaintenanceDate:
+                                                              _lastMaintenanceDate
+                                                                      .text
+                                                                      .isNotEmpty
+                                                                  ? _lastMaintenanceDate
+                                                                      .text
+                                                                  : null,
+                                                          maintenanceNotes:
+                                                              _maintenanceNotes
+                                                                  .text,
+                                                          status:
+                                                              _selectedStatus,
+                                                          categoryId:
+                                                              _selectedDropdownCategory
+                                                                      ?.categoryId ??
+                                                                  "",
+                                                          filters: filters,
+                                                        )
+                                                            .then((value) {
+                                                          setState(() {
+                                                            isLoading = false;
+                                                            leases.add(
+                                                                unit_appliance(
+                                                              applianceName:
+                                                                  _name.text,
+                                                              applianceDescription:
+                                                                  _description
+                                                                      .text,
+                                                              installedDate:
+                                                                  _installedDate
+                                                                      .text,
+                                                              adminId: id,
+                                                              unitId: widget
+                                                                  .unit?.unitId,
+                                                              type: _type.text,
+                                                              brand:
+                                                                  _selectedBrand,
+                                                              model:
+                                                                  _model.text,
+                                                              serialNumber:
+                                                                  _serialNumber
+                                                                      .text,
+                                                              warrantyExpiry:
+                                                                  _warrantyExpiry
+                                                                      .text,
+                                                              lastMaintenanceDate:
+                                                                  _lastMaintenanceDate
+                                                                      .text,
+                                                              maintenanceNotes:
+                                                                  _maintenanceNotes
+                                                                      .text,
+                                                              status:
+                                                                  _selectedStatus,
+                                                              categoryId:
+                                                                  _selectedDropdownCategory
+                                                                      ?.categoryId,
+                                                              filters: filters,
+                                                            ));
+                                                          });
+                                                          reload_screen();
+                                                          Navigator.pop(
+                                                              context, true);
+                                                        }).catchError((e) {
+                                                          setState(() =>
+                                                              isLoading =
+                                                                  false);
+                                                          // Show error message to user
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                                content: Text(
+                                                                    'Failed to add appliance: ${e.toString()}')),
+                                                          );
                                                         });
-                                                      });
-                                                    }
-                                                  },
-                                                  child: const Text(
-                                                    'Save',
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.black
-                                                          .withOpacity(0.25),
-                                                      spreadRadius: 0,
-                                                      blurRadius: 15,
-                                                      offset: const Offset(0.5,
-                                                          0.5), // Shadow moved to the right and bottom
-                                                    )
-                                                  ],
-                                                ),
-                                                height: 40,
-                                                width: 70,
-                                                child: Center(
-                                                  child: GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.of(context)
-                                                          .pop();
+                                                      }
                                                     },
+                                                    child: const Text('Save',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white)),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
                                                     child: const Text('Cancel'),
                                                   ),
-                                                ),
+                                                ],
                                               ),
-                                            ),
-                                          ],
+                                              if (iserror)
+                                                const Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 8.0),
+                                                  child: Text(
+                                                    "Please fill in all fields correctly.",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Colors.redAccent),
+                                                  ),
+                                                )
+                                            ],
+                                          ),
                                         ),
-                                        if (iserror)
-                                          Text(
-                                            "Please fill in all fields correctly.",
-                                            style: TextStyle(
-                                                color: Colors.redAccent),
-                                          )
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 );
@@ -15088,6 +15812,254 @@ class _AppliancesPartState extends State<AppliancesPart> {
                           },
                         );
                       },
+
+                      // onTap: () {
+                      //   _name.clear();
+                      //   _description.clear();
+                      //   _installedDate.clear();
+                      //   showDialog(
+                      //     context: context,
+                      //     builder: (BuildContext context) {
+                      //       return StatefulBuilder(
+                      //         builder:
+                      //             (BuildContext context, StateSetter setState) {
+                      //           return AlertDialog(
+                      //             backgroundColor: Colors.white,
+                      //             surfaceTintColor: Colors.white,
+                      //             title: const Text('Add Appliances'),
+                      //             content: Form(
+                      //               key: _formKey,
+                      //               child: Column(
+                      //                 mainAxisSize: MainAxisSize.min,
+                      //                 children: [
+                      //                   CustomTextFormField(
+                      //                     labelText: 'Name',
+                      //                     hintText: 'Enter Name',
+                      //                     keyboardType: TextInputType.text,
+                      //                     controller: _name,
+                      //                     // validator: (value) {
+                      //                     //   if (value == null || value.isEmpty) {
+                      //                     //     return 'Please enter name';
+                      //                     //   }
+                      //                     //   return null;
+                      //                     // },
+                      //                   ),
+                      //                   CustomTextFormField(
+                      //                     labelText: 'Description',
+                      //                     hintText: 'Enter description',
+                      //                     keyboardType: TextInputType.text,
+                      //                     controller: _description,
+                      //                     // validator: (value) {
+                      //                     //   if (value == null || value.isEmpty) {
+                      //                     //     return 'Please enter description';
+                      //                     //   }
+                      //                     //   return null;
+                      //                     // },
+                      //                   ),
+                      //                   GestureDetector(
+                      //                     onTap: () {
+                      //                       showDatePicker(
+                      //                         context: context,
+                      //                         initialDate: DateTime.now(),
+                      //                         firstDate: DateTime(2000),
+                      //                         lastDate: DateTime(2100),
+                      //                         builder: (BuildContext context,
+                      //                             Widget? child) {
+                      //                           return Theme(
+                      //                             data: ThemeData.light()
+                      //                                 .copyWith(
+                      //                               // primaryColor: blueColor,
+                      //                               //  hintColor: blueColor,
+                      //                               colorScheme:
+                      //                                   ColorScheme.light(
+                      //                                 primary: blueColor,
+                      //                                 // onPrimary:blueColor,
+                      //                                 //  surface: blueColor,
+                      //                                 onSurface: Colors.black,
+                      //                               ),
+                      //                               buttonTheme:
+                      //                                   ButtonThemeData(
+                      //                                 textTheme: ButtonTextTheme
+                      //                                     .primary,
+                      //                               ),
+                      //                             ),
+                      //                             child: child!,
+                      //                           );
+                      //                         },
+                      //                       ).then((date) {
+                      //                         if (date != null) {
+                      //                           setState(() {
+                      //                             _selectedDate = date;
+                      //                             _installedDate.text =
+                      //                                 formatDate(
+                      //                                     date.toString());
+                      //                           });
+                      //                         }
+                      //                       });
+                      //                     },
+                      //                     child: AbsorbPointer(
+                      //                       child: CustomTextFormField(
+                      //                         labelText: 'Date',
+                      //                         hintText: 'Select Date',
+                      //                         keyboardType:
+                      //                             TextInputType.datetime,
+                      //                         controller: _installedDate,
+                      //                         // validator: (value) {
+                      //                         //   if (value == null ||
+                      //                         //       value.isEmpty) {
+                      //                         //     return 'Please select date';
+                      //                         //   }
+                      //                         //   return null;
+                      //                         // },
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                   Row(
+                      //                     mainAxisAlignment:
+                      //                         MainAxisAlignment.center,
+                      //                     children: [
+                      //                       Padding(
+                      //                         padding:
+                      //                             const EdgeInsets.all(8.0),
+                      //                         child: Container(
+                      //                           height: 42,
+                      //                           width: 80,
+                      //                           child: ElevatedButton(
+                      //                             style: ElevatedButton.styleFrom(
+                      //                                 backgroundColor:
+                      //                                     blueColor,
+                      //                                 shape:
+                      //                                     RoundedRectangleBorder(
+                      //                                         borderRadius:
+                      //                                             BorderRadius
+                      //                                                 .circular(
+                      //                                                     8.0))),
+                      //                             onPressed: () async {
+                      //                               if (_name.text.isEmpty ||
+                      //                                   _description
+                      //                                       .text.isEmpty ||
+                      //                                   _installedDate
+                      //                                       .text.isEmpty) {
+                      //                                 setState(() {
+                      //                                   iserror = true;
+                      //                                 });
+                      //                               } else {
+                      //                                 setState(() {
+                      //                                   isLoading = true;
+                      //                                   iserror = false;
+                      //                                 });
+                      //                                 SharedPreferences prefs =
+                      //                                     await SharedPreferences
+                      //                                         .getInstance();
+                      //                                 String? id = prefs
+                      //                                     .getString("adminId");
+                      //                                 print("calling");
+                      //                                 Properies_summery_Repo()
+                      //                                     .addappliances(
+                      //                                   adminId: id,
+                      //                                   unitId:
+                      //                                       widget.unit?.unitId,
+                      //                                   appliancename:
+                      //                                       _name.text,
+                      //                                   appliancedescription:
+                      //                                       _description.text,
+                      //                                   installeddate:
+                      //                                       reverseFormatDate(
+                      //                                           _installedDate
+                      //                                               .text),
+                      //                                 )
+                      //                                     .then((value) {
+                      //                                   print(widget.properties
+                      //                                       ?.adminId);
+                      //                                   print(widget
+                      //                                       .unit?.unitId);
+                      //                                   setState(() {
+                      //                                     isLoading = false;
+                      //
+                      //                                     leases.add(
+                      //                                         unit_appliance(
+                      //                                       applianceName:
+                      //                                           _name.text,
+                      //                                       applianceDescription:
+                      //                                           _description
+                      //                                               .text,
+                      //                                       installedDate:
+                      //                                           _installedDate
+                      //                                               .text,
+                      //                                       adminId: id,
+                      //                                       unitId: widget
+                      //                                           .unit?.unitId,
+                      //                                     ));
+                      //                                   });
+                      //                                   reload_screen();
+                      //
+                      //                                   Navigator.pop(
+                      //                                       context, true);
+                      //                                 }).catchError((e) {
+                      //                                   setState(() {
+                      //                                     isLoading = false;
+                      //                                   });
+                      //                                 });
+                      //                               }
+                      //                             },
+                      //                             child: const Text(
+                      //                               'Save',
+                      //                               style: TextStyle(
+                      //                                   fontSize: 14,
+                      //                                   color: Colors.white),
+                      //                             ),
+                      //                           ),
+                      //                         ),
+                      //                       ),
+                      //                       Padding(
+                      //                         padding:
+                      //                             const EdgeInsets.all(8.0),
+                      //                         child: Container(
+                      //                           decoration: BoxDecoration(
+                      //                             color: Colors.white,
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(8),
+                      //                             boxShadow: [
+                      //                               BoxShadow(
+                      //                                 color: Colors.black
+                      //                                     .withOpacity(0.25),
+                      //                                 spreadRadius: 0,
+                      //                                 blurRadius: 15,
+                      //                                 offset: const Offset(0.5,
+                      //                                     0.5), // Shadow moved to the right and bottom
+                      //                               )
+                      //                             ],
+                      //                           ),
+                      //                           height: 40,
+                      //                           width: 70,
+                      //                           child: Center(
+                      //                             child: GestureDetector(
+                      //                               onTap: () {
+                      //                                 Navigator.of(context)
+                      //                                     .pop();
+                      //                               },
+                      //                               child: const Text('Cancel'),
+                      //                             ),
+                      //                           ),
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                   if (iserror)
+                      //                     Text(
+                      //                       "Please fill in all fields correctly.",
+                      //                       style: TextStyle(
+                      //                           color: Colors.redAccent),
+                      //                     )
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           );
+                      //         },
+                      //       );
+                      //     },
+                      //   );
+                      // },
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -16139,6 +17111,45 @@ class _AppliancesPartState extends State<AppliancesPart> {
   }
 }
 
+Widget dateField(String label, TextEditingController controller,
+    BuildContext context, StateSetter setState) {
+  return GestureDetector(
+    onTap: () {
+      showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: blueColor,
+                onSurface: Colors.black,
+              ),
+            ),
+            child: child!,
+          );
+        },
+      ).then((date) {
+        if (date != null) {
+          setState(() {
+            controller.text = formatDate(date.toString());
+          });
+        }
+      });
+    },
+    child: AbsorbPointer(
+      child: CustomTextFormField(
+        labelText: label,
+        hintText: 'Select $label',
+        controller: controller,
+        keyboardType: TextInputType.datetime,
+      ),
+    ),
+  );
+}
+
 void showCommonPopup({
   required BuildContext context,
   required bool isMultiunit,
@@ -16833,53 +17844,80 @@ class CustomTextFormField extends StatefulWidget {
   final String hintText;
   final TextInputType keyboardType;
   final TextEditingController controller;
-  //final FormFieldValidator<String> validator;
+  final bool obscureText;
+  final Widget? suffixIcon;
 
-  CustomTextFormField({
+  const CustomTextFormField({
+    super.key,
     required this.labelText,
     required this.hintText,
     required this.keyboardType,
     required this.controller,
-    // required this.validator,
+    this.obscureText = false,
+    this.suffixIcon,
   });
 
   @override
-  _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
+  State<CustomTextFormField> createState() => _CustomTextFormFieldState();
 }
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
+  final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() {
+        _isFocused = _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-        controller: widget.controller,
-        //validator: widget.validator,
-        decoration: InputDecoration(
-          labelText: widget.labelText,
-          hintText: widget.hintText,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: const BorderSide(color: Colors.grey),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: const BorderSide(color: Colors.blue),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: const BorderSide(color: Colors.red),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: const BorderSide(color: Colors.red),
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: _isFocused
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : [],
+          border: Border.all(
+            color: Colors.grey.shade300,
+            width: 1.2,
           ),
         ),
-        style: const TextStyle(fontSize: 16.0),
-        keyboardType: widget.keyboardType,
-        autofocus: _isFocused,
+        child: TextFormField(
+          focusNode: _focusNode,
+          controller: widget.controller,
+          keyboardType: widget.keyboardType,
+          obscureText: widget.obscureText,
+          style: const TextStyle(fontSize: 16),
+          decoration: InputDecoration(
+            // labelText: widget.labelText,
+            hintText: widget.hintText,
+            suffixIcon: widget.suffixIcon,
+            border: InputBorder.none,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          ),
+        ),
       ),
     );
   }

@@ -21,6 +21,7 @@ import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart'
 import 'package:http/http.dart' as http;
 import 'SummeryPageLease.dart';
 import 'newAddLease.dart';
+
 class Renewlease extends StatefulWidget {
   LeaseSummary? lease;
   String leaseId;
@@ -29,7 +30,15 @@ class Renewlease extends StatefulWidget {
   String? leasetype;
   String? renewfileName;
   String? rentamount;
-  Renewlease({super.key, required this.leaseId,  this.lease,this.rentamount,this.startdate,this.enddate,this.leasetype,this.renewfileName});
+  Renewlease(
+      {super.key,
+      required this.leaseId,
+      this.lease,
+      this.rentamount,
+      this.startdate,
+      this.enddate,
+      this.leasetype,
+      this.renewfileName});
 
   @override
   State<Renewlease> createState() => _RenewleaseState();
@@ -62,7 +71,8 @@ class _RenewleaseState extends State<Renewlease> {
       // Check if endDate is valid before proceeding
       if (endDate != null) {
         DateTime startDate = endDate;
-        DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+        DateTime newEndDate =
+            DateTime(endDate.year, endDate.month + 1, endDate.day);
 
         startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
         endDateController.text = DateFormat('yyyy-MM-dd').format(newEndDate);
@@ -80,17 +90,18 @@ class _RenewleaseState extends State<Renewlease> {
     }
     // if(widget.renewfileName != "")
     //   _uploadedFileNames.add(widget.renewfileName!);
-    rent.text = widget.rentamount ??"";
+    rent.text = widget.rentamount ?? "";
     fetchDropdownData();
     super.initState();
     leaseData();
-
   }
+
   void _refreshAccounts() {
     setState(() {
       fetchDropdownData();
     });
   }
+
   DateTime formatDates(String dateTime) {
     List<String> dateFormats = [
       'yyyy-MM-dd',
@@ -116,6 +127,7 @@ class _RenewleaseState extends State<Renewlease> {
 
     return parsedDate!;
   }
+
   TextEditingController rent = TextEditingController();
   TextEditingController securitydeposit = TextEditingController();
   final TextEditingController startDateController = TextEditingController();
@@ -144,6 +156,7 @@ class _RenewleaseState extends State<Renewlease> {
       ],
     );
   }
+
   List<FocusNode> focusNodes = [];
   Map<String, List<String>> categorizedData = {};
   final FocusNode _nodeText1 = FocusNode();
@@ -154,8 +167,8 @@ class _RenewleaseState extends State<Renewlease> {
       rows.add({
         'account': null,
         'charge_type': null,
-        'amount': "",
-
+        'amount': "0",
+        'memo': "",
       });
       focusNodes.add(FocusNode());
     });
@@ -163,39 +176,34 @@ class _RenewleaseState extends State<Renewlease> {
 
   void deleteRow(int index) {
     setState(() {
-
-      if(rows[index]['amount'].runtimeType == String)
-      {
-        totalAmount -= double.tryParse(rows[index]['amount']) ??0.0;
+      double oldAmount = 0.0;
+      if (rows[index]['amount'].toString().isNotEmpty) {
+        oldAmount = double.tryParse(rows[index]['amount'].toString()) ?? 0.0;
       }
-      else{
-        totalAmount -= rows[index]['amount'];
-      }
+      totalAmount -= oldAmount;
 
       rows.removeAt(index);
       focusNodes.removeAt(index);
     });
-
     validateAmounts();
   }
 
   void updateAmount(int index, String value) {
     setState(() {
-      double amount = double.tryParse(value) ?? 0.0;
-
-      if(rows[index]['amount'].runtimeType == String)
-      {
-        totalAmount -= double.tryParse(rows[index]['amount']) ??0.0;
-      }
-      else{
-        totalAmount -= rows[index]['amount'];
+      double oldAmount = 0.0;
+      if (rows[index]['amount'].toString().isNotEmpty) {
+        oldAmount = double.tryParse(rows[index]['amount'].toString()) ?? 0.0;
       }
 
-      rows[index]['amount'] = amount;
-      totalAmount += amount;
+      totalAmount -= oldAmount;
+
+      double newAmount = double.tryParse(value) ?? 0.0;
+      rows[index]['amount'] = value;
+      totalAmount += newAmount;
     });
     validateAmounts();
   }
+
   final TextEditingController Amount = TextEditingController();
   String? validationMessage;
   void validateAmounts() {
@@ -213,14 +221,15 @@ class _RenewleaseState extends State<Renewlease> {
       });
     }
   }
+
   Future<void> fetchDropdownData() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      print("calling dropdown");
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
-      print(token);
-      print('lease drop ${widget.leaseId}');
       String? id = prefs.getString("adminId");
+
       final response = await http.get(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
@@ -228,11 +237,15 @@ class _RenewleaseState extends State<Renewlease> {
           "id": "CRM $id",
         },
       );
+
       print('lease drop ${response.body}');
       if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body)['data'];
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        if (jsonResponse['data'] != null) {
+          List<dynamic> data = jsonResponse['data'];
         Map<String, List<String>> fetchedData = {};
-        // Adding static items to the "LIABILITY ACCOUNT" category
+
+          // Initialize with static liability accounts
         fetchedData["Liability Account"] = [
           "Late Fee Income",
           "Pre-payments",
@@ -240,21 +253,42 @@ class _RenewleaseState extends State<Renewlease> {
           'Rent Income'
         ];
 
-        for (var item in jsonResponse) {
+          // Group accounts by charge_type
+          for (var item in data) {
+            String chargeType = item['charge_type'] ?? 'Other';
+            String account = item['account'] ?? '';
 
-          String chargeType = item['charge_type'];
-          String account = item['account'];
-
+            if (account.isNotEmpty) {
           if (!fetchedData.containsKey(chargeType)) {
             fetchedData[chargeType] = [];
           }
+              if (!fetchedData[chargeType]!.contains(account)) {
           fetchedData[chargeType]!.add(account);
+              }
+            }
         }
 
         setState(() {
           categorizedData = fetchedData;
           isLoading = false;
-        });
+
+            // Initialize first row if rows is empty
+            if (rows.isEmpty) {
+              rows.add({
+                'account': null,
+                'charge_type': null,
+                'amount': "0",
+                'memo': "",
+              });
+              focusNodes.add(FocusNode());
+            }
+          });
+        } else {
+          setState(() {
+            hasError = true;
+            isLoading = false;
+          });
+        }
       } else {
         setState(() {
           hasError = true;
@@ -262,14 +296,15 @@ class _RenewleaseState extends State<Renewlease> {
         });
       }
     } catch (e) {
-      print(e);
+      print('Error in fetchDropdownData: $e');
       setState(() {
         hasError = true;
         isLoading = false;
       });
     }
   }
-  Future<void> updatenewrenewallease(Map<String,dynamic> renewlease) async {
+
+  Future<void> updatenewrenewallease(Map<String, dynamic> renewlease) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
@@ -277,29 +312,26 @@ class _RenewleaseState extends State<Renewlease> {
       print(token);
       print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
-      final response = await http.post(
-          Uri.parse('$Api_url/api/leases/renew_lease'),
+      final response =
+          await http.post(Uri.parse('$Api_url/api/leases/renew_lease'),
           headers: {
             "authorization": "CRM $token",
             "id": "CRM $id",
             'Content-Type': 'application/json',
           },
-          body: json.encode(renewlease)
-      );
+              body: json.encode(renewlease));
       print(response.body);
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: "Lease Renewal Successfully");
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));
-
-      }
-      else{
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => SummeryPageLease(
+                  leaseId: widget.leaseId,
+                )));
+      } else {
         Fluttertoast.showToast(msg: "Renewal Lease not success");
       }
-
-
     } catch (e) {
       print(e);
-
     }
   }
 
@@ -325,11 +357,9 @@ class _RenewleaseState extends State<Renewlease> {
     'Operating',
   ]; // Example items
 
-
   List<String> accounts = [];
 
   //for upload file
-
 
   List<File> _pdfFiles = [];
 
@@ -399,6 +429,7 @@ class _RenewleaseState extends State<Renewlease> {
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }
   }
+
   late LeaseSummary leasegetdata;
 
   leaseData() async {
@@ -419,43 +450,42 @@ class _RenewleaseState extends State<Renewlease> {
       setState(() {
         leasegetdata = LeaseSummary.fromJson(jsonDecode(response.body));
         print("Renew lease ${leasegetdata.data!.renewLeases!.length}");
-        if (determineStatus(leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
+        if (determineStatus(
+            leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
           // Lease is expired
           startDateController.text = formatDate(DateTime.now().toString());
 
           // Set the end date to one month from today's date
-          DateTime newEndDate = DateTime(
-              DateTime.now().year,
-              DateTime.now().month + 1,
-              DateTime.now().day
-          );
+          DateTime newEndDate = DateTime(DateTime.now().year,
+              DateTime.now().month + 1, DateTime.now().day);
           endDateController.text = formatDate(
               DateFormat('yyyy-MM-dd').format(newEndDate).toString());
         }
         if (leasegetdata.data!.renewLeases != null &&
             leasegetdata.data!.renewLeases!.isNotEmpty) {
           // Lease is active
-          if(!determineStatus(leasegetdata.data!.renewLeases!.last.startDate!, leasegetdata.data!.renewLeases!.last.endDate!)){
-            DateTime endDate = formatDates(leasegetdata.data!.renewLeases!.last.endDate!);
+          if (!determineStatus(leasegetdata.data!.renewLeases!.last.startDate!,
+              leasegetdata.data!.renewLeases!.last.endDate!)) {
+            DateTime endDate =
+                formatDates(leasegetdata.data!.renewLeases!.last.endDate!);
 
             // Set start date to the current lease's end date
-            startDateController.text = formatDate(
-                DateFormat('yyyy-MM-dd').format(endDate).toString()
-            );
+            startDateController.text =
+                formatDate(DateFormat('yyyy-MM-dd').format(endDate).toString());
 
             // Extend the lease for one month from the current lease's end date
-            DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+            DateTime newEndDate =
+                DateTime(endDate.year, endDate.month + 1, endDate.day);
             endDateController.text = formatDate(
                 DateFormat('yyyy-MM-dd').format(newEndDate).toString());
           }
-
         }
-
       });
     } else {
       throw Exception('Failed to load lease summary');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -482,7 +512,7 @@ class _RenewleaseState extends State<Renewlease> {
                 //Same as `blurRadius` i guess
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color:blueColor,
+                  color: blueColor,
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.grey,
@@ -509,8 +539,9 @@ class _RenewleaseState extends State<Renewlease> {
               future: futureLeaseSummary,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return  Container(
-                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * .35),
+                  return Container(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * .35),
                     child: Center(
                         child: SpinKitFadingCircle(
                           color: blueColor,
@@ -579,8 +610,7 @@ class _RenewleaseState extends State<Renewlease> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color:blueColor),
+                                border: Border.all(color: blueColor),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -715,8 +745,7 @@ class _RenewleaseState extends State<Renewlease> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color:blueColor),
+                                border: Border.all(color: blueColor),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -1148,17 +1177,24 @@ class _RenewleaseState extends State<Renewlease> {
                                       controller: rent,
                                       onChanged: (value) {
                                         // Sanitize input to allow only numbers and a single decimal point
-                                        String sanitizedValue = value.replaceAll(RegExp(r'[^0-9.]'), '');
-                                        sanitizedValue = sanitizedValue.replaceAll(RegExp(r'(\..*?)\..*'), r'$1');
+                                        String sanitizedValue = value
+                                            .replaceAll(RegExp(r'[^0-9.]'), '');
+                                        sanitizedValue =
+                                            sanitizedValue.replaceAll(
+                                                RegExp(r'(\..*?)\..*'), r'$1');
 
                                         // Update the rent value
                                         rent.text = sanitizedValue;
 
                                         // Calculate renewAmount
-                                        double enteredAmount = double.tryParse(sanitizedValue) ?? 0.0;
-                                        num existingAmount = leasesummery.data?.amount ?? 00;
+                                        double enteredAmount =
+                                            double.tryParse(sanitizedValue) ??
+                                                0.0;
+                                        num existingAmount =
+                                            leasesummery.data?.amount ?? 00;
 
-                                        double renewAmount = enteredAmount - existingAmount > 0
+                                        double renewAmount =
+                                            enteredAmount - existingAmount > 0
                                             ? enteredAmount - existingAmount
                                             : 0.0;
 
@@ -1168,12 +1204,15 @@ class _RenewleaseState extends State<Renewlease> {
                                           // renewLeaseData['renewAmount'] = renewAmount;
 
                                           // Update Security Deposit field dynamically
-                                          securitydeposit.text = renewAmount.toStringAsFixed(2);
+                                          securitydeposit.text =
+                                              renewAmount.toStringAsFixed(2);
                                         });
 
                                         // Move the cursor to the end of the text field
-                                        rent.selection = TextSelection.fromPosition(
-                                            TextPosition(offset: rent.text.length));
+                                        rent.selection =
+                                            TextSelection.fromPosition(
+                                                TextPosition(
+                                                    offset: rent.text.length));
                                       },
                                     ),
                                     const SizedBox(
@@ -1218,7 +1257,6 @@ class _RenewleaseState extends State<Renewlease> {
                                         ),
                                       ],
                                     ),
-
                                     SizedBox(
                                       height: 10,
                                     ),
@@ -1231,16 +1269,15 @@ class _RenewleaseState extends State<Renewlease> {
                                           height: 40,
                                           width: 140,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                           child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor:  blueColor
-
-
-                                              ,
+                                              backgroundColor: blueColor,
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
                                               ),
                                             ),
                                             onPressed: _pickPdfFiles,
@@ -1251,11 +1288,13 @@ class _RenewleaseState extends State<Renewlease> {
                                     ),
                                     SingleChildScrollView(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(top: 8,bottom: 8),
+                                        padding: const EdgeInsets.only(
+                                            top: 8, bottom: 8),
                                         child: Column(
-                                          children: _uploadedFileNames.map((fileName) {
-                                            int index =
-                                            _uploadedFileNames.indexOf(fileName);
+                                          children: _uploadedFileNames
+                                              .map((fileName) {
+                                            int index = _uploadedFileNames
+                                                .indexOf(fileName);
                                             return ListTile(
                                               title: Text(
                                                 fileName,
@@ -1268,7 +1307,8 @@ class _RenewleaseState extends State<Renewlease> {
                                               trailing: IconButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    _uploadedFileNames.removeAt(index);
+                                                    _uploadedFileNames
+                                                        .removeAt(index);
                                                   });
                                                 },
                                                 icon: FaIcon(
@@ -1292,9 +1332,12 @@ class _RenewleaseState extends State<Renewlease> {
                                       ),
                                     )
                                         : hasError
-                                        ? const Center(child: Text('Failed to load data'))
+                                            ? const Center(
+                                                child:
+                                                    Text('Failed to load data'))
                                         : Table(
-                                      border: TableBorder.all(width: 1),
+                                                border:
+                                                    TableBorder.all(width: 1),
                                       columnWidths: const {
                                         0: FlexColumnWidth(3),
                                         1: FlexColumnWidth(2),
@@ -1303,149 +1346,219 @@ class _RenewleaseState extends State<Renewlease> {
                                       children: [
                                         TableRow(children: [
                                           Padding(
-                                            padding: EdgeInsets.all(8.0),
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
                                             child: Center(
                                               child: Text('Account',
                                                   style: TextStyle(
                                                       color:
                                                       blueColor,
-                                                      fontWeight: FontWeight.bold)),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
                                             ),
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.all(8.0),
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
                                             child: Center(
                                               child: Text('Amount',
                                                   style: TextStyle(
                                                       color:
                                                       blueColor,
-                                                      fontWeight: FontWeight.bold)),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
                                             ),
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.all(5.0),
+                                                      padding:
+                                                          EdgeInsets.all(5.0),
                                             child: Center(
                                               child: Text('',
                                                   style: TextStyle(
                                                       color:
                                                       blueColor,
-                                                      fontWeight: FontWeight.bold)),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
                                             ),
                                           ),
                                         ]),
-                                        ...rows.asMap().entries.map((entry) {
+                                                  ...rows
+                                                      .asMap()
+                                                      .entries
+                                                      .map((entry) {
                                           int index = entry.key;
-                                          Map<String, dynamic> row = entry.value;
+                                                    Map<String, dynamic> row =
+                                                        entry.value;
                                           return TableRow(children: [
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: DropdownButtonHideUnderline(
-                                                child: FormField<String>(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child:
+                                                            DropdownButtonHideUnderline(
+                                                          child:
+                                                              FormField<String>(
                                                   validator: (value) {
-                                                    if (rows[index]['account'] ==
+                                                              if (rows[index][
+                                                                      'account'] ==
                                                         null) {
                                                       return 'Please select an account';
                                                     }
                                                     return null;
                                                   },
                                                   builder:
-                                                      (FormFieldState<String> state) {
-                                                    String? selectedAccount =
+                                                                (FormFieldState<
+                                                                        String>
+                                                                    state) {
+                                                              String?
+                                                                  selectedAccount =
                                                     row['account'];
 
-
-                                                    String? selectedCharge =
+                                                              String?
+                                                                  selectedCharge =
                                                     row['charge_type'];
                                                     // List of all dropdown items, including missing ones
-                                                    Map<String, List<String>>
+                                                              Map<
+                                                                      String,
+                                                                      List<
+                                                                          String>>
                                                     categorizedDataCopy =
-                                                    Map.from(categorizedData);
+                                                                  Map.from(
+                                                                      categorizedData);
 
                                                     // Ensure the selected value is present in the list
-                                                    if (selectedAccount != null &&
-                                                        !categorizedData.values
-                                                            .expand((list) => list)
+                                                              if (selectedAccount !=
+                                                                      null &&
+                                                                  !categorizedData
+                                                                      .values
+                                                                      .expand(
+                                                                          (list) =>
+                                                                              list)
                                                             .contains(
                                                             selectedAccount)) {
                                                       if (categorizedDataCopy[
                                                       'Other'] ==
                                                           null) {
-                                                        categorizedDataCopy['Other'] =
-                                                        [];
-                                                      }
-                                                      categorizedDataCopy['Other']!
-                                                          .add(selectedAccount);
-                                                    }
+                                                                  categorizedDataCopy[
+                                                                      'Other'] = [];
+                                                                }
+                                                                categorizedDataCopy[
+                                                                        'Other']!
+                                                                    .add(
+                                                                        selectedAccount);
+                                                              }
 
-
-                                                    List<String> liabilityAccounts = [
+                                                              List<String>
+                                                                  liabilityAccounts =
+                                                                  [
                                                       "Late Fee Income",
                                                       "Pre-payments",
                                                       "Security Deposit",
                                                       'Rent Income'
                                                     ];
-                                                    String? surchargetype;
-                                                    if (selectedCharge == "Surcharge") {
-                                                      for (var entry in categorizedData.entries) {
-                                                        if (entry.value.contains(selectedAccount)) {
-                                                          print("Account found: $selectedAccount in category: ${entry.key}");
-                                                          surchargetype = entry.key;
+                                                              String?
+                                                                  surchargetype;
+                                                              if (selectedCharge ==
+                                                                  "Surcharge") {
+                                                                for (var entry
+                                                                    in categorizedData
+                                                                        .entries) {
+                                                                  if (entry
+                                                                      .value
+                                                                      .contains(
+                                                                          selectedAccount)) {
+                                                                    print(
+                                                                        "Account found: $selectedAccount in category: ${entry.key}");
+                                                                    surchargetype =
+                                                                        entry
+                                                                            .key;
                                                           break;
                                                         }
                                                       }
                                                     }
-                                                    bool nosurcharge= false;
-                                                    if (row["charge_type"] == "Surcharge") {
-                                                      print("Surcharge calling");
+                                                              bool nosurcharge =
+                                                                  false;
+                                                              if (row["charge_type"] ==
+                                                                  "Surcharge") {
+                                                                print(
+                                                                    "Surcharge calling");
 
-                                                      for (var entry in categorizedData.entries) {
-                                                        if (entry.value.contains(row['account'])) {
-                                                          print("Account found: ${row['account']} in category: ${entry.key}");
-                                                          surchargetype = entry.key;
-                                                        }
-                                                      }
-                                                      if(surchargetype == ""){
-                                                        nosurcharge = true;
-                                                      }
-
+                                                                for (var entry
+                                                                    in categorizedData
+                                                                        .entries) {
+                                                                  if (entry
+                                                                      .value
+                                                                      .contains(
+                                                                          row['account'])) {
+                                                                    print(
+                                                                        "Account found: ${row['account']} in category: ${entry.key}");
+                                                                    surchargetype =
+                                                                        entry
+                                                                            .key;
+                                                                  }
+                                                                }
+                                                                if (surchargetype ==
+                                                                    "") {
+                                                                  nosurcharge =
+                                                                      true;
+                                                                }
                                                     }
 
                                                     // Prepare the dropdown items
-                                                    List<DropdownMenuItem<String>>
-                                                    dropdownItems = [
-                                                      ...categorizedDataCopy.entries
-                                                          .expand((entry) {
+                                                              List<
+                                                                      DropdownMenuItem<
+                                                                          String>>
+                                                                  dropdownItems =
+                                                                  [
+                                                                ...categorizedDataCopy
+                                                                    .entries
+                                                                    .expand(
+                                                                        (entry) {
                                                         return [
-                                                          DropdownMenuItem<String>(
-                                                            enabled: false,
-                                                            child: Text(
-                                                              entry.key,
-                                                              style: const TextStyle(
+                                                                    DropdownMenuItem<
+                                                                        String>(
+                                                                      enabled:
+                                                                          false,
+                                                                      child:
+                                                                          Text(
+                                                                        entry
+                                                                            .key,
+                                                                        style:
+                                                                            const TextStyle(
                                                                 fontWeight:
                                                                 FontWeight.bold,
                                                                 color: Color.fromRGBO(
-                                                                    21, 43, 81, 1),
+                                                                              21,
+                                                                              43,
+                                                                              81,
+                                                                              1),
                                                               ),
                                                             ),
                                                           ),
-                                                          ...entry.value.map((item) {
+                                                                    ...entry
+                                                                        .value
+                                                                        .map(
+                                                                            (item) {
                                                             return DropdownMenuItem<
                                                                 String>(
                                                               value:
                                                               "${item}_${entry.key}",
-                                                              child: Padding(
-                                                                padding:
-                                                                const EdgeInsets
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
                                                                     .only(
                                                                     left: 10,
                                                                     bottom: 1),
-                                                                child: Text(
+                                                                          child:
+                                                                              Text(
                                                                   item,
                                                                   style:
                                                                   const TextStyle(
                                                                     color: Colors.black,
-                                                                    fontWeight:
-                                                                    FontWeight.w400,
+                                                                              fontWeight: FontWeight.w400,
                                                                   ),
                                                                 ),
                                                               ),
@@ -1453,46 +1566,64 @@ class _RenewleaseState extends State<Renewlease> {
                                                           }).toList(),
                                                         ];
                                                       }).toList(),
-                                                      if (row['account'] != null && !categorizedData.values.expand((v) => v).contains(row['account']))
-                                                        DropdownMenuItem<String>(
-                                                          value:"${row['account']}_${row['charge_type']}",
-                                                          child: Padding(
-                                                            padding: const EdgeInsets.only(left: 0.0),
-                                                            child: Text(
+                                                                if (row['account'] !=
+                                                                        null &&
+                                                                    !categorizedData
+                                                                        .values
+                                                                        .expand(
+                                                                            (v) =>
+                                                                                v)
+                                                                        .contains(row[
+                                                                            'account']))
+                                                                  DropdownMenuItem<
+                                                                      String>(
+                                                                    value:
+                                                                        "${row['account']}_${row['charge_type']}",
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              0.0),
+                                                                      child:
+                                                                          Text(
                                                               row['account']!,
-                                                              style: const TextStyle(
-                                                                color: Colors.black,
-                                                                fontWeight: FontWeight.w400,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          color:
+                                                                              Colors.black,
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
                                                               ),
                                                             ),
                                                           ),
                                                         ),
-
-                                                      DropdownMenuItem<String>(
-                                                        value: 'button_item',
-                                                        child: GestureDetector(
-                                                          onTap: (){
-                                                            Navigator.pop(context);
+                                                                DropdownMenuItem<
+                                                                    String>(
+                                                                  value:
+                                                                      'button_item',
+                                                                  child:
+                                                                      GestureDetector(
+                                                                    onTap: () {
+                                                                      Navigator.pop(
+                                                                          context);
                                                             showDialog(
-                                                              context: context,
-                                                              builder: (BuildContext context) {
-                                                                return StatefulBuilder(
-                                                                    builder: (context, setState) {
-                                                                      return
-                                                                        Dialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return StatefulBuilder(builder:
+                                                                              (context, setState) {
+                                                                            return Dialog(
                                                                           backgroundColor: Colors.white,
                                                                           surfaceTintColor: Colors.white,
-                                                                          shape: RoundedRectangleBorder(
-                                                                              borderRadius:
-                                                                              BorderRadius.circular(10.0)),
-                                                                          child:
-                                                                          SingleChildScrollView(
+                                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                                                              child: SingleChildScrollView(
                                                                             child: Container(
                                                                               // height: 450,
-                                                                              child:
-                                                                              Padding(
-                                                                                padding:
-                                                                                const EdgeInsets.all(16.0),
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.all(16.0),
                                                                                 child: Form(
                                                                                   key: _subFormKey,
                                                                                   child: Column(
@@ -1503,8 +1634,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                         'Add account',
                                                                                         style: TextStyle(
                                                                                           fontSize: 16,
-                                                                                          fontWeight:
-                                                                                          FontWeight.bold,
+                                                                                              fontWeight: FontWeight.bold,
                                                                                           color: blueColor,
                                                                                         ),
                                                                                       ),
@@ -1515,56 +1645,45 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                         'Account Name *',
                                                                                         style: TextStyle(
                                                                                           fontSize: 14,
-                                                                                          fontWeight:
-                                                                                          FontWeight.bold,
+                                                                                              fontWeight: FontWeight.bold,
                                                                                           color: blueColor,
                                                                                         ),
                                                                                       ),
                                                                                       const SizedBox(height: 5),
                                                                                       CustomTextField(
                                                                                         validator: (value) {
-                                                                                          if (value == null ||
-                                                                                              value.isEmpty) {
+                                                                                              if (value == null || value.isEmpty) {
                                                                                             return 'Please enter Account Name';
                                                                                           }
                                                                                           return null;
                                                                                         },
-                                                                                        keyboardType:
-                                                                                        TextInputType.text,
-                                                                                        hintText:
-                                                                                        'Enter Account Name',
-                                                                                        controller:
-                                                                                        _accountNameController,
+                                                                                            keyboardType: TextInputType.text,
+                                                                                            hintText: 'Enter Account Name',
+                                                                                            controller: _accountNameController,
                                                                                       ),
                                                                                       const SizedBox(height: 10),
                                                                                       Text(
                                                                                         'Account Type',
                                                                                         style: TextStyle(
                                                                                           fontSize: 14,
-                                                                                          fontWeight:
-                                                                                          FontWeight.bold,
+                                                                                              fontWeight: FontWeight.bold,
                                                                                           color: blueColor,
                                                                                         ),
                                                                                       ),
                                                                                       const SizedBox(height: 5),
                                                                                       CustomDropdown(
                                                                                         validator: (value) {
-                                                                                          if (_selectedAccountType == null ||
-                                                                                              _selectedAccountType!.isEmpty) {
+                                                                                              if (_selectedAccountType == null || _selectedAccountType!.isEmpty) {
                                                                                             return 'Please select a Account Type';
                                                                                           }
                                                                                           return null;
                                                                                         },
-                                                                                        labelText:
-                                                                                        'Select Account Type',
+                                                                                            labelText: 'Select Account Type',
                                                                                         items: accountTypeItems,
-                                                                                        selectedValue:
-                                                                                        _selectedAccountType,
-                                                                                        onChanged:
-                                                                                            (String? value) {
+                                                                                            selectedValue: _selectedAccountType,
+                                                                                            onChanged: (String? value) {
                                                                                           setState(() {
-                                                                                            _selectedAccountType =
-                                                                                                value;
+                                                                                                _selectedAccountType = value;
                                                                                           });
                                                                                         },
                                                                                       ),
@@ -1573,30 +1692,24 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                         'Fund Type',
                                                                                         style: TextStyle(
                                                                                           fontSize: 14,
-                                                                                          fontWeight:
-                                                                                          FontWeight.bold,
+                                                                                              fontWeight: FontWeight.bold,
                                                                                           color: blueColor,
                                                                                         ),
                                                                                       ),
                                                                                       const SizedBox(height: 5),
                                                                                       CustomDropdown(
                                                                                         validator: (value) {
-                                                                                          if (_selectedFundType == null ||
-                                                                                              _selectedFundType!.isEmpty) {
+                                                                                              if (_selectedFundType == null || _selectedFundType!.isEmpty) {
                                                                                             return 'Please select a Fund Type';
                                                                                           }
                                                                                           return null;
                                                                                         },
-                                                                                        labelText:
-                                                                                        'Select Fund Type',
+                                                                                            labelText: 'Select Fund Type',
                                                                                         items: fundTypeItems,
-                                                                                        selectedValue:
-                                                                                        _selectedFundType,
-                                                                                        onChanged:
-                                                                                            (String? value) {
+                                                                                            selectedValue: _selectedFundType,
+                                                                                            onChanged: (String? value) {
                                                                                           setState(() {
-                                                                                            _selectedFundType =
-                                                                                                value;
+                                                                                                _selectedFundType = value;
                                                                                           });
                                                                                         },
                                                                                       ),
@@ -1605,51 +1718,41 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                         'Notes',
                                                                                         style: TextStyle(
                                                                                           fontSize: 14,
-                                                                                          fontWeight:
-                                                                                          FontWeight.bold,
+                                                                                              fontWeight: FontWeight.bold,
                                                                                           color: blueColor,
                                                                                         ),
                                                                                       ),
                                                                                       const SizedBox(height: 5),
                                                                                       CustomTextField(
                                                                                         validator: (value) {
-                                                                                          if (value == null ||
-                                                                                              value.isEmpty) {
+                                                                                              if (value == null || value.isEmpty) {
                                                                                             return 'Please enter Notes';
                                                                                           }
                                                                                           return null;
                                                                                         },
-                                                                                        keyboardType:
-                                                                                        TextInputType.text,
+                                                                                            keyboardType: TextInputType.text,
                                                                                         hintText: 'Enter Notes',
-                                                                                        controller:
-                                                                                        _notesController,
+                                                                                            controller: _notesController,
                                                                                       ),
                                                                                       const SizedBox(
                                                                                         height: 20,
                                                                                       ),
                                                                                       RichText(
-                                                                                        text:  TextSpan(
+                                                                                            text: TextSpan(
                                                                                           children: <TextSpan>[
                                                                                             TextSpan(
-                                                                                              text:
-                                                                                              'We stores this information ',
+                                                                                                  text: 'We stores this information ',
                                                                                               style: TextStyle(
                                                                                                 fontSize: 12,
-                                                                                                fontWeight:
-                                                                                                FontWeight
-                                                                                                    .bold,
-                                                                                                color:
-                                                                                                Colors.grey,
+                                                                                                    fontWeight: FontWeight.bold,
+                                                                                                    color: Colors.grey,
                                                                                               ),
                                                                                             ),
                                                                                             TextSpan(
                                                                                               text: ' Privately ',
                                                                                               style: TextStyle(
                                                                                                 fontSize: 12,
-                                                                                                fontWeight:
-                                                                                                FontWeight
-                                                                                                    .bold,
+                                                                                                    fontWeight: FontWeight.bold,
                                                                                                 color: blueColor,
                                                                                               ),
                                                                                             ),
@@ -1657,20 +1760,15 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                               text: ' and ',
                                                                                               style: TextStyle(
                                                                                                 fontSize: 12,
-                                                                                                fontWeight:
-                                                                                                FontWeight
-                                                                                                    .normal,
-                                                                                                color:
-                                                                                                Colors.grey,
+                                                                                                    fontWeight: FontWeight.normal,
+                                                                                                    color: Colors.grey,
                                                                                               ),
                                                                                             ),
                                                                                             TextSpan(
                                                                                               text: ' Securely ',
                                                                                               style: TextStyle(
                                                                                                 fontSize: 12,
-                                                                                                fontWeight:
-                                                                                                FontWeight
-                                                                                                    .bold,
+                                                                                                    fontWeight: FontWeight.bold,
                                                                                                 color: blueColor,
                                                                                               ),
                                                                                             ),
@@ -1681,32 +1779,20 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                         height: 20,
                                                                                       ),
                                                                                       Row(
-                                                                                        mainAxisAlignment:
-                                                                                        MainAxisAlignment.end,
+                                                                                            mainAxisAlignment: MainAxisAlignment.end,
                                                                                         children: [
                                                                                           Container(
                                                                                               height: 50,
                                                                                               width: 90,
-                                                                                              decoration: BoxDecoration(
-                                                                                                  borderRadius:
-                                                                                                  BorderRadius
-                                                                                                      .circular(
-                                                                                                      8.0)),
-                                                                                              child:
-                                                                                              ElevatedButton(
-                                                                                                  style: ElevatedButton.styleFrom(
-                                                                                                      backgroundColor:
-                                                                                                      blueColor,
-                                                                                                      shape: RoundedRectangleBorder(
-                                                                                                          borderRadius: BorderRadius.circular(
-                                                                                                              8.0))),
+                                                                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+                                                                                                  child: ElevatedButton(
+                                                                                                      style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                                                                                                   // onPressed:
                                                                                                   //     () {
                                                                                                   //   _submitSubForm(context);
                                                                                                   // },
                                                                                                   onPressed: () async {
-                                                                                                    if (_selectedAccountType == null || _accountNameController.text.isEmpty ||
-                                                                                                        _selectedFundType == null || _notesController.text.isEmpty ) {
+                                                                                                        if (_selectedAccountType == null || _accountNameController.text.isEmpty || _selectedFundType == null || _notesController.text.isEmpty) {
                                                                                                       setState(() {
                                                                                                         isError = true;
                                                                                                       });
@@ -1716,8 +1802,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                                         isError = false;
                                                                                                       });
 
-                                                                                                      SharedPreferences prefs =
-                                                                                                      await SharedPreferences.getInstance();
+                                                                                                          SharedPreferences prefs = await SharedPreferences.getInstance();
                                                                                                       String? id = prefs.getString("adminId");
 
                                                                                                       try {
@@ -1742,12 +1827,9 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                                       }
                                                                                                     }
                                                                                                   },
-                                                                                                  child:
-                                                                                                  const Text(
+                                                                                                      child: const Text(
                                                                                                     'Add',
-                                                                                                    style: TextStyle(
-                                                                                                        color:
-                                                                                                        Color(0xFFf7f8f9)),
+                                                                                                        style: TextStyle(color: Color(0xFFf7f8f9)),
                                                                                                   ))),
                                                                                           const SizedBox(
                                                                                             width: 10,
@@ -1755,37 +1837,19 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                           Container(
                                                                                               height: 50,
                                                                                               width: 94,
-                                                                                              decoration: BoxDecoration(
-                                                                                                  borderRadius:
-                                                                                                  BorderRadius
-                                                                                                      .circular(
-                                                                                                      8.0)),
-                                                                                              child:
-                                                                                              ElevatedButton(
-                                                                                                  style: ElevatedButton.styleFrom(
-                                                                                                      backgroundColor:
-                                                                                                      const Color(
-                                                                                                          0xFFffffff),
-                                                                                                      shape: RoundedRectangleBorder(
-                                                                                                          borderRadius: BorderRadius.circular(
-                                                                                                              8.0))),
-                                                                                                  onPressed:
-                                                                                                      () {
+                                                                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+                                                                                                  child: ElevatedButton(
+                                                                                                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                                                      onPressed: () {
                                                                                                     setState(() {
-                                                                                                      Navigator.pop(
-                                                                                                          context);
+                                                                                                          Navigator.pop(context);
                                                                                                       _selectedProperty = null;
                                                                                                     });
-                                                                                                    Navigator.pop(
-                                                                                                        context);
-
+                                                                                                        Navigator.pop(context);
                                                                                                   },
-                                                                                                  child:
-                                                                                                  const Text(
+                                                                                                      child: const Text(
                                                                                                     'Cancel',
-                                                                                                    style: TextStyle(
-                                                                                                        color:
-                                                                                                        Color(0xFF748097)),
+                                                                                                        style: TextStyle(color: Color(0xFF748097)),
                                                                                                   ))),
                                                                                         ],
                                                                                       ),
@@ -1804,14 +1868,17 @@ class _RenewleaseState extends State<Renewlease> {
                                                                             ),
                                                                           ),
                                                                         );
-
                                                                     });
                                                               },
                                                             );
                                                           },
                                                           child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.start,
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
                                                             children: [
                                                               const Text(
                                                                 '+ Add One Time Charge',
@@ -1826,14 +1893,18 @@ class _RenewleaseState extends State<Renewlease> {
                                                       ),
                                                     ];
 
-
                                                     return Column(
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                                    CrossAxisAlignment
+                                                                        .start,
                                                       children: [
-                                                        SizedBox(height: 5),
-                                                        DropdownButton2<String>(
-                                                          isExpanded: true,
+                                                                  SizedBox(
+                                                                      height:
+                                                                          5),
+                                                                  DropdownButton2<
+                                                                      String>(
+                                                                    isExpanded:
+                                                                        true,
                                                           // value: (row['account'] !=
                                                           //             null &&
                                                           //         row['charge_type'] !=
@@ -1847,96 +1918,110 @@ class _RenewleaseState extends State<Renewlease> {
                                                           // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
                                                           //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
                                                           //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
-                                                          value: row['account'] != null
+                                                                    value: row['account'] !=
+                                                                            null
                                                               ? (liabilityAccounts.contains(row['account'])
                                                               ? "${row['account']}_Liability Account"
                                                               : (row['charge_type'] == "Surcharge" && surchargetype != null
                                                               ? "${row['account']}_$surchargetype"
                                                               : "${row['account']}_${row['charge_type']}"))
                                                               : null,
-                                                          items: dropdownItems,
-                                                          onChanged: (value) {
-                                                            dynamic? chargeType;
-                                                            for (var entry
-                                                            in categorizedData
-                                                                .entries) {
-                                                              if (entry.value
-                                                                  .contains(value)) {
-                                                                chargeType = entry.key;
-                                                                break;
-                                                              }
-                                                            }
-                                                            setState(() {
+                                                                    items:
+                                                                        dropdownItems,
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      if (value !=
+                                                                              null &&
+                                                                          value !=
+                                                                              'button_item') {
+                                                                        setState(
+                                                                            () {
                                                               final parts =
-                                                              value!.split('_');
-                                                              final selectedChargeType =
+                                                                              value.split('_');
+                                                                          if (parts.length >=
+                                                                              2) {
+                                                                            final selectedAccount =
                                                               parts[0];
-                                                              final selectedValue =
-                                                              parts
-                                                                  .sublist(1)
-                                                                  .join('_');
+                                                                            final selectedChargeType =
+                                                                                parts.sublist(1).join('_');
+
                                                               rows[index]['account'] =
+                                                                                selectedAccount;
+                                                                            rows[index]['charge_type'] =
                                                                   selectedChargeType;
-                                                              rows[index]
-                                                              ['charge_type'] =
-                                                                  selectedValue;
-                                                              state.didChange(
-                                                                  value); // Update the FormField state
-                                                            });
-                                                            state.reset();
+
+                                                                            // Update form field state
+                                                                            state.didChange(value);
+                                                                          }
+                                                                        });
+                                                                      }
                                                           },
                                                           buttonStyleData:
                                                           ButtonStyleData(
-                                                            height: 45,
-                                                            padding:
-                                                            const EdgeInsets.only(
-                                                                left: 0, right: 14),
-                                                            decoration: BoxDecoration(
+                                                                      height:
+                                                                          45,
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              0,
+                                                                          right:
+                                                                              14),
+                                                                      decoration:
+                                                                          BoxDecoration(
                                                               borderRadius:
-                                                              BorderRadius.circular(
-                                                                  6),
-                                                              color: Colors.white,
-                                                            ),
-                                                            elevation: 2,
+                                                                            BorderRadius.circular(6),
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      elevation:
+                                                                          2,
                                                           ),
                                                           iconStyleData:
                                                           const IconStyleData(
                                                             icon: Icon(
-                                                                Icons.arrow_drop_down),
-                                                            iconSize: 24,
+                                                                          Icons
+                                                                              .arrow_drop_down),
+                                                                      iconSize:
+                                                                          24,
                                                             iconEnabledColor:
-                                                            Color(0xFFb0b6c3),
+                                                                          Color(
+                                                                              0xFFb0b6c3),
                                                             iconDisabledColor:
-                                                            Colors.grey,
+                                                                          Colors
+                                                                              .grey,
                                                           ),
                                                           dropdownStyleData:
                                                           DropdownStyleData(
-                                                            width: 250,
-                                                            decoration: BoxDecoration(
+                                                                      width:
+                                                                          250,
+                                                                      decoration:
+                                                                          BoxDecoration(
                                                               borderRadius:
-                                                              BorderRadius.circular(
-                                                                  6),
-                                                              color: Colors.white,
+                                                                            BorderRadius.circular(6),
+                                                                        color: Colors
+                                                                            .white,
                                                             ),
                                                             scrollbarTheme:
                                                             ScrollbarThemeData(
-                                                              radius:
-                                                              const Radius.circular(
+                                                                        radius: const Radius
+                                                                            .circular(
                                                                   6),
                                                               thickness:
-                                                              MaterialStateProperty
-                                                                  .all(6),
+                                                                            MaterialStateProperty.all(6),
                                                               thumbVisibility:
-                                                              MaterialStateProperty
-                                                                  .all(true),
-                                                            ),
-                                                          ),
-                                                          hint: Padding(
-                                                            padding:
-                                                            const EdgeInsets.only(
-                                                                left: 7,
-                                                                right: 5,
-                                                                bottom: 2),
+                                                                            MaterialStateProperty.all(true),
+                                                                      ),
+                                                                    ),
+                                                                    hint:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              7,
+                                                                          right:
+                                                                              5,
+                                                                          bottom:
+                                                                              2),
                                                             child: Text(
                                                                 'Select an account'),
                                                           ),
@@ -1944,15 +2029,22 @@ class _RenewleaseState extends State<Renewlease> {
                                                         if (state
                                                             .hasError) // Display the validation error
                                                           Padding(
-                                                            padding:
-                                                            const EdgeInsets.only(
-                                                                left: 16.0,
-                                                                top: 5.0),
-                                                            child: Text(
-                                                              state.errorText ?? '',
-                                                              style: const TextStyle(
-                                                                color: Colors.red,
-                                                                fontSize: 12,
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              16.0,
+                                                                          top:
+                                                                              5.0),
+                                                                      child:
+                                                                          Text(
+                                                                        state.errorText ??
+                                                                            '',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          color:
+                                                                              Colors.red,
+                                                                          fontSize:
+                                                                              12,
                                                               ),
                                                             ),
                                                           ),
@@ -1962,7 +2054,6 @@ class _RenewleaseState extends State<Renewlease> {
                                                 ),
                                               ),
                                             ),
-
                                             // Padding(
                                             //   padding: const EdgeInsets.all(8.0),
                                             //   child: DropdownButtonHideUnderline(
@@ -2421,56 +2512,87 @@ class _RenewleaseState extends State<Renewlease> {
                                             //   ),
                                             // ),
                                             Container(
-                                              margin: EdgeInsets.only(top: 5),
+                                                        margin: EdgeInsets.only(
+                                                            top: 5),
                                               child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
                                                 child: SizedBox(
                                                   height: 50,
-                                                  child: KeyboardActions(
-                                                    config: _buildConfig(context),
-                                                    child: TextFormField(
-                                                      initialValue: widget.leaseId !=
-                                                          null
-                                                          ? rows[index]["amount"]
+                                                            child:
+                                                                KeyboardActions(
+                                                              config:
+                                                                  _buildConfig(
+                                                                      context),
+                                                              child:
+                                                                  TextFormField(
+                                                                initialValue: widget
+                                                                            .leaseId !=
+                                                                        null
+                                                                    ? rows[index]
+                                                                            [
+                                                                            "amount"]
                                                           .toString()
                                                           : "0", // Make sure 0 is a string,
-                                                      focusNode: focusNodes[index],
+                                                                focusNode:
+                                                                    focusNodes[
+                                                                        index],
                                                       keyboardType:
-                                                      TextInputType.number,
+                                                                    TextInputType
+                                                                        .number,
                                                       onChanged: (value) =>
-                                                          updateAmount(index, value),
+                                                                    updateAmount(
+                                                                        index,
+                                                                        value),
                                                       decoration: const InputDecoration(
-                                                          border: OutlineInputBorder(),
-                                                          hintText: 'Enter amount',
-                                                          hintStyle:
-                                                          TextStyle(fontSize: 14),
+                                                                    border:
+                                                                        OutlineInputBorder(),
+                                                                    hintText:
+                                                                        'Enter amount',
+                                                                    hintStyle: TextStyle(
+                                                                        fontSize:
+                                                                            14),
                                                           contentPadding:
                                                           EdgeInsets.only(
-                                                              top: 7, left: 7)),
+                                                                            top:
+                                                                                7,
+                                                                            left:
+                                                                                7)),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
                                               child: IconButton(
-                                                icon: const Icon(Icons.delete,
-                                                    color: Colors.red),
-                                                onPressed: () => deleteRow(index),
+                                                          icon: const Icon(
+                                                              Icons.delete,
+                                                              color:
+                                                                  Colors.red),
+                                                          onPressed: () =>
+                                                              deleteRow(index),
                                               ),
                                             ),
                                           ]);
                                         }).toList(),
                                         TableRow(children: [
                                           const Padding(
-                                            padding: EdgeInsets.all(8.0),
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
                                             child: Text('Total',
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.bold)),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
                                             child: Text(
                                                 '\$${totalAmount.toStringAsFixed(2)}'),
                                           ),
@@ -2479,13 +2601,17 @@ class _RenewleaseState extends State<Renewlease> {
                                         TableRow(children: [
                                           Padding(
                                             padding: EdgeInsets.only(
-                                                left:
-                                                MediaQuery.of(context).size.width <
+                                                          left: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
                                                     500
                                                     ? 16
                                                     : 70,
-                                                right:
-                                                MediaQuery.of(context).size.width <
+                                                          right: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
                                                     500
                                                     ? 16
                                                     : 70,
@@ -2496,29 +2622,34 @@ class _RenewleaseState extends State<Renewlease> {
                                               width: 100,
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
-                                                  border: Border.all(width: 1),
+                                                            border: Border.all(
+                                                                width: 1),
                                                   borderRadius:
-                                                  BorderRadius.circular(5.0)),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5.0)),
                                               child: ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
                                                     shape: RoundedRectangleBorder(
                                                         borderRadius:
-                                                        BorderRadius.circular(
+                                                                      BorderRadius
+                                                                          .circular(
                                                             5.0)),
                                                     elevation: 0,
-                                                    backgroundColor: Colors.white),
+                                                              backgroundColor:
+                                                                  Colors.white),
                                                 onPressed: addRow,
                                                 child: Text(
                                                   'Add Row',
                                                   style: TextStyle(
-                                                    fontSize: MediaQuery.of(context)
+                                                              fontSize: MediaQuery.of(
+                                                                              context)
                                                         .size
                                                         .width <
                                                         500
                                                         ? 14
                                                         : 18,
-                                                    color:
-                                                    blueColor,
+                                                              color: blueColor,
                                                   ),
                                                 ),
                                               ),
@@ -2529,7 +2660,6 @@ class _RenewleaseState extends State<Renewlease> {
                                         ]),
                                       ],
                                     ),
-
                                   ],
                                 ),
                               ),
@@ -2542,52 +2672,54 @@ class _RenewleaseState extends State<Renewlease> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-
-                                  List<Map<String,dynamic>> entries = rows.map((element){
+                                  List<Map<String, dynamic>> entries =
+                                      rows.map((element) {
                                     return {
-                                      "account":element["account"],
-                                      "amount":element["amount"],
-                                      "charge_type":element["charge_type"],
-                                      "memo":element["memo"]
+                                      "account": element["account"],
+                                      "amount": element["amount"],
+                                      "charge_type": element["charge_type"],
+                                      "memo": element["memo"]
                                     };
                                   }).toList();
 
-                                  Map<String,dynamic> charge = {
-                                    "lease_id":widget.leaseId,
-                                    "admin_id":leasesummery.data!.adminId,
-
+                                  Map<String, dynamic> charge = {
+                                    "lease_id": widget.leaseId,
+                                    "admin_id": leasesummery.data!.adminId,
                                     "type": "Charge",
                                     "total_amount": totalAmount,
-                                    "entry" : entries.length > 0 ?entries : [
-                                      {
-                                        "account":"",
-                                        "amount":"",
-                                        "charge_type":"",
-                                        "memo":""
-                                      }
-                                    ]
+                                    "entry": entries.length > 0
+                                        ? entries
+                                        : [
+                                            {
+                                              "account": "",
+                                              "amount": "",
+                                              "charge_type": "",
+                                              "memo": ""
+                                            }
+                                          ]
                                   };
 
+                                  Map<String, dynamic> leasedata = {
+                                    "lease_id": widget.leaseId,
 
-                                  Map<String,dynamic> leasedata = {
-                                    "lease_id":widget.leaseId,
-
-                                    "renewAmount":widget.rentamount,
-                                    "admin_id":leasesummery.data!.adminId,
-                                    "lease_type":leasesummery.data!.leaseType,
-                                    "start_date": reverseFormatDate(startDateController.text.trim()),
-                                    "end_date":reverseFormatDate(endDateController.text.trim()),
-                                    "amount":rent.text.trim(),
-                                    "renewAmount": securitydeposit.text.trim(),// new amount
-                                    "lease_amount" :widget.rentamount,
-                                    "charges":charge,
-                                    "renew_fileName" :  _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
-
+                                    "renewAmount": widget.rentamount,
+                                    "admin_id": leasesummery.data!.adminId,
+                                    "lease_type": leasesummery.data!.leaseType,
+                                    "start_date": reverseFormatDate(
+                                        startDateController.text.trim()),
+                                    "end_date": reverseFormatDate(
+                                        endDateController.text.trim()),
+                                    "amount": rent.text.trim(),
+                                    "renewAmount": securitydeposit.text
+                                        .trim(), // new amount
+                                    "lease_amount": widget.rentamount,
+                                    "charges": charge,
+                                    "renew_fileName":
+                                        _uploadedFileNames.length > 0
+                                            ? _uploadedFileNames.first
+                                            : "",
                                   };
                                   updatenewrenewallease(leasedata);
-
-
-
                                 },
                                 child: Container(
                                     height:
@@ -2663,6 +2795,7 @@ class _RenewleaseState extends State<Renewlease> {
       ),
     );
   }
+
   bool determineStatus(String? startDate, String? endDate) {
     if (startDate == null || endDate == null) return false;
 
@@ -2677,7 +2810,4 @@ class _RenewleaseState extends State<Renewlease> {
       return false;
     }
   }
-
-
-
 }

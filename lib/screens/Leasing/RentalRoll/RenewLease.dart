@@ -217,7 +217,8 @@ class _RenewleaseState extends State<Renewlease> {
       rows.add({
         'account': null,
         'charge_type': null,
-        'amount': "",
+        'amount': "0",
+        'memo': "",
       });
       focusNodes.add(FocusNode());
     });
@@ -240,16 +241,16 @@ class _RenewleaseState extends State<Renewlease> {
 
   void updateAmount(int index, String value) {
     setState(() {
-      double amount = double.tryParse(value) ?? 0.0;
-
-      if (rows[index]['amount'].runtimeType == String) {
-        totalAmount -= double.tryParse(rows[index]['amount']) ?? 0.0;
-      } else {
-        totalAmount -= rows[index]['amount'];
+      double oldAmount = 0.0;
+      if (rows[index]['amount'].toString().isNotEmpty) {
+        oldAmount = double.tryParse(rows[index]['amount'].toString()) ?? 0.0;
       }
 
-      rows[index]['amount'] = amount;
-      totalAmount += amount;
+      totalAmount -= oldAmount;
+
+      double newAmount = double.tryParse(value) ?? 0.0;
+      rows[index]['amount'] = value;
+      totalAmount += newAmount;
     });
     validateAmounts();
   }
@@ -273,13 +274,13 @@ class _RenewleaseState extends State<Renewlease> {
   }
 
   Future<void> fetchDropdownData() async {
+    print("calling drops ");
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
-      print(token);
-      print('lease drop ${widget.leaseId}');
       String? id = prefs.getString("adminId");
+
       final response = await http.get(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
@@ -287,40 +288,55 @@ class _RenewleaseState extends State<Renewlease> {
           "id": "CRM $id",
         },
       );
+
       print('lease drop ${response.body}');
       if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body)['data'];
-        List<String> fetchedAccounts = [];
-        Map<String, List<String>> fetchedData = {};
-        // Adding static items to the "LIABILITY ACCOUNT" category
-        fetchedData["Liability Account"] = [
-          "Late Fee Income",
-          "Pre-payments",
-          // "Security Deposit",
-          // 'Rent Income'
-        ];
-        //
-        for (var item in jsonResponse) {
-          String chargeType = item['charge_type'];
-          String account = item['account'];
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        if (jsonResponse['data'] != null) {
+          List<dynamic> data = jsonResponse['data'];
+          Map<String, List<String>> fetchedData = {};
 
-          if (!fetchedData.containsKey(chargeType)) {
-            fetchedData[chargeType] = [];
+          // Initialize with static liability accounts
+          fetchedData["Liability Account"] = [
+            "Late Fee Income",
+            "Pre-payments",
+          ];
+
+          // Group accounts by charge_type
+          for (var item in data) {
+            String chargeType = item['charge_type'] ?? 'Other';
+            String account = item['account'] ?? '';
+
+            if (account.isNotEmpty) {
+              if (!fetchedData.containsKey(chargeType)) {
+                fetchedData[chargeType] = [];
+              }
+              if (!fetchedData[chargeType]!.contains(account)) {
+                fetchedData[chargeType]!.add(account);
+              }
+            }
           }
-          fetchedData[chargeType]!.add(account);
-        }
-      //  fetchedAccounts.addAll(["Late Fee Income", "Pre-payments"]);
 
-        // Collect all account values
-        // for (var item in jsonResponse) {
-        //   String account = item['account'];
-        //   fetchedAccounts.add(account);
-        // }
-        setState(() {
-          //categorizedData = {"": fetchedAccounts};
+          setState(() {
             categorizedData = fetchedData;
-          isLoading = false;
-        });
+            isLoading = false;
+
+            // Initialize first row if rows is empty
+            if (rows.isEmpty) {
+              rows.add({
+                'account': null,
+                'charge_type': null,
+                'amount': "",
+              });
+              focusNodes.add(FocusNode());
+            }
+          });
+        } else {
+          setState(() {
+            hasError = true;
+            isLoading = false;
+          });
+        }
       } else {
         setState(() {
           hasError = true;
@@ -328,7 +344,7 @@ class _RenewleaseState extends State<Renewlease> {
         });
       }
     } catch (e) {
-      print(e);
+      print('Error in fetchDropdownData: $e');
       setState(() {
         hasError = true;
         isLoading = false;
@@ -1488,7 +1504,6 @@ class _RenewleaseState extends State<Renewlease> {
                                                                   [
                                                                 "Late Fee Income",
                                                                 "Pre-payments",
-
                                                               ];
                                                               String?
                                                                   surchargetype;
@@ -1936,63 +1951,43 @@ class _RenewleaseState extends State<Renewlease> {
                                                                       String>(
                                                                     isExpanded:
                                                                         true,
-                                                                    // value: (row['account'] !=
-                                                                    //             null &&
-                                                                    //         row['charge_type'] !=
-                                                                    //             null)
-                                                                    //     ? (liabilityAccounts
-                                                                    //             .contains(row[
-                                                                    //                 'account'])
-                                                                    //         ? "${row['account']}_Liability Account"
-                                                                    //         : "${row['account']}_${row['charge_type']}")
-                                                                    //     : null,
-                                                                    // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
-                                                                    //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
-                                                                    //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
                                                                     value: row['account'] !=
                                                                             null
                                                                         ? (liabilityAccounts.contains(row['account'])
                                                                             ? "${row['account']}_Liability Account"
-                                                                            : (row['charge_type'] == "Surcharge" && surchargetype != null
-                                                                                ? "${row['account']}_$surchargetype"
-                                                                                : "${row['account']}_${row['charge_type']}"))
+                                                                            : row['charge_type'] != null
+                                                                                ? "${row['account']}_${row['charge_type']}"
+                                                                                : null)
                                                                         : null,
                                                                     items:
                                                                         dropdownItems,
                                                                     onChanged:
                                                                         (value) {
-                                                                      dynamic?
-                                                                          chargeType;
-                                                                      for (var entry
-                                                                          in categorizedData
-                                                                              .entries) {
-                                                                        if (entry
-                                                                            .value
-                                                                            .contains(value)) {
-                                                                          chargeType =
-                                                                              entry.key;
-                                                                          break;
-                                                                        }
+                                                                      if (value !=
+                                                                              null &&
+                                                                          value !=
+                                                                              'button_item') {
+                                                                        setState(
+                                                                            () {
+                                                                          final parts =
+                                                                              value.split('_');
+                                                                          if (parts.length >=
+                                                                              2) {
+                                                                            final selectedAccount =
+                                                                                parts[0];
+                                                                            final selectedChargeType =
+                                                                                parts.sublist(1).join('_');
+
+                                                                            rows[index]['account'] =
+                                                                                selectedAccount;
+                                                                            rows[index]['charge_type'] =
+                                                                                selectedChargeType;
+
+                                                                            // Update form field state
+                                                                            state.didChange(value);
+                                                                          }
+                                                                        });
                                                                       }
-                                                                      print('dropdwoun ${value}');
-                                                                      setState(
-                                                                          () {
-                                                                        final parts =
-                                                                            value!.split('_');
-                                                                        final selectedChargeType =
-                                                                            parts[0];
-                                                                        final selectedValue = parts
-                                                                            .sublist(1)
-                                                                            .join('_');
-                                                                        rows[index]['account'] =
-                                                                            selectedChargeType;
-                                                                        rows[index]['charge_type'] =
-                                                                            selectedValue;
-                                                                        state.didChange(
-                                                                            value); // Update the FormField state
-                                                                      });
-                                                                      state
-                                                                          .reset();
                                                                     },
                                                                     buttonStyleData:
                                                                         ButtonStyleData(
@@ -2092,684 +2087,6 @@ class _RenewleaseState extends State<Renewlease> {
                                                           ),
                                                         ),
                                                       ),
-
-                                                      // Padding(
-                                                      //   padding: const EdgeInsets.all(8.0),
-                                                      //   child: DropdownButtonHideUnderline(
-                                                      //     child: DropdownButton2<String>(
-                                                      //       isExpanded: true,
-                                                      //       style: TextStyle(fontSize: 14),
-                                                      //       value: row['account'],
-                                                      //       items: [
-                                                      //         ...categorizedData.entries
-                                                      //             .expand((entry) {
-                                                      //           return [
-                                                      //             DropdownMenuItem<String>(
-                                                      //               enabled: false,
-                                                      //               child: Text(
-                                                      //                 entry.key,
-                                                      //                 style: const TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight.bold,
-                                                      //                   color: Color.fromRGBO(
-                                                      //                       21, 43, 81, 1),
-                                                      //                 ),
-                                                      //               ),
-                                                      //             ),
-                                                      //             ...entry.value.map((item) {
-                                                      //               return DropdownMenuItem<
-                                                      //                   String>(
-                                                      //                 value: item,
-                                                      //                 child: Padding(
-                                                      //                   padding:
-                                                      //                   const EdgeInsets.only(
-                                                      //                       left: 0.0),
-                                                      //                   child: Text(
-                                                      //                     item,
-                                                      //                     style: const TextStyle(
-                                                      //                       color: Colors.black,
-                                                      //                       fontWeight:
-                                                      //                       FontWeight.w400,
-                                                      //                     ),
-                                                      //                   ),
-                                                      //                 ),
-                                                      //               );
-                                                      //             }).toList(),
-                                                      //
-                                                      //           ];
-                                                      //
-                                                      //         }).toList(),
-                                                      //         DropdownMenuItem<String>(
-                                                      //           value: 'button_item',
-                                                      //           child: GestureDetector(
-                                                      //             onTap: (){
-                                                      //               Navigator.pop(context);
-                                                      //               showDialog(
-                                                      //                 context: context,
-                                                      //                 builder: (BuildContext context) {
-                                                      //                   return StatefulBuilder(
-                                                      //                       builder: (context, setState) {
-                                                      //                         return
-                                                      //                           Dialog(
-                                                      //                             backgroundColor: Colors.white,
-                                                      //                             surfaceTintColor: Colors.white,
-                                                      //                             shape: RoundedRectangleBorder(
-                                                      //                                 borderRadius:
-                                                      //                                 BorderRadius.circular(10.0)),
-                                                      //                             child:
-                                                      //                             SingleChildScrollView(
-                                                      //                               child: Container(
-                                                      //                                 // height: 450,
-                                                      //                                 child:
-                                                      //                                 Padding(
-                                                      //                                   padding:
-                                                      //                                   const EdgeInsets.all(16.0),
-                                                      //                                   child: Form(
-                                                      //                                     key: _subFormKey,
-                                                      //                                     child: Column(
-                                                      //                                       mainAxisAlignment: MainAxisAlignment.start,
-                                                      //                                       crossAxisAlignment: CrossAxisAlignment.start,
-                                                      //                                       children: [
-                                                      //                                         Text(
-                                                      //                                           'Add account',
-                                                      //                                           style: TextStyle(
-                                                      //                                             fontSize: 16,
-                                                      //                                             fontWeight:
-                                                      //                                             FontWeight.bold,
-                                                      //                                             color: blueColor,
-                                                      //                                           ),
-                                                      //                                         ),
-                                                      //                                         SizedBox(
-                                                      //                                           height: 20,
-                                                      //                                         ),
-                                                      //                                         Text(
-                                                      //                                           'Account Name *',
-                                                      //                                           style: TextStyle(
-                                                      //                                             fontSize: 14,
-                                                      //                                             fontWeight:
-                                                      //                                             FontWeight.bold,
-                                                      //                                             color: blueColor,
-                                                      //                                           ),
-                                                      //                                         ),
-                                                      //                                         const SizedBox(height: 5),
-                                                      //                                         CustomTextField(
-                                                      //                                           validator: (value) {
-                                                      //                                             if (value == null ||
-                                                      //                                                 value.isEmpty) {
-                                                      //                                               return 'Please enter Account Name';
-                                                      //                                             }
-                                                      //                                             return null;
-                                                      //                                           },
-                                                      //                                           keyboardType:
-                                                      //                                           TextInputType.text,
-                                                      //                                           hintText:
-                                                      //                                           'Enter Account Name',
-                                                      //                                           controller:
-                                                      //                                           _accountNameController,
-                                                      //                                         ),
-                                                      //                                         const SizedBox(height: 10),
-                                                      //                                         Text(
-                                                      //                                           'Account Type',
-                                                      //                                           style: TextStyle(
-                                                      //                                             fontSize: 14,
-                                                      //                                             fontWeight:
-                                                      //                                             FontWeight.bold,
-                                                      //                                             color: blueColor,
-                                                      //                                           ),
-                                                      //                                         ),
-                                                      //                                         const SizedBox(height: 5),
-                                                      //                                         CustomDropdown(
-                                                      //                                           validator: (value) {
-                                                      //                                             if (_selectedAccountType == null ||
-                                                      //                                                 _selectedAccountType!.isEmpty) {
-                                                      //                                               return 'Please select a Account Type';
-                                                      //                                             }
-                                                      //                                             return null;
-                                                      //                                           },
-                                                      //                                           labelText:
-                                                      //                                           'Select Account Type',
-                                                      //                                           items: accountTypeItems,
-                                                      //                                           selectedValue:
-                                                      //                                           _selectedAccountType,
-                                                      //                                           onChanged:
-                                                      //                                               (String? value) {
-                                                      //                                             setState(() {
-                                                      //                                               _selectedAccountType =
-                                                      //                                                   value;
-                                                      //                                             });
-                                                      //                                           },
-                                                      //                                         ),
-                                                      //                                         const SizedBox(height: 10),
-                                                      //                                         Text(
-                                                      //                                           'Fund Type',
-                                                      //                                           style: TextStyle(
-                                                      //                                             fontSize: 14,
-                                                      //                                             fontWeight:
-                                                      //                                             FontWeight.bold,
-                                                      //                                             color: blueColor,
-                                                      //                                           ),
-                                                      //                                         ),
-                                                      //                                         const SizedBox(height: 5),
-                                                      //                                         CustomDropdown(
-                                                      //                                           validator: (value) {
-                                                      //                                             if (_selectedFundType == null ||
-                                                      //                                                 _selectedFundType!.isEmpty) {
-                                                      //                                               return 'Please select a Fund Type';
-                                                      //                                             }
-                                                      //                                             return null;
-                                                      //                                           },
-                                                      //                                           labelText:
-                                                      //                                           'Select Fund Type',
-                                                      //                                           items: fundTypeItems,
-                                                      //                                           selectedValue:
-                                                      //                                           _selectedFundType,
-                                                      //                                           onChanged:
-                                                      //                                               (String? value) {
-                                                      //                                             setState(() {
-                                                      //                                               _selectedFundType =
-                                                      //                                                   value;
-                                                      //                                             });
-                                                      //                                           },
-                                                      //                                         ),
-                                                      //                                         const SizedBox(height: 10),
-                                                      //                                         Text(
-                                                      //                                           'Notes',
-                                                      //                                           style: TextStyle(
-                                                      //                                             fontSize: 14,
-                                                      //                                             fontWeight:
-                                                      //                                             FontWeight.bold,
-                                                      //                                             color: blueColor,
-                                                      //                                           ),
-                                                      //                                         ),
-                                                      //                                         const SizedBox(height: 5),
-                                                      //                                         CustomTextField(
-                                                      //                                           validator: (value) {
-                                                      //                                             if (value == null ||
-                                                      //                                                 value.isEmpty) {
-                                                      //                                               return 'Please enter Notes';
-                                                      //                                             }
-                                                      //                                             return null;
-                                                      //                                           },
-                                                      //                                           keyboardType:
-                                                      //                                           TextInputType.text,
-                                                      //                                           hintText: 'Enter Notes',
-                                                      //                                           controller:
-                                                      //                                           _notesController,
-                                                      //                                         ),
-                                                      //                                         const SizedBox(
-                                                      //                                           height: 20,
-                                                      //                                         ),
-                                                      //                                         RichText(
-                                                      //                                           text:  TextSpan(
-                                                      //                                             children: <TextSpan>[
-                                                      //                                               TextSpan(
-                                                      //                                                 text:
-                                                      //                                                 'We stores this information ',
-                                                      //                                                 style: TextStyle(
-                                                      //                                                   fontSize: 12,
-                                                      //                                                   fontWeight:
-                                                      //                                                   FontWeight
-                                                      //                                                       .bold,
-                                                      //                                                   color:
-                                                      //                                                   Colors.grey,
-                                                      //                                                 ),
-                                                      //                                               ),
-                                                      //                                               TextSpan(
-                                                      //                                                 text: ' Privately ',
-                                                      //                                                 style: TextStyle(
-                                                      //                                                   fontSize: 12,
-                                                      //                                                   fontWeight:
-                                                      //                                                   FontWeight
-                                                      //                                                       .bold,
-                                                      //                                                   color: blueColor,
-                                                      //                                                 ),
-                                                      //                                               ),
-                                                      //                                               TextSpan(
-                                                      //                                                 text: ' and ',
-                                                      //                                                 style: TextStyle(
-                                                      //                                                   fontSize: 12,
-                                                      //                                                   fontWeight:
-                                                      //                                                   FontWeight
-                                                      //                                                       .normal,
-                                                      //                                                   color:
-                                                      //                                                   Colors.grey,
-                                                      //                                                 ),
-                                                      //                                               ),
-                                                      //                                               TextSpan(
-                                                      //                                                 text: ' Securely ',
-                                                      //                                                 style: TextStyle(
-                                                      //                                                   fontSize: 12,
-                                                      //                                                   fontWeight:
-                                                      //                                                   FontWeight
-                                                      //                                                       .bold,
-                                                      //                                                   color: blueColor,
-                                                      //                                                 ),
-                                                      //                                               ),
-                                                      //                                             ],
-                                                      //                                           ),
-                                                      //                                         ),
-                                                      //                                         const SizedBox(
-                                                      //                                           height: 20,
-                                                      //                                         ),
-                                                      //                                         Row(
-                                                      //                                           mainAxisAlignment:
-                                                      //                                           MainAxisAlignment.end,
-                                                      //                                           children: [
-                                                      //                                             Container(
-                                                      //                                                 height: 50,
-                                                      //                                                 width: 90,
-                                                      //                                                 decoration: BoxDecoration(
-                                                      //                                                     borderRadius:
-                                                      //                                                     BorderRadius
-                                                      //                                                         .circular(
-                                                      //                                                         8.0)),
-                                                      //                                                 child:
-                                                      //                                                 ElevatedButton(
-                                                      //                                                     style: ElevatedButton.styleFrom(
-                                                      //                                                         backgroundColor:
-                                                      //                                                         blueColor,
-                                                      //                                                         shape: RoundedRectangleBorder(
-                                                      //                                                             borderRadius: BorderRadius.circular(
-                                                      //                                                                 8.0))),
-                                                      //                                                     // onPressed:
-                                                      //                                                     //     () {
-                                                      //                                                     //   _submitSubForm(context);
-                                                      //                                                     // },
-                                                      //                                                     onPressed: () async {
-                                                      //                                                       if (_selectedAccountType == null || _accountNameController.text.isEmpty ||
-                                                      //                                                           _selectedFundType == null || _notesController.text.isEmpty ) {
-                                                      //                                                         setState(() {
-                                                      //                                                           isError = true;
-                                                      //                                                         });
-                                                      //                                                       } else {
-                                                      //                                                         setState(() {
-                                                      //                                                           isLoading = true;
-                                                      //                                                           isError = false;
-                                                      //                                                         });
-                                                      //
-                                                      //                                                         SharedPreferences prefs =
-                                                      //                                                         await SharedPreferences.getInstance();
-                                                      //                                                         String? id = prefs.getString("adminId");
-                                                      //
-                                                      //                                                         try {
-                                                      //                                                           await accountRepository().addAccount(
-                                                      //                                                             adminId: id!,
-                                                      //                                                             account: _accountNameController.text,
-                                                      //                                                             accounttype: _selectedAccountType,
-                                                      //                                                             fundtype: _selectedFundType,
-                                                      //                                                             chargetype: 'One Time Charge',
-                                                      //                                                             notes: _notesController.text,
-                                                      //                                                           );
-                                                      //                                                           Navigator.pop(context, true);
-                                                      //                                                           _refreshAccounts();
-                                                      //                                                         } catch (e) {
-                                                      //                                                           setState(() {
-                                                      //                                                             isError = true;
-                                                      //                                                           });
-                                                      //                                                         } finally {
-                                                      //                                                           setState(() {
-                                                      //                                                             isLoading = false;
-                                                      //                                                           });
-                                                      //                                                         }
-                                                      //                                                       }
-                                                      //                                                     },
-                                                      //                                                     child:
-                                                      //                                                     const Text(
-                                                      //                                                       'Add',
-                                                      //                                                       style: TextStyle(
-                                                      //                                                           color:
-                                                      //                                                           Color(0xFFf7f8f9)),
-                                                      //                                                     ))),
-                                                      //                                             const SizedBox(
-                                                      //                                               width: 10,
-                                                      //                                             ),
-                                                      //                                             Container(
-                                                      //                                                 height: 50,
-                                                      //                                                 width: 94,
-                                                      //                                                 decoration: BoxDecoration(
-                                                      //                                                     borderRadius:
-                                                      //                                                     BorderRadius
-                                                      //                                                         .circular(
-                                                      //                                                         8.0)),
-                                                      //                                                 child:
-                                                      //                                                 ElevatedButton(
-                                                      //                                                     style: ElevatedButton.styleFrom(
-                                                      //                                                         backgroundColor:
-                                                      //                                                         const Color(
-                                                      //                                                             0xFFffffff),
-                                                      //                                                         shape: RoundedRectangleBorder(
-                                                      //                                                             borderRadius: BorderRadius.circular(
-                                                      //                                                                 8.0))),
-                                                      //                                                     onPressed:
-                                                      //                                                         () {
-                                                      //                                                       setState(() {
-                                                      //                                                         Navigator.pop(
-                                                      //                                                             context);
-                                                      //                                                         _selectedProperty = null;
-                                                      //                                                       });
-                                                      //                                                       Navigator.pop(
-                                                      //                                                           context);
-                                                      //
-                                                      //                                                     },
-                                                      //                                                     child:
-                                                      //                                                     const Text(
-                                                      //                                                       'Cancel',
-                                                      //                                                       style: TextStyle(
-                                                      //                                                           color:
-                                                      //                                                           Color(0xFF748097)),
-                                                      //                                                     ))),
-                                                      //                                           ],
-                                                      //                                         ),
-                                                      //                                         if (isError)
-                                                      //                                           Padding(
-                                                      //                                             padding: const EdgeInsets.only(top: 8.0),
-                                                      //                                             child: Text(
-                                                      //                                               'Please fill all fields',
-                                                      //                                               style: TextStyle(color: Colors.red),
-                                                      //                                             ),
-                                                      //                                           ),
-                                                      //                                       ],
-                                                      //                                     ),
-                                                      //                                   ),
-                                                      //                                 ),
-                                                      //                               ),
-                                                      //                             ),
-                                                      //                           );
-                                                      //
-                                                      //                       });
-                                                      //                 },
-                                                      //               );
-                                                      //             },
-                                                      //             child: Row(
-                                                      //               mainAxisAlignment: MainAxisAlignment.start,
-                                                      //               crossAxisAlignment: CrossAxisAlignment.start,
-                                                      //               children: [
-                                                      //                 const Text(
-                                                      //                   '+ Add One Time Charge',
-                                                      //                   style: TextStyle(
-                                                      //                       fontSize: 14,
-                                                      //                       color: Colors.black,
-                                                      //                       fontWeight: FontWeight.w500),
-                                                      //                 ),
-                                                      //               ],
-                                                      //             ),
-                                                      //           ),
-                                                      //         ),
-                                                      //       ],
-                                                      //       onChanged: (value) {
-                                                      //         String? chargeType;
-                                                      //         for (var entry
-                                                      //         in categorizedData.entries) {
-                                                      //           if (entry.value.contains(value)) {
-                                                      //             chargeType = entry.key;
-                                                      //             break;
-                                                      //           }
-                                                      //         }
-                                                      //
-                                                      //         setState(() {
-                                                      //           rows[index]['account'] = value;
-                                                      //           rows[index]['charge_type'] =
-                                                      //               chargeType;
-                                                      //         });
-                                                      //       },
-                                                      //       buttonStyleData: ButtonStyleData(
-                                                      //         height: 50,
-                                                      //         width: 220,
-                                                      //         padding: const EdgeInsets.only(
-                                                      //             left: 8, right: 5),
-                                                      //         decoration: BoxDecoration(
-                                                      //           borderRadius:
-                                                      //           BorderRadius.circular(6),
-                                                      //           color: Colors.white,
-                                                      //         ),
-                                                      //         elevation: 2,
-                                                      //       ),
-                                                      //       iconStyleData: const IconStyleData(
-                                                      //         icon: Icon(Icons.arrow_drop_down),
-                                                      //         iconSize: 24,
-                                                      //         iconEnabledColor: Color(0xFFb0b6c3),
-                                                      //         iconDisabledColor: Colors.grey,
-                                                      //       ),
-                                                      //       dropdownStyleData: DropdownStyleData(
-                                                      //         width: 250,
-                                                      //         decoration: BoxDecoration(
-                                                      //           borderRadius:
-                                                      //           BorderRadius.circular(6),
-                                                      //           color: Colors.white,
-                                                      //         ),
-                                                      //         scrollbarTheme: ScrollbarThemeData(
-                                                      //           radius: const Radius.circular(6),
-                                                      //           thickness:
-                                                      //           MaterialStateProperty.all(6),
-                                                      //           thumbVisibility:
-                                                      //           MaterialStateProperty.all(
-                                                      //               true),
-                                                      //         ),
-                                                      //       ),
-                                                      //       hint: const Text('Select an account'),
-                                                      //     ),
-                                                      //   ),
-                                                      // ),
-
-                                                      //abc
-                                                      // Padding(
-                                                      //   padding:
-                                                      //       const EdgeInsets
-                                                      //           .all(8),
-                                                      //   child:
-                                                      //       DropdownButtonHideUnderline(
-                                                      //     child:
-                                                      //         FormField<String>(
-                                                      //       validator: (value) {
-                                                      //         if (rows[index][
-                                                      //                     'account'] ==
-                                                      //                 null ||
-                                                      //             rows[index][
-                                                      //                     'account'] ==
-                                                      //                 'Select') {
-                                                      //           return 'Please select an account';
-                                                      //         }
-                                                      //         return null;
-                                                      //       },
-                                                      //       builder:
-                                                      //           (FormFieldState<
-                                                      //                   String>
-                                                      //               state) {
-                                                      //         String?
-                                                      //             selectedAccount =
-                                                      //             rows[index][
-                                                      //                 'account'];
-                                                      //
-                                                      //         // Ensure selected value is in the list
-                                                      //         Map<
-                                                      //                 String,
-                                                      //                 List<
-                                                      //                     String>>
-                                                      //             categorizedDataCopy =
-                                                      //             Map.from(
-                                                      //                 categorizedData);
-                                                      //         if (selectedAccount !=
-                                                      //                 null &&
-                                                      //             !categorizedData
-                                                      //                 .values
-                                                      //                 .expand(
-                                                      //                     (list) =>
-                                                      //                         list)
-                                                      //                 .contains(
-                                                      //                     selectedAccount) &&
-                                                      //             selectedAccount !=
-                                                      //                 'Select') {
-                                                      //           categorizedDataCopy[
-                                                      //               ''] = (categorizedDataCopy[
-                                                      //                   ''] ??
-                                                      //               [])
-                                                      //             ..add(
-                                                      //                 selectedAccount);
-                                                      //         }
-                                                      //
-                                                      //         // Prepare dropdown items including 'Select' as the first item
-                                                      //         List<
-                                                      //                 DropdownMenuItem<
-                                                      //                     String>>
-                                                      //             dropdownItems =
-                                                      //             [
-                                                      //           const DropdownMenuItem<
-                                                      //               String>(
-                                                      //             value:
-                                                      //                 'Select',
-                                                      //             child:
-                                                      //                 Padding(
-                                                      //               padding: EdgeInsets.symmetric(
-                                                      //                   horizontal:
-                                                      //                       12.0,
-                                                      //                   vertical:
-                                                      //                       4.0),
-                                                      //               child: Text(
-                                                      //                 'Select',
-                                                      //                 style:
-                                                      //                     TextStyle(
-                                                      //                   color: Colors
-                                                      //                       .grey,
-                                                      //                   fontWeight:
-                                                      //                       FontWeight.w400,
-                                                      //                   fontSize:
-                                                      //                       14,
-                                                      //                 ),
-                                                      //               ),
-                                                      //             ),
-                                                      //           ),
-                                                      //           ...categorizedDataCopy.values.expand(
-                                                      //                   (entry) {
-                                                      //             return entry.asMap().entries.map(
-                                                      //                     (items) {
-                                                      //                       int index = items.key;
-                                                      //                      String item =
-                                                      //                           items.value;
-                                                      //               return DropdownMenuItem<
-                                                      //                   String>(
-                                                      //                 value:
-                                                      //                    "${item}_${index}",
-                                                      //                 child:
-                                                      //                     Padding(
-                                                      //                   padding: const EdgeInsets
-                                                      //                       .symmetric(
-                                                      //                       horizontal:
-                                                      //                           12.0,
-                                                      //                       vertical:
-                                                      //                           4.0),
-                                                      //                   child:
-                                                      //                       Text(
-                                                      //                     item,
-                                                      //                     style:
-                                                      //                         const TextStyle(
-                                                      //                       color:
-                                                      //                           Colors.black,
-                                                      //                       fontWeight:
-                                                      //                           FontWeight.w400,
-                                                      //                       fontSize:
-                                                      //                           14,
-                                                      //                     ),
-                                                      //                   ),
-                                                      //                 ),
-                                                      //               );
-                                                      //             }).toList();
-                                                      //           }).toList(),
-                                                      //         ];
-                                                      //
-                                                      //         return Column(
-                                                      //           children: [
-                                                      //             // Label
-                                                      //             Container(
-                                                      //               height:45,
-                                                      //               decoration:
-                                                      //                   BoxDecoration(
-                                                      //                 border: Border.all(
-                                                      //                     color: Colors
-                                                      //                         .grey
-                                                      //                         .shade400),
-                                                      //                 borderRadius:
-                                                      //                     BorderRadius.circular(
-                                                      //                         8.0),
-                                                      //                 color: Colors
-                                                      //                     .white,
-                                                      //               ),
-                                                      //               child: DropdownButton2<
-                                                      //                   String>(
-                                                      //                 isExpanded:
-                                                      //                     true,
-                                                      //                 value: selectedAccount ?? 'Select', // Default to 'Select'
-                                                      //                 items:
-                                                      //                     dropdownItems,
-                                                      //                 onChanged:
-                                                      //                     (value) {
-                                                      //                   setState(
-                                                      //                       () {
-                                                      //                     rows[index]
-                                                      //                         [
-                                                      //                         'account'] = value ==
-                                                      //                             'Select'
-                                                      //                         ? null
-                                                      //                         : value;
-                                                      //                     print(' selct account ${selectedAccount}');
-                                                      //                     state.didChange(
-                                                      //                         value);
-                                                      //                   });
-                                                      //                 },
-                                                      //                 buttonStyleData:
-                                                      //                     const ButtonStyleData(
-                                                      //                   padding: EdgeInsets.symmetric(
-                                                      //                       horizontal:
-                                                      //                           12,
-                                                      //                       vertical:
-                                                      //                           8),
-                                                      //                 ),
-                                                      //                 dropdownStyleData:
-                                                      //                     DropdownStyleData(
-                                                      //                   decoration:
-                                                      //                       BoxDecoration(
-                                                      //                     borderRadius:
-                                                      //                         BorderRadius.circular(8),
-                                                      //                     color:
-                                                      //                         Colors.white,
-                                                      //                   ),
-                                                      //                 ),
-                                                      //                 iconStyleData:
-                                                      //                     const IconStyleData(
-                                                      //                   icon: Icon(
-                                                      //                       Icons
-                                                      //                           .keyboard_arrow_down,
-                                                      //                       color:
-                                                      //                           Colors.grey),
-                                                      //                 ),
-                                                      //               ),
-                                                      //             ),
-                                                      //             // Validation message
-                                                      //             if (state
-                                                      //                 .hasError)
-                                                      //               Padding(
-                                                      //                 padding: const EdgeInsets
-                                                      //                     .only(
-                                                      //                     top:
-                                                      //                         4.0,
-                                                      //                     left:
-                                                      //                         4.0),
-                                                      //                 child:
-                                                      //                     Text(
-                                                      //                   state
-                                                      //                       .errorText!,
-                                                      //                   style: const TextStyle(
-                                                      //                       color:
-                                                      //                           Colors.red,
-                                                      //                       fontSize: 12),
-                                                      //                 ),
-                                                      //               ),
-                                                      //           ],
-                                                      //         );
-                                                      //       },
-                                                      //     ),
-                                                      //   ),
-                                                      // ),
-
                                                       Container(
                                                         margin: EdgeInsets.only(
                                                             top: 5),
@@ -2936,12 +2253,15 @@ class _RenewleaseState extends State<Renewlease> {
                                     return {
                                       "account": element["account"],
                                       "amount": element["amount"],
-                                    //  "charge_type": 'One Time Charge',
-                                      "charge_type":(element["account"] == "" ||
-                                          element["account"] == "Late Fee Income" ||
-                                          element["account"] == "Pre-payments")
-                                          ? element["account"]
-                                          : "One Time Charge",
+                                      //  "charge_type": 'One Time Charge',
+                                      "charge_type":
+                                          (element["account"] == "" ||
+                                                  element["account"] ==
+                                                      "Late Fee Income" ||
+                                                  element["account"] ==
+                                                      "Pre-payments")
+                                              ? element["account"]
+                                              : "One Time Charge",
                                       //  "charge_type": element["charge_type"],
                                       "memo": element["memo"]
                                     };
@@ -2992,7 +2312,7 @@ class _RenewleaseState extends State<Renewlease> {
                                             : "",
                                   };
                                   print(leasedata);
-                                 // updatenewrenewallease(leasedata);
+                                  // updatenewrenewallease(leasedata);
                                 },
                                 child: Container(
                                     height:

@@ -66,12 +66,9 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -116,59 +113,29 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                   children: [
                     width < 400
                         ? Text("Property ",
-                            style: TextStyle(color: Colors.white))
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Property",
-                            style: TextStyle(color: Colors.white)),
-                    // Text("Property", style: TextStyle(color: Colors.white)),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 4,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("Tenant", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -197,27 +164,37 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: Row(mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text("Days", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    Flexible(
+                      child: Text(
+                        "Remaining Days",
+                        style: TextStyle(
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: width < 400 ? 14 : 14,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    // ascending3
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -772,17 +749,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                           children: [
                             SizedBox(height: 10),
                             _buildHeaders(),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                      Color.fromRGBO(152, 162, 179, .5)
-
-
-)),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -796,28 +764,30 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                       Propertytype.tenantNames!.join(" , ");
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
+                                    margin:
+                                    EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
                                       border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
+                                          color: Color(0xFFDBE0E5)),
+                                      borderRadius:
+                                      BorderRadius.circular(10),
                                     ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
                                           contentPadding: EdgeInsets.zero,
                                           title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
+                                            padding:
+                                            const EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              CrossAxisAlignment
+                                                  .center,
                                               children: <Widget>[
                                                 InkWell(
                                                   onTap: () {
@@ -837,29 +807,32 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                     setState(() {
                                                       if (expandedIndex ==
                                                           index) {
-                                                        expandedIndex = null;
+                                                        expandedIndex =
+                                                        null;
                                                       } else {
-                                                        expandedIndex = index;
+                                                        expandedIndex =
+                                                            index;
                                                       }
                                                     });
                                                   },
                                                   child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 5, right: 5),
+                                                    margin:
+                                                    EdgeInsets.only(
+                                                        left: 5,
+                                                        right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
-                                                            bottom: 10)
+                                                        bottom: 10)
                                                         : EdgeInsets.only(
-                                                            top: 10),
+                                                        top: 10),
                                                     child: FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                              .sortUp
+                                                          .sortUp
                                                           : FontAwesomeIcons
-                                                              .sortDown,
+                                                          .sortDown,
                                                       size: 20,
-                                                      color: blueColor
-,
+                                                      color: blueColor,
                                                     ),
                                                   ),
                                                 ),
@@ -870,202 +843,264 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                       setState(() {
                                                         if (expandedIndex ==
                                                             index) {
-                                                          expandedIndex = null;
+                                                          expandedIndex =
+                                                          null;
                                                         } else {
-                                                          expandedIndex = index;
+                                                          expandedIndex =
+                                                              index;
                                                         }
                                                       });
                                                     },
                                                     child: Text(
                                                       ' ${Propertytype.rentalAddress}',
                                                       style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                        color:
+                                                        Colors.black,
                                                         fontSize: 13,
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .03),
+                                                    width: MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width *
+                                                        .03),
                                                 Expanded(
-                                                  flex: 4,
-                                                  child: Text(
-                                                    '${tenants}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .03),
-                                                Expanded(
-                                                  flex: 3,
+                                                  flex: 1,
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10.0),
+                                                    const EdgeInsets
+                                                        .only(
+                                                        left: 10.0),
                                                     child: Text(
-                                                      // '${widget.data.createdAt}',
                                                       formatDate(
-                                                          '${Propertytype.remainingDays!.toStringAsFixed(0)}'),
-
+                                                          '${Propertytype.remainingDays!.toStringAsFixed(0)}') +
+                                                          ' days',
                                                       style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                        color:
+                                                        Colors.black,
                                                         fontSize: 13,
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
+                                                    width: MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width *
+                                                        .02),
                                               ],
                                             ),
                                           ),
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 2.0),
-                                            margin: EdgeInsets.only(bottom: 2),
+                                            // padding: EdgeInsets.symmetric(
+                                            //     horizontal: 2.0),
+                                            //
+                                            // margin: EdgeInsets.only(
+                                            //     bottom: 2),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                top: BorderSide(
+                                                    color:
+                                                    Color(0xFFDBE0E5),
+                                                    width: 1),
+                                              ),
+                                            ),
                                             child: SingleChildScrollView(
                                               child: Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
                                                 children: [
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                    const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16.0,
+                                                        vertical:
+                                                        8.0),
+                                                    child: Row(
+                                                      children: [
+                                                        SizedBox(width: 11,),
+                                                        Text(
+                                                          'Tenants : ',
+                                                          style:
+                                                          TextStyle(
+                                                            color:
+                                                            blueColor,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Text(
+                                                            tenants,
+                                                            style:
+                                                            TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                              fontSize:
+                                                              13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
                                                   if (Propertytype
                                                       .isRenewing !=
                                                       false)
                                                     Row(
-                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .end,
                                                       children: [
-                                                        Expanded(
+                                                        SizedBox(
+                                                          width: 12,
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap:
+                                                              () async {
+                                                            var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => Renewlease(
+                                                                      leaseId: Propertytype.leaseId!,
+                                                                      leasetype: Propertytype.leaseType,
+                                                                      rentamount: Propertytype.leaseAmount.toString(),
+                                                                      enddate: Propertytype.endDate,
+                                                                      startdate: Propertytype.startDate,
+                                                                    )));
+                                                            if (check ==
+                                                                true) {
+                                                              setState(
+                                                                      () {});
+                                                            }
+                                                          },
                                                           child:
-                                                          GestureDetector(
-                                                            onTap:
-                                                                () async {
-                                                              var check = await Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) => Renewlease(
-                                                                        leaseId: Propertytype.leaseId!,
-                                                                        leasetype: Propertytype.leaseType,
-                                                                        rentamount: Propertytype.leaseAmount.toString(),
-                                                                        enddate: Propertytype.endDate,
-                                                                        startdate: Propertytype.startDate,
-                                                                      )));
-                                                              if (check ==
-                                                                  true) {
-                                                                setState(
-                                                                        () {});
-                                                              }
-                                                            },
-                                                            child:
-                                                            Container(
-                                                              height: 40,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                  color:
-                                                                  Colors.grey[350]), // color:Colors.grey[100],
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .edit,
-                                                                    size:
-                                                                    15,
-                                                                    color:
-                                                                    blueColor,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width:
-                                                                    10,
-                                                                  ),
-                                                                  Text(
-                                                                    "Renew lease",
-                                                                    style: TextStyle(
-                                                                        color: blueColor,
-                                                                        fontWeight: FontWeight.bold),
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                          Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              // border: Border.all(color: Colors.green,
+                                                              //     // width: 1.5
+                                                              // ),
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade50,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .solidCircleCheck,
+                                                                  size:
+                                                                  20,
+                                                                  color: Colors
+                                                                      .green[700],
+                                                                ),
+                                                                // SizedBox(
+                                                                //   width:
+                                                                //   10,
+                                                                // ),
+                                                                // Text(
+                                                                //   "Renew lease",
+                                                                //   style: TextStyle(
+                                                                //       color: Colors.green[700],
+                                                                //       fontWeight: FontWeight.bold),
+                                                                // ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
                                                         SizedBox(
-                                                          width: 5,
+                                                          width: 15,
                                                         ),
-                                                        Expanded(
-                                                          child:
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              print(
-                                                                  "calling");
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            print(
+                                                                "calling");
 
-                                                              _showAlert(
-                                                                  context,
-                                                                  Propertytype
-                                                                      .leaseId!);
-                                                            },
-                                                            child:
-                                                            Container(
-                                                              height: 40,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                  color:
-                                                                  Colors.grey[350]),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .trashCan,
-                                                                    size:
-                                                                    15,
-                                                                    color:
-                                                                    blueColor,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width:
-                                                                    10,
-                                                                  ),
-                                                                  Text(
-                                                                    "Not Renewing",
-                                                                    style: TextStyle(
-                                                                        color: blueColor,
-                                                                        fontWeight: FontWeight.bold),
-                                                                  )
-                                                                ],
-                                                              ),
+                                                            _showAlert(
+                                                                context,
+                                                                Propertytype
+                                                                    .leaseId!);
+                                                          },
+                                                          child:
+                                                          Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            // height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              // border: Border.all(
+                                                              //     color: Colors
+                                                              //         .red,
+                                                              //     width:
+                                                              //         1.5),
+                                                              color: Colors
+                                                                  .red
+                                                                  .shade50,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .solidCircleXmark,
+                                                                  size:
+                                                                  20,
+                                                                  color: Colors
+                                                                      .red[700],
+                                                                ),
+                                                                // SizedBox(
+                                                                //   width:
+                                                                //       10,
+                                                                // ),
+                                                                // Text(
+                                                                //   "Not Renewing",
+                                                                //   style: TextStyle(
+                                                                //       color: Colors.red[700],
+                                                                //       fontWeight: FontWeight.bold),
+                                                                // )
+                                                              ],
                                                             ),
                                                           ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 12,
                                                         ),
                                                       ],
                                                     ),
@@ -1073,48 +1108,79 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                       .isRenewing ==
                                                       false)
                                                     Row(
-                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .end,
                                                       children: [
-                                                        Expanded(
-                                                          child:
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              print(
-                                                                  "calling");
+                                                        SizedBox(
+                                                          width: 12,
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            print(
+                                                                "calling");
 
-                                                              _showUndoAlert(
-                                                                  context,
-                                                                  Propertytype
-                                                                      .leaseId!);
-                                                            },
-                                                            child:
-                                                            Container(
-                                                              height: 40,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                  color:
-                                                                  Colors.grey[350]),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                                children: [
-                                                                  Text(
-                                                                    " Undo Not Renewing",
-                                                                    style: TextStyle(
-                                                                        color: blueColor,
-                                                                        fontWeight: FontWeight.bold),
-                                                                  )
-                                                                ],
-                                                              ),
+                                                            _showUndoAlert(
+                                                                context,
+                                                                Propertytype
+                                                                    .leaseId!);
+                                                          },
+                                                          child:
+                                                          Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            // height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              // border: Border.all(
+                                                              //     color:
+                                                              //         blueColor,
+                                                              //     width:
+                                                              //         1.5),
+                                                              color: Colors
+                                                                  .grey
+                                                                  .shade200,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .clockRotateLeft,
+                                                                    size:
+                                                                    20,
+                                                                    color:
+                                                                    blueColor),
+                                                                // SizedBox(
+                                                                //   width:
+                                                                //       10,
+                                                                // ),
+                                                                // Text(
+                                                                //   "Reset Decline Status",
+                                                                //   style: TextStyle(
+                                                                //       color: blueColor,
+                                                                //       fontWeight: FontWeight.bold),
+                                                                // ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
+                                                        SizedBox(
+                                                          width: 12,
+                                                        ),
                                                       ],
                                                     ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
                                                 ],
                                               ),
                                             ),
