@@ -688,7 +688,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
     final countyController = TextEditingController(text: ownerDetails?.country);
     final codeController =
         TextEditingController(text: ownerDetails?.postalCode);
-    return Scaffold(
+    return
+      Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(

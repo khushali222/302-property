@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Model/applience_details_model.dart';
 import '../Model/unit.dart';
 import '../constant/constant.dart';
 
@@ -42,6 +43,21 @@ class UnitData {
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body)["data"];
       List<unit_lease> leases = body.map((dynamic item) => unit_lease.fromJson(item)).toList();
+      return leases;
+    } else {
+      throw Exception('Failed to load leases');
+    }
+  }
+  Future<List<applience_details_model>> fetchdetails(String applienceid) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final response = await http.get(Uri.parse('${baseUrl}appliance/appliance_details/$applienceid'),
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body)["data"];
+      List<applience_details_model> leases = body.map((dynamic item) => applience_details_model.fromJson(item)).toList();
       return leases;
     } else {
       throw Exception('Failed to load leases');

@@ -658,10 +658,34 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     Alert(
       context: context,
       type: AlertType.warning,
-      title: "Payment Acknowledgement",
-      desc: "Are you sure you want to acknowledge this payment as Failed?",
+      title: null,
+      desc: null,
       style: AlertStyle(
         backgroundColor: Colors.white,
+      ),
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 15),
+          Text(
+            "Payment Acknowledgement",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 15),
+          Text(
+            "Are you sure you want to acknowledge this payment as Failed?",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+          ),
+        ],
       ),
       buttons: [
         DialogButton(
@@ -701,10 +725,28 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     Alert(
       context: context,
       type: AlertType.warning,
-      title: "Payment Retry",
-      desc: "Retry this payment now?",
+      title: null,
+      desc: null,
       style: AlertStyle(
         backgroundColor: Colors.white,
+      ),
+      content: Column(
+        children: [
+          SizedBox(height: 15),
+          Text(
+            "Payment Retry",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 15),
+          Text(
+            "Retry this payment now?",
+            style: TextStyle(fontSize: 14, color: Colors.black87),
+          ),
+        ],
       ),
       buttons: [
         DialogButton(
@@ -747,14 +789,28 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     Alert(
       context: context,
       type: AlertType.warning,
-      title: "Payment ReSchedule",
-      desc:
-      "Please select a payment date to retry. The date must be tomorrow or later :",
+      title: null,
+      desc: null,
       content: Column(
+        // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(
-            height: 10,
+          SizedBox(height: 15),
+          Text(
+            "Reschedule Payment",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.black,
+            ),
           ),
+          SizedBox(height: 10),
+          Text(
+            "Please select a payment date to retry. The date must be tomorrow or later:",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.black87),
+          ),
+          SizedBox(height: 16),
           SizedBox(
             height: 60,
             child: CustomTextField(
@@ -764,22 +820,21 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 DateTime? pickedDate = await showDatePicker(
                   context: context,
                   initialDate: tomorrow,
-                  firstDate:
-                  tomorrow, // Restrict selection to tomorrow and future dates
+                  firstDate: tomorrow,
                   lastDate: DateTime(2101),
                   locale: const Locale('en', 'US'),
                   builder: (BuildContext context, Widget? child) {
                     return Theme(
                       data: ThemeData.light().copyWith(
                         colorScheme: ColorScheme.light(
-                          primary: blueColor, // header background color
-                          onPrimary: Colors.white, // header text color
-                          onSurface: blueColor, // body text color
+                          primary: blueColor,
+                          onPrimary: Colors.white,
+                          onSurface: blueColor,
                         ),
                         textButtonTheme: TextButtonThemeData(
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: blueColor, // button text color
+                            backgroundColor: blueColor,
                           ),
                         ),
                       ),
@@ -792,7 +847,6 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   setState(() {
                     retrydate.text =
                     pickedDate.toLocal().toString().split(' ')[0];
-                    // This ensures the date appears as selected in yyyy-MM-dd format
                   });
                 }
               },
@@ -813,12 +867,6 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               controller: retrydate,
             ),
           ),
-
-          // if (_errorText)
-          //   Text(
-          //     "Please fill in all fields correctly.",
-          //     style: TextStyle(color: Colors.redAccent),
-          //   ),
         ],
       ),
       style: AlertStyle(
@@ -1169,94 +1217,140 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   }
 
   void _showAlertvoid(BuildContext context, String id) {
-    print("calling");
     TextEditingController reason = TextEditingController();
-    Alert(
+
+    showDialog(
       context: context,
-      type: AlertType.warning,
-      title: "Are you sure you want to void this payment?",
-      desc: "A void can be issued on this payment until it is settled",
-      content: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            height: 45,
-            child: TextField(
-              controller: reason,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter reason for void',
-                contentPadding: EdgeInsets.only(top: 8, left: 15),
-              ),
-            ),
-          ),
-          // if (_errorText)
-          //   Text(
-          //     "Please fill in all fields correctly.",
-          //     style: TextStyle(color: Colors.redAccent),
-          //   ),
-        ],
-      ),
-      style: AlertStyle(
-        backgroundColor: Colors.white,
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "Void",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () async {
-            if (reason.text.isEmpty) {
-              // setState(() {
-              //  _errorText == true;
-              // });
-              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            } else {
-              Navigator.pop(context);
-              var data = await PaymentCronjobRepository().VoidCron(
-                  pay_id: id, void_reason: reason.text, context: context);
-              // Add your delete logic here
-              if (data != null)
-                setState(() {
-                  futurecronjobpayment = cronjob_payment_tableService()
-                      .fetchCronjob_payment(limit: itemsPerPage);
-                });
-            }
-          },
-          color: blueColor,
-        ),
-        DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () {
-            Alert(
-              type: AlertType.warning,
-              title: "Void Cancelled",
-              context: context,
-              buttons: [
-                DialogButton(
-                  child: Text(
-                    "Ok",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+      barrierDismissible: false, // prevent dismiss on outside tap
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            bool isReasonEntered = reason.text.trim().isNotEmpty;
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              backgroundColor: Colors.white,
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 68,
+                    height: 68,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.orange, width: 3),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '!',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 34,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context); // Close dialog
-                    Navigator.pop(context);
-                  },
-                  color: blueColor,
-                ),
-              ],
-            ).show();
+                  SizedBox(height: 12),
+                  Text(
+                    "Are you sure you want to void this payment?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "A void can be issued on this payment until it is settled",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: reason,
+                    onChanged: (_) => setState(() {}),
+                    decoration: const InputDecoration(
+                      hintText: 'Enter reason for void',
+                      border: OutlineInputBorder(),
+                      contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: isReasonEntered
+                              ? () async {
+                            Navigator.pop(context);
+                            var data =
+                            await PaymentCronjobRepository().VoidCron(
+                              pay_id: id,
+                              void_reason: reason.text.trim(),
+                              context: context,
+                            );
+                            if (data != null) {
+                              // refresh data
+                              futurecronjobpayment =
+                                  cronjob_payment_tableService()
+                                      .fetchCronjob_payment(
+                                      limit: itemsPerPage);
+                            }
+                          }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                            isReasonEntered ? blueColor : Colors.grey,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          child: const Text("Void",
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: DialogButton(
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          onPressed: () {
+                            Alert(
+                              type: AlertType.warning,
+                              title: "Void Cancelled",
+                              context: context,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "Ok",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context); // Close dialog
+                                    Navigator.pop(context);
+                                  },
+                                  color: blueColor,
+                                ),
+                              ],
+                            ).show();
+                          },
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
           },
-          color: Colors.grey,
-        ),
-      ],
-    ).show();
+        );
+      },
+    );
   }
 
   @override
