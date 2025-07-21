@@ -16,6 +16,7 @@ import '../../../../repository/properties_summery.dart';
 import '../../../../repository/unit_data.dart';
 import '../../../../Model/unit.dart';
 import 'package:http/http.dart' as http;
+
 class AppliancesPart extends StatefulWidget {
   Rentals? properties;
   unit_properties? unit;
@@ -49,7 +50,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
   Future<void> fetchLeases() async {
     //  try {
     final fetchedLeases =
-    await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
+        await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
     print(widget.unit!.unitId!);
     print('hello');
     setState(() {
@@ -114,8 +115,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -236,10 +237,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -256,10 +257,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -491,11 +492,11 @@ class _AppliancesPartState extends State<AppliancesPart> {
                   children: [
                     width < 400
                         ? Text("Name",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Name",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                   ],
@@ -653,7 +654,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     'Appliances',
                     style: TextStyle(
                       fontSize:
-                      MediaQuery.of(context).size.width < 500 ? 17 : 20,
+                          MediaQuery.of(context).size.width < 500 ? 17 : 20,
                       fontWeight: FontWeight.bold,
                       color: blueColor,
                     ),
@@ -684,6 +685,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         }
                         filterControllers.clear();
                         showFiltersSection = false;
+
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -693,18 +695,16 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                 return Dialog(
                                   backgroundColor: Colors.white,
                                   surfaceTintColor: Colors.white,
-                                  child:
-                                  SingleChildScrollView(
+                                  child: SingleChildScrollView(
                                     child: SizedBox(
                                       width: 800,
-                                      // width: double.infinity,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Form(
                                           key: _formKey,
                                           child: Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Row(
@@ -713,7 +713,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     "Add Home Systems",
                                                     style: TextStyle(
                                                         fontWeight:
-                                                        FontWeight.bold,
+                                                            FontWeight.bold,
                                                         fontSize: 16,
                                                         color: blueColor),
                                                   ),
@@ -724,12 +724,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               ),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Name',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               CustomTextFormField(
@@ -737,17 +737,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 hintText: 'Enter Name',
                                                 controller: _name,
                                                 keyboardType:
-                                                TextInputType.text,
+                                                    TextInputType.text,
                                               ),
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Description',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               CustomTextFormField(
@@ -755,26 +755,26 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 hintText: 'Enter description',
                                                 controller: _description,
                                                 keyboardType:
-                                                TextInputType.text,
+                                                    TextInputType.text,
                                               ),
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Category',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               SizedBox(height: 4),
                                               //categories dropdwoun
                                               Padding(
                                                 padding:
-                                                const EdgeInsets.all(8.0),
+                                                    const EdgeInsets.all(8.0),
                                                 child:
-                                                DropdownButtonHideUnderline(
+                                                    DropdownButtonHideUnderline(
                                                   child: DropdownButton2<
                                                       allcategories_model>(
                                                     isExpanded: true,
@@ -782,8 +782,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                         ? 'Loading categories...'
                                                         : 'Select Category'),
                                                     value: _dropdownCategories
-                                                        .contains(
-                                                        _selectedDropdownCategory)
+                                                            .contains(
+                                                                _selectedDropdownCategory)
                                                         ? _selectedDropdownCategory
                                                         : null,
                                                     items: _dropdownCategories
@@ -805,98 +805,78 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     //   });
                                                     // },
                                                     onChanged:
-                                                    _isLoadingCategories
-                                                        ? null // disables dropdown while loading
-                                                        : (allcategories_model?
-                                                    newValue) {
-                                                      setState(() {
-                                                        _selectedDropdownCategory =
-                                                            newValue;
-
-                                                        // Check if HVAC is selected and show/hide filters section
-                                                        if (newValue
-                                                            ?.name
-                                                            ?.toLowerCase() ==
-                                                            'hvac') {
-                                                          showFiltersSection =
-                                                          true;
-                                                          // Add an initial filter if none exist
-                                                          if (filterControllers
-                                                              .isEmpty) {
-                                                            filterControllers
-                                                                .add({
-                                                              'name':
-                                                              TextEditingController(),
-                                                              'size':
-                                                              TextEditingController(),
-                                                            });
-                                                          }
-                                                        } else {
-                                                          showFiltersSection =
-                                                          false;
-                                                          // Clear any existing filters if not HVAC
-                                                          for (var controllers
-                                                          in filterControllers) {
-                                                            controllers[
-                                                            'name']
-                                                                ?.dispose();
-                                                            controllers[
-                                                            'size']
-                                                                ?.dispose();
-                                                          }
-                                                          filterControllers
-                                                              .clear();
-                                                        }
-                                                      });
-                                                    },
+                                                        _isLoadingCategories
+                                                            ? null // disables dropdown while loading
+                                                            : (allcategories_model?
+                                                                newValue) {
+                                                                setState(() {
+                                                                  _selectedDropdownCategory =
+                                                                      newValue;
+                                                                  // Don't show filters section immediately for HVAC
+                                                                  showFiltersSection =
+                                                                      false;
+                                                                  // Clear any existing filters
+                                                                  for (var controllers
+                                                                      in filterControllers) {
+                                                                    controllers[
+                                                                            'name']
+                                                                        ?.dispose();
+                                                                    controllers[
+                                                                            'size']
+                                                                        ?.dispose();
+                                                                  }
+                                                                  filterControllers
+                                                                      .clear();
+                                                                });
+                                                              },
                                                     buttonStyleData:
-                                                    ButtonStyleData(
+                                                        ButtonStyleData(
                                                       height: 45,
                                                       padding:
-                                                      const EdgeInsets.only(
-                                                          left: 14,
-                                                          right: 14),
+                                                          const EdgeInsets.only(
+                                                              left: 14,
+                                                              right: 14),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       elevation: 2,
                                                     ),
                                                     iconStyleData:
-                                                    const IconStyleData(
+                                                        const IconStyleData(
                                                       icon: Icon(Icons
                                                           .arrow_drop_down),
                                                       iconSize: 24,
                                                       iconEnabledColor:
-                                                      Color(0xFFb0b6c3),
+                                                          Color(0xFFb0b6c3),
                                                       iconDisabledColor:
-                                                      Colors.grey,
+                                                          Colors.grey,
                                                     ),
                                                     dropdownStyleData:
-                                                    DropdownStyleData(
+                                                        DropdownStyleData(
                                                       maxHeight: 250,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       scrollbarTheme:
-                                                      ScrollbarThemeData(
+                                                          ScrollbarThemeData(
                                                         radius: const Radius
                                                             .circular(6),
                                                         thickness:
-                                                        MaterialStateProperty
-                                                            .all(6),
+                                                            MaterialStateProperty
+                                                                .all(6),
                                                         thumbVisibility:
-                                                        MaterialStateProperty
-                                                            .all(true),
+                                                            MaterialStateProperty
+                                                                .all(true),
                                                       ),
                                                     ),
                                                     menuItemStyleData:
-                                                    const MenuItemStyleData(
+                                                        const MenuItemStyleData(
                                                       height: 50,
                                                       padding: EdgeInsets.only(
                                                           left: 14, right: 14),
@@ -907,12 +887,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Type',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               CustomTextFormField(
@@ -920,35 +900,35 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 hintText: 'Enter type',
                                                 controller: _type,
                                                 keyboardType:
-                                                TextInputType.name,
+                                                    TextInputType.name,
                                               ),
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Brand',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               Padding(
                                                 padding:
-                                                const EdgeInsets.all(8.0),
+                                                    const EdgeInsets.all(8.0),
                                                 child:
-                                                DropdownButtonHideUnderline(
+                                                    DropdownButtonHideUnderline(
                                                   child:
-                                                  DropdownButton2<String>(
+                                                      DropdownButton2<String>(
                                                     isExpanded: true,
                                                     hint: const Text(
                                                         'Select Brand'),
                                                     value: brandList.contains(
-                                                        _selectedBrand)
+                                                            _selectedBrand)
                                                         ? _selectedBrand
                                                         : null,
                                                     items:
-                                                    brandList.map((brand) {
+                                                        brandList.map((brand) {
                                                       return DropdownMenuItem<
                                                           String>(
                                                         value: brand,
@@ -963,56 +943,56 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       });
                                                     },
                                                     buttonStyleData:
-                                                    ButtonStyleData(
+                                                        ButtonStyleData(
                                                       height: 45,
                                                       padding: const EdgeInsets
                                                           .symmetric(
                                                           horizontal: 14),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       elevation: 2,
                                                     ),
                                                     iconStyleData:
-                                                    const IconStyleData(
+                                                        const IconStyleData(
                                                       icon: Icon(Icons
                                                           .arrow_drop_down),
                                                       iconSize: 24,
                                                       iconEnabledColor:
-                                                      Color(0xFFb0b6c3),
+                                                          Color(0xFFb0b6c3),
                                                       iconDisabledColor:
-                                                      Colors.grey,
+                                                          Colors.grey,
                                                     ),
                                                     dropdownStyleData:
-                                                    DropdownStyleData(
+                                                        DropdownStyleData(
                                                       maxHeight: 250,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       scrollbarTheme:
-                                                      ScrollbarThemeData(
+                                                          ScrollbarThemeData(
                                                         radius: const Radius
                                                             .circular(6),
                                                         thickness:
-                                                        MaterialStateProperty
-                                                            .all(6),
+                                                            MaterialStateProperty
+                                                                .all(6),
                                                         thumbVisibility:
-                                                        MaterialStateProperty
-                                                            .all(true),
+                                                            MaterialStateProperty
+                                                                .all(true),
                                                       ),
                                                     ),
                                                     menuItemStyleData:
-                                                    const MenuItemStyleData(
+                                                        const MenuItemStyleData(
                                                       height: 50,
                                                       padding:
-                                                      EdgeInsets.symmetric(
-                                                          horizontal: 14),
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 14),
                                                     ),
                                                   ),
                                                 ),
@@ -1025,7 +1005,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                   'Model',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               CustomTextFormField(
@@ -1033,17 +1013,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 hintText: 'Enter model',
                                                 controller: _model,
                                                 keyboardType:
-                                                TextInputType.text,
+                                                    TextInputType.text,
                                               ),
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Serial Number',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               CustomTextFormField(
@@ -1051,17 +1031,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 hintText: 'Enter serial number',
                                                 controller: _serialNumber,
                                                 keyboardType:
-                                                TextInputType.text,
+                                                    TextInputType.text,
                                               ),
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Installed Date',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               dateField(
@@ -1072,12 +1052,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Warranty Expiry',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               dateField(
@@ -1088,12 +1068,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Last Maintenance Date',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               dateField(
@@ -1104,26 +1084,26 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Status',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               Padding(
                                                 padding:
-                                                const EdgeInsets.all(8.0),
+                                                    const EdgeInsets.all(8.0),
                                                 child:
-                                                DropdownButtonHideUnderline(
+                                                    DropdownButtonHideUnderline(
                                                   child:
-                                                  DropdownButton2<String>(
+                                                      DropdownButton2<String>(
                                                     isExpanded: true,
                                                     hint: const Text(
                                                         'Select Status'),
                                                     value: statusList.contains(
-                                                        _selectedStatus)
+                                                            _selectedStatus)
                                                         ? _selectedStatus
                                                         : null,
                                                     items: statusList
@@ -1142,56 +1122,56 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       });
                                                     },
                                                     buttonStyleData:
-                                                    ButtonStyleData(
+                                                        ButtonStyleData(
                                                       height: 45,
                                                       padding: const EdgeInsets
                                                           .symmetric(
                                                           horizontal: 14),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       elevation: 2,
                                                     ),
                                                     iconStyleData:
-                                                    const IconStyleData(
+                                                        const IconStyleData(
                                                       icon: Icon(Icons
                                                           .arrow_drop_down),
                                                       iconSize: 24,
                                                       iconEnabledColor:
-                                                      Color(0xFFb0b6c3),
+                                                          Color(0xFFb0b6c3),
                                                       iconDisabledColor:
-                                                      Colors.grey,
+                                                          Colors.grey,
                                                     ),
                                                     dropdownStyleData:
-                                                    DropdownStyleData(
+                                                        DropdownStyleData(
                                                       maxHeight: 250,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       scrollbarTheme:
-                                                      ScrollbarThemeData(
+                                                          ScrollbarThemeData(
                                                         radius: const Radius
                                                             .circular(6),
                                                         thickness:
-                                                        MaterialStateProperty
-                                                            .all(6),
+                                                            MaterialStateProperty
+                                                                .all(6),
                                                         thumbVisibility:
-                                                        MaterialStateProperty
-                                                            .all(true),
+                                                            MaterialStateProperty
+                                                                .all(true),
                                                       ),
                                                     ),
                                                     menuItemStyleData:
-                                                    const MenuItemStyleData(
+                                                        const MenuItemStyleData(
                                                       height: 50,
                                                       padding:
-                                                      EdgeInsets.symmetric(
-                                                          horizontal: 14),
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 14),
                                                     ),
                                                   ),
                                                 ),
@@ -1199,12 +1179,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               SizedBox(height: 8),
                                               Padding(
                                                 padding:
-                                                EdgeInsets.only(left: 10),
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
                                                   'Maintenance Notes',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               CustomTextFormField(
@@ -1212,42 +1192,53 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 hintText: 'Enter notes',
                                                 controller: _maintenanceNotes,
                                                 keyboardType:
-                                                TextInputType.text,
+                                                    TextInputType.text,
                                               ),
                                               const SizedBox(height: 16),
                                               // Add this after your Status dropdown
                                               if (_selectedDropdownCategory
-                                                  ?.name ==
+                                                      ?.name ==
                                                   'HVAC') ...[
                                                 SizedBox(height: 16),
                                                 Row(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Text(
                                                       'Filters',
                                                       style: TextStyle(
                                                         fontWeight:
-                                                        FontWeight.bold,
+                                                            FontWeight.bold,
                                                         fontSize: 16,
                                                       ),
                                                     ),
                                                     ElevatedButton(
                                                       onPressed: () {
                                                         setState(() {
-                                                          addNewFilter();
+                                                          showFiltersSection =
+                                                              true;
+                                                          if (filterControllers
+                                                              .isEmpty) {
+                                                            filterControllers
+                                                                .add({
+                                                              'name':
+                                                                  TextEditingController(),
+                                                              'size':
+                                                                  TextEditingController(),
+                                                            });
+                                                          }
                                                         });
                                                       },
                                                       style: ElevatedButton
                                                           .styleFrom(
                                                         backgroundColor:
-                                                        blueColor,
+                                                            blueColor,
                                                         shape:
-                                                        RoundedRectangleBorder(
+                                                            RoundedRectangleBorder(
                                                           borderRadius:
-                                                          BorderRadius
-                                                              .circular(8),
+                                                              BorderRadius
+                                                                  .circular(8),
                                                         ),
                                                       ),
                                                       child: Text('Add Filter',
@@ -1277,21 +1268,21 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       margin: EdgeInsets.only(
                                                           bottom: 16),
                                                       padding:
-                                                      EdgeInsets.all(16),
+                                                          EdgeInsets.all(16),
                                                       decoration: BoxDecoration(
                                                         border: Border.all(
                                                             color: Colors
                                                                 .grey.shade300),
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(8),
+                                                            BorderRadius
+                                                                .circular(8),
                                                       ),
                                                       child: Column(
                                                         children: [
                                                           Row(
                                                             mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
                                                             children: [
                                                               Text(
                                                                   'Filter ${index + 1}'),
@@ -1314,25 +1305,25 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                           CustomTextFormField(
                                                             labelText: '',
                                                             hintText:
-                                                            'Filter Name',
+                                                                'Filter Name',
                                                             controller:
-                                                            controllers[
-                                                            'name']!,
+                                                                controllers[
+                                                                    'name']!,
                                                             keyboardType:
-                                                            TextInputType
-                                                                .text,
+                                                                TextInputType
+                                                                    .text,
                                                           ),
                                                           SizedBox(height: 8),
                                                           CustomTextFormField(
                                                             labelText: '',
                                                             hintText:
-                                                            'Filter Size (e.g., 16x20x1)',
+                                                                'Filter Size (e.g., 16x20x1)',
                                                             controller:
-                                                            controllers[
-                                                            'size']!,
+                                                                controllers[
+                                                                    'size']!,
                                                             keyboardType:
-                                                            TextInputType
-                                                                .text,
+                                                                TextInputType
+                                                                    .text,
                                                           ),
                                                         ],
                                                       ),
@@ -1343,7 +1334,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               const SizedBox(height: 16),
                                               Row(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                    MainAxisAlignment.start,
                                                 children: [
                                                   SizedBox(
                                                     width: 10,
@@ -1353,17 +1344,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       style: ElevatedButton
                                                           .styleFrom(
                                                         backgroundColor:
-                                                        blueColor,
+                                                            blueColor,
                                                         shape:
-                                                        RoundedRectangleBorder(
+                                                            RoundedRectangleBorder(
                                                           borderRadius:
-                                                          BorderRadius
-                                                              .circular(8),
+                                                              BorderRadius
+                                                                  .circular(8),
                                                         ),
                                                       ),
                                                       onPressed: () async {
                                                         if (_name
-                                                            .text.isEmpty ||
+                                                                .text.isEmpty ||
                                                             _description
                                                                 .text.isEmpty ||
                                                             _installedDate
@@ -1375,7 +1366,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                             _selectedBrand ==
                                                                 null) {
                                                           setState(() =>
-                                                          iserror = true);
+                                                              iserror = true);
                                                         } else {
                                                           setState(() {
                                                             isLoading = true;
@@ -1383,73 +1374,99 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                           });
 
                                                           SharedPreferences
-                                                          prefs =
-                                                          await SharedPreferences
-                                                              .getInstance();
+                                                              prefs =
+                                                              await SharedPreferences
+                                                                  .getInstance();
                                                           String? id =
-                                                          prefs.getString(
-                                                              "adminId");
+                                                              prefs.getString(
+                                                                  "adminId");
                                                           List<
-                                                              Map<String,
-                                                                  dynamic>>
-                                                          filters =
-                                                          showFiltersSection
-                                                              ? filterControllers
-                                                              .map(
-                                                                  (controller) {
-                                                                return {
-                                                                  "filter_name":
-                                                                  controller['name']?.text ??
-                                                                      '',
-                                                                  "filter_size":
-                                                                  controller['size']?.text ??
-                                                                      '',
-                                                                };
-                                                              }).toList()
-                                                              : [];
+                                                                  Map<String,
+                                                                      dynamic>>
+                                                              filters =
+                                                              showFiltersSection
+                                                                  ? filterControllers
+                                                                      .map(
+                                                                          (controller) {
+                                                                      return {
+                                                                        "filter_name":
+                                                                            controller['name']?.text ??
+                                                                                '',
+                                                                        "filter_size":
+                                                                            controller['size']?.text ??
+                                                                                '',
+                                                                      };
+                                                                    }).toList()
+                                                                  : [];
+
+                                                          if (_selectedDropdownCategory
+                                                                      ?.name ==
+                                                                  'HVAC' &&
+                                                              showFiltersSection) {
+                                                            filters =
+                                                                filterControllers
+                                                                    .map(
+                                                                        (controller) {
+                                                              return {
+                                                                "filter_id": DateTime
+                                                                        .now()
+                                                                    .millisecondsSinceEpoch
+                                                                    .toString(),
+                                                                "filter_name":
+                                                                    controller['name']
+                                                                            ?.text ??
+                                                                        '',
+                                                                "filter_size":
+                                                                    controller['size']
+                                                                            ?.text ??
+                                                                        '',
+                                                              };
+                                                            }).toList();
+                                                          }
+
                                                           Properies_summery_Repo()
                                                               .addappliances(
                                                             adminId: id,
                                                             unitId: widget
                                                                 .unit?.unitId,
                                                             appliancename:
-                                                            _name.text,
+                                                                _name.text,
                                                             appliancedescription:
-                                                            _description
-                                                                .text,
+                                                                _description
+                                                                    .text,
                                                             installeddate:
-                                                            _installedDate
-                                                                .text,
+                                                                _installedDate
+                                                                    .text,
                                                             type: _type.text,
                                                             brand:
-                                                            _selectedBrand,
+                                                                _selectedBrand,
                                                             model: _model.text,
                                                             serialNumber:
-                                                            _serialNumber
-                                                                .text,
+                                                                _serialNumber
+                                                                    .text,
                                                             warrantyExpiry:
-                                                            _warrantyExpiry
-                                                                .text
-                                                                .isNotEmpty
-                                                                ? _warrantyExpiry
-                                                                .text
-                                                                : null,
+                                                                _warrantyExpiry
+                                                                        .text
+                                                                        .isNotEmpty
+                                                                    ? _warrantyExpiry
+                                                                        .text
+                                                                    : null,
                                                             lastMaintenanceDate:
-                                                            _lastMaintenanceDate
-                                                                .text
-                                                                .isNotEmpty
-                                                                ? _lastMaintenanceDate
-                                                                .text
-                                                                : null,
+                                                                _lastMaintenanceDate
+                                                                        .text
+                                                                        .isNotEmpty
+                                                                    ? _lastMaintenanceDate
+                                                                        .text
+                                                                    : null,
                                                             maintenanceNotes:
-                                                            _maintenanceNotes
-                                                                .text,
+                                                                _maintenanceNotes
+                                                                    .text,
                                                             status:
-                                                            _selectedStatus,
+                                                                _selectedStatus,
                                                             categoryId:
-                                                            _selectedDropdownCategory
-                                                                ?.categoryId ??
-                                                                "",
+                                                                _selectedDropdownCategory
+                                                                        ?.categoryId ??
+                                                                    "",
                                                             filters: filters,
                                                           )
                                                               .then((value) {
@@ -1457,55 +1474,55 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                               isLoading = false;
                                                               leases.add(
                                                                   unit_appliance(
-                                                                    applianceName:
+                                                                applianceName:
                                                                     _name.text,
-                                                                    applianceDescription:
+                                                                applianceDescription:
                                                                     _description
                                                                         .text,
-                                                                    installedDate:
+                                                                installedDate:
                                                                     _installedDate
                                                                         .text,
-                                                                    adminId: id,
-                                                                    unitId: widget
-                                                                        .unit
-                                                                        ?.unitId,
-                                                                    type:
+                                                                adminId: id,
+                                                                unitId: widget
+                                                                    .unit
+                                                                    ?.unitId,
+                                                                type:
                                                                     _type.text,
-                                                                    brand:
+                                                                brand:
                                                                     _selectedBrand,
-                                                                    model:
+                                                                model:
                                                                     _model.text,
-                                                                    serialNumber:
+                                                                serialNumber:
                                                                     _serialNumber
                                                                         .text,
-                                                                    warrantyExpiry:
+                                                                warrantyExpiry:
                                                                     _warrantyExpiry
                                                                         .text,
-                                                                    lastMaintenanceDate:
+                                                                lastMaintenanceDate:
                                                                     _lastMaintenanceDate
                                                                         .text,
-                                                                    maintenanceNotes:
+                                                                maintenanceNotes:
                                                                     _maintenanceNotes
                                                                         .text,
-                                                                    status:
+                                                                status:
                                                                     _selectedStatus,
-                                                                    categoryId:
+                                                                categoryId:
                                                                     _selectedDropdownCategory
                                                                         ?.categoryId,
-                                                                    filters:
+                                                                filters:
                                                                     filters,
-                                                                  ));
+                                                              ));
                                                             });
                                                             reload_screen();
                                                             Navigator.pop(
                                                                 context, true);
                                                           }).catchError((e) {
                                                             setState(() =>
-                                                            isLoading =
-                                                            false);
+                                                                isLoading =
+                                                                    false);
                                                             // Show error message to user
                                                             ScaffoldMessenger
-                                                                .of(context)
+                                                                    .of(context)
                                                                 .showSnackBar(
                                                               SnackBar(
                                                                   content: Text(
@@ -1527,7 +1544,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                           Navigator.of(context)
                                                               .pop(),
                                                       child:
-                                                      const Text('Cancel'),
+                                                          const Text('Cancel'),
                                                     ),
                                                   ),
                                                 ],
@@ -1535,12 +1552,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               if (iserror)
                                                 const Padding(
                                                   padding:
-                                                  EdgeInsets.only(top: 8.0),
+                                                      EdgeInsets.only(top: 8.0),
                                                   child: Text(
                                                     "Please fill in all fields correctly.",
                                                     style: TextStyle(
                                                         color:
-                                                        Colors.redAccent),
+                                                            Colors.redAccent),
                                                   ),
                                                 )
                                             ],
@@ -1555,9 +1572,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                           },
                         );
                       },
-    //                   onTap:(){
-    //                     Navigator.push(context, MaterialPageRoute(builder: (context)=>AddApplience(unit: widget.unit,)));
-    // },
+                      //                   onTap:(){
+                      //                     Navigator.push(context, MaterialPageRoute(builder: (context)=>AddApplience(unit: widget.unit,)));
+                      // },
                       // onTap: () {
                       //   _name.clear();
                       //   _description.clear();
@@ -1814,18 +1831,18 @@ class _AppliancesPartState extends State<AppliancesPart> {
                           ),
                         ),
                         height:
-                        MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                            MediaQuery.of(context).size.width < 500 ? 40 : 50,
                         width:
-                        MediaQuery.of(context).size.width < 500 ? 70 : 80,
+                            MediaQuery.of(context).size.width < 500 ? 70 : 80,
                         child: Center(
                           child: Text(
                             'Add',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 14
-                                    : 20,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 14
+                                        : 20,
                                 color: blueColor),
                           ),
                         ),
@@ -1849,9 +1866,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
                           child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                        color: Colors.black,
+                        size: 40.0,
+                      ));
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1867,13 +1884,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       } else if (searchValue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((rentals) => rentals.applianceName!
-                            .toLowerCase()
-                            .contains(searchValue!.toLowerCase()))
+                                .toLowerCase()
+                                .contains(searchValue!.toLowerCase()))
                             .toList();
                       } else {
                         data = snapshot.data!
                             .where((rentals) =>
-                        rentals.applianceName == searchValue)
+                                rentals.applianceName == searchValue)
                             .toList();
                       }
                       sortData(data);
@@ -1911,7 +1928,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           ? Color(0xFFF4F8FF)
                                           : Colors.white,
                                       border:
-                                      Border.all(color: Color(0xFFDBE0E5)),
+                                          Border.all(color: Color(0xFFDBE0E5)),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     // decoration: BoxDecoration(
@@ -1925,9 +1942,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                             padding: const EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 InkWell(
                                                   onTap: () {
@@ -1958,15 +1975,15 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                         left: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
-                                                        bottom: 10)
+                                                            bottom: 10)
                                                         : EdgeInsets.only(
-                                                        top: 10),
+                                                            top: 10),
                                                     child: FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                          .sortUp
+                                                              .sortUp
                                                           : FontAwesomeIcons
-                                                          .sortDown,
+                                                              .sortDown,
                                                       size: 20,
                                                       color: blueColor,
                                                     ),
@@ -1988,7 +2005,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
-                                                        FontWeight.bold,
+                                                            FontWeight.bold,
                                                         fontSize: 13,
                                                       ),
                                                     ),
@@ -1996,10 +2013,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .09),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .09),
                                                 Expanded(
                                                   flex: 1,
                                                   child: Text(
@@ -2007,18 +2024,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       fontSize: 12,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .08),
-
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
                                               ],
                                             ),
                                           ),
@@ -2033,45 +2049,45 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 children: [
                                                   Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                        MainAxisAlignment.start,
                                                     children: [
                                                       FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                            .sortUp
+                                                                .sortUp
                                                             : FontAwesomeIcons
-                                                            .sortDown,
+                                                                .sortDown,
                                                         size: 50,
                                                         color:
-                                                        Colors.transparent,
+                                                            Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                           children: <Widget>[
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                    'Install Date : ',
+                                                                        'Install Date : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight
+                                                                                .bold,
                                                                         color:
-                                                                        blueColor), // Bold and black
+                                                                            blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
                                                                     text: dateProvider
                                                                         .formatCurrentDate(
-                                                                        '${rentals.installedDate}'),
+                                                                            '${rentals.installedDate}'),
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
+                                                                            FontWeight
+                                                                                .w700,
                                                                         color: Colors
                                                                             .grey), // Light and grey
                                                                   ),
@@ -2080,9 +2096,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                             ),
                                                             SizedBox(
                                                               height: MediaQuery.of(
-                                                                  context)
-                                                                  .size
-                                                                  .height *
+                                                                          context)
+                                                                      .size
+                                                                      .height *
                                                                   .01,
                                                             ),
                                                             Text.rich(
@@ -2090,21 +2106,21 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                    'Brand : ',
+                                                                        'Brand : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight
+                                                                                .bold,
                                                                         color:
-                                                                        blueColor), // Bold and black
+                                                                            blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                    '${rentals.brand}',
+                                                                        '${rentals.brand}',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
+                                                                            FontWeight
+                                                                                .w700,
                                                                         color: Colors
                                                                             .grey), // Light and grey
                                                                   ),
@@ -2116,8 +2132,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                             ),
                                                             Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
+                                                                  MainAxisAlignment
+                                                                      .end,
                                                               children: [
                                                                 GestureDetector(
                                                                   onTap: () {
@@ -2127,31 +2143,31 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                             .applianceId!);
                                                                   },
                                                                   child:
-                                                                  Container(
+                                                                      Container(
                                                                     height: 35,
                                                                     width: 35,
                                                                     decoration: BoxDecoration(
                                                                         borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            8),
+                                                                            BorderRadius.circular(
+                                                                                8),
                                                                         color: Colors
                                                                             .red
                                                                             .shade50),
                                                                     child: Row(
                                                                       mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
+                                                                          MainAxisAlignment
+                                                                              .center,
                                                                       crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
+                                                                          CrossAxisAlignment
+                                                                              .center,
                                                                       children: [
                                                                         FaIcon(
                                                                           FontAwesomeIcons
                                                                               .trashCan,
                                                                           size:
-                                                                          15,
+                                                                              15,
                                                                           color:
-                                                                          Colors.red,
+                                                                              Colors.red,
                                                                         ),
                                                                       ],
                                                                     ),
@@ -2164,22 +2180,22 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                   onTap:
                                                                       () async {
                                                                     _name.text =
-                                                                    rentals
-                                                                        .applianceName!;
+                                                                        rentals
+                                                                            .applianceName!;
                                                                     _description
-                                                                        .text =
-                                                                    rentals
-                                                                        .applianceDescription!;
+                                                                            .text =
+                                                                        rentals
+                                                                            .applianceDescription!;
                                                                     _installedDate
-                                                                        .text =
-                                                                    rentals
-                                                                        .installedDate!;
+                                                                            .text =
+                                                                        rentals
+                                                                            .installedDate!;
                                                                     showDialog(
                                                                       context:
-                                                                      context,
+                                                                          context,
                                                                       builder:
                                                                           (BuildContext
-                                                                      context) {
+                                                                              context) {
                                                                         return StatefulBuilder(
                                                                           builder:
                                                                               (BuildContext context, StateSetter setState) {
@@ -2365,31 +2381,31 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                     );
                                                                   },
                                                                   child:
-                                                                  Container(
+                                                                      Container(
                                                                     height: 35,
                                                                     width: 35,
                                                                     decoration: BoxDecoration(
                                                                         borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            8),
+                                                                            BorderRadius.circular(
+                                                                                8),
                                                                         color: Colors
                                                                             .green
                                                                             .shade50), // color:Colors.grey[100],
                                                                     child: Row(
                                                                       mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
+                                                                          MainAxisAlignment
+                                                                              .center,
                                                                       crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
+                                                                          CrossAxisAlignment
+                                                                              .center,
                                                                       children: [
                                                                         FaIcon(
                                                                           FontAwesomeIcons
                                                                               .edit,
                                                                           size:
-                                                                          15,
+                                                                              15,
                                                                           color:
-                                                                          Colors.green,
+                                                                              Colors.green,
                                                                         ),
                                                                       ],
                                                                     ),
@@ -2401,37 +2417,37 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                 GestureDetector(
                                                                   onTap: () {},
                                                                   child:
-                                                                  Container(
+                                                                      Container(
                                                                     height: 35,
                                                                     width: 35,
                                                                     decoration:
-                                                                    BoxDecoration(
+                                                                        BoxDecoration(
                                                                       color: Colors
                                                                           .grey
                                                                           .shade200,
                                                                       borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          8),
+                                                                          BorderRadius.circular(
+                                                                              8),
                                                                     ),
                                                                     child: Row(
                                                                       mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
+                                                                          MainAxisAlignment
+                                                                              .center,
                                                                       crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
+                                                                          CrossAxisAlignment
+                                                                              .center,
                                                                       children: [
                                                                         FaIcon(
                                                                           FontAwesomeIcons
                                                                               .eye,
                                                                           size:
-                                                                          15,
+                                                                              15,
                                                                           color:
-                                                                          Colors.black,
+                                                                              Colors.black,
                                                                         ),
                                                                         SizedBox(
                                                                             width:
-                                                                            2),
+                                                                                2),
                                                                       ],
                                                                     ),
                                                                   ),
@@ -2473,7 +2489,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
-                                          Border.all(color: Colors.grey),
+                                              Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
@@ -2489,7 +2505,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               setState(() {
                                                 itemsPerPage = newValue!;
                                                 currentPage =
-                                                0; // Reset to first page when items per page change
+                                                    0; // Reset to first page when items per page change
                                               });
                                             },
                                           ),
@@ -2510,10 +2526,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
                                     // IconButton(
                                     //   icon: Icon(Icons.arrow_back),
@@ -2546,10 +2562,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
                                           : null,
                                     ),
                                   ],
@@ -2569,9 +2585,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
                           child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                        color: Colors.black,
+                        size: 40.0,
+                      ));
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -2588,12 +2604,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       } else if (searchValue.isNotEmpty) {
                         filteredData = snapshot.data!
                             .where((staff) =>
-                        staff.applianceName!
-                            .toLowerCase()
-                            .contains(searchValue.toLowerCase()) ||
-                            staff.applianceDescription!
-                                .toLowerCase()
-                                .contains(searchValue.toLowerCase()))
+                                staff.applianceName!
+                                    .toLowerCase()
+                                    .contains(searchValue.toLowerCase()) ||
+                                staff.applianceDescription!
+                                    .toLowerCase()
+                                    .contains(searchValue.toLowerCase()))
                             .toList();
                       }
 
@@ -2612,17 +2628,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                   children: [
                                     TableRow(
                                       decoration:
-                                      BoxDecoration(border: Border.all()),
+                                          BoxDecoration(border: Border.all()),
                                       children: [
                                         _buildHeader('Name', 0,
-                                                (rental) => rental.applianceName!),
+                                            (rental) => rental.applianceName!),
                                         _buildHeader(
                                             'Description',
                                             1,
-                                                (rental) =>
-                                            rental.applianceDescription!),
+                                            (rental) =>
+                                                rental.applianceDescription!),
                                         _buildHeader('InstalledDate', 2,
-                                                (rental) => rental.installedDate!),
+                                            (rental) => rental.installedDate!),
                                         _buildHeader('Actions', 3, null),
                                       ],
                                     ),
@@ -2633,7 +2649,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       ),
                                       children: List.generate(
                                           4,
-                                              (index) => TableCell(
+                                          (index) => TableCell(
                                               child: Container(height: 20))),
                                     ),
                                     for (var i = 0; i < _pagedData.length; i++)
@@ -2658,9 +2674,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               _pagedData[i].installedDate!),
                                           Column(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                                CrossAxisAlignment.center,
                                             children: [
                                               SizedBox(
                                                 height: 14,
@@ -2678,42 +2694,42 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                           .first
                                                           .applianceDescription!;
                                                       _installedDate.text =
-                                                      _tableData.first
-                                                          .installedDate!;
+                                                          _tableData.first
+                                                              .installedDate!;
                                                       showDialog(
                                                         context: context,
                                                         builder: (BuildContext
-                                                        context) {
+                                                            context) {
                                                           return StatefulBuilder(
                                                             builder: (BuildContext
-                                                            context,
+                                                                    context,
                                                                 StateSetter
-                                                                setState) {
+                                                                    setState) {
                                                               return AlertDialog(
                                                                 backgroundColor:
-                                                                Colors
-                                                                    .white,
+                                                                    Colors
+                                                                        .white,
                                                                 surfaceTintColor:
-                                                                Colors
-                                                                    .white,
+                                                                    Colors
+                                                                        .white,
                                                                 title: const Text(
                                                                     'Edit Appliances'),
                                                                 content: Form(
                                                                   key: _formKey,
                                                                   child: Column(
                                                                     mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
+                                                                        MainAxisSize
+                                                                            .min,
                                                                     children: [
                                                                       CustomTextFormField(
                                                                         labelText:
-                                                                        'Name',
+                                                                            'Name',
                                                                         hintText:
-                                                                        'Enter Name',
+                                                                            'Enter Name',
                                                                         keyboardType:
-                                                                        TextInputType.text,
+                                                                            TextInputType.text,
                                                                         controller:
-                                                                        _name,
+                                                                            _name,
                                                                         // validator: (value) {
                                                                         //   if (value == null || value.isEmpty) {
                                                                         //     return 'Please enter name';
@@ -2723,13 +2739,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                       ),
                                                                       CustomTextFormField(
                                                                         labelText:
-                                                                        'Description',
+                                                                            'Description',
                                                                         hintText:
-                                                                        'Enter description',
+                                                                            'Enter description',
                                                                         keyboardType:
-                                                                        TextInputType.text,
+                                                                            TextInputType.text,
                                                                         controller:
-                                                                        _description,
+                                                                            _description,
                                                                         // validator: (value) {
                                                                         //   if (value == null || value.isEmpty) {
                                                                         //     return 'Please enter description';
@@ -2742,13 +2758,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                             () {
                                                                           showDatePicker(
                                                                             context:
-                                                                            context,
+                                                                                context,
                                                                             initialDate:
-                                                                            DateTime.now(),
+                                                                                DateTime.now(),
                                                                             firstDate:
-                                                                            DateTime(2000),
+                                                                                DateTime(2000),
                                                                             lastDate:
-                                                                            DateTime(2100),
+                                                                                DateTime(2100),
                                                                             builder:
                                                                                 (BuildContext context, Widget? child) {
                                                                               return Theme(
@@ -2769,28 +2785,28 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                               );
                                                                             },
                                                                           ).then(
-                                                                                  (date) {
-                                                                                if (date !=
-                                                                                    null) {
-                                                                                  setState(() {
-                                                                                    _selectedDate = date;
-                                                                                    _installedDate.text = formatDate(date.toString());
-                                                                                  });
-                                                                                }
+                                                                              (date) {
+                                                                            if (date !=
+                                                                                null) {
+                                                                              setState(() {
+                                                                                _selectedDate = date;
+                                                                                _installedDate.text = formatDate(date.toString());
                                                                               });
+                                                                            }
+                                                                          });
                                                                         },
                                                                         child:
-                                                                        AbsorbPointer(
+                                                                            AbsorbPointer(
                                                                           child:
-                                                                          CustomTextFormField(
+                                                                              CustomTextFormField(
                                                                             labelText:
-                                                                            'Date',
+                                                                                'Date',
                                                                             hintText:
-                                                                            'Select Date',
+                                                                                'Select Date',
                                                                             keyboardType:
-                                                                            TextInputType.datetime,
+                                                                                TextInputType.datetime,
                                                                             controller:
-                                                                            _installedDate,
+                                                                                _installedDate,
                                                                             // validator: (value) {
                                                                             //   if (value == null ||
                                                                             //       value.isEmpty) {
@@ -2803,13 +2819,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                       ),
                                                                       Row(
                                                                         mainAxisAlignment:
-                                                                        MainAxisAlignment.center,
+                                                                            MainAxisAlignment.center,
                                                                         children: [
                                                                           Padding(
                                                                             padding:
-                                                                            const EdgeInsets.all(8.0),
+                                                                                const EdgeInsets.all(8.0),
                                                                             child:
-                                                                            Container(
+                                                                                Container(
                                                                               height: 42,
                                                                               width: 80,
                                                                               child: ElevatedButton(
@@ -2861,9 +2877,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                           ),
                                                                           Padding(
                                                                             padding:
-                                                                            const EdgeInsets.all(8.0),
+                                                                                const EdgeInsets.all(8.0),
                                                                             child:
-                                                                            Container(
+                                                                                Container(
                                                                               decoration: BoxDecoration(
                                                                                 color: Colors.white,
                                                                                 borderRadius: BorderRadius.circular(8),
@@ -2894,7 +2910,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                         Text(
                                                                           "Please fill in all fields correctly.",
                                                                           style:
-                                                                          TextStyle(color: Colors.redAccent),
+                                                                              TextStyle(color: Colors.redAccent),
                                                                         )
                                                                     ],
                                                                   ),
@@ -2998,6 +3014,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
     );
   }
 }
+
 class CustomTextFormField extends StatefulWidget {
   final String labelText;
   final String hintText;
@@ -3050,12 +3067,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: _isFocused
               ? [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ]
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
               : [],
           border: Border.all(
             color: Colors.grey.shade300,
@@ -3074,7 +3091,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             suffixIcon: widget.suffixIcon,
             border: InputBorder.none,
             contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
         ),
       ),

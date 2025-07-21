@@ -6671,6 +6671,7 @@ class _Summery_pageState extends State<Summery_page>
                         // AppliancesPart(
                         //   unit: widget.unit,
                         // ),
+
                         AppliancesPart(
                           unit: data.first,
                         ),

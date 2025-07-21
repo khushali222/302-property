@@ -56,33 +56,24 @@ class PropertiesTable extends StatefulWidget {
 class _PropertiesTableState extends State<PropertiesTable> {
   late Future<List<Rentals>> futureRentalOwners;
   // late Future<List<propertytype>> futurePropertyTypes;
-  int rowsPerPage = 5;
-  int sortColumnIndex = 0;
-  bool sortAscending = true;
-  List<Rentals> _tableData = [];
-  int totalrecords = 0;
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
-  int currentPage = 0;
-  int itemsPerPage = 10;
-  int? expandedIndex;
+  List<Rentals> _tableData = [];
+  int totalrecords = 0;
   Set<int> expandedIndices = {};
+  int? expandedIndex;
 
-  List<int> itemsPerPageOptions = [
-    10,
-    25,
-    50,
-    100,
-  ]; // Options for items per page
-  late bool isExpanded;
+  List<int> itemsPerPageOptions = [10, 25, 50, 100];
+
   bool sorting1 = false;
   bool sorting2 = false;
   bool sorting3 = false;
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
+
   final List<String> applicantStatusOptions = [
     'All',
     'Accepting Applicant',
@@ -95,175 +86,24 @@ class _PropertiesTableState extends State<PropertiesTable> {
   ];
   String? selectedApplicantStatus = 'All';
   String? selectedApplicantOcuupied = 'All';
-  void sortData(List<Rentals> data) {
-    if (sorting1) {
-      data.sort((a, b) => ascending1
-          ? a.rentalAddress!.compareTo(b.rentalAddress!)
-          : b.rentalAddress!.compareTo(a.rentalAddress!));
-    } else if (sorting2) {
-      data.sort((a, b) => ascending2
-          ? a.propertyTypeData!.propertyType!
-              .compareTo(b.propertyTypeData!.propertyType!)
-          : b.propertyTypeData!.propertyType!
-              .compareTo(a.propertyTypeData!.propertyType!));
-    } else if (sorting3) {
-      data.sort((a, b) {
-        if (a!.is_available! == b!.is_available!) return 0;
-        return a!.is_available! ? -1 : 1; // true comes before false
-      });
-    } else {
-      // Default sorting by createdAt in descending order (newest first)
-      data.sort((a, b) {
-        if (a.createdAt == null || b.createdAt == null) return 0;
-        return DateTime.parse(b.createdAt!)
-            .compareTo(DateTime.parse(a.createdAt!));
-      });
-      // Then sort by property name in ascending order
-      data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
-    }
-  }
-
-  Widget _buildHeaders() {
-    var width = MediaQuery.of(context).size.width;
-    return Container(
-      decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
-      child: ListTile(
-        contentPadding: EdgeInsets.zero,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              child: Icon(
-                Icons.expand_less,
-                color: Colors.transparent,
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting1) {
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = !sorting1;
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    SizedBox(width: 6),
-                    width < 400
-                        ? Text("Property",
-                            style: TextStyle(color: Colors.white, fontSize: 14))
-                        : Text("Property",
-                            style: TextStyle(color: Colors.white)),
-                    // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
-                    ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("     Type",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending1 = false;
-                      ascending2 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending1 = false;
-                      ascending2 = false;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("Accepting \nApplicant",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   List<Rentals> get _pagedData {
+    if (_tableData.isEmpty) return [];
+
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
-    return _tableData.sublist(startIndex,
-        endIndex > _tableData.length ? _tableData.length : endIndex);
+
+    // Ensure startIndex is within bounds
+    if (startIndex >= _tableData.length) {
+      _currentPage = (_tableData.length / _rowsPerPage).floor() - 1;
+      startIndex = _currentPage * _rowsPerPage;
+      endIndex = startIndex + _rowsPerPage;
+    }
+
+    // Ensure endIndex doesn't exceed the array length
+    endIndex = endIndex > _tableData.length ? _tableData.length : endIndex;
+
+    return _tableData.sublist(startIndex, endIndex);
   }
 
   void _changeRowsPerPage(int selectedRowsPerPage) {
@@ -344,7 +184,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
         MaterialPageRoute(
             builder: (context) => Summery_page(
                   properties: properties,
-
                 )));
     /* if (result == true) {
       setState(() {
@@ -480,8 +319,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
         }
       });
       setState(() {
-        sortColumnIndex = columnIndex;
-        sortAscending = ascending;
+        _sortColumnIndex = columnIndex;
+        _sortAscending = ascending;
       });
     });
   }
@@ -525,6 +364,169 @@ class _PropertiesTableState extends State<PropertiesTable> {
     } else {
       throw Exception('Failed to load data');
     }
+  }
+
+  void sortData(List<Rentals> data) {
+    if (sorting1) {
+      data.sort((a, b) => ascending1
+          ? a.rentalAddress!.compareTo(b.rentalAddress!)
+          : b.rentalAddress!.compareTo(a.rentalAddress!));
+    } else if (sorting2) {
+      data.sort((a, b) => ascending2
+          ? a.propertyTypeData!.propertyType!
+              .compareTo(b.propertyTypeData!.propertyType!)
+          : b.propertyTypeData!.propertyType!
+              .compareTo(a.propertyTypeData!.propertyType!));
+    } else if (sorting3) {
+      data.sort((a, b) {
+        if (a!.is_available! == b!.is_available!) return 0;
+        return a!.is_available! ? -1 : 1; // true comes before false
+      });
+    } else {
+      // Default sorting by createdAt in descending order (newest first)
+      data.sort((a, b) {
+        if (a.createdAt == null || b.createdAt == null) return 0;
+        return DateTime.parse(b.createdAt!)
+            .compareTo(DateTime.parse(a.createdAt!));
+      });
+      // Then sort by property name in ascending order
+      data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
+    }
+  }
+
+  Widget _buildHeaders() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      decoration: BoxDecoration(
+        color: blueColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        ),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1) {
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = !sorting1;
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    SizedBox(width: 6),
+                    width < 400
+                        ? Text("Property",
+                            style: TextStyle(color: Colors.white, fontSize: 14))
+                        : Text("Property",
+                            style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 3),
+                    ascending1
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("     Type",
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3) {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending1 = false;
+                      ascending2 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = !sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending1 = false;
+                      ascending2 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("Accepting \nApplicant",
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -692,7 +694,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       onChanged: (value) {
                                         setState(() {
                                           searchvalue = value;
-                                          if (currentPage != 0) currentPage = 0;
+                                          if (_currentPage != 0)
+                                            _currentPage = 0;
                                         });
                                       },
                                       cursorColor: blueColor,
@@ -909,8 +912,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 onChanged: (value) {
                                   setState(() {
                                     selectedApplicantStatus = value;
-                                    if (currentPage != 0)
-                                      currentPage =
+                                    if (_currentPage != 0)
+                                      _currentPage =
                                           0; // Reset to first page when filter changes
                                   });
                                 },
@@ -1003,8 +1006,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 onChanged: (value) {
                                   setState(() {
                                     selectedApplicantOcuupied = value;
-                                    if (currentPage != 0)
-                                      currentPage =
+                                    if (_currentPage != 0)
+                                      _currentPage =
                                           0; // Reset to first page when filter changes
                                   });
                                 },
@@ -1169,13 +1172,28 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   .toList();
                             }
                             sortData(data);
-                            final totalPages =
-                                (data.length / itemsPerPage).ceil();
 
-                            final currentPageData = data
-                                .skip(currentPage * itemsPerPage)
-                                .take(itemsPerPage)
-                                .toList();
+                            // Store the filtered and sorted data
+                            _tableData = List<Rentals>.from(data);
+
+                            // Calculate pagination
+                            final totalPages =
+                                (_tableData.length / _rowsPerPage).ceil();
+
+                            // Ensure current page is within bounds
+                            if (_currentPage >= totalPages && totalPages > 0) {
+                              _currentPage = totalPages - 1;
+                            }
+
+                            // Get data for current page
+                            final startIndex = _currentPage * _rowsPerPage;
+                            final endIndex =
+                                (startIndex + _rowsPerPage > _tableData.length)
+                                    ? _tableData.length
+                                    : startIndex + _rowsPerPage;
+
+                            final currentPageData =
+                                _tableData.sublist(startIndex, endIndex);
 
                             return SingleChildScrollView(
                               child: Column(
@@ -1625,7 +1643,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                         builder: (context) =>
                                                                             Summery_page(
                                                                               properties: rentals,
-
                                                                             )));
                                                               },
                                                               child: Container(
@@ -1683,7 +1700,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
-                                  if (data.length > itemsPerPage)
+                                  if (data.length > _rowsPerPage)
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
@@ -1704,7 +1721,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                 child:
                                                     DropdownButtonHideUnderline(
                                                   child: DropdownButton<int>(
-                                                    value: itemsPerPage,
+                                                    value: _rowsPerPage,
                                                     items: itemsPerPageOptions
                                                         .map((int value) {
                                                       return DropdownMenuItem<
@@ -1726,9 +1743,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 .first // Condition to check if dropdown should be enabled
                                                         ? (newValue) {
                                                             setState(() {
-                                                              itemsPerPage =
+                                                              _rowsPerPage =
                                                                   newValue!;
-                                                              currentPage =
+                                                              _currentPage =
                                                                   0; // Reset to first page when items per page change
                                                             });
                                                           }
@@ -1745,15 +1762,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                               icon: FaIcon(
                                                 FontAwesomeIcons
                                                     .circleChevronLeft,
-                                                color: currentPage == 0
+                                                color: _currentPage == 0
                                                     ? Colors.grey
                                                     : blueColor,
                                               ),
-                                              onPressed: currentPage == 0
+                                              onPressed: _currentPage == 0
                                                   ? null
                                                   : () {
                                                       setState(() {
-                                                        currentPage--;
+                                                        _currentPage--;
                                                       });
                                                     },
                                             ),
@@ -1768,7 +1785,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                             //       : null,
                                             // ),
                                             Text(
-                                                'Page ${currentPage + 1} of $totalPages'),
+                                                'Page ${_currentPage + 1} of $totalPages'),
                                             // IconButton(
                                             //   icon: Icon(Icons.arrow_forward),
                                             //   onPressed: currentPage < totalPages - 1
@@ -1783,16 +1800,16 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                               icon: FaIcon(
                                                 FontAwesomeIcons
                                                     .circleChevronRight,
-                                                color:
-                                                    currentPage < totalPages - 1
-                                                        ? blueColor
-                                                        : Colors.grey,
+                                                color: _currentPage <
+                                                        totalPages - 1
+                                                    ? blueColor
+                                                    : Colors.grey,
                                               ),
                                               onPressed:
-                                                  currentPage < totalPages - 1
+                                                  _currentPage < totalPages - 1
                                                       ? () {
                                                           setState(() {
-                                                            currentPage++;
+                                                            _currentPage++;
                                                           });
                                                         }
                                                       : null,
@@ -2264,7 +2281,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => Summery_page(
-                          properties: inkText,
+                            properties: inkText,
                           )));
             },
             child: Text(text?.isNotEmpty == true ? text! : 'N/A',

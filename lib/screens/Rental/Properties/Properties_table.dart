@@ -54,17 +54,12 @@ class PropertiesTable extends StatefulWidget {
 class _PropertiesTableState extends State<PropertiesTable> {
   late Future<List<Rentals>> futureRentalOwners;
   // late Future<List<propertytype>> futurePropertyTypes;
-  int rowsPerPage = 5;
-  int sortColumnIndex = 0;
-  bool sortAscending = true;
-  List<Rentals> _tableData = [];
-  int totalrecords = 0;
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
-  int currentPage = 0;
-  int itemsPerPage = 10;
+  List<Rentals> _tableData = [];
+  int totalrecords = 0;
   int? expandedIndex;
   Set<int> expandedIndices = {};
 
@@ -313,10 +308,22 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
 
   List<Rentals> get _pagedData {
+    if (_tableData.isEmpty) return [];
+
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
-    return _tableData.sublist(startIndex,
-        endIndex > _tableData.length ? _tableData.length : endIndex);
+
+    // Ensure startIndex is within bounds
+    if (startIndex >= _tableData.length) {
+      _currentPage = (_tableData.length / _rowsPerPage).floor() - 1;
+      startIndex = _currentPage * _rowsPerPage;
+      endIndex = startIndex + _rowsPerPage;
+    }
+
+    // Ensure endIndex doesn't exceed the array length
+    endIndex = endIndex > _tableData.length ? _tableData.length : endIndex;
+
+    return _tableData.sublist(startIndex, endIndex);
   }
 
   void _changeRowsPerPage(int selectedRowsPerPage) {
@@ -399,8 +406,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         MaterialPageRoute(
             builder: (context) => Summery_page(
                   properties: properties,
-
-            )));
+                )));
     /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -524,8 +530,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
             : Comparable.compare(bValue, aValue);
       });
       setState(() {
-        sortColumnIndex = columnIndex;
-        sortAscending = ascending;
+        _sortColumnIndex = columnIndex;
+        _sortAscending = ascending;
       });
     });
   }
@@ -734,7 +740,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       onChanged: (value) {
                                         setState(() {
                                           searchvalue = value;
-                                          if (currentPage != 0) currentPage = 0;
+                                          if (_currentPage != 0)
+                                            _currentPage = 0;
                                         });
                                       },
                                       cursorColor: blueColor,
@@ -951,8 +958,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 onChanged: (value) {
                                   setState(() {
                                     selectedApplicantStatus = value;
-                                    if (currentPage != 0)
-                                      currentPage =
+                                    if (_currentPage != 0)
+                                      _currentPage =
                                           0; // Reset to first page when filter changes
                                   });
                                 },
@@ -1045,8 +1052,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 onChanged: (value) {
                                   setState(() {
                                     selectedApplicantOcuupied = value;
-                                    if (currentPage != 0)
-                                      currentPage =
+                                    if (_currentPage != 0)
+                                      _currentPage =
                                           0; // Reset to first page when filter changes
                                   });
                                 },
@@ -1143,6 +1150,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             );
                           } else {
                             var data = snapshot.data!;
+
+                            // Apply filters
                             if (selectedValue != null &&
                                 selectedValue != "All") {
                               data = data
@@ -1152,6 +1161,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       selectedValue)
                                   .toList();
                             }
+
                             if (searchvalue.isNotEmpty) {
                               data = data
                                   .where((properties) =>
@@ -1182,6 +1192,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       properties.rentalOwnerData!.Address!.toLowerCase().contains(searchvalue.toLowerCase()))
                                   .toList();
                             }
+
                             if (selectedApplicantStatus ==
                                 'Accepting Applicant') {
                               data = data
@@ -1196,7 +1207,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   .toList();
                             }
 
-                            // Filter by occupancy status
                             if (selectedApplicantOcuupied == 'Occupied') {
                               data = data
                                   .where((properties) =>
@@ -1210,16 +1220,32 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       properties.tenantsData!.length == 0)
                                   .toList();
                             }
+
                             sortData(data);
-                            //data = data.reversed.toList();
+
+                            // Update the total data
+                            _tableData = List<Rentals>.from(data);
+
+                            // Calculate total pages
                             final totalPages =
-                                (data.length / itemsPerPage).ceil();
+                                (_tableData.length / _rowsPerPage).ceil();
 
-                            final currentPageData = data
-                                .skip(currentPage * itemsPerPage)
-                                .take(itemsPerPage)
-                                .toList();
+                            // Ensure current page is valid
+                            if (_currentPage >= totalPages && totalPages > 0) {
+                              _currentPage = totalPages - 1;
+                            }
 
+                            // Calculate start and end indices for current page
+                            final startIndex = _currentPage * _rowsPerPage;
+                            final endIndex =
+                                startIndex + _rowsPerPage > _tableData.length
+                                    ? _tableData.length
+                                    : startIndex + _rowsPerPage;
+
+                            // Get current page data
+                            final currentPageData =
+                                _tableData.sublist(startIndex, endIndex);
+                            print("data for check  table $data");
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
@@ -1675,7 +1701,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                         builder: (context) =>
                                                                             Summery_page(
                                                                               properties: rentals,
-
                                                                             )));
                                                               },
                                                               child: Container(
@@ -1733,7 +1758,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
-                                  if (data.length > itemsPerPage)
+                                  if (data.length > _rowsPerPage)
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
@@ -2352,7 +2377,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   MaterialPageRoute(
                       builder: (context) => Summery_page(
                             properties: inkText,
-                      )));
+                          )));
             },
             child: Text(text?.isNotEmpty == true ? text! : 'N/A',
                 style: const TextStyle(fontSize: 18))),
@@ -2403,19 +2428,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
 
   Widget _buildPaginationControls() {
-    int numorpages = 1;
-    numorpages = (totalrecords / _rowsPerPage).ceil();
+    int totalPages = (_tableData.length / _rowsPerPage).ceil();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // Text('Rows per page: '),
-        // SizedBox(width: 10),
         Material(
           elevation: 2,
           color: Colors.white,
           child: Container(
-            // height: 40,
             height: 55,
             padding: EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
@@ -2435,15 +2456,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     ? (newValue) {
                         setState(() {
                           _rowsPerPage = newValue!;
-                          _currentPage =
-                              0; // Reset to first page when items per page change
+                          _currentPage = 0; // Reset to first page
                         });
                       }
                     : null,
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  size: 40,
-                ),
+                icon: Icon(Icons.arrow_drop_down, size: 40),
                 style: TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
@@ -2465,17 +2482,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 },
         ),
         Text(
-          'Page ${_currentPage + 1} of $numorpages',
+          'Page ${_currentPage + 1} of $totalPages',
           style: TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronRight,
-            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
-                ? Colors.grey
-                : blueColor, // Change color based on availability
+            color: _currentPage >= totalPages - 1 ? Colors.grey : blueColor,
           ),
-          onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+          onPressed: _currentPage >= totalPages - 1
               ? null
               : () {
                   setState(() {
