@@ -200,6 +200,16 @@ class Properies_summery_Repo {
     String? appliancename,
     String? appliancedescription,
     String? installeddate,
+    String? type,
+    String? brand,
+    String? model,
+    String? serialNumber,
+    String? warrantyExpiry,
+    String? lastMaintenanceDate,
+    String? maintenanceNotes,
+    String? status,
+    String? categoryId,
+    List<dynamic>? filters,
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
@@ -208,6 +218,16 @@ class Properies_summery_Repo {
       'appliance_name': appliancename,
       'appliance_description': appliancedescription,
       'installed_date': installeddate,
+      'type': type,
+      'brand': brand,
+      'model': model,
+      'serial_number': serialNumber,
+      'warranty_expiry': warrantyExpiry,
+      'last_maintenance_date': lastMaintenanceDate,
+      'maintenance_notes': maintenanceNotes,
+      'status': status,
+      'category_id': categoryId,
+      'filters': filters ?? [],
     };
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -222,15 +242,17 @@ class Properies_summery_Repo {
       },
       body: jsonEncode(data),
     );
-    print(applianceid);
-    print('hii api${response.body}');
+    print('Edit appliance request: ${jsonEncode(data)}');
+    print('Edit appliance response: ${response.body}');
+
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: "edit appliances successfully");
+      Fluttertoast.showToast(msg: "Appliance updated successfully");
       return json.decode(response.body);
     } else {
-      Fluttertoast.showToast(msg: "Failed to edit appliances");
-      throw Exception('Failed to edit appliances');
+      Fluttertoast.showToast(
+          msg: responseData["message"] ?? "Failed to update appliance");
+      throw Exception('Failed to update appliance');
     }
   }
 

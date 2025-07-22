@@ -164,11 +164,9 @@ class _AddApplienceState extends State<AddApplience> {
         currentpage: "Properties",
         dropdown: true,
       ),
-      body:
-      SingleChildScrollView(
+      body: SingleChildScrollView(
         child: SizedBox(
           width: 800,
-          // width: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Form(
@@ -283,41 +281,21 @@ class _AddApplienceState extends State<AddApplience> {
                           setState(() {
                             _selectedDropdownCategory =
                                 newValue;
-
-                            // Check if HVAC is selected and show/hide filters section
-                            if (newValue
-                                ?.name
-                                ?.toLowerCase() ==
-                                'hvac') {
-                              showFiltersSection =
-                              true;
-                              // Add an initial filter if none exist
-                              if (filterControllers
-                                  .isEmpty) {
-                                filterControllers
-                                    .add({
-                                  'name':
-                                  TextEditingController(),
-                                  'size':
-                                  TextEditingController(),
-                                });
-                              }
-                            } else {
-                              showFiltersSection =
-                              false;
-                              // Clear any existing filters if not HVAC
-                              for (var controllers
-                              in filterControllers) {
-                                controllers[
-                                'name']
-                                    ?.dispose();
-                                controllers[
-                                'size']
-                                    ?.dispose();
-                              }
-                              filterControllers
-                                  .clear();
+                            // Don't show filters section immediately for HVAC
+                            showFiltersSection =
+                            false;
+                            // Clear any existing filters
+                            for (var controllers
+                            in filterControllers) {
+                              controllers[
+                              'name']
+                                  ?.dispose();
+                              controllers[
+                              'size']
+                                  ?.dispose();
                             }
+                            filterControllers
+                                .clear();
                           });
                         },
                         buttonStyleData:
@@ -707,7 +685,16 @@ class _AddApplienceState extends State<AddApplience> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              addNewFilter();
+                              showFiltersSection =
+                              true;
+                              // Always add a new filter when button is clicked
+                              filterControllers
+                                  .add({
+                                'name':
+                                TextEditingController(),
+                                'size':
+                                TextEditingController(),
+                              });
                             });
                           },
                           style: ElevatedButton
@@ -878,7 +865,51 @@ class _AddApplienceState extends State<AddApplience> {
                                     };
                                   }).toList()
                                   : [];
-                              Properies_summery_Repo()
+
+                              // Generate filters list based on category
+                              List<
+                                  Map<String,
+                                      dynamic>>
+                              finalFilters = [];
+
+                              if (_selectedDropdownCategory
+                                  ?.name ==
+                                  'HVAC' &&
+                                  showFiltersSection) {
+                                for (int i = 0;
+                                i <
+                                    filterControllers
+                                        .length;
+                                i++) {
+                                  // Add a delay to ensure unique timestamps
+                                  await Future.delayed(
+                                      Duration(
+                                          milliseconds:
+                                          2));
+                                  final uniqueId =
+                                  DateTime.now()
+                                      .millisecondsSinceEpoch
+                                      .toString();
+                                  final controller =
+                                  filterControllers[
+                                  i];
+                                  finalFilters.add({
+                                    "filter_id":
+                                    uniqueId,
+                                    "filter_name":
+                                    controller['name']
+                                        ?.text ??
+                                        '',
+                                    "filter_size":
+                                    controller['size']
+                                        ?.text ??
+                                        '',
+                                  });
+                                }
+                              }
+
+                              // Single API call with the correct filters
+                              await Properies_summery_Repo()
                                   .addappliances(
                                 adminId: id,
                                 unitId: widget
@@ -921,7 +952,8 @@ class _AddApplienceState extends State<AddApplience> {
                                 _selectedDropdownCategory
                                     ?.categoryId ??
                                     "",
-                                filters: filters,
+                                filters:
+                                finalFilters,
                               )
                                   .then((value) {
                                 setState(() {

@@ -59,6 +59,7 @@ class unit_appliance {
   String? warrantyExpiry;
   String? lastMaintenanceDate;
   String? maintenanceNotes;
+  String? categoryName;
   String? status;
   List<dynamic>? filters;
   List<dynamic>? notes;
@@ -83,6 +84,7 @@ class unit_appliance {
     this.warrantyExpiry,
     this.lastMaintenanceDate,
     this.maintenanceNotes,
+    this.categoryName,
     this.status,
     this.filters,
     this.notes,
@@ -107,6 +109,7 @@ class unit_appliance {
     installedDate = json['installed_date'];
     warrantyExpiry = json['warranty_expiry'];
     lastMaintenanceDate = json['last_maintenance_date'];
+    categoryName = json['category_name'];
     maintenanceNotes = json['maintenance_notes'];
     status = json['status'];
     filters = json['filters'];
@@ -133,6 +136,7 @@ class unit_appliance {
     data['installed_date'] = this.installedDate;
     data['warranty_expiry'] = this.warrantyExpiry;
     data['last_maintenance_date'] = this.lastMaintenanceDate;
+    data['category_name'] = this.categoryName;
     data['maintenance_notes'] = this.maintenanceNotes;
     data['status'] = this.status;
     data['filters'] = this.filters;

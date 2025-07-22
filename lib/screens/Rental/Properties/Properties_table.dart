@@ -406,7 +406,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         MaterialPageRoute(
             builder: (context) => Summery_page(
                   properties: properties,
-                )));
+            )));
     /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -2377,7 +2377,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   MaterialPageRoute(
                       builder: (context) => Summery_page(
                             properties: inkText,
-                          )));
+                      )));
             },
             child: Text(text?.isNotEmpty == true ? text! : 'N/A',
                 style: const TextStyle(fontSize: 18))),
