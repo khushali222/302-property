@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:http/http.dart' as http;
 import '../../../../Model/All_categories_model.dart';
 import '../../../../constant/constant.dart';
 import '../../../../widgets/appbar.dart';
@@ -16,6 +19,8 @@ import '../../../../repository/fetch_allcategories.dart';
 import '../../../../repository/properties_summery.dart';
 import '../../../../repository/unit_data.dart';
 import '../../../../Model/unit.dart';
+import 'dart:io';
+import 'dart:convert';
 
 class Edit_applience extends StatefulWidget {
   final Rentals? properties;
@@ -256,6 +261,62 @@ class _Edit_applienceState extends State<Edit_applience> {
 
   bool showFiltersSection = false;
 
+  //for image add
+  File? _image;
+  bool isloading = false;
+  List<File> _images = [];
+  String? _uploadedFileName;
+  List<String> _uploadedFileNames = [];
+  List<String> _imageUrls = [];
+  Future<String?> uploadImage(File imageFile) async {
+    print(imageFile.path);
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+          uploadUrl,
+        ));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
+
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+    print(responseData.body);
+
+    var responseBody = json.decode(responseData.body);
+    if (responseBody['status'] == 'ok') {
+      List file = responseBody['files'];
+      return file.first["filename"];
+    } else {
+      throw Exception('Failed to upload file: ${responseBody['message']}');
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+        _images.add(File(image.path));
+      });
+      _uploadImage(File(image.path));
+    }
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    try {
+      String? fileName = await uploadImage(imageFile);
+      setState(() {
+        _uploadedFileNames.add(fileName!);
+        _uploadedFileName = fileName;
+        _imageUrls.add(fileName!);
+      });
+    } catch (e) {
+      print('Image upload failed: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -273,19 +334,36 @@ class _Edit_applienceState extends State<Edit_applience> {
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Add Home Systems",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: blueColor),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: Container(
+                      height: 50.0,
+                      padding: EdgeInsets.only(top: 10, left: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        color: blueColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 1.0),
+                            blurRadius: 6.0,
+                          ),
+                        ],
                       ),
-                    ],
+                      child: Text(
+                        "Edit Home Systems",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: 20,
@@ -606,100 +684,264 @@ class _Edit_applienceState extends State<Edit_applience> {
                     controller: _maintenanceNotes,
                     keyboardType: TextInputType.text,
                   ),
-                  const SizedBox(height: 16),
                   // Add this after your Status dropdown
                   if (_selectedDropdownCategory?.name == 'HVAC') ...[
-                    SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Filters',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              showFiltersSection = true;
-                              // Always add a new filter when button is clicked
-                              filterControllers.add({
-                                'name': TextEditingController(),
-                                'size': TextEditingController(),
-                              });
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: blueColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text('Add Filter',
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      'Optional: Add filters for HVAC systems',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    if (showFiltersSection) ...[
-                      ...filterControllers.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        var controllers = entry.value;
-                        return Container(
-                          margin: EdgeInsets.only(bottom: 16),
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('Filter ${index + 1}'),
-                                  IconButton(
-                                    icon: Icon(Icons.remove_circle_outline,
-                                        color: Colors.red),
-                                    onPressed: () {
-                                      setState(() {
-                                        removeFilter(index);
-                                      });
-                                    },
+                              Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Text(
+                                  'Filters',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
-                                ],
+                                ),
                               ),
-                              SizedBox(height: 8),
-                              CustomTextFormField(
-                                labelText: '',
-                                hintText: 'Filter Name',
-                                controller: controllers['name']!,
-                                keyboardType: TextInputType.text,
-                              ),
-                              SizedBox(height: 8),
-                              CustomTextFormField(
-                                labelText: '',
-                                hintText: 'Filter Size (e.g., 16x20x1)',
-                                controller: controllers['size']!,
-                                keyboardType: TextInputType.text,
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showFiltersSection = true;
+                                    // Always add a new filter when button is clicked
+                                    filterControllers.add({
+                                      'name': TextEditingController(),
+                                      'size': TextEditingController(),
+                                    });
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: blueColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: Text('Add Filter',
+                                    style: TextStyle(color: Colors.white)),
                               ),
                             ],
                           ),
-                        );
-                      }).toList(),
-                    ]
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              'Optional: Add filters for HVAC systems',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          if (showFiltersSection) ...[
+                            ...filterControllers.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              var controllers = entry.value;
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 16),
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Filter ${index + 1}'),
+                                        IconButton(
+                                          icon: Icon(
+                                              Icons.remove_circle_outline,
+                                              color: Colors.red),
+                                          onPressed: () {
+                                            setState(() {
+                                              removeFilter(index);
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 8),
+                                    CustomTextFormField(
+                                      labelText: '',
+                                      hintText: 'Filter Name',
+                                      controller: controllers['name']!,
+                                      keyboardType: TextInputType.text,
+                                    ),
+                                    SizedBox(height: 8),
+                                    CustomTextFormField(
+                                      labelText: '',
+                                      hintText: 'Filter Size (e.g., 16x20x1)',
+                                      controller: controllers['size']!,
+                                      keyboardType: TextInputType.text,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ],
+                      ),
+                    ),
                   ],
-                  const SizedBox(height: 16),
+                  // Padding(
+                  //   padding: EdgeInsets.only(left: 10),
+                  //   child: Text(
+                  //     'Image',
+                  //     style: TextStyle(fontWeight: FontWeight.bold),
+                  //   ),
+                  // ),
+                  // SizedBox(height: 6),
+                  // if (_images.isEmpty)
+                  //   Padding(
+                  //     padding: const EdgeInsets.all(8.0),
+                  //     child: GestureDetector(
+                  //       onTap: () {
+                  //         _pickImage().then((_) {
+                  //           setState(() {});
+                  //         });
+                  //       },
+                  //       child: Container(
+                  //         width: double.infinity,
+                  //         padding: EdgeInsets.all(16),
+                  //         decoration: BoxDecoration(
+                  //           border: Border.all(
+                  //               color: Colors.grey.shade300,
+                  //               style: BorderStyle.solid),
+                  //           borderRadius: BorderRadius.circular(8),
+                  //         ),
+                  //         child: Column(
+                  //           children: [
+                  //             // Icon(Icons.upload,
+                  //             //     size: 40, color: Colors.grey[600]),
+                  //             Image.asset(
+                  //               'assets/icons/Upload.png',
+                  //               height: 50,
+                  //               width: 50,
+                  //             ),
+                  //             SizedBox(height: 8),
+                  //             Text(
+                  //               'Upload your Photo here',
+                  //               textAlign: TextAlign.center,
+                  //               style: TextStyle(
+                  //                 fontSize: 16,
+                  //                 fontWeight: FontWeight.w600,
+                  //                 color: Colors.grey[700],
+                  //               ),
+                  //             ),
+                  //             SizedBox(height: 4),
+                  //             Text(
+                  //               'Maximum File Size is 20MB',
+                  //               textAlign: TextAlign.center,
+                  //               style:
+                  //                   TextStyle(fontSize: 12, color: Colors.grey),
+                  //             ),
+                  //             Text(
+                  //               'Supported File Types are .png, .jpeg, .pdf, .csv',
+                  //               textAlign: TextAlign.center,
+                  //               style:
+                  //                   TextStyle(fontSize: 12, color: Colors.grey),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // if (_images.isEmpty) SizedBox(height: 16),
+                  // if (_images.isNotEmpty) ...[
+                  //   Container(
+                  //     width: double.infinity,
+                  //     padding: EdgeInsets.all(10),
+                  //     decoration: BoxDecoration(
+                  //       border: Border.all(
+                  //           color: Colors.grey.shade300,
+                  //           style: BorderStyle.solid),
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //     child: Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         SingleChildScrollView(
+                  //           scrollDirection: Axis.horizontal,
+                  //           child: Padding(
+                  //             padding: EdgeInsets.only(top: 10, right: 10),
+                  //             child: Wrap(
+                  //               alignment: WrapAlignment.start,
+                  //               crossAxisAlignment: WrapCrossAlignment.start,
+                  //               spacing: 8,
+                  //               runSpacing: 8,
+                  //               children:
+                  //                   List.generate(_images.length, (index) {
+                  //                 return Stack(
+                  //                   clipBehavior: Clip.none, //
+                  //                   children: [
+                  //                     Padding(
+                  //                       padding: EdgeInsets.all(4.0),
+                  //                       child: Container(
+                  //                         width: 80,
+                  //                         height: 80,
+                  //                         decoration: BoxDecoration(
+                  //                           borderRadius:
+                  //                               BorderRadius.circular(8),
+                  //                           border: Border.all(
+                  //                               color: Colors.grey.shade300),
+                  //                         ),
+                  //                         child: ClipRRect(
+                  //                           borderRadius:
+                  //                               BorderRadius.circular(8),
+                  //                           child: Image.file(
+                  //                             _images[index],
+                  //                             fit: BoxFit.cover,
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                     Positioned(
+                  //                       top: 0, //
+                  //                       right: 0, //
+                  //                       child: GestureDetector(
+                  //                         onTap: () {
+                  //                           setState(() {
+                  //                             _images.removeAt(index);
+                  //                           });
+                  //                         },
+                  //                         child: Container(
+                  //                           width: 18,
+                  //                           height: 18,
+                  //                           decoration: BoxDecoration(
+                  //                             color: Colors.white,
+                  //                             shape: BoxShape.circle,
+                  //                             boxShadow: [
+                  //                               BoxShadow(
+                  //                                 color: Colors.black,
+                  //                                 blurRadius: 4,
+                  //                               ),
+                  //                             ],
+                  //                           ),
+                  //                           child: Icon(
+                  //                             Icons.close,
+                  //                             size: 14,
+                  //                             color: Colors.black,
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                   ],
+                  //                 );
+                  //               }),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ],
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [

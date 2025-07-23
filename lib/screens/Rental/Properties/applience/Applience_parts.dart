@@ -560,7 +560,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 },
                 child: Row(
                   children: [
-                    Text("           Type",
+                    Text("           Category",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
@@ -1803,7 +1803,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 Expanded(
                                                   flex: 1,
                                                   child: Text(
-                                                    '${rentals.type}',
+                                                    '${rentals.categoryName}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1960,24 +1960,24 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                   width: 5,
                                                                 ),
                                                                 GestureDetector(
-                                                                  onTap:
-                                                                      () async {
-                                                                    // var check = await
-                                                                    // Navigator.push(
-                                                                    //     context,
-                                                                    //     MaterialPageRoute(
-                                                                    //         builder: (context) => Edit_applience(
-                                                                    //               unit: widget.unit,
-                                                                    //               appliance: rentals,
-                                                                    //             )));
-                                                                    // if (check ==
-                                                                    //     true) {
-                                                                    //   setState(
-                                                                    //       () {
-                                                                    //         futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
-                                                                    //       });
-                                                                    // }
-                                                                  },
+                                                                  // onTap:
+                                                                  //     () async {
+                                                                  //   var check = await
+                                                                  //   Navigator.push(
+                                                                  //       context,
+                                                                  //       MaterialPageRoute(
+                                                                  //           builder: (context) => Edit_applience(
+                                                                  //                 unit: widget.unit,
+                                                                  //                 appliance: rentals,
+                                                                  //               )));
+                                                                  //   if (check ==
+                                                                  //       true) {
+                                                                  //     setState(
+                                                                  //         () {
+                                                                  //           futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+                                                                  //         });
+                                                                  //   }
+                                                                  // },
                                                                   child:
                                                                       Container(
                                                                     height: 35,

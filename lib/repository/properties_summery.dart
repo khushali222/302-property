@@ -151,7 +151,16 @@ class Properies_summery_Repo {
     String? categoryId,
     List<dynamic>? filters,
   }) async {
-    final Map<String, dynamic> data = {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+
+    // Convert filters to JSON string
+    String filtersJson = json.encode(filters ?? []);
+    print('Filters as JSON string: $filtersJson');
+
+    // Create FormData
+    var formData = {
       'admin_id': adminId,
       'unit_id': unitId,
       'appliance_name': appliancename,
@@ -166,23 +175,24 @@ class Properies_summery_Repo {
       'maintenance_notes': maintenanceNotes,
       'status': status,
       'category_id': categoryId,
-      'filters': filters ?? [],
+      'filters': filtersJson, // Send filters as JSON string
       'appliance_id': "",
     };
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    print('Sending form data: ${json.encode(formData)}');
+
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/appliance/appliance'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type':
+            'application/x-www-form-urlencoded', // Changed content type
         "id": "CRM $id",
       },
-      body: jsonEncode(data),
+      body: formData, // Send as form data
     );
-    print(" add appliences ${response.body}");
+
+    print("Add appliances response: ${response.body}");
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: "add appliances successfully");
@@ -211,7 +221,16 @@ class Properies_summery_Repo {
     String? categoryId,
     List<dynamic>? filters,
   }) async {
-    final Map<String, dynamic> data = {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+
+    // Convert filters to JSON string
+    String filtersJson = json.encode(filters ?? []);
+    print('Filters as JSON string: $filtersJson');
+
+    // Create form data
+    var formData = {
       'admin_id': adminId,
       'unit_id': unitId,
       'appliance_id': applianceid,
@@ -227,22 +246,22 @@ class Properies_summery_Repo {
       'maintenance_notes': maintenanceNotes,
       'status': status,
       'category_id': categoryId,
-      'filters': filters ?? [],
+      'filters': filtersJson, // Send filters as JSON string
     };
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    print('Sending form data for edit: ${json.encode(formData)}');
+
     final http.Response response = await http.put(
       Uri.parse('${Api_url}/api/appliance/appliance/$applianceid'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type':
+            'application/x-www-form-urlencoded', // Changed content type
         "id": "CRM $id",
       },
-      body: jsonEncode(data),
+      body: formData, // Send as form data
     );
-    print('Edit appliance request: ${jsonEncode(data)}');
+
     print('Edit appliance response: ${response.body}');
 
     var responseData = json.decode(response.body);
