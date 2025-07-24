@@ -66,6 +66,7 @@ class _Summery_pageState extends State<Summery_page>
   late Future<List<Properties_Revenu_model>> futureLeaseRevenueDetails;
   late Future<List<unit_properties>> futureUnitsummery;
   late Future<List<Rentals>> futurerentalowners;
+  late Future<List<unit_appliance>> futureAppliences;
   int _selectedIndex = 0;
 
   //late Future<List<RentalSummary>> futuresummery;
@@ -119,6 +120,15 @@ class _Summery_pageState extends State<Summery_page>
         print("unit id with new $unitId");
       }
     });
+    futureUnitsummery.then((units) {
+      if (units.isNotEmpty) {
+        // Get the first unit's ID and fetch lease details
+        String unitId = units.first.unitId!;
+        futureAppliences = UnitData().fetchApplianceData(unitId);
+        print("unit id with new $unitId");
+      }
+    });
+
     futureUnitsummery.then((units) {
       if (units.isNotEmpty) {
         // Get the first unit's ID and fetch lease details
@@ -1909,6 +1919,41 @@ class _Summery_pageState extends State<Summery_page>
                                 ),
                               ),
                             ),
+                            // Expanded(
+                            //   child: GestureDetector(
+                            //     onTap: () {
+                            //       setState(() {
+                            //         _selectedIndex = isMultiUnit ? 6 : 5;
+                            //       });
+                            //     },
+                            //     child: Container(
+                            //       padding: EdgeInsets.symmetric(
+                            //           vertical: 0, horizontal: 5),
+                            //       margin: EdgeInsets.symmetric(horizontal: 0),
+                            //       decoration: BoxDecoration(
+                            //         color:
+                            //         _selectedIndex == (isMultiUnit ? 6 : 5)
+                            //             ? blueColor
+                            //             : Colors.grey.shade200,
+                            //         borderRadius: BorderRadius.circular(3),
+                            //       ),
+                            //       child: Center(
+                            //         child: Text(
+                            //           "Infrastructure",
+                            //           textAlign: TextAlign.center,
+                            //           style: TextStyle(
+                            //             fontWeight: FontWeight.w600,
+                            //             color: _selectedIndex ==
+                            //                 (isMultiUnit ? 6 : 5)
+                            //                 ? Colors.white
+                            //                 : blueColor,
+                            //             fontSize: 13,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         );
                       },
@@ -2486,7 +2531,11 @@ class _Summery_pageState extends State<Summery_page>
         } else if (_selectedIndex == 5 && isMultiUnit) {
           return Revenue_page();
         }
-
+        // else if (_selectedIndex == 5 && isMultiUnit) {
+        //   return Revenue_page();
+        // } else if (_selectedIndex == (isMultiUnit ? 6 : 5)) {
+        //   return AppliancesPart(unit: uni);
+        // }
         return Container();
       },
     );

@@ -1,5 +1,5 @@
 class allcategories_model {
-  String? sId;
+  String? id;
   String? categoryId;
   String? adminId;
   String? name;
@@ -7,21 +7,22 @@ class allcategories_model {
   bool? isDelete;
   String? createdAt;
   String? updatedAt;
-  int? iV;
+  List<String>? brands;
 
-  allcategories_model(
-      {this.sId,
-        this.categoryId,
-        this.adminId,
-        this.name,
-        this.isDefault,
-        this.isDelete,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+  allcategories_model({
+    this.id,
+    this.categoryId,
+    this.adminId,
+    this.name,
+    this.isDefault,
+    this.isDelete,
+    this.createdAt,
+    this.updatedAt,
+    this.brands,
+  });
 
   allcategories_model.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
+    id = json['_id'];
     categoryId = json['category_id'];
     adminId = json['admin_id'];
     name = json['name'];
@@ -29,12 +30,12 @@ class allcategories_model {
     isDelete = json['is_delete'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    iV = json['__v'];
+    brands = json['brands'] != null ? List<String>.from(json['brands']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
+    data['_id'] = this.id;
     data['category_id'] = this.categoryId;
     data['admin_id'] = this.adminId;
     data['name'] = this.name;
@@ -42,7 +43,9 @@ class allcategories_model {
     data['is_delete'] = this.isDelete;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
+    if (this.brands != null) {
+      data['brands'] = this.brands;
+    }
     return data;
   }
 }
