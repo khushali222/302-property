@@ -150,6 +150,7 @@ class Properies_summery_Repo {
     String? status,
     String? categoryId,
     List<dynamic>? filters,
+    String? appliance_image, // Add this parameter
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -175,8 +176,9 @@ class Properies_summery_Repo {
       'maintenance_notes': maintenanceNotes,
       'status': status,
       'category_id': categoryId,
-      'filters': filtersJson, // Send filters as JSON string
+      'filters': filtersJson,
       'appliance_id': "",
+      'appliance_image': appliance_image, // Add this field
     };
 
     print('Sending form data: ${json.encode(formData)}');
@@ -220,6 +222,7 @@ class Properies_summery_Repo {
     String? status,
     String? categoryId,
     List<dynamic>? filters,
+    String? appliance_image, // Add this parameter
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -227,7 +230,7 @@ class Properies_summery_Repo {
 
     // Convert filters to JSON string
     String filtersJson = json.encode(filters ?? []);
-    print('Filters as JSON string: $filtersJson');
+    print('Filters as JSON string edit : $filtersJson');
 
     // Create form data
     var formData = {
@@ -246,7 +249,8 @@ class Properies_summery_Repo {
       'maintenance_notes': maintenanceNotes,
       'status': status,
       'category_id': categoryId,
-      'filters': filtersJson, // Send filters as JSON string
+      'filters': filtersJson,
+      'appliance_image': appliance_image, // Add this field
     };
 
     print('Sending form data for edit: ${json.encode(formData)}');

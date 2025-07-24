@@ -67,6 +67,7 @@ class unit_appliance {
   String? createdAt;
   String? updatedAt;
   int? iV;
+  String? applianceImage; // Add this field
 
   unit_appliance({
     this.sId,
@@ -92,6 +93,7 @@ class unit_appliance {
     this.createdAt,
     this.updatedAt,
     this.iV,
+    this.applianceImage, // Add this to constructor
   });
 
   unit_appliance.fromJson(Map<String, dynamic> json) {
@@ -118,6 +120,7 @@ class unit_appliance {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     iV = json['__v'];
+    applianceImage = json['appliance_image']; // Add this to fromJson
   }
 
   Map<String, dynamic> toJson() {
@@ -145,6 +148,7 @@ class unit_appliance {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['__v'] = this.iV;
+    data['appliance_image'] = this.applianceImage; // Add this to toJson
     return data;
   }
 }

@@ -1960,24 +1960,24 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                   width: 5,
                                                                 ),
                                                                 GestureDetector(
-                                                                  // onTap:
-                                                                  //     () async {
-                                                                  //   var check = await
-                                                                  //   Navigator.push(
-                                                                  //       context,
-                                                                  //       MaterialPageRoute(
-                                                                  //           builder: (context) => Edit_applience(
-                                                                  //                 unit: widget.unit,
-                                                                  //                 appliance: rentals,
-                                                                  //               )));
-                                                                  //   if (check ==
-                                                                  //       true) {
-                                                                  //     setState(
-                                                                  //         () {
-                                                                  //           futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
-                                                                  //         });
-                                                                  //   }
-                                                                  // },
+                                                                  onTap:
+                                                                      () async {
+                                                                    var check = await
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => Edit_applience(
+                                                                                  unit: widget.unit,
+                                                                                  appliance: rentals,
+                                                                                )));
+                                                                    if (check ==
+                                                                        true) {
+                                                                      setState(
+                                                                          () {
+                                                                            futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+                                                                          });
+                                                                    }
+                                                                  },
                                                                   child:
                                                                       Container(
                                                                     height: 35,

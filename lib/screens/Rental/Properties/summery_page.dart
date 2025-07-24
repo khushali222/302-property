@@ -38,7 +38,6 @@ import '../../../repository/unit_data.dart';
 import '../../../widgets/Properties_revenue_table.dart';
 import '../../Leasing/RentalRoll/addcard/CardModel.dart';
 import '../../Maintenance/Workorder/workorder_summery.dart';
-
 import 'applience/Applience_parts.dart';
 import 'moveout/Moveout_properties.dart';
 import 'moveout/repository.dart';
