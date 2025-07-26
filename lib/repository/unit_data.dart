@@ -19,8 +19,7 @@ class UnitData {
 
     try {
       final response = await http.get(url,headers: {"authorization" : "CRM $token","id":"CRM $id",},);
-      print(" data and  get appliences ${response.body}");
-      print(" data api  ${"${baseUrl}appliance/appliance/$unitId"}");
+      print(response.body);
       print(["data"].first.length);
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)["data"];

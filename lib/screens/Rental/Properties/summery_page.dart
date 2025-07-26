@@ -39,6 +39,7 @@ import '../../../widgets/Properties_revenue_table.dart';
 import '../../Leasing/RentalRoll/addcard/CardModel.dart';
 import '../../Maintenance/Workorder/workorder_summery.dart';
 import 'applience/Applience_parts.dart';
+import 'infrastracture.dart';
 import 'moveout/Moveout_properties.dart';
 import 'moveout/repository.dart';
 import '../../Leasing/RentalRoll/NewAddLease.dart';
@@ -60,13 +61,13 @@ class Summery_page extends StatefulWidget {
 class _Summery_pageState extends State<Summery_page>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
+  ScrollController _scrollController = ScrollController();
   late Future<List<TenantData>> futurePropertysummery;
   late Future<Rentals> futureRentalDetails;
   late Future<List<Properties_lease_model>> futureLeaseDetails;
   late Future<List<Properties_Revenu_model>> futureLeaseRevenueDetails;
   late Future<List<unit_properties>> futureUnitsummery;
   late Future<List<Rentals>> futurerentalowners;
-  late Future<List<unit_appliance>> futureAppliences;
   int _selectedIndex = 0;
 
   //late Future<List<RentalSummary>> futuresummery;
@@ -96,11 +97,19 @@ class _Summery_pageState extends State<Summery_page>
         _connectivityResult = result;
       });
     });
+    
+    // Add scroll listener to update UI when scrolling
+    _scrollController.addListener(() {
+      setState(() {
+        // This will trigger a rebuild to update arrow colors
+      });
+    });
+    
     checkInternet();
     _fetchData();
     futureUnitsummery =
         Properies_summery_Repo().fetchunit(widget.properties.rentalId ?? "");
-
+    fetchunits1();
     futurePropertysummery = Properies_summery_Repo()
         .fetchPropertiessummery(widget.properties.rentalId!);
     futureworkordersummery =
@@ -120,15 +129,6 @@ class _Summery_pageState extends State<Summery_page>
         print("unit id with new $unitId");
       }
     });
-    futureUnitsummery.then((units) {
-      if (units.isNotEmpty) {
-        // Get the first unit's ID and fetch lease details
-        String unitId = units.first.unitId!;
-        futureAppliences = UnitData().fetchApplianceData(unitId);
-        print("unit id with new $unitId");
-      }
-    });
-
     futureUnitsummery.then((units) {
       if (units.isNotEmpty) {
         // Get the first unit's ID and fetch lease details
@@ -159,6 +159,34 @@ class _Summery_pageState extends State<Summery_page>
     setState(() {
       _connectivityResult = connectiondata;
     });
+  }
+
+  // Scroll to previous tab
+  void _scrollToPreviousTab() {
+    if (_scrollController.hasClients) {
+      double currentOffset = _scrollController.offset;
+      double scrollAmount = 150; // Adjust this value based on your tab width
+      double newOffset = (currentOffset - scrollAmount).clamp(0.0, _scrollController.position.maxScrollExtent);
+      _scrollController.animateTo(
+        newOffset,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  // Scroll to next tab
+  void _scrollToNextTab() {
+    if (_scrollController.hasClients) {
+      double currentOffset = _scrollController.offset;
+      double scrollAmount = 150; // Adjust this value based on your tab width
+      double newOffset = (currentOffset + scrollAmount).clamp(0.0, _scrollController.position.maxScrollExtent);
+      _scrollController.animateTo(
+        newOffset,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   String? moveOutDate;
@@ -338,6 +366,7 @@ class _Summery_pageState extends State<Summery_page>
   @override
   void dispose() {
     _tabController!.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -426,8 +455,8 @@ class _Summery_pageState extends State<Summery_page>
   Future<void> fetchunits1() async {
     //  try {
     final fetchedunit1 =
-        await unit1Repository.fetchunit(widget.unit?.unitId ?? "");
-    print(widget.unit?.unitId ?? "");
+        await unit1Repository.fetchunit(widget.properties.rentalId ?? "");
+    print(widget.properties.rentalId ?? "");
     print('hello');
     setState(() {
       print(widget.unit?.unitId ?? "");
@@ -1399,7 +1428,7 @@ class _Summery_pageState extends State<Summery_page>
     });
   }
 
-  final _scrollController = ScrollController();
+
 
   Widget _buildHeaderrent<T>(String text, int columnIndex,
       Comparable<T> Function(Rentals d)? getField) {
@@ -1698,7 +1727,7 @@ class _Summery_pageState extends State<Summery_page>
                   ),*/
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    height: 50,
+                    height: 45,
                     decoration: BoxDecoration(
                       color: Colors.transparent,
                       border: Border.all(color: Colors.transparent),
@@ -1709,251 +1738,136 @@ class _Summery_pageState extends State<Summery_page>
                         final bool isMultiUnit =
                             snapshot.data?.propertyTypeData?.isMultiunit ??
                                 false;
+                        
+                        // Create list of tab items
+                        List<Map<String, dynamic>> tabItems = [
+                          {"title": "Summary", "index": 0},
+                        ];
+                        
+                        if (isMultiUnit) {
+                          tabItems.add({"title": "Unit ($unitCount)", "index": 1});
+                        }
+                        
+                        tabItems.addAll([
+                          {"title": "Tenant ($tenentCount)", "index": isMultiUnit ? 2 : 1},
+                          {"title": "Work order ($count)", "index": isMultiUnit ? 3 : 2},
+                          {"title": "Lease", "index": isMultiUnit ? 4 : 3},
+                          {"title": "Revenue", "index": isMultiUnit ? 5 : 4},
+                          {"title": "Infrastructure", "index": isMultiUnit ? 6 : 5},
+                        ]);
+
                         return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = 0;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color: _selectedIndex == 0
-                                        ? blueColor
-                                        : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
+                            // Left arrow button - only show if not at the beginning
+                            if (_scrollController.hasClients && _scrollController.offset > 0)
+                              Container(
+                                width: 30,
+                                height: 35,
+                                child: IconButton(
+                                  onPressed: () {
+                                    // Scroll to previous tab
+                                    _scrollToPreviousTab();
+                                  },
+                                  icon: Icon(
+                                    Icons.chevron_left,
+                                    color: blueColor,
+                                    size: 36,
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      "Summary",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex == 0
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
                                 ),
                               ),
-                            ),
-                            if (isMultiUnit)
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = 1;
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 0, horizontal: 5),
-                                    margin: EdgeInsets.symmetric(horizontal: 0),
-                                    decoration: BoxDecoration(
-                                      color: _selectedIndex == 1
-                                          ? blueColor
-                                          : Colors.grey.shade200,
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Unit($unitCount)",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          color: _selectedIndex == 1
-                                              ? Colors.white
-                                              : blueColor,
-                                          fontSize: 13,
+                            
+                            // Scrollable tab content
+                            Expanded(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                controller: _scrollController,
+                                physics: BouncingScrollPhysics(),
+                                child: Row(
+                                  children: tabItems.map((tab) {
+                                    int tabIndex = tab["index"];
+                                    String title = tab["title"];
+                                    
+                                    return Container(
+                                      margin: EdgeInsets.symmetric(horizontal: 3),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedIndex = tabIndex;
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 0, horizontal: 16),
+                                          decoration: BoxDecoration(
+                                            color: _selectedIndex == tabIndex
+                                                ? blueColor
+                                                : Colors.grey.shade200,
+                                            borderRadius: BorderRadius.circular(6),
+                                            border: Border.all(
+                                              color: _selectedIndex == tabIndex
+                                                  ? blueColor
+                                                  : Colors.grey.shade300,
+                                              width: 1,
+                                            ),
+                                            boxShadow: _selectedIndex == tabIndex
+                                                ? [
+                                                    BoxShadow(
+                                                      color: blueColor.withOpacity(0.3),
+                                                      blurRadius: 4,
+                                                      offset: Offset(0, 2),
+                                                    )
+                                                  ]
+                                                : [
+                                                    BoxShadow(
+                                                      color: Colors.grey.withOpacity(0.1),
+                                                      blurRadius: 2,
+                                                      offset: Offset(0, 1),
+                                                    )
+                                                  ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              title,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: _selectedIndex == tabIndex
+                                                    ? Colors.white
+                                                    : blueColor,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = isMultiUnit ? 2 : 1;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedIndex == (isMultiUnit ? 2 : 1)
-                                            ? blueColor
-                                            : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Tenant($tenentCount)",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex ==
-                                                (isMultiUnit ? 2 : 1)
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
+                                    );
+                                  }).toList(),
                                 ),
                               ),
                             ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = isMultiUnit ? 3 : 2;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedIndex == (isMultiUnit ? 3 : 2)
-                                            ? blueColor
-                                            : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
+                            
+                            // Right arrow button - only show if not at the end
+                            if (_scrollController.hasClients && 
+                                _scrollController.offset < _scrollController.position.maxScrollExtent)
+                              Container(
+                                width: 30,
+                                height: 35,
+                                child: IconButton(
+                                  onPressed: () {
+                                    // Scroll to next tab
+                                    _scrollToNextTab();
+                                  },
+                                  icon: Icon(
+                                    Icons.chevron_right,
+                                    color: blueColor,
+                                    size: 36,
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      "Work order\n($count)",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex ==
-                                                (isMultiUnit ? 3 : 2)
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = isMultiUnit ? 4 : 3;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedIndex == (isMultiUnit ? 4 : 3)
-                                            ? blueColor
-                                            : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Lease",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex ==
-                                                (isMultiUnit ? 4 : 3)
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = isMultiUnit ? 5 : 4;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedIndex == (isMultiUnit ? 5 : 4)
-                                            ? blueColor
-                                            : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Revenue",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex ==
-                                                (isMultiUnit ? 5 : 4)
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Expanded(
-                            //   child: GestureDetector(
-                            //     onTap: () {
-                            //       setState(() {
-                            //         _selectedIndex = isMultiUnit ? 6 : 5;
-                            //       });
-                            //     },
-                            //     child: Container(
-                            //       padding: EdgeInsets.symmetric(
-                            //           vertical: 0, horizontal: 5),
-                            //       margin: EdgeInsets.symmetric(horizontal: 0),
-                            //       decoration: BoxDecoration(
-                            //         color:
-                            //         _selectedIndex == (isMultiUnit ? 6 : 5)
-                            //             ? blueColor
-                            //             : Colors.grey.shade200,
-                            //         borderRadius: BorderRadius.circular(3),
-                            //       ),
-                            //       child: Center(
-                            //         child: Text(
-                            //           "Infrastructure",
-                            //           textAlign: TextAlign.center,
-                            //           style: TextStyle(
-                            //             fontWeight: FontWeight.w600,
-                            //             color: _selectedIndex ==
-                            //                 (isMultiUnit ? 6 : 5)
-                            //                 ? Colors.white
-                            //                 : blueColor,
-                            //             fontSize: 13,
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         );
                       },
@@ -2484,6 +2398,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget _buildTabContent(BuildContext context) {
+
     return FutureBuilder<Rentals>(
       future: futureRentalDetails,
       builder: (context, snapshot) {
@@ -2497,7 +2412,7 @@ class _Summery_pageState extends State<Summery_page>
         }
         final bool isMultiUnit =
             snapshot.data?.propertyTypeData?.isMultiunit ?? false;
-
+       
         if (_selectedIndex == 0) {
           return Summary_page();
         } else if (_selectedIndex == 1) {
@@ -2514,28 +2429,28 @@ class _Summery_pageState extends State<Summery_page>
           } else {
             return Workorder(context);
           }
-        } else if (_selectedIndex == 3) {
+                } else if (_selectedIndex == 3) {
           if (isMultiUnit) {
             return Workorder(context);
           } else {
             return Lease_page();
           }
-        } else if (_selectedIndex == 4 && isMultiUnit) {
-          return Lease_page();
         } else if (_selectedIndex == 4) {
           if (isMultiUnit) {
             return Lease_page();
           } else {
             return Revenue_page();
           }
-        } else if (_selectedIndex == 5 && isMultiUnit) {
-          return Revenue_page();
+        } else if (_selectedIndex == 5) {
+          if (isMultiUnit) {
+            return Revenue_page();
+          } else {
+            return Infrastructure_page(data);
+          }
+        } else if (_selectedIndex == 6 && isMultiUnit) {
+          return Infrastructure_page(data);
         }
-        // else if (_selectedIndex == 5 && isMultiUnit) {
-        //   return Revenue_page();
-        // } else if (_selectedIndex == (isMultiUnit ? 6 : 5)) {
-        //   return AppliancesPart(unit: uni);
-        // }
+
         return Container();
       },
     );
@@ -11376,6 +11291,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   unitScreen1(BuildContext context, unit_properties unit) {
+    print('unit idsss ${unit?.unitId}');
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -11995,6 +11911,14 @@ class _Summery_pageState extends State<Summery_page>
           ),
         ],
       ),
+    );
+  }
+
+  Infrastructure_page(List<unit_properties> unit) {
+  
+    return InfrastructurePart(
+      properties: widget.properties,
+      units: unit,
     );
   }
 

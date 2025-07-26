@@ -24,10 +24,13 @@ import '../../../../Model/unit.dart';
 class AddApplience extends StatefulWidget {
   Rentals? properties;
   unit_properties? unit;
+  unit_appliance? appliance;
+
   AddApplience({
     this.unit,
     this.properties,
-  });
+    this.appliance,
+    });
 
   @override
   State<AddApplience> createState() => _AddApplienceState();
@@ -50,79 +53,22 @@ class _AddApplienceState extends State<AddApplience> {
   final UnitData leaseRepository = UnitData();
   List<unit_appliance> leases = [];
   late Future<List<unit_appliance>> futureAppliences;
-
-  // Add this variable to store available brands for selected category
-  List<String> availableBrands = [];
-
-  bool showAllFields = false; // Add this variable to control field visibility
-
-  // Add this method to check if brand/model/serial fields should be hidden
-  bool shouldHideBrandModelSerial() {
-    if (_selectedDropdownCategory == null) return true;
-
-    final categoryName = _selectedDropdownCategory!.name?.toLowerCase() ?? '';
-    return categoryName == 'electrical' ||
-        categoryName == 'exterior' ||
-        categoryName == 'roof';
-  }
-
-  // Modify the updateAvailableBrands method
-  void updateAvailableBrands(allcategories_model? category) {
-    setState(() {
-      // Only update brands if we shouldn't hide these fields
-      if (!shouldHideBrandModelSerial()) {
-        if (category != null &&
-            category.brands != null &&
-            category.brands!.isNotEmpty) {
-          availableBrands = List<String>.from(category.brands!);
-          if (!availableBrands.contains('Other')) {
-            availableBrands.add('Other');
-          }
-        } else {
-          availableBrands = ['Other'];
-        }
-      } else {
-        availableBrands = [];
-      }
-      _selectedBrand = null;
-    });
-  }
-
-  // Add this method to check if a field should be shown
-  bool shouldShowField(String fieldName) {
-    if (_selectedDropdownCategory == null) return true;
-
-    // Always show these fields
-    final alwaysShowFields = [
-      'name',
-      'description',
-      'installedDate',
-      'status',
-      'maintenanceNotes'
-    ];
-    if (alwaysShowFields.contains(fieldName)) return true;
-
-    // Show brand, model, serialNumber only for appliances with brands
-    if (['brand', 'model', 'serialNumber'].contains(fieldName)) {
-      return _selectedDropdownCategory!.brands != null &&
-          _selectedDropdownCategory!.brands!.isNotEmpty;
-    }
-
-    // Show filters only for HVAC
-    if (fieldName == 'filters') {
-      return _selectedDropdownCategory!.name == 'HVAC';
-    }
-
-    return true;
-  }
-
   Future<void> fetchLeases() async {
+    //  try {
     final fetchedLeases =
         await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
+    
     setState(() {
+      
       leases = fetchedLeases;
       isLoading = false;
     });
+    //} catch (e) {
+    setState(() {
+      isLoading = false;
+    });
+    //print('Failed to load leases: $e');
+    //}
   }
 
   reload_screen() {
@@ -134,10 +80,34 @@ class _AddApplienceState extends State<AddApplience> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _loadDropdownCategories();
     fetchLeases();
     futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+
+  }
+
+//make an funtion for load data from widget
+  void loadDataFromWidget() {
+    setState(() {
+      _name.text = widget.appliance?.applianceName ?? '';
+      _description.text = widget.appliance?.applianceDescription ?? '';
+      _installedDate.text = widget.appliance?.installedDate ?? '';
+      _warrantyExpiry.text = widget.appliance?.warrantyExpiry ?? '';
+      _lastMaintenanceDate.text = widget.appliance?.lastMaintenanceDate ?? '';
+      _maintenanceNotes.text = widget.appliance?.maintenanceNotes ?? '';
+      _type.text = widget.appliance?.type ?? '';
+      _model.text = widget.appliance?.model ?? '';
+      _serialNumber.text = widget.appliance?.serialNumber ?? '';
+      // filter out data from list of dropdown category
+      _dropdownCategories = _dropdownCategories.where((category) => category.categoryId == widget.appliance?.categoryId).toList();
+      _selectedDropdownCategory = _dropdownCategories.first;
+      brandList = _selectedDropdownCategory?.brands ?? [];
+      _selectedBrand = widget.appliance?.brand ?? '';
+      _selectedStatus = widget.appliance?.status ?? '';
+      
+    });
   }
 
   Future<void> _loadDropdownCategories() async {
@@ -146,12 +116,16 @@ class _AddApplienceState extends State<AddApplience> {
     });
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
+      print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
       setState(() {
         _dropdownCategories = cats;
         _isLoadingCategories = false;
       });
+      if(widget.appliance != null)
+      loadDataFromWidget();
     } catch (e) {
-      print('Error fetching categories: $e');
+      print('Error fetching categories in AddWorkOrderForMobile: ' +
+          e.toString());
       setState(() {
         _isLoadingCategories = false;
       });
@@ -164,14 +138,16 @@ class _AddApplienceState extends State<AddApplience> {
   allcategories_model? _selectedDropdownCategory;
   bool _isLoadingCategories = false;
 
-  // Add back the statusList
-  final List<String> statusList = ['Working', 'Needs Repair', "Out of Service"];
+  List<String> brandList = [];
+  List<String> statusList = ['Working', 'Needs Repair', "Out of Service"];
 
   String? _selectedBrand;
   String? _selectedStatus;
+  // Add these to your state class
   List<Map<String, TextEditingController>> filterControllers = [];
   bool showFilters = false;
 
+// Add this method to handle adding new filter
   void addNewFilter() {
     setState(() {
       filterControllers.add({
@@ -181,6 +157,7 @@ class _AddApplienceState extends State<AddApplience> {
     });
   }
 
+// Add this method to remove filter
   void removeFilter(int index) {
     setState(() {
       filterControllers[index]['name']?.dispose();
@@ -266,7 +243,9 @@ class _AddApplienceState extends State<AddApplience> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(height: 20),
+                  SizedBox(
+                    height: 20,
+                  ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(5.0),
                     child: Container(
@@ -283,8 +262,9 @@ class _AddApplienceState extends State<AddApplience> {
                           ),
                         ],
                       ),
+                      //if appliance is not null then show edit else show add
                       child: Text(
-                        "Add Home Systems",
+                        widget.appliance != null ? "Edit Infrastructure" : "Add Infrastructure",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -293,13 +273,13 @@ class _AddApplienceState extends State<AddApplience> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
-
-                  // Name field - always visible
+                  SizedBox(
+                    height: 20,
+                  ),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
-                      'Name',
+                      'Infrastructure Name *',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -309,8 +289,6 @@ class _AddApplienceState extends State<AddApplience> {
                     controller: _name,
                     keyboardType: TextInputType.text,
                   ),
-
-                  // Description field - always visible
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -324,17 +302,18 @@ class _AddApplienceState extends State<AddApplience> {
                     hintText: 'Enter description',
                     controller: _description,
                     keyboardType: TextInputType.text,
+                    
                   ),
-
-                  // Category dropdown - always visible
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
-                      'Category',
+                      'Category *',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
+                  SizedBox(height: 4),
+                  //categories dropdwoun
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: DropdownButtonHideUnderline(
@@ -353,21 +332,31 @@ class _AddApplienceState extends State<AddApplience> {
                             child: Text(cat.name ?? ''),
                           );
                         }).toList(),
+                        // onChanged: _isLoadingCategories
+                        //     ? null // disables dropdown while loading
+                        //     : (allcategories_model? newValue) {
+                        //   setState(() {
+                        //     _selectedDropdownCategory = newValue;
+                        //     // _showTextField =
+                        //     //     newValue?.name == 'Other';
+                        //   });
+                        // },
                         onChanged: _isLoadingCategories
-                            ? null
+                            ? null // disables dropdown while loading
                             : (allcategories_model? newValue) {
                                 setState(() {
                                   _selectedDropdownCategory = newValue;
-                                  updateAvailableBrands(newValue);
-                                  // Reset filters if changing from HVAC
-                                  if (newValue?.name != 'HVAC') {
-                                    showFiltersSection = false;
-                                    for (var controllers in filterControllers) {
-                                      controllers['name']?.dispose();
-                                      controllers['size']?.dispose();
-                                    }
-                                    filterControllers.clear();
+                                  print(_selectedDropdownCategory?.name);
+                                  print(_selectedDropdownCategory?.brands);
+                                  brandList = _selectedDropdownCategory?.brands ?? [];
+                                  // Don't show filters section immediately for HVAC
+                                  showFiltersSection = false;
+                                  // Clear any existing filters
+                                  for (var controllers in filterControllers) {
+                                    controllers['name']?.dispose();
+                                    controllers['size']?.dispose();
                                   }
+                                  filterControllers.clear();
                                 });
                               },
                         buttonStyleData: ButtonStyleData(
@@ -404,118 +393,123 @@ class _AddApplienceState extends State<AddApplience> {
                       ),
                     ),
                   ),
-
-                  // Show brand, model, serial number only for appropriate categories
-                  if (_selectedDropdownCategory != null &&
-                      !shouldHideBrandModelSerial()) ...[
-                    // Brand dropdown
-                    SizedBox(height: 8),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Brand',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: const Text('Select Brand'),
-                          value: _selectedBrand,
-                          items: availableBrands.map((brand) {
-                            return DropdownMenuItem<String>(
-                              value: brand,
-                              child: Text(brand),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedBrand = newValue;
-                            });
-                          },
-                          buttonStyleData: ButtonStyleData(
-                            height: 45,
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            elevation: 2,
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(Icons.arrow_drop_down),
-                            iconSize: 24,
-                            iconEnabledColor: Color(0xFFb0b6c3),
-                            iconDisabledColor: Colors.grey,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            maxHeight: 250,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            scrollbarTheme: ScrollbarThemeData(
-                              radius: const Radius.circular(6),
-                              thickness: MaterialStateProperty.all(6),
-                              thumbVisibility: MaterialStateProperty.all(true),
-                            ),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 50,
-                            padding: EdgeInsets.symmetric(horizontal: 14),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // Model field
-                    SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Model',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    CustomTextFormField(
-                      labelText: '',
-                      hintText: 'Enter model',
-                      controller: _model,
-                      keyboardType: TextInputType.text,
-                    ),
-
-                    // Serial Number field
-                    SizedBox(height: 8),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Serial Number',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    CustomTextFormField(
-                      labelText: '',
-                      hintText: 'Enter serial number',
-                      controller: _serialNumber,
-                      keyboardType: TextInputType.text,
-                    ),
-                  ],
-
-                  // Installed Date field - always visible
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
-                      'Installed Date',
+                      'Type',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  CustomTextFormField(
+                    labelText: '',
+                    hintText: 'Enter type',
+                    controller: _type,
+                    keyboardType: TextInputType.name,
+                  ),
+                  SizedBox(height: 8),
+                  if (brandList.isNotEmpty) ...[
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Brand',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: const Text('Select Brand'),
+                        value: brandList.contains(_selectedBrand)
+                            ? _selectedBrand
+                            : null,
+                        items: brandList.map((brand) {
+                          return DropdownMenuItem<String>(
+                            value: brand,
+                            child: Text(brand),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedBrand = newValue;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 45,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                          elevation: 2,
+                        ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 24,
+                          iconEnabledColor: Color(0xFFb0b6c3),
+                          iconDisabledColor: Colors.grey,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                          scrollbarTheme: ScrollbarThemeData(
+                            radius: const Radius.circular(6),
+                            thickness: MaterialStateProperty.all(6),
+                            thumbVisibility: MaterialStateProperty.all(true),
+                          ),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 50,
+                          padding: EdgeInsets.symmetric(horizontal: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                    SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Model',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  CustomTextFormField(
+                    labelText: '',
+                    hintText: 'Enter model',
+                    controller: _model,
+                    keyboardType: TextInputType.text,
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Serial Number',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  CustomTextFormField(
+                    labelText: '',
+                    hintText: 'Enter serial number',
+                    controller: _serialNumber,
+                    keyboardType: TextInputType.text,
+                  ),
+                  SizedBox(height: 8),
+                  ],
+                
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Installed Date *',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   dateField(
                       'Installed Date', _installedDate, context, setState),
-
-                  // Warranty Expiry field - always visible
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -526,8 +520,6 @@ class _AddApplienceState extends State<AddApplience> {
                   ),
                   dateField(
                       'Warranty Expiry', _warrantyExpiry, context, setState),
-
-                  // Last Maintenance Date field - always visible
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -538,13 +530,11 @@ class _AddApplienceState extends State<AddApplience> {
                   ),
                   dateField('Last Maintenance Date', _lastMaintenanceDate,
                       context, setState),
-
-                  // Status dropdown - always visible
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
-                      'Status',
+                      'Status *',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -554,7 +544,9 @@ class _AddApplienceState extends State<AddApplience> {
                       child: DropdownButton2<String>(
                         isExpanded: true,
                         hint: const Text('Select Status'),
-                        value: _selectedStatus,
+                        value: statusList.contains(_selectedStatus)
+                            ? _selectedStatus
+                            : null,
                         items: statusList.map((status) {
                           return DropdownMenuItem<String>(
                             value: status,
@@ -600,8 +592,6 @@ class _AddApplienceState extends State<AddApplience> {
                       ),
                     ),
                   ),
-
-                  // Maintenance Notes field - always visible
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -616,8 +606,8 @@ class _AddApplienceState extends State<AddApplience> {
                     controller: _maintenanceNotes,
                     keyboardType: TextInputType.text,
                   ),
-
-                  // HVAC Filters section (only for HVAC category)
+                  const SizedBox(height: 5),
+                  // Add this after your Status dropdown
                   if (_selectedDropdownCategory?.name == 'HVAC') ...[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -678,14 +668,14 @@ class _AddApplienceState extends State<AddApplience> {
                                 padding: EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   border:
-                                      Border.all(color: Colors.grey.shade300),
+                                  Border.all(color: Colors.grey.shade300),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Column(
                                   children: [
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text('Filter ${index + 1}'),
                                         IconButton(
@@ -723,9 +713,6 @@ class _AddApplienceState extends State<AddApplience> {
                       ),
                     ),
                   ],
-
-                  // Image section - always visible
-                  SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.only(left: 13),
                     child: Text(
@@ -888,13 +875,13 @@ class _AddApplienceState extends State<AddApplience> {
                       ],
                     ),
                   ),
-
-                  // Buttons section
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(width: 10),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -905,12 +892,9 @@ class _AddApplienceState extends State<AddApplience> {
                           ),
                           onPressed: () async {
                             if (_name.text.isEmpty ||
-                                _description.text.isEmpty ||
                                 _installedDate.text.isEmpty ||
-                                _selectedDropdownCategory ==
-                                    null || // Add validation for required fields
-                                _selectedStatus == null ||
-                                _selectedBrand == null) {
+                                _selectedDropdownCategory == null ||
+                                _selectedStatus == null) {
                               setState(() => iserror = true);
                             } else {
                               setState(() {
@@ -924,7 +908,7 @@ class _AddApplienceState extends State<AddApplience> {
 
                               // Create a single filters list
                               List<Map<String, dynamic>> filters = [];
-
+                              print("calling save button");
                               if (_selectedDropdownCategory?.name == 'HVAC' &&
                                   showFiltersSection) {
                                 print('Creating filters for HVAC appliance');
@@ -975,34 +959,62 @@ class _AddApplienceState extends State<AddApplience> {
                                   base64Image = 'data:image/jpeg;base64,' +
                                       base64Encode(imageBytes);
                                 }
-
-                                final response = await Properies_summery_Repo()
+                               
+                                final response = widget.appliance == null? await Properies_summery_Repo()
                                     .addappliances(
                                   adminId: id,
-                                  unitId: widget.unit?.unitId,
+                                  unitId: widget.unit?.unitId ?? "",
                                   appliancename: _name.text,
                                   appliancedescription: _description.text,
                                   installeddate: _installedDate.text,
                                   type: _type.text,
-                                  brand: _selectedBrand,
+                                  brand: _selectedBrand ?? "",
                                   model: _model.text,
                                   serialNumber: _serialNumber.text,
                                   warrantyExpiry:
                                       _warrantyExpiry.text.isNotEmpty
                                           ? _warrantyExpiry.text
-                                          : null,
+                                          : "",
                                   lastMaintenanceDate:
                                       _lastMaintenanceDate.text.isNotEmpty
                                           ? _lastMaintenanceDate.text
-                                          : null,
+                                          : "",
                                   maintenanceNotes: _maintenanceNotes.text,
-                                  status: _selectedStatus,
+                                  status: _selectedStatus ?? "",
                                   categoryId:
                                       _selectedDropdownCategory?.categoryId ??
                                           "",
                                   filters: filters.isNotEmpty ? filters : [],
                                   appliance_image:
-                                      base64Image, // Add the base64 image
+                                      base64Image ?? "", // Add the base64 image
+                                ):await Properies_summery_Repo()
+                                    .Editappliances(
+                                  adminId: id,
+                                  unitId: widget.unit?.unitId ?? "",
+                                  applianceid: widget.appliance?.applianceId ?? "",
+                                  appliancename: _name.text,
+                                  appliancedescription: _description.text,
+                                  installeddate: _installedDate.text,
+                                  type: _type.text,
+                                  brand: _selectedBrand ?? "",
+                                  model: _model.text,
+                                  serialNumber: _serialNumber.text,
+                                  warrantyExpiry:
+                                      _warrantyExpiry.text.isNotEmpty
+                                          ? _warrantyExpiry.text
+                                          : "",
+                                  lastMaintenanceDate:
+                                      _lastMaintenanceDate.text.isNotEmpty
+                                          ? _lastMaintenanceDate.text
+                                          : "",
+                                  maintenanceNotes: _maintenanceNotes.text,
+                                  status: _selectedStatus ?? "",
+                                  categoryId:
+                                      _selectedDropdownCategory?.categoryId ??
+                                          "",
+                                  filters: filters.isNotEmpty ? filters : [],
+                                  appliance_image:
+                                      base64Image ?? "", // Add the base64 image
                                 );
 
                                 print('API Response: $response');

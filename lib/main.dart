@@ -114,7 +114,7 @@ void main() {
         enabled: true,
         tools: [
           ...DevicePreview.defaultTools,
-        ],
+            ],
         builder: (context) => MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (context) => OwnerDetailsProvider()),

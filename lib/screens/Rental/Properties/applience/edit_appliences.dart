@@ -365,36 +365,6 @@ class _Edit_applienceState extends State<Edit_applience> {
     }
   }
 
-  // Add this method to check if brand/model/serial fields should be hidden
-  bool shouldHideBrandModelSerial() {
-    if (_selectedDropdownCategory == null) return true;
-
-    final categoryName = _selectedDropdownCategory!.name?.toLowerCase() ?? '';
-    return categoryName == 'electrical' ||
-        categoryName == 'exterior' ||
-        categoryName == 'roof';
-  }
-
-  // Modify the updateAvailableBrands method
-  void updateAvailableBrands(allcategories_model? category) {
-    setState(() {
-      // Only update brands if we shouldn't hide these fields
-      if (!shouldHideBrandModelSerial()) {
-        if (category != null &&
-            category.brands != null &&
-            category.brands!.isNotEmpty) {
-          brandList = List<String>.from(category.brands!);
-          if (!brandList.contains('Other')) {
-            brandList.add('Other');
-          }
-        } else {
-          brandList = ['Other'];
-        }
-      }
-      _selectedBrand = null;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -505,7 +475,6 @@ class _Edit_applienceState extends State<Edit_applience> {
                                   _selectedDropdownCategory = newValue;
                                   print(
                                       'Category changed to: ${newValue?.name}');
-                                  updateAvailableBrands(newValue);
 
                                   // Reset filters if changing from/to HVAC
                                   if (_selectedDropdownCategory?.name !=
@@ -516,13 +485,6 @@ class _Edit_applienceState extends State<Edit_applience> {
                                       controllers['size']?.dispose();
                                     }
                                     filterControllers.clear();
-                                  }
-
-                                  // Clear brand/model/serial if switching to a category that hides these fields
-                                  if (shouldHideBrandModelSerial()) {
-                                    _selectedBrand = null;
-                                    _model.clear();
-                                    _serialNumber.clear();
                                   }
                                 });
                               },
@@ -575,104 +537,95 @@ class _Edit_applienceState extends State<Edit_applience> {
                     keyboardType: TextInputType.name,
                   ),
                   SizedBox(height: 8),
-                  // Only show these fields if category is not electrical/exterior/roof
-                  if (_selectedDropdownCategory != null &&
-                      !shouldHideBrandModelSerial()) ...[
-                    SizedBox(height: 8),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Brand',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Brand',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: const Text('Select Brand'),
-                          value: brandList.contains(_selectedBrand)
-                              ? _selectedBrand
-                              : null,
-                          items: brandList.map((brand) {
-                            return DropdownMenuItem<String>(
-                              value: brand,
-                              child: Text(brand),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedBrand = newValue;
-                            });
-                          },
-                          buttonStyleData: ButtonStyleData(
-                            height: 45,
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            elevation: 2,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: const Text('Select Brand'),
+                        value: brandList.contains(_selectedBrand)
+                            ? _selectedBrand
+                            : null,
+                        items: brandList.map((brand) {
+                          return DropdownMenuItem<String>(
+                            value: brand,
+                            child: Text(brand),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedBrand = newValue;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 45,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
                           ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(Icons.arrow_drop_down),
-                            iconSize: 24,
-                            iconEnabledColor: Color(0xFFb0b6c3),
-                            iconDisabledColor: Colors.grey,
+                          elevation: 2,
+                        ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 24,
+                          iconEnabledColor: Color(0xFFb0b6c3),
+                          iconDisabledColor: Colors.grey,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
                           ),
-                          dropdownStyleData: DropdownStyleData(
-                            maxHeight: 250,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            scrollbarTheme: ScrollbarThemeData(
-                              radius: const Radius.circular(6),
-                              thickness: MaterialStateProperty.all(6),
-                              thumbVisibility: MaterialStateProperty.all(true),
-                            ),
+                          scrollbarTheme: ScrollbarThemeData(
+                            radius: const Radius.circular(6),
+                            thickness: MaterialStateProperty.all(6),
+                            thumbVisibility: MaterialStateProperty.all(true),
                           ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 50,
-                            padding: EdgeInsets.symmetric(horizontal: 14),
-                          ),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 50,
+                          padding: EdgeInsets.symmetric(horizontal: 14),
                         ),
                       ),
                     ),
-
-                    // Model field
-                    SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Model',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Model',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    CustomTextFormField(
-                      labelText: '',
-                      hintText: 'Enter model',
-                      controller: _model,
-                      keyboardType: TextInputType.text,
+                  ),
+                  CustomTextFormField(
+                    labelText: '',
+                    hintText: 'Enter model',
+                    controller: _model,
+                    keyboardType: TextInputType.text,
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Serial Number',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-
-                    // Serial Number field
-                    SizedBox(height: 8),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Serial Number',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    CustomTextFormField(
-                      labelText: '',
-                      hintText: 'Enter serial number',
-                      controller: _serialNumber,
-                      keyboardType: TextInputType.text,
-                    ),
-                  ],
+                  ),
+                  CustomTextFormField(
+                    labelText: '',
+                    hintText: 'Enter serial number',
+                    controller: _serialNumber,
+                    keyboardType: TextInputType.text,
+                  ),
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -894,135 +847,133 @@ class _Edit_applienceState extends State<Edit_applience> {
                   ),
                   SizedBox(height: 6),
                   Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 8),
-                    child: Column(
-                      children: [
-                        if (_imageUrl == null)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                _pickImage();
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.grey.shade300,
-                                      style: BorderStyle.solid),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Image.asset(
-                                      'assets/icons/Upload.png',
-                                      height: 50,
-                                      width: 50,
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      'Upload your Photo here',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      'Maximum File Size is 20MB',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey),
-                                    ),
-                                    Text(
-                                      'Supported File Types are .png, .jpeg, .pdf, .csv',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (_imageUrl != null)
-                          Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey.shade300,
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.all(4.0),
-                                      child: Container(
-                                        width: 80,
-                                        height: 80,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          border: Border.all(
-                                              color: Colors.grey.shade300),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: _buildImage(),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 0,
-                                      right: 0,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _image = null;
-                                            _imageUrl = null;
-                                          });
-                                        },
-                                        child: Container(
-                                          width: 18,
-                                          height: 18,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black,
-                                                blurRadius: 4,
-                                              ),
-                                            ],
-                                          ),
-                                          child: Icon(
-                                            Icons.close,
-                                            size: 14,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
+                   padding: const EdgeInsets.only(left: 8,right: 8),
+                   child: Column(
+                     children: [
+                       if (_imageUrl == null)
+                         Padding(
+                           padding: const EdgeInsets.all(8.0),
+                           child: GestureDetector(
+                             onTap: () {
+                               _pickImage();
+                             },
+                             child: Container(
+                               width: double.infinity,
+                               padding: EdgeInsets.all(16),
+                               decoration: BoxDecoration(
+                                 border: Border.all(
+                                     color: Colors.grey.shade300,
+                                     style: BorderStyle.solid),
+                                 borderRadius: BorderRadius.circular(8),
+                               ),
+                               child: Column(
+                                 children: [
+                                   Image.asset(
+                                     'assets/icons/Upload.png',
+                                     height: 50,
+                                     width: 50,
+                                   ),
+                                   SizedBox(height: 8),
+                                   Text(
+                                     'Upload your Photo here',
+                                     textAlign: TextAlign.center,
+                                     style: TextStyle(
+                                       fontSize: 16,
+                                       fontWeight: FontWeight.w600,
+                                       color: Colors.grey[700],
+                                     ),
+                                   ),
+                                   SizedBox(height: 4),
+                                   Text(
+                                     'Maximum File Size is 20MB',
+                                     textAlign: TextAlign.center,
+                                     style:
+                                     TextStyle(fontSize: 12, color: Colors.grey),
+                                   ),
+                                   Text(
+                                     'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                     textAlign: TextAlign.center,
+                                     style:
+                                     TextStyle(fontSize: 12, color: Colors.grey),
+                                   ),
+                                 ],
+                               ),
+                             ),
+                           ),
+                         ),
+                       if (_imageUrl != null)
+                         Container(
+                           width: double.infinity,
+                           padding: EdgeInsets.all(10),
+                           decoration: BoxDecoration(
+                             border: Border.all(
+                                 color: Colors.grey.shade300,
+                                 style: BorderStyle.solid),
+                             borderRadius: BorderRadius.circular(8),
+                           ),
+                           child: Column(
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Stack(
+                                 clipBehavior: Clip.none,
+                                 children: [
+                                   Padding(
+                                     padding: EdgeInsets.all(4.0),
+                                     child: Container(
+                                       width: 80,
+                                       height: 80,
+                                       decoration: BoxDecoration(
+                                         borderRadius: BorderRadius.circular(8),
+                                         border:
+                                         Border.all(color: Colors.grey.shade300),
+                                       ),
+                                       child: ClipRRect(
+                                         borderRadius: BorderRadius.circular(8),
+                                         child: _buildImage(),
+                                       ),
+                                     ),
+                                   ),
+                                   Positioned(
+                                     top: 0,
+                                     right: 0,
+                                     child: GestureDetector(
+                                       onTap: () {
+                                         setState(() {
+                                           _image = null;
+                                           _imageUrl = null;
+                                         });
+                                       },
+                                       child: Container(
+                                         width: 18,
+                                         height: 18,
+                                         decoration: BoxDecoration(
+                                           color: Colors.white,
+                                           shape: BoxShape.circle,
+                                           boxShadow: [
+                                             BoxShadow(
+                                               color: Colors.black,
+                                               blurRadius: 4,
+                                             ),
+                                           ],
+                                         ),
+                                         child: Icon(
+                                           Icons.close,
+                                           size: 14,
+                                           color: Colors.black,
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                 ],
+                               ),
+                             ],
+                           ),
+                         ),
+                     ],
+                   ),
+                 ),
                   SizedBox(height: 10),
-                  Row(
+                    Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
