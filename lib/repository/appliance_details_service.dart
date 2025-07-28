@@ -27,7 +27,7 @@ class ApplianceDetailsService {
       );
 
       print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      print('Response body for get details of applience: ${response.body}');
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);

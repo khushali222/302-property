@@ -30,7 +30,7 @@ class AddApplience extends StatefulWidget {
     this.unit,
     this.properties,
     this.appliance,
-    });
+  });
 
   @override
   State<AddApplience> createState() => _AddApplienceState();
@@ -50,6 +50,8 @@ class _AddApplienceState extends State<AddApplience> {
   TextEditingController _lastMaintenanceDate = TextEditingController();
   TextEditingController _maintenanceNotes = TextEditingController();
 
+  String? _imageUrl; // Add this line
+
   final UnitData leaseRepository = UnitData();
   List<unit_appliance> leases = [];
   late Future<List<unit_appliance>> futureAppliences;
@@ -57,9 +59,8 @@ class _AddApplienceState extends State<AddApplience> {
     //  try {
     final fetchedLeases =
         await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
-    
+
     setState(() {
-      
       leases = fetchedLeases;
       isLoading = false;
     });
@@ -85,12 +86,15 @@ class _AddApplienceState extends State<AddApplience> {
     _loadDropdownCategories();
     fetchLeases();
     futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
-
   }
 
 //make an funtion for load data from widget
   void loadDataFromWidget() {
     setState(() {
+      print("Loading data from widget...");
+      print("Appliance data: ${widget.appliance?.toJson()}");
+      print("Filters data: ${widget.appliance?.filters}");
+
       _name.text = widget.appliance?.applianceName ?? '';
       _description.text = widget.appliance?.applianceDescription ?? '';
       _installedDate.text = widget.appliance?.installedDate ?? '';
@@ -101,13 +105,85 @@ class _AddApplienceState extends State<AddApplience> {
       _model.text = widget.appliance?.model ?? '';
       _serialNumber.text = widget.appliance?.serialNumber ?? '';
       // filter out data from list of dropdown category
-      _dropdownCategories = _dropdownCategories.where((category) => category.categoryId == widget.appliance?.categoryId).toList();
+      _dropdownCategories = _dropdownCategories
+          .where(
+              (category) => category.categoryId == widget.appliance?.categoryId)
+          .toList();
       _selectedDropdownCategory = _dropdownCategories.first;
+      print("Selected category: ${_selectedDropdownCategory?.name}");
+
       brandList = _selectedDropdownCategory?.brands ?? [];
       _selectedBrand = widget.appliance?.brand ?? '';
       _selectedStatus = widget.appliance?.status ?? '';
-      
+
+      // Load existing image if available
+      if (widget.appliance?.applianceImage != null) {
+        _imageUrl = widget.appliance?.applianceImage;
+      }
+
+      // Load existing filters if available and category is HVAC
+      if (_selectedDropdownCategory?.name == 'HVAC' &&
+          widget.appliance?.filters != null &&
+          widget.appliance!.filters!.isNotEmpty) {
+        print("Loading HVAC filters...");
+        print("Number of filters: ${widget.appliance!.filters!.length}");
+
+        showFiltersSection = true;
+        filterControllers.clear();
+        for (var filter in widget.appliance!.filters!) {
+          print("Processing filter: $filter");
+          Map<String, dynamic> filterMap = filter as Map<String, dynamic>;
+          filterControllers.add({
+            'name': TextEditingController(
+                text: filterMap['filter_name']?.toString() ?? ''),
+            'size': TextEditingController(
+                text: filterMap['filter_size']?.toString() ?? ''),
+          });
+          print(
+              "Added filter - Name: ${filterMap['filter_name']}, Size: ${filterMap['filter_size']}");
+        }
+        print("Filter controllers created: ${filterControllers.length}");
+      } else {
+        print("No HVAC filters to load");
+        print("Category: ${_selectedDropdownCategory?.name}");
+        print("Has filters: ${widget.appliance?.filters != null}");
+        print("Filters not empty: ${widget.appliance?.filters?.isNotEmpty}");
+      }
     });
+  }
+
+  Widget _buildImage() {
+    if (_image != null) {
+      return Image.file(
+        _image!,
+        fit: BoxFit.cover,
+      );
+    }
+
+    if (_imageUrl != null) {
+      try {
+        return Image.memory(
+          base64Decode(_imageUrl!.split(',')[1]),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: Colors.grey[200],
+              child: Icon(Icons.error),
+            );
+          },
+        );
+      } catch (e) {
+        return Container(
+          color: Colors.grey[200],
+          child: Icon(Icons.error),
+        );
+      }
+    }
+
+    return Container(
+      color: Colors.grey[200],
+      child: Icon(Icons.image_not_supported),
+    );
   }
 
   Future<void> _loadDropdownCategories() async {
@@ -121,8 +197,7 @@ class _AddApplienceState extends State<AddApplience> {
         _dropdownCategories = cats;
         _isLoadingCategories = false;
       });
-      if(widget.appliance != null)
-      loadDataFromWidget();
+      if (widget.appliance != null) loadDataFromWidget();
     } catch (e) {
       print('Error fetching categories in AddWorkOrderForMobile: ' +
           e.toString());
@@ -264,7 +339,9 @@ class _AddApplienceState extends State<AddApplience> {
                       ),
                       //if appliance is not null then show edit else show add
                       child: Text(
-                        widget.appliance != null ? "Edit Infrastructure" : "Add Infrastructure",
+                        widget.appliance != null
+                            ? "Edit Infrastructure"
+                            : "Add Infrastructure",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -302,7 +379,6 @@ class _AddApplienceState extends State<AddApplience> {
                     hintText: 'Enter description',
                     controller: _description,
                     keyboardType: TextInputType.text,
-                    
                   ),
                   SizedBox(height: 8),
                   Padding(
@@ -348,7 +424,8 @@ class _AddApplienceState extends State<AddApplience> {
                                   _selectedDropdownCategory = newValue;
                                   print(_selectedDropdownCategory?.name);
                                   print(_selectedDropdownCategory?.brands);
-                                  brandList = _selectedDropdownCategory?.brands ?? [];
+                                  brandList =
+                                      _selectedDropdownCategory?.brands ?? [];
                                   // Don't show filters section immediately for HVAC
                                   showFiltersSection = false;
                                   // Clear any existing filters
@@ -409,98 +486,98 @@ class _AddApplienceState extends State<AddApplience> {
                   ),
                   SizedBox(height: 8),
                   if (brandList.isNotEmpty) ...[
-                  Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
-                      'Brand',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Text(
+                        'Brand',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Text('Select Brand'),
-                        value: brandList.contains(_selectedBrand)
-                            ? _selectedBrand
-                            : null,
-                        items: brandList.map((brand) {
-                          return DropdownMenuItem<String>(
-                            value: brand,
-                            child: Text(brand),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedBrand = newValue;
-                          });
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          height: 45,
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            color: Colors.white,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: const Text('Select Brand'),
+                          value: brandList.contains(_selectedBrand)
+                              ? _selectedBrand
+                              : null,
+                          items: brandList.map((brand) {
+                            return DropdownMenuItem<String>(
+                              value: brand,
+                              child: Text(brand),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedBrand = newValue;
+                            });
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            height: 45,
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white,
+                            ),
+                            elevation: 2,
                           ),
-                          elevation: 2,
-                        ),
-                        iconStyleData: const IconStyleData(
-                          icon: Icon(Icons.arrow_drop_down),
-                          iconSize: 24,
-                          iconEnabledColor: Color(0xFFb0b6c3),
-                          iconDisabledColor: Colors.grey,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 250,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            color: Colors.white,
+                          iconStyleData: const IconStyleData(
+                            icon: Icon(Icons.arrow_drop_down),
+                            iconSize: 24,
+                            iconEnabledColor: Color(0xFFb0b6c3),
+                            iconDisabledColor: Colors.grey,
                           ),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(6),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility: MaterialStateProperty.all(true),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 250,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white,
+                            ),
+                            scrollbarTheme: ScrollbarThemeData(
+                              radius: const Radius.circular(6),
+                              thickness: MaterialStateProperty.all(6),
+                              thumbVisibility: MaterialStateProperty.all(true),
+                            ),
                           ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 14),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 50,
+                            padding: EdgeInsets.symmetric(horizontal: 14),
+                          ),
                         ),
                       ),
                     ),
-                  ),
                     SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      'Model',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        'Model',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  CustomTextFormField(
-                    labelText: '',
-                    hintText: 'Enter model',
-                    controller: _model,
-                    keyboardType: TextInputType.text,
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
-                      'Serial Number',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    CustomTextFormField(
+                      labelText: '',
+                      hintText: 'Enter model',
+                      controller: _model,
+                      keyboardType: TextInputType.text,
                     ),
-                  ),
-                  CustomTextFormField(
-                    labelText: '',
-                    hintText: 'Enter serial number',
-                    controller: _serialNumber,
-                    keyboardType: TextInputType.text,
-                  ),
-                  SizedBox(height: 8),
+                    SizedBox(height: 8),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Text(
+                        'Serial Number',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    CustomTextFormField(
+                      labelText: '',
+                      hintText: 'Enter serial number',
+                      controller: _serialNumber,
+                      keyboardType: TextInputType.text,
+                    ),
+                    SizedBox(height: 8),
                   ],
-                
+
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
@@ -668,14 +745,14 @@ class _AddApplienceState extends State<AddApplience> {
                                 padding: EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   border:
-                                  Border.all(color: Colors.grey.shade300),
+                                      Border.all(color: Colors.grey.shade300),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Column(
                                   children: [
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text('Filter ${index + 1}'),
                                         IconButton(
@@ -725,7 +802,7 @@ class _AddApplienceState extends State<AddApplience> {
                     padding: const EdgeInsets.only(left: 8, right: 8),
                     child: Column(
                       children: [
-                        if (_images.isEmpty)
+                        if (_imageUrl == null && _images.isEmpty)
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
@@ -745,8 +822,6 @@ class _AddApplienceState extends State<AddApplience> {
                                 ),
                                 child: Column(
                                   children: [
-                                    // Icon(Icons.upload,
-                                    //     size: 40, color: Colors.grey[600]),
                                     Image.asset(
                                       'assets/icons/Upload.png',
                                       height: 50,
@@ -780,8 +855,7 @@ class _AddApplienceState extends State<AddApplience> {
                               ),
                             ),
                           ),
-                        if (_images.isEmpty) SizedBox(height: 16),
-                        if (_images.isNotEmpty) ...[
+                        if (_imageUrl != null || _images.isNotEmpty)
                           Container(
                             width: double.infinity,
                             padding: EdgeInsets.all(10),
@@ -794,84 +868,64 @@ class _AddApplienceState extends State<AddApplience> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.only(top: 10, right: 10),
-                                    child: Wrap(
-                                      alignment: WrapAlignment.start,
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.start,
-                                      spacing: 8,
-                                      runSpacing: 8,
-                                      children: List.generate(_images.length,
-                                          (index) {
-                                        return Stack(
-                                          clipBehavior: Clip.none, //
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.all(4.0),
-                                              child: Container(
-                                                width: 80,
-                                                height: 80,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  border: Border.all(
-                                                      color:
-                                                          Colors.grey.shade300),
-                                                ),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  child: Image.file(
-                                                    _images[index],
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              top: 0, //
-                                              right: 0, //
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    _images.removeAt(index);
-                                                  });
-                                                },
-                                                child: Container(
-                                                  width: 18,
-                                                  height: 18,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    shape: BoxShape.circle,
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.black,
-                                                        blurRadius: 4,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: Icon(
-                                                    Icons.close,
-                                                    size: 14,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      }),
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(4.0),
+                                      child: Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: Colors.grey.shade300),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: _buildImage(),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _image = null;
+                                            _imageUrl = null;
+                                            _images.clear();
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black,
+                                                blurRadius: 4,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 14,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
-                        ],
                       ],
                     ),
                   ),
@@ -902,55 +956,56 @@ class _AddApplienceState extends State<AddApplience> {
                                 iserror = false;
                               });
 
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              String? id = prefs.getString("adminId");
+                              try {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                String? id = prefs.getString("adminId");
 
-                              // Create a single filters list
-                              List<Map<String, dynamic>> filters = [];
-                              print("calling save button");
-                              if (_selectedDropdownCategory?.name == 'HVAC' &&
-                                  showFiltersSection) {
-                                print('Creating filters for HVAC appliance');
-                                for (int i = 0;
-                                    i < filterControllers.length;
-                                    i++) {
-                                  final controller = filterControllers[i];
-                                  final filterName =
-                                      controller['name']?.text.trim() ?? '';
-                                  final filterSize =
-                                      controller['size']?.text.trim() ?? '';
+                                // Create a single filters list
+                                List<Map<String, dynamic>> filters = [];
+                                print("calling save button");
+                                if (_selectedDropdownCategory?.name == 'HVAC' &&
+                                    showFiltersSection) {
+                                  print('Creating filters for HVAC appliance');
+                                  for (int i = 0;
+                                      i < filterControllers.length;
+                                      i++) {
+                                    final controller = filterControllers[i];
+                                    final filterName =
+                                        controller['name']?.text.trim() ?? '';
+                                    final filterSize =
+                                        controller['size']?.text.trim() ?? '';
 
-                                  print('Processing Filter ${i + 1}:');
-                                  print('  Name: $filterName');
-                                  print('  Size: $filterSize');
+                                    print('Processing Filter ${i + 1}:');
+                                    print('  Name: $filterName');
+                                    print('  Size: $filterSize');
 
-                                  // Only add filter if either name or size is not empty
-                                  if (filterName.isNotEmpty ||
-                                      filterSize.isNotEmpty) {
-                                    final uniqueId = DateTime.now()
-                                        .millisecondsSinceEpoch
-                                        .toString();
-                                    final filterData = {
-                                      "filter_id":
-                                          uniqueId, // Add back the filter_id
-                                      "filter_name": filterName,
-                                      "filter_size": filterSize,
-                                    };
-                                    filters.add(filterData);
-                                    print('Added filter to list: $filterData');
+                                    // Only add filter if either name or size is not empty
+                                    if (filterName.isNotEmpty ||
+                                        filterSize.isNotEmpty) {
+                                      final uniqueId = DateTime.now()
+                                          .millisecondsSinceEpoch
+                                          .toString();
+                                      final filterData = {
+                                        "filter_id":
+                                            uniqueId, // Add back the filter_id
+                                        "filter_name": filterName,
+                                        "filter_size": filterSize,
+                                      };
+                                      filters.add(filterData);
+                                      print(
+                                          'Added filter to list: $filterData');
 
-                                    // Add a small delay to ensure unique timestamps for filter_ids
-                                    await Future.delayed(
-                                        Duration(milliseconds: 2));
+                                      // Add a small delay to ensure unique timestamps for filter_ids
+                                      await Future.delayed(
+                                          Duration(milliseconds: 2));
+                                    }
                                   }
+
+                                  print(
+                                      'Final filters list before API call: ${json.encode(filters)}');
                                 }
 
-                                print(
-                                    'Final filters list before API call: ${json.encode(filters)}');
-                              }
-
-                              try {
                                 // Get the base64 image if available
                                 String? base64Image;
                                 if (_images.isNotEmpty) {
@@ -958,64 +1013,73 @@ class _AddApplienceState extends State<AddApplience> {
                                       await _images.first.readAsBytes();
                                   base64Image = 'data:image/jpeg;base64,' +
                                       base64Encode(imageBytes);
+                                } else if (_imageUrl != null) {
+                                  base64Image = _imageUrl;
                                 }
-                               
-                                final response = widget.appliance == null? await Properies_summery_Repo()
-                                    .addappliances(
-                                  adminId: id,
-                                  unitId: widget.unit?.unitId ?? "",
-                                  appliancename: _name.text,
-                                  appliancedescription: _description.text,
-                                  installeddate: _installedDate.text,
-                                  type: _type.text,
-                                  brand: _selectedBrand ?? "",
-                                  model: _model.text,
-                                  serialNumber: _serialNumber.text,
-                                  warrantyExpiry:
-                                      _warrantyExpiry.text.isNotEmpty
-                                          ? _warrantyExpiry.text
-                                          : "",
-                                  lastMaintenanceDate:
-                                      _lastMaintenanceDate.text.isNotEmpty
-                                          ? _lastMaintenanceDate.text
-                                          : "",
-                                  maintenanceNotes: _maintenanceNotes.text,
-                                  status: _selectedStatus ?? "",
-                                  categoryId:
-                                      _selectedDropdownCategory?.categoryId ??
-                                          "",
-                                  filters: filters.isNotEmpty ? filters : [],
-                                  appliance_image:
-                                      base64Image ?? "", // Add the base64 image
-                                ):await Properies_summery_Repo()
-                                    .Editappliances(
-                                  adminId: id,
-                                  unitId: widget.unit?.unitId ?? "",
-                                  applianceid: widget.appliance?.applianceId ?? "",
-                                  appliancename: _name.text,
-                                  appliancedescription: _description.text,
-                                  installeddate: _installedDate.text,
-                                  type: _type.text,
-                                  brand: _selectedBrand ?? "",
-                                  model: _model.text,
-                                  serialNumber: _serialNumber.text,
-                                  warrantyExpiry:
-                                      _warrantyExpiry.text.isNotEmpty
-                                          ? _warrantyExpiry.text
-                                          : "",
-                                  lastMaintenanceDate:
-                                      _lastMaintenanceDate.text.isNotEmpty
-                                          ? _lastMaintenanceDate.text
-                                          : "",
-                                  maintenanceNotes: _maintenanceNotes.text,
-                                  status: _selectedStatus ?? "",
-                                  categoryId:
-                                      _selectedDropdownCategory?.categoryId ??
-                                          "",
-                                  filters: filters.isNotEmpty ? filters : [],
-                                  appliance_image:
-                                      base64Image ?? "", // Add the base64 image
-                                );
+
+                                final response = widget.appliance == null
+                                    ? await Properies_summery_Repo()
+                                        .addappliances(
+                                        adminId: id,
+                                        unitId: widget.unit?.unitId ?? "",
+                                        appliancename: _name.text,
+                                        appliancedescription: _description.text,
+                                        installeddate: _installedDate.text,
+                                        type: _type.text,
+                                        brand: _selectedBrand ?? "",
+                                        model: _model.text,
+                                        serialNumber: _serialNumber.text,
+                                        warrantyExpiry:
+                                            _warrantyExpiry.text.isNotEmpty
+                                                ? _warrantyExpiry.text
+                                                : "",
+                                        lastMaintenanceDate:
+                                            _lastMaintenanceDate.text.isNotEmpty
+                                                ? _lastMaintenanceDate.text
+                                                : "",
+                                        maintenanceNotes:
+                                            _maintenanceNotes.text,
+                                        status: _selectedStatus ?? "",
+                                        categoryId: _selectedDropdownCategory
+                                                ?.categoryId ??
+                                            "",
+                                        filters:
+                                            filters.isNotEmpty ? filters : [],
+                                        appliance_image: base64Image ??
+                                            "", // Add the base64 image
+                                      )
+                                    : await Properies_summery_Repo()
+                                        .Editappliances(
+                                        adminId: id,
+                                        unitId: widget.unit?.unitId ?? "",
+                                        applianceid:
+                                            widget.appliance?.applianceId ?? "",
+                                        appliancename: _name.text,
+                                        appliancedescription: _description.text,
+                                        installeddate: _installedDate.text,
+                                        type: _type.text,
+                                        brand: _selectedBrand ?? "",
+                                        model: _model.text,
+                                        serialNumber: _serialNumber.text,
+                                        warrantyExpiry:
+                                            _warrantyExpiry.text.isNotEmpty
+                                                ? _warrantyExpiry.text
+                                                : "",
+                                        lastMaintenanceDate:
+                                            _lastMaintenanceDate.text.isNotEmpty
+                                                ? _lastMaintenanceDate.text
+                                                : "",
+                                        maintenanceNotes:
+                                            _maintenanceNotes.text,
+                                        status: _selectedStatus ?? "",
+                                        categoryId: _selectedDropdownCategory
+                                                ?.categoryId ??
+                                            "",
+                                        filters:
+                                            filters.isNotEmpty ? filters : [],
+                                        appliance_image: base64Image ??
+                                            "", // Add the base64 image
+                                      );
 
                                 print('API Response: $response');
 
@@ -1043,7 +1107,8 @@ class _AddApplienceState extends State<AddApplience> {
                                 });
 
                                 reload_screen();
-                                Navigator.pop(context, true);
+                                Navigator.pop(context,
+                                    true); // Return true to indicate success
                               } catch (e) {
                                 print('Error adding appliance: $e');
                                 setState(() => isLoading = false);

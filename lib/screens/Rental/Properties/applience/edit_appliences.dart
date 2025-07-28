@@ -847,133 +847,135 @@ class _Edit_applienceState extends State<Edit_applience> {
                   ),
                   SizedBox(height: 6),
                   Padding(
-                   padding: const EdgeInsets.only(left: 8,right: 8),
-                   child: Column(
-                     children: [
-                       if (_imageUrl == null)
-                         Padding(
-                           padding: const EdgeInsets.all(8.0),
-                           child: GestureDetector(
-                             onTap: () {
-                               _pickImage();
-                             },
-                             child: Container(
-                               width: double.infinity,
-                               padding: EdgeInsets.all(16),
-                               decoration: BoxDecoration(
-                                 border: Border.all(
-                                     color: Colors.grey.shade300,
-                                     style: BorderStyle.solid),
-                                 borderRadius: BorderRadius.circular(8),
-                               ),
-                               child: Column(
-                                 children: [
-                                   Image.asset(
-                                     'assets/icons/Upload.png',
-                                     height: 50,
-                                     width: 50,
-                                   ),
-                                   SizedBox(height: 8),
-                                   Text(
-                                     'Upload your Photo here',
-                                     textAlign: TextAlign.center,
-                                     style: TextStyle(
-                                       fontSize: 16,
-                                       fontWeight: FontWeight.w600,
-                                       color: Colors.grey[700],
-                                     ),
-                                   ),
-                                   SizedBox(height: 4),
-                                   Text(
-                                     'Maximum File Size is 20MB',
-                                     textAlign: TextAlign.center,
-                                     style:
-                                     TextStyle(fontSize: 12, color: Colors.grey),
-                                   ),
-                                   Text(
-                                     'Supported File Types are .png, .jpeg, .pdf, .csv',
-                                     textAlign: TextAlign.center,
-                                     style:
-                                     TextStyle(fontSize: 12, color: Colors.grey),
-                                   ),
-                                 ],
-                               ),
-                             ),
-                           ),
-                         ),
-                       if (_imageUrl != null)
-                         Container(
-                           width: double.infinity,
-                           padding: EdgeInsets.all(10),
-                           decoration: BoxDecoration(
-                             border: Border.all(
-                                 color: Colors.grey.shade300,
-                                 style: BorderStyle.solid),
-                             borderRadius: BorderRadius.circular(8),
-                           ),
-                           child: Column(
-                             crossAxisAlignment: CrossAxisAlignment.start,
-                             children: [
-                               Stack(
-                                 clipBehavior: Clip.none,
-                                 children: [
-                                   Padding(
-                                     padding: EdgeInsets.all(4.0),
-                                     child: Container(
-                                       width: 80,
-                                       height: 80,
-                                       decoration: BoxDecoration(
-                                         borderRadius: BorderRadius.circular(8),
-                                         border:
-                                         Border.all(color: Colors.grey.shade300),
-                                       ),
-                                       child: ClipRRect(
-                                         borderRadius: BorderRadius.circular(8),
-                                         child: _buildImage(),
-                                       ),
-                                     ),
-                                   ),
-                                   Positioned(
-                                     top: 0,
-                                     right: 0,
-                                     child: GestureDetector(
-                                       onTap: () {
-                                         setState(() {
-                                           _image = null;
-                                           _imageUrl = null;
-                                         });
-                                       },
-                                       child: Container(
-                                         width: 18,
-                                         height: 18,
-                                         decoration: BoxDecoration(
-                                           color: Colors.white,
-                                           shape: BoxShape.circle,
-                                           boxShadow: [
-                                             BoxShadow(
-                                               color: Colors.black,
-                                               blurRadius: 4,
-                                             ),
-                                           ],
-                                         ),
-                                         child: Icon(
-                                           Icons.close,
-                                           size: 14,
-                                           color: Colors.black,
-                                         ),
-                                       ),
-                                     ),
-                                   ),
-                                 ],
-                               ),
-                             ],
-                           ),
-                         ),
-                     ],
-                   ),
-                 ),
+                    padding: const EdgeInsets.only(left: 8, right: 8),
+                    child: Column(
+                      children: [
+                        if (_imageUrl == null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                _pickImage();
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey.shade300,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Image.asset(
+                                      'assets/icons/Upload.png',
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                    SizedBox(height: 8),
+                                    Text(
+                                      'Upload your Photo here',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      'Maximum File Size is 20MB',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                    Text(
+                                      'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (_imageUrl != null)
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  style: BorderStyle.solid),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(4.0),
+                                      child: Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: Colors.grey.shade300),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: _buildImage(),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _image = null;
+                                            _imageUrl = null;
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black,
+                                                blurRadius: 4,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 14,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: 10),
-                    Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(

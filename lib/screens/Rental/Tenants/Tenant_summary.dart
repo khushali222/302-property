@@ -1640,7 +1640,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.waiting) {
                                                 return const Center(
-                                                    child: SpinKitFadingCircle(
+                                                    child:
+                                                    SpinKitFadingCircle(
                                                   color: Colors.black,
                                                   size: 40.0,
                                                 ));

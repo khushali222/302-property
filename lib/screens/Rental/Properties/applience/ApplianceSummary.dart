@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/applience/Add_applience.dart';
@@ -62,7 +63,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         setState(() {
           _isLoading = true;
         });
-
+        print("calling api load data api ");
         final appliance = await _applianceService.fetchApplianceDetails(
           widget.appliance.applianceId!,
         );
@@ -76,7 +77,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         setState(() {
           _isLoading = false;
         });
-        
+
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -96,12 +97,12 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     setState(() {
       _isRefreshing = true;
     });
-    
+
     try {
       final appliance = await _applianceService.refreshApplianceDetails(
         widget.appliance.applianceId!,
       );
-      
+
       setState(() {
         _liveAppliance = appliance;
         _isRefreshing = false;
@@ -111,7 +112,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
       setState(() {
         _isRefreshing = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error refreshing data: ${e.toString()}'),
@@ -123,7 +124,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
   void _showAddDialog(String sectionTitle) {
     final appliance = _liveAppliance ?? widget.appliance;
-    
+
     if (sectionTitle == 'Maintenance History') {
       showDialog(
         context: context,
@@ -159,8 +160,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
   Widget build(BuildContext context) {
     // Use live data if available, otherwise fall back to widget data
     final appliance = _liveAppliance ?? widget.appliance;
-   // print(appliance.categoryName);
-    
+    // print(appliance.categoryName);
+
     if (_isLoading) {
       return Scaffold(
         appBar: widget_302.App_Bar(context: context),
@@ -173,8 +174,12 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(blueColor),
+              // CircularProgressIndicator(
+              //   valueColor: AlwaysStoppedAnimation<Color>(blueColor),
+              // ),
+              SpinKitFadingCircle(
+                color: Colors.black,
+                size: 40.0,
               ),
               SizedBox(height: 16),
               Text(
@@ -201,7 +206,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         child: Column(
           children: [
             // Top Navigation Bar
-            
+
             // Appliance Header
             Container(
               padding: EdgeInsets.all(20),
@@ -221,7 +226,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                         widget.appliance.categoryName ?? 'N/A',
+                          widget.appliance.categoryName ?? 'N/A',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey.shade600,
@@ -233,7 +238,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(6),
@@ -257,7 +263,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                 ],
               ),
             ),
-            
+
             // Content
             Expanded(
               child: _isRefreshing
@@ -266,7 +272,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(blueColor),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(blueColor),
                           ),
                           SizedBox(height: 16),
                           Text(
@@ -283,96 +290,155 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         children: [
-                    // Appliance Details Card
-                    _buildDetailCard(
-                      'Appliance Details',
-                      [
-                        _buildDetailRowPair('Name', appliance.applianceName ?? '', 'Warranty Expiration', appliance.warrantyExpiry != null ? formatDate(appliance.warrantyExpiry!) : ''),
-                        _buildDetailRowPair('Model', appliance.model ?? '', 'Category', appliance.categoryName ?? ''),
-                        _buildDetailRowPair('Type', appliance.type ?? '', 'Brand', appliance.brand ?? ''),
-                        _buildDetailRowPair('Description', appliance.applianceDescription ?? '', 'Status', appliance.status ?? '', valueColor2: _getStatusColor(appliance.status)),
-                        _buildDetailRowPair('Serial Number', appliance.serialNumber ?? '', 'Installed Date', appliance.installedDate != null ? formatDate(appliance.installedDate!) : ''),
-                        // if (appliance.lastMaintenanceDate != null)
-                        //   _buildDetailRowPair('Last Maintenance', formatDate(appliance.lastMaintenanceDate!), 'Appliance ID', appliance.applianceId ?? ''),
-                      ],
-                      showEdit: true,
-                    ),
-                    SizedBox(height: 16),
-                      if(appliance.filters != null && appliance.filters!.isNotEmpty)
-                    // Filters Card
-                    _buildDetailCard(
-                      'Filters',
-                      appliance.filters != null && appliance.filters!.isNotEmpty
-                          ? appliance.filters!.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              dynamic filter = entry.value;
-                              return _buildDetailRowPair(
-                                'Filter Name',
-                                filter['name'] ?? '',
-                                'Filter Size',
-                                filter['size'] ?? '',
-                              );
-                            }).toList()
-                          : [
-                              _buildDetailRowPair('Filter Name', 'No filters', 'Filter Size', ''),
+                          // Appliance Details Card
+                          _buildDetailCard(
+                            'Appliance Details',
+                            [
+                              _buildDetailRowPair(
+                                  'Name',
+                                  appliance.applianceName ?? '',
+                                  'Warranty Expiration',
+                                  appliance.warrantyExpiry != null
+                                      ? formatDate(appliance.warrantyExpiry!)
+                                      : ''),
+                              _buildDetailRowPair(
+                                  'Model',
+                                  appliance.model ?? '',
+                                  'Category',
+                                  appliance.categoryName ?? ''),
+                              _buildDetailRowPair('Type', appliance.type ?? '',
+                                  'Brand', appliance.brand ?? ''),
+                              _buildDetailRowPair(
+                                  'Description',
+                                  appliance.applianceDescription ?? '',
+                                  'Status',
+                                  appliance.status ?? '',
+                                  valueColor2:
+                                      _getStatusColor(appliance.status)),
+                              _buildDetailRowPair(
+                                  'Serial Number',
+                                  appliance.serialNumber ?? '',
+                                  'Installed Date',
+                                  appliance.installedDate != null
+                                      ? formatDate(appliance.installedDate!)
+                                      : ''),
+                              // if (appliance.lastMaintenanceDate != null)
+                              //   _buildDetailRowPair('Last Maintenance', formatDate(appliance.lastMaintenanceDate!), 'Appliance ID', appliance.applianceId ?? ''),
                             ],
-                    ),
-                    SizedBox(height: 16),
-                   // if(widget.appliance.maintenanceHistory != null && widget.appliance.maintenanceHistory!.isNotEmpty)
-                    // Maintenance History Card
-                    _buildDetailCard(
-                      'Maintenance History',
-                      appliance.maintenanceHistory != null && appliance.maintenanceHistory!.isNotEmpty
-                          ? appliance.maintenanceHistory!.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              dynamic history = entry.value;
-                              return _buildMaintenanceItem(
-                                formatDate(history['timestamp'] ?? ''),
-                                history['event'] ?? 'Maintenance',
-                                'Vendor: ${history['vendor'] ?? ''}',
-                                'Work Order: ${history['work_order'] ?? 'No WO'}',
-                                'history_$index',
-                              );
-                            }).toList()
-                          : [
-                              _buildNoDataMessage('No maintenance history available'),
-                            ],
-                      showAdd: true,
-                      showSearch: true,
-                    ),
-                    SizedBox(height: 16),
+                            showEdit: true,
+                          ),
+                          SizedBox(height: 16),
+                          if (appliance.filters != null &&
+                              appliance.filters!.isNotEmpty)
+                            // Filters Card
+                            _buildDetailCard(
+                              'Filters',
+                              appliance.filters != null &&
+                                      appliance.filters!.isNotEmpty
+                                  ? appliance.filters!
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                      int index = entry.key;
+                                      dynamic filter = entry.value;
+                                      print("filtter name ${filter['filter_name']}");
+                                      return _buildDetailRowPair(
+                                        'Filter Name',
+                                        filter['filter_name'] ?? '',
+                                        'Filter Size',
+                                        filter['filter_size'] ?? '',
+                                      );
+                                    }).toList()
+                                  : [
+                                      _buildDetailRowPair('Filter Name',
+                                          'No filters', 'Filter Size', ''),
+                                    ],
+                            ),
+                          SizedBox(height: 16),
+                          // if(widget.appliance.maintenanceHistory != null && widget.appliance.maintenanceHistory!.isNotEmpty)
+                          // Maintenance History Card
+                          _buildDetailCard(
+                            'Maintenance History',
+                            appliance.maintenanceHistory != null &&
+                                    appliance.maintenanceHistory!.isNotEmpty
+                                ? appliance.maintenanceHistory!
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                    int index = entry.key;
+                                    dynamic history = entry.value;
+                                    return _buildMaintenanceItem(
+                                      formatDate(history['timestamp'] ?? ''),
+                                      history['event'] ?? 'Maintenance',
+                                      'Vendor: ${history['vendor'] ?? ''}',
+                                      'Work Order: ${history['work_order'] ?? 'No WO'}',
+                                      'history_$index',
+                                    );
+                                  }).toList()
+                                : [
+                                    _buildNoDataMessage(
+                                        'No maintenance history available'),
+                                  ],
+                            showAdd: true,
+                            showSearch: true,
+                          ),
+                          SizedBox(height: 16),
 
-                    // Maintenance Notes Card
-                    _buildDetailCard(
-                      'Maintenance Notes',
-                      appliance.notes != null && appliance.notes!.isNotEmpty
-                          ? appliance.notes!.asMap().entries.map((entry) {
-                             
-                              int index = entry.key;
-                              dynamic note = entry.value;
-                              return _buildNoteItem(
-                                formatDate(note['timestamp'] ?? ''),
-                                note['user_name'] ?? '',
-                                note['note'] ?? '',
-                                'note_$index',
-                                note['_id'] ?? '',
-                              );
-                            }).toList()
-                          : appliance.maintenanceNotes != null && appliance.maintenanceNotes!.isNotEmpty
-                              ? [
-                                  _buildNoteItem('Current', 'System', appliance.maintenanceNotes!, 'current_note',''),
-                                ]
-                              : [
-                                  _buildNoDataMessage('No maintenance notes available'),
-                                ],
-                      showAdd: true,
-                      showSearch: true,
-                    ),
-                    SizedBox(height: 20),
-                  ],
-                ),
+                          // Maintenance Notes Card
+                          // _buildDetailCard(
+                          //   'Maintenance Notes',
+                          //   appliance.notes != null && appliance.notes!.isNotEmpty
+                          //       ? appliance.notes!.asMap().entries.map((entry) {
+                          //
+                          //           int index = entry.key;
+                          //           dynamic note = entry.value;
+                          //           return _buildNoteItem(
+                          //             formatDate(note['timestamp'] ?? ''),
+                          //             note['user_name'] ?? '',
+                          //             note['note'] ?? '',
+                          //             'note_$index',
+                          //             note['_id'] ?? '',
+                          //           );
+                          //         }).toList()
+                          //       : appliance.maintenanceNotes != null && appliance.maintenanceNotes!.isNotEmpty
+                          //           ? [
+                          //               _buildNoteItem('Current', 'System', appliance.maintenanceNotes!, 'current_note',''),
+                          //             ]
+                          //           : [
+                          //               _buildNoDataMessage('No maintenance notes available'),
+                          //             ],
+                          //   showAdd: true,
+                          //   showSearch: true,
+                          // ),
+                          _buildDetailCard(
+                            'Maintenance Notes',
+                            appliance!.notes != null &&
+                                    appliance!.notes!.isNotEmpty
+                                ? appliance!.notes!
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                    int index = entry.key;
+                                    dynamic note = entry.value;
+                                    return _buildNoteItem(
+                                      formatDate(note['timestamp'] ?? ''),
+                                      note['user_name'] ?? '',
+                                      note['note'] ?? '',
+                                      'note_$index',
+                                      note['_id'] ?? '',
+                                    );
+                                  }).toList()
+                                : [
+                                    _buildNoDataMessage(
+                                        'No maintenance notes available'),
+                                  ],
+                            showAdd: true,
+                            showSearch: true,
+                          ),
+                          SizedBox(height: 20),
+                        ],
                       ),
-                    
+                    ),
             ),
           ],
         ),
@@ -380,9 +446,10 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     );
   }
 
-  Widget _buildDetailCard(String title, List<Widget> children, {bool showEdit = false, bool showAdd = false, bool showSearch = false}) {
+  Widget _buildDetailCard(String title, List<Widget> children,
+      {bool showEdit = false, bool showAdd = false, bool showSearch = false}) {
     final appliance = _liveAppliance ?? widget.appliance;
-    
+
     return Container(
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -408,7 +475,6 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                 ),
                 Row(
                   children: [
-                  
                     if (showAdd)
                       Container(
                         margin: EdgeInsets.only(right: 8),
@@ -423,7 +489,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                             ),
                           ),
                           child: IconButton(
-                            icon: Icon(Icons.add, color: Colors.green, size: 20),
+                            icon:
+                                Icon(Icons.add, color: Colors.green, size: 20),
                             onPressed: () {
                               _showAddDialog(title);
                             },
@@ -435,7 +502,11 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     if (showEdit)
                       GestureDetector(
                         onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => AddApplience(appliance: appliance)));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddApplience(appliance: appliance)));
                           // Edit functionality
                         },
                         child: Text(
@@ -491,7 +562,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     );
   }
 
-  Widget _buildDetailRowPair(String label1, String value1, String label2, String value2, {Color? valueColor1, Color? valueColor2}) {
+  Widget _buildDetailRowPair(
+      String label1, String value1, String label2, String value2,
+      {Color? valueColor1, Color? valueColor2}) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12),
       child: Column(
@@ -553,7 +626,10 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
   }
 
   String _formatValue(String value) {
-    if (value == null || value.isEmpty || value.trim() == '' || value == 'N/A') {
+    if (value == null ||
+        value.isEmpty ||
+        value.trim() == '' ||
+        value == 'N/A') {
       return 'Not specified';
     }
     return value;
@@ -585,9 +661,10 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     );
   }
 
-  Widget _buildMaintenanceItem(String date, String eventType, String vendor, String workOrder, String key) {
+  Widget _buildMaintenanceItem(String date, String eventType, String vendor,
+      String workOrder, String key) {
     bool isExpanded = _expandedItems[key] ?? false;
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -605,7 +682,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
               child: Row(
                 children: [
                   Icon(
-                    isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
                     color: Colors.grey.shade600,
                     size: 18,
                   ),
@@ -622,7 +701,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: eventType == 'Install' ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                      color: eventType == 'Install'
+                          ? Colors.green.withOpacity(0.1)
+                          : Colors.orange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -630,7 +711,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: eventType == 'Install' ? Colors.green : Colors.orange,
+                        color: eventType == 'Install'
+                            ? Colors.green
+                            : Colors.orange,
                       ),
                     ),
                   ),
@@ -686,7 +769,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       ),
                       Expanded(
                         child: Text(
-                          _formatValue(workOrder.replaceAll('Work Order: ', '')),
+                          _formatValue(
+                              workOrder.replaceAll('Work Order: ', '')),
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey.shade800,
@@ -704,9 +788,10 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     );
   }
 
-  Widget _buildNoteItem(String date, String addedBy, String note, String key,String noteId) {
+  Widget _buildNoteItem(
+      String date, String addedBy, String note, String key, String noteId) {
     bool isExpanded = _expandedItems[key] ?? false;
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -724,7 +809,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
               child: Row(
                 children: [
                   Icon(
-                    isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
                     color: Colors.grey.shade600,
                     size: 18,
                   ),
@@ -746,7 +833,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                         decoration: BoxDecoration(
                           color: Colors.green.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: Colors.green.withOpacity(0.3), width: 1),
+                          border: Border.all(
+                              color: Colors.green.withOpacity(0.3), width: 1),
                         ),
                         child: Material(
                           color: Colors.transparent,
@@ -756,7 +844,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                               showDialog(
                                 context: context,
                                 builder: (context) => AddNoteDialog(
-                                  applianceId: widget.appliance.applianceId ?? '',
+                                  applianceId:
+                                      widget.appliance.applianceId ?? '',
                                   noteId: noteId,
                                   initialText: note,
                                   onNoteAdded: _refreshApplianceData,
@@ -780,7 +869,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                         decoration: BoxDecoration(
                           color: Colors.red.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: Colors.red.withOpacity(0.3), width: 1),
+                          border: Border.all(
+                              color: Colors.red.withOpacity(0.3), width: 1),
                         ),
                         child: Material(
                           color: Colors.transparent,
@@ -817,7 +907,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                     ),
                                     actions: <Widget>[
                                       TextButton(
-                                        onPressed: () => Navigator.of(context).pop(false),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(false),
                                         child: Text(
                                           'Cancel',
                                           style: TextStyle(
@@ -829,10 +920,12 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                       Container(
                                         decoration: BoxDecoration(
                                           color: Colors.red,
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                         ),
                                         child: TextButton(
-                                          onPressed: () => Navigator.of(context).pop(true),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
                                           child: Text(
                                             'Delete',
                                             style: TextStyle(
@@ -847,7 +940,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                 },
                               );
                               if (confirmed == true) {
-                                await _applianceService.deleteNote( 
+                                await _applianceService.deleteNote(
                                   noteId,
                                   widget.appliance.applianceId ?? '',
                                 );
@@ -949,4 +1042,4 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         return Colors.grey.shade800;
     }
   }
-} 
+}

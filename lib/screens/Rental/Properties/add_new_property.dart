@@ -389,6 +389,44 @@ class _Add_new_propertyState extends State<Add_new_property> {
   //   );
   // }
 
+  static const List<String> roomsArray = [
+    "1 Bed", "2 Bed", "3 Bed", "4 Bed", "5 Bed",
+    "6 Bed", "7 Bed", "8 Bed", "9 Bed", "9+ Bed",
+  ];
+
+  static const List<String> bathArray = [
+    "1 Bath", "1.5 Bath", "2 Bath", "2.5 Bath", "3 Bath",
+    "3.5 Bath", "4 Bath", "4.5 Bath", "5 Bath", "5+ Bath",
+  ];
+  Widget customDropdownField(
+      String hint,
+      List<String> items,
+      TextEditingController controller,
+      ) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 8),
+      child: DropdownButtonFormField<String>(
+        value: controller.text.isNotEmpty ? controller.text : null,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        ),
+        hint: Text(hint),
+        items: items.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          controller.text = newValue ?? '';
+        },
+        validator: (value) =>
+        value == null || value.isEmpty ? 'Required' : null,
+      ),
+    );
+  }
+
   Widget customTextField(String label, TextEditingController Controller) {
     return FormField<String>(
       validator: (value) {
@@ -533,6 +571,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
     );
   }
 
+
   void addPropertyGroup() {
     // print("hello");
     List<Widget> fields = [];
@@ -569,8 +608,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
         customTextField('Unit', unitController),
         customTextField('Unit Address', unitAddressController),
         customTextField('SQft', sqftController),
-        customTextField('Bath', bathController),
-        customTextField('Bed', bedController),
+        customDropdownField('Bath', bathArray, bathController),
+        customDropdownField('Bed', roomsArray, bedController),
+        // customTextField('Bath', bathController),
+        // customTextField('Bed', bedController),
 
         SizedBox(
           height: 10,
@@ -592,8 +633,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
       fields = [
         customTextField('SQft', sqftController),
-        customTextField('Bath', bathController),
-        customTextField('Bed', bedController),
+        customDropdownField('Bath', bathArray, bathController),
+        customDropdownField('Bed', roomsArray, bedController),
+        // customTextField('Bath', bathController),
+        // customTextField('Bed', bedController),
 
         SizedBox(
           height: 10,
@@ -3707,15 +3750,27 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
+                                              // Align(
+                                              //   alignment:
+                                              //       Alignment.centerRight,
+                                              //   child: InkWell(
+                                              //     onTap: () =>
+                                              //         removePropertyGroup(
+                                              //             index),
+                                              //     child: Icon(Icons.close,
+                                              //         color: Colors.black),
+                                              //   ),
+                                              // ),
                                               Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: InkWell(
-                                                  onTap: () =>
-                                                      removePropertyGroup(
-                                                          index),
-                                                  child: Icon(Icons.close,
-                                                      color: Colors.black),
+                                                alignment: Alignment.centerRight,
+                                                child: Visibility(
+                                                  visible: !(selectedpropertytype == 'Residential' &&
+                                                      selectedIsMultiUnit == false &&
+                                                      index == 0),
+                                                  child: InkWell(
+                                                    onTap: () => removePropertyGroup(index),
+                                                    child: Icon(Icons.close, color: Colors.black),
+                                                  ),
                                                 ),
                                               ),
                                               SizedBox(height: 5),
@@ -3846,15 +3901,27 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
+                                                // Align(
+                                                //   alignment:
+                                                //       Alignment.centerRight,
+                                                //   child: InkWell(
+                                                //     onTap: () =>
+                                                //         removePropertyGroup(
+                                                //             index),
+                                                //     child: Icon(Icons.close,
+                                                //         color: Colors.black),
+                                                //   ),
+                                                // ),
                                                 Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: InkWell(
-                                                    onTap: () =>
-                                                        removePropertyGroup(
-                                                            index),
-                                                    child: Icon(Icons.close,
-                                                        color: Colors.black),
+                                                  alignment: Alignment.centerRight,
+                                                  child: Visibility(
+                                                    visible: !(selectedpropertytype == 'Commercial' &&
+                                                        selectedIsMultiUnit == false &&
+                                                        index == 0),
+                                                    child: InkWell(
+                                                      onTap: () => removePropertyGroup(index),
+                                                      child: Icon(Icons.close, color: Colors.black),
+                                                    ),
                                                   ),
                                                 ),
                                                 SizedBox(height: 5),
