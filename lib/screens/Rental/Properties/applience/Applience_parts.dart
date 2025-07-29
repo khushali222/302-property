@@ -322,7 +322,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
         builder: (context) => Edit_applience(
           unit: widget.unit,
           properties: widget.properties,
-          appliance: appliance,  // Pass the appliance data
+          appliance: appliance, // Pass the appliance data
         ),
       ),
     );
@@ -330,7 +330,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
     // Refresh the table if changes were made
     if (result == true) {
       setState(() {
-        futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+        futureAppliences =
+            UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
         // Force a rebuild of the table
         _tableData.clear();
         isLoading = true;
@@ -1967,8 +1968,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                 GestureDetector(
                                                                   onTap:
                                                                       () async {
-                                                                    var check = await
-                                                                    Navigator.push(
+                                                                    var check = await Navigator.push(
                                                                         context,
                                                                         MaterialPageRoute(
                                                                             builder: (context) => Edit_applience(
@@ -1979,7 +1979,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                         true) {
                                                                       setState(
                                                                           () {
-                                                                            futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+                                                                        futureAppliences =
+                                                                            UnitData().fetchApplianceData(widget.unit?.unitId ??
+                                                                                "");
                                                                           });
                                                                     }
                                                                   },
@@ -2019,13 +2021,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                 ),
                                                                 GestureDetector(
                                                                   onTap: () {
-                                                                    Navigator.push(
+                                                                    Navigator
+                                                                        .push(
                                                                       context,
                                                                       MaterialPageRoute(
-                                                                        builder: (context) => ApplianceSummary(
-                                                                          appliance: rentals,
-                                                                          unit:widget.unit,
-                                                                          properties: widget.properties,
+                                                                        builder:
+                                                                            (context) =>
+                                                                                ApplianceSummary(
+                                                                          appliance:
+                                                                              rentals,
+                                                                          unit:
+                                                                              widget.unit,
+                                                                          properties:
+                                                                              widget.properties,
                                                                         ),
                                                                       ),
                                                                     );

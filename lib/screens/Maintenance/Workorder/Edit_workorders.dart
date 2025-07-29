@@ -320,19 +320,28 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       // totalAmount = calculateTotalAmount(partsAndLabor);
     });
 
-    print(fetchedDetails.tenantId);
-    _loadUnits(_selectedPropertyId!);
-    if (_selectedUnitId != null) {
-      _loadTenant(_selectedPropertyId!, _selectedUnitId!);
+    print('Tenant ID: ${fetchedDetails.tenantId}');
+    print('Unit ID from fetched details: ${fetchedDetails.unitId}');
+
+    // First load the units for the selected property
+    if (_selectedPropertyId != null) {
+      await _loadUnits(_selectedPropertyId!);
+
+      // After units are loaded, set the selected unit
+      setState(() {
+        if (fetchedDetails.unitId != null &&
+            fetchedDetails.unitId!.isNotEmpty) {
+          _selectedUnitId = fetchedDetails.unitId;
+          _selectedUnit = fetchedDetails.unitId;
+          print('Setting selected unit to: ${fetchedDetails.unitId}');
+        }
+      });
+
+      // Load tenant data if we have a unit
+      if (_selectedUnitId != null) {
+        _loadTenant(_selectedPropertyId!, _selectedUnitId!);
+      }
     }
-    // _loadUnits(renderId)
-    if (_selectedProperty != null) {
-      await _loadUnits(_selectedProperty!);
-    }
-    setState(() {
-      _selectedUnit = fetchedDetails.unitId;
-      print('fetch unit ${fetchedDetails.unitId}');
-    });
     //} catch (e) {
     //print('Failed to fetch lease details: $e');
     //}
@@ -376,36 +385,67 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   Future<void> _loadUnits(String rentalId) async {
     setState(() {
       _isLoading = true;
+      // Clear units and selection when loading new units
+      units = {};
+      _selectedUnitId = null;
     });
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+
     try {
       final response = await http
           .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('$Api_url/api/unit/rental_unit/$rentalId');
+      print('Loading units for rental: $rentalId');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> unitAddresses = {};
-        jsonResponse.forEach((data) {
-          unitAddresses[data['unit_id'].toString()] =
-              data['rental_unit'].toString();
-        });
-        //  200 no hoy tyare _loadtennant
+
+        // Filter out any null or empty unit names
+        for (var data in jsonResponse) {
+          String unitId = data['unit_id']?.toString() ?? '';
+          String unitName = data['rental_unit']?.toString() ?? '';
+
+          if (unitId.isNotEmpty && unitName.trim().isNotEmpty) {
+            unitAddresses[unitId] = unitName.trim();
+          }
+        }
+
+        print('Found ${unitAddresses.length} valid units');
+
         setState(() {
           units = unitAddresses;
           _isLoading = false;
+
+          // Only keep the selected unit if it exists in the new units
+          if (_selectedUnitId != null && !units.containsKey(_selectedUnitId)) {
+            print('Clearing invalid unit selection: $_selectedUnitId');
+            _selectedUnitId = null;
+          }
         });
+
+        // Load tenant data if we have a valid unit selected
+        if (_selectedUnitId != null && units.containsKey(_selectedUnitId)) {
+          _loadTenant(rentalId, _selectedUnitId!);
+        }
       } else {
-        _loadTenant(rentalId, unitId);
-        throw Exception('Failed to load units');
+        print('Failed to load units: ${response.statusCode}');
+        setState(() {
+          units = {};
+          _selectedUnitId = null;
+          _isLoading = false;
+        });
       }
     } catch (e) {
+      print('Error loading units: $e');
       setState(() {
+        units = {};
+        _selectedUnitId = null;
         _isLoading = false;
       });
     }
@@ -952,7 +992,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Photo ',
+                          Text('Photos (Maximum of 10) ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -973,12 +1013,19 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
-                              onPressed: () async {
-                                _pickImage().then((_) {
-                                  setState(
-                                      () {}); // Rebuild the widget after selecting the image
-                                });
-                              },
+                              onPressed: _images.length >= 10
+                                  ? null // disables the button
+                                  : () async {
+                                      _pickImage().then((_) {
+                                        setState(() {});
+                                      });
+                                    },
+                              // onPressed: () async {
+                              //   _pickImage().then((_) {
+                              //     setState(
+                              //         () {}); // Rebuild the widget after selecting the image
+                              //   });
+                              // },
                               child: isLoading
                                   ? Center(
                                       child: SpinKitFadingCircle(
@@ -1191,7 +1238,13 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               print(
                                                   'Selected Property: $_selectedProperty');
                                               if (value != null) {
+                                                units =
+                                                    {}; // Clear existing units
                                                 _loadUnits(value);
+                                              } else {
+                                                units =
+                                                    {}; // Clear units if no property selected
+                                                _selectedUnitId = null;
                                               }
                                               state.didChange(value);
                                             });
@@ -1256,161 +1309,144 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                   );
                                 },
                               ),
-                              units.isNotEmpty
-                                  ? const Text('Unit',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey))
-                                  : Container(),
-                              const SizedBox(height: 0),
-                              units.isNotEmpty
-                                  ? FormField<String>(
-                                      validator: (value) {
-                                        if (_selectedUnitId == null) {
-                                          return 'Please select an option';
-                                        }
-                                        return null;
-                                      },
-                                      builder: (FormFieldState<String> state) {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            DropdownButtonHideUnderline(
-                                              child: DropdownButtonFormField2<
-                                                  String>(
-                                                decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  errorText: state
-                                                      .errorText, // Display validation error if present
-                                                ),
-                                                isExpanded: true,
-                                                hint: const Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                        'Select Unit',
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color:
-                                                              Color(0xFFb0b6c3),
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
+                              // Only show unit dropdown if we have valid units
+                              units.isNotEmpty &&
+                                      units.values
+                                          .any((unit) => unit.trim().isNotEmpty)
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text('Unit *',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        const SizedBox(height: 2),
+                                        FormField<String>(
+                                          validator: (value) {
+                                            if (_selectedUnitId == null) {
+                                              return 'Please select an option';
+                                            }
+                                            return null;
+                                          },
+                                          builder:
+                                              (FormFieldState<String> state) {
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                DropdownButtonHideUnderline(
+                                                  child:
+                                                      DropdownButtonFormField2<
+                                                          String>(
+                                                    decoration: InputDecoration(
+                                                      border: InputBorder.none,
+                                                      errorText:
+                                                          state.errorText,
                                                     ),
-                                                  ],
-                                                ),
-                                                items: units.keys.map((unitId) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: unitId,
-                                                    child: Text(
-                                                      units[unitId]!,
-                                                      style: const TextStyle(
+                                                    isExpanded: true,
+                                                    hint: const Text(
+                                                      'Select Unit',
+                                                      style: TextStyle(
                                                         fontSize: 14,
                                                         fontWeight:
                                                             FontWeight.w400,
-                                                        color: Colors.black87,
+                                                        color:
+                                                            Color(0xFFb0b6c3),
                                                       ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
                                                     ),
-                                                  );
-                                                }).toList(),
-                                                value: _selectedUnitId
-                                                        .toString()
-                                                        .isNotEmpty
-                                                    ? _selectedUnitId
-                                                    : null,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    unitId = value.toString();
-                                                    _selectedUnitId = value;
-                                                    _selectedUnit = units[
-                                                        value]; // Store selected rental_unit
-                                                    _loadTenant(
-                                                        _selectedPropertyId!,
-                                                        unitId);
-                                                    print(
-                                                        'Selected Unit: $_selectedUnit');
-                                                    state.didChange(value);
-                                                  });
-                                                  state.reset();
-                                                  // Notify form field of the change
-                                                },
-                                                buttonStyleData:
-                                                    ButtonStyleData(
-                                                  height: 45,
-                                                  width: 160,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 14, right: 14),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    color: Colors.white,
-                                                  ),
-                                                  elevation: 2,
-                                                ),
-                                                iconStyleData:
-                                                    const IconStyleData(
-                                                  icon: Icon(
-                                                      Icons.arrow_drop_down),
-                                                  iconSize: 24,
-                                                  iconEnabledColor:
-                                                      Color(0xFFb0b6c3),
-                                                  iconDisabledColor:
-                                                      Colors.grey,
-                                                ),
-                                                dropdownStyleData:
-                                                    DropdownStyleData(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    color: Colors.white,
-                                                  ),
-                                                  scrollbarTheme:
-                                                      ScrollbarThemeData(
-                                                    radius:
-                                                        const Radius.circular(
-                                                            6),
-                                                    thickness:
-                                                        MaterialStateProperty
-                                                            .all(6),
-                                                    thumbVisibility:
-                                                        MaterialStateProperty
-                                                            .all(true),
-                                                  ),
-                                                ),
-                                                menuItemStyleData:
-                                                    const MenuItemStyleData(
-                                                  height: 40,
-                                                  padding: EdgeInsets.only(
-                                                      left: 14, right: 14),
-                                                ),
-                                              ),
-                                            ),
-                                            if (state.hasError)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 14, top: 8),
-                                                child: Text(
-                                                  state.errorText!,
-                                                  style: const TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 12,
+                                                    items: units.keys
+                                                        .map((unitId) {
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: unitId,
+                                                        child: Text(
+                                                          units[unitId]!,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color:
+                                                                Colors.black87,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                    value: units.containsKey(
+                                                            _selectedUnitId)
+                                                        ? _selectedUnitId
+                                                        : null,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        _selectedUnitId = value;
+                                                        if (value != null) {
+                                                          _loadTenant(
+                                                              _selectedPropertyId!,
+                                                              value);
+                                                        }
+                                                      });
+                                                    },
+                                                    buttonStyleData:
+                                                        ButtonStyleData(
+                                                      height: 45,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 14),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color: Colors.white,
+                                                      ),
+                                                      elevation: 2,
+                                                    ),
+                                                    iconStyleData:
+                                                        const IconStyleData(
+                                                      icon: Icon(Icons
+                                                          .arrow_drop_down),
+                                                      iconSize: 24,
+                                                      iconEnabledColor:
+                                                          Color(0xFFb0b6c3),
+                                                      iconDisabledColor:
+                                                          Colors.grey,
+                                                    ),
+                                                    dropdownStyleData:
+                                                        DropdownStyleData(
+                                                      maxHeight: 200,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color: Colors.white,
+                                                      ),
+                                                      scrollbarTheme:
+                                                          ScrollbarThemeData(
+                                                        radius: const Radius
+                                                            .circular(6),
+                                                        thickness:
+                                                            MaterialStateProperty
+                                                                .all(6),
+                                                        thumbVisibility:
+                                                            MaterialStateProperty
+                                                                .all(true),
+                                                      ),
+                                                    ),
+                                                    menuItemStyleData:
+                                                        const MenuItemStyleData(
+                                                      height: 40,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 14),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                          ],
-                                        );
-                                      },
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     )
                                   : Container(),
                             ],
@@ -1588,7 +1624,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Vendors *',
+                          Text('Assigned To *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -1601,7 +1637,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             children: [
                               FormField<String>(
                                 validator: (value) {
-                                  if (_selectedvendorsId == null) {
+                                  if (_selectedstaffId == null) {
                                     return 'Please select an option';
                                   }
                                   return null;
@@ -1639,11 +1675,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             ],
                                           ),
-                                          items: vendors.keys.map((vendorId) {
+                                          items:
+                                              staffs.keys.map((staffmemberId) {
                                             return DropdownMenuItem<String>(
-                                              value: vendorId,
+                                              value: staffmemberId,
                                               child: Text(
-                                                vendors[vendorId]!,
+                                                staffs[staffmemberId]!,
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w400,
@@ -1653,23 +1690,25 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             );
                                           }).toList(),
-                                          value: vendors.containsKey(
-                                                  _selectedvendorsId)
-                                              ? _selectedvendorsId
+                                          value: staffs
+                                                  .containsKey(_selectedstaffId)
+                                              ? _selectedstaffId
                                               : null,
                                           onChanged: (value) {
                                             setState(() {
                                               // Notify form field of the change
-                                              _selectedvendorsId = value;
-                                              _selectedVendors = vendors[
-                                                  value]; // Store selected vendor
-
-                                              vendorId = value.toString();
+                                              _selectedstaffId = value;
+                                              _selectedStaffs = staffs[
+                                                  value]; // Store selected staff
+                                              StaffId = value.toString();
                                               print(
-                                                  'Selected Vendors: $_selectedVendors');
-                                              _loadUnits(value!);
-                                              state.didChange(
-                                                  value); // Fetch units for the selected vendor
+                                                  'Selected Staffs: $_selectedStaffs');
+
+                                              if (value != null) {
+                                                _loadUnits(
+                                                    value); // Fetch units for the selected staff
+                                              }
+                                              state.didChange(value);
                                             });
                                             state.reset();
                                           },
@@ -1805,7 +1844,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Assigned To *',
+                          Text('Vendor ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -1818,7 +1857,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             children: [
                               FormField<String>(
                                 validator: (value) {
-                                  if (_selectedstaffId == null) {
+                                  if (_selectedvendorsId == null) {
                                     return 'Please select an option';
                                   }
                                   return null;
@@ -1856,12 +1895,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             ],
                                           ),
-                                          items:
-                                              staffs.keys.map((staffmemberId) {
+                                          items: vendors.keys.map((vendorId) {
                                             return DropdownMenuItem<String>(
-                                              value: staffmemberId,
+                                              value: vendorId,
                                               child: Text(
-                                                staffs[staffmemberId]!,
+                                                vendors[vendorId]!,
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w400,
@@ -1871,25 +1909,23 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             );
                                           }).toList(),
-                                          value: staffs
-                                                  .containsKey(_selectedstaffId)
-                                              ? _selectedstaffId
+                                          value: vendors.containsKey(
+                                                  _selectedvendorsId)
+                                              ? _selectedvendorsId
                                               : null,
                                           onChanged: (value) {
                                             setState(() {
                                               // Notify form field of the change
-                                              _selectedstaffId = value;
-                                              _selectedStaffs = staffs[
-                                                  value]; // Store selected staff
-                                              StaffId = value.toString();
-                                              print(
-                                                  'Selected Staffs: $_selectedStaffs');
+                                              _selectedvendorsId = value;
+                                              _selectedVendors = vendors[
+                                                  value]; // Store selected vendor
 
-                                              if (value != null) {
-                                                _loadUnits(
-                                                    value); // Fetch units for the selected staff
-                                              }
-                                              state.didChange(value);
+                                              vendorId = value.toString();
+                                              print(
+                                                  'Selected Vendors: $_selectedVendors');
+                                              _loadUnits(value!);
+                                              state.didChange(
+                                                  value); // Fetch units for the selected vendor
                                             });
                                             state.reset();
                                           },
@@ -2060,7 +2096,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           Row(
                             children: [
                               Text(
-                                "Billable To Tenants",
+                                "Billable To Tenant",
                                 style: TextStyle(color: Colors.grey),
                               ),
                               SizedBox(
