@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -220,6 +221,37 @@ class _Summery_pageState extends State<Summery_page>
     //workorder
     // fetchAndSetCounts(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
+  }
+
+
+  // Scroll to previous tab
+  void _scrollToPreviousTab() {
+    if (_scrollController.hasClients) {
+      double currentOffset = _scrollController.offset;
+      double scrollAmount = 150; // Adjust this value based on your tab width
+      double newOffset = (currentOffset - scrollAmount)
+          .clamp(0.0, _scrollController.position.maxScrollExtent);
+      _scrollController.animateTo(
+        newOffset,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  // Scroll to next tab
+  void _scrollToNextTab() {
+    if (_scrollController.hasClients) {
+      double currentOffset = _scrollController.offset;
+      double scrollAmount = 150; // Adjust this value based on your tab width
+      double newOffset = (currentOffset + scrollAmount)
+          .clamp(0.0, _scrollController.position.maxScrollExtent);
+      _scrollController.animateTo(
+        newOffset,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   ConnectivityResult? _connectivityResult;
@@ -1915,9 +1947,238 @@ class _Summery_pageState extends State<Summery_page>
                     // ),
                   ),*/
 
+                  // Container(
+                  //   padding: EdgeInsets.symmetric(horizontal: 10),
+                  //   height: 50,
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.transparent,
+                  //     border: Border.all(color: Colors.transparent),
+                  //   ),
+                  //   child: FutureBuilder<Rentals>(
+                  //     future: futureRentalDetails,
+                  //     builder: (context, snapshot) {
+                  //       final bool isMultiUnit =
+                  //           snapshot.data?.propertyTypeData?.isMultiunit ??
+                  //               false;
+                  //
+                  //       return Row(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //         children: [
+                  //           Expanded(
+                  //             child: GestureDetector(
+                  //               onTap: () {
+                  //                 setState(() {
+                  //                   _selectedIndex = 0;
+                  //                 });
+                  //               },
+                  //               child: Container(
+                  //                 padding: EdgeInsets.symmetric(
+                  //                     vertical: 0, horizontal: 5),
+                  //                 margin: EdgeInsets.symmetric(horizontal: 0),
+                  //                 decoration: BoxDecoration(
+                  //                   color: _selectedIndex == 0
+                  //                       ? blueColor
+                  //                       : Colors.grey.shade200,
+                  //                   borderRadius: BorderRadius.circular(3),
+                  //                 ),
+                  //                 child: Center(
+                  //                   child: Text(
+                  //                     "Summary",
+                  //                     textAlign: TextAlign.center,
+                  //                     style: TextStyle(
+                  //                       fontWeight: FontWeight.w600,
+                  //                       color: _selectedIndex == 0
+                  //                           ? Colors.white
+                  //                           : blueColor,
+                  //                       fontSize: 13,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           if (isMultiUnit)
+                  //             Expanded(
+                  //               child: GestureDetector(
+                  //                 onTap: () {
+                  //                   setState(() {
+                  //                     _selectedIndex = 1;
+                  //                   });
+                  //                 },
+                  //                 child: Container(
+                  //                   padding: EdgeInsets.symmetric(
+                  //                       vertical: 0, horizontal: 5),
+                  //                   margin: EdgeInsets.symmetric(horizontal: 0),
+                  //                   decoration: BoxDecoration(
+                  //                     color: _selectedIndex == 1
+                  //                         ? blueColor
+                  //                         : Colors.grey.shade200,
+                  //                     borderRadius: BorderRadius.circular(3),
+                  //                   ),
+                  //                   child: Center(
+                  //                     child: Text(
+                  //                       "Unit($unitCount)",
+                  //                       textAlign: TextAlign.center,
+                  //                       style: TextStyle(
+                  //                         fontWeight: FontWeight.w600,
+                  //                         color: _selectedIndex == 1
+                  //                             ? Colors.white
+                  //                             : blueColor,
+                  //                         fontSize: 13,
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           Expanded(
+                  //             child: GestureDetector(
+                  //               onTap: () {
+                  //                 setState(() {
+                  //                   _selectedIndex = isMultiUnit ? 2 : 1;
+                  //                 });
+                  //               },
+                  //               child: Container(
+                  //                 padding: EdgeInsets.symmetric(
+                  //                     vertical: 0, horizontal: 5),
+                  //                 margin: EdgeInsets.symmetric(horizontal: 0),
+                  //                 decoration: BoxDecoration(
+                  //                   color:
+                  //                       _selectedIndex == (isMultiUnit ? 2 : 1)
+                  //                           ? blueColor
+                  //                           : Colors.grey.shade200,
+                  //                   borderRadius: BorderRadius.circular(3),
+                  //                 ),
+                  //                 child: Center(
+                  //                   child: Text(
+                  //                     "Tenant($tenentCount)",
+                  //                     textAlign: TextAlign.center,
+                  //                     style: TextStyle(
+                  //                       fontWeight: FontWeight.w600,
+                  //                       color: _selectedIndex ==
+                  //                               (isMultiUnit ? 2 : 1)
+                  //                           ? Colors.white
+                  //                           : blueColor,
+                  //                       fontSize: 13,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           Expanded(
+                  //             child: GestureDetector(
+                  //               onTap: () {
+                  //                 setState(() {
+                  //                   _selectedIndex = isMultiUnit ? 3 : 2;
+                  //                 });
+                  //               },
+                  //               child: Container(
+                  //                 padding: EdgeInsets.symmetric(
+                  //                     vertical: 0, horizontal: 5),
+                  //                 margin: EdgeInsets.symmetric(horizontal: 0),
+                  //                 decoration: BoxDecoration(
+                  //                   color:
+                  //                       _selectedIndex == (isMultiUnit ? 3 : 2)
+                  //                           ? blueColor
+                  //                           : Colors.grey.shade200,
+                  //                   borderRadius: BorderRadius.circular(3),
+                  //                 ),
+                  //                 child: Center(
+                  //                   child: Text(
+                  //                     "Work order\n($count)",
+                  //                     textAlign: TextAlign.center,
+                  //                     style: TextStyle(
+                  //                       fontWeight: FontWeight.w600,
+                  //                       color: _selectedIndex ==
+                  //                               (isMultiUnit ? 3 : 2)
+                  //                           ? Colors.white
+                  //                           : blueColor,
+                  //                       fontSize: 13,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           Expanded(
+                  //             child: GestureDetector(
+                  //               onTap: () {
+                  //                 setState(() {
+                  //                   _selectedIndex = isMultiUnit ? 4 : 3;
+                  //                 });
+                  //               },
+                  //               child: Container(
+                  //                 padding: EdgeInsets.symmetric(
+                  //                     vertical: 0, horizontal: 5),
+                  //                 margin: EdgeInsets.symmetric(horizontal: 0),
+                  //                 decoration: BoxDecoration(
+                  //                   color:
+                  //                       _selectedIndex == (isMultiUnit ? 4 : 3)
+                  //                           ? blueColor
+                  //                           : Colors.grey.shade200,
+                  //                   borderRadius: BorderRadius.circular(3),
+                  //                 ),
+                  //                 child: Center(
+                  //                   child: Text(
+                  //                     "Lease",
+                  //                     textAlign: TextAlign.center,
+                  //                     style: TextStyle(
+                  //                       fontWeight: FontWeight.w600,
+                  //                       color: _selectedIndex ==
+                  //                               (isMultiUnit ? 4 : 3)
+                  //                           ? Colors.white
+                  //                           : blueColor,
+                  //                       fontSize: 13,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           Expanded(
+                  //             child: GestureDetector(
+                  //               onTap: () {
+                  //                 setState(() {
+                  //                   _selectedIndex = isMultiUnit ? 5 : 4;
+                  //                 });
+                  //               },
+                  //               child: Container(
+                  //                 padding: EdgeInsets.symmetric(
+                  //                     vertical: 0, horizontal: 5),
+                  //                 margin: EdgeInsets.symmetric(horizontal: 0),
+                  //                 decoration: BoxDecoration(
+                  //                   color:
+                  //                       _selectedIndex == (isMultiUnit ? 5 : 4)
+                  //                           ? blueColor
+                  //                           : Colors.grey.shade200,
+                  //                   borderRadius: BorderRadius.circular(3),
+                  //                 ),
+                  //                 child: Center(
+                  //                   child: Text(
+                  //                     "Revenue",
+                  //                     textAlign: TextAlign.center,
+                  //                     style: TextStyle(
+                  //                       fontWeight: FontWeight.w600,
+                  //                       color: _selectedIndex ==
+                  //                               (isMultiUnit ? 5 : 4)
+                  //                           ? Colors.white
+                  //                           : blueColor,
+                  //                       fontSize: 13,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    height: 50,
+                    height: 45,
                     decoration: BoxDecoration(
                       color: Colors.transparent,
                       border: Border.all(color: Colors.transparent),
@@ -1929,216 +2190,162 @@ class _Summery_pageState extends State<Summery_page>
                             snapshot.data?.propertyTypeData?.isMultiunit ??
                                 false;
 
+                        // Create list of tab items
+                        List<Map<String, dynamic>> tabItems = [
+                          {"title": "Summary", "index": 0},
+                        ];
+
+                        if (isMultiUnit) {
+                          tabItems
+                              .add({"title": "Unit ($unitCount)", "index": 1});
+                        }
+
+                        tabItems.addAll([
+                          {
+                            "title": "Tenant ($tenentCount)",
+                            "index": isMultiUnit ? 2 : 1
+                          },
+                          {
+                            "title": "Work order ($count)",
+                            "index": isMultiUnit ? 3 : 2
+                          },
+                          {"title": "Lease", "index": isMultiUnit ? 4 : 3},
+                          {"title": "Revenue", "index": isMultiUnit ? 5 : 4},
+                          // {
+                          //   "title": "Infrastructure",
+                          //   "index": isMultiUnit ? 6 : 5
+                          // },
+                        ]);
+
                         return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = 0;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color: _selectedIndex == 0
-                                        ? blueColor
-                                        : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
+                            // Left arrow button - only show if not at the beginning
+                            if (_scrollController.hasClients &&
+                                _scrollController.offset > 0)
+                              Container(
+                                width: 30,
+                                height: 35,
+                                child: IconButton(
+                                  onPressed: () {
+                                    // Scroll to previous tab
+                                    _scrollToPreviousTab();
+                                  },
+                                  icon: Icon(
+                                    Icons.chevron_left,
+                                    color: blueColor,
+                                    size: 36,
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      "Summary",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex == 0
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
                                 ),
                               ),
-                            ),
-                            if (isMultiUnit)
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = 1;
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 0, horizontal: 5),
-                                    margin: EdgeInsets.symmetric(horizontal: 0),
-                                    decoration: BoxDecoration(
-                                      color: _selectedIndex == 1
-                                          ? blueColor
-                                          : Colors.grey.shade200,
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Unit($unitCount)",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          color: _selectedIndex == 1
-                                              ? Colors.white
-                                              : blueColor,
-                                          fontSize: 13,
+
+                            // Scrollable tab content
+                            Expanded(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                controller: _scrollController,
+                                physics: BouncingScrollPhysics(),
+                                child: Row(
+                                  children: tabItems.map((tab) {
+                                    int tabIndex = tab["index"];
+                                    String title = tab["title"];
+
+                                    return Container(
+                                      margin:
+                                      EdgeInsets.symmetric(horizontal: 3),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedIndex = tabIndex;
+                                            // Refresh data when switching to Purchase Info tab
+                                            if (tabIndex == 1) {
+                                              // Purchase Info tab index
+                                              futureRentalDetails =
+                                                  Properies_summery_Repo()
+                                                      .fetchrentalDetails(widget
+                                                      .properties
+                                                      .rentalId!);
+                                            }
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 0, horizontal: 16),
+                                          decoration: BoxDecoration(
+                                            color: _selectedIndex == tabIndex
+                                                ? blueColor
+                                                : Colors.grey.shade200,
+                                            borderRadius:
+                                            BorderRadius.circular(6),
+                                            border: Border.all(
+                                              color: _selectedIndex == tabIndex
+                                                  ? blueColor
+                                                  : Colors.grey.shade300,
+                                              width: 1,
+                                            ),
+                                            boxShadow:
+                                            _selectedIndex == tabIndex
+                                                ? [
+                                              BoxShadow(
+                                                color: blueColor
+                                                    .withOpacity(0.3),
+                                                blurRadius: 4,
+                                                offset: Offset(0, 2),
+                                              )
+                                            ]
+                                                : [
+                                              BoxShadow(
+                                                color: Colors.grey
+                                                    .withOpacity(0.1),
+                                                blurRadius: 2,
+                                                offset: Offset(0, 1),
+                                              )
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              title,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color:
+                                                _selectedIndex == tabIndex
+                                                    ? Colors.white
+                                                    : blueColor,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = isMultiUnit ? 2 : 1;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedIndex == (isMultiUnit ? 2 : 1)
-                                            ? blueColor
-                                            : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Tenant($tenentCount)",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex ==
-                                                (isMultiUnit ? 2 : 1)
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
+                                    );
+                                  }).toList(),
                                 ),
                               ),
                             ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = isMultiUnit ? 3 : 2;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedIndex == (isMultiUnit ? 3 : 2)
-                                            ? blueColor
-                                            : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
+
+                            // Right arrow button - only show if not at the end
+                            if (_scrollController.hasClients &&
+                                _scrollController.offset <
+                                    _scrollController.position.maxScrollExtent)
+                              Container(
+                                width: 30,
+                                height: 35,
+                                child: IconButton(
+                                  onPressed: () {
+                                    // Scroll to next tab
+                                    _scrollToNextTab();
+                                  },
+                                  icon: Icon(
+                                    Icons.chevron_right,
+                                    color: blueColor,
+                                    size: 36,
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      "Work order\n($count)",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex ==
-                                                (isMultiUnit ? 3 : 2)
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = isMultiUnit ? 4 : 3;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedIndex == (isMultiUnit ? 4 : 3)
-                                            ? blueColor
-                                            : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Lease",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex ==
-                                                (isMultiUnit ? 4 : 3)
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = isMultiUnit ? 5 : 4;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  margin: EdgeInsets.symmetric(horizontal: 0),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedIndex == (isMultiUnit ? 5 : 4)
-                                            ? blueColor
-                                            : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Revenue",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: _selectedIndex ==
-                                                (isMultiUnit ? 5 : 4)
-                                            ? Colors.white
-                                            : blueColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
                           ],
                         );
                       },
@@ -2235,17 +2442,23 @@ class _Summery_pageState extends State<Summery_page>
           } else {
             return Lease_page();
           }
-        } else if (_selectedIndex == 4 && isMultiUnit) {
-          return Lease_page();
         } else if (_selectedIndex == 4) {
           if (isMultiUnit) {
             return Lease_page();
           } else {
             return Revenue_page();
           }
-        } else if (_selectedIndex == 5 && isMultiUnit) {
-          return Revenue_page();
         }
+        // else if (_selectedIndex == 5) {
+        //   if (isMultiUnit) {
+        //     return Revenue_page();
+        //   } else {
+        //     return Infrastructure_page(data);
+        //   }
+        // } else if (_selectedIndex == 6 && isMultiUnit) {
+        //   return Infrastructure_page(data);
+        // }
+
         return Container();
       },
     );
@@ -2735,6 +2948,11 @@ class _Summery_pageState extends State<Summery_page>
   //       return Container(); // Fallback for safety
   //   }
   // }
+  final purchaseDateController = TextEditingController();
+  final purchasePriceController = TextEditingController();
+  final parcelNumberController = TextEditingController();
+  DateTime? selectedDate;
+  bool is_Loading = true;
   Summary_page() {
     print("$image_url${widget.properties.rentalImage}");
     return FutureBuilder<Rentals>(
@@ -3839,18 +4057,265 @@ class _Summery_pageState extends State<Summery_page>
                     },
                   ),
                 SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: Text(
-                    "Purchase Information",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: blueColor,
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Text(
+                        "Purchase Information",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: blueColor,
+                        ),
+                      ),
                     ),
-                  ),
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 30,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            // Initialize with current values
+                            purchaseDateController.text =
+                                rentalDetails.purchaseDate ?? '';
+                            purchasePriceController.text =
+                                rentalDetails.purchasePrice?.toString() ?? '';
+                            parcelNumberController.text =
+                                rentalDetails.parcelNumber ?? '';
+                            selectedDate =
+                            (rentalDetails.purchaseDate != null &&
+                                rentalDetails.purchaseDate != 'N/A' &&
+                                rentalDetails.purchaseDate!.isNotEmpty)
+                                ? DateTime.tryParse(
+                                rentalDetails.purchaseDate!) ??
+                                null
+                                : null;
+
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        'Edit Purchase Information',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      ),
+                                      content: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Purchase Date",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                            SizedBox(height: 6),
+                                            InkWell(
+                                              onTap: () async {
+                                                final DateTime? picked =
+                                                await showDatePicker(
+                                                  context: context,
+                                                  initialDate: selectedDate ??
+                                                      DateTime.now(),
+                                                  firstDate: DateTime(2000),
+                                                  lastDate: DateTime(2100),
+                                                );
+                                                if (picked != null) {
+                                                  setState(() {
+                                                    selectedDate = picked;
+                                                    purchaseDateController
+                                                        .text =
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(picked);
+                                                  });
+                                                }
+                                              },
+                                              child: AbsorbPointer(
+                                                child: TextField(
+                                                  controller:
+                                                  purchaseDateController,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                    'Enter purchase date',
+                                                    suffixIcon: Icon(
+                                                        Icons.calendar_today),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          12),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 16),
+                                            Text(
+                                              "Purchase Price",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                            SizedBox(height: 6),
+                                            TextField(
+                                              controller:
+                                              purchasePriceController,
+                                              keyboardType:
+                                              TextInputType.number,
+                                              decoration: InputDecoration(
+                                                hintText:
+                                                'Enter purchase price',
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 16),
+                                            Text(
+                                              "Parcel Number",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                            SizedBox(height: 6),
+                                            TextField(
+                                              controller:
+                                              parcelNumberController,
+                                              decoration: InputDecoration(
+                                                hintText: 'Enter parcel number',
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('Cancel'),
+                                        ),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: blueColor,
+                                          ),
+                                          onPressed: () async {
+                                            SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                            String? token =
+                                            prefs.getString('token');
+                                            String? id =
+                                            prefs.getString('adminId');
+
+                                            try {
+                                              final response = await http.put(
+                                                Uri.parse(
+                                                    '${Api_url}/api/rentals/rental/${widget.properties.rentalId}/purchase_info'),
+                                                headers: {
+                                                  "authorization": "CRM $token",
+                                                  "id": "CRM $id",
+                                                  "Content-Type":
+                                                  "application/json",
+                                                },
+                                                body: json.encode({
+                                                  "purchase_date":
+                                                  purchaseDateController
+                                                      .text,
+                                                  "purchase_price": double.tryParse(
+                                                      purchasePriceController
+                                                          .text) ??
+                                                      0,
+                                                  "parcel_number":
+                                                  parcelNumberController
+                                                      .text,
+                                                }),
+                                              );
+
+                                              if (response.statusCode == 200) {
+                                                reload_Screen();
+                                                Navigator.pop(context);
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                  "Purchase information updated successfully",
+                                                  toastLength:
+                                                  Toast.LENGTH_LONG,
+                                                );
+                                                if (mounted) {
+                                                  setState(() {
+                                                    futureRentalDetails =
+                                                        Properies_summery_Repo()
+                                                            .fetchrentalDetails(
+                                                            widget
+                                                                .properties
+                                                                .rentalId!);
+                                                  });
+                                                }
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                  "Failed to update purchase information",
+                                                  toastLength:
+                                                  Toast.LENGTH_LONG,
+                                                );
+                                              }
+                                            } catch (e) {
+                                              print(
+                                                  'Error updating purchase info: $e');
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                "Error updating purchase information",
+                                                toastLength: Toast.LENGTH_LONG,
+                                              );
+                                            }
+                                          },
+                                          child: Text(
+                                            'Save',
+                                            style:
+                                            TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: Text(
+                            'Edit',
+                            style: TextStyle(color: Color(0xFFf7f8f9)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                  ],
                 ),
-                SizedBox(height: 2),
+                SizedBox(height: 5),
                 Padding(
                   padding: const EdgeInsets.only(left: 6, right: 6),
                   child: Container(
@@ -3928,28 +4393,42 @@ class _Summery_pageState extends State<Summery_page>
                               Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
-                                  (rentalDetails.purchaseDate == null || rentalDetails.purchaseDate!.isEmpty)
+                                  (rentalDetails.purchaseDate == null ||
+                                          rentalDetails.purchaseDate!.isEmpty)
                                       ? "N/A"
                                       : rentalDetails.purchaseDate!,
-                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
                                 ),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
-                                  (rentalDetails.purchasePrice == null || rentalDetails.purchasePrice == 0)
+                                  (rentalDetails.purchasePrice == null ||
+                                          rentalDetails.purchasePrice == 0)
                                       ? "N/A"
                                       : "\$${rentalDetails.purchasePrice!.toStringAsFixed(0)}",
-                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
                                 ),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(12.0),
-                                child: Text(
-                                  (rentalDetails.parcelNumber == null || rentalDetails.parcelNumber!.isEmpty)
-                                      ? "N/A"
-                                      : rentalDetails.parcelNumber!,
-                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      (rentalDetails.parcelNumber == null ||
+                                              rentalDetails
+                                                  .parcelNumber!.isEmpty)
+                                          ? "N/A"
+                                          : rentalDetails.parcelNumber!,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                    ),
+
+                                  ],
                                 ),
                               ),
                             ],
@@ -15716,6 +16195,10 @@ class _Summery_pageState extends State<Summery_page>
 
   reload_Screen() {
     setState(() {
+      // Refresh rental details
+      futureRentalDetails = Properies_summery_Repo()
+          .fetchrentalDetails(widget.properties.rentalId!);
+      // Refresh unit summary
       futureUnitsummery =
           Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
     });

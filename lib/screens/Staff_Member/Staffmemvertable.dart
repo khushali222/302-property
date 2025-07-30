@@ -344,19 +344,209 @@ class _StaffTableState extends State<StaffTable> {
   }
 
   void handleEdit(Staffmembers staff) async {
-    // Handle edit action
+    TextEditingController nameController =
+        TextEditingController(text: staff.staffmemberName);
+    TextEditingController designationController =
+        TextEditingController(text: staff.staffmemberDesignation);
+    TextEditingController phoneController =
+        TextEditingController(text: staff.staffmemberPhoneNumber);
+    TextEditingController emailController =
+        TextEditingController(text: staff.staffmemberEmail);
+    bool isLoading = false;
 
-    final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Edit_staff_member(
-                  staff: staff,
-                )));
-    if (result == true) {
-      setState(() {
-        futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
-      });
-    }
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text('Edit Staff Member',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: blueColor)),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Name",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: blueColor)),
+                  SizedBox(height: 6),
+                  Container(
+                    height: 45,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xFFCED4DA)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text("Designation",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: blueColor)),
+                  SizedBox(height: 6),
+                  Container(
+                    height: 45,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xFFCED4DA)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextField(
+                      controller: designationController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text("Phone Number",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: blueColor)),
+                  SizedBox(height: 6),
+                  Container(
+                    height: 45,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xFFCED4DA)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextField(
+                      controller: phoneController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text("Email",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: blueColor)),
+                  SizedBox(height: 6),
+                  Container(
+                    height: 45,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xFFCED4DA)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        setState(() => isLoading = true);
+
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        String? adminId = prefs.getString("adminId");
+                        String? token = prefs.getString('token');
+
+                        try {
+                          await StaffMemberRepository().Edit_staff_member(
+                            adminId: adminId!,
+                            staffmemberName: nameController.text.trim(),
+                            staffmemberDesignation:
+                                designationController.text.trim(),
+                            staffmemberPhoneNumber: phoneController.text.trim(),
+                            staffmemberEmail: emailController.text.trim(),
+                            Sid: staff.staffmemberId,
+                            staffmemberPassword: staff.staffmemberPassword,
+                          );
+
+                          Navigator.pop(context);
+                          this.setState(() {
+                            futureStaffMembers =
+                                StaffMemberRepository().fetchStaffmembers();
+                          });
+
+                          Fluttertoast.showToast(
+                            msg: "Staff member updated successfully",
+                            toastLength: Toast.LENGTH_LONG,
+                          );
+                        } catch (e) {
+                          print('Error updating staff member: $e');
+                          Fluttertoast.showToast(
+                            msg: "Failed to update staff member",
+                            toastLength: Toast.LENGTH_LONG,
+                          );
+                        } finally {
+                          setState(() => isLoading = false);
+                        }
+                      },
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: isLoading
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  "Save",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 
   void _showDeleteAlert(BuildContext context, String id) {

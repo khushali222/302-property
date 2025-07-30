@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -97,14 +98,14 @@ class _Summery_pageState extends State<Summery_page>
         _connectivityResult = result;
       });
     });
-    
+
     // Add scroll listener to update UI when scrolling
     _scrollController.addListener(() {
       setState(() {
         // This will trigger a rebuild to update arrow colors
       });
     });
-    
+
     checkInternet();
     _fetchData();
     futureUnitsummery =
@@ -166,7 +167,8 @@ class _Summery_pageState extends State<Summery_page>
     if (_scrollController.hasClients) {
       double currentOffset = _scrollController.offset;
       double scrollAmount = 150; // Adjust this value based on your tab width
-      double newOffset = (currentOffset - scrollAmount).clamp(0.0, _scrollController.position.maxScrollExtent);
+      double newOffset = (currentOffset - scrollAmount)
+          .clamp(0.0, _scrollController.position.maxScrollExtent);
       _scrollController.animateTo(
         newOffset,
         duration: Duration(milliseconds: 300),
@@ -180,7 +182,8 @@ class _Summery_pageState extends State<Summery_page>
     if (_scrollController.hasClients) {
       double currentOffset = _scrollController.offset;
       double scrollAmount = 150; // Adjust this value based on your tab width
-      double newOffset = (currentOffset + scrollAmount).clamp(0.0, _scrollController.position.maxScrollExtent);
+      double newOffset = (currentOffset + scrollAmount)
+          .clamp(0.0, _scrollController.position.maxScrollExtent);
       _scrollController.animateTo(
         newOffset,
         duration: Duration(milliseconds: 300),
@@ -1428,8 +1431,6 @@ class _Summery_pageState extends State<Summery_page>
     });
   }
 
-
-
   Widget _buildHeaderrent<T>(String text, int columnIndex,
       Comparable<T> Function(Rentals d)? getField) {
     return TableCell(
@@ -1738,28 +1739,39 @@ class _Summery_pageState extends State<Summery_page>
                         final bool isMultiUnit =
                             snapshot.data?.propertyTypeData?.isMultiunit ??
                                 false;
-                        
+
                         // Create list of tab items
                         List<Map<String, dynamic>> tabItems = [
                           {"title": "Summary", "index": 0},
                         ];
-                        
+
                         if (isMultiUnit) {
-                          tabItems.add({"title": "Unit ($unitCount)", "index": 1});
+                          tabItems
+                              .add({"title": "Unit ($unitCount)", "index": 1});
                         }
-                        
+
                         tabItems.addAll([
-                          {"title": "Tenant ($tenentCount)", "index": isMultiUnit ? 2 : 1},
-                          {"title": "Work order ($count)", "index": isMultiUnit ? 3 : 2},
+                          {
+                            "title": "Tenant ($tenentCount)",
+                            "index": isMultiUnit ? 2 : 1
+                          },
+                          {
+                            "title": "Work order ($count)",
+                            "index": isMultiUnit ? 3 : 2
+                          },
                           {"title": "Lease", "index": isMultiUnit ? 4 : 3},
                           {"title": "Revenue", "index": isMultiUnit ? 5 : 4},
-                          {"title": "Infrastructure", "index": isMultiUnit ? 6 : 5},
+                          {
+                            "title": "Infrastructure",
+                            "index": isMultiUnit ? 6 : 5
+                          },
                         ]);
 
                         return Row(
                           children: [
                             // Left arrow button - only show if not at the beginning
-                            if (_scrollController.hasClients && _scrollController.offset > 0)
+                            if (_scrollController.hasClients &&
+                                _scrollController.offset > 0)
                               Container(
                                 width: 30,
                                 height: 35,
@@ -1777,7 +1789,7 @@ class _Summery_pageState extends State<Summery_page>
                                   constraints: BoxConstraints(),
                                 ),
                               ),
-                            
+
                             // Scrollable tab content
                             Expanded(
                               child: SingleChildScrollView(
@@ -1788,13 +1800,23 @@ class _Summery_pageState extends State<Summery_page>
                                   children: tabItems.map((tab) {
                                     int tabIndex = tab["index"];
                                     String title = tab["title"];
-                                    
+
                                     return Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 3),
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 3),
                                       child: GestureDetector(
                                         onTap: () {
                                           setState(() {
                                             _selectedIndex = tabIndex;
+                                            // Refresh data when switching to Purchase Info tab
+                                            if (tabIndex == 1) {
+                                              // Purchase Info tab index
+                                              futureRentalDetails =
+                                                  Properies_summery_Repo()
+                                                      .fetchrentalDetails(widget
+                                                          .properties
+                                                          .rentalId!);
+                                            }
                                           });
                                         },
                                         child: Container(
@@ -1804,28 +1826,32 @@ class _Summery_pageState extends State<Summery_page>
                                             color: _selectedIndex == tabIndex
                                                 ? blueColor
                                                 : Colors.grey.shade200,
-                                            borderRadius: BorderRadius.circular(6),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
                                             border: Border.all(
                                               color: _selectedIndex == tabIndex
                                                   ? blueColor
                                                   : Colors.grey.shade300,
                                               width: 1,
                                             ),
-                                            boxShadow: _selectedIndex == tabIndex
-                                                ? [
-                                                    BoxShadow(
-                                                      color: blueColor.withOpacity(0.3),
-                                                      blurRadius: 4,
-                                                      offset: Offset(0, 2),
-                                                    )
-                                                  ]
-                                                : [
-                                                    BoxShadow(
-                                                      color: Colors.grey.withOpacity(0.1),
-                                                      blurRadius: 2,
-                                                      offset: Offset(0, 1),
-                                                    )
-                                                  ],
+                                            boxShadow:
+                                                _selectedIndex == tabIndex
+                                                    ? [
+                                                        BoxShadow(
+                                                          color: blueColor
+                                                              .withOpacity(0.3),
+                                                          blurRadius: 4,
+                                                          offset: Offset(0, 2),
+                                                        )
+                                                      ]
+                                                    : [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.1),
+                                                          blurRadius: 2,
+                                                          offset: Offset(0, 1),
+                                                        )
+                                                      ],
                                           ),
                                           child: Center(
                                             child: Text(
@@ -1833,9 +1859,10 @@ class _Summery_pageState extends State<Summery_page>
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
-                                                color: _selectedIndex == tabIndex
-                                                    ? Colors.white
-                                                    : blueColor,
+                                                color:
+                                                    _selectedIndex == tabIndex
+                                                        ? Colors.white
+                                                        : blueColor,
                                                 fontSize: 15,
                                               ),
                                             ),
@@ -1847,10 +1874,11 @@ class _Summery_pageState extends State<Summery_page>
                                 ),
                               ),
                             ),
-                            
+
                             // Right arrow button - only show if not at the end
-                            if (_scrollController.hasClients && 
-                                _scrollController.offset < _scrollController.position.maxScrollExtent)
+                            if (_scrollController.hasClients &&
+                                _scrollController.offset <
+                                    _scrollController.position.maxScrollExtent)
                               Container(
                                 width: 30,
                                 height: 35,
@@ -2398,7 +2426,6 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget _buildTabContent(BuildContext context) {
-
     return FutureBuilder<Rentals>(
       future: futureRentalDetails,
       builder: (context, snapshot) {
@@ -2412,7 +2439,7 @@ class _Summery_pageState extends State<Summery_page>
         }
         final bool isMultiUnit =
             snapshot.data?.propertyTypeData?.isMultiunit ?? false;
-       
+
         if (_selectedIndex == 0) {
           return Summary_page();
         } else if (_selectedIndex == 1) {
@@ -2429,7 +2456,7 @@ class _Summery_pageState extends State<Summery_page>
           } else {
             return Workorder(context);
           }
-                } else if (_selectedIndex == 3) {
+        } else if (_selectedIndex == 3) {
           if (isMultiUnit) {
             return Workorder(context);
           } else {
@@ -2456,6 +2483,11 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
+  final purchaseDateController = TextEditingController();
+  final purchasePriceController = TextEditingController();
+  final parcelNumberController = TextEditingController();
+  DateTime? selectedDate;
+  bool is_Loading = true;
   Summary_page() {
     print("$image_url${widget.properties.rentalImage}");
     return FutureBuilder<Rentals>(
@@ -3326,18 +3358,265 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ),
                 SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: Text(
-                    "Purchase Information",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: blueColor,
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Text(
+                        "Purchase Information",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: blueColor,
+                        ),
+                      ),
                     ),
-                  ),
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 30,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            // Initialize with current values
+                            purchaseDateController.text =
+                                rentalDetails.purchaseDate ?? '';
+                            purchasePriceController.text =
+                                rentalDetails.purchasePrice?.toString() ?? '';
+                            parcelNumberController.text =
+                                rentalDetails.parcelNumber ?? '';
+                            selectedDate =
+                                (rentalDetails.purchaseDate != null &&
+                                        rentalDetails.purchaseDate != 'N/A' &&
+                                        rentalDetails.purchaseDate!.isNotEmpty)
+                                    ? DateTime.tryParse(
+                                            rentalDetails.purchaseDate!) ??
+                                        null
+                                    : null;
+
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        'Edit Purchase Information',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      ),
+                                      content: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Purchase Date",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                            SizedBox(height: 6),
+                                            InkWell(
+                                              onTap: () async {
+                                                final DateTime? picked =
+                                                    await showDatePicker(
+                                                  context: context,
+                                                  initialDate: selectedDate ??
+                                                      DateTime.now(),
+                                                  firstDate: DateTime(2000),
+                                                  lastDate: DateTime(2100),
+                                                );
+                                                if (picked != null) {
+                                                  setState(() {
+                                                    selectedDate = picked;
+                                                    purchaseDateController
+                                                            .text =
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(picked);
+                                                  });
+                                                }
+                                              },
+                                              child: AbsorbPointer(
+                                                child: TextField(
+                                                  controller:
+                                                      purchaseDateController,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                        'Enter purchase date',
+                                                    suffixIcon: Icon(
+                                                        Icons.calendar_today),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 16),
+                                            Text(
+                                              "Purchase Price",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                            SizedBox(height: 6),
+                                            TextField(
+                                              controller:
+                                                  purchasePriceController,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              decoration: InputDecoration(
+                                                hintText:
+                                                    'Enter purchase price',
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 16),
+                                            Text(
+                                              "Parcel Number",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                            SizedBox(height: 6),
+                                            TextField(
+                                              controller:
+                                                  parcelNumberController,
+                                              decoration: InputDecoration(
+                                                hintText: 'Enter parcel number',
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('Cancel'),
+                                        ),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: blueColor,
+                                          ),
+                                          onPressed: () async {
+                                            SharedPreferences prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            String? token =
+                                                prefs.getString('token');
+                                            String? id =
+                                                prefs.getString('adminId');
+
+                                            try {
+                                              final response = await http.put(
+                                                Uri.parse(
+                                                    '${Api_url}/api/rentals/rental/${widget.properties.rentalId}/purchase_info'),
+                                                headers: {
+                                                  "authorization": "CRM $token",
+                                                  "id": "CRM $id",
+                                                  "Content-Type":
+                                                      "application/json",
+                                                },
+                                                body: json.encode({
+                                                  "purchase_date":
+                                                      purchaseDateController
+                                                          .text,
+                                                  "purchase_price": double.tryParse(
+                                                          purchasePriceController
+                                                              .text) ??
+                                                      0,
+                                                  "parcel_number":
+                                                      parcelNumberController
+                                                          .text,
+                                                }),
+                                              );
+
+                                              if (response.statusCode == 200) {
+                                                reload_Screen();
+                                                Navigator.pop(context);
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Purchase information updated successfully",
+                                                  toastLength:
+                                                      Toast.LENGTH_LONG,
+                                                );
+                                                if (mounted) {
+                                                  setState(() {
+                                                    futureRentalDetails =
+                                                        Properies_summery_Repo()
+                                                            .fetchrentalDetails(
+                                                                widget
+                                                                    .properties
+                                                                    .rentalId!);
+                                                  });
+                                                }
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Failed to update purchase information",
+                                                  toastLength:
+                                                      Toast.LENGTH_LONG,
+                                                );
+                                              }
+                                            } catch (e) {
+                                              print(
+                                                  'Error updating purchase info: $e');
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "Error updating purchase information",
+                                                toastLength: Toast.LENGTH_LONG,
+                                              );
+                                            }
+                                          },
+                                          child: Text(
+                                            'Save',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: Text(
+                            'Edit',
+                            style: TextStyle(color: Color(0xFFf7f8f9)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                  ],
                 ),
-                SizedBox(height: 2),
+                SizedBox(height: 5),
                 Padding(
                   padding: const EdgeInsets.only(left: 6, right: 6),
                   child: Container(
@@ -4596,7 +4875,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
               SizedBox(height: 13),
               Text(
-                "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+                "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you'll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
                 textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
@@ -11915,7 +12194,6 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Infrastructure_page(List<unit_properties> unit) {
-  
     return InfrastructurePart(
       properties: widget.properties,
       units: unit,

@@ -15,7 +15,9 @@ import 'package:three_zero_two_property/screens/Reports/ReportScreens/RentersIns
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import '../../Model/Home_System_Report_model.dart';
 import '../../widgets/custom_drawer.dart';
+import 'ReportScreens/Home_System_Report.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 import 'ReportScreens/RentRollReport.dart';
 import 'ReportScreens/Rent_collection.dart';
@@ -698,6 +700,7 @@ class ReportScreen extends StatelessWidget {
             reportSection('assets/images/mingcute_clipboard-fill.svg', 'Maintenance & Work Orders', [
               {'title': 'Open Work Orders', 'subtitle': 'Work order not yet in complete state',"navigate":OpenWorkOrders()},
               {'title': 'Completed Work Orders', 'subtitle': 'All completed work orders',"navigate":CompletedWorkOrders()},
+              //{'title': 'Home System Report', 'subtitle': 'Home system report',"navigate":HomeSystemReportScreen()},
             ],"Fix it fast, document it all",context),
             SizedBox(height: 10,),
             reportSection('assets/images/solar_shield-up-bold.svg', 'Insurance', [
