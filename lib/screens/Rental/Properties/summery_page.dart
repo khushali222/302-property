@@ -552,12 +552,9 @@ class _Summery_pageState extends State<Summery_page>
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -602,9 +599,9 @@ class _Summery_pageState extends State<Summery_page>
                   children: [
                     width < 400
                         ? Text("Work Order ",
-                            style: TextStyle(color: Colors.white))
+                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Work Order",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 1),
                     ascending1
@@ -653,7 +650,7 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-                    Text("   Status", style: TextStyle(color: Colors.white)),
+                    Text("   Status", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -703,7 +700,7 @@ class _Summery_pageState extends State<Summery_page>
                 child: Row(
                   children: [
                     Text("       Billable ",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -1561,6 +1558,7 @@ class _Summery_pageState extends State<Summery_page>
     }
   }
 
+  bool staffExpanded = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -2951,15 +2949,9 @@ class _Summery_pageState extends State<Summery_page>
                             child: Column(
                               children: [
                                 SizedBox(height: 5),
-                                _buildHeadersrent(),
-                                SizedBox(height: 20),
+                                //  _buildHeadersrent(),
+                                // SizedBox(height: 20),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5))),
-                                  // decoration: BoxDecoration(
-                                  //     border: Border.all(color: blueColor)),
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -2971,16 +2963,23 @@ class _Summery_pageState extends State<Summery_page>
                                       //return CustomExpansionTile(data: Propertytype, index: index);
                                       return Container(
                                         decoration: BoxDecoration(
-                                          color: index % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                          color: Color(0xFFEAF1FB),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(16),
+                                            topRight: Radius.circular(16),
+                                            bottomLeft: isExpanded
+                                                ? Radius.zero
+                                                : Radius.circular(16),
+                                            bottomRight: isExpanded
+                                                ? Radius.zero
+                                                : Radius.circular(16),
+                                          ),
                                           border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                            color: Color(
+                                                0x4D636363), // Translucent gray border
+                                            width: 1.0,
+                                          ),
                                         ),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
                                         child: Column(
                                           children: <Widget>[
                                             ListTile(
@@ -3039,85 +3038,32 @@ class _Summery_pageState extends State<Summery_page>
                                                         ),
                                                       ),
                                                     ),
-                                                    Expanded(
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            if (expandedIndex ==
-                                                                index) {
-                                                              expandedIndex =
-                                                                  null;
-                                                            } else {
-                                                              expandedIndex =
-                                                                  index;
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Text(
-                                                          '${(rentals.rentalOwnerData?.rentalOwnerName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerName} ',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
+                                                    SizedBox(width: 8),
+                                                    Text(
+                                                      'Rental Owner',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .08),
-                                                    Expanded(
-                                                      child: Text(
-                                                        '${(rentals.rentalOwnerData?.rentalOwnerCompanyName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerCompanyName}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .06),
-                                                    Expanded(
-                                                      child: Text(
-                                                        formatPhoneNumber(rentals
-                                                                .rentalOwnerData
-                                                                ?.rentalOwnerPhoneNumber ??
-                                                            "N/A"),
-                                                        //'${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .02),
                                                   ],
                                                 ),
                                               ),
                                             ),
                                             if (isExpanded)
                                               Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8.0),
-                                                margin:
-                                                    EdgeInsets.only(bottom: 20),
+                                                width: double.infinity,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border(
+                                                    top: BorderSide(
+                                                      color: Color(0x4D636363),
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
+                                                ),
                                                 child: SingleChildScrollView(
                                                   child: Column(
                                                     children: [
@@ -3143,34 +3089,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                       .start,
                                                               children: <Widget>[
                                                                 SizedBox(
-                                                                  height: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height *
-                                                                      .01,
-                                                                ),
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Email : ',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor), // Bold and black
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: Colors.grey), // Light and grey
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
+                                                                    height: 3),
                                                                 SizedBox(
                                                                   height: MediaQuery.of(
                                                                               context)
@@ -3183,20 +3102,91 @@ class _Summery_pageState extends State<Summery_page>
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                            'Home Number : ',
+                                                                            'Rental Owner Name : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '\n${(rentals.rentalOwnerData?.rentalOwnerName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerName}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: Colors.grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Rental Company Name :',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '\n${(rentals.rentalOwnerData?.rentalOwnerCompanyName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerCompanyName}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: Colors.grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Owner E-Mail Address : ',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
                                                                             color: blueColor), // Bold and black
                                                                       ),
                                                                       TextSpan(
-                                                                        text: formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerHomeNumber ??
-                                                                            "N/A"),
-                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
+                                                                        text:
+                                                                            '\n${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,
                                                                             color: Colors.grey), // Light and grey
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Owner Phone Number : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            "\n${formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "N/A")}",
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: Colors.grey),
                                                                       ),
                                                                     ],
                                                                   ),
@@ -3208,29 +3198,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                           .height *
                                                                       .01,
                                                                 ),
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Business Number : ',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor), // Bold and black
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text: formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ??
-                                                                            "N/A"),
-                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: Colors.grey), // Light and grey
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
+                                                                SizedBox(
+                                                                    height: 3),
                                                               ],
                                                             ),
                                                           ),
@@ -3247,109 +3216,109 @@ class _Summery_pageState extends State<Summery_page>
                                     }).toList(),
                                   ),
                                 ),
-                                SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        // Text('Rows per page:'),
-                                        SizedBox(width: 10),
-                                        Material(
-                                          elevation: 3,
-                                          child: Container(
-                                            height: 40,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<int>(
-                                                value: itemsPerPagerent,
-                                                items: itemsPerPageOptionsrent
-                                                    .map((int value) {
-                                                  return DropdownMenuItem<int>(
-                                                    value: value,
-                                                    child:
-                                                        Text(value.toString()),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    itemsPerPagerent =
-                                                        newValue!;
-                                                    currentPagerent =
-                                                        0; // Reset to first page when items per page change
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPagerent == 0
-                                                ? Colors.grey
-                                                : blueColor,
-                                          ),
-                                          onPressed: currentPagerent == 0
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    currentPagerent--;
-                                                  });
-                                                },
-                                        ),
-                                        // IconButton(
-                                        //   icon: Icon(Icons.arrow_back),
-                                        //   onPressed: currentPage > 0
-                                        //       ? () {
-                                        //     setState(() {
-                                        //       currentPage--;
-                                        //     });
-                                        //   }
-                                        //       : null,
-                                        // ),
-                                        Text(
-                                            'Page ${currentPagerent + 1} of $totalPages'),
-                                        // IconButton(
-                                        //   icon: Icon(Icons.arrow_forward),
-                                        //   onPressed: currentPage < totalPages - 1
-                                        //       ? () {
-                                        //     setState(() {
-                                        //       currentPage++;
-                                        //     });
-                                        //   }
-                                        //       : null,
-                                        // ),
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronRight,
-                                            color:
-                                                currentPagerent < totalPages - 1
-                                                    ? blueColor
-                                                    : Colors.grey,
-                                          ),
-                                          onPressed:
-                                              currentPagerent < totalPages - 1
-                                                  ? () {
-                                                      setState(() {
-                                                        currentPagerent++;
-                                                      });
-                                                    }
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                // SizedBox(height: 20),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.end,
+                                //   children: [
+                                //     Row(
+                                //       children: [
+                                //         // Text('Rows per page:'),
+                                //         SizedBox(width: 10),
+                                //         Material(
+                                //           elevation: 3,
+                                //           child: Container(
+                                //             height: 40,
+                                //             padding: EdgeInsets.symmetric(
+                                //                 horizontal: 12.0),
+                                //             decoration: BoxDecoration(
+                                //               border: Border.all(
+                                //                   color: Colors.grey),
+                                //             ),
+                                //             child: DropdownButtonHideUnderline(
+                                //               child: DropdownButton<int>(
+                                //                 value: itemsPerPagerent,
+                                //                 items: itemsPerPageOptionsrent
+                                //                     .map((int value) {
+                                //                   return DropdownMenuItem<int>(
+                                //                     value: value,
+                                //                     child:
+                                //                         Text(value.toString()),
+                                //                   );
+                                //                 }).toList(),
+                                //                 onChanged: (newValue) {
+                                //                   setState(() {
+                                //                     itemsPerPagerent =
+                                //                         newValue!;
+                                //                     currentPagerent =
+                                //                         0; // Reset to first page when items per page change
+                                //                   });
+                                //                 },
+                                //               ),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     Row(
+                                //       children: [
+                                //         IconButton(
+                                //           icon: FaIcon(
+                                //             FontAwesomeIcons.circleChevronLeft,
+                                //             color: currentPagerent == 0
+                                //                 ? Colors.grey
+                                //                 : blueColor,
+                                //           ),
+                                //           onPressed: currentPagerent == 0
+                                //               ? null
+                                //               : () {
+                                //                   setState(() {
+                                //                     currentPagerent--;
+                                //                   });
+                                //                 },
+                                //         ),
+                                //         // IconButton(
+                                //         //   icon: Icon(Icons.arrow_back),
+                                //         //   onPressed: currentPage > 0
+                                //         //       ? () {
+                                //         //     setState(() {
+                                //         //       currentPage--;
+                                //         //     });
+                                //         //   }
+                                //         //       : null,
+                                //         // ),
+                                //         Text(
+                                //             'Page ${currentPagerent + 1} of $totalPages'),
+                                //         // IconButton(
+                                //         //   icon: Icon(Icons.arrow_forward),
+                                //         //   onPressed: currentPage < totalPages - 1
+                                //         //       ? () {
+                                //         //     setState(() {
+                                //         //       currentPage++;
+                                //         //     });
+                                //         //   }
+                                //         //       : null,
+                                //         // ),
+                                //         IconButton(
+                                //           icon: FaIcon(
+                                //             FontAwesomeIcons.circleChevronRight,
+                                //             color:
+                                //                 currentPagerent < totalPages - 1
+                                //                     ? blueColor
+                                //                     : Colors.grey,
+                                //           ),
+                                //           onPressed:
+                                //               currentPagerent < totalPages - 1
+                                //                   ? () {
+                                //                       setState(() {
+                                //                         currentPagerent++;
+                                //                       });
+                                //                     }
+                                //                   : null,
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ],
+                                // ),
                               ],
                             ),
                           );
@@ -3940,58 +3909,259 @@ class _Summery_pageState extends State<Summery_page>
                 const SizedBox(
                   height: 10,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: Table(
-                    border: TableBorder.all(color: blueColor),
-                    children: [
-                      TableRow(
-                          decoration: BoxDecoration(
-                            color: blueColor,
-                            //  borderRadius: BorderRadius.circular(10),
-                          ),
-                          children: [
-                            TableCell(
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Staff Member',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 19,
-                                      fontWeight: FontWeight.bold),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFEAF1FB),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                      bottomLeft:
+                          staffExpanded ? Radius.zero : Radius.circular(16),
+                      bottomRight:
+                          staffExpanded ? Radius.zero : Radius.circular(16),
+                    ),
+                    border: Border.all(
+                      color: Color(0x4D636363), // Translucent gray border
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    staffExpanded = !staffExpanded;
+                                  });
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 5, right: 5),
+                                  padding: !staffExpanded
+                                      ? EdgeInsets.only(bottom: 10)
+                                      : EdgeInsets.only(top: 10),
+                                  child: FaIcon(
+                                    staffExpanded
+                                        ? FontAwesomeIcons.sortUp
+                                        : FontAwesomeIcons.sortDown,
+                                    size: 20,
+                                    color: blueColor,
+                                  ),
                                 ),
                               ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Staff Details',
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (staffExpanded)
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border(
+                              top: BorderSide(
+                                color: Color(0x4D636363),
+                                width: 1.0,
+                              ),
                             ),
-                          ]),
-                      TableRow(children: [
-                        TableCell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              rentalDetails.staffMemberData?.staffmemberName !=
-                                          null &&
-                                      rentalDetails.staffMemberData!
-                                          .staffmemberName!.isNotEmpty
-                                  ? '${rentalDetails.staffMemberData!.staffmemberName}'
-                                  : 'N/A',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 16
-                                        : 19,
+                          ),
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15,right: 15,top: 10,bottom: 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Staff Member',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    rentalDetails.staffMemberData
+                                                    ?.staffmemberName !=
+                                                null &&
+                                            rentalDetails.staffMemberData!
+                                                .staffmemberName!.isNotEmpty
+                                        ? rentalDetails
+                                            .staffMemberData!.staffmemberName!
+                                        : 'N/A',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.grey),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                      ])
+                      //SizedBox(height: 13,),
                     ],
                   ),
                 ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: Container(
+                //     decoration: BoxDecoration(
+                //       color: const Color(0xFFF4F8FF),
+                //       borderRadius: BorderRadius.circular(16),
+                //       border: Border.all(color: Colors.grey.shade400),
+                //     ),
+                //     child: Column(
+                //       children: [
+                //         // Header Row
+                //         InkWell(
+                //           onTap: () {
+                //             setState(() {
+                //               staffExpanded = !staffExpanded;
+                //             });
+                //           },
+                //           child: Container(
+                //             padding: const EdgeInsets.symmetric(
+                //                 horizontal: 16, vertical: 14),
+                //             decoration: const BoxDecoration(
+                //               borderRadius: BorderRadius.vertical(
+                //                   top: Radius.circular(16)),
+                //               color: Color(0xFFF4F8FF),
+                //             ),
+                //             child: Row(
+                //               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //               children: [
+                //                 FaIcon(
+                //                   staffExpanded
+                //                       ? FontAwesomeIcons
+                //                       .sortUp
+                //                       : FontAwesomeIcons
+                //                       .sortDown,
+                //                   size: 20,
+                //                   color: blueColor,
+                //                 ),
+                //
+                //                 SizedBox(width: 13,),
+                //                 Text(
+                //                   'Staff Details',
+                //                   style: TextStyle(
+                //                     color: blueColor,
+                //                     fontWeight:
+                //                     FontWeight.bold,
+                //                     fontSize: 14,
+                //                   ),
+                //                 ),
+                //
+                //               ],
+                //             ),
+                //           ),
+                //         ),
+                //
+                //         if (staffExpanded)
+                //             Container(
+                //               width: double.infinity,
+                //               decoration: const BoxDecoration(
+                //                 color: Colors.white,
+                //                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+                //               ),
+                //               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                //               child: Padding(
+                //                 padding: const EdgeInsets.all(8.0),
+                //                 child: Column(
+                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                //                   children: [
+                //                     Text(
+                //                       'Staff Member',
+                //                       style: TextStyle(
+                //                           fontWeight:
+                //                           FontWeight.bold,
+                //                           color: blueColor),
+                //                     ),
+                //                     const SizedBox(height: 4),
+                //                     Text(
+                //                       rentalDetails.staffMemberData?.staffmemberName != null &&
+                //                           rentalDetails.staffMemberData!.staffmemberName!.isNotEmpty
+                //                           ? rentalDetails.staffMemberData!.staffmemberName!
+                //                           : 'N/A',
+                //                       style: TextStyle(
+                //                           fontWeight:
+                //                           FontWeight.w700,
+                //                           color: Colors.grey),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               ),
+                //             ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 5, right: 5),
+                //   child: Table(
+                //     border: TableBorder.all(color: blueColor),
+                //     children: [
+                //       TableRow(
+                //           decoration: BoxDecoration(
+                //             color: blueColor,
+                //             //  borderRadius: BorderRadius.circular(10),
+                //           ),
+                //           children: [
+                //             TableCell(
+                //               child: Padding(
+                //                 padding: EdgeInsets.all(8.0),
+                //                 child: Text(
+                //                   'Staff Member',
+                //                   style: TextStyle(
+                //                       color: Colors.white,
+                //                       fontSize:
+                //                           MediaQuery.of(context).size.width <
+                //                                   500
+                //                               ? 16
+                //                               : 19,
+                //                       fontWeight: FontWeight.bold),
+                //                 ),
+                //               ),
+                //             ),
+                //           ]),
+                //       TableRow(children: [
+                //         TableCell(
+                //           child: Padding(
+                //             padding: const EdgeInsets.all(8.0),
+                //             child: Text(
+                //               rentalDetails.staffMemberData?.staffmemberName !=
+                //                           null &&
+                //                       rentalDetails.staffMemberData!
+                //                           .staffmemberName!.isNotEmpty
+                //                   ? '${rentalDetails.staffMemberData!.staffmemberName}'
+                //                   : 'N/A',
+                //               style: TextStyle(
+                //                 fontSize:
+                //                     MediaQuery.of(context).size.width < 500
+                //                         ? 16
+                //                         : 19,
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //       ])
+                //     ],
+                //   ),
+                // ),
                 const SizedBox(
                   height: 50,
                 ),
@@ -12209,100 +12379,7 @@ class _Summery_pageState extends State<Summery_page>
             height: 20,
           ),
           //add Data
-          Padding(
-            padding: const EdgeInsets.only(left: 11, right: 11),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 5),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
-                Row(
-                  children: [
-                    Text(
-                      "Show Completed Task",
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width > 500
-                              ? 20
-                              : 12),
-                    ),
-                    if (MediaQuery.of(context).size.width < 500)
-                      SizedBox(
-                        width: 10,
-                      ),
-                    if (MediaQuery.of(context).size.width > 500)
-                      SizedBox(width: 20),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width < 500 ? 24 : 50,
-                      height: MediaQuery.of(context).size.width < 500 ? 24 : 50,
-                      child: Checkbox(
-                        value: isChecked,
-                        onChanged: (value) {
-                          setState(() {
-                            isChecked = value ?? false;
-                          });
-                        },
-                        activeColor: isChecked ? blueColor : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTap: () async {
-                    final result =
-                        await Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ResponsiveAddWorkOrder(
-                                  rentalid: widget.properties.rentalId,
-                                )));
-                    if (result == true) {
-                      setState(() {
-                        futureworkordersummery = Properies_summery_Repo()
-                            .fetchWorkOrders(widget.properties.rentalId!);
-                      });
-                    }
-                  },
-                  child: Container(
-                    height: (MediaQuery.of(context).size.width < 500)
-                        ? 40
-                        : MediaQuery.of(context).size.width * 0.063,
 
-                    // height:  MediaQuery.of(context).size.width * 0.07,
-                    // height:  40,
-                    width: MediaQuery.of(context).size.width * 0.29,
-                    decoration: BoxDecoration(
-                      color: blueColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Add Work Order",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width > 500
-                                  ? 20
-                                  : 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
-              ],
-            ),
-          ),
-          // SizedBox(height: 15),
-          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 20),
-          if (MediaQuery.of(context).size.width < 500) SizedBox(height: 15),
-          //search
           Padding(
             padding: const EdgeInsets.only(left: 11, right: 11),
             child: Row(
@@ -12330,9 +12407,9 @@ class _Summery_pageState extends State<Summery_page>
                           child: TextField(
                             style: TextStyle(
                                 fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 12
-                                        : 14),
+                                MediaQuery.of(context).size.width < 500
+                                    ? 12
+                                    : 14),
                             // onChanged: (value) {
                             //   setState(() {
                             //     cvverror = false;
@@ -12350,9 +12427,9 @@ class _Summery_pageState extends State<Summery_page>
                                 hintText: "Search here...",
                                 hintStyle: TextStyle(
                                   fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 14
-                                          : 18,
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 18,
                                   // fontWeight: FontWeight.bold,
                                   color: Color(0xFF8A95A8),
                                 ),
@@ -12391,17 +12468,17 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                       items: items
                           .map((String item) => DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ))
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ))
                           .toList(),
                       value: selectedValue,
                       onChanged: (value) {
@@ -12411,7 +12488,7 @@ class _Summery_pageState extends State<Summery_page>
                       },
                       buttonStyleData: ButtonStyleData(
                         height:
-                            MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                        MediaQuery.of(context).size.width < 500 ? 45 : 50,
                         // width: 180,
                         width: MediaQuery.of(context).size.width < 500
                             ? MediaQuery.of(context).size.width * .38
@@ -12444,6 +12521,102 @@ class _Summery_pageState extends State<Summery_page>
                       menuItemStyleData: const MenuItemStyleData(
                         height: 40,
                         padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
+                    ),
+                  ),
+                ),
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
+              ],
+            ),
+          ),
+          // SizedBox(height: 15),
+          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 20),
+          if (MediaQuery.of(context).size.width < 500) SizedBox(height: 15),
+          //search
+          Padding(
+            padding: const EdgeInsets.only(left: 11, right: 11),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 5),
+                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
+                Row(
+                  children: [
+                    Text(
+                      "Show Completed Task",
+                      style: TextStyle(
+                          color:Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width > 500
+                              ? 20
+                              : 12),
+                    ),
+                    if (MediaQuery.of(context).size.width < 500)
+                      SizedBox(
+                        width: 10,
+                      ),
+                    if (MediaQuery.of(context).size.width > 500)
+                      SizedBox(width: 20),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width < 500 ? 24 : 50,
+                      height: MediaQuery.of(context).size.width < 500 ? 24 : 50,
+                      child: Checkbox(
+                        value: isChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            isChecked = value ?? false;
+                          });
+                        },
+                        activeColor: isChecked ? blueColor : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () async {
+                    final result =
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ResponsiveAddWorkOrder(
+                          rentalid: widget.properties.rentalId,
+                        )));
+                    if (result == true) {
+                      setState(() {
+                        futureworkordersummery = Properies_summery_Repo()
+                            .fetchWorkOrders(widget.properties.rentalId!);
+                      });
+                    }
+                  },
+                  child: Container(
+                    height: (MediaQuery.of(context).size.width < 500)
+                        ? 40
+                        : MediaQuery.of(context).size.width * 0.063,
+
+                    // height:  MediaQuery.of(context).size.width * 0.07,
+                    // height:  40,
+                    width: MediaQuery.of(context).size.width * 0.29,
+
+                    decoration: BoxDecoration(
+                      border: Border.all(color: blueColor),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Add Work Order",
+                            style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width > 500
+                                  ? 20
+                                  : 12,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -12553,17 +12726,11 @@ class _Summery_pageState extends State<Summery_page>
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          if (data.isNotEmpty) SizedBox(height: 20),
+                          if (data.isNotEmpty) SizedBox(height: 10),
                           if (data.isNotEmpty) _buildHeaders(),
-                          SizedBox(height: 20),
+                          SizedBox(height: 10),
                           if (data.isNotEmpty)
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -12574,17 +12741,17 @@ class _Summery_pageState extends State<Summery_page>
                                   propertiesworkData workOrder = entry.value;
                                   //return CustomExpansionTile(data: Data, index: index);
                                   return Container(
+                                    margin:
+                                    EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
                                       border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
+                                          color: Color(0xFFDBE0E5)),
+                                      borderRadius:
+                                      BorderRadius.circular(10),
                                     ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
@@ -12961,69 +13128,65 @@ class _Summery_pageState extends State<Summery_page>
                                                     height: 10,
                                                   ),
                                                   Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .end,
                                                     children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            Workorder_summery(
-                                                                              workorder_id: workOrder.workOrderId,
-                                                                            )));
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Image.asset(
-                                                                  'assets/icons/view.png',
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                SizedBox(
-                                                                  width: 8,
-                                                                ),
-                                                                Text(
-                                                                  "View Summery",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
-                                                            ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                      Workorder_summery(
+                                                                        workorder_id: workOrder.workOrderId,
+                                                                      )));
+                                                        },
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: Colors
+                                                                .grey
+                                                                .shade200,
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                8),
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .eye,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                              SizedBox(
+                                                                  width:
+                                                                  2),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
+                                                      SizedBox(
+                                                        width: 20,
+                                                      ),
                                                     ],
                                                   ),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+
                                                 ],
                                               ),
                                             ),
